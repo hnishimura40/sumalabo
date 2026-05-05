@@ -1,0 +1,146 @@
+---
+title: "記事テンプレート"
+slug: "_template"
+type: "foundation"
+category: "スマホの選び方"
+description: "すまラボの記事作成時に使うMDXテンプレートです。公開記事ではありません。"
+thumbnail: ""
+thumbnailAlt: ""
+status: "idea"
+priority: 99
+characterUse:
+  recommended: true
+  count: 3
+  primary: "duo_talk_half.webp"
+  secondary: "himari_question_icon.webp"
+related: []
+updated: "2026-04-30"
+---
+
+import CharacterCallout from "../../src/components/characters/CharacterCallout.astro";
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+import CharacterGuideCard from "../../src/components/characters/CharacterGuideCard.astro";
+
+この記事では、【テーマ】について、初心者にも分かるように整理します。
+
+「【読者が感じている疑問】」という人に向けて、意味、違い、メリット、注意点、向いている人を順番に見ていきます。
+
+<div class="summary-box">
+  <p class="box-label">30秒でわかる結論</p>
+  <ul>
+    <li>【結論1】</li>
+    <li>【結論2】</li>
+    <li>【結論3】</li>
+    <li>【初心者が先に確認すべきこと】</li>
+  </ul>
+</div>
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "【読者目線の短い質問】" },
+    { speaker: "らぼまる", text: "【一言で整理した答え】" },
+  ]}
+/>
+
+## 【基本解説の見出し】
+
+【テーマの意味を短く説明する。専門用語はそのまま流さず、普通の言葉に言い換える。】
+
+【1段落は長くしすぎず、スマホで読みやすい長さにする。】
+
+## 【比較・違いの見出し】
+
+【比較する理由を短く書く。】
+
+| 項目 | 【比較対象A】 | 【比較対象B】 |
+|---|---|---|
+| 形 | 【Aの説明】 | 【Bの説明】 |
+| 使いやすさ | 【Aの説明】 | 【Bの説明】 |
+| 初心者向け | 【Aの説明】 | 【Bの説明】 |
+| 注意点 | 【Aの説明】 | 【Bの説明】 |
+
+【表を見たあと、どちらが絶対に上ではなく、使い方で選ぶことを補足する。】
+
+## 【メリットの見出し】
+
+【メリットを文章だけで並べず、3つ程度に整理する。】
+
+<div class="point-grid">
+  <section>
+    <h3>【メリット1】</h3>
+    <p>【短い説明】</p>
+  </section>
+  <section>
+    <h3>【メリット2】</h3>
+    <p>【短い説明】</p>
+  </section>
+  <section>
+    <h3>【メリット3】</h3>
+    <p>【短い説明】</p>
+  </section>
+</div>
+
+## 【注意点の見出し】
+
+【注意点の全体像を短く書く。怖がらせすぎず、確認すれば避けられる形で整理する。】
+
+<div class="check-box">
+  <p class="box-label">【申し込み前 / 購入前 / 選ぶ前】チェックリスト</p>
+  <ul class="check-list">
+    <li>【確認項目1】</li>
+    <li>【確認項目2】</li>
+    <li>【確認項目3】</li>
+    <li>【確認項目4】</li>
+    <li>【確認項目5】</li>
+  </ul>
+</div>
+
+<CharacterCallout
+  character="ひまり"
+  image="/images/characters/himari_question_icon.webp"
+  tone="caution"
+  title="【注意点の短い見出し】"
+  text="【読者が失敗しにくくなる一言補足。本文の繰り返しにしない。】"
+/>
+
+## 【向いている人 / 向いていない人】
+
+【全員に必要なものではないことを前提に、向き不向きを整理する。】
+
+| 向いている人 | 向いていない人 |
+|---|---|
+| 【向いている人1】 | 【向いていない人1】 |
+| 【向いている人2】 | 【向いていない人2】 |
+| 【向いている人3】 | 【向いていない人3】 |
+| 【向いている人4】 | 【向いていない人4】 |
+
+## 【関連テーマとの関係】
+
+【この記事で理解した内容が、次の記事やカテゴリとどうつながるかを書く。】
+
+{/* Future links: /articles/future-slug-1/, /articles/future-slug-2/ */}
+
+<CharacterGuideCard
+  image="/images/characters/duo_guide_half.webp"
+  title="【次に読む導線の見出し】"
+  text="【読者が次に何を読むと判断しやすいかを自然に案内する。】"
+  links={[
+    {
+      label: "【作成済みページまたはカテゴリ】",
+      href: "/articles/",
+      description: "【リンク先で分かること】"
+    },
+    {
+      label: "【カテゴリページ】",
+      href: "/categories/mobile-plan/",
+      description: "【カテゴリの短い説明】"
+    }
+  ]}
+/>
+
+## まとめ：【記事の結論を短く】
+
+【結論を短く言い直す。】
+
+【初心者が最初に確認すべきこと、次に取る行動を1〜2段落で締める。】

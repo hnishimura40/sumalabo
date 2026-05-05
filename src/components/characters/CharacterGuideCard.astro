@@ -1,0 +1,120 @@
+---
+interface GuideLink {
+  label: string;
+  href: string;
+  description?: string;
+}
+
+interface Props {
+  image?: string;
+  title: string;
+  text: string;
+  links: GuideLink[];
+}
+
+const {
+  image = "/images/characters/duo_guide_half.webp",
+  title,
+  text,
+  links = [],
+} = Astro.props;
+---
+
+<aside class="character-guide-card" aria-label="関連記事の案内">
+  <div>
+    <p class="guide-label">次に読むなら</p>
+    <h3>{title}</h3>
+    <p>{text}</p>
+    <ul>
+      {links.map((link) => (
+        <li>
+          <a href={link.href}>{link.label}</a>
+          {link.description && <span>{link.description}</span>}
+        </li>
+      ))}
+    </ul>
+  </div>
+  <img src={image} alt="ひまりとらぼまるの案内" loading="lazy" />
+</aside>
+
+<style>
+  .character-guide-card {
+    display: grid;
+    grid-template-columns: 1fr minmax(140px, 210px);
+    gap: 20px;
+    align-items: center;
+    margin: 36px 0 8px;
+    padding: 22px;
+    border: 1px solid color-mix(in srgb, var(--teal) 20%, var(--line));
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-md);
+  }
+
+  .guide-label {
+    margin: 0 0 6px;
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    color: var(--fg);
+    font-size: 20px;
+    line-height: 1.45;
+  }
+
+  p {
+    margin: 0 0 14px;
+    color: var(--fg-mid);
+    line-height: 1.75;
+  }
+
+  ul {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    border-top: 1px solid var(--line);
+    padding-top: 11px;
+  }
+
+  a {
+    color: var(--teal-deep);
+    font-weight: 800;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+  }
+
+  span {
+    display: block;
+    margin-top: 3px;
+    color: var(--fg-soft);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+  }
+
+  @media (max-width: 640px) {
+    .character-guide-card {
+      grid-template-columns: 1fr;
+    }
+
+    img {
+      max-height: 128px;
+      justify-self: center;
+    }
+  }
+</style>

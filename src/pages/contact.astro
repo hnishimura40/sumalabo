@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../config/site";
+
+const hasContactEmail = siteConfig.contactEmail.length > 0;
+---
+
+<BaseLayout
+  title="お問い合わせ"
+  description="すまラボへのお問い合わせページです。記事内容の確認、掲載内容、広告・レビュー依頼などの連絡先として整備予定です。"
+  canonicalPath="/contact/"
+>
+  <section class="page-shell static-page">
+    <header class="static-hero">
+      <p class="static-eyebrow">CONTACT</p>
+      <h1>お問い合わせ</h1>
+      <p>
+        記事内容の確認、掲載内容、広告・レビュー依頼など、すまラボへのご連絡についてのページです。
+      </p>
+    </header>
+
+    <div class="static-content">
+      <section class="static-card">
+        <h2>お問い合わせ先について</h2>
+        {
+          hasContactEmail ? (
+            <>
+              <p>
+                お問い合わせは、以下のメールアドレスまでご連絡ください。
+              </p>
+              <div class="static-note">
+                <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* TODO: 本番URL・問い合わせメール確定後に src/config/site.ts の contactEmail を設定する。 */}
+              <p>
+                お問い合わせ先は本番公開前に設定予定です。メールアドレスまたはお問い合わせフォームの設置後、このページでご案内します。
+              </p>
+              <div class="static-note">
+                お問い合わせ先は本番公開前に設定予定です。
+              </div>
+            </>
+          )
+        }
+      </section>
+
+      <section class="static-card">
+        <h2>今後受け付ける内容</h2>
+        <ul>
+          <li>記事内容の誤りや補足情報に関するご連絡</li>
+          <li>掲載内容に関するお問い合わせ</li>
+          <li>広告掲載、レビュー依頼、取材に関するご相談</li>
+          <li>サイト運営に関するご連絡</li>
+        </ul>
+      </section>
+
+      <section class="static-card">
+        <h2>ご連絡前のお願い</h2>
+        <p>
+          商品やサービスの価格、在庫、キャンペーン、仕様は変動する場合があります。記事内の情報について確認される場合は、該当ページ名やURL、確認したい箇所を添えていただけると助かります。
+        </p>
+        <p>
+          返信が必要なお問い合わせについても、内容によっては回答までお時間をいただく場合があります。
+        </p>
+      </section>
+    </div>
+  </section>
+</BaseLayout>

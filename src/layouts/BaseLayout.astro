@@ -1,0 +1,93 @@
+---
+import "../styles/global.css";
+import { siteConfig } from "../config/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  ogType?: "website" | "article";
+  canonicalPath?: string;
+}
+
+const {
+  title = siteConfig.siteName,
+  description = siteConfig.siteDescription,
+  image = "",
+  ogType = "website",
+  canonicalPath,
+} = Astro.props;
+const pageTitle = title === siteConfig.siteName ? title : `${title} | ${siteConfig.siteName}`;
+const canonicalPathname = canonicalPath ?? Astro.url.pathname;
+const hasSiteUrl = siteConfig.siteUrl.length > 0;
+// TODO: 本番公開URL確定後は src/config/site.ts の siteUrl を設定し、canonical/OGP URLを絶対URLで出力する。
+const canonicalUrl = hasSiteUrl ? new URL(canonicalPathname, siteConfig.siteUrl).toString() : canonicalPathname;
+const selectedImage = image || siteConfig.defaultOgpImage;
+const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.siteUrl).toString() : selectedImage;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="author" content={siteConfig.authorName} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:site_name" content={siteConfig.siteName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="/" aria-label="すまラボ トップへ">
+          <span class="brand-mark">す</span>
+          <span>
+            <strong>すまラボ</strong>
+            <small>スマホ・AI・ガジェットをやさしく整理</small>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="メインナビゲーション">
+          <a href="/">ホーム</a>
+          <a href="/articles/">記事一覧</a>
+          <a href="/categories/mobile-plan/">通信費</a>
+          <a href="/categories/smartphone/">スマホ選び</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a class="brand" href="/" aria-label="すまラボ トップへ">
+            <span class="brand-mark">す</span>
+            <span>
+              <strong>すまラボ</strong>
+              <small>スマホ・AI・ガジェットの整理メディア</small>
+            </span>
+          </a>
+          <p>むずかしい話を、選びやすさと損しにくさにつながる形で整理します。</p>
+        </div>
+        <nav class="footer-links" aria-label="フッターナビゲーション">
+          <a href="/articles/">記事一覧</a>
+          <a href="/categories/news/">ニュースをかみくだく</a>
+          <a href="/categories/smartphone/">スマホの選び方</a>
+          <a href="/categories/mobile-plan/">通信費を下げる</a>
+          <a href="/categories/gadgets/">周辺機器・ガジェット</a>
+          <a href="/about/">すまラボについて</a>
+          <a href="/privacy-policy/">プライバシーポリシー</a>
+          <a href="/contact/">お問い合わせ</a>
+          <a href="/disclosure/">広告・アフィリエイトについて</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

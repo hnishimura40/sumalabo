@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO: 本番公開URL確定後に Sitemap 行を追加する。
+# 例: Sitemap: https://本番公開URL/sitemap-index.xml

@@ -1,0 +1,104 @@
+---
+interface Props {
+  character: "labomaru" | "himari" | string;
+  image: string;
+  title?: string;
+  text: string;
+  tone?: "normal" | "caution" | "point" | string;
+}
+
+const { character, image, title, text, tone = "normal" } = Astro.props;
+const toneLabel = tone === "caution" ? "注意" : tone === "point" ? "ポイント" : "補足";
+---
+
+<aside class={`character-callout tone-${tone}`} aria-label={`${character}からの${toneLabel}`}>
+  <img src={image} alt={`${character}のアイコン`} loading="lazy" />
+  <div>
+    <p class="callout-label">{toneLabel}</p>
+    {title && <h3>{title}</h3>}
+    <p>{text}</p>
+  </div>
+</aside>
+
+<style>
+  .character-callout {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+    align-items: center;
+    margin: 30px 0;
+    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--teal) 24%, var(--line));
+    border-left: 5px solid var(--teal);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 72%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tone-caution {
+    border-color: color-mix(in srgb, var(--amber) 34%, var(--line));
+    border-left-color: var(--amber);
+    background:
+      linear-gradient(135deg, var(--amber-tint), transparent 72%),
+      var(--bg-elev);
+  }
+
+  .tone-point {
+    border-color: color-mix(in srgb, var(--slate) 30%, var(--line));
+    border-left-color: var(--slate);
+    background:
+      linear-gradient(135deg, var(--slate-tint), transparent 72%),
+      var(--bg-elev);
+  }
+
+  img {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+  }
+
+  .callout-label {
+    margin: 0 0 4px;
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: 0.06em;
+  }
+
+  .tone-caution .callout-label {
+    color: color-mix(in srgb, var(--amber) 70%, var(--fg));
+  }
+
+  h3 {
+    margin: 0 0 5px;
+    color: var(--fg);
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  p {
+    margin: 0;
+    color: var(--fg-mid);
+    line-height: 1.75;
+  }
+
+  @media (max-width: 520px) {
+    .character-callout {
+      grid-template-columns: 54px 1fr;
+      gap: 12px;
+      padding: 14px;
+    }
+
+    img {
+      width: 54px;
+      height: 54px;
+    }
+  }
+</style>

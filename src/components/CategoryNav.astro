@@ -1,0 +1,152 @@
+---
+import { categories } from "../lib/categories";
+
+interface Props {
+  activeSlug?: string;
+  title?: string;
+  text?: string;
+}
+
+const {
+  activeSlug = "",
+  title = "カテゴリから探す",
+  text = "すまラボの主要テーマを4つの入口に分けて整理しています。",
+} = Astro.props;
+---
+
+<section class="category-nav" aria-labelledby="category-nav-title">
+  <div class="category-nav-heading">
+    <p class="eyebrow">Categories</p>
+    <h2 id="category-nav-title">{title}</h2>
+    <p>{text}</p>
+  </div>
+  <div class="category-links">
+    {categories.map((category) => (
+      <a
+        class={`category-link category-${category.slug} ${category.slug === activeSlug ? "is-active" : ""}`}
+        href={`/categories/${category.slug}/`}
+      >
+        <span>{category.slug}</span>
+        <strong>{category.name}</strong>
+        <small>{category.description}</small>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .category-nav {
+    margin: 34px 0 0;
+  }
+
+  .category-nav-heading {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .eyebrow {
+    margin: 0;
+    color: var(--teal);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 0;
+    color: var(--fg);
+    font-size: clamp(22px, 4vw, 30px);
+    line-height: 1.35;
+    letter-spacing: 0;
+  }
+
+  p {
+    max-width: 720px;
+    margin: 0;
+    color: var(--fg-soft);
+    line-height: 1.75;
+  }
+
+  .category-links {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .category-link {
+    display: grid;
+    gap: 7px;
+    min-height: 150px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    color: var(--fg);
+    text-decoration: none;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .category-link:hover,
+  .category-link.is-active {
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+  }
+
+  .category-link span {
+    width: fit-content;
+    border-radius: 999px;
+    padding: 3px 8px;
+    color: var(--fg-mid);
+    background: var(--bg-sunk);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .category-link strong {
+    font-size: 17px;
+    line-height: 1.45;
+  }
+
+  .category-link small {
+    color: var(--fg-soft);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .category-news {
+    background: linear-gradient(135deg, var(--cat-news-tint), var(--bg-elev) 52%);
+  }
+
+  .category-smartphone {
+    background: linear-gradient(135deg, var(--cat-smartphone-tint), var(--bg-elev) 52%);
+  }
+
+  .category-mobile-plan {
+    background: linear-gradient(135deg, var(--cat-mobile-plan-tint), var(--bg-elev) 52%);
+  }
+
+  .category-gadgets {
+    background: linear-gradient(135deg, var(--cat-gadgets-tint), var(--bg-elev) 52%);
+  }
+
+  @media (max-width: 900px) {
+    .category-links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .category-links {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

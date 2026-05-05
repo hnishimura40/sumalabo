@@ -1,0 +1,98 @@
+---
+interface DialogueLine {
+  speaker: string;
+  text: string;
+}
+
+interface Props {
+  image?: string;
+  lines: DialogueLine[];
+}
+
+const {
+  image = "/images/characters/duo_talk_half.webp",
+  lines = [],
+} = Astro.props;
+---
+
+<aside class="character-dialogue" aria-label="キャラクター会話">
+  <img src={image} alt="ひまりとらぼまるの会話" loading="lazy" />
+  <div class="dialogue-lines">
+    {lines.slice(0, 3).map((line) => (
+      <p>
+        <strong>{line.speaker}</strong>
+        <span>{line.text}</span>
+      </p>
+    ))}
+  </div>
+</aside>
+
+<style>
+  .character-dialogue {
+    display: grid;
+    grid-template-columns: minmax(130px, 190px) 1fr;
+    gap: 18px;
+    align-items: center;
+    margin: 30px 0;
+    padding: 18px;
+    border: 1px solid color-mix(in srgb, var(--teal) 22%, var(--line));
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 70%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+  }
+
+  .dialogue-lines {
+    display: grid;
+    gap: 10px;
+  }
+
+  p {
+    display: grid;
+    grid-template-columns: 78px 1fr;
+    gap: 10px;
+    margin: 0;
+    align-items: start;
+  }
+
+  strong {
+    width: fit-content;
+    border-radius: 999px;
+    padding: 2px 8px;
+    background: var(--bg-elev);
+    color: var(--teal-deep);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.6;
+  }
+
+  span {
+    display: block;
+    color: var(--fg-mid);
+    line-height: 1.75;
+  }
+
+  @media (max-width: 640px) {
+    .character-dialogue {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    img {
+      max-height: 128px;
+      justify-self: center;
+    }
+
+    p {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+</style>

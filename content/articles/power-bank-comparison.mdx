@@ -1,0 +1,565 @@
+---
+title: "モバイルバッテリーおすすめ比較。容量・重さ・メーカーで選ぶ"
+slug: "power-bank-comparison"
+type: "revenue"
+category: "周辺機器・ガジェット"
+description: "モバイルバッテリーのおすすめを容量・重さ・W数・メーカー別に比較。Anker、CIO、エレコム、MOTTERU、Belkinなどから用途別に選びやすく整理します。"
+thumbnail: "/images/thumbnails/power-bank-comparison.webp"
+thumbnailAlt: "モバイルバッテリーのおすすめを、ひまりとらぼまるが容量や重さで比較しているイメージ"
+status: "ready"
+priority: 1
+characterUse:
+  recommended: true
+  count: 3
+  primary: "labomaru_chart_icon.webp"
+  secondary: "duo_guide_half.webp"
+related:
+  - "power-bank-guide"
+  - "usb-c-charger-guide"
+  - "usb-c-charger-comparison"
+updated: "2026-05-03"
+---
+
+import CharacterCallout from "../../src/components/characters/CharacterCallout.astro";
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+import CharacterGuideCard from "../../src/components/characters/CharacterGuideCard.astro";
+import AffiliateLinks from "../../src/components/AffiliateLinks.astro";
+
+モバイルバッテリーは、Amazonや家電量販店を見ると似た商品がたくさん並んでいます。
+10,000mAh、20,000mAh、30W、67W、Qi2、ケーブル内蔵など、見る項目も多めです。
+
+この記事では、モバイルバッテリーを単純なランキングではなく、「使い方」と「メーカーの方向性」で整理します。
+容量だけで選ぶのではなく、重さ、出力W数、USB-C入出力、PSE、販売元、保証まで見て、自分に合う候補を絞りましょう。
+
+<div class="check-box">
+  <p class="box-label">PR表記</p>
+  <p>この記事には広告・アフィリエイトリンクを含む場合があります。価格や在庫、販売元は変動するため、購入前に各販売ページで最新情報をご確認ください。</p>
+</div>
+
+<div class="summary-box">
+  <p class="box-label">先に結論：用途別おすすめ</p>
+  <ul>
+    <li>普段使いで迷うなら、10,000mAh・USB-C入出力・20W〜30W前後が選びやすい</li>
+    <li>ケーブル忘れが不安なら、USB-Cケーブル内蔵モデルを候補にする</li>
+    <li>ノートPC兼用や旅行用なら、20,000mAh前後と45W〜65W以上の出力も見る</li>
+    <li>iPhoneのワイヤレス重視なら、Qi2 / MagSafe系を検討する</li>
+    <li>安全性はメーカー名だけで判断せず、PSE、販売元、保証、レビュー本文まで確認する</li>
+  </ul>
+</div>
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "モバイルバッテリーって、mAhが大きいほどいいの？" },
+    { speaker: "らぼまる", text: "たくさん充電できるけど、重くなりやすいよ。普段使いか旅行用かで分けると選びやすいです。" },
+  ]}
+/>
+
+## 厳選おすすめ早見表
+
+まずはここだけ見ればOKです。
+細かいスペックまで見る前に、自分の使い方に近い行から候補を確認してください。
+
+<div class="quick-pick-box">
+  <p class="box-label">厳選おすすめ早見表</p>
+  <table>
+    <thead>
+      <tr>
+        <th>用途</th>
+        <th>商品候補</th>
+        <th>容量</th>
+        <th>最大出力</th>
+        <th>重さ</th>
+        <th>向いている人</th>
+        <th>注意点</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>迷ったら定番</td>
+        <td>Anker Power Bank 10000mAh 30W</td>
+        <td>10,000mAh</td>
+        <td>30W</td>
+        <td>約220g</td>
+        <td>初めての1台</td>
+        <td>Anker内で型番違いが多い</td>
+      </tr>
+      <tr>
+        <td>ケーブル忘れ対策</td>
+        <td>Anker Zolo Power Bank 10000mAh 30W Built-In USB-Cケーブル</td>
+        <td>10,000mAh</td>
+        <td>30W</td>
+        <td>要最終確認</td>
+        <td>USB-Cケーブルを忘れがちな人</td>
+        <td>内蔵ケーブルの取り回し確認</td>
+      </tr>
+      <tr>
+        <td>日本メーカーで軽め</td>
+        <td>エレコム DE-C69L-10000</td>
+        <td>10,000mAh / 37Wh</td>
+        <td>30W</td>
+        <td>約190g</td>
+        <td>国内メーカー・軽さ重視</td>
+        <td>2ポート同時は合計15W</td>
+      </tr>
+      <tr>
+        <td>軽量・色展開</td>
+        <td>MOTTERU MOT-MB10003-EC</td>
+        <td>10,000mAh</td>
+        <td>30W</td>
+        <td>要最終確認</td>
+        <td>軽さ・色・保証重視</td>
+        <td>PC用途は30Wまで</td>
+      </tr>
+      <tr>
+        <td>Android急速充電</td>
+        <td>CIO SMARTCOBY Pro CABLE C</td>
+        <td>10,000mAh</td>
+        <td>35W</td>
+        <td>要最終確認</td>
+        <td>PPS・ケーブル内蔵重視</td>
+        <td>2台同時時は出力低下</td>
+      </tr>
+      <tr>
+        <td>ノートPC兼用</td>
+        <td>CIO SMARTCOBY TRIO 67W SS</td>
+        <td>20,000mAh</td>
+        <td>67W</td>
+        <td>要最終確認</td>
+        <td>PC・タブレット兼用</td>
+        <td>価格・在庫要確認</td>
+      </tr>
+      <tr>
+        <td>旅行・出張</td>
+        <td>Anker Power Bank 20000mAh 87W Built-In USB-Cケーブル</td>
+        <td>20,000mAh</td>
+        <td>合計87W / 単ポート65W</td>
+        <td>約430g</td>
+        <td>複数機器・PCも充電</td>
+        <td>重い</td>
+      </tr>
+      <tr>
+        <td>安心感重視</td>
+        <td>バッファロー BMPBSA10000</td>
+        <td>10,000mAh / 37Wh</td>
+        <td>30W</td>
+        <td>要最終確認</td>
+        <td>半固体・安全性重視</td>
+        <td>新商品なのでレビュー要確認</td>
+      </tr>
+      <tr>
+        <td>iPhoneワイヤレス</td>
+        <td>Anker MagGo Power Bank 10000mAh Slim</td>
+        <td>10,000mAh</td>
+        <td>有線30W / ワイヤレス15W</td>
+        <td>約207g</td>
+        <td>Qi2 / MagSafe系を使いたい人</td>
+        <td>ワイヤレスはロスあり</td>
+      </tr>
+      <tr>
+        <td>Apple系・Qi2</td>
+        <td>Belkin Qi2 15W 10K</td>
+        <td>10,000mAh</td>
+        <td>Qi2 15W</td>
+        <td>要確認</td>
+        <td>iPhone周辺機器重視</td>
+        <td>価格は高めになりやすい</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+## 用途別おすすめの選び方
+
+<div class="decision-guide-grid">
+  <section class="decision-guide-panel">
+    <span class="guide-chip">迷ったらここを見る</span>
+    <h2>用途別おすすめの選び方</h2>
+    <p>迷ったら、まずはスマホだけか、PCも充電したいかで分けると選びやすいです。</p>
+    <ul class="decision-list">
+      <li><strong>スマホ1回分でよい</strong>5,000〜10,000mAh。軽さ重視で見る</li>
+      <li><strong>普段使いで迷う</strong>10,000mAh、USB-C入出力、20W〜30Wを基準にする</li>
+      <li><strong>ケーブル忘れ対策</strong>USB-Cケーブル内蔵モデルを優先する</li>
+      <li><strong>Android急速充電</strong>USB PD / PPS対応を確認する</li>
+      <li><strong>ノートPC兼用</strong>45W〜65W以上を目安にする</li>
+      <li><strong>iPhoneワイヤレス</strong>Qi2 / MagSafe系を候補にする</li>
+    </ul>
+  </section>
+
+  <section class="decision-guide-panel">
+    <span class="guide-chip">メーカー整理</span>
+    <h2>メーカー別に見るおすすめの方向性</h2>
+    <p>メーカーごとに得意分野が違うため、何を重視するかで見ると分かりやすいです。</p>
+    <ul class="decision-list">
+      <li><strong>Anker</strong>定番で選びやすく、小型から高出力まで幅広い</li>
+      <li><strong>CIO</strong>小型・高出力・PPS・ケーブル内蔵など、使い勝手重視</li>
+      <li><strong>MOTTERU</strong>軽量、色展開、保証の見やすさを重視したい人向け</li>
+      <li><strong>エレコム</strong>国内大手で、家電量販店でも選びやすい</li>
+      <li><strong>バッファロー</strong>半固体など安全性訴求を見たい人向け</li>
+      <li><strong>Belkin</strong>iPhone周辺機器、Apple系、Qi2重視の人向け</li>
+    </ul>
+  </section>
+</div>
+
+メーカーの国やブランド背景だけで「安全」「危険」と決めるのは避けましょう。
+日本メーカーでも海外製造の場合はありますし、中国系メーカーでも日本法人や保証体制が整っている場合があります。
+
+## 厳選おすすめ商品カード
+
+ここからは、上の早見表に入れたメイン候補を商品カードで整理します。
+正式なアフィリエイトリンクは未設定のため、購入リンク欄は後でAmazon / 楽天 / Yahoo / 公式リンクを差し込める形にしています。
+
+<div class="product-card-grid">
+  <section class="product-card">
+    <p class="product-rank">迷ったら定番</p>
+    <h3>Anker Power Bank 10000mAh 30W</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>初めての1台として、10,000mAh・30W前後の定番候補から選びたい人</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>10,000mAh、最大30W、USB-C×2とUSB-A×1を備えた使いやすい候補</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>Anker内で似た名前のモデルが多いため、型番、容量、最大出力を確認したい</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="anker-power-bank-10000-30w" />
+  </section>
+
+  <section class="product-card">
+    <p class="product-rank">ケーブル忘れ対策</p>
+    <h3>Anker Zolo Power Bank 10000mAh 30W Built-In USB-Cケーブル</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>外出先でUSB-Cケーブルを忘れがちな人</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>10,000mAh、30W、USB-Cケーブル内蔵で、持ち物を減らしやすい</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>内蔵ケーブルの取り回しや、壊れたときの扱いを確認したい</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="anker-zolo-power-bank-10000-30w" />
+  </section>
+
+  <section class="product-card">
+    <p class="product-rank">日本メーカーで軽め</p>
+    <h3>エレコム DE-C69L-10000</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>国内大手メーカーの候補から、軽めの10,000mAhを選びたい人</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>10,000mAh / 37Wh、USB-C最大30W、USB-C×1・USB-A×1、約190gのコンパクトモデル</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>2ポート同時使用時は合計最大15Wになる点に注意</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="elecom-de-c69l-10000" />
+  </section>
+
+  <section class="product-card">
+    <p class="product-rank">軽量・色展開</p>
+    <h3>MOTTERU MOT-MB10003-EC</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>軽さ、色展開、保証の見やすさを重視したい人</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>10,000mAh、PD30W入出力、2年保証のモデル</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>PC用途は30Wまで。日本メーカーでも生産国や販売元は商品ごとに確認したい</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="motteru-mot-mb10003-ec" />
+  </section>
+
+  <section class="product-card">
+    <p class="product-rank">Android急速充電</p>
+    <h3>CIO SMARTCOBY Pro CABLE C</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>PPS対応やUSB-Cケーブル内蔵を重視するAndroidユーザー</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>10,000mAh級で最大35W、USB-Cケーブル内蔵、PPS対応の候補</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>2台同時使用時は出力が下がる場合があるため、使い方に合うか確認したい</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="cio-smartcoby-pro-cable-c" />
+  </section>
+
+  <section class="product-card">
+    <p class="product-rank">ノートPC兼用</p>
+    <h3>CIO SMARTCOBY TRIO 67W SS</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>スマホだけでなく、タブレットやノートPCも視野に入れたい人</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>20,000mAh、67W級でPC兼用候補にしやすい</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>価格・在庫は要確認。半固体系の表記があっても、安全性を断定しない</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="cio-smartcoby-trio-67w-ss" />
+  </section>
+
+  <section class="product-card">
+    <p class="product-rank">旅行・出張</p>
+    <h3>Anker Power Bank 20000mAh 87W Built-In USB-Cケーブル</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>旅行・出張で、スマホ以外の機器やノートPCも充電したい人</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>20,000mAh、単ポート最大65W、合計最大87W、内蔵USB-Cケーブル、本体への最大65W入力が確認できる候補</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>約430gと重め。毎日持ち歩くより旅行・出張向き</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="anker-power-bank-20000-87w" />
+  </section>
+
+  <section class="product-card">
+    <p class="product-rank">安心感重視</p>
+    <h3>バッファロー BMPBSA10000</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>半固体や国内メーカーの安全性訴求を重視したい人</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>10,000mAh / 37Wh、USB-C最大30W、USB-C×2、PPS対応、PSE適合表記ありの候補</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>新しめの商品なので、価格・在庫・レビュー傾向・サクラチェッカー評価を購入前に確認したい</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="buffalo-bmpbsa10000" />
+  </section>
+
+  <section class="product-card">
+    <p class="product-rank">iPhoneワイヤレス</p>
+    <h3>Anker MagGo Power Bank 10000mAh Slim</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>iPhoneでQi2 / MagSafe系のワイヤレス充電を使いたい人</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>10,000mAh、約104×71×15mm、約207g、USB-C最大30W、ワイヤレス最大15Wの薄型候補</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>ワイヤレス充電は有線より充電ロスや発熱が出やすい</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="anker-maggo-power-bank-slim" />
+  </section>
+
+  <section class="product-card">
+    <p class="product-rank">Apple系・Qi2</p>
+    <h3>Belkin Qi2 15W 10K</h3>
+    <dl>
+      <div>
+        <dt>向いている人</dt>
+        <dd>iPhone周辺機器やApple系アクセサリとの相性を重視したい人</dd>
+      </div>
+      <div>
+        <dt>良いところ</dt>
+        <dd>10,000mAh、Qi2 15W対応として候補にしやすい</dd>
+      </div>
+      <div>
+        <dt>注意点</dt>
+        <dd>価格は高めになりやすく、ワイヤレスは有線より充電ロスが出やすい</dd>
+      </div>
+    </dl>
+    <AffiliateLinks productId="belkin-qi2-15w-10k" />
+  </section>
+</div>
+
+## 詳しく見たい人向け：詳細比較表
+
+ここからは、厳選候補と注意付き候補をまとめて比較します。
+価格、在庫、販売元、ASIN、サクラチェッカー評価は購入前に最終確認してください。
+
+| 商品名 | メーカー | 型番 | 容量 | Wh | 最大出力 | ポート構成 | PPS | ワイヤレス | ケーブル内蔵 | 重さ | PSE | 保証 | 注意点 |
+|---|---|---|---:|---:|---:|---|---|---|---|---:|---|---|---|
+| Anker Power Bank 10000mAh 30W | Anker | A1256 | 10,000mAh | 要確認 | 30W | USB-C×2 / USB-A×1 | 要確認 | なし | なし | 約220g | 要確認 | 要確認 | 定番だがAnker内で型番注意 |
+| Anker Zolo Power Bank 10000mAh 30W | Anker | A1688 | 10,000mAh | 要確認 | 30W | USB-C / USB-A / 内蔵USB-C | 要確認 | なし | USB-C内蔵 | 要確認 | 要確認 | 要確認 | ケーブル取り回し確認 |
+| Anker Power Bank 20000mAh 30W | Anker | A1384候補 | 20,000mAh | 要確認 | 30W | USB-C×2 / USB-A×1 | 要確認 | なし | ストラップ型ケーブル付属 | 約462g | 要確認 | 要確認 | 大容量安め。PC向けではない |
+| Anker Power Bank 20000mAh 87W | Anker | A1383 | 20,000mAh | 要確認 | 合計87W / 単ポート65W | 内蔵USB-C / USB-C / USB-A | 要確認 | なし | USB-C内蔵 | 約430g | 要確認 | 要確認 | 旅行・PC向け。重い |
+| Anker Power Bank 25000mAh Built-In & 巻取り式USB-Cケーブル | Anker | A1695 | 25,000mAh | 要確認 | 最大100W / 合計165W級 | USB-C複数 / USB-A | 要確認 | なし | 巻取り式＋内蔵USB-C | 要確認 | 要確認 | 要確認 | 高価・重め。PC出張向け |
+| Anker MagGo Power Bank 10000mAh Slim | Anker | A1664 | 10,000mAh | 要確認 | USB-C 30W / ワイヤレス15W | USB-C + ワイヤレス | 要確認 | Qi2系 | なし | 約207g | 要確認 | 要確認 | ワイヤレスはロスあり |
+| Anker MagGo Power Bank 10000mAh | Anker | A1654 | 10,000mAh | 38.5Wh | USB-C 27W級 / ワイヤレス15W | USB-C + ワイヤレス | 要確認 | Qi2系 | なし | 約250g | 要確認 | 要確認 | Slimより重いがスタンド付き |
+| CIO SMARTCOBY Pro CABLE C | CIO | SMARTCOBYPRO-35W-CABLE-C | 10,000mAh | 要確認 | 35W | USB-C×2 / 内蔵Cケーブル | 対応 | なし | USB-C内蔵 | 要確認 | 要確認 | 要確認 | 2台同時時の出力低下に注意 |
+| CIO SMARTCOBY TRIO 67W | CIO | CIO-MB67W2C1A-20000 | 20,000mAh | 要確認 | 67W | USB-C×2 / USB-A×1 | 対応 | なし | なし | 要確認 | 要確認 | 要確認 | ノートPC向け。普段持ちは重め |
+| CIO SMARTCOBY TRIO 67W SS | CIO | CIO-MB67W2C1A-SS20000 | 20,000mAh | 要確認 | 67W | USB-C×2 / USB-A×1 | 要確認 | なし | なし | 要確認 | 要確認 | 要確認 | 半固体系。価格・在庫要確認 |
+| MOTTERU 10000mAh PD30W | MOTTERU | MOT-MB10003-EC | 10,000mAh | 要確認 | 30W | USB-C / USB-A | PPS対応 | なし | なし | 要確認 | 要確認 | 2年保証 | 軽量。PC用途は30Wまで |
+| MOTTERU 準固体 10000mAh PD30W | MOTTERU | MOT-MBSS10002 | 10,000mAh | 要確認 | 30W | 要確認 | 要確認 | なし | ケーブルストラップ付属 | 約174g表記あり | 要確認 | 2年保証 | 準固体。安全性を断定しない |
+| エレコム DE-C69L-10000 | エレコム | DE-C69L-10000BK | 10,000mAh | 37Wh | 30W | USB-C×1 / USB-A×1 | 要確認 | なし | なし | 約190g | 要確認 | 要確認 | 2ポート同時は合計15W |
+| バッファロー BMPBSA10000 | バッファロー | BMPBSA10000BKX等 | 10,000mAh | 37Wh | 30W | USB-C×2 | PPS対応 | なし | なし / Type-C一体型モデル要確認 | 要確認 | PSE適合表記あり | 要確認 | 新商品。レビュー要確認 |
+| Belkin Qi2 15W 10K | Belkin | BPD008候補 | 10,000mAh | 要確認 | Qi2 15W | USB-C + ワイヤレス | 要確認 | Qi2 | なし | 要確認 | 要確認 | 要確認 | ワイヤレスは有線よりロスあり |
+| Belkin BoostCharge 20W ケーブル内蔵 10000mAh | Belkin | BPB021候補 | 10,000mAh | 要確認 | 20W | 一体型USB-C等 | 要確認 | なし | USB-C内蔵 | 要確認 | 要確認 | 要確認 | 20WなのでPC向けではない |
+| UGREEN Nexode / 高出力系モバイルバッテリー | UGREEN | 要確認 | 要確認 | 要確認 | 要確認 | 要確認 | 要確認 | なし | 要確認 | 要確認 | 要確認 | 要確認 | 在庫・販売元を必ず確認 |
+| Samsung Wireless Battery Pack | Samsung | EB-U2510候補 | 10,000mAh | 要確認 | 25W級 | USB-C + ワイヤレス | 要確認 | 対応 | なし | 要確認 | 要確認 | 公式販売条件確認 | Galaxy向け。販売状況確認 |
+
+## モバイルバッテリーを選ぶポイント
+
+<div class="point-grid">
+  <section>
+    <h3>容量は使い方で分ける</h3>
+    <p>日常用なら10,000mAh前後、旅行・出張・防災なら20,000mAh前後が目安です。容量だけで実際の充電回数は決まりません。</p>
+  </section>
+  <section>
+    <h3>W数は充電速度に関係する</h3>
+    <p>スマホ中心なら20W〜30W、タブレットやノートPCも見るなら45W〜65W以上を目安にします。</p>
+  </section>
+  <section>
+    <h3>USB-C入出力を見る</h3>
+    <p>USB-Cポートがあるだけでなく、本体充電とスマホへの出力の両方に対応しているかを確認しましょう。</p>
+  </section>
+  <section>
+    <h3>PPSやケーブルも確認</h3>
+    <p>Android急速充電ではPPS対応が関係することがあります。高出力ではケーブル側の対応も必要です。</p>
+  </section>
+  <section>
+    <h3>ワイヤレスは便利だがロスあり</h3>
+    <p>Qi2やMagSafe系は手軽ですが、有線より充電ロスや発熱が出やすい点は見ておきたいところです。</p>
+  </section>
+  <section>
+    <h3>安全性は複数項目で見る</h3>
+    <p>PSE、保証、販売元、公式仕様、リコール情報、レビュー本文を合わせて確認するのが大切です。</p>
+  </section>
+</div>
+
+## 失敗しやすい選び方
+
+容量が大きければ安心に見えますが、重すぎると持ち歩かなくなります。
+毎日用なら10,000mAh前後、旅行や出張なら20,000mAh前後と分けた方が現実的です。
+
+また、容量が大きくても出力W数が弱いと充電は遅くなります。
+USB-Cポートがあっても入力だけ、出力だけの場合もあるので、「USB-C入出力対応」かを確認しましょう。
+
+安すぎる無名品は、仕様、PSE、販売元、保証、レビューの確認が難しい場合があります。
+価格だけで決めず、販売元や保証、公式仕様の分かりやすさも見てください。
+
+<CharacterCallout
+  character="らぼまる"
+  image="/images/characters/labomaru_worried_icon.webp"
+  tone="caution"
+  title="旅行前は飛行機ルールも確認"
+  text="モバイルバッテリーは飛行機では扱いに注意が必要です。Wh、個数、機内での使用ルールは航空会社や時期で変わる場合があるため、出発前に最新案内を確認しましょう。"
+/>
+
+## 購入前チェックリスト
+
+買う前に、最低限ここだけは確認しておくと失敗しにくくなります。
+
+<div class="check-box">
+  <p class="box-label">購入前チェックリスト</p>
+  <ul class="check-list">
+    <li>日常用か旅行用か決めた</li>
+    <li>10,000mAhか20,000mAhか決めた</li>
+    <li>スマホだけか、タブレット・PCも充電するか決めた</li>
+    <li>最大出力W数を確認した</li>
+    <li>USB-C入力とUSB-C出力に対応しているか確認した</li>
+    <li>Android急速充電ならPPS対応を確認した</li>
+    <li>ケーブル内蔵やワイヤレス充電が必要か確認した</li>
+    <li>重さが持ち歩ける範囲か確認した</li>
+    <li>PSE表記、保証、販売元、出荷元を確認した</li>
+    <li>Amazonレビュー本文とサクラチェッカー評価を補助的に確認した</li>
+    <li>飛行機に持ち込む場合はWh表記と航空会社ルールを確認した</li>
+    <li>価格・在庫・キャンペーンを購入前に確認した</li>
+  </ul>
+</div>
+
+## 内部リンク導線
+
+モバイルバッテリーの基礎から確認したい場合は、[モバイルバッテリーの選び方](/articles/power-bank-guide/) が先に役立ちます。
+充電器側のW数やUSB-C、PPSの見方は [USB-C充電器の選び方](/articles/usb-c-charger-guide/) で整理しています。
+
+USB-C充電器も商品候補まで比較したい場合は、[USB-C充電器おすすめ比較](/articles/usb-c-charger-comparison/) も合わせて確認してください。
+周辺機器全体から探すなら、[周辺機器・ガジェットカテゴリ](/categories/gadgets/) から入ると探しやすいです。
+
+<CharacterGuideCard
+  image="/images/characters/duo_guide_half.webp"
+  title="充電まわりはセットで見ると失敗しにくい"
+  text="モバイルバッテリーだけでなく、USB-C充電器やケーブル側の対応も合わせて見ると、外出先でも期待した速度で充電しやすくなります。"
+  links={[
+    {
+      label: "モバイルバッテリーの選び方を読む",
+      href: "/articles/power-bank-guide/",
+      description: "容量、出力W数、USB-C対応、重さ、安全性の基本を整理できます。"
+    },
+    {
+      label: "USB-C充電器の選び方を読む",
+      href: "/articles/usb-c-charger-guide/",
+      description: "充電器のW数、PPS、ポート数、安全性の見方を確認できます。"
+    },
+    {
+      label: "USB-C充電器おすすめ比較を見る",
+      href: "/articles/usb-c-charger-comparison/",
+      description: "充電器の商品候補を用途別に比較できます。"
+    }
+  ]}
+/>
+
+## 注意書き
+
+<div class="check-box">
+  <p class="box-label">購入前に確認したいこと</p>
+  <ul>
+    <li>価格や在庫、販売元、レビュー評価は変動します。</li>
+    <li>実際の充電回数はスマホのバッテリー容量、使用状況、変換ロスによって変わります。</li>
+    <li>充電速度はスマホ、モバイルバッテリー、ケーブル、充電器の組み合わせで変わります。</li>
+    <li>飛行機への持ち込みルールは航空会社や時期によって変わる場合があります。</li>
+    <li>サクラチェッカーはレビュー信頼性を見る補助情報であり、製品品質や安全性を保証するものではありません。</li>
+    <li>日本メーカーだから必ず安全、中国系メーカーだから危険、という意味ではありません。</li>
+    <li>半固体・準固体の表記があっても、絶対に発熱や劣化が起きないという意味ではありません。</li>
+  </ul>
+</div>
+
+## まとめ：容量だけでなく、重さ・出力・安全性まで見る
+
+モバイルバッテリーは、容量だけで選ぶと失敗しやすいアイテムです。
+普段使いなら10,000mAh前後、旅行・出張・防災なら20,000mAh前後、ノートPC兼用なら45W〜65W以上の出力も見たいところです。
+
+メーカー選びでは、Ankerは定番ですが、CIO、MOTTERU、エレコム、バッファロー、Belkinなども候補になります。
+大切なのは、国やブランド名だけで決めず、容量、重さ、W数、USB-C対応、PSE、保証、販売元、レビュー本文を合わせて見ることです。
+
+迷ったら、まず「毎日持つのか」「旅行用なのか」「スマホだけか、PCも充電するのか」を決めてください。
+そこが決まると、自分に合うモバイルバッテリーをかなり絞りやすくなります。

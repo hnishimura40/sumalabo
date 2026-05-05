@@ -1,0 +1,96 @@
+---
+import { affiliateLinks, type AffiliateProductId, type AffiliateStore } from "../data/affiliateLinks";
+
+interface Props {
+  productId: AffiliateProductId;
+}
+
+const { productId } = Astro.props;
+const links = affiliateLinks[productId];
+
+const stores: Array<{
+  key: AffiliateStore;
+  label: string;
+  pendingLabel: string;
+}> = [
+  { key: "amazon", label: "Amazonで見る", pendingLabel: "Amazonリンク準備中" },
+  { key: "rakuten", label: "楽天で見る", pendingLabel: "楽天リンク準備中" },
+  { key: "yahoo", label: "Yahooで見る", pendingLabel: "Yahooリンク準備中" },
+  { key: "official", label: "公式で見る", pendingLabel: "公式リンク準備中" },
+];
+---
+
+<div class="affiliate-links" aria-label="購入リンク欄">
+  {stores.map((store) => {
+    const href = links[store.key];
+    return href ? (
+      <a
+        class={`affiliate-button affiliate-button--${store.key}`}
+        href={href}
+        target="_blank"
+        rel="nofollow sponsored noopener"
+      >
+        {store.label}
+      </a>
+    ) : (
+      <span class={`affiliate-button affiliate-button--pending affiliate-button--${store.key}`}>
+        {store.pendingLabel}
+      </span>
+    );
+  })}
+</div>
+
+<style>
+  .affiliate-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 12px;
+  }
+
+  .affiliate-button {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in srgb, var(--teal) 38%, var(--line));
+    border-radius: 999px;
+    background: var(--teal);
+    padding: 8px 13px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+    text-decoration: none;
+  }
+
+  .affiliate-button--rakuten {
+    background: color-mix(in srgb, var(--teal) 84%, var(--mint));
+  }
+
+  .affiliate-button--yahoo {
+    background: color-mix(in srgb, var(--teal) 72%, var(--fg));
+  }
+
+  .affiliate-button--official {
+    background: color-mix(in srgb, var(--teal) 62%, var(--slate));
+  }
+
+  .affiliate-button--pending {
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--fg-soft) 26%, var(--line));
+    background: color-mix(in srgb, var(--bg-elev) 88%, var(--bg-tint));
+    color: var(--fg-soft);
+  }
+
+  @media (max-width: 520px) {
+    .affiliate-links {
+      flex-direction: column;
+    }
+
+    .affiliate-button {
+      width: 100%;
+    }
+  }
+</style>

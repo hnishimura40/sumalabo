@@ -1,0 +1,315 @@
+[
+  {
+    "title": "iPhoneとAndroid、結局どっちが向いている？",
+    "slug": "iphone-vs-android",
+    "type": "foundation",
+    "category": "スマホの選び方",
+    "categorySlug": "smartphone",
+    "priority": 1,
+    "descriptionDraft": "iPhoneとAndroidの違いを、価格、使いやすさ、長く使えるか、選択肢の多さから整理し、自分に向くスマホを選びやすくします。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "iPhoneとAndroidスマホを見比べながら選び方を考えるひまりとらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 3,
+      "primary": "duo_talk_half.webp",
+      "secondary": "labomaru_normal_icon.webp"
+    },
+    "related": [
+      "what-is-ai-smartphone",
+      "used-smartphone-guide",
+      "smartphone-under-30000-guide",
+      "smartphone-under-30000-comparison"
+    ],
+    "revenueTarget": [
+      "smartphone-under-30000-comparison"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "eSIMとは何か。初心者向けにやさしく解説",
+    "slug": "what-is-esim",
+    "type": "foundation",
+    "category": "通信費を下げる",
+    "categorySlug": "mobile-plan",
+    "priority": 1,
+    "descriptionDraft": "eSIMの意味、普通のSIMカードとの違い、向いている人、申し込み前に確認したい注意点を初心者向けに整理します。",
+    "thumbnail": "/images/thumbnails/what-is-esim.webp",
+    "thumbnailAltDraft": "スマホの通信設定とSIMカードの違いを見ながらeSIMを理解するひまりとらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 3,
+      "primary": "duo_talk_half.webp",
+      "secondary": "himari_question_icon.webp"
+    },
+    "related": [
+      "what-is-cheap-sim",
+      "cheap-sim-comparison",
+      "rakuten-mobile-vs-ahamo"
+    ],
+    "revenueTarget": [
+      "cheap-sim-comparison",
+      "rakuten-mobile-vs-ahamo"
+    ],
+    "status": "ready"
+  },
+  {
+    "title": "格安SIMとは何か。大手と何が違う？",
+    "slug": "what-is-cheap-sim",
+    "type": "foundation",
+    "category": "通信費を下げる",
+    "categorySlug": "mobile-plan",
+    "priority": 1,
+    "descriptionDraft": "格安SIMが安い理由、大手キャリアとの違い、向いている人と注意点を初心者向けに整理します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "スマホ料金明細を見ながら格安SIMの安さと注意点を整理するひまりとらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 3,
+      "primary": "himari_question_icon.webp",
+      "secondary": "labomaru_worried_icon.webp"
+    },
+    "related": [
+      "what-is-esim",
+      "cheap-sim-comparison",
+      "rakuten-mobile-vs-ahamo"
+    ],
+    "revenueTarget": [
+      "cheap-sim-comparison",
+      "rakuten-mobile-vs-ahamo"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "AIスマホとは何か。何が便利で何がまだ微妙？",
+    "slug": "what-is-ai-smartphone",
+    "type": "news",
+    "category": "ニュースをかみくだく",
+    "categorySlug": "news",
+    "priority": 1,
+    "descriptionDraft": "AIスマホでできること、便利な場面、まだ期待しすぎないほうがよい点を生活者目線で整理します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "AI機能付きスマホを見ながら便利な点と注意点を考えるひまり",
+    "characterUse": {
+      "recommended": true,
+      "count": 2,
+      "primary": "himari_device_half.webp",
+      "secondary": "labomaru_normal_icon.webp"
+    },
+    "related": [
+      "iphone-vs-android",
+      "smartphone-under-30000-guide",
+      "smartphone-under-30000-comparison"
+    ],
+    "revenueTarget": [
+      "smartphone-under-30000-comparison"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "中古スマホは危ないのか。失敗しにくい選び方",
+    "slug": "used-smartphone-guide",
+    "type": "foundation",
+    "category": "スマホの選び方",
+    "categorySlug": "smartphone",
+    "priority": 2,
+    "descriptionDraft": "中古スマホのリスク、確認すべきポイント、失敗しにくい選び方を初心者向けに整理します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "中古スマホをチェックリストで確認しながら失敗しにくい選び方を考えるひまりとらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 3,
+      "primary": "labomaru_worried_icon.webp",
+      "secondary": "duo_guide_half.webp"
+    },
+    "related": [
+      "iphone-vs-android",
+      "smartphone-under-30000-guide",
+      "smartphone-under-30000-comparison"
+    ],
+    "revenueTarget": [
+      "smartphone-under-30000-comparison"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "3万円台スマホの選び方",
+    "slug": "smartphone-under-30000-guide",
+    "type": "foundation",
+    "category": "スマホの選び方",
+    "categorySlug": "smartphone",
+    "priority": 2,
+    "descriptionDraft": "3万円台スマホを選ぶときに見るべき性能、妥協点、用途別の優先順位を整理します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "3万円台スマホを複数並べて価格と重視ポイントを整理するらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 3,
+      "primary": "labomaru_chart_icon.webp",
+      "secondary": "labomaru_worried_icon.webp"
+    },
+    "related": [
+      "iphone-vs-android",
+      "used-smartphone-guide",
+      "smartphone-under-30000-comparison"
+    ],
+    "revenueTarget": [
+      "smartphone-under-30000-comparison"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "USB-C充電器の選び方",
+    "slug": "usb-c-charger-guide",
+    "type": "foundation",
+    "category": "周辺機器・ガジェット",
+    "categorySlug": "gadgets",
+    "priority": 2,
+    "descriptionDraft": "USB-C充電器のW数、USB PD、ポート数、安全性の見方を初心者向けに整理します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "USB-C充電器とスマホ、ノートPCを並べて必要なW数を整理するらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 3,
+      "primary": "labomaru_chart_icon.webp",
+      "secondary": "himari_question_icon.webp"
+    },
+    "related": [
+      "power-bank-guide",
+      "usb-c-charger-comparison"
+    ],
+    "revenueTarget": [
+      "usb-c-charger-comparison"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "モバイルバッテリーの選び方",
+    "slug": "power-bank-guide",
+    "type": "foundation",
+    "category": "周辺機器・ガジェット",
+    "categorySlug": "gadgets",
+    "priority": 2,
+    "descriptionDraft": "モバイルバッテリーの容量、出力、重さ、安全性をどう見ればよいかを初心者向けに整理します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "外出先でスマホとモバイルバッテリーを使い容量と重さのバランスを考えるひまり",
+    "characterUse": {
+      "recommended": true,
+      "count": 3,
+      "primary": "labomaru_worried_icon.webp",
+      "secondary": "labomaru_chart_icon.webp"
+    },
+    "related": [
+      "usb-c-charger-guide",
+      "usb-c-charger-comparison"
+    ],
+    "revenueTarget": [
+      "usb-c-charger-comparison"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "格安SIMおすすめ比較",
+    "slug": "cheap-sim-comparison",
+    "type": "revenue",
+    "category": "通信費を下げる",
+    "categorySlug": "mobile-plan",
+    "priority": 3,
+    "descriptionDraft": "料金、通信品質、使いやすさ、サポートの違いから、使い方別に向いている格安SIMを整理します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "複数のスマホ料金プランを比較表で整理するらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 2,
+      "primary": "labomaru_chart_icon.webp",
+      "secondary": "duo_guide_half.webp"
+    },
+    "related": [
+      "what-is-cheap-sim",
+      "what-is-esim",
+      "rakuten-mobile-vs-ahamo"
+    ],
+    "revenueTarget": [
+      "cheap-sim-application"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "楽天モバイルとahamoはどっち向き？",
+    "slug": "rakuten-mobile-vs-ahamo",
+    "type": "revenue",
+    "category": "通信費を下げる",
+    "categorySlug": "mobile-plan",
+    "priority": 3,
+    "descriptionDraft": "楽天モバイルとahamoを、料金、回線、使い方、サポートの違いから向いている人別に比較します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "楽天モバイルとahamoの2つの料金プランを左右で比較するらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 2,
+      "primary": "labomaru_chart_icon.webp",
+      "secondary": "labomaru_worried_icon.webp"
+    },
+    "related": [
+      "what-is-cheap-sim",
+      "what-is-esim",
+      "cheap-sim-comparison"
+    ],
+    "revenueTarget": [
+      "rakuten-mobile-application",
+      "ahamo-application"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "3万円台スマホおすすめ比較",
+    "slug": "smartphone-under-30000-comparison",
+    "type": "revenue",
+    "category": "スマホの選び方",
+    "categorySlug": "smartphone",
+    "priority": 3,
+    "descriptionDraft": "3万円台で選びやすいスマホを、用途、性能、電池、カメラ、注意点から比較します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "3万円台スマホを用途別に比較する表とらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 2,
+      "primary": "labomaru_chart_icon.webp",
+      "secondary": "duo_guide_half.webp"
+    },
+    "related": [
+      "smartphone-under-30000-guide",
+      "used-smartphone-guide",
+      "iphone-vs-android"
+    ],
+    "revenueTarget": [
+      "smartphone-purchase"
+    ],
+    "status": "planned"
+  },
+  {
+    "title": "USB-C充電器おすすめ比較",
+    "slug": "usb-c-charger-comparison",
+    "type": "revenue",
+    "category": "周辺機器・ガジェット",
+    "categorySlug": "gadgets",
+    "priority": 3,
+    "descriptionDraft": "USB-C充電器を、必要W数、ポート数、安全性、持ち運びやすさから比較します。",
+    "thumbnail": "",
+    "thumbnailAltDraft": "複数のUSB-C充電器をW数とポート数で比較するらぼまる",
+    "characterUse": {
+      "recommended": true,
+      "count": 2,
+      "primary": "labomaru_chart_icon.webp",
+      "secondary": "labomaru_worried_icon.webp"
+    },
+    "related": [
+      "usb-c-charger-guide",
+      "power-bank-guide"
+    ],
+    "revenueTarget": [
+      "usb-c-charger-purchase"
+    ],
+    "status": "planned"
+  }
+]
