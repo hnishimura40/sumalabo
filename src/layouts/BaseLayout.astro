@@ -33,7 +33,14 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="author" content={siteConfig.authorName} />
+    <meta name="theme-color" content="#0f1720" />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta property="og:site_name" content={siteConfig.siteName} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
@@ -58,6 +65,7 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
           <a href="/articles/">記事一覧</a>
           <a href="/categories/mobile-plan/">通信費</a>
           <a href="/categories/smartphone/">スマホ選び</a>
+          <a href="/categories/gadgets/">周辺機器</a>
         </nav>
       </div>
     </header>

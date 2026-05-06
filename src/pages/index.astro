@@ -26,12 +26,28 @@ const articles = (await getCollection("articles"))
           <a href="/articles/what-is-esim/">eSIM記事を見る</a>
         </div>
       </div>
-      <div class="hero-panel" aria-hidden="true">
-        <span>SMARTPHONE</span>
-        <span>AI</span>
-        <span>eSIM</span>
-        <span>GADGET</span>
-      </div>
+      <nav class="hero-panel" aria-label="すまラボの主要カテゴリ">
+        <div class="hero-panel-heading">
+          <span>すまラボの入口</span>
+          <small>知りたいテーマから探す</small>
+        </div>
+        <a href="/categories/smartphone/">
+          <strong>スマホの選び方</strong>
+          <span>iPhone・Android・中古スマホを整理</span>
+        </a>
+        <a href="/categories/mobile-plan/">
+          <strong>通信費を下げる</strong>
+          <span>格安SIM・eSIM・乗り換えの基本</span>
+        </a>
+        <a href="/articles/what-is-esim/">
+          <strong>eSIM入門</strong>
+          <span>まず知りたい仕組みと注意点</span>
+        </a>
+        <a href="/categories/gadgets/">
+          <strong>周辺機器比較</strong>
+          <span>充電器・モバイルバッテリー選び</span>
+        </a>
+      </nav>
     </div>
 
     <section class="section-block">
@@ -143,29 +159,114 @@ const articles = (await getCollection("articles"))
   }
 
   .hero-panel {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: 12px;
+    overflow: hidden;
     padding: 18px;
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     background:
+      radial-gradient(circle at 86% 10%, color-mix(in srgb, var(--teal) 20%, transparent), transparent 28%),
       linear-gradient(135deg, var(--teal-tint), transparent 62%),
       var(--bg-sunk);
   }
 
-  .hero-panel span {
+  .hero-panel::after {
+    content: "";
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 34px;
+    height: 34px;
+    border: 4px solid color-mix(in srgb, var(--teal) 52%, transparent);
+    border-radius: 50%;
+    opacity: 0.34;
+    pointer-events: none;
+  }
+
+  .hero-panel::before {
+    content: "";
+    position: absolute;
+    top: 48px;
+    right: 13px;
+    width: 18px;
+    height: 5px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--teal) 52%, transparent);
+    opacity: 0.34;
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+
+  .hero-panel-heading {
+    grid-column: 1 / -1;
     display: grid;
-    place-items: center;
-    min-height: 78px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    background: color-mix(in srgb, var(--bg-elev) 78%, transparent);
-    color: var(--fg-mid);
-    font-family: var(--font-mono);
+    gap: 4px;
+    padding: 0 46px 2px 2px;
+  }
+
+  .hero-panel-heading span {
+    color: var(--fg);
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  .hero-panel-heading small {
+    color: var(--fg-soft);
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    line-height: 1.5;
+  }
+
+  .hero-panel a {
+    position: relative;
+    display: grid;
+    align-content: start;
+    min-height: 112px;
+    gap: 6px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--bg-elev) 88%, transparent), color-mix(in srgb, var(--bg-elev) 70%, transparent)),
+      color-mix(in srgb, var(--bg-sunk) 88%, var(--teal-tint));
+    color: var(--fg);
+    padding: 14px;
+    text-decoration: none;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  .hero-panel a:hover {
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+  }
+
+  .hero-panel a::before {
+    content: "";
+    width: 22px;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--teal);
+    opacity: 0.78;
+  }
+
+  .hero-panel strong {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .hero-panel a span {
+    color: var(--fg-soft);
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.55;
   }
 
   .section-block + .section-block {
@@ -282,6 +383,10 @@ const articles = (await getCollection("articles"))
       grid-template-columns: 1fr;
     }
 
+    .hero-panel {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .category-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -297,6 +402,14 @@ const articles = (await getCollection("articles"))
   }
 
   @media (max-width: 520px) {
+    .hero-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-panel a {
+      min-height: auto;
+    }
+
     .category-grid {
       grid-template-columns: 1fr;
     }

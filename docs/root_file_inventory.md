@@ -58,6 +58,8 @@ Cloudflare Pages / GitHub 公開前の最終整理として、ルート直下に
 | `ChatGPT Image 2026年5月1日 18_07_54.png` | `archive/original_uploads/ChatGPT Image 2026年5月1日 18_07_54.png` | サムネイル生成元画像の保管 |
 | `ChatGPT Image 2026年5月2日 20_44_12.png` | `archive/original_uploads/ChatGPT Image 2026年5月2日 20_44_12.png` | サムネイル生成元画像の保管 |
 | `ChatGPT Image 2026年5月3日 21_11_55.png` | `archive/original_uploads/ChatGPT Image 2026年5月3日 21_11_55.png` | サムネイル生成元画像の保管 |
+| `ChatGPT Image 2026年5月6日 20_44_05.png` | `archive/original_uploads/ChatGPT Image 2026年5月6日 20_44_05.png` | favicon生成元画像の保管。Git管理用原本は `assets/icons/original/favicon-source.png` にコピー |
+| `ChatGPT Image 2026年5月6日 20_49_55.png` | `archive/original_uploads/ChatGPT Image 2026年5月6日 20_49_55.png` | Apple touch icon / PWAアイコン生成元画像の保管。Git管理用原本は `assets/icons/original/apple-touch-icon-source.png` にコピー |
 | `character_assets_manifest.txt` | `archive/original_uploads/character_assets_manifest.txt` | 旧manifest原本の保管 |
 | `すまラボ — デザインイメージ (印刷用).pdf` | `archive/original_uploads/すまラボ — デザインイメージ (印刷用).pdf` | デザイン参考資料の保管 |
 | `すまラボデザイン.html` | `archive/original_uploads/すまラボデザイン.html` | デザイン参考資料の保管 |

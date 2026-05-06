@@ -13,6 +13,7 @@
 | `public/` | 含める | 公開用画像、robots.txtなど本番表示に必要 |
 | `public/images/` | 含める | 記事サムネイル・キャラクター画像の公開先 |
 | `assets/characters/` | 含める | キャラクター素材の原本・派生管理に必要 |
+| `assets/icons/original/` | 含める | favicon / ホーム画面アイコンの元画像保管に必要 |
 | `assets/thumbnails/webp/` | 含める | Web表示用サムネイルの管理に必要 |
 | `assets/thumbnails/original/` | 含める方針 | サムネイル再生成用の原本。公開リポジトリにする場合は容量と公開可否を確認 |
 | `docs/` | 含める方針 | 運用・制作方針の共有に必要。公開前に個人情報や秘密情報がないか確認 |
