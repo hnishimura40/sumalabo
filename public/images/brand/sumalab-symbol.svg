@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Sumalab symbol">
+  <defs>
+    <linearGradient id="lens" x1="16" y1="12" x2="48" y2="52" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67d8ca" />
+      <stop offset="1" stop-color="#12998d" />
+    </linearGradient>
+  </defs>
+  <circle cx="29" cy="29" r="17" fill="none" stroke="url(#lens)" stroke-width="7" />
+  <path d="M41.2 41.2 53 53" fill="none" stroke="#12998d" stroke-width="8" stroke-linecap="round" />
+  <path d="M22.5 34v-8.5M29.5 36V21M36.5 32V17" fill="none" stroke="#12998d" stroke-width="4.8" stroke-linecap="round" />
+  <circle cx="22" cy="21" r="2.4" fill="#8ee8dd" opacity="0.9" />
+</svg>
