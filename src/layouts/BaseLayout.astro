@@ -54,7 +54,9 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href="/" aria-label="すまラボ トップへ">
-          <span class="brand-mark">す</span>
+          <span class="brand-mark" aria-hidden="true">
+            <img src="/images/brand/sumalab-brand-icon.png" alt="" />
+          </span>
           <span>
             <strong>すまラボ</strong>
             <small>スマホ・AI・ガジェットをやさしく整理</small>
@@ -76,7 +78,9 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
       <div class="footer-inner">
         <div class="footer-brand">
           <a class="brand" href="/" aria-label="すまラボ トップへ">
-            <span class="brand-mark">す</span>
+            <span class="brand-mark" aria-hidden="true">
+              <img src="/images/brand/sumalab-brand-icon.png" alt="" />
+            </span>
             <span>
               <strong>すまラボ</strong>
               <small>スマホ・AI・ガジェットの整理メディア</small>
@@ -90,6 +94,7 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
           <a href="/categories/smartphone/">スマホの選び方</a>
           <a href="/categories/mobile-plan/">通信費を下げる</a>
           <a href="/categories/gadgets/">周辺機器・ガジェット</a>
+          <a href="/characters/">らぼまる・ひまりについて</a>
           <a href="/about/">すまラボについて</a>
           <a href="/privacy-policy/">プライバシーポリシー</a>
           <a href="/contact/">お問い合わせ</a>

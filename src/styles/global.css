@@ -170,22 +170,27 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex: 0 0 auto;
   color: var(--fg);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .brand-mark {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-md);
-  background: var(--teal);
-  color: #ffffff;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0;
+  display: block;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .brand strong,
@@ -197,6 +202,7 @@ button {
   font-size: 19px;
   line-height: 1.2;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .brand small {
@@ -229,6 +235,54 @@ button {
 .site-nav a:hover {
   background: var(--bg-sunk);
   color: var(--fg);
+}
+
+@media (max-width: 720px) {
+  .header-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    padding: 10px 0;
+  }
+
+  .brand {
+    max-width: 100%;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .brand strong {
+    font-size: 18px;
+  }
+
+  .brand small {
+    display: none;
+  }
+
+  .site-nav {
+    width: 100%;
+    margin-left: 0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 2px;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .site-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav a {
+    flex: 0 0 auto;
+    padding: 6px 9px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
 }
 
 .page-shell {
@@ -446,8 +500,8 @@ button {
 @media (max-width: 720px) {
   .header-inner {
     width: min(100% - 24px, 1200px);
-    min-height: 62px;
-    gap: 16px;
+    min-height: 0;
+    gap: 8px;
   }
 
   .brand small {

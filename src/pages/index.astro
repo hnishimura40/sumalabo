@@ -21,10 +21,6 @@ const articles = (await getCollection("articles"))
         <p>
           すまラボは、ニュースを要約するだけでなく「それで何が変わるのか」「誰に関係あるのか」「買う・選ぶ判断にどうつながるのか」まで整理するメディアです。
         </p>
-        <div class="hero-actions">
-          <a href="/articles/">記事一覧を見る</a>
-          <a href="/articles/what-is-esim/">eSIM記事を見る</a>
-        </div>
       </div>
       <nav class="hero-panel" aria-label="すまラボの主要カテゴリ">
         <div class="hero-panel-heading">
@@ -51,6 +47,19 @@ const articles = (await getCollection("articles"))
     </div>
 
     <section class="section-block">
+      <div class="section-heading section-heading--with-action">
+        <div>
+          <h2>新着記事</h2>
+          <p>公開中の記事から、新しいものを中心に表示しています。</p>
+        </div>
+        <a class="section-action" href="/articles/">記事一覧を見る</a>
+      </div>
+      <div class="article-list">
+        {articles.map((article) => <ArticleCard article={article.data} />)}
+      </div>
+    </section>
+
+    <section class="section-block">
       <div class="section-heading">
         <h2>カテゴリ</h2>
         <p>まずは4つの入口から、知りたいテーマを選べる形にしていきます。</p>
@@ -65,16 +74,6 @@ const articles = (await getCollection("articles"))
       </div>
     </section>
 
-    <section class="section-block">
-      <div class="section-heading">
-        <h2>新着記事</h2>
-        <p>公開中の記事から、新しいものを中心に表示しています。</p>
-      </div>
-      <div class="article-list">
-        {articles.map((article) => <ArticleCard article={article.data} />)}
-      </div>
-    </section>
-
     <section class="site-note" aria-label="すまラボの運営方針">
       <div>
         <strong>すまラボの運営方針</strong>
@@ -82,6 +81,7 @@ const articles = (await getCollection("articles"))
       </div>
       <div class="site-note-links">
         <a href="/about/">すまラボについて</a>
+        <a href="/characters/">らぼまる・ひまりについて</a>
         <a href="/disclosure/">広告・アフィリエイトについて</a>
       </div>
     </section>
@@ -127,35 +127,6 @@ const articles = (await getCollection("articles"))
     margin: 0;
     color: var(--color-muted);
     font-size: 16px;
-  }
-
-  .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 22px;
-  }
-
-  .hero-actions a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 42px;
-    border-radius: var(--radius-md);
-    padding: 8px 14px;
-    font-size: 13.5px;
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  .hero-actions a:first-child {
-    background: var(--teal);
-    color: #ffffff;
-  }
-
-  .hero-actions a:last-child {
-    border: 1px solid var(--color-border);
-    background: var(--bg-elev);
-    color: var(--color-text);
   }
 
   .hero-panel {
@@ -275,6 +246,39 @@ const articles = (await getCollection("articles"))
 
   .section-heading {
     margin-bottom: 16px;
+  }
+
+  .section-heading--with-action {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .section-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--teal);
+    color: #ffffff;
+    padding: 8px 14px;
+    font-size: 13.5px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      filter 160ms ease,
+      transform 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .section-action:hover {
+    box-shadow: var(--shadow-sm);
+    filter: brightness(1.05);
+    transform: translateY(-1px);
   }
 
   h2 {
@@ -402,6 +406,11 @@ const articles = (await getCollection("articles"))
   }
 
   @media (max-width: 520px) {
+    .section-heading--with-action {
+      align-items: start;
+      flex-direction: column;
+    }
+
     .hero-panel {
       grid-template-columns: 1fr;
     }

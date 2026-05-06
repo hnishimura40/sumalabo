@@ -1,0 +1,290 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="らぼまる・ひまりについて"
+  description="すまラボの案内役「らぼまる」と、読者目線で疑問を拾う「ひまり」を紹介します。スマホ・AI・ガジェットの難しい話を、わかりやすく整理するためのキャラクターです。"
+  canonicalPath="/characters/"
+>
+  <section class="page-shell characters-page">
+    <header class="characters-hero">
+      <div>
+        <p class="static-eyebrow">CHARACTERS</p>
+        <h1>らぼまる・ひまりについて</h1>
+        <p>
+          すまラボでは、スマホ・AI・ガジェットの難しい話をやさしく整理するために、案内役として「らぼまる」と「ひまり」が登場します。
+        </p>
+        <p>
+          ただし、主役はあくまで記事本文です。2人は、読者が迷いやすいポイントや注意点をわかりやすくするための補助役です。
+        </p>
+      </div>
+      <img
+        src="/images/characters/duo_guide_half.webp"
+        alt="すまラボの案内役、らぼまるとひまり"
+        loading="eager"
+      />
+    </header>
+
+    <div class="character-grid">
+      <section class="character-card">
+        <div class="character-image character-image--labomaru">
+          <img src="/images/characters/labomaru_normal_full.webp" alt="らぼまる" loading="lazy" />
+        </div>
+        <div>
+          <p class="character-label">Navigator</p>
+          <h2>らぼまる</h2>
+          <p>
+            らぼまるは、すまラボの公式ナビゲーターです。スマホ・AI・ガジェットの複雑な話を、普通の人にもわかる言葉で整理する小さなラボ助手です。
+          </p>
+          <p>
+            難しい用語をかみくだいたり、比較のポイントをまとめたりする役割を担当します。
+          </p>
+          <ul>
+            <li>すまラボの案内役</li>
+            <li>用語や仕組みをやさしく整理</li>
+            <li>比較記事では「選ぶ軸」をまとめる</li>
+            <li>ちょっとだけラボっぽい、やさしいマスコット</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="character-card">
+        <div class="character-image character-image--himari">
+          <img src="/images/characters/himari_joyful_full.webp" alt="ひまり" loading="lazy" />
+        </div>
+        <div>
+          <p class="character-label">Reader View</p>
+          <h2>ひまり</h2>
+          <p>
+            ひまりは、読者目線で疑問を拾う助手キャラクターです。「それってどういうこと？」「初心者はどこで迷うの？」という視点から、記事の中で大事なポイントを確認していきます。
+          </p>
+          <p>
+            スマホやAIに詳しくない人でも読み進めやすいように、つまずきやすい部分を代わりに聞いてくれる存在です。
+          </p>
+          <ul>
+            <li>読者目線の質問役</li>
+            <li>初心者が迷いやすい点を確認</li>
+            <li>重要ポイントの整理をサポート</li>
+            <li>明るく親しみやすい助手役</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="usage-card">
+      <div>
+        <p class="character-label">In Articles</p>
+        <h2>記事の中では、必要なところだけ登場します</h2>
+        <p>
+          すまラボでは、キャラクターを飾りとして多用するのではなく、理解を助ける場面に絞って使います。たとえば、導入直後の疑問整理、比較のポイント、注意点、まとめ前の確認などです。
+        </p>
+        <ul>
+          <li>1記事あたりの登場は原則1〜3回まで</li>
+          <li>本文と同じ内容を繰り返さない</li>
+          <li>読者の判断に役立つ場面だけで使う</li>
+          <li>かわいさよりも、わかりやすさを優先する</li>
+        </ul>
+      </div>
+      <img src="/images/characters/duo_talk_half.webp" alt="会話しながら案内するらぼまるとひまり" loading="lazy" />
+    </section>
+
+    <nav class="character-links" aria-label="関連ページ">
+      <a href="/articles/">記事一覧を見る</a>
+      <a href="/categories/smartphone/">スマホの選び方を見る</a>
+      <a href="/categories/gadgets/">周辺機器の記事を見る</a>
+    </nav>
+  </section>
+</BaseLayout>
+
+<style>
+  .characters-page {
+    max-width: 1040px;
+  }
+
+  .characters-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 280px);
+    gap: 28px;
+    align-items: center;
+    margin-bottom: 22px;
+    padding: clamp(24px, 5vw, 42px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--teal) 18%, transparent), transparent 30%),
+      linear-gradient(135deg, var(--teal-tint), transparent 62%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-md);
+  }
+
+  .characters-hero h1,
+  .character-card h2,
+  .usage-card h2 {
+    margin: 0;
+    letter-spacing: 0;
+  }
+
+  .characters-hero h1 {
+    font-size: clamp(34px, 6vw, 52px);
+    line-height: 1.18;
+  }
+
+  .characters-hero p:not(.static-eyebrow),
+  .character-card p,
+  .usage-card p {
+    color: var(--fg-soft);
+    line-height: 1.85;
+  }
+
+  .characters-hero img {
+    width: min(100%, 260px);
+    justify-self: center;
+    filter: drop-shadow(0 18px 24px rgb(15 23 32 / 0.12));
+  }
+
+  .character-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .character-card,
+  .usage-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .character-card {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+    padding: 22px;
+  }
+
+  .character-image {
+    display: grid;
+    place-items: center;
+    min-height: 210px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--teal-tint) 72%, transparent), transparent 70%),
+      var(--bg-sunk);
+  }
+
+  .character-image img {
+    width: min(76%, 210px);
+    max-height: 230px;
+    object-fit: contain;
+    filter: drop-shadow(0 16px 22px rgb(15 23 32 / 0.14));
+  }
+
+  .character-image--himari img {
+    width: min(82%, 230px);
+  }
+
+  .character-label {
+    margin: 0 0 6px;
+    color: var(--teal-deep);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .character-card h2,
+  .usage-card h2 {
+    font-size: clamp(24px, 4vw, 32px);
+    line-height: 1.3;
+  }
+
+  .character-card ul,
+  .usage-card ul {
+    display: grid;
+    gap: 8px;
+    margin: 16px 0 0;
+    padding-left: 1.2em;
+    color: var(--fg-soft);
+    line-height: 1.7;
+  }
+
+  .usage-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(160px, 260px);
+    gap: 22px;
+    align-items: center;
+    margin-top: 18px;
+    padding: 24px;
+  }
+
+  .usage-card img {
+    width: min(100%, 240px);
+    justify-self: center;
+    filter: drop-shadow(0 16px 22px rgb(15 23 32 / 0.12));
+  }
+
+  .character-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .character-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--bg-elev);
+    color: var(--fg);
+    padding: 8px 13px;
+    font-size: 13.5px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .character-links a:first-child {
+    background: var(--teal);
+    color: #ffffff;
+  }
+
+  @media (max-width: 780px) {
+    .characters-hero,
+    .usage-card {
+      grid-template-columns: 1fr;
+    }
+
+    .characters-hero img {
+      max-width: 220px;
+    }
+
+    .character-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .characters-hero,
+    .character-card,
+    .usage-card {
+      padding: 20px;
+    }
+
+    .character-image {
+      min-height: 180px;
+    }
+
+    .character-links {
+      flex-direction: column;
+    }
+
+    .character-links a {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+</style>
