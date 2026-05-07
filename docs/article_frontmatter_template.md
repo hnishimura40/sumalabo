@@ -24,6 +24,7 @@ characterUse:
   secondary: ""
 related: []
 updated: ""
+publishAt: ""
 ---
 ```
 
@@ -49,6 +50,7 @@ related:
   - "what-is-cheap-sim"
   - "rakuten-mobile-vs-ahamo"
 updated: "2026-04-29"
+publishAt: ""
 ---
 ```
 
@@ -245,6 +247,20 @@ characterUse:
 related:
   - "what-is-cheap-sim"
   - "rakuten-mobile-vs-ahamo"
+```
+
+
+### publishAt
+
+- 予約投稿用の公開予定日時。
+- 任意項目。空または未設定なら通常どおり公開対象になる。
+- 未来日時を指定した記事は、指定時刻を過ぎるまでトップページ、記事一覧、カテゴリ、記事詳細、sitemapに出さない。
+- 日本時間で予約する場合は、タイムゾーン付きISO形式で書く。
+
+例:
+
+```yaml
+publishAt: "2026-05-08T09:00:00+09:00"
 ```
 
 ### updated

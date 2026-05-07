@@ -10,10 +10,39 @@ export type ArticleEntry = CollectionEntry<"articles">;
 
 const publicStatuses = ["review", "ready", "published", "needs-update"];
 
+export function getBuildNow() {
+  const override = import.meta.env.SUMALAB_NOW;
+  if (override) {
+    const overrideTime = Date.parse(override);
+    if (!Number.isNaN(overrideTime)) {
+      return new Date(overrideTime);
+    }
+  }
+
+  return new Date();
+}
+
+export function isPublishWindowOpen(entry: ArticleEntry, now = getBuildNow()) {
+  const publishAt = entry.data.publishAt?.trim();
+
+  if (!publishAt) {
+    return true;
+  }
+
+  const publishTime = Date.parse(publishAt);
+
+  if (Number.isNaN(publishTime)) {
+    return false;
+  }
+
+  return publishTime <= now.getTime();
+}
+
 export function isListableArticle(entry: ArticleEntry) {
   return (
     entry.data.slug !== "_template" &&
-    publicStatuses.includes(entry.data.status)
+    publicStatuses.includes(entry.data.status) &&
+    isPublishWindowOpen(entry)
   );
 }
 

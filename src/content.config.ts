@@ -41,6 +41,7 @@ const articles = defineCollection({
     }),
     related: z.array(z.string()).default([]),
     updated: z.string(),
+    publishAt: z.string().default(""),
   }),
 });
 
