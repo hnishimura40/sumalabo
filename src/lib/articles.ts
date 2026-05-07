@@ -22,7 +22,12 @@ export function getBuildNow() {
   return new Date();
 }
 
-export function isPublishWindowOpen(entry: ArticleEntry, now = getBuildNow()) {
+function normalizeBuildNow(now: unknown) {
+  return now instanceof Date ? now : getBuildNow();
+}
+
+export function isPublishWindowOpen(entry: ArticleEntry, now: unknown = getBuildNow()) {
+  const buildNow = normalizeBuildNow(now);
   const publishAt = entry.data.publishAt?.trim();
 
   if (!publishAt) {
@@ -35,21 +40,75 @@ export function isPublishWindowOpen(entry: ArticleEntry, now = getBuildNow()) {
     return false;
   }
 
-  return publishTime <= now.getTime();
+  return publishTime <= buildNow.getTime();
 }
 
-export function isListableArticle(entry: ArticleEntry) {
+export function isListableArticle(entry: ArticleEntry, now: unknown = getBuildNow()) {
+  const buildNow = normalizeBuildNow(now);
+  const articleData = entry.data as ArticleEntry["data"] & { draft?: boolean };
+
   return (
     entry.data.slug !== "_template" &&
+    articleData.draft !== true &&
     publicStatuses.includes(entry.data.status) &&
-    isPublishWindowOpen(entry)
+    isPublishWindowOpen(entry, buildNow)
   );
 }
 
+function parseDateValue(value: string | Date | undefined) {
+  if (!value) {
+    return 0;
+  }
+
+  const time = value instanceof Date ? value.getTime() : Date.parse(value);
+  return Number.isNaN(time) ? 0 : time;
+}
+
+export function getArticlePublicTime(entry: ArticleEntry) {
+  const articleData = entry.data as ArticleEntry["data"] & {
+    pubDate?: string | Date;
+  };
+  const publishAtTime = parseDateValue(articleData.publishAt);
+
+  if (publishAtTime > 0) {
+    return publishAtTime;
+  }
+
+  return parseDateValue(articleData.pubDate) || parseDateValue(articleData.updated);
+}
+
 export function sortArticles(a: ArticleEntry, b: ArticleEntry) {
+  const dateDiff = getArticlePublicTime(b) - getArticlePublicTime(a);
+
+  if (dateDiff !== 0) {
+    return dateDiff;
+  }
+
   if (a.data.priority !== b.data.priority) {
     return a.data.priority - b.data.priority;
   }
 
-  return b.data.updated.localeCompare(a.data.updated);
+  return a.data.slug.localeCompare(b.data.slug);
+}
+
+export function getVisibleArticles(entries: ArticleEntry[], now = getBuildNow()) {
+  return entries.filter((entry) => isListableArticle(entry, now));
+}
+
+export function getSortedVisibleArticles(entries: ArticleEntry[], now = getBuildNow()) {
+  return getVisibleArticles(entries, now).sort(sortArticles);
+}
+
+export function getAdjacentArticles(entries: ArticleEntry[], currentSlug: string) {
+  const sortedArticles = getSortedVisibleArticles(entries);
+  const currentIndex = sortedArticles.findIndex((entry) => entry.data.slug === currentSlug);
+
+  if (currentIndex === -1) {
+    return { previousArticle: undefined, nextArticle: undefined };
+  }
+
+  return {
+    previousArticle: sortedArticles[currentIndex + 1],
+    nextArticle: sortedArticles[currentIndex - 1],
+  };
 }

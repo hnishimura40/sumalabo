@@ -31,6 +31,7 @@ const articles = defineCollection({
     description: z.string(),
     thumbnail: z.string().default(""),
     thumbnailAlt: z.string().default(""),
+    draft: z.boolean().default(false),
     status: articleStatus,
     priority: z.number(),
     characterUse: z.object({
@@ -40,6 +41,7 @@ const articles = defineCollection({
       secondary: z.string().default(""),
     }),
     related: z.array(z.string()).default([]),
+    pubDate: z.string().default(""),
     updated: z.string(),
     publishAt: z.string().default(""),
   }),

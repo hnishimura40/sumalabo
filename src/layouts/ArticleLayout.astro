@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import ArticleNavigation from "../components/ArticleNavigation.astro";
 
 type ArticleData = {
   title: string;
@@ -14,9 +15,11 @@ type ArticleData = {
 
 interface Props {
   article: ArticleData;
+  previousArticle?: ArticleData;
+  nextArticle?: ArticleData;
 }
 
-const { article } = Astro.props;
+const { article, previousArticle, nextArticle } = Astro.props;
 
 const typeLabels = {
   foundation: "土台記事",
@@ -61,6 +64,8 @@ const typeLabels = {
     <div class="article-content">
       <slot />
     </div>
+
+    <ArticleNavigation previousArticle={previousArticle} nextArticle={nextArticle} />
   </article>
 </BaseLayout>
 

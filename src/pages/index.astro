@@ -3,12 +3,9 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
 import { categories } from "../lib/categories";
-import { isListableArticle, sortArticles } from "../lib/articles";
+import { getSortedVisibleArticles } from "../lib/articles";
 
-const articles = (await getCollection("articles"))
-  .filter(isListableArticle)
-  .sort(sortArticles)
-  .slice(0, 3);
+const articles = getSortedVisibleArticles(await getCollection("articles")).slice(0, 6);
 ---
 
 <BaseLayout canonicalPath="/">
@@ -337,7 +334,7 @@ const articles = (await getCollection("articles"))
   }
 
   .article-list {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .site-note {
@@ -395,6 +392,10 @@ const articles = (await getCollection("articles"))
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .article-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .site-note {
       align-items: flex-start;
       flex-direction: column;
@@ -420,6 +421,10 @@ const articles = (await getCollection("articles"))
     }
 
     .category-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .article-list {
       grid-template-columns: 1fr;
     }
   }
