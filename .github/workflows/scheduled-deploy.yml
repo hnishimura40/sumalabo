@@ -1,0 +1,25 @@
+name: Scheduled Cloudflare Pages Deploy
+
+on:
+  schedule:
+    # GitHub Actions cron is UTC. This runs every 30 minutes.
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure deploy hook secret exists
+        run: |
+          if [ -z "$CF_PAGES_DEPLOY_HOOK_URL" ]; then
+            echo "CF_PAGES_DEPLOY_HOOK_URL is not set."
+            exit 1
+          fi
+        env:
+          CF_PAGES_DEPLOY_HOOK_URL: ${{ secrets.CF_PAGES_DEPLOY_HOOK_URL }}
+
+      - name: Trigger Cloudflare Pages deploy
+        run: curl -X POST "$CF_PAGES_DEPLOY_HOOK_URL"
+        env:
+          CF_PAGES_DEPLOY_HOOK_URL: ${{ secrets.CF_PAGES_DEPLOY_HOOK_URL }}

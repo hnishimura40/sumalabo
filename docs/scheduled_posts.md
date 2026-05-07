@@ -59,3 +59,32 @@ Remove-Item Env:SUMALAB_NOW
 - 公開時刻後に再ビルド・再デプロイされることで公開されます。
 - Cloudflare Pages側で定期デプロイの仕組みを用意すると、予約投稿に近い運用ができます。
 - `publishAt` の形式が壊れている記事は、安全側に倒して公開対象から外れます。
+
+## GitHub Actionsで定期デプロイする
+
+予約投稿を自動反映するために、GitHub ActionsからCloudflare PagesのDeploy Hookへ定期的にPOSTします。
+
+必要な設定:
+
+- Cloudflare PagesでDeploy Hookを作成する
+- GitHubリポジトリのActions SecretにDeploy Hook URLを保存する
+- Secret名は `CF_PAGES_DEPLOY_HOOK_URL`
+- Deploy Hook URLはコードやdocsへ直接書かない
+
+Cloudflare PagesのDeploy Hookは、Cloudflare Pagesの対象プロジェクト内で作成します。
+通常は、対象プロジェクトの設定画面からDeploy Hooksを追加し、発行されたURLをGitHub Secretsに登録します。
+
+このリポジトリでは、`.github/workflows/scheduled-deploy.yml` で30分ごとにDeploy Hookを呼び出します。
+GitHub ActionsのcronはUTC基準です。
+
+```yaml
+schedule:
+  # GitHub Actions cron is UTC. This runs every 30 minutes.
+  - cron: "7,37 * * * *"
+```
+
+この運用では、`publishAt` の時刻ぴったりに公開されるとは限りません。
+最大で30分程度のズレが出る前提で運用します。
+
+急いで公開したい場合は、GitHub Actionsの `Scheduled Cloudflare Pages Deploy` workflowを手動実行できます。
+手動実行は `workflow_dispatch` に対応しています。
