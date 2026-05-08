@@ -57,6 +57,50 @@ export function generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDra
 最終版サムネイル画像生成プロンプトには、サムネの狙い、大きく入れる文字案、補足文字案、構図の要約、画像生成用プロンプト本文を含めてください。すまラボらしく、普通の人にもわかりやすく、難しいITニュースをやさしく整理する印象にしてください。固定テンプレではなく、この話題に合った自由な構図にし、らぼまる・ひまりは必要に応じて使ってください。実在ロゴや元記事画像のコピーは使わず、スマホでも読める短い文字にしてください。`;
 }
 
+export function generateThumbnailRetryFlowMarkdown({ thumbnailOutputPath } = {}) {
+  const outputPath = thumbnailOutputPath || "public/images/thumbnails/{slug}.png";
+
+  return `## サムネイル画像生成失敗時の自動リトライ
+
+サムネイル画像生成でエラーが出た場合は、Claude in Chromeが最大3回まで自動リトライします。1回目・2回目は同じプロンプトで再試行し、3回目はプロンプトを簡略化して再試行します。3回失敗した場合は、サムネイル生成失敗として最終確認待ちにします。
+
+リトライ対象:
+- 画像が生成されない
+- エラー表示が出る
+- 生成が途中で止まった
+- 画像枠は出たが画像が読み込まれない
+- ダウンロードできる画像が表示されない
+- 記事内容と無関係な画像が生成された
+
+リトライ手順:
+1. ChatGPTが回答中・画像生成中の場合は、完了または失敗表示が出るまで次の操作をしない
+2. 1回目失敗: 数秒待ってから同じ最終版サムネイルプロンプトをそのまま再送信する
+3. 2回目失敗: 数秒待ってから同じ最終版サムネイルプロンプトをもう一度再送信する
+4. 3回目失敗: 数秒待ってから、文字量・構図指定・細かすぎる装飾指定を減らした簡略版プロンプトで再送信する
+5. 簡略版でも、記事テーマ、すまラボらしさ、実在ロゴを使わない条件、元記事画像をコピーしない条件は維持する
+6. 3回失敗した場合は、それ以上は自動生成を続けず「サムネイル生成失敗・最終確認待ち」として記録する
+
+成功判定:
+- サムネイル画像が画面に表示された
+- ダウンロード可能な状態になった
+- 画像をダウンロードできた
+- ダウンロードフォルダに画像ファイルが存在する
+- その画像を ${outputPath} または元拡張子に合わせたファイル名へ移動できた
+
+ダウンロード後の確認:
+1. D:\\downloads に最新画像が保存されたことを確認する
+2. 最新の画像ファイルを ${outputPath} へ移動・リネームする
+3. 画像ファイルの存在を自動確認する
+4. 成功した画像だけをClaude Code側のMDX反映へ進める
+
+注意:
+- 無限リトライしない
+- エラー時にEdgeは使わない
+- Chromeだけで操作する
+- 失敗した途中画像や不完全な画像は保存しない
+- 関係ない画像が生成された場合は成功扱いにしない`;
+}
+
 export function buildHandoffPaths({ slug, config }) {
   return {
     articleBriefPath: `${config.paths.articleBriefDir}/${slug}.article.json`,
@@ -79,6 +123,7 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
     materialsDraftPath: paths.materialsDraftPath,
     finalThumbnailPromptPath: paths.finalThumbnailPromptPath,
   });
+  const thumbnailRetryFlow = generateThumbnailRetryFlowMarkdown({ thumbnailOutputPath: paths.thumbnailOutputPath });
 
   return `# ChatGPT 5.5 handoff: ${slug}
 
@@ -155,6 +200,8 @@ ${refinementFlow}
 
 ${materialsFlow}
 
+${thumbnailRetryFlow}
+
 ## 追加メモ
 
 - 外部APIはCLIから呼びません。
@@ -175,6 +222,7 @@ export function generateChromeStepsMarkdown({ slug, paths, config }) {
     materialsDraftPath: paths.materialsDraftPath,
     finalThumbnailPromptPath: paths.finalThumbnailPromptPath,
   });
+  const thumbnailRetryFlow = generateThumbnailRetryFlowMarkdown({ thumbnailOutputPath: paths.thumbnailOutputPath });
 
   return `# Chrome操作手順: ${slug}
 
@@ -249,6 +297,8 @@ ${materialsFlow}
 6. その後、Claude in ChromeまたはClaude Codeが以下へ移動・リネームする
 
    ${paths.thumbnailOutputPath}
+
+${thumbnailRetryFlow}
 
 ## サムネイル画像生成（例外手順）
 
