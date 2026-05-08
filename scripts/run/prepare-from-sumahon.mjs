@@ -79,7 +79,8 @@ async function main() {
     thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
     browser: config.browserPolicy.useBrowser,
     doNotUse: config.browserPolicy.doNotUse,
-    nextAction: "Chromeでhandoff手順に沿ってChatGPT 5.5へpromptを貼り付ける。Edgeは使わない。",
+    refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
+    nextAction: "Chromeでhandoff手順に沿ってChatGPT 5.5へpromptを貼り付ける。Edgeは使わない。初稿は保存せず、チェック・修正後の最終稿だけを drafts/generated に保存する。",
   }, null, 2));
 }
 
