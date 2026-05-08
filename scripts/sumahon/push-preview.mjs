@@ -3,7 +3,7 @@ import { runCommand } from "./utils.mjs";
 const safeDirectory = process.cwd();
 
 async function git(args) {
-  await runCommand("git", ["-c", `safe.directory=${safeDirectory}`, ...args]);
+  await runCommand("git", ["-c", `safe.directory=${safeDirectory}`, ...args], { shell: false });
 }
 
 export async function getCurrentBranch() {
@@ -11,7 +11,7 @@ export async function getCurrentBranch() {
   const result = spawnSync(
     "git",
     ["-c", `safe.directory=${safeDirectory}`, "branch", "--show-current"],
-    { encoding: "utf-8", shell: process.platform === "win32" },
+    { encoding: "utf-8", shell: false },
   );
 
   return result.stdout.trim() || "unknown";
@@ -22,7 +22,7 @@ export async function assertNoTrackedChanges() {
   const result = spawnSync(
     "git",
     ["-c", `safe.directory=${safeDirectory}`, "status", "--porcelain", "--untracked-files=no"],
-    { encoding: "utf-8", shell: process.platform === "win32" },
+    { encoding: "utf-8", shell: false },
   );
   const trackedChanges = result.stdout.trim();
 
