@@ -1,0 +1,45 @@
+{
+  "branchName": "auto/sumahon-202603-honor-robot-phone-mwc-2026-202605080726",
+  "articlePath": "content\\articles\\202603-honor-robot-phone-mwc-2026.mdx",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/sumahon-202603-honor-robot-phone-mwc-2026-202605080726.",
+  "checkUrls": [
+    "/articles/202603-honor-robot-phone-mwc-2026/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": false,
+  "doNotPublish": false,
+  "previewCreated": true,
+  "previewPolicy": "buildが成功した記事は、本番公開可否に関係なくCloudflare Pages Previewで人間確認する。",
+  "encodingNote": "PowerShellでJSONを確認する場合は Get-Content -Encoding UTF8 を推奨。",
+  "thumbnailPrompt": "1200x675、16:9、すまラボのミント/ティール系デザイン。\nテーマ: 変形するスマホ「Honor Robot Phone」年内発売へ。背面…とは？普通の人向けに要点を整理\n普通の人向けにAIニュースを整理するイメージ。\nひまりとらぼまるは控えめに配置し、文字は大きく読みやすく。\n煽りすぎず、ニュース解説・判断材料の雰囲気にする。",
+  "thumbnailBriefPath": "logs/thumbnail/202603-honor-robot-phone-mwc-2026.brief.json",
+  "thumbnailPromptPath": "logs/thumbnail/202603-honor-robot-phone-mwc-2026.prompt.md",
+  "thumbnailHeadlineIdeas": [
+    "変形するスマホHonor Robo…って何？",
+    "AIニュースを整理",
+    "普通の人はここだけ確認"
+  ],
+  "thumbnailSublineIdeas": [
+    "何が変わるのかをやさしく解説",
+    "買う・待つ・様子見の判断材料に",
+    "AIの話題をかみくだく"
+  ],
+  "thumbnailCoreIdea": "AIニュースの細かなスペック紹介ではなく、「普通の人が今知っておくと判断しやすい変化」を1枚で見せる。",
+  "chatgptHandoff": {
+    "articleProjectUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/project",
+    "articlePromptPath": "logs/prompt/202603-honor-robot-phone-mwc-2026.article.md",
+    "generatedDraftPath": "drafts/generated/202603-honor-robot-phone-mwc-2026.md",
+    "thumbnailChatUrl": "https://chatgpt.com/g/g-p-69e8682b346c8191a2d09562e86a1f57/c/69e99484-b0d4-83e8-98d4-1c49a209c2a5",
+    "thumbnailPromptPath": "logs/thumbnail/202603-honor-robot-phone-mwc-2026.prompt.md",
+    "thumbnailOutputPath": "public/images/thumbnails/202603-honor-robot-phone-mwc-2026.png",
+    "handoffPath": "logs/handoff/202603-honor-robot-phone-mwc-2026.handoff.md",
+    "chromeStepsPath": "logs/handoff/202603-honor-robot-phone-mwc-2026.chrome-steps.md",
+    "browser": "Chrome",
+    "doNotUse": "Edge"
+  },
+  "xPostDraft": "変形するスマホ「Honor Robot Phone」年内発売へ。背面…とは？普通の人向けに要点を整理\n\n何が話題なのか、普通の人にはどう関係するのかをすまラボ向けに整理しました。\n#すまラボ #スマホ #AI #ガジェット"
+}
