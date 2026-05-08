@@ -17,6 +17,26 @@ export async function getCurrentBranch() {
   return result.stdout.trim() || "unknown";
 }
 
+export async function assertNoTrackedChanges() {
+  const { spawnSync } = await import("node:child_process");
+  const result = spawnSync(
+    "git",
+    ["-c", `safe.directory=${safeDirectory}`, "status", "--porcelain", "--untracked-files=no"],
+    { encoding: "utf-8", shell: process.platform === "win32" },
+  );
+  const trackedChanges = result.stdout.trim();
+
+  if (trackedChanges) {
+    throw new Error(
+      [
+        "Tracked working tree changes were found before preview branch creation.",
+        "Commit or stash intentional script/site changes first, then rerun the CLI.",
+        trackedChanges,
+      ].join("\n"),
+    );
+  }
+}
+
 export async function createPreviewBranch(branchName) {
   await git(["switch", "-c", branchName]);
 }

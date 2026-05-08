@@ -6,7 +6,7 @@ import { generateExplainer } from "../sumahon/generate-explainer.mjs";
 import { reviewArticle } from "../sumahon/review-article.mjs";
 import { reviseArticle } from "../sumahon/revise-article.mjs";
 import { writeMdx } from "../sumahon/write-mdx.mjs";
-import { commitAndPushPreview, createPreviewBranch, getCurrentBranch } from "../sumahon/push-preview.mjs";
+import { assertNoTrackedChanges, commitAndPushPreview, createPreviewBranch, getCurrentBranch } from "../sumahon/push-preview.mjs";
 import {
   assertSumahonUrl,
   parseArgs,
@@ -63,6 +63,7 @@ async function main() {
 
   console.log(`Current branch: ${currentBranch}`);
   console.log(`Preview branch: ${branchName}`);
+  await assertNoTrackedChanges();
 
   const source = await fetchSource(sourceUrl);
   const classification = classifyTopic(source);
@@ -81,6 +82,8 @@ async function main() {
   const finalReviewPath = path.join("logs", "review", `${slug}.final.json`);
   const factcheckPath = path.join("logs", "factcheck", `${slug}.json`);
   const previewLogPath = path.join("logs", "preview", `${slug}.json`);
+  const humanReviewRequired = !finalReview.publishable || finalReview.findings.length > 0;
+  const doNotPublish = !finalReview.publishable;
 
   await writeJson(sourceLogPath, {
     sourceMedia: source.sourceMedia,
@@ -104,19 +107,6 @@ async function main() {
     blockingRisk: !finalReview.publishable,
     provisionalDecision: finalReview.provisionalDecision,
   });
-  await writeJson(previewLogPath, {
-    branchName,
-    articlePath: mdxPath,
-    expectedPreview: `Cloudflare Pages will create a preview deployment for branch ${branchName}.`,
-    checkUrls: [
-      `/articles/${slug}/`,
-      "/articles/",
-      "/categories/news/",
-      "/",
-    ],
-    thumbnailPrompt: generated.thumbnailPrompt,
-    xPostDraft: generated.xPostDraft,
-  });
   const automationPaths = await updateAutomationData({ sourceUrl, classification, slug, generated });
 
   const generatedFiles = [
@@ -132,15 +122,36 @@ async function main() {
   console.log("Running build...");
   await runCommand(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"]);
 
+  await writeJson(previewLogPath, {
+    branchName,
+    articlePath: mdxPath,
+    expectedPreview: `Cloudflare Pages will create a preview deployment for branch ${branchName}.`,
+    checkUrls: [
+      `/articles/${slug}/`,
+      "/articles/",
+      "/categories/news/",
+      "/",
+    ],
+    publishable: finalReview.publishable,
+    provisionalDecision: finalReview.provisionalDecision,
+    humanReviewRequired,
+    doNotPublish,
+    previewCreated: true,
+    previewPolicy: "buildが成功した記事は、本番公開可否に関係なくCloudflare Pages Previewで人間確認する。",
+    encodingNote: "PowerShellでJSONを確認する場合は Get-Content -Encoding UTF8 を推奨。",
+    thumbnailPrompt: generated.thumbnailPrompt,
+    xPostDraft: generated.xPostDraft,
+  });
+
   if (!finalReview.publishable) {
-    console.log("Build succeeded, but review marked this article as not publishable. Skipping commit/push.");
-  } else {
-    await commitAndPushPreview({
-      files: generatedFiles,
-      message: "feat(article): add preview draft from sumahon topic",
-      branchName,
-    });
+    console.log("Build succeeded. Review marked this article as not publishable, but preview push will continue for human review.");
   }
+
+  await commitAndPushPreview({
+    files: generatedFiles,
+    message: "feat(article): add preview draft from sumahon topic",
+    branchName,
+  });
 
   console.log(JSON.stringify({
     sourceUrl,
@@ -156,6 +167,10 @@ async function main() {
       previewLogPath,
     },
     branchName,
+    previewCreated: true,
+    publishable: finalReview.publishable,
+    humanReviewRequired,
+    doNotPublish,
     provisionalDecision: finalReview.provisionalDecision,
     publishAt: generated.publishAt,
     updated: todayJst(),
