@@ -185,6 +185,7 @@ async function main() {
       articlePromptPath,
       generatedDraftPath: handoffPaths.generatedDraftPath,
       materialsDraftPath: handoffPaths.materialsDraftPath,
+      finalThumbnailPromptPath: handoffPaths.finalThumbnailPromptPath,
       thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
       thumbnailPromptPath,
       thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
@@ -194,6 +195,7 @@ async function main() {
       doNotUse: config.browserPolicy.doNotUse,
       refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
       materialsReminder: "最終稿本文とは別に、ブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存してください。本文ファイルと混ぜないでください。",
+      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存してからサムネイル専用チャットへ貼ります。",
     },
     xPostDraft: generated.xPostDraft,
   });
@@ -232,6 +234,7 @@ async function main() {
       articlePromptPath,
       generatedDraftPath: handoffPaths.generatedDraftPath,
       materialsDraftPath: handoffPaths.materialsDraftPath,
+      finalThumbnailPromptPath: handoffPaths.finalThumbnailPromptPath,
       thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
       thumbnailPromptPath,
       thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
@@ -241,6 +244,7 @@ async function main() {
       doNotUse: config.browserPolicy.doNotUse,
       refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
       materialsReminder: "最終稿本文とは別に、ブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存してください。本文ファイルと混ぜないでください。",
+      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存してからサムネイル専用チャットへ貼ります。",
     },
     thumbnail: {
       headlineIdeas: thumbnailBrief.headlineIdeas,

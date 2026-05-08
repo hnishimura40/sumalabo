@@ -12,8 +12,9 @@ export function generateArticlePrompt({ articleBrief, thumbnailBrief, config }) 
   const articleProjectUrl = config.chatgptTargets.articleProjectUrl;
   const generatedDraftPath = `${config.paths.generatedDraftDir}/${articleBrief.slug}.md`;
   const materialsDraftPath = `${config.paths.materialsDraftDir}/${articleBrief.slug}.materials.md`;
+  const finalThumbnailPromptPath = `${config.paths.materialsDraftDir}/${articleBrief.slug}${config.paths.finalThumbnailPromptSuffix}`;
   const refinementFlow = generateRefinementFlowMarkdown({ generatedDraftPath });
-  const materialsFlow = generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDraftPath });
+  const materialsFlow = generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDraftPath, finalThumbnailPromptPath });
 
   return `# すまラボ記事本文生成プロンプト
 
@@ -99,5 +100,34 @@ ${materialsFlow}
 - 続けて、ブログ化用の資料一式を出力してもらい、${materialsDraftPath} に保存する
 - 本文ファイルと資料ファイルを混ぜない
 - メタ情報は本文には入れず、資料側にだけ入れる
+
+## サムネイル画像生成プロンプト作成の指示
+
+続いて、上記の記事内容とブログ化用資料一式を踏まえて、すまラボ用サムネイルの画像生成プロンプトを作成してください。
+これはサムネイル専用ChatGPTチャットに貼り付けて画像生成するためのプロンプトです。
+そのままコピペで使える完成形にしてください。
+
+出力したサムネイル画像生成プロンプトは、${finalThumbnailPromptPath} に保存します。
+${config.paths.thumbnailPromptDir}/${articleBrief.slug}.prompt.md はCLIが作る初期サムネイル案・参考プロンプトです。最終的にサムネイル専用チャットに貼るのは ${finalThumbnailPromptPath} です。
+
+サムネイル画像生成プロンプトには以下を含めてください。
+
+- サムネの狙い
+- 大きく入れる文字案
+- 補足文字案
+- 構図の要約
+- 画像生成用プロンプト本文
+
+サムネイル方針:
+
+- すまラボらしく、普通の人にもわかりやすい
+- 難しいITニュースをやさしく整理する印象
+- 固定テンプレではなく、この話題に合った自由な構図
+- らぼまる、ひまりは必要に応じて使う
+- 毎回同じ構図にしない
+- 実在ロゴは使わない
+- 元記事画像のコピーはしない
+- スマホでも読める短い文字を入れる
+- 画像の雰囲気、構図、主役、色の方向性も分かるようにする
 `;
 }
