@@ -14,7 +14,11 @@ export async function getCurrentBranch() {
     { encoding: "utf-8", shell: false },
   );
 
-  return result.stdout.trim() || "unknown";
+  if (result.error) {
+    throw result.error;
+  }
+
+  return (result.stdout || "").trim() || "unknown";
 }
 
 export async function assertNoTrackedChanges() {
@@ -24,7 +28,11 @@ export async function assertNoTrackedChanges() {
     ["-c", `safe.directory=${safeDirectory}`, "status", "--porcelain", "--untracked-files=no"],
     { encoding: "utf-8", shell: false },
   );
-  const trackedChanges = result.stdout.trim();
+  if (result.error) {
+    throw result.error;
+  }
+
+  const trackedChanges = (result.stdout || "").trim();
 
   if (trackedChanges) {
     throw new Error(

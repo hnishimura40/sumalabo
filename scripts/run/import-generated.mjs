@@ -29,16 +29,17 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const slug = assertRequired(args.slug, "slug");
   const filePath = assertRequired(args.file, "file");
+
+  if (!existsSync(filePath)) {
+    throw new Error(`Generated draft file was not found: ${filePath}`);
+  }
+
   const currentBranch = await getCurrentBranch();
   const branchName = makeBranchName(slug);
 
   console.log(`Current branch: ${currentBranch}`);
   console.log(`Import branch: ${branchName}`);
   await assertNoTrackedChanges();
-
-  if (!existsSync(filePath)) {
-    throw new Error(`Generated draft file was not found: ${filePath}`);
-  }
 
   const articleBriefPath = path.join("logs", "brief", `${slug}.article.json`);
   const legacyArticleBriefPath = path.join("logs", "brief", `${slug}.json`);
