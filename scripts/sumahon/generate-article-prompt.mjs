@@ -94,10 +94,14 @@ ${materialsFlow}
 
 - 初稿をそのまま保存しない
 - 初稿・途中稿・チェック結果は ${generatedDraftPath} には保存しない
-- 同じChatGPTチャット内でチェックと修正を行う
+- Claude in Chromeが同じChatGPTチャット内でチェックと修正を行う
+- ChatGPTが回答中の間は次の操作をしない
 - 最後に「最終稿として、ブログに貼り付ける本文だけを全文で再出力してください」と依頼する
-- その最終稿だけを ${generatedDraftPath} に保存する
-- 続けて、ブログ化用の資料一式を出力してもらい、${materialsDraftPath} に保存する
+- 回答完了後、Claude in Chromeがその最終稿だけを全文コピーして ${generatedDraftPath} に保存する
+- 保存後、ファイルが存在し、本文が途中で切れていないことを自動確認する
+- 続けて、ブログ化用の資料一式を出力してもらい、回答完了後に全文コピーする
+- Claude in Chromeがブログ化用資料一式を ${materialsDraftPath} に保存する
+- 保存後、ファイルが存在し、資料が途中で切れていないことを自動確認する
 - 本文ファイルと資料ファイルを混ぜない
 - メタ情報は本文には入れず、資料側にだけ入れる
 
@@ -111,7 +115,9 @@ ${materialsFlow}
 出力したサムネイル画像生成プロンプトは、${finalThumbnailPromptPath} に保存します。
 ${config.paths.thumbnailPromptDir}/${articleBrief.slug}.prompt.md はCLIが作る初期サムネイル案・参考プロンプトです。実際に主で使うのは、本文と資料一式を踏まえて台本チャット内で作る ${finalThumbnailPromptPath} です。
 
-サムネイル画像は、原則として同じ台本チャット内で ${finalThumbnailPromptPath} の内容を使って生成してください。生成画像はいったん通常のダウンロード先に保存される想定です。あとで public/images/thumbnails/${articleBrief.slug}.png などへ移動・リネームします。
+Claude in Chromeは、回答完了後に最終版サムネイル画像生成プロンプトを全文コピーし、${finalThumbnailPromptPath} に保存します。保存後、ファイルが存在し、プロンプトが途中で切れていないことを自動確認します。
+
+サムネイル画像は、原則として同じ台本チャット内で ${finalThumbnailPromptPath} の内容を使って生成してください。生成画像はいったん通常のダウンロード先に保存される想定です。ダウンロード完了を自動確認したあと、public/images/thumbnails/${articleBrief.slug}.png などへ移動・リネームします。
 
 どうしても別チャットを使う場合は、使い回しの文脈に引っ張られないよう、その記事専用の新しいチャットを優先してください。サムネイル専用チャットは必要時の参考・例外運用です。
 
