@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview --host 127.0.0.1",
     "article:from-sumahon": "node scripts/run/create-from-sumahon.mjs",
-    "article:prepare-from-sumahon": "node scripts/run/prepare-from-sumahon.mjs"
+    "article:prepare-from-sumahon": "node scripts/run/prepare-from-sumahon.mjs",
+    "article:import-generated": "node scripts/run/import-generated.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",
