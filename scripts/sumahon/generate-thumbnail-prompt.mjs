@@ -2,12 +2,15 @@ function listItems(items = []) {
   return items.map((item) => `- ${item}`).join("\n");
 }
 
-export function generateThumbnailPrompt(brief) {
+export function generateThumbnailPrompt(brief, options = {}) {
+  const thumbnailChatUrl = options.thumbnailChatUrl || "";
   const referenceText = brief.referenceAssetsMissing
     ? "既存キャラクター素材が見つからない場合は、らぼまる・ひまりの特徴を守って新規イラストとして自然に描く。"
     : `既存キャラクター素材を参照する前提。候補:\n${listItems(brief.referenceAssets)}`;
 
   return `# すまラボ サムネイル生成プロンプト
+
+${thumbnailChatUrl ? `このプロンプトは、以下のサムネイル専用ChatGPTチャットに貼り付けて使用する。\n\nサムネイル生成用:\n${thumbnailChatUrl}\n` : ""}
 
 1200x630px、ブログ/YouTubeサムネイル向け、16:9に近い横長構図。
 

@@ -1,0 +1,18 @@
+{
+  "chatgptTargets": {
+    "articleProjectUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/project",
+    "thumbnailChatUrl": "https://chatgpt.com/g/g-p-69e8682b346c8191a2d09562e86a1f57/c/69e99484-b0d4-83e8-98d4-1c49a209c2a5"
+  },
+  "browserPolicy": {
+    "useBrowser": "Chrome",
+    "doNotUse": "Edge"
+  },
+  "paths": {
+    "articleBriefDir": "logs/brief",
+    "articlePromptDir": "logs/prompt",
+    "thumbnailPromptDir": "logs/thumbnail",
+    "handoffDir": "logs/handoff",
+    "generatedDraftDir": "drafts/generated",
+    "thumbnailOutputDir": "public/images/thumbnails"
+  }
+}
