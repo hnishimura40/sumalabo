@@ -71,6 +71,7 @@ async function main() {
     articlePromptPath: handoffPaths.articlePromptPath,
     generatedDraftPath: handoffPaths.generatedDraftPath,
     materialsDraftPath: handoffPaths.materialsDraftPath,
+    finalThumbnailPromptPath: handoffPaths.finalThumbnailPromptPath,
     thumbnailBriefPath: handoffPaths.thumbnailBriefPath,
     thumbnailPromptPath: handoffPaths.thumbnailPromptPath,
     thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
@@ -82,7 +83,8 @@ async function main() {
     doNotUse: config.browserPolicy.doNotUse,
     refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
     materialsReminder: "最終稿本文とは別に、ブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存してください。本文ファイルと混ぜないでください。",
-    nextAction: "Chromeでhandoff手順に沿ってChatGPT 5.5へpromptを貼り付ける。Edgeは使わない。初稿は保存せず、チェック・修正後の最終稿だけを drafts/generated に保存し、続けて資料一式を drafts/materials に保存する。",
+    thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存してからサムネイル専用チャットへ貼ります。",
+    nextAction: "Chromeでhandoff手順に沿ってChatGPT 5.5へpromptを貼り付ける。Edgeは使わない。最終稿を drafts/generated、資料一式を drafts/materials、最終版サムネイルプロンプトを drafts/materials/*.thumbnail-prompt.md に保存する。",
   }, null, 2));
 }
 

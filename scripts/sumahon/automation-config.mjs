@@ -16,6 +16,7 @@ const defaultConfig = {
     handoffDir: "logs/handoff",
     generatedDraftDir: "drafts/generated",
     materialsDraftDir: "drafts/materials",
+    finalThumbnailPromptSuffix: ".thumbnail-prompt.md",
     thumbnailOutputDir: "public/images/thumbnails",
   },
 };

@@ -24,13 +24,14 @@ export function generateRefinementFlowMarkdown({ generatedDraftPath } = {}) {
 初稿・途中稿・チェック結果は ${draftPath} には保存しません。必要な場合だけ別メモとして残してください。`;
 }
 
-export function generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDraftPath } = {}) {
+export function generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDraftPath, finalThumbnailPromptPath } = {}) {
   const generatedPath = generatedDraftPath || "drafts/generated/{slug}.md";
   const materialsPath = materialsDraftPath || "drafts/materials/{slug}.materials.md";
+  const finalPromptPath = finalThumbnailPromptPath || "drafts/materials/{slug}.thumbnail-prompt.md";
 
   return `## ブログ化用の資料一式保存フロー
 
-最終稿本文を出力したあと、同じChatGPTチャットで続けて「ブログ化用の資料一式」を出力してもらいます。
+最終稿本文を出力したあと、同じChatGPTチャットで続けて「ブログ化用の資料一式」と「最終版サムネイル画像生成プロンプト」を出力してもらいます。
 
 1. 最終稿本文は ${generatedPath} に保存する
 2. 続けて、ブログ化用の資料一式をChatGPTに出力してもらう
@@ -38,8 +39,13 @@ export function generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDra
 4. 本文ファイルと資料ファイルを混ぜない
 5. メタ情報は本文には入れず、資料側にだけ入れる
 6. Claude Codeは、本文と資料一式の両方を見てブログ記事MDXとして整える
+7. さらに同じ台本チャットで、記事本文と資料一式を踏まえたサムネイル画像生成プロンプトを作ってもらう
+8. 最終版サムネイル画像生成プロンプトは ${finalPromptPath} に保存する
+9. 最終版サムネイル画像生成プロンプトをコピーして、サムネイル専用ChatGPTチャットへ移動する
 
-資料一式には、記事タイトル案、description案、slug案、記事カテゴリ、記事種別、想定読者、この記事の役割、先に結論、見出し構成、要点まとめボックス案、本文で特に大事なポイント、メタ的な内容が残っていないかの確認結果、元記事の趣旨を壊していないかの確認結果、公式発表・報道・予測・未確定情報の整理、ファクトチェック注意点、人間が確認すべきポイント、内部リンク候補、関連記事への導線案、キャラクター会話を入れるならどこが自然か、サムネイルの方向性、サムネイルに入れる短い文字案、X投稿案、Claude Codeへのブログ化指示メモを含めてください。`;
+資料一式には、記事タイトル案、description案、slug案、記事カテゴリ、記事種別、想定読者、この記事の役割、先に結論、見出し構成、要点まとめボックス案、本文で特に大事なポイント、メタ的な内容が残っていないかの確認結果、元記事の趣旨を壊していないかの確認結果、公式発表・報道・予測・未確定情報の整理、ファクトチェック注意点、人間が確認すべきポイント、内部リンク候補、関連記事への導線案、キャラクター会話を入れるならどこが自然か、サムネイルの方向性、サムネイルに入れる短い文字案、X投稿案、Claude Codeへのブログ化指示メモを含めてください。
+
+最終版サムネイル画像生成プロンプトには、サムネの狙い、大きく入れる文字案、補足文字案、構図の要約、画像生成用プロンプト本文を含めてください。すまラボらしく、普通の人にもわかりやすく、難しいITニュースをやさしく整理する印象にしてください。固定テンプレではなく、この話題に合った自由な構図にし、らぼまる・ひまりは必要に応じて使ってください。実在ロゴや元記事画像のコピーは使わず、スマホでも読める短い文字にしてください。`;
 }
 
 export function buildHandoffPaths({ slug, config }) {
@@ -48,6 +54,7 @@ export function buildHandoffPaths({ slug, config }) {
     articlePromptPath: `${config.paths.articlePromptDir}/${slug}.article.md`,
     generatedDraftPath: `${config.paths.generatedDraftDir}/${slug}.md`,
     materialsDraftPath: `${config.paths.materialsDraftDir}/${slug}.materials.md`,
+    finalThumbnailPromptPath: `${config.paths.materialsDraftDir}/${slug}${config.paths.finalThumbnailPromptSuffix}`,
     thumbnailBriefPath: `${config.paths.thumbnailPromptDir}/${slug}.brief.json`,
     thumbnailPromptPath: `${config.paths.thumbnailPromptDir}/${slug}.prompt.md`,
     thumbnailOutputPath: `${config.paths.thumbnailOutputDir}/${slug}.png`,
@@ -61,6 +68,7 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
   const materialsFlow = generateMaterialsFlowMarkdown({
     generatedDraftPath: paths.generatedDraftPath,
     materialsDraftPath: paths.materialsDraftPath,
+    finalThumbnailPromptPath: paths.finalThumbnailPromptPath,
   });
 
   return `# ChatGPT 5.5 handoff: ${slug}
@@ -77,11 +85,13 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
 - 本文生成用promptファイル: ${paths.articlePromptPath}
 - 生成本文の保存先: ${paths.generatedDraftPath}
 - ブログ化用資料一式の保存先: ${paths.materialsDraftPath}
+- 最終版サムネイル画像生成プロンプトの保存先: ${paths.finalThumbnailPromptPath}
 
 ## サムネイル生成
 
 - サムネイル生成用ChatGPTチャットURL: ${config.chatgptTargets.thumbnailChatUrl}
-- サムネイル生成用promptファイル: ${paths.thumbnailPromptPath}
+- 初期サムネイル案・参考プロンプト: ${paths.thumbnailPromptPath}
+- サムネイル専用チャットへ貼る最終版プロンプト: ${paths.finalThumbnailPromptPath}
 - サムネイル画像の保存先: ${paths.thumbnailOutputPath}
 
 ## ブラウザ操作ポリシー
@@ -100,11 +110,13 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
 5. 最後に最終稿だけを ${paths.generatedDraftPath} に保存する
 6. 続けて、ブログ化用の資料一式をChatGPTに出力してもらう
 7. 資料一式だけを ${paths.materialsDraftPath} に保存する
-8. Chromeでサムネイル生成用ChatGPTチャットを開く
-9. ${paths.thumbnailPromptPath} の内容を貼り付ける
-10. サムネイル画像を生成する
-11. 生成画像を ${paths.thumbnailOutputPath} に保存する
-12. import コマンドでMDX化・サムネイル反映・preview作成へ進む
+8. 同じ台本チャットで、記事本文と資料一式を踏まえた最終版サムネイル画像生成プロンプトを作ってもらう
+9. 最終版サムネイル画像生成プロンプトを ${paths.finalThumbnailPromptPath} に保存する
+10. Chromeでサムネイル生成用ChatGPTチャットを開く
+11. ${paths.finalThumbnailPromptPath} の内容を貼り付ける
+12. サムネイル画像を生成する
+13. 生成画像を ${paths.thumbnailOutputPath} に保存する
+14. import コマンドでMDX化・サムネイル反映・preview作成へ進む
 
 ${refinementFlow}
 
@@ -117,6 +129,7 @@ ${materialsFlow}
 - 本文・サムネイルともに、生成後は人間が確認してください。
 - ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。
 - 本文ファイルとブログ化用資料ファイルを混ぜないでください。
+- ${paths.thumbnailPromptPath} は初期サムネイル案・参考プロンプトです。最終的にサムネイル専用チャットに貼るのは ${paths.finalThumbnailPromptPath} です。
 `;
 }
 
@@ -125,6 +138,7 @@ export function generateChromeStepsMarkdown({ slug, paths, config }) {
   const materialsFlow = generateMaterialsFlowMarkdown({
     generatedDraftPath: paths.generatedDraftPath,
     materialsDraftPath: paths.materialsDraftPath,
+    finalThumbnailPromptPath: paths.finalThumbnailPromptPath,
   });
 
   return `# Chrome操作手順: ${slug}
@@ -159,6 +173,12 @@ export function generateChromeStepsMarkdown({ slug, paths, config }) {
 
    ${paths.materialsDraftPath}
 
+9. 同じ台本チャットで、記事本文と資料一式を踏まえたサムネイル画像生成プロンプトを作ってもらう
+
+10. 最終版サムネイル画像生成プロンプトだけを以下に保存する
+
+   ${paths.finalThumbnailPromptPath}
+
 ${refinementFlow}
 
 ${materialsFlow}
@@ -169,21 +189,28 @@ ${materialsFlow}
 
    ${config.chatgptTargets.thumbnailChatUrl}
 
-2. 以下のファイルの内容を貼る
+2. 以下の最終版サムネイル画像生成プロンプトを貼る
 
-   ${paths.thumbnailPromptPath}
+   ${paths.finalThumbnailPromptPath}
 
 3. サムネイル画像を生成する
 
-4. 生成画像を以下に保存する
+4. 必要なら同じサムネイル専用チャット内で微修正する
+
+5. 生成画像を以下に保存する
 
    ${paths.thumbnailOutputPath}
+
+補足:
+- ${paths.thumbnailPromptPath} はCLIが作る初期サムネイル案・参考プロンプトです。
+- サムネイル専用チャットへ貼るのは、台本チャットで本文・資料一式を踏まえて作った ${paths.finalThumbnailPromptPath} です。
 
 ## 完了後に確認するもの
 
 ${listItems([
     paths.generatedDraftPath,
     paths.materialsDraftPath,
+    paths.finalThumbnailPromptPath,
     paths.thumbnailOutputPath,
     paths.handoffPath,
     paths.chromeStepsPath,
