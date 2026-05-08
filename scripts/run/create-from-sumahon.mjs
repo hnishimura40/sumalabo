@@ -191,6 +191,7 @@ async function main() {
       chromeStepsPath,
       browser: config.browserPolicy.useBrowser,
       doNotUse: config.browserPolicy.doNotUse,
+      refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
     },
     xPostDraft: generated.xPostDraft,
   });
@@ -235,6 +236,7 @@ async function main() {
       chromeStepsPath,
       browser: config.browserPolicy.useBrowser,
       doNotUse: config.browserPolicy.doNotUse,
+      refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
     },
     thumbnail: {
       headlineIdeas: thumbnailBrief.headlineIdeas,

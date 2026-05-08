@@ -2,6 +2,28 @@ function listItems(items = []) {
   return items.map((item) => `- ${item}`).join("\n");
 }
 
+export function generateRefinementFlowMarkdown({ generatedDraftPath } = {}) {
+  const draftPath = generatedDraftPath || "drafts/generated/{slug}.md";
+
+  return `## 本文生成後の精錬フロー
+
+すまラボでは、ChatGPTの初稿をそのまま保存しません。同じChatGPTチャット内で複数回チェック・修正し、最後に出した最終稿だけを保存します。
+
+1. 初稿を生成する
+2. メタ的な内容が残っていないか確認する
+3. 記事ボリュームが十分か確認する
+4. 元記事の趣旨を壊していないか確認する
+5. すまラボらしく普通の人にもわかりやすいか確認する
+6. 難しいITニュースを噛み砕けているか確認する
+7. 公式発表、報道、予測、未確定情報を混同していないか確認する
+8. 不足があれば修正する
+9. 必要なら再チェックする
+10. 最後に「最終稿として、ブログに貼り付ける本文だけを全文で再出力してください」と依頼する
+11. その最終稿だけを ${draftPath} に保存する
+
+初稿・途中稿・チェック結果は ${draftPath} には保存しません。必要な場合だけ別メモとして残してください。`;
+}
+
 export function buildHandoffPaths({ slug, config }) {
   return {
     articleBriefPath: `${config.paths.articleBriefDir}/${slug}.article.json`,
@@ -16,6 +38,8 @@ export function buildHandoffPaths({ slug, config }) {
 }
 
 export function generateHandoffMarkdown({ source, slug, paths, config }) {
+  const refinementFlow = generateRefinementFlowMarkdown({ generatedDraftPath: paths.generatedDraftPath });
+
   return `# ChatGPT 5.5 handoff: ${slug}
 
 ## 対象
@@ -47,23 +71,29 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
 
 1. Chromeで本文生成用ChatGPTプロジェクトを開く
 2. ${paths.articlePromptPath} の内容を貼り付ける
-3. ChatGPT 5.5で本文を生成する
-4. 生成された本文を ${paths.generatedDraftPath} に保存する
-5. Chromeでサムネイル生成用ChatGPTチャットを開く
-6. ${paths.thumbnailPromptPath} の内容を貼り付ける
-7. サムネイル画像を生成する
-8. 生成画像を ${paths.thumbnailOutputPath} に保存する
-9. 将来の import コマンドでMDX化・サムネイル反映・preview作成へ進む
+3. ChatGPT 5.5で本文の初稿を生成する
+4. 同じチャット内で下記の精錬フローに沿ってチェック・修正する
+5. 最後に最終稿だけを ${paths.generatedDraftPath} に保存する
+6. Chromeでサムネイル生成用ChatGPTチャットを開く
+7. ${paths.thumbnailPromptPath} の内容を貼り付ける
+8. サムネイル画像を生成する
+9. 生成画像を ${paths.thumbnailOutputPath} に保存する
+10. import コマンドでMDX化・サムネイル反映・preview作成へ進む
+
+${refinementFlow}
 
 ## 追加メモ
 
 - 外部APIはCLIから呼びません。
 - OpenAI APIキーやClaude APIキーは不要です。
 - 本文・サムネイルともに、生成後は人間が確認してください。
+- ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。
 `;
 }
 
 export function generateChromeStepsMarkdown({ slug, paths, config }) {
+  const refinementFlow = generateRefinementFlowMarkdown({ generatedDraftPath: paths.generatedDraftPath });
+
   return `# Chrome操作手順: ${slug}
 
 重要:
@@ -80,11 +110,17 @@ export function generateChromeStepsMarkdown({ slug, paths, config }) {
 
    ${paths.articlePromptPath}
 
-3. ChatGPT 5.5で本文を生成する
+3. ChatGPT 5.5で本文の初稿を生成する
 
-4. 生成された本文を以下に保存する
+4. 同じチャット内で、下記の精錬フローに沿ってチェック・修正する
+
+5. 最後に「最終稿として、ブログに貼り付ける本文だけを全文で再出力してください」と依頼する
+
+6. 最終稿だけを以下に保存する
 
    ${paths.generatedDraftPath}
+
+${refinementFlow}
 
 ## サムネイル生成
 

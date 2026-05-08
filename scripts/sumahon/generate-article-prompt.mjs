@@ -1,3 +1,5 @@
+import { generateRefinementFlowMarkdown } from "./generate-handoff.mjs";
+
 function listItems(items = []) {
   return items.map((item) => `- ${item}`).join("\n");
 }
@@ -8,6 +10,8 @@ function linkItems(items = []) {
 
 export function generateArticlePrompt({ articleBrief, thumbnailBrief, config }) {
   const articleProjectUrl = config.chatgptTargets.articleProjectUrl;
+  const generatedDraftPath = `${config.paths.generatedDraftDir}/${articleBrief.slug}.md`;
+  const refinementFlow = generateRefinementFlowMarkdown({ generatedDraftPath });
 
   return `# すまラボ記事本文生成プロンプト
 
@@ -78,5 +82,15 @@ ${listItems(articleBrief.cautions)}
 - 見出しだけでも流れが分かる構成にする
 - キャラクター会話を入れる場合は1〜2回まで、短くする
 - 最後に、読者が次に読むべき既存記事への自然な導線を入れる
+
+${refinementFlow}
+
+## 最終稿の保存ルール
+
+- 初稿をそのまま保存しない
+- 初稿・途中稿・チェック結果は ${generatedDraftPath} には保存しない
+- 同じChatGPTチャット内でチェックと修正を行う
+- 最後に「最終稿として、ブログに貼り付ける本文だけを全文で再出力してください」と依頼する
+- その最終稿だけを ${generatedDraftPath} に保存する
 `;
 }
