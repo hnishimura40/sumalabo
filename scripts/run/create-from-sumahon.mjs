@@ -197,6 +197,7 @@ async function main() {
       materialsReminder: "最終稿本文とは別に、Claude in Chromeがブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存します。本文ファイルとは混ぜません。",
       thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。標準手順では同じ台本チャット内で画像生成まで行います。",
       thumbnailImageReminder: "生成画像はいったん通常のダウンロード先に保存される想定です。後で public/images/thumbnails/ へ移動・リネームしてください。",
+      thumbnailRetryPolicy: "サムネイル画像生成でエラーが出た場合は、Claude in Chromeが最大3回まで自動リトライします。1回目・2回目は同じプロンプト、3回目は簡略版プロンプトで再試行します。3回失敗した場合はサムネイル生成失敗・最終確認待ちとして残します。",
       automatedCompleted: [
         "source取得",
         "分類",
@@ -208,6 +209,7 @@ async function main() {
         "必要に応じてChatGPT台本チャットで本文・資料・最終版サムネイルプロンプトを再生成する",
         "ChatGPT回答完了を待ち、全文コピーして指定パスへ保存する",
         "保存後、ファイル存在と内容の完了を自動確認する",
+        "サムネイル画像生成失敗時は最大3回まで自動リトライし、失敗時は最終確認待ちとして記録する",
       ],
       nextClaudeCode: [
         "生成ファイルを読み込み、MDX化・サムネ反映・build・preview pushを実行する",
@@ -269,6 +271,7 @@ async function main() {
       materialsReminder: "最終稿本文とは別に、Claude in Chromeがブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存します。本文ファイルとは混ぜません。",
       thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。標準手順では同じ台本チャット内で画像生成まで行います。",
       thumbnailImageReminder: "生成画像はいったん通常のダウンロード先に保存される想定です。後で public/images/thumbnails/ へ移動・リネームしてください。",
+      thumbnailRetryPolicy: "サムネイル画像生成でエラーが出た場合は、Claude in Chromeが最大3回まで自動リトライします。1回目・2回目は同じプロンプト、3回目は簡略版プロンプトで再試行します。3回失敗した場合はサムネイル生成失敗・最終確認待ちとして残します。",
       automatedCompleted: [
         "source取得",
         "分類",
@@ -280,6 +283,7 @@ async function main() {
         "必要に応じてChatGPT台本チャットで本文・資料・最終版サムネイルプロンプトを再生成する",
         "ChatGPT回答完了を待ち、全文コピーして指定パスへ保存する",
         "保存後、ファイル存在と内容の完了を自動確認する",
+        "サムネイル画像生成失敗時は最大3回まで自動リトライし、失敗時は最終確認待ちとして記録する",
       ],
       nextClaudeCode: [
         "生成ファイルを読み込み、MDX化・サムネ反映・build・preview pushを実行する",

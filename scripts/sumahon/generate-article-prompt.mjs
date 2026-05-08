@@ -1,4 +1,4 @@
-import { generateMaterialsFlowMarkdown, generateRefinementFlowMarkdown } from "./generate-handoff.mjs";
+import { generateMaterialsFlowMarkdown, generateRefinementFlowMarkdown, generateThumbnailRetryFlowMarkdown } from "./generate-handoff.mjs";
 
 function listItems(items = []) {
   return items.map((item) => `- ${item}`).join("\n");
@@ -13,8 +13,10 @@ export function generateArticlePrompt({ articleBrief, thumbnailBrief, config }) 
   const generatedDraftPath = `${config.paths.generatedDraftDir}/${articleBrief.slug}.md`;
   const materialsDraftPath = `${config.paths.materialsDraftDir}/${articleBrief.slug}.materials.md`;
   const finalThumbnailPromptPath = `${config.paths.materialsDraftDir}/${articleBrief.slug}${config.paths.finalThumbnailPromptSuffix}`;
+  const thumbnailOutputPath = `${config.paths.thumbnailOutputDir}/${articleBrief.slug}.png`;
   const refinementFlow = generateRefinementFlowMarkdown({ generatedDraftPath });
   const materialsFlow = generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDraftPath, finalThumbnailPromptPath });
+  const thumbnailRetryFlow = generateThumbnailRetryFlowMarkdown({ thumbnailOutputPath });
 
   return `# すまラボ記事本文生成プロンプト
 
@@ -120,6 +122,8 @@ Claude in Chromeは、回答完了後に最終版サムネイル画像生成プ�
 サムネイル画像は、原則として同じ台本チャット内で ${finalThumbnailPromptPath} の内容を使って生成してください。生成画像はいったん通常のダウンロード先に保存される想定です。ダウンロード完了を自動確認したあと、public/images/thumbnails/${articleBrief.slug}.png などへ移動・リネームします。
 
 どうしても別チャットを使う場合は、使い回しの文脈に引っ張られないよう、その記事専用の新しいチャットを優先してください。サムネイル専用チャットは必要時の参考・例外運用です。
+
+${thumbnailRetryFlow}
 
 サムネイル画像生成プロンプトには以下を含めてください。
 
