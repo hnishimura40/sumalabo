@@ -1,0 +1,22 @@
+{
+  "branchName": "auto/imported-202603-honor-robot-phone-mwc-2026-202605080747",
+  "articlePath": "content\\articles\\202603-honor-robot-phone-mwc-2026.mdx",
+  "generatedDraftPath": "drafts/generated/202603-honor-robot-phone-mwc-2026.md",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/imported-202603-honor-robot-phone-mwc-2026-202605080747.",
+  "checkUrls": [
+    "/articles/202603-honor-robot-phone-mwc-2026/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": true,
+  "doNotPublish": false,
+  "previewCreated": true,
+  "thumbnail": "",
+  "thumbnailExists": false,
+  "thumbnailSourcePath": "public\\images\\thumbnails\\202603-honor-robot-phone-mwc-2026.png",
+  "thumbnailBriefPath": "logs\\thumbnail\\202603-honor-robot-phone-mwc-2026.brief.json",
+  "thumbnailPromptPath": "logs\\thumbnail\\202603-honor-robot-phone-mwc-2026.prompt.md"
+}

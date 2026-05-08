@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-05-08T07:47:35.986Z",
+  "wordCountApprox": 2156,
+  "h2Count": 9,
+  "presentTopics": [
+    "先に結論",
+    "何が起きたのか",
+    "何が新しいのか",
+    "難しいポイントのかみくだき",
+    "普通の人にどう関係するのか",
+    "まだ分からないこと",
+    "すまラボ的な見方",
+    "まとめ"
+  ],
+  "missingTopics": [],
+  "issues": [
+    {
+      "code": "thumbnail_missing",
+      "severity": "warning",
+      "message": "サムネイル画像が未配置です。frontmatter thumbnailは空にしています。"
+    }
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "sourceUrl": "https://smhn.info/202603-honor-robot-phone-mwc-2026",
+  "articleTitle": "変形するスマホ「Honor Robot Phone」年内発売へ。背面…とは？普通の人向けに要点を整理",
+  "generatedDraftPath": "drafts/generated/202603-honor-robot-phone-mwc-2026.md",
+  "mdxPath": "content\\articles\\202603-honor-robot-phone-mwc-2026.mdx"
+}
