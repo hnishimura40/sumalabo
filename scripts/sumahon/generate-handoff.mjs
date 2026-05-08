@@ -41,7 +41,9 @@ export function generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDra
 6. Claude Codeは、本文と資料一式の両方を見てブログ記事MDXとして整える
 7. さらに同じ台本チャットで、記事本文と資料一式を踏まえたサムネイル画像生成プロンプトを作ってもらう
 8. 最終版サムネイル画像生成プロンプトは ${finalPromptPath} に保存する
-9. 最終版サムネイル画像生成プロンプトをコピーして、サムネイル専用ChatGPTチャットへ移動する
+9. 原則として、その同じ台本チャット内で最終版プロンプトを使ってサムネイル画像を生成する
+10. 生成画像はいったん通常のダウンロード先に保存される想定で、あとから public/images/thumbnails/ へ移動・リネームする
+11. どうしても別チャットを使う場合だけ、記事専用の新しいチャットか、参考用のサムネイル専用チャットを使う
 
 資料一式には、記事タイトル案、description案、slug案、記事カテゴリ、記事種別、想定読者、この記事の役割、先に結論、見出し構成、要点まとめボックス案、本文で特に大事なポイント、メタ的な内容が残っていないかの確認結果、元記事の趣旨を壊していないかの確認結果、公式発表・報道・予測・未確定情報の整理、ファクトチェック注意点、人間が確認すべきポイント、内部リンク候補、関連記事への導線案、キャラクター会話を入れるならどこが自然か、サムネイルの方向性、サムネイルに入れる短い文字案、X投稿案、Claude Codeへのブログ化指示メモを含めてください。
 
@@ -89,10 +91,13 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
 
 ## サムネイル生成
 
-- サムネイル生成用ChatGPTチャットURL: ${config.chatgptTargets.thumbnailChatUrl}
 - 初期サムネイル案・参考プロンプト: ${paths.thumbnailPromptPath}
-- サムネイル専用チャットへ貼る最終版プロンプト: ${paths.finalThumbnailPromptPath}
-- サムネイル画像の保存先: ${paths.thumbnailOutputPath}
+- 実際に使う最終版サムネイル画像生成プロンプト: ${paths.finalThumbnailPromptPath}
+- 標準手順: 同じ台本チャット内で、最終版プロンプトを使って画像生成まで行う
+- 生成画像の最終保存先: ${paths.thumbnailOutputPath}
+- 補足: 画像は通常のダウンロード先に保存される想定です。あとから ${paths.thumbnailOutputPath} へ移動・リネームしてください。
+- 参考・例外運用のサムネイル専用ChatGPTチャットURL: ${config.chatgptTargets.thumbnailChatUrl}
+- 例外時は、使い回しチャットではなく、その記事専用の新しいチャットを優先してください。
 
 ## ブラウザ操作ポリシー
 
@@ -112,11 +117,12 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
 7. 資料一式だけを ${paths.materialsDraftPath} に保存する
 8. 同じ台本チャットで、記事本文と資料一式を踏まえた最終版サムネイル画像生成プロンプトを作ってもらう
 9. 最終版サムネイル画像生成プロンプトを ${paths.finalThumbnailPromptPath} に保存する
-10. Chromeでサムネイル生成用ChatGPTチャットを開く
-11. ${paths.finalThumbnailPromptPath} の内容を貼り付ける
-12. サムネイル画像を生成する
-13. 生成画像を ${paths.thumbnailOutputPath} に保存する
-14. import コマンドでMDX化・サムネイル反映・preview作成へ進む
+10. 原則として、同じ台本チャット内でその最終版プロンプトを使ってサムネイル画像を生成する
+11. 必要なら同じ台本チャット内で微修正する
+12. 画像をダウンロードする
+13. いったん既定のダウンロード先に保存される想定で扱う
+14. その後、${paths.thumbnailOutputPath} へ移動・リネームする
+15. import コマンドでMDX化・サムネイル反映・preview作成へ進む
 
 ${refinementFlow}
 
@@ -129,7 +135,9 @@ ${materialsFlow}
 - 本文・サムネイルともに、生成後は人間が確認してください。
 - ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。
 - 本文ファイルとブログ化用資料ファイルを混ぜないでください。
-- ${paths.thumbnailPromptPath} は初期サムネイル案・参考プロンプトです。最終的にサムネイル専用チャットに貼るのは ${paths.finalThumbnailPromptPath} です。
+- ${paths.thumbnailPromptPath} は初期サムネイル案・参考プロンプトです。実際に主で使うのは、台本チャットで本文・資料一式を踏まえて作る ${paths.finalThumbnailPromptPath} です。
+- 標準手順では、サムネイル画像も同じ台本チャット内で生成します。
+- サムネイル専用チャットは必要時だけの参考・例外運用です。使い回しチャットの文脈に引っ張られないよう注意してください。
 `;
 }
 
@@ -183,27 +191,32 @@ ${refinementFlow}
 
 ${materialsFlow}
 
-## サムネイル生成
+## サムネイル画像生成（標準手順）
 
-1. Chromeで以下を開く
-
-   ${config.chatgptTargets.thumbnailChatUrl}
-
-2. 以下の最終版サムネイル画像生成プロンプトを貼る
+1. 同じ台本チャット内で、以下の最終版サムネイル画像生成プロンプトを使ってサムネイル画像を生成する
 
    ${paths.finalThumbnailPromptPath}
 
-3. サムネイル画像を生成する
+2. 必要なら同じ台本チャット内で微修正する
 
-4. 必要なら同じサムネイル専用チャット内で微修正する
+3. 画像をダウンロードする
 
-5. 生成画像を以下に保存する
+4. いったん既定のダウンロード先に保存される想定で扱う
+
+5. その後、以下へ移動・リネームする
 
    ${paths.thumbnailOutputPath}
 
+## サムネイル画像生成（例外手順）
+
+- どうしても別チャットを使う場合のみ、記事専用の新しいチャット、または参考用のサムネイル専用チャットを使う
+- 参考用のサムネイル専用ChatGPTチャットURL: ${config.chatgptTargets.thumbnailChatUrl}
+- 使い回しチャットの過去文脈に引っ張られる可能性があるため、標準手順では同じ台本チャット内で生成する
+
 補足:
 - ${paths.thumbnailPromptPath} はCLIが作る初期サムネイル案・参考プロンプトです。
-- サムネイル専用チャットへ貼るのは、台本チャットで本文・資料一式を踏まえて作った ${paths.finalThumbnailPromptPath} です。
+- 実際に主で使うのは、台本チャットで本文・資料一式を踏まえて作った ${paths.finalThumbnailPromptPath} です。
+- 標準手順では、その最終版プロンプトを同じ台本チャット内で使って画像生成します。
 
 ## 完了後に確認するもの
 

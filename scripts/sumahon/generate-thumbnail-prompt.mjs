@@ -8,9 +8,12 @@ export function generateThumbnailPrompt(brief, options = {}) {
     ? "既存キャラクター素材が見つからない場合は、らぼまる・ひまりの特徴を守って新規イラストとして自然に描く。"
     : `既存キャラクター素材を参照する前提。候補:\n${listItems(brief.referenceAssets)}`;
 
-  return `# すまラボ サムネイル生成プロンプト
+  return `# すまラボ 初期サムネイル案・参考プロンプト
 
-${thumbnailChatUrl ? `このプロンプトは、以下のサムネイル専用ChatGPTチャットに貼り付けて使用する。\n\nサムネイル生成用:\n${thumbnailChatUrl}\n` : ""}
+これはCLIが記事素材から作る初期サムネイル案です。
+実運用では、本文・ブログ化用資料一式を作ったあと、同じ台本チャット内で最終版サムネイル画像生成プロンプトを作ります。
+最終版プロンプトは drafts/materials/{slug}.thumbnail-prompt.md に保存し、原則として同じ台本チャット内で画像生成まで行います。
+${thumbnailChatUrl ? `\n参考・例外運用として使うサムネイル専用ChatGPTチャット:\n${thumbnailChatUrl}\n` : ""}
 
 1200x630px、ブログ/YouTubeサムネイル向け、16:9に近い横長構図。
 

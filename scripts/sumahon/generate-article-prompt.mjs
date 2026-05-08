@@ -104,11 +104,16 @@ ${materialsFlow}
 ## サムネイル画像生成プロンプト作成の指示
 
 続いて、上記の記事内容とブログ化用資料一式を踏まえて、すまラボ用サムネイルの画像生成プロンプトを作成してください。
-これはサムネイル専用ChatGPTチャットに貼り付けて画像生成するためのプロンプトです。
+これは原則として、この同じ台本チャット内で画像生成に使うためのプロンプトです。
+必要に応じて、別チャットへ移すために保存しても構いません。
 そのままコピペで使える完成形にしてください。
 
 出力したサムネイル画像生成プロンプトは、${finalThumbnailPromptPath} に保存します。
-${config.paths.thumbnailPromptDir}/${articleBrief.slug}.prompt.md はCLIが作る初期サムネイル案・参考プロンプトです。最終的にサムネイル専用チャットに貼るのは ${finalThumbnailPromptPath} です。
+${config.paths.thumbnailPromptDir}/${articleBrief.slug}.prompt.md はCLIが作る初期サムネイル案・参考プロンプトです。実際に主で使うのは、本文と資料一式を踏まえて台本チャット内で作る ${finalThumbnailPromptPath} です。
+
+サムネイル画像は、原則として同じ台本チャット内で ${finalThumbnailPromptPath} の内容を使って生成してください。生成画像はいったん通常のダウンロード先に保存される想定です。あとで public/images/thumbnails/${articleBrief.slug}.png などへ移動・リネームします。
+
+どうしても別チャットを使う場合は、使い回しの文脈に引っ張られないよう、その記事専用の新しいチャットを優先してください。サムネイル専用チャットは必要時の参考・例外運用です。
 
 サムネイル画像生成プロンプトには以下を含めてください。
 

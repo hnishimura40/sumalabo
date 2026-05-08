@@ -78,13 +78,14 @@ async function main() {
     handoffPath: handoffPaths.handoffPath,
     chromeStepsPath: handoffPaths.chromeStepsPath,
     articleProjectUrl: config.chatgptTargets.articleProjectUrl,
-    thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
+    thumbnailChatUrl: `${config.chatgptTargets.thumbnailChatUrl} (参考・例外運用。標準手順では同じ台本チャット内で生成)`,
     browser: config.browserPolicy.useBrowser,
     doNotUse: config.browserPolicy.doNotUse,
     refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
     materialsReminder: "最終稿本文とは別に、ブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存してください。本文ファイルと混ぜないでください。",
-    thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存してからサムネイル専用チャットへ貼ります。",
-    nextAction: "Chromeでhandoff手順に沿ってChatGPT 5.5へpromptを貼り付ける。Edgeは使わない。最終稿を drafts/generated、資料一式を drafts/materials、最終版サムネイルプロンプトを drafts/materials/*.thumbnail-prompt.md に保存する。",
+    thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。標準手順では同じ台本チャット内で画像生成まで行います。",
+    thumbnailImageReminder: "生成画像はいったん通常のダウンロード先に保存される想定です。後で public/images/thumbnails/ へ移動・リネームしてください。",
+    nextAction: "Chromeでhandoff手順に沿ってChatGPT 5.5へpromptを貼り付ける。Edgeは使わない。最終稿を drafts/generated、資料一式と最終版サムネイルプロンプトを drafts/materials に保存し、同じ台本チャット内でサムネイル画像を生成する。",
   }, null, 2));
 }
 
