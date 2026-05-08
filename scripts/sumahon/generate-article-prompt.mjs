@@ -1,4 +1,4 @@
-import { generateRefinementFlowMarkdown } from "./generate-handoff.mjs";
+import { generateMaterialsFlowMarkdown, generateRefinementFlowMarkdown } from "./generate-handoff.mjs";
 
 function listItems(items = []) {
   return items.map((item) => `- ${item}`).join("\n");
@@ -11,7 +11,9 @@ function linkItems(items = []) {
 export function generateArticlePrompt({ articleBrief, thumbnailBrief, config }) {
   const articleProjectUrl = config.chatgptTargets.articleProjectUrl;
   const generatedDraftPath = `${config.paths.generatedDraftDir}/${articleBrief.slug}.md`;
+  const materialsDraftPath = `${config.paths.materialsDraftDir}/${articleBrief.slug}.materials.md`;
   const refinementFlow = generateRefinementFlowMarkdown({ generatedDraftPath });
+  const materialsFlow = generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDraftPath });
 
   return `# すまラボ記事本文生成プロンプト
 
@@ -85,6 +87,8 @@ ${listItems(articleBrief.cautions)}
 
 ${refinementFlow}
 
+${materialsFlow}
+
 ## 最終稿の保存ルール
 
 - 初稿をそのまま保存しない
@@ -92,5 +96,8 @@ ${refinementFlow}
 - 同じChatGPTチャット内でチェックと修正を行う
 - 最後に「最終稿として、ブログに貼り付ける本文だけを全文で再出力してください」と依頼する
 - その最終稿だけを ${generatedDraftPath} に保存する
+- 続けて、ブログ化用の資料一式を出力してもらい、${materialsDraftPath} に保存する
+- 本文ファイルと資料ファイルを混ぜない
+- メタ情報は本文には入れず、資料側にだけ入れる
 `;
 }

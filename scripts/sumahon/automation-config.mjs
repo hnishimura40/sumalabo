@@ -15,6 +15,7 @@ const defaultConfig = {
     thumbnailPromptDir: "logs/thumbnail",
     handoffDir: "logs/handoff",
     generatedDraftDir: "drafts/generated",
+    materialsDraftDir: "drafts/materials",
     thumbnailOutputDir: "public/images/thumbnails",
   },
 };
