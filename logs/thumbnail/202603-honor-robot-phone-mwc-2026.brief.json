@@ -1,0 +1,56 @@
+{
+  "slug": "202603-honor-robot-phone-mwc-2026",
+  "articleTitle": "変形するスマホ「Honor Robot Phone」年内発売へ。背面…とは？普通の人向けに要点を整理",
+  "category": "ニュースをかみくだく",
+  "articleType": "news",
+  "coreIdea": "AIニュースの細かなスペック紹介ではなく、「普通の人が今知っておくと判断しやすい変化」を1枚で見せる。",
+  "thumbnailMood": "近未来 / 不思議 / やさしい整理",
+  "mainSubject": "AI機能や新しいデバイスの変化を象徴するスマホ画面・小さなAIアイコン",
+  "characterUse": {
+    "labomaru": "新しい技術を指し示す案内役。小さくても視線誘導になる配置。",
+    "himari": "新機能を見て少し驚く読者代表。大きく出しすぎず、疑問の入口にする。",
+    "note": "必ず2人固定にしない。ニュースの主役を中心にし、キャラクターは理解補助にする。"
+  },
+  "visualMotifs": [
+    "AIアイコン",
+    "スマホ画面",
+    "吹き出し",
+    "小さな回路モチーフ",
+    "大きな短文見出し",
+    "ミント/ティール系アクセント",
+    "チェックマーク",
+    "やわらかい光"
+  ],
+  "headlineIdeas": [
+    "変形するスマホHonor Robo…って何？",
+    "AIニュースを整理",
+    "普通の人はここだけ確認"
+  ],
+  "sublineIdeas": [
+    "何が変わるのかをやさしく解説",
+    "買う・待つ・様子見の判断材料に",
+    "AIの話題をかみくだく"
+  ],
+  "avoid": [
+    "実在企業ロゴ",
+    "元記事画像コピー",
+    "文字詰め込み",
+    "毎回同じ構図",
+    "煽りすぎる表現",
+    "細かすぎるスペック表現"
+  ],
+  "referenceAssets": [
+    "public/images/characters/duo_guide_half.webp",
+    "public/images/characters/duo_talk_half.webp",
+    "public/images/characters/himari_device_half.webp",
+    "public/images/characters/himari_question_icon.webp",
+    "public/images/characters/labomaru_normal_icon.webp",
+    "public/images/characters/labomaru_chart_icon.webp",
+    "public/images/characters/labomaru_worried_icon.webp",
+    "assets/characters/full/himari_device_full.webp",
+    "assets/characters/full/labomaru_normal_full.webp",
+    "assets/characters/half/duo_talk_half.webp",
+    "assets/characters/half/duo_guide_half.webp"
+  ],
+  "referenceAssetsMissing": false
+}
