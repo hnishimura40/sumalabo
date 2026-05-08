@@ -3,10 +3,12 @@ import path from "node:path";
 import { fetchSource } from "../sumahon/fetch-source.mjs";
 import { classifyTopic } from "../sumahon/classify-topic.mjs";
 import { generateExplainer } from "../sumahon/generate-explainer.mjs";
+import { generateThumbnailBrief } from "../sumahon/generate-thumbnail-brief.mjs";
+import { generateThumbnailPrompt } from "../sumahon/generate-thumbnail-prompt.mjs";
 import { reviewArticle } from "../sumahon/review-article.mjs";
 import { reviseArticle } from "../sumahon/revise-article.mjs";
 import { writeMdx } from "../sumahon/write-mdx.mjs";
-import { commitAndPushPreview, createPreviewBranch, getCurrentBranch } from "../sumahon/push-preview.mjs";
+import { assertNoTrackedChanges, commitAndPushPreview, createPreviewBranch, getCurrentBranch } from "../sumahon/push-preview.mjs";
 import {
   assertSumahonUrl,
   parseArgs,
@@ -16,6 +18,7 @@ import {
   todayJst,
   uniqueSlug,
   writeJson,
+  writeText,
 } from "../sumahon/utils.mjs";
 
 async function updateAutomationData({ sourceUrl, classification, slug, generated }) {
@@ -63,6 +66,7 @@ async function main() {
 
   console.log(`Current branch: ${currentBranch}`);
   console.log(`Preview branch: ${branchName}`);
+  await assertNoTrackedChanges();
 
   const source = await fetchSource(sourceUrl);
   const classification = classifyTopic(source);
@@ -71,6 +75,8 @@ async function main() {
   const revision = reviseArticle({ mdx: generated.mdx, review: initialReview });
   const finalGenerated = { ...generated, mdx: revision.mdx };
   const finalReview = reviewArticle({ mdx: revision.mdx, source, generated: finalGenerated });
+  const thumbnailBrief = generateThumbnailBrief({ source, classification, generated: finalGenerated });
+  const thumbnailPrompt = generateThumbnailPrompt(thumbnailBrief);
 
   await createPreviewBranch(branchName);
 
@@ -81,6 +87,10 @@ async function main() {
   const finalReviewPath = path.join("logs", "review", `${slug}.final.json`);
   const factcheckPath = path.join("logs", "factcheck", `${slug}.json`);
   const previewLogPath = path.join("logs", "preview", `${slug}.json`);
+  const thumbnailBriefPath = path.join("logs", "thumbnail", `${slug}.brief.json`);
+  const thumbnailPromptPath = path.join("logs", "thumbnail", `${slug}.prompt.md`);
+  const humanReviewRequired = !finalReview.publishable || finalReview.findings.length > 0;
+  const doNotPublish = !finalReview.publishable;
 
   await writeJson(sourceLogPath, {
     sourceMedia: source.sourceMedia,
@@ -93,6 +103,8 @@ async function main() {
   });
   await writeJson(initialReviewPath, initialReview);
   await writeJson(finalReviewPath, finalReview);
+  await writeJson(thumbnailBriefPath, thumbnailBrief);
+  await writeText(thumbnailPromptPath, thumbnailPrompt);
   await writeJson(factcheckPath, {
     checkedAt: new Date().toISOString(),
     sourceUrl,
@@ -104,6 +116,23 @@ async function main() {
     blockingRisk: !finalReview.publishable,
     provisionalDecision: finalReview.provisionalDecision,
   });
+  const automationPaths = await updateAutomationData({ sourceUrl, classification, slug, generated });
+
+  const generatedFiles = [
+    mdxPath,
+    sourceLogPath,
+    initialReviewPath,
+    finalReviewPath,
+    thumbnailBriefPath,
+    thumbnailPromptPath,
+    factcheckPath,
+    previewLogPath,
+    ...automationPaths,
+  ];
+
+  console.log("Running build...");
+  await runCommand(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"]);
+
   await writeJson(previewLogPath, {
     branchName,
     articlePath: mdxPath,
@@ -114,33 +143,31 @@ async function main() {
       "/categories/news/",
       "/",
     ],
+    publishable: finalReview.publishable,
+    provisionalDecision: finalReview.provisionalDecision,
+    humanReviewRequired,
+    doNotPublish,
+    previewCreated: true,
+    previewPolicy: "buildが成功した記事は、本番公開可否に関係なくCloudflare Pages Previewで人間確認する。",
+    encodingNote: "PowerShellでJSONを確認する場合は Get-Content -Encoding UTF8 を推奨。",
     thumbnailPrompt: generated.thumbnailPrompt,
+    thumbnailBriefPath,
+    thumbnailPromptPath,
+    thumbnailHeadlineIdeas: thumbnailBrief.headlineIdeas,
+    thumbnailSublineIdeas: thumbnailBrief.sublineIdeas,
+    thumbnailCoreIdea: thumbnailBrief.coreIdea,
     xPostDraft: generated.xPostDraft,
   });
-  const automationPaths = await updateAutomationData({ sourceUrl, classification, slug, generated });
-
-  const generatedFiles = [
-    mdxPath,
-    sourceLogPath,
-    initialReviewPath,
-    finalReviewPath,
-    factcheckPath,
-    previewLogPath,
-    ...automationPaths,
-  ];
-
-  console.log("Running build...");
-  await runCommand(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"]);
 
   if (!finalReview.publishable) {
-    console.log("Build succeeded, but review marked this article as not publishable. Skipping commit/push.");
-  } else {
-    await commitAndPushPreview({
-      files: generatedFiles,
-      message: "feat(article): add preview draft from sumahon topic",
-      branchName,
-    });
+    console.log("Build succeeded. Review marked this article as not publishable, but preview push will continue for human review.");
   }
+
+  await commitAndPushPreview({
+    files: generatedFiles,
+    message: "feat(article): add preview draft from sumahon topic",
+    branchName,
+  });
 
   console.log(JSON.stringify({
     sourceUrl,
@@ -154,8 +181,21 @@ async function main() {
       finalReviewPath,
       factcheckPath,
       previewLogPath,
+      thumbnailBriefPath,
+      thumbnailPromptPath,
+    },
+    thumbnail: {
+      headlineIdeas: thumbnailBrief.headlineIdeas,
+      sublineIdeas: thumbnailBrief.sublineIdeas,
+      coreIdea: thumbnailBrief.coreIdea,
+      briefPath: thumbnailBriefPath,
+      promptPath: thumbnailPromptPath,
     },
     branchName,
+    previewCreated: true,
+    publishable: finalReview.publishable,
+    humanReviewRequired,
+    doNotPublish,
     provisionalDecision: finalReview.provisionalDecision,
     publishAt: generated.publishAt,
     updated: todayJst(),

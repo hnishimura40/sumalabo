@@ -32,6 +32,48 @@ function makeXPost(title) {
   return `${title}\n\n何が話題なのか、普通の人にはどう関係するのかをすまラボ向けに整理しました。\n#すまラボ #スマホ #AI #ガジェット`;
 }
 
+function makeReaderPointItems(topicCategory) {
+  return [
+    `これは、${topicCategory}分野で新しい動きが出ていることを知るためのニュースです。`,
+    "普通の人は、今すぐ行動が必要か、将来の選び方に関係する話かを分けて見ると安心です。",
+    "購入や契約に関わる場合は、価格・発売時期・日本対応・保証を公式情報で確認したいところです。",
+  ];
+}
+
+function makeTopicSummaryItems(topicCategory) {
+  const categoryMap = {
+    AI: [
+      "AI機能やAIデバイスの使い方が、少しずつ日常のスマホ利用に近づいている話です。",
+      "便利そうに見える一方で、日本対応、対応機種、料金、プライバシー面は確認が必要です。",
+    ],
+    iPhone: [
+      "iPhone選びやApple製品の使い方に関係する可能性がある話題です。",
+      "未発表情報や報道ベースの内容が含まれる場合は、公式発表まで距離を置いて見たいところです。",
+    ],
+    Android: [
+      "Androidスマホの機能、価格帯、メーカーごとの方向性を見る材料になる話題です。",
+      "具体的な発売時期や日本展開は、公式情報で確認してから判断するのが安全です。",
+    ],
+    通信: [
+      "スマホ回線、料金、乗り換え、通信サービスの選び方に関係する可能性があります。",
+      "キャンペーンや料金条件は変わりやすいため、最新条件の確認が前提です。",
+    ],
+    ガジェット: [
+      "スマホ周辺機器や新しいデバイスの選び方に関係する話題です。",
+      "スペックだけでなく、日本での販売、保証、安全性、使い勝手も合わせて見たいところです。",
+    ],
+    ITニュース: [
+      "ITサービスやAI活用の流れを知るうえで参考になる話題です。",
+      "一般ユーザーに関係するかは、料金、対応環境、実際の使いやすさまで見て判断したいところです。",
+    ],
+  };
+
+  return categoryMap[topicCategory] || [
+    "スマホ・AI・ガジェットまわりの動きを知るための話題です。",
+    "自分に関係するかどうかは、価格、対応環境、日本展開、使い道を分けて見ると判断しやすくなります。",
+  ];
+}
+
 export function generateExplainer({ source, classification, slug }) {
   const title = makeTitle(source.sourceTitle);
   const description = makeDescription(source.sourceTitle, classification.topicCategory);
@@ -43,12 +85,10 @@ export function generateExplainer({ source, classification, slug }) {
     .filter(Boolean)
     .slice(0, 3);
 
-  const keyPointItems = source.keyPoints
-    .slice(0, 4)
+  const keyPointItems = makeReaderPointItems(classification.topicCategory)
     .map((point) => `    <li>${point}</li>`)
     .join("\n");
-  const sourceMemoItems = source.keyPoints
-    .slice(0, 5)
+  const topicSummaryItems = makeTopicSummaryItems(classification.topicCategory)
     .map((point) => `- ${point}`)
     .join("\n");
   const links = relatedLinks
@@ -85,7 +125,7 @@ publishAt: "${publishAt}"
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
 import CharacterGuideCard from "../../src/components/characters/CharacterGuideCard.astro";
 
-${source.sourceTitle} というニュースが話題になっています。
+${classification.topicCategory}まわりで、新しいニュースが出ています。
 
 ただ、スマホ・AI・ガジェットのニュースは、専門用語やメーカー事情が多く、そのままだと「結局、自分に関係あるの？」が見えにくくなりがちです。
 
@@ -111,9 +151,9 @@ ${keyPointItems}
 
 ## 何が話題なのか
 
-今回の話題は、元ニュースでは次のようなポイントとして紹介されています。
+今回の話題は、すまラボ読者向けには次のように見ると分かりやすいです。
 
-${sourceMemoItems}
+${topicSummaryItems}
 
 ここでは、元記事の細かな表現をそのまま追うのではなく、すまラボ読者が判断しやすいように「何の話か」「なぜ話題か」「どこを確認すべきか」に分けて見ていきます。
 

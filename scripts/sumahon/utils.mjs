@@ -119,6 +119,11 @@ export async function writeJson(filePath, data) {
   await writeFile(filePath, `${JSON.stringify(data, null, 2)}\n`, "utf-8");
 }
 
+export async function writeText(filePath, data) {
+  await ensureDir(filePath);
+  await writeFile(filePath, data.endsWith("\n") ? data : `${data}\n`, "utf-8");
+}
+
 export async function readJson(filePath, fallback) {
   try {
     return JSON.parse(await readFile(filePath, "utf-8"));
