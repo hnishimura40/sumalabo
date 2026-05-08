@@ -2,7 +2,11 @@
 import path from "node:path";
 import { fetchSource } from "../sumahon/fetch-source.mjs";
 import { classifyTopic } from "../sumahon/classify-topic.mjs";
+import { loadAutomationConfig } from "../sumahon/automation-config.mjs";
+import { generateArticleBrief } from "../sumahon/generate-article-brief.mjs";
+import { generateArticlePrompt } from "../sumahon/generate-article-prompt.mjs";
 import { generateExplainer } from "../sumahon/generate-explainer.mjs";
+import { buildHandoffPaths, generateChromeStepsMarkdown, generateHandoffMarkdown } from "../sumahon/generate-handoff.mjs";
 import { generateThumbnailBrief } from "../sumahon/generate-thumbnail-brief.mjs";
 import { generateThumbnailPrompt } from "../sumahon/generate-thumbnail-prompt.mjs";
 import { reviewArticle } from "../sumahon/review-article.mjs";
@@ -59,6 +63,7 @@ function makeBranchName(slug) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const sourceUrl = assertSumahonUrl(args.url);
+  const config = await loadAutomationConfig();
   const currentBranch = await getCurrentBranch();
   const baseSlug = slugifyFromUrl(sourceUrl, "sumahon-topic");
   const slug = await uniqueSlug(baseSlug);
@@ -75,8 +80,15 @@ async function main() {
   const revision = reviseArticle({ mdx: generated.mdx, review: initialReview });
   const finalGenerated = { ...generated, mdx: revision.mdx };
   const finalReview = reviewArticle({ mdx: revision.mdx, source, generated: finalGenerated });
+  const articleBrief = generateArticleBrief({ source, classification, generated: finalGenerated });
   const thumbnailBrief = generateThumbnailBrief({ source, classification, generated: finalGenerated });
-  const thumbnailPrompt = generateThumbnailPrompt(thumbnailBrief);
+  const thumbnailPrompt = generateThumbnailPrompt(thumbnailBrief, {
+    thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
+  });
+  const handoffPaths = buildHandoffPaths({ slug, config });
+  const articlePrompt = generateArticlePrompt({ articleBrief, thumbnailBrief, config });
+  const handoffMarkdown = generateHandoffMarkdown({ source, slug, paths: handoffPaths, config });
+  const chromeStepsMarkdown = generateChromeStepsMarkdown({ slug, paths: handoffPaths, config });
 
   await createPreviewBranch(branchName);
 
@@ -87,8 +99,12 @@ async function main() {
   const finalReviewPath = path.join("logs", "review", `${slug}.final.json`);
   const factcheckPath = path.join("logs", "factcheck", `${slug}.json`);
   const previewLogPath = path.join("logs", "preview", `${slug}.json`);
-  const thumbnailBriefPath = path.join("logs", "thumbnail", `${slug}.brief.json`);
-  const thumbnailPromptPath = path.join("logs", "thumbnail", `${slug}.prompt.md`);
+  const articleBriefPath = handoffPaths.articleBriefPath;
+  const articlePromptPath = handoffPaths.articlePromptPath;
+  const thumbnailBriefPath = handoffPaths.thumbnailBriefPath;
+  const thumbnailPromptPath = handoffPaths.thumbnailPromptPath;
+  const handoffPath = handoffPaths.handoffPath;
+  const chromeStepsPath = handoffPaths.chromeStepsPath;
   const humanReviewRequired = !finalReview.publishable || finalReview.findings.length > 0;
   const doNotPublish = !finalReview.publishable;
 
@@ -103,8 +119,12 @@ async function main() {
   });
   await writeJson(initialReviewPath, initialReview);
   await writeJson(finalReviewPath, finalReview);
+  await writeJson(articleBriefPath, articleBrief);
+  await writeText(articlePromptPath, articlePrompt);
   await writeJson(thumbnailBriefPath, thumbnailBrief);
   await writeText(thumbnailPromptPath, thumbnailPrompt);
+  await writeText(handoffPath, handoffMarkdown);
+  await writeText(chromeStepsPath, chromeStepsMarkdown);
   await writeJson(factcheckPath, {
     checkedAt: new Date().toISOString(),
     sourceUrl,
@@ -123,8 +143,12 @@ async function main() {
     sourceLogPath,
     initialReviewPath,
     finalReviewPath,
+    articleBriefPath,
+    articlePromptPath,
     thumbnailBriefPath,
     thumbnailPromptPath,
+    handoffPath,
+    chromeStepsPath,
     factcheckPath,
     previewLogPath,
     ...automationPaths,
@@ -156,6 +180,18 @@ async function main() {
     thumbnailHeadlineIdeas: thumbnailBrief.headlineIdeas,
     thumbnailSublineIdeas: thumbnailBrief.sublineIdeas,
     thumbnailCoreIdea: thumbnailBrief.coreIdea,
+    chatgptHandoff: {
+      articleProjectUrl: config.chatgptTargets.articleProjectUrl,
+      articlePromptPath,
+      generatedDraftPath: handoffPaths.generatedDraftPath,
+      thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
+      thumbnailPromptPath,
+      thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
+      handoffPath,
+      chromeStepsPath,
+      browser: config.browserPolicy.useBrowser,
+      doNotUse: config.browserPolicy.doNotUse,
+    },
     xPostDraft: generated.xPostDraft,
   });
 
@@ -181,8 +217,24 @@ async function main() {
       finalReviewPath,
       factcheckPath,
       previewLogPath,
+      articleBriefPath,
+      articlePromptPath,
       thumbnailBriefPath,
       thumbnailPromptPath,
+      handoffPath,
+      chromeStepsPath,
+    },
+    chatgptHandoff: {
+      articleProjectUrl: config.chatgptTargets.articleProjectUrl,
+      articlePromptPath,
+      generatedDraftPath: handoffPaths.generatedDraftPath,
+      thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
+      thumbnailPromptPath,
+      thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
+      handoffPath,
+      chromeStepsPath,
+      browser: config.browserPolicy.useBrowser,
+      doNotUse: config.browserPolicy.doNotUse,
     },
     thumbnail: {
       headlineIdeas: thumbnailBrief.headlineIdeas,

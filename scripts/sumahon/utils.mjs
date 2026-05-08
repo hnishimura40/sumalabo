@@ -28,9 +28,9 @@ export function parseArgs(argv) {
   return args;
 }
 
-export function assertSumahonUrl(rawUrl) {
+export function assertSumahonUrl(rawUrl, commandName = "article:from-sumahon") {
   if (!rawUrl) {
-    throw new Error('Usage: npm run article:from-sumahon -- --url "https://smhn.info/..."');
+    throw new Error(`Usage: npm run ${commandName} -- --url "https://smhn.info/..."`);
   }
 
   const url = new URL(rawUrl);
