@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-05-08T08:51:36.472Z",
+  "wordCountApprox": 4889,
+  "h2Count": 0,
+  "presentTopics": [
+    "先に結論",
+    "何が起きたのか",
+    "何が新しいのか",
+    "難しいポイントのかみくだき",
+    "普通の人にどう関係するのか",
+    "まだ分からないこと",
+    "すまラボ的な見方",
+    "まとめ"
+  ],
+  "missingTopics": [],
+  "issues": [
+    {
+      "code": "no_headings",
+      "severity": "major",
+      "message": "見出しがほぼありません。"
+    },
+    {
+      "code": "thumbnail_missing",
+      "severity": "warning",
+      "message": "サムネイル画像が未配置です。frontmatter thumbnailは空にしています。"
+    }
+  ],
+  "publishable": false,
+  "provisionalDecision": "要修正",
+  "sourceUrl": "https://smhn.info/202605-github-copilot-shifts-to-token-based-pricing-june-1",
+  "articleTitle": "GitHub Copilot、6月1日からトークン従量課金へ移行とは？普通の人向けに要点を整理",
+  "generatedDraftPath": "drafts/generated/202605-github-copilot-shifts-to-token-based-pricing-june-1.md",
+  "mdxPath": "content\\articles\\202605-github-copilot-shifts-to-token-based-pricing-june-1.mdx"
+}

@@ -1,0 +1,22 @@
+{
+  "branchName": "auto/imported-202605-github-copilot-shifts-to-token-based-pric-202605080851",
+  "articlePath": "content\\articles\\202605-github-copilot-shifts-to-token-based-pricing-june-1.mdx",
+  "generatedDraftPath": "drafts/generated/202605-github-copilot-shifts-to-token-based-pricing-june-1.md",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/imported-202605-github-copilot-shifts-to-token-based-pric-202605080851.",
+  "checkUrls": [
+    "/articles/202605-github-copilot-shifts-to-token-based-pricing-june-1/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": false,
+  "provisionalDecision": "要修正",
+  "humanReviewRequired": true,
+  "doNotPublish": true,
+  "previewCreated": true,
+  "thumbnail": "",
+  "thumbnailExists": false,
+  "thumbnailSourcePath": "public\\images\\thumbnails\\202605-github-copilot-shifts-to-token-based-pricing-june-1.png",
+  "thumbnailBriefPath": "logs\\thumbnail\\202605-github-copilot-shifts-to-token-based-pricing-june-1.brief.json",
+  "thumbnailPromptPath": "logs\\thumbnail\\202605-github-copilot-shifts-to-token-based-pricing-june-1.prompt.md"
+}
