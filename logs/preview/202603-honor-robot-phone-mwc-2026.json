@@ -1,0 +1,20 @@
+{
+  "branchName": "auto/sumahon-202603-honor-robot-phone-mwc-2026-202605080611",
+  "articlePath": "content\\articles\\202603-honor-robot-phone-mwc-2026.mdx",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/sumahon-202603-honor-robot-phone-mwc-2026-202605080611.",
+  "checkUrls": [
+    "/articles/202603-honor-robot-phone-mwc-2026/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": false,
+  "doNotPublish": false,
+  "previewCreated": true,
+  "previewPolicy": "buildが成功した記事は、本番公開可否に関係なくCloudflare Pages Previewで人間確認する。",
+  "encodingNote": "PowerShellでJSONを確認する場合は Get-Content -Encoding UTF8 を推奨。",
+  "thumbnailPrompt": "1200x675、16:9、すまラボのミント/ティール系デザイン。\nテーマ: 変形するスマホ「Honor Robot Phone」年内発売へ。背面…とは？普通の人向けに要点を整理\n普通の人向けにAIニュースを整理するイメージ。\nひまりとらぼまるは控えめに配置し、文字は大きく読みやすく。\n煽りすぎず、ニュース解説・判断材料の雰囲気にする。",
+  "xPostDraft": "変形するスマホ「Honor Robot Phone」年内発売へ。背面…とは？普通の人向けに要点を整理\n\n何が話題なのか、普通の人にはどう関係するのかをすまラボ向けに整理しました。\n#すまラボ #スマホ #AI #ガジェット"
+}
