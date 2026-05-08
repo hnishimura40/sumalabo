@@ -70,6 +70,7 @@ async function main() {
     articleBriefPath: handoffPaths.articleBriefPath,
     articlePromptPath: handoffPaths.articlePromptPath,
     generatedDraftPath: handoffPaths.generatedDraftPath,
+    materialsDraftPath: handoffPaths.materialsDraftPath,
     thumbnailBriefPath: handoffPaths.thumbnailBriefPath,
     thumbnailPromptPath: handoffPaths.thumbnailPromptPath,
     thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
@@ -80,7 +81,8 @@ async function main() {
     browser: config.browserPolicy.useBrowser,
     doNotUse: config.browserPolicy.doNotUse,
     refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
-    nextAction: "Chromeでhandoff手順に沿ってChatGPT 5.5へpromptを貼り付ける。Edgeは使わない。初稿は保存せず、チェック・修正後の最終稿だけを drafts/generated に保存する。",
+    materialsReminder: "最終稿本文とは別に、ブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存してください。本文ファイルと混ぜないでください。",
+    nextAction: "Chromeでhandoff手順に沿ってChatGPT 5.5へpromptを貼り付ける。Edgeは使わない。初稿は保存せず、チェック・修正後の最終稿だけを drafts/generated に保存し、続けて資料一式を drafts/materials に保存する。",
   }, null, 2));
 }
 

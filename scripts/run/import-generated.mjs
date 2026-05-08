@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { existsSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { importGeneratedArticle } from "../sumahon/import-generated-article.mjs";
 import { writeMdx } from "../sumahon/write-mdx.mjs";
@@ -14,10 +15,14 @@ import {
 
 function assertRequired(value, name) {
   if (!value || value === true) {
-    throw new Error(`Usage: npm run article:import-generated -- --slug "xxxxx" --file "drafts/generated/xxxxx.md"`);
+    throw new Error(`Usage: npm run article:import-generated -- --slug "xxxxx" --file "drafts/generated/xxxxx.md" [--materials "drafts/materials/xxxxx.materials.md"]`);
   }
 
   return String(value);
+}
+
+function optionalPath(value) {
+  return value && value !== true ? String(value) : "";
 }
 
 function makeBranchName(slug) {
@@ -29,9 +34,14 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const slug = assertRequired(args.slug, "slug");
   const filePath = assertRequired(args.file, "file");
+  const materialsPath = optionalPath(args.materials);
 
   if (!existsSync(filePath)) {
     throw new Error(`Generated draft file was not found: ${filePath}`);
+  }
+
+  if (materialsPath && !existsSync(materialsPath)) {
+    throw new Error(`Materials file was not found: ${materialsPath}`);
   }
 
   const currentBranch = await getCurrentBranch();
@@ -53,6 +63,14 @@ async function main() {
   const articleBrief = await readJson(articleBriefPath, await readJson(legacyArticleBriefPath, null));
   const sourceLog = await readJson(sourceLogPath, null);
   const thumbnailBrief = await readJson(thumbnailBriefPath, null);
+
+  const resolvedMaterialsInfo = materialsPath
+    ? {
+        path: materialsPath,
+        byteLength: Buffer.byteLength(await readFile(materialsPath, "utf-8"), "utf-8"),
+        role: "Claude Codeがブログ記事MDXとして整えるための補助資料。本文には直接混ぜない。",
+      }
+    : null;
 
   if (!articleBrief) {
     throw new Error(`Article brief was not found: ${articleBriefPath}`);
@@ -76,6 +94,7 @@ async function main() {
     sourceUrl: sourceLog?.sourceUrl || articleBrief.sourceUrl,
     articleTitle: imported.title,
     generatedDraftPath: filePath,
+    materials: resolvedMaterialsInfo,
     mdxPath,
   });
   await writeJson(factcheckPath, {
@@ -89,11 +108,13 @@ async function main() {
     ],
     issues: imported.review.issues.filter((issue) => issue.code === "source_respect"),
     provisionalDecision: imported.review.provisionalDecision,
+    materials: resolvedMaterialsInfo,
   });
   await writeJson(previewLogPath, {
     branchName,
     articlePath: mdxPath,
     generatedDraftPath: filePath,
+    materialsPath: resolvedMaterialsInfo?.path || "",
     expectedPreview: `Cloudflare Pages will create a preview deployment for branch ${branchName}.`,
     checkUrls: [
       `/articles/${slug}/`,
@@ -111,6 +132,7 @@ async function main() {
     thumbnailSourcePath: imported.thumbnailPath,
     thumbnailBriefPath,
     thumbnailPromptPath,
+    materials: resolvedMaterialsInfo,
   });
 
   console.log("Running build...");
@@ -134,6 +156,7 @@ async function main() {
     reviewPath,
     factcheckPath,
     previewLogPath,
+    materialsPath: resolvedMaterialsInfo?.path || "",
     branchName,
     commitMessage: `feat(article): import generated draft for ${slug}`,
     publishable: imported.review.publishable,

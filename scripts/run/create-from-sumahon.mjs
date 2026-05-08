@@ -184,6 +184,7 @@ async function main() {
       articleProjectUrl: config.chatgptTargets.articleProjectUrl,
       articlePromptPath,
       generatedDraftPath: handoffPaths.generatedDraftPath,
+      materialsDraftPath: handoffPaths.materialsDraftPath,
       thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
       thumbnailPromptPath,
       thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
@@ -192,6 +193,7 @@ async function main() {
       browser: config.browserPolicy.useBrowser,
       doNotUse: config.browserPolicy.doNotUse,
       refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
+      materialsReminder: "最終稿本文とは別に、ブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存してください。本文ファイルと混ぜないでください。",
     },
     xPostDraft: generated.xPostDraft,
   });
@@ -229,6 +231,7 @@ async function main() {
       articleProjectUrl: config.chatgptTargets.articleProjectUrl,
       articlePromptPath,
       generatedDraftPath: handoffPaths.generatedDraftPath,
+      materialsDraftPath: handoffPaths.materialsDraftPath,
       thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
       thumbnailPromptPath,
       thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
@@ -237,6 +240,7 @@ async function main() {
       browser: config.browserPolicy.useBrowser,
       doNotUse: config.browserPolicy.doNotUse,
       refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
+      materialsReminder: "最終稿本文とは別に、ブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存してください。本文ファイルと混ぜないでください。",
     },
     thumbnail: {
       headlineIdeas: thumbnailBrief.headlineIdeas,

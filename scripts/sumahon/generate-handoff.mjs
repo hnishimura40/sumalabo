@@ -24,11 +24,30 @@ export function generateRefinementFlowMarkdown({ generatedDraftPath } = {}) {
 初稿・途中稿・チェック結果は ${draftPath} には保存しません。必要な場合だけ別メモとして残してください。`;
 }
 
+export function generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDraftPath } = {}) {
+  const generatedPath = generatedDraftPath || "drafts/generated/{slug}.md";
+  const materialsPath = materialsDraftPath || "drafts/materials/{slug}.materials.md";
+
+  return `## ブログ化用の資料一式保存フロー
+
+最終稿本文を出力したあと、同じChatGPTチャットで続けて「ブログ化用の資料一式」を出力してもらいます。
+
+1. 最終稿本文は ${generatedPath} に保存する
+2. 続けて、ブログ化用の資料一式をChatGPTに出力してもらう
+3. 資料一式は ${materialsPath} に保存する
+4. 本文ファイルと資料ファイルを混ぜない
+5. メタ情報は本文には入れず、資料側にだけ入れる
+6. Claude Codeは、本文と資料一式の両方を見てブログ記事MDXとして整える
+
+資料一式には、記事タイトル案、description案、slug案、記事カテゴリ、記事種別、想定読者、この記事の役割、先に結論、見出し構成、要点まとめボックス案、本文で特に大事なポイント、メタ的な内容が残っていないかの確認結果、元記事の趣旨を壊していないかの確認結果、公式発表・報道・予測・未確定情報の整理、ファクトチェック注意点、人間が確認すべきポイント、内部リンク候補、関連記事への導線案、キャラクター会話を入れるならどこが自然か、サムネイルの方向性、サムネイルに入れる短い文字案、X投稿案、Claude Codeへのブログ化指示メモを含めてください。`;
+}
+
 export function buildHandoffPaths({ slug, config }) {
   return {
     articleBriefPath: `${config.paths.articleBriefDir}/${slug}.article.json`,
     articlePromptPath: `${config.paths.articlePromptDir}/${slug}.article.md`,
     generatedDraftPath: `${config.paths.generatedDraftDir}/${slug}.md`,
+    materialsDraftPath: `${config.paths.materialsDraftDir}/${slug}.materials.md`,
     thumbnailBriefPath: `${config.paths.thumbnailPromptDir}/${slug}.brief.json`,
     thumbnailPromptPath: `${config.paths.thumbnailPromptDir}/${slug}.prompt.md`,
     thumbnailOutputPath: `${config.paths.thumbnailOutputDir}/${slug}.png`,
@@ -39,6 +58,10 @@ export function buildHandoffPaths({ slug, config }) {
 
 export function generateHandoffMarkdown({ source, slug, paths, config }) {
   const refinementFlow = generateRefinementFlowMarkdown({ generatedDraftPath: paths.generatedDraftPath });
+  const materialsFlow = generateMaterialsFlowMarkdown({
+    generatedDraftPath: paths.generatedDraftPath,
+    materialsDraftPath: paths.materialsDraftPath,
+  });
 
   return `# ChatGPT 5.5 handoff: ${slug}
 
@@ -53,6 +76,7 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
 - 本文生成用ChatGPTプロジェクトURL: ${config.chatgptTargets.articleProjectUrl}
 - 本文生成用promptファイル: ${paths.articlePromptPath}
 - 生成本文の保存先: ${paths.generatedDraftPath}
+- ブログ化用資料一式の保存先: ${paths.materialsDraftPath}
 
 ## サムネイル生成
 
@@ -74,13 +98,17 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
 3. ChatGPT 5.5で本文の初稿を生成する
 4. 同じチャット内で下記の精錬フローに沿ってチェック・修正する
 5. 最後に最終稿だけを ${paths.generatedDraftPath} に保存する
-6. Chromeでサムネイル生成用ChatGPTチャットを開く
-7. ${paths.thumbnailPromptPath} の内容を貼り付ける
-8. サムネイル画像を生成する
-9. 生成画像を ${paths.thumbnailOutputPath} に保存する
-10. import コマンドでMDX化・サムネイル反映・preview作成へ進む
+6. 続けて、ブログ化用の資料一式をChatGPTに出力してもらう
+7. 資料一式だけを ${paths.materialsDraftPath} に保存する
+8. Chromeでサムネイル生成用ChatGPTチャットを開く
+9. ${paths.thumbnailPromptPath} の内容を貼り付ける
+10. サムネイル画像を生成する
+11. 生成画像を ${paths.thumbnailOutputPath} に保存する
+12. import コマンドでMDX化・サムネイル反映・preview作成へ進む
 
 ${refinementFlow}
+
+${materialsFlow}
 
 ## 追加メモ
 
@@ -88,11 +116,16 @@ ${refinementFlow}
 - OpenAI APIキーやClaude APIキーは不要です。
 - 本文・サムネイルともに、生成後は人間が確認してください。
 - ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。
+- 本文ファイルとブログ化用資料ファイルを混ぜないでください。
 `;
 }
 
 export function generateChromeStepsMarkdown({ slug, paths, config }) {
   const refinementFlow = generateRefinementFlowMarkdown({ generatedDraftPath: paths.generatedDraftPath });
+  const materialsFlow = generateMaterialsFlowMarkdown({
+    generatedDraftPath: paths.generatedDraftPath,
+    materialsDraftPath: paths.materialsDraftPath,
+  });
 
   return `# Chrome操作手順: ${slug}
 
@@ -120,7 +153,15 @@ export function generateChromeStepsMarkdown({ slug, paths, config }) {
 
    ${paths.generatedDraftPath}
 
+7. 続けて、ブログ化用の資料一式をChatGPTに出力してもらう
+
+8. 資料一式だけを以下に保存する
+
+   ${paths.materialsDraftPath}
+
 ${refinementFlow}
+
+${materialsFlow}
 
 ## サムネイル生成
 
@@ -142,6 +183,7 @@ ${refinementFlow}
 
 ${listItems([
     paths.generatedDraftPath,
+    paths.materialsDraftPath,
     paths.thumbnailOutputPath,
     paths.handoffPath,
     paths.chromeStepsPath,
