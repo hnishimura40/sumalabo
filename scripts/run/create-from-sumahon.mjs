@@ -172,7 +172,7 @@ async function main() {
     humanReviewRequired,
     doNotPublish,
     previewCreated: true,
-    previewPolicy: "buildが成功した記事は、本番公開可否に関係なくCloudflare Pages Previewで人間確認する。",
+    previewPolicy: "buildが成功した記事は、本番公開可否に関係なくCloudflare Pages Previewへ送り、最後に人間がファクトチェックと公開判断を行う。",
     encodingNote: "PowerShellでJSONを確認する場合は Get-Content -Encoding UTF8 を推奨。",
     thumbnailPrompt: generated.thumbnailPrompt,
     thumbnailBriefPath,
@@ -186,22 +186,45 @@ async function main() {
       generatedDraftPath: handoffPaths.generatedDraftPath,
       materialsDraftPath: handoffPaths.materialsDraftPath,
       finalThumbnailPromptPath: handoffPaths.finalThumbnailPromptPath,
-      thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
+      thumbnailChatUrl: `${config.chatgptTargets.thumbnailChatUrl} (参考・例外運用。標準手順では同じ台本チャット内で生成)`,
       thumbnailPromptPath,
       thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
       handoffPath,
       chromeStepsPath,
       browser: config.browserPolicy.useBrowser,
       doNotUse: config.browserPolicy.doNotUse,
-      refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
-      materialsReminder: "最終稿本文とは別に、ブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存してください。本文ファイルと混ぜないでください。",
-      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存してからサムネイル専用チャットへ貼ります。",
+      refinementReminder: "ChatGPTの初稿をそのまま保存せず、Claude in Chromeが精錬後の最終稿だけを指定パスへ保存します。",
+      materialsReminder: "最終稿本文とは別に、Claude in Chromeがブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存します。本文ファイルとは混ぜません。",
+      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。標準手順では同じ台本チャット内で画像生成まで行います。",
+      thumbnailImageReminder: "生成画像はいったん通常のダウンロード先に保存される想定です。後で public/images/thumbnails/ へ移動・リネームしてください。",
+      automatedCompleted: [
+        "source取得",
+        "分類",
+        "MDX下書き生成",
+        "review / revise",
+        "npm run build",
+      ],
+      nextClaudeInChrome: [
+        "必要に応じてChatGPT台本チャットで本文・資料・最終版サムネイルプロンプトを再生成する",
+        "ChatGPT回答完了を待ち、全文コピーして指定パスへ保存する",
+        "保存後、ファイル存在と内容の完了を自動確認する",
+      ],
+      nextClaudeCode: [
+        "生成ファイルを読み込み、MDX化・サムネ反映・build・preview pushを実行する",
+      ],
+      humanFinalReview: [
+        "公式情報と矛盾していないか",
+        "未確定情報を断定していないか",
+        "料金・日付・対象プランなどが最新か",
+        "画像・サムネイルに問題がないか",
+        "公開してよいか",
+      ],
     },
     xPostDraft: generated.xPostDraft,
   });
 
   if (!finalReview.publishable) {
-    console.log("Build succeeded. Review marked this article as not publishable, but preview push will continue for human review.");
+    console.log("Build succeeded. Review marked this article as not publishable, but preview push will continue for final human fact-check and publish decision.");
   }
 
   await commitAndPushPreview({
@@ -235,16 +258,39 @@ async function main() {
       generatedDraftPath: handoffPaths.generatedDraftPath,
       materialsDraftPath: handoffPaths.materialsDraftPath,
       finalThumbnailPromptPath: handoffPaths.finalThumbnailPromptPath,
-      thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
+      thumbnailChatUrl: `${config.chatgptTargets.thumbnailChatUrl} (参考・例外運用。標準手順では同じ台本チャット内で生成)`,
       thumbnailPromptPath,
       thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
       handoffPath,
       chromeStepsPath,
       browser: config.browserPolicy.useBrowser,
       doNotUse: config.browserPolicy.doNotUse,
-      refinementReminder: "ChatGPTの初稿をそのまま保存せず、精錬後の最終稿だけを保存してください。",
-      materialsReminder: "最終稿本文とは別に、ブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存してください。本文ファイルと混ぜないでください。",
-      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存してからサムネイル専用チャットへ貼ります。",
+      refinementReminder: "ChatGPTの初稿をそのまま保存せず、Claude in Chromeが精錬後の最終稿だけを指定パスへ保存します。",
+      materialsReminder: "最終稿本文とは別に、Claude in Chromeがブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存します。本文ファイルとは混ぜません。",
+      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。標準手順では同じ台本チャット内で画像生成まで行います。",
+      thumbnailImageReminder: "生成画像はいったん通常のダウンロード先に保存される想定です。後で public/images/thumbnails/ へ移動・リネームしてください。",
+      automatedCompleted: [
+        "source取得",
+        "分類",
+        "MDX下書き生成",
+        "review / revise",
+        "npm run build",
+      ],
+      nextClaudeInChrome: [
+        "必要に応じてChatGPT台本チャットで本文・資料・最終版サムネイルプロンプトを再生成する",
+        "ChatGPT回答完了を待ち、全文コピーして指定パスへ保存する",
+        "保存後、ファイル存在と内容の完了を自動確認する",
+      ],
+      nextClaudeCode: [
+        "生成ファイルを読み込み、MDX化・サムネ反映・build・preview pushを実行する",
+      ],
+      humanFinalReview: [
+        "公式情報と矛盾していないか",
+        "未確定情報を断定していないか",
+        "料金・日付・対象プランなどが最新か",
+        "画像・サムネイルに問題がないか",
+        "公開してよいか",
+      ],
     },
     thumbnail: {
       headlineIdeas: thumbnailBrief.headlineIdeas,
