@@ -18,6 +18,8 @@ const defaultConfig = {
     materialsDraftDir: "drafts/materials",
     finalThumbnailPromptSuffix: ".thumbnail-prompt.md",
     thumbnailOutputDir: "public/images/thumbnails",
+    himariBaseImagePath: "public/images/characters/base/himari-base.png",
+    labomaruBaseImagePath: "public/images/characters/base/labomaru-base.png",
   },
 };
 

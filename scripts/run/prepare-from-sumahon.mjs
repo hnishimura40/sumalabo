@@ -35,10 +35,11 @@ async function main() {
   const generated = generateExplainer({ source, classification, slug });
   const articleBrief = generateArticleBrief({ source, classification, generated });
   const thumbnailBrief = generateThumbnailBrief({ source, classification, generated });
-  const thumbnailPrompt = generateThumbnailPrompt(thumbnailBrief, {
-    thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
-  });
   const handoffPaths = buildHandoffPaths({ slug, config });
+  const thumbnailPrompt = generateThumbnailPrompt(thumbnailBrief, {
+    himariBaseImagePath: handoffPaths.himariBaseImagePath,
+    labomaruBaseImagePath: handoffPaths.labomaruBaseImagePath,
+  });
   const articlePrompt = generateArticlePrompt({ articleBrief, thumbnailBrief, config });
   const handoffMarkdown = generateHandoffMarkdown({ source, slug, paths: handoffPaths, config });
   const chromeStepsMarkdown = generateChromeStepsMarkdown({ slug, paths: handoffPaths, config });
@@ -51,7 +52,7 @@ async function main() {
     sourcePublishedAt: source.sourcePublishedAt,
     detectedAt: new Date().toISOString(),
     keyPoints: source.keyPoints,
-    note: "元記事本文の丸ごと保存はしない。ChatGPT 5.5 handoffのための最小メモのみ保存。",
+    note: "元記事本文を丸ごと保存しない。ChatGPT 5.5 handoffのための最小メモのみ保存。",
   });
   await writeJson(handoffPaths.articleBriefPath, articleBrief);
   await writeText(handoffPaths.articlePromptPath, articlePrompt);
@@ -75,17 +76,19 @@ async function main() {
     thumbnailBriefPath: handoffPaths.thumbnailBriefPath,
     thumbnailPromptPath: handoffPaths.thumbnailPromptPath,
     thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
+    himariBaseImagePath: handoffPaths.himariBaseImagePath,
+    labomaruBaseImagePath: handoffPaths.labomaruBaseImagePath,
     handoffPath: handoffPaths.handoffPath,
     chromeStepsPath: handoffPaths.chromeStepsPath,
     articleProjectUrl: config.chatgptTargets.articleProjectUrl,
-    thumbnailChatUrl: `${config.chatgptTargets.thumbnailChatUrl} (参考・例外運用。標準手順では同じ台本チャット内で生成)`,
     browser: config.browserPolicy.useBrowser,
     doNotUse: config.browserPolicy.doNotUse,
-    refinementReminder: "ChatGPTの初稿をそのまま保存せず、Claude in Chromeが精錬後の最終稿だけを指定パスへ保存します。",
-    materialsReminder: "最終稿本文とは別に、Claude in Chromeがブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存します。本文ファイルとは混ぜません。",
-    thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。標準手順では同じ台本チャット内で画像生成まで行います。",
-    thumbnailImageReminder: "生成画像はいったん通常のダウンロード先に保存される想定です。後で public/images/thumbnails/ へ移動・リネームしてください。",
-    thumbnailRetryPolicy: "サムネイル画像生成でエラーが出た場合は、Claude in Chromeが最大3回まで自動リトライします。1回目・2回目は同じプロンプト、3回目は簡略版プロンプトで再試行します。3回失敗した場合はサムネイル生成失敗・最終確認待ちとして残します。",
+    thumbnailGenerationPolicy: "サムネイル生成は毎回新しいチャットで行う。サムネイル専用チャットは使い回さない。本文生成用チャットとも分ける。",
+    thumbnailBaseImagePolicy: "新しいサムネイル生成チャットで、ひまり・らぼまるのベース絵2枚を毎回アップロードしてから最終版プロンプトを貼る。",
+    thumbnailCompositionPolicy: "ひまり・らぼまるは説明中ではなく、記事内容を理解した後の反応を見せる。毎回同じ「これ何？説明して」構図にしない。",
+    thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案・参考プロンプト。主に使うのは、台本チャットで本文・資料一式を踏まえて作る drafts/materials/{slug}.thumbnail-prompt.md。",
+    thumbnailImageReminder: "生成画像はいったん通常のダウンロード先に保存される想定。後で public/images/thumbnails/{slug}.png へ移動・リネームする。",
+    thumbnailRetryPolicy: "画像生成失敗時は最大3回まで自動リトライ。1回目・2回目は同じプロンプト、3回目は簡略版プロンプト。3回失敗したら最終確認待ちにする。",
     automatedCompleted: [
       "source取得",
       "分類",
@@ -97,19 +100,20 @@ async function main() {
     nextClaudeInChrome: [
       "Chromeで本文生成用ChatGPTプロジェクトを開く。Edgeは使わない",
       "article promptを貼り、ChatGPT回答完了まで待つ",
-      "初稿を精錬し、最終稿だけを全文コピーして drafts/generated へ保存する",
-      "保存後、ファイル存在と本文の完了を自動確認する",
-      "ブログ化用資料一式を生成し、drafts/materials に保存・自動確認する",
-      "最終版サムネイルプロンプトを生成し、drafts/materials/*.thumbnail-prompt.md に保存・自動確認する",
-      "同じ台本チャット内でサムネイル画像を生成し、ダウンロード完了を自動確認する",
-      "画像生成失敗時は最大3回まで自動リトライし、失敗時は最終確認待ちとして記録する",
-      "画像を public/images/thumbnails/ へ移動・リネームする",
+      "初稿を精錬し、最終稿だけを drafts/generated へ保存して自動確認する",
+      "ブログ化用資料一式を drafts/materials へ保存して自動確認する",
+      "最終版サムネイルプロンプトを drafts/materials/*.thumbnail-prompt.md へ保存して自動確認する",
+      "Chromeで新しいサムネイル生成チャットを開く",
+      "ひまり・らぼまるのベース絵2枚をアップロードする",
+      "最終版サムネイルプロンプトを貼って画像生成する",
+      "画像生成失敗時は最大3回まで自動リトライする",
+      "画像をダウンロードし、public/images/thumbnails/ へ移動・リネームする",
     ],
     nextClaudeCode: [
       "article:import-generated でMDX化する",
       "サムネイルが配置済みなら記事frontmatterへ反映する",
       "review / factcheck / previewログを保存する",
-      "npm run build を実行する",
+      "npm run buildを実行する",
       "build成功後にpreviewブランチへcommit / pushする",
     ],
     humanFinalReview: [

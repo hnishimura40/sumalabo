@@ -1,4 +1,8 @@
-import { generateMaterialsFlowMarkdown, generateRefinementFlowMarkdown, generateThumbnailRetryFlowMarkdown } from "./generate-handoff.mjs";
+import {
+  generateMaterialsFlowMarkdown,
+  generateRefinementFlowMarkdown,
+  generateThumbnailRetryFlowMarkdown,
+} from "./generate-handoff.mjs";
 
 function listItems(items = []) {
   return items.map((item) => `- ${item}`).join("\n");
@@ -14,13 +18,22 @@ export function generateArticlePrompt({ articleBrief, thumbnailBrief, config }) 
   const materialsDraftPath = `${config.paths.materialsDraftDir}/${articleBrief.slug}.materials.md`;
   const finalThumbnailPromptPath = `${config.paths.materialsDraftDir}/${articleBrief.slug}${config.paths.finalThumbnailPromptSuffix}`;
   const thumbnailOutputPath = `${config.paths.thumbnailOutputDir}/${articleBrief.slug}.png`;
+  const himariBaseImagePath = config.paths.himariBaseImagePath || "public/images/characters/base/himari-base.png";
+  const labomaruBaseImagePath = config.paths.labomaruBaseImagePath || "public/images/characters/base/labomaru-base.png";
   const refinementFlow = generateRefinementFlowMarkdown({ generatedDraftPath });
-  const materialsFlow = generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDraftPath, finalThumbnailPromptPath });
+  const materialsFlow = generateMaterialsFlowMarkdown({
+    generatedDraftPath,
+    materialsDraftPath,
+    finalThumbnailPromptPath,
+    himariBaseImagePath,
+    labomaruBaseImagePath,
+    thumbnailOutputPath,
+  });
   const thumbnailRetryFlow = generateThumbnailRetryFlowMarkdown({ thumbnailOutputPath });
 
   return `# すまラボ記事本文生成プロンプト
 
-このプロンプトは、以下のChatGPTプロジェクトに貼り付けて使用する。
+このプロンプトは、以下のChatGPTプロジェクトに貼り付けて使用します。
 
 本文・台本生成用:
 ${articleProjectUrl}
@@ -68,11 +81,11 @@ ${listItems(articleBrief.suggestedStructure)}
 
 ${linkItems(articleBrief.internalLinkCandidates)}
 
-## サムネイルとの連携メモ
+## サムネイル連携メモ
 
 - サムネイルの芯: ${thumbnailBrief.coreIdea}
-- サムネイル見出し候補: ${thumbnailBrief.headlineIdeas.join(" / ")}
-- サムネイル補足文候補: ${thumbnailBrief.sublineIdeas.join(" / ")}
+- 見出し候補: ${thumbnailBrief.headlineIdeas.join(" / ")}
+- 補足文候補: ${thumbnailBrief.sublineIdeas.join(" / ")}
 
 ## 必ず守ること
 
@@ -92,7 +105,7 @@ ${refinementFlow}
 
 ${materialsFlow}
 
-## 最終稿の保存ルール
+## 最終稿本文の保存ルール
 
 - 初稿をそのまま保存しない
 - 初稿・途中稿・チェック結果は ${generatedDraftPath} には保存しない
@@ -101,31 +114,50 @@ ${materialsFlow}
 - 最後に「最終稿として、ブログに貼り付ける本文だけを全文で再出力してください」と依頼する
 - 回答完了後、Claude in Chromeがその最終稿だけを全文コピーして ${generatedDraftPath} に保存する
 - 保存後、ファイルが存在し、本文が途中で切れていないことを自動確認する
-- 続けて、ブログ化用の資料一式を出力してもらい、回答完了後に全文コピーする
-- Claude in Chromeがブログ化用資料一式を ${materialsDraftPath} に保存する
-- 保存後、ファイルが存在し、資料が途中で切れていないことを自動確認する
-- 本文ファイルと資料ファイルを混ぜない
-- メタ情報は本文には入れず、資料側にだけ入れる
 
-## サムネイル画像生成プロンプト作成の指示
+## ブログ化用資料一式の出力指示
+
+最終稿本文を出力したあと、続けて「ブログ化用資料一式」を出力してください。資料一式は ${materialsDraftPath} に保存します。本文ファイルと資料ファイルを混ぜないでください。メタ情報は本文には入れず、資料側にだけ入れてください。
+
+資料一式には以下を含めてください。
+
+- 記事タイトル案
+- description案
+- slug案
+- 記事カテゴリ
+- 記事種別
+- 想定読者
+- この記事の役割
+- 先に結論
+- 見出し構成
+- 要点まとめボックス案
+- 本文で特に大事なポイント
+- メタ的な内容が残っていないかの確認結果
+- 元記事の趣旨を壊していないかの確認結果
+- 公式発表・報道・予測・未確定情報の整理
+- ファクトチェック注意点
+- 最後に人間が確認するポイント
+- 内部リンク候補
+- 関連記事への導線案
+- キャラクター会話を入れるならどこが自然か
+- サムネイルの方向性
+- サムネイルに入れる短い文字案
+- X投稿案
+- Claude Codeへのブログ化指示メモ
+
+## 最終版サムネイル画像生成プロンプト作成の指示
 
 続いて、上記の記事内容とブログ化用資料一式を踏まえて、すまラボ用サムネイルの画像生成プロンプトを作成してください。
-これは原則として、この同じ台本チャット内で画像生成に使うためのプロンプトです。
-必要に応じて、別チャットへ移すために保存しても構いません。
-そのままコピペで使える完成形にしてください。
 
-出力したサムネイル画像生成プロンプトは、${finalThumbnailPromptPath} に保存します。
-${config.paths.thumbnailPromptDir}/${articleBrief.slug}.prompt.md はCLIが作る初期サムネイル案・参考プロンプトです。実際に主で使うのは、本文と資料一式を踏まえて台本チャット内で作る ${finalThumbnailPromptPath} です。
+これは、毎回新しく開くサムネイル生成チャットで、ひまり・らぼまるのベース絵をアップロードした後に貼り付けるためのプロンプトです。サムネイル専用チャットを使い回す前提にしないでください。そのままコピペで使える完成形にしてください。
 
-Claude in Chromeは、回答完了後に最終版サムネイル画像生成プロンプトを全文コピーし、${finalThumbnailPromptPath} に保存します。保存後、ファイルが存在し、プロンプトが途中で切れていないことを自動確認します。
+最終版サムネイルプロンプトは ${finalThumbnailPromptPath} に保存します。
 
-サムネイル画像は、原則として同じ台本チャット内で ${finalThumbnailPromptPath} の内容を使って生成してください。生成画像はいったん通常のダウンロード先に保存される想定です。ダウンロード完了を自動確認したあと、public/images/thumbnails/${articleBrief.slug}.png などへ移動・リネームします。
+サムネイル生成時に使う固定ベース絵:
+- ひまりベース絵: ${himariBaseImagePath}
+- らぼまるベース絵: ${labomaruBaseImagePath}
 
-どうしても別チャットを使う場合は、使い回しの文脈に引っ張られないよう、その記事専用の新しいチャットを優先してください。サムネイル専用チャットは必要時の参考・例外運用です。
-
-${thumbnailRetryFlow}
-
-サムネイル画像生成プロンプトには以下を含めてください。
+サムネイルプロンプトに含める要素:
 
 - サムネの狙い
 - 大きく入れる文字案
@@ -138,11 +170,17 @@ ${thumbnailRetryFlow}
 - すまラボらしく、普通の人にもわかりやすい
 - 難しいITニュースをやさしく整理する印象
 - 固定テンプレではなく、この話題に合った自由な構図
-- らぼまる、ひまりは必要に応じて使う
-- 毎回同じ構図にしない
+- ひまり・らぼまるは必要に応じて使う
+- 2人とも、記事内容をある程度理解した状態で登場する
+- 説明中ではなく、理解後の反応を見せる
+- 良いニュースは前向き・感心・わくわく、判断が分かれる話は慎重・考え中、悪いニュースや値上げは困る・残念・不安など、記事内容に応じて表情と感情を変える
+- 毎回同じ「これ何？説明して」パターンにしない
 - 実在ロゴは使わない
 - 元記事画像のコピーはしない
 - スマホでも読める短い文字を入れる
 - 画像の雰囲気、構図、主役、色の方向性も分かるようにする
-`;
+
+サムネイル画像生成は、Claude in Chromeが別途「新しいチャット」を開いて行います。この本文生成チャット内では、最終版サムネイルプロンプト作成までを行ってください。
+
+${thumbnailRetryFlow}`;
 }
