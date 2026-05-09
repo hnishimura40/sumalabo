@@ -17,6 +17,27 @@ const metaLinePatterns = [
   /handoff/i,
 ];
 
+const forbiddenPublicSourcePhrases = [
+  "元記事・すまほん",
+  "元記事: すまほん",
+  "元記事：すまほん",
+  "参考元: すまほん",
+  "参考元：すまほん",
+  "参照元: すまほん",
+  "参照元：すまほん",
+  "すまほん記事",
+  "すまほんを参考",
+  "すまほんでは",
+];
+
+const sourceReferenceLinePatterns = [
+  /^(?:[-*]\s*)?\[[^\]]*(?:元記事|参考元|参照元)[^\]]*すまほん[^\]]*\]\([^)]+\)\s*$/i,
+  /^(?:[-*]\s*)?.*(?:元記事|参考元|参照元)\s*[：:・]\s*すまほん.*$/i,
+  /^(?:[-*]\s*)?.*すまほん記事.*$/i,
+  /^(?:[-*]\s*)?.*すまほんを参考.*$/i,
+  /^(?:[-*]\s*)?.*すまほんでは.*$/i,
+];
+
 function escapeYaml(value = "") {
   return String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
@@ -40,10 +61,45 @@ function stripMetaLines(markdown) {
     .trim();
 }
 
+export function sanitizePublicArticleContent(content) {
+  const removedLines = [];
+  const sanitized = content
+    .split(/\r?\n/)
+    .filter((line) => {
+      const shouldRemove = sourceReferenceLinePatterns.some((pattern) => pattern.test(line.trim()));
+      if (shouldRemove) {
+        removedLines.push(line);
+      }
+      return !shouldRemove;
+    })
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  if (removedLines.length > 0) {
+    console.warn(
+      `Removed ${removedLines.length} source-media reference line(s) from public article content.`,
+    );
+  }
+
+  return sanitized;
+}
+
+export function validatePublicArticleContent(content) {
+  const found = forbiddenPublicSourcePhrases.filter((phrase) => content.includes(phrase));
+
+  if (found.length > 0) {
+    console.warn(`Public article content still contains source-media references: ${found.join(", ")}`);
+    throw new Error(`Public article content still contains source-media references: ${found.join(" / ")}`);
+  }
+}
+
 function normalizeBody(markdown, title) {
   let body = stripFrontmatter(markdown);
   body = stripDuplicateTitle(body, title);
   body = stripMetaLines(body);
+  body = sanitizePublicArticleContent(body);
+  validatePublicArticleContent(body);
   return body;
 }
 

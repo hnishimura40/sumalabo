@@ -75,6 +75,8 @@ function makeTopicSummaryItems(topicCategory) {
 }
 
 export function generateExplainer({ source, classification, slug }) {
+  // Public articles should not expose source-discovery media names such as
+  // "元記事" or "すまほん". Source URLs and media names belong in logs.
   const title = makeTitle(source.sourceTitle);
   const description = makeDescription(source.sourceTitle, classification.topicCategory);
   const updated = todayJst();
@@ -155,7 +157,7 @@ ${keyPointItems}
 
 ${topicSummaryItems}
 
-ここでは、元記事の細かな表現をそのまま追うのではなく、すまラボ読者が判断しやすいように「何の話か」「なぜ話題か」「どこを確認すべきか」に分けて見ていきます。
+ここでは、ニュースの細かな表現をそのまま追うのではなく、すまラボ読者が判断しやすいように「何の話か」「なぜ話題か」「どこを確認すべきか」に分けて見ていきます。
 
 ## 難しいポイントをかみくだく
 
