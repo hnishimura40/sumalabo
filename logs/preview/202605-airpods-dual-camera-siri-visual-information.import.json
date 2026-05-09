@@ -1,0 +1,28 @@
+{
+  "branchName": "auto/imported-202605-airpods-dual-camera-siri-visual-informati-202605091224",
+  "articlePath": "content\\articles\\202605-airpods-dual-camera-siri-visual-information.mdx",
+  "generatedDraftPath": "drafts/generated/202605-airpods-dual-camera-siri-visual-information.md",
+  "materialsPath": "drafts/materials/202605-airpods-dual-camera-siri-visual-information.materials.md",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/imported-202605-airpods-dual-camera-siri-visual-informati-202605091224.",
+  "checkUrls": [
+    "/articles/202605-airpods-dual-camera-siri-visual-information/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": true,
+  "doNotPublish": false,
+  "previewCreated": true,
+  "thumbnail": "",
+  "thumbnailExists": false,
+  "thumbnailSourcePath": "public\\images\\thumbnails\\202605-airpods-dual-camera-siri-visual-information.png",
+  "thumbnailBriefPath": "logs\\thumbnail\\202605-airpods-dual-camera-siri-visual-information.brief.json",
+  "thumbnailPromptPath": "logs\\thumbnail\\202605-airpods-dual-camera-siri-visual-information.prompt.md",
+  "materials": {
+    "path": "drafts/materials/202605-airpods-dual-camera-siri-visual-information.materials.md",
+    "byteLength": 13784,
+    "role": "Claude Codeがブログ記事MDXとして整えるための補助資料。本文には直接混ぜない。"
+  }
+}
