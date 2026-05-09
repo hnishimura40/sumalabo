@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-05-09T12:24:09.995Z",
+  "wordCountApprox": 3147,
+  "h2Count": 9,
+  "presentTopics": [
+    "先に結論",
+    "何が起きたのか",
+    "何が新しいのか",
+    "難しいポイントのかみくだき",
+    "普通の人にどう関係するのか",
+    "まだ分からないこと",
+    "すまラボ的な見方",
+    "まとめ"
+  ],
+  "missingTopics": [],
+  "issues": [
+    {
+      "code": "thumbnail_missing",
+      "severity": "warning",
+      "message": "サムネイル画像が未配置です。frontmatter thumbnailは空にしています。"
+    }
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "sourceUrl": "https://smhn.info/202605-airpods-dual-camera-siri-visual-information",
+  "articleTitle": "AirPodsに両耳カメラ搭載へ、Siriが視覚情報を取得する仕組み…とは？普通の人向けに要点を整理",
+  "generatedDraftPath": "drafts/generated/202605-airpods-dual-camera-siri-visual-information.md",
+  "materials": {
+    "path": "drafts/materials/202605-airpods-dual-camera-siri-visual-information.materials.md",
+    "byteLength": 13784,
+    "role": "Claude Codeがブログ記事MDXとして整えるための補助資料。本文には直接混ぜない。"
+  },
+  "mdxPath": "content\\articles\\202605-airpods-dual-camera-siri-visual-information.mdx"
+}
