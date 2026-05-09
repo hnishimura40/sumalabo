@@ -16,5 +16,12 @@
     "materialsDraftDir": "drafts/materials",
     "finalThumbnailPromptSuffix": ".thumbnail-prompt.md",
     "thumbnailOutputDir": "public/images/thumbnails"
+  },
+  "watch": {
+    "enabled": true,
+    "maxJobsPerRun": 1,
+    "source": "sumahon",
+    "rssUrl": "https://smhn.info/feed",
+    "lockMaxAgeMinutes": 180
   }
 }

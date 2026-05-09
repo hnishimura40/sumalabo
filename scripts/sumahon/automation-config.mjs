@@ -19,6 +19,13 @@ const defaultConfig = {
     finalThumbnailPromptSuffix: ".thumbnail-prompt.md",
     thumbnailOutputDir: "public/images/thumbnails",
   },
+  watch: {
+    enabled: true,
+    maxJobsPerRun: 1,
+    source: "sumahon",
+    rssUrl: "https://smhn.info/feed",
+    lockMaxAgeMinutes: 180,
+  },
 };
 
 export async function loadAutomationConfig() {
@@ -38,6 +45,10 @@ export async function loadAutomationConfig() {
     paths: {
       ...defaultConfig.paths,
       ...(config.paths || {}),
+    },
+    watch: {
+      ...defaultConfig.watch,
+      ...(config.watch || {}),
     },
   };
 }

@@ -1,0 +1,28 @@
+{
+  "updatedAt": null,
+  "source": "sumahon",
+  "lockOwner": "runner",
+  "lockNote": "This watcher does not create its own lock. Windows Task Scheduler runner owns duplicate-run prevention.",
+  "statuses": [
+    "queued",
+    "processing",
+    "prepared",
+    "preview_created",
+    "human_review_waiting",
+    "failed",
+    "skipped",
+    "published"
+  ],
+  "counts": {
+    "queued": 0,
+    "processing": 0,
+    "prepared": 0,
+    "preview_created": 0,
+    "human_review_waiting": 0,
+    "failed": 0,
+    "skipped": 0,
+    "published": 0
+  },
+  "total": 0,
+  "jobs": []
+}
