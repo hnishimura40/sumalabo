@@ -118,6 +118,7 @@ characterUse:
   secondary: "duo_guide_half.webp"
 related:
 ${relatedSlugs.length > 0 ? relatedSlugs.map((item) => `  - "${item}"`).join("\n") : "  []"}
+pubDate: "${updated}"
 updated: "${updated}"
 publishAt: "${publishAt}"
 ---
