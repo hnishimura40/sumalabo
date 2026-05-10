@@ -1,0 +1,485 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// VAPID公開鍵はビルド時に環境変数から埋め込む。
+// 公開鍵はクライアント側でsubscribeに使うため公開可。
+// 秘密鍵はサーバー側のみで使うため、import.meta.env.VAPID_PRIVATE_KEY は client bundle に出さない。
+const vapidPublicKey = (import.meta.env.VAPID_PUBLIC_KEY || "") + "";
+---
+
+<BaseLayout
+  title="レビュー | すまラボ"
+  description="確認待ち記事の一覧と承認用画面（運営者向け）。"
+  canonicalPath="/review/"
+>
+  <section class="page-shell review-shell">
+    <header class="review-header">
+      <p class="review-eyebrow">SUMALAB REVIEW</p>
+      <h1>確認待ち記事</h1>
+      <p>Preview記事の一覧です。承認はPreview記事ページの「この記事を承認して公開」ボタンから行います。</p>
+    </header>
+
+    <section class="review-actions" aria-label="通知設定">
+      <div class="review-notice-block">
+        <p class="review-notice-text">
+          通知を有効にすると、新しい確認待ち記事ができたタイミングでiPhoneのホーム画面アプリへPush通知が届きます。
+        </p>
+        <div class="review-notice-row">
+          <button type="button" id="review-enable-push" class="review-button review-button--primary" disabled>
+            通知を有効にする
+          </button>
+          <button type="button" id="review-refresh" class="review-button">
+            一覧を再読み込み
+          </button>
+        </div>
+        <p class="review-status" id="review-push-status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="review-list" aria-label="確認待ち記事一覧">
+      <p class="review-loading" id="review-loading">読み込み中…</p>
+      <p class="review-empty" id="review-empty" hidden>確認待ちの記事はありません。</p>
+      <ul class="review-items" id="review-items" hidden></ul>
+    </section>
+
+    <noscript>
+      <p class="review-noscript">この画面はJavaScriptが必要です。ブラウザの設定をご確認ください。</p>
+    </noscript>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ vapidPublicKey }}>
+  const $ = (id) => document.getElementById(id);
+  const enableBtn = $("review-enable-push");
+  const refreshBtn = $("review-refresh");
+  const pushStatus = $("review-push-status");
+  const loading = $("review-loading");
+  const emptyEl = $("review-empty");
+  const listEl = $("review-items");
+
+  function setPushStatus(text) {
+    if (pushStatus) pushStatus.textContent = text || "";
+  }
+
+  function escapeHtml(s) {
+    return String(s || "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  }
+
+  function formatDate(iso) {
+    if (!iso) return "";
+    try {
+      const d = new Date(iso);
+      return d.toLocaleString("ja-JP", { dateStyle: "medium", timeStyle: "short" });
+    } catch {
+      return iso;
+    }
+  }
+
+  function renderItems(items) {
+    if (!Array.isArray(items) || items.length === 0) {
+      loading.hidden = true;
+      emptyEl.hidden = false;
+      listEl.hidden = true;
+      listEl.innerHTML = "";
+      return;
+    }
+    loading.hidden = true;
+    emptyEl.hidden = true;
+    listEl.hidden = false;
+    listEl.innerHTML = items
+      .map((it) => {
+        const title = escapeHtml(it.title || it.slug || "(無題)");
+        const slug = escapeHtml(it.slug || "");
+        const branch = escapeHtml(it.branch || "");
+        const created = formatDate(it.createdAt);
+        const status = escapeHtml(it.status || "review");
+        const previewUrl = it.previewUrl ? String(it.previewUrl) : "";
+        const prUrl = it.prUrl ? String(it.prUrl) : "";
+        const thumb = it.thumbnail ? String(it.thumbnail) : "";
+        const sourceCheckBadge = it.sourceCheckPassed === false
+          ? '<span class="review-badge review-badge--warn">sourceCheck 要修正</span>'
+          : '<span class="review-badge review-badge--ok">sourceCheck OK</span>';
+        const previewLink = previewUrl
+          ? `<a class="review-button review-button--primary" href="${escapeHtml(previewUrl)}" target="_blank" rel="noopener">記事を見る（Preview）</a>`
+          : '<span class="review-muted">Preview URL未登録</span>';
+        const prLink = prUrl
+          ? `<a class="review-button" href="${escapeHtml(prUrl)}" target="_blank" rel="noopener">PRを見る</a>`
+          : "";
+        const thumbBlock = thumb
+          ? `<img class="review-thumb" src="${escapeHtml(thumb)}" alt="サムネイル" loading="lazy" />`
+          : '<div class="review-thumb review-thumb--empty" aria-hidden="true">No thumb</div>';
+        return `
+          <li class="review-item">
+            ${thumbBlock}
+            <div class="review-item-main">
+              <p class="review-item-meta">
+                <span class="review-badge">${status}</span>
+                ${sourceCheckBadge}
+                <span class="review-muted">${created}</span>
+              </p>
+              <h2 class="review-item-title">${title}</h2>
+              <p class="review-item-sub"><code>${slug}</code> <span class="review-muted">${branch}</span></p>
+              <div class="review-item-actions">${previewLink} ${prLink}</div>
+              <p class="review-item-hint">承認はPreview記事ページ末尾の「この記事を承認して公開」ボタンから行います。</p>
+            </div>
+          </li>`;
+      })
+      .join("");
+  }
+
+  async function loadItems() {
+    loading.hidden = false;
+    emptyEl.hidden = true;
+    listEl.hidden = true;
+    try {
+      const res = await fetch("/api/review-items", { headers: { Accept: "application/json" } });
+      if (!res.ok) {
+        loading.hidden = true;
+        emptyEl.hidden = false;
+        emptyEl.textContent = `一覧の取得に失敗しました（HTTP ${res.status}）`;
+        return;
+      }
+      const data = await res.json();
+      renderItems(data.items || []);
+    } catch (err) {
+      loading.hidden = true;
+      emptyEl.hidden = false;
+      emptyEl.textContent = "一覧の取得に失敗しました（通信エラー）";
+    }
+  }
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+    const raw = atob(base64);
+    const out = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; ++i) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+
+  async function registerServiceWorkerIfNeeded() {
+    if (!("serviceWorker" in navigator)) {
+      throw new Error("このブラウザはService Workerに対応していません。");
+    }
+    let reg = await navigator.serviceWorker.getRegistration("/sw.js");
+    if (!reg) {
+      reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+    }
+    await navigator.serviceWorker.ready;
+    return reg;
+  }
+
+  async function enablePush() {
+    if (!vapidPublicKey) {
+      setPushStatus("VAPID公開鍵が未設定です。Cloudflare Pagesの環境変数 VAPID_PUBLIC_KEY を設定してください。");
+      return;
+    }
+    if (!("Notification" in window)) {
+      setPushStatus("このブラウザは通知に対応していません。");
+      return;
+    }
+    enableBtn.disabled = true;
+    setPushStatus("通知設定を準備しています…");
+    try {
+      const reg = await registerServiceWorkerIfNeeded();
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") {
+        setPushStatus("通知許可が得られませんでした。");
+        enableBtn.disabled = false;
+        return;
+      }
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        });
+      }
+      const res = await fetch("/api/push/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subscription: sub.toJSON ? sub.toJSON() : sub }),
+      });
+      if (res.ok) {
+        setPushStatus("通知を有効にしました。新しい確認待ち記事ができたら通知します。");
+        enableBtn.textContent = "通知は有効です";
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setPushStatus("購読の保存に失敗しました: " + (data.message || `HTTP ${res.status}`));
+        enableBtn.disabled = false;
+      }
+    } catch (err) {
+      setPushStatus("通知設定でエラーが発生しました: " + String(err && err.message ? err.message : err));
+      enableBtn.disabled = false;
+    }
+  }
+
+  function setupButtons() {
+    if (enableBtn) {
+      const supported = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+      if (!supported) {
+        enableBtn.disabled = true;
+        setPushStatus("このブラウザではWeb Push通知が使えません。iOS/iPadOS 16.4以降のホーム画面追加版（PWA）が必要です。");
+      } else {
+        enableBtn.disabled = false;
+        enableBtn.addEventListener("click", () => { enablePush(); });
+      }
+    }
+    if (refreshBtn) refreshBtn.addEventListener("click", () => { loadItems(); });
+  }
+
+  setupButtons();
+  // Register SW immediately so push handlers are ready
+  if ("serviceWorker" in navigator) {
+    registerServiceWorkerIfNeeded().catch(() => { /* ignore */ });
+  }
+  loadItems();
+</script>
+
+<style>
+  .review-shell {
+    width: min(960px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: clamp(20px, 4vw, 40px) 0 60px;
+  }
+
+  .review-header {
+    margin-bottom: 24px;
+    padding: clamp(20px, 4vw, 30px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 58%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .review-eyebrow {
+    margin: 0 0 6px;
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .review-header h1 {
+    margin: 0 0 12px;
+    font-size: clamp(22px, 5vw, 32px);
+    line-height: 1.35;
+  }
+
+  .review-header p {
+    margin: 0;
+    color: var(--fg-mid);
+    font-size: 14px;
+  }
+
+  .review-actions {
+    margin-bottom: 28px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--teal);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 70%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .review-notice-text {
+    margin: 0 0 14px;
+    color: var(--fg-mid);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .review-notice-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .review-status {
+    margin: 12px 0 0;
+    color: var(--fg-soft);
+    font-size: 13px;
+    min-height: 1.4em;
+  }
+
+  .review-status:not(:empty) {
+    color: var(--fg-mid);
+  }
+
+  .review-button {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--bg-elev);
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .review-button:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  .review-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .review-button--primary {
+    border-color: var(--teal);
+    background: var(--teal);
+    color: var(--bg-elev);
+  }
+
+  .review-list {
+    margin-top: 16px;
+  }
+
+  .review-loading,
+  .review-empty {
+    margin: 0;
+    padding: 18px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    color: var(--fg-soft);
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .review-noscript {
+    margin: 24px 0 0;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--amber);
+    border-radius: var(--radius-md);
+    color: var(--fg-mid);
+    font-size: 14px;
+  }
+
+  .review-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+
+  .review-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  @media (max-width: 540px) {
+    .review-item { grid-template-columns: 80px 1fr; gap: 12px; padding: 14px; }
+  }
+
+  .review-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--bg-elev) 86%, var(--teal-tint));
+    border: 1px solid var(--line);
+  }
+
+  .review-thumb--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fg-soft);
+    font-size: 11px;
+  }
+
+  .review-item-main { min-width: 0; }
+
+  .review-item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 8px;
+    font-size: 12px;
+  }
+
+  .review-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--bg-elev) 86%, var(--teal-tint));
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .review-badge--ok {
+    border-color: color-mix(in srgb, var(--teal) 50%, var(--line));
+  }
+
+  .review-badge--warn {
+    border-color: color-mix(in srgb, var(--amber) 60%, var(--line));
+    color: color-mix(in srgb, var(--amber) 70%, var(--fg));
+    background: color-mix(in srgb, var(--bg-elev) 80%, var(--amber-tint));
+  }
+
+  .review-item-title {
+    margin: 0 0 6px;
+    font-size: clamp(15px, 3.6vw, 17px);
+    line-height: 1.4;
+  }
+
+  .review-item-sub {
+    margin: 0 0 10px;
+    color: var(--fg-soft);
+    font-size: 12px;
+  }
+
+  .review-item-sub code {
+    padding: 1px 6px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--bg-elev) 92%, var(--teal-tint));
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
+  .review-item-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .review-item-hint {
+    margin: 0;
+    color: var(--fg-soft);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .review-muted {
+    color: var(--fg-soft);
+    font-size: 12px;
+  }
+</style>
