@@ -70,6 +70,7 @@ function relatedSlugs(articleBrief) {
 
 function frontmatter({ slug, title, description, thumbnail, thumbnailAlt, articleBrief }) {
   const related = relatedSlugs(articleBrief);
+  const publicDate = todayJst();
 
   return `---
 title: "${escapeYaml(title)}"
@@ -88,7 +89,8 @@ characterUse:
   secondary: "duo_guide_half.webp"
 related:
 ${related.length > 0 ? related.map((item) => `  - "${item}"`).join("\n") : "  []"}
-updated: "${todayJst()}"
+pubDate: "${publicDate}"
+updated: "${publicDate}"
 publishAt: "${toIsoJst()}"
 ---`;
 }
