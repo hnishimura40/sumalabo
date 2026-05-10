@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-05-10T22:22:48.144Z",
+  "wordCountApprox": 3555,
+  "h2Count": 14,
+  "presentTopics": [
+    "先に結論",
+    "何が起きたのか",
+    "何が新しいのか",
+    "難しいポイントのかみくだき",
+    "普通の人にどう関係するのか",
+    "まだ分からないこと",
+    "すまラボ的な見方",
+    "まとめ"
+  ],
+  "missingTopics": [],
+  "issues": [],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "sourceUrl": "https://smhn.info/202605-iphone-18-pro-dynamic-island-top-left-rumor",
+  "articleTitle": "iPhone 18 Pro、Dynamic Islandはあんまり変…とは？普通の人向けに要点を整理",
+  "generatedDraftPath": "drafts/generated/202605-iphone-18-pro-dynamic-island-top-left-rumor.md",
+  "materials": {
+    "path": "drafts/materials/202605-iphone-18-pro-dynamic-island-top-left-rumor.materials.md",
+    "byteLength": 13366,
+    "role": "Claude Codeがブログ記事MDXとして整えるための補助資料。本文には直接混ぜない。"
+  },
+  "mdxPath": "content\\articles\\202605-iphone-18-pro-dynamic-island-top-left-rumor.mdx"
+}

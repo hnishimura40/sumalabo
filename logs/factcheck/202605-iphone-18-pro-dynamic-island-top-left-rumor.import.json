@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-05-10T22:22:48.194Z",
+  "sourceUrl": "https://smhn.info/202605-iphone-18-pro-dynamic-island-top-left-rumor",
+  "humanCheckRequired": [
+    "ChatGPT生成本文の事実関係",
+    "公式発表、報道、噂、予測の区別",
+    "元記事の長文コピーや近すぎる表現が残っていないか",
+    "価格、発売時期、対応機種、日本展開などの最新確認"
+  ],
+  "issues": [],
+  "provisionalDecision": "preview確認後に公開可",
+  "materials": {
+    "path": "drafts/materials/202605-iphone-18-pro-dynamic-island-top-left-rumor.materials.md",
+    "byteLength": 13366,
+    "role": "Claude Codeがブログ記事MDXとして整えるための補助資料。本文には直接混ぜない。"
+  }
+}

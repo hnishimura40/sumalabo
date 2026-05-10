@@ -1,0 +1,28 @@
+{
+  "branchName": "auto/imported-202605-iphone-18-pro-dynamic-island-top-left-rum-202605102222",
+  "articlePath": "content\\articles\\202605-iphone-18-pro-dynamic-island-top-left-rumor.mdx",
+  "generatedDraftPath": "drafts/generated/202605-iphone-18-pro-dynamic-island-top-left-rumor.md",
+  "materialsPath": "drafts/materials/202605-iphone-18-pro-dynamic-island-top-left-rumor.materials.md",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/imported-202605-iphone-18-pro-dynamic-island-top-left-rum-202605102222.",
+  "checkUrls": [
+    "/articles/202605-iphone-18-pro-dynamic-island-top-left-rumor/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": false,
+  "doNotPublish": false,
+  "previewCreated": true,
+  "thumbnail": "/images/thumbnails/202605-iphone-18-pro-dynamic-island-top-left-rumor.png",
+  "thumbnailExists": true,
+  "thumbnailSourcePath": "public\\images\\thumbnails\\202605-iphone-18-pro-dynamic-island-top-left-rumor.png",
+  "thumbnailBriefPath": "logs\\thumbnail\\202605-iphone-18-pro-dynamic-island-top-left-rumor.brief.json",
+  "thumbnailPromptPath": "logs\\thumbnail\\202605-iphone-18-pro-dynamic-island-top-left-rumor.prompt.md",
+  "materials": {
+    "path": "drafts/materials/202605-iphone-18-pro-dynamic-island-top-left-rumor.materials.md",
+    "byteLength": 13366,
+    "role": "Claude Codeがブログ記事MDXとして整えるための補助資料。本文には直接混ぜない。"
+  }
+}
