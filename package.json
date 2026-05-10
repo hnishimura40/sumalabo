@@ -9,7 +9,9 @@
     "preview": "astro preview --host 127.0.0.1",
     "article:from-sumahon": "node scripts/run/create-from-sumahon.mjs",
     "article:prepare-from-sumahon": "node scripts/run/prepare-from-sumahon.mjs",
-    "article:import-generated": "node scripts/run/import-generated.mjs"
+    "article:import-generated": "node scripts/run/import-generated.mjs",
+    "automation:run-queue": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/run-sumahon-queue.ps1",
+    "automation:register-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/register-sumahon-tasks.ps1"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",
