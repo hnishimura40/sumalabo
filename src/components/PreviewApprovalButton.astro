@@ -1,0 +1,168 @@
+---
+// Preview環境（CloudflarePagesのpreview/* デプロイ）でだけ表示する承認ボタン。
+// build時の環境変数 CF_PAGES_BRANCH を見て、preview/ で始まるブランチのときのみ
+// HTML/JSを出力する。本番main、ローカル開発、未設定環境では何も描画しない。
+
+const allowedPrefix = (import.meta.env.APPROVE_ALLOWED_BRANCH_PREFIX || "preview/") + "";
+
+// Cloudflare Pages はビルド時に CF_PAGES_BRANCH を設定する。
+// ローカルや明示テストのため PREVIEW_BRANCH_OVERRIDE も見る（PUBLIC_ プレフィックスを使わないことで
+// 値が JS バンドルに展開されないようにする）。
+const cfBranch = (import.meta.env.CF_PAGES_BRANCH || "") + "";
+const overrideBranch = (import.meta.env.PREVIEW_BRANCH_OVERRIDE || "") + "";
+const previewBranch = overrideBranch || cfBranch;
+
+const isPreview =
+  previewBranch.length > 0 &&
+  previewBranch !== "main" &&
+  previewBranch !== "master" &&
+  previewBranch.startsWith(allowedPrefix);
+---
+
+{isPreview && (
+  <aside class="preview-approval" data-preview-approval data-branch={previewBranch} aria-label="Preview承認">
+    <p class="preview-approval__hint">確認後、このPreviewブランチを main へマージします</p>
+    <button type="button" class="preview-approval__button" data-approval-button>
+      この記事を承認して公開
+    </button>
+    <p class="preview-approval__status" role="status" aria-live="polite" data-approval-status></p>
+    <p class="preview-approval__meta">対象ブランチ: <code>{previewBranch}</code></p>
+  </aside>
+)}
+
+<script>
+  const wrapper = document.querySelector<HTMLElement>("[data-preview-approval]");
+  if (wrapper) {
+    const button = wrapper.querySelector<HTMLButtonElement>("[data-approval-button]");
+    const status = wrapper.querySelector<HTMLParagraphElement>("[data-approval-status]");
+    const branch = wrapper.dataset.branch || "";
+
+    if (button && status) {
+      let pending = false;
+
+      button.addEventListener("click", async () => {
+        if (pending) return;
+        pending = true;
+        button.disabled = true;
+        status.textContent = "承認中...";
+
+        try {
+          const res = await fetch("/api/approve-preview", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ branch }),
+          });
+
+          let data: { ok?: boolean; message?: string; pullNumber?: number; merged?: boolean } = {};
+          try {
+            data = await res.json();
+          } catch {
+            /* fallthrough */
+          }
+
+          if (res.ok && data.ok) {
+            const prSuffix = data.pullNumber ? `（PR #${data.pullNumber}）` : "";
+            status.textContent = `承認しました。本番反映を待っています。${prSuffix}`;
+            button.textContent = "承認済み";
+            // ボタンは無効のまま
+          } else {
+            const message = data.message || `承認に失敗しました（HTTP ${res.status}）`;
+            status.textContent = message;
+            button.disabled = false;
+            pending = false;
+          }
+        } catch (err) {
+          status.textContent = "通信エラーで承認できませんでした。再読み込みしてもう一度試してください。";
+          button.disabled = false;
+          pending = false;
+        }
+      });
+    }
+  }
+</script>
+
+<style>
+  /*
+    配色は src/styles/global.css 由来のCSS変数（--teal / --teal-tint / --bg-elev / --line / --fg-mid）
+    を使うため、ライトモード/ダークモード切り替えに自動追従する。
+    ボタン色は --teal を背景、--bg-elev を文字色として、ダークモード時はトーンが反転する。
+  */
+  .preview-approval {
+    margin: 28px 0 32px;
+    padding: 20px 22px;
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--teal);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 70%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .preview-approval__hint {
+    margin: 0 0 14px;
+    color: var(--fg-mid);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .preview-approval__button {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: 1px solid var(--teal);
+    border-radius: var(--radius-md);
+    background: var(--teal);
+    color: var(--bg-elev);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: opacity 0.15s ease, transform 0.05s ease;
+  }
+
+  .preview-approval__button:hover:not(:disabled) {
+    opacity: 0.92;
+  }
+
+  .preview-approval__button:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .preview-approval__button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .preview-approval__status {
+    margin: 12px 0 0;
+    color: var(--fg-soft);
+    font-size: 14px;
+    line-height: 1.55;
+    min-height: 1.4em;
+  }
+
+  .preview-approval__status:not(:empty) {
+    color: var(--fg-mid);
+  }
+
+  .preview-approval__meta {
+    margin: 8px 0 0;
+    color: var(--fg-soft);
+    font-size: 12px;
+  }
+
+  .preview-approval__meta code {
+    padding: 1px 6px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--bg-elev) 92%, var(--teal-tint));
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+</style>

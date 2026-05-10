@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import ArticleNavigation from "../components/ArticleNavigation.astro";
+import PreviewApprovalButton from "../components/PreviewApprovalButton.astro";
 
 type ArticleData = {
   title: string;
@@ -64,6 +65,8 @@ const typeLabels = {
     <div class="article-content">
       <slot />
     </div>
+
+    <PreviewApprovalButton />
 
     <ArticleNavigation previousArticle={previousArticle} nextArticle={nextArticle} />
   </article>
