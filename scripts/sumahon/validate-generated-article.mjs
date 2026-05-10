@@ -10,6 +10,81 @@ function makeIssue(code, severity, message) {
   return { code, severity, message };
 }
 
+const REFERENCE_SECTION_RE = /^##\s*参考情報\s*$/m;
+const URL_RE = /https?:\/\/[^\s)\]"'>]+/g;
+const SUMAHON_PUBLIC_NEEDLES = ["smhn.info", "すまほん"];
+const REPORTING_NOTICE_NEEDLES = [
+  "公式発表ではな",
+  "公式発表でない",
+  "報道ベース",
+  "報道段階",
+  "今後変わる",
+  "今後変更",
+  "今後内容が変わる",
+  "確定情報ではな",
+];
+
+const REPORTING_TOPIC_NEEDLES = [
+  "報道",
+  "報じ",
+  "報道ベース",
+  "リーク",
+  "噂",
+  "うわさ",
+  "観測",
+];
+
+function extractReferenceSection(body) {
+  const match = body.match(/^##\s*参考情報\s*$/m);
+  if (!match) return "";
+  const start = match.index + match[0].length;
+  const rest = body.slice(start);
+  const nextHeading = rest.search(/^##\s+/m);
+  return nextHeading === -1 ? rest : rest.slice(0, nextHeading);
+}
+
+export function validateSourceReferences(body, { source = {} } = {}) {
+  const hasReferenceSection = REFERENCE_SECTION_RE.test(body);
+  const referenceSection = extractReferenceSection(body);
+  const referenceUrls = referenceSection.match(URL_RE) || [];
+  const urlCount = referenceUrls.length;
+
+  const sumahonHits = SUMAHON_PUBLIC_NEEDLES.filter((needle) => body.includes(needle));
+  const containsSumahonPublicReference = sumahonHits.length > 0;
+
+  const sourceUrl = String(source?.sourceUrl || "");
+  const sourceMedia = String(source?.sourceMedia || "");
+  const isReportingTopic = includesAny(body, REPORTING_TOPIC_NEEDLES) || /smhn\.info|すまほん/.test(sourceUrl + sourceMedia);
+  const hasReportingNotice = includesAny(body, REPORTING_NOTICE_NEEDLES);
+  const reportingNoticeRequired = isReportingTopic;
+  const reportingNoticeOk = !reportingNoticeRequired || hasReportingNotice;
+
+  const reasons = [];
+  if (!hasReferenceSection) reasons.push("参考情報セクションが本文末尾に存在しません");
+  if (urlCount < 2) reasons.push(`参考情報セクション内のURLが ${urlCount} 件で、2件未満です`);
+  if (containsSumahonPublicReference) reasons.push(`公開記事本文に内部参考元の露出があります: ${sumahonHits.join(" / ")}`);
+  if (!reportingNoticeOk) reasons.push("報道ベースの記事に必要な注意文（公式発表ではない／報道ベース／今後変わる可能性 など）が見当たりません");
+
+  const ok = reasons.length === 0;
+  const notes = ok
+    ? "公開記事用の参考情報セクションがあり、内部参考元の露出もありません。"
+    : reasons.join(" / ");
+
+  return {
+    ok,
+    hasReferenceSection,
+    urlCount,
+    referenceUrls,
+    containsSumahonPublicReference,
+    sumahonHits,
+    isReportingTopic,
+    hasReportingNotice,
+    reportingNoticeRequired,
+    reasons,
+    notes,
+  };
+}
+
 const requiredTopics = [
   {
     code: "summary",
@@ -124,6 +199,46 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists })
     issues.push(makeIssue("thumbnail_missing", "warning", "サムネイル画像が未配置です。frontmatter thumbnailは空にしています。"));
   }
 
+  const sourceCheck = validateSourceReferences(body, { source });
+
+  if (!sourceCheck.hasReferenceSection) {
+    issues.push(
+      makeIssue(
+        "missing_reference_section",
+        "major",
+        "本文末尾に「## 参考情報」セクションがありません。公式情報・元報道・関連報道のリンクを含めてください。",
+      ),
+    );
+  } else if (sourceCheck.urlCount < 2) {
+    issues.push(
+      makeIssue(
+        "insufficient_reference_urls",
+        "major",
+        `参考情報セクション内のURLが ${sourceCheck.urlCount} 件で2件未満です。公式情報・元報道・関連報道を最低2件以上掲載してください。`,
+      ),
+    );
+  }
+
+  if (sourceCheck.containsSumahonPublicReference) {
+    issues.push(
+      makeIssue(
+        "sumahon_public_exposure",
+        "major",
+        `公開記事本文に内部参考元の露出があります: ${sourceCheck.sumahonHits.join(" / ")}。すまほん名・URLは公開記事に出さず、参考情報には公式情報・一次情報・元報道を入れてください。`,
+      ),
+    );
+  }
+
+  if (sourceCheck.reportingNoticeRequired && !sourceCheck.hasReportingNotice) {
+    issues.push(
+      makeIssue(
+        "missing_reporting_notice",
+        "major",
+        "報道ベースの記事ですが、本文中に「公式発表ではない／報道ベース／今後変わる可能性」などの注意文が見当たりません。冒頭または参考情報の注記に1文追加してください。",
+      ),
+    );
+  }
+
   const hasMajorIssue = issues.some((issue) => issue.severity === "major");
 
   return {
@@ -133,6 +248,7 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists })
     presentTopics,
     missingTopics,
     issues,
+    sourceCheck,
     publishable: !hasMajorIssue,
     provisionalDecision: hasMajorIssue ? "要修正" : "preview確認後に公開可",
   };

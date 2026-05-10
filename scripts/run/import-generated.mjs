@@ -84,10 +84,118 @@ async function main() {
     thumbnailBrief,
   });
 
+  const sourceCheck = imported.review.sourceCheck || {
+    ok: false,
+    hasReferenceSection: false,
+    urlCount: 0,
+    containsSumahonPublicReference: false,
+    notes: "sourceCheckが計算されていません。",
+  };
+  const sourceCheckPassed = !!sourceCheck.ok;
+  const blockingRisk = !sourceCheckPassed;
+  const provisionalDecision = sourceCheckPassed ? imported.review.provisionalDecision : "要修正";
+  const publishable = sourceCheckPassed && imported.review.publishable;
+  const doNotPublish = !publishable;
+
+  const factcheckHumanCheckRequired = [
+    "ChatGPT生成本文の事実関係",
+    "公式発表、報道、噂、予測の区別",
+    "元記事の長文コピーや近すぎる表現が残っていないか",
+    "価格、発売時期、対応機種、日本展開などの最新確認",
+    "公式情報と矛盾していないか",
+    "元報道の内容を誤って断定していないか",
+    "発売日・価格・日本展開・対応機種を断定していないか",
+    "公開記事本文・参考情報・リンクにすまほん（smhn.info）が出ていないか",
+    "参考情報セクションに公式情報・元報道・関連報道のURLが2件以上あるか",
+  ];
+
+  if (!sourceCheckPassed) {
+    console.log("source check failed:");
+    for (const reason of sourceCheck.reasons || [sourceCheck.notes]) {
+      console.log("  - " + reason);
+    }
+    console.log("Preview branch creation and push are skipped. Fix the article and rerun.");
+
+    await writeJson(reviewPath, {
+      ...imported.review,
+      sourceUrl: sourceLog?.sourceUrl || articleBrief.sourceUrl,
+      articleTitle: imported.title,
+      generatedDraftPath: filePath,
+      materials: resolvedMaterialsInfo,
+      mdxPath: null,
+      sourceCheck,
+      blockingRisk,
+      publishable,
+      provisionalDecision,
+    });
+    await writeJson(factcheckPath, {
+      checkedAt: new Date().toISOString(),
+      sourceUrl: sourceLog?.sourceUrl || articleBrief.sourceUrl,
+      humanCheckRequired: factcheckHumanCheckRequired,
+      issues: imported.review.issues.filter((issue) =>
+        ["source_respect", "missing_reference_section", "insufficient_reference_urls", "sumahon_public_exposure", "missing_reporting_notice"].includes(issue.code),
+      ),
+      provisionalDecision,
+      blockingRisk,
+      sourceCheck,
+      materials: resolvedMaterialsInfo,
+    });
+    await writeJson(previewLogPath, {
+      branchName: null,
+      articlePath: null,
+      generatedDraftPath: filePath,
+      materialsPath: resolvedMaterialsInfo?.path || "",
+      expectedPreview: "Preview deployment skipped: sourceCheck failed.",
+      checkUrls: [],
+      publishable,
+      provisionalDecision,
+      humanReviewRequired: true,
+      doNotPublish,
+      blockingRisk,
+      previewCreated: false,
+      sourceCheck,
+      thumbnail: imported.thumbnail,
+      thumbnailExists: imported.thumbnailExists,
+      thumbnailSourcePath: imported.thumbnailPath,
+      thumbnailBriefPath,
+      thumbnailPromptPath,
+      materials: resolvedMaterialsInfo,
+    });
+
+    console.log(JSON.stringify({
+      slug,
+      importedTitle: imported.title,
+      mdxPath: null,
+      reviewPath,
+      factcheckPath,
+      previewLogPath,
+      materialsPath: resolvedMaterialsInfo?.path || "",
+      branchName: null,
+      commitMessage: null,
+      publishable,
+      doNotPublish,
+      blockingRisk,
+      provisionalDecision,
+      thumbnail: imported.thumbnail,
+      thumbnailExists: imported.thumbnailExists,
+      buildChecked: false,
+      previewPushed: false,
+      sourceCheckPassed,
+      referenceSectionFound: !!sourceCheck.hasReferenceSection,
+      referenceUrlCount: sourceCheck.urlCount || 0,
+      containsSumahonPublicReference: !!sourceCheck.containsSumahonPublicReference,
+      sourceCheckReasons: sourceCheck.reasons || [],
+      sourceCheckNotes: sourceCheck.notes || "",
+      updated: todayJst(),
+    }, null, 2));
+
+    process.exitCode = 1;
+    return;
+  }
+
   await createPreviewBranch(branchName);
 
   const mdxPath = await writeMdx({ slug, mdx: imported.mdx });
-  const doNotPublish = !imported.review.publishable;
 
   await writeJson(reviewPath, {
     ...imported.review,
@@ -96,18 +204,21 @@ async function main() {
     generatedDraftPath: filePath,
     materials: resolvedMaterialsInfo,
     mdxPath,
+    sourceCheck,
+    blockingRisk,
+    publishable,
+    provisionalDecision,
   });
   await writeJson(factcheckPath, {
     checkedAt: new Date().toISOString(),
     sourceUrl: sourceLog?.sourceUrl || articleBrief.sourceUrl,
-    humanCheckRequired: [
-      "ChatGPT生成本文の事実関係",
-      "公式発表、報道、噂、予測の区別",
-      "元記事の長文コピーや近すぎる表現が残っていないか",
-      "価格、発売時期、対応機種、日本展開などの最新確認",
-    ],
-    issues: imported.review.issues.filter((issue) => issue.code === "source_respect"),
-    provisionalDecision: imported.review.provisionalDecision,
+    humanCheckRequired: factcheckHumanCheckRequired,
+    issues: imported.review.issues.filter((issue) =>
+      ["source_respect", "missing_reference_section", "insufficient_reference_urls", "sumahon_public_exposure", "missing_reporting_notice"].includes(issue.code),
+    ),
+    provisionalDecision,
+    blockingRisk,
+    sourceCheck,
     materials: resolvedMaterialsInfo,
   });
   await writeJson(previewLogPath, {
@@ -122,11 +233,13 @@ async function main() {
       "/categories/news/",
       "/",
     ],
-    publishable: imported.review.publishable,
-    provisionalDecision: imported.review.provisionalDecision,
+    publishable,
+    provisionalDecision,
     humanReviewRequired: imported.review.issues.length > 0,
     doNotPublish,
+    blockingRisk,
     previewCreated: true,
+    sourceCheck,
     thumbnail: imported.thumbnail,
     thumbnailExists: imported.thumbnailExists,
     thumbnailSourcePath: imported.thumbnailPath,
@@ -159,12 +272,20 @@ async function main() {
     materialsPath: resolvedMaterialsInfo?.path || "",
     branchName,
     commitMessage: `feat(article): import generated draft for ${slug}`,
-    publishable: imported.review.publishable,
+    publishable,
     doNotPublish,
-    provisionalDecision: imported.review.provisionalDecision,
+    blockingRisk,
+    provisionalDecision,
     thumbnail: imported.thumbnail,
     thumbnailExists: imported.thumbnailExists,
     buildChecked: true,
+    previewPushed: true,
+    sourceCheckPassed,
+    referenceSectionFound: !!sourceCheck.hasReferenceSection,
+    referenceUrlCount: sourceCheck.urlCount || 0,
+    containsSumahonPublicReference: !!sourceCheck.containsSumahonPublicReference,
+    sourceCheckReasons: sourceCheck.reasons || [],
+    sourceCheckNotes: sourceCheck.notes || "",
     updated: todayJst(),
   }, null, 2));
 }
