@@ -1,0 +1,155 @@
+// ChatGPT file picker attachment for Sumalabo character base images.
+//
+// Purpose:
+//   Drive the Windows "開く" file selection dialog (#32770) opened by ChatGPT
+//   so that the two character base images (himari-base.png, labomaru-base.png)
+//   are attached to the chat input area.
+//
+// Preconditions (caller must satisfy these BEFORE running this script):
+//   1. Chrome is active and brought to foreground (SetForegroundWindow).
+//   2. The new ChatGPT chat is the visible tab in the Chrome window
+//      (not a background tab — clicks in a non-visible tab will not raise
+//      the OS dialog even if dispatched via CDP).
+//   3. The user has clicked the visible "+" button and then the visible
+//      "写真とファイルを追加" menu item (real UI clicks, not hidden file
+//      input clicks and not the file_upload API).
+//   4. The Windows file selection dialog (class #32770, title "開く" /
+//      "Open" / "アップロードするファイルの選択" / "ファイルの選択") is
+//      already open. The caller should poll for #32770 before invoking.
+//   5. Do NOT use Edge for this workflow. Chrome only.
+//
+// Flow:
+//   - Locate the file picker dialog by title and class #32770.
+//   - Focus the address bar (Alt+D) and paste the character base directory.
+//   - Focus the file name field (Alt+N) and paste the multi-file selection
+//     string exactly as: "himari-base.png" "labomaru-base.png"
+//   - Press Enter twice (1st commits the file name field, 2nd presses 開く).
+//
+// Retry policy:
+//   - If a single invocation does not actually attach the files (e.g. keys
+//     were sent before the dialog was activated), the dialog often remains
+//     open. The caller may re-run this script while the same dialog is
+//     still open; it is idempotent under that condition.
+//   - The caller should still cap retries (e.g. 3 times) to avoid loops.
+//
+// Limitations:
+//   - This script does not open the file dialog itself. If the dialog is
+//     not present, GETID returns -1, MSGBOX is shown, and the script exits.
+//   - Clipboard is used to paste the directory and the quoted file list.
+//     If a clipboard manager is overwriting clipboard contents, the paste
+//     can fail; see docs/uwsc_chatgpt_file_attach_test.md for details.
+
+OPTION EXPLICIT
+
+DIM dialogId
+DIM baseDir
+
+baseDir = "D:\documents\動画作成関連\すまラボ\public\images\characters\base"
+
+// Windows file picker dialog.
+dialogId = GETID("開く", "#32770", 3)
+
+IF dialogId < 0 THEN
+  dialogId = GETID("Open", "#32770", 3)
+ENDIF
+
+IF dialogId < 0 THEN
+  dialogId = GETID("アップロードするファイルの選択", "#32770", 3)
+ENDIF
+
+IF dialogId < 0 THEN
+  dialogId = GETID("ファイルの選択", "#32770", 3)
+ENDIF
+
+IF dialogId < 0 THEN
+  MSGBOX("ファイル選択ダイアログが見つかりません。ChatGPTの「写真とファイルを追加」でOSダイアログを開いてから再実行してください。")
+  EXIT
+ENDIF
+
+CTRLWIN(dialogId, ACTIVATE)
+SLEEP(0.5)
+
+// 1. アドレス欄へ移動
+KBD(18, DOWN)   // Alt
+KBD(68, CLICK)  // D
+KBD(18, UP)
+SLEEP(0.3)
+
+// 2. 既存の場所を全選択して削除
+KBD(17, DOWN)   // Ctrl
+KBD(65, CLICK)  // A
+KBD(17, UP)
+SLEEP(0.1)
+KBD(8, CLICK)   // Backspace
+SLEEP(0.2)
+
+// 3. 本来の画像フォルダを貼り付け
+PasteTextByPowerShell(baseDir)
+SLEEP(0.3)
+KBD(13, CLICK)  // Enter
+SLEEP(1.2)
+
+// 4. ファイル名欄へ移動
+KBD(18, DOWN)   // Alt
+KBD(78, CLICK)  // N
+KBD(18, UP)
+SLEEP(0.3)
+
+// 5. ファイル名欄を全選択して削除
+KBD(17, DOWN)   // Ctrl
+KBD(65, CLICK)  // A
+KBD(17, UP)
+SLEEP(0.1)
+KBD(8, CLICK)   // Backspace
+SLEEP(0.2)
+
+// 6. ファイル名欄に必ず以下を貼り付ける
+// "himari-base.png" "labomaru-base.png"
+PasteQuotedFileListByClipExe()
+SLEEP(0.5)
+
+// 7. 開く
+// 1回目でファイル名欄の入力を確定、2回目で「開く」を確実に押す想定
+KBD(13, CLICK)
+SLEEP(0.4)
+KBD(13, CLICK)
+
+SLEEP(2.0)
+
+PROCEDURE PasteTextByPowerShell(text)
+  DIM ps
+  DIM dq
+  DIM sq
+
+  dq = CHR(34)
+  sq = CHR(39)
+
+  ps = "powershell -NoProfile -ExecutionPolicy Bypass -Command " + dq + "Set-Clipboard -Value " + sq + text + sq + dq
+
+  DOSCMD(ps)
+  SLEEP(0.3)
+
+  KBD(17, DOWN)   // Ctrl
+  KBD(86, CLICK)  // V
+  KBD(17, UP)
+  SLEEP(0.3)
+FEND
+
+PROCEDURE PasteQuotedFileListByClipExe()
+  DIM cmd
+  DIM dq
+
+  dq = CHR(34)
+
+  // クリップボードに以下を入れる：
+  // "himari-base.png" "labomaru-base.png"
+  cmd = "cmd /c echo " + dq + "himari-base.png" + dq + " " + dq + "labomaru-base.png" + dq + "| clip"
+
+  DOSCMD(cmd)
+  SLEEP(0.3)
+
+  KBD(17, DOWN)   // Ctrl
+  KBD(86, CLICK)  // V
+  KBD(17, UP)
+  SLEEP(0.3)
+FEND
