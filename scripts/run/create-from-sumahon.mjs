@@ -83,7 +83,7 @@ async function main() {
   const articleBrief = generateArticleBrief({ source, classification, generated: finalGenerated });
   const thumbnailBrief = generateThumbnailBrief({ source, classification, generated: finalGenerated });
   const thumbnailPrompt = generateThumbnailPrompt(thumbnailBrief, {
-    thumbnailChatUrl: config.chatgptTargets.thumbnailChatUrl,
+    thumbnailNewChatUrl: config.chatgptTargets.thumbnailNewChatUrl,
   });
   const handoffPaths = buildHandoffPaths({ slug, config });
   const articlePrompt = generateArticlePrompt({ articleBrief, thumbnailBrief, config });
@@ -186,7 +186,8 @@ async function main() {
       generatedDraftPath: handoffPaths.generatedDraftPath,
       materialsDraftPath: handoffPaths.materialsDraftPath,
       finalThumbnailPromptPath: handoffPaths.finalThumbnailPromptPath,
-      thumbnailChatUrl: `${config.chatgptTargets.thumbnailChatUrl} (参考・例外運用。標準手順では同じ台本チャット内で生成)`,
+      thumbnailNewChatUrl: config.chatgptTargets.thumbnailNewChatUrl,
+      thumbnailAttach: config.thumbnailAttach,
       thumbnailPromptPath,
       thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
       handoffPath,
@@ -195,9 +196,10 @@ async function main() {
       doNotUse: config.browserPolicy.doNotUse,
       refinementReminder: "ChatGPTの初稿をそのまま保存せず、Claude in Chromeが精錬後の最終稿だけを指定パスへ保存します。",
       materialsReminder: "最終稿本文とは別に、Claude in Chromeがブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存します。本文ファイルとは混ぜません。",
-      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。標準手順では同じ台本チャット内で画像生成まで行います。",
-      thumbnailImageReminder: "生成画像はいったん通常のダウンロード先に保存される想定です。後で public/images/thumbnails/ へ移動・リネームしてください。",
-      thumbnailRetryPolicy: "サムネイル画像生成でエラーが出た場合は、Claude in Chromeが最大3回まで自動リトライします。1回目・2回目は同じプロンプト、3回目は簡略版プロンプトで再試行します。3回失敗した場合はサムネイル生成失敗・最終確認待ちとして残します。",
+      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。",
+      thumbnailImageReminder: "サムネイル画像生成は毎回新規ChatGPTチャットで行います。Chromeウィンドウの可視タブが新規タブであり、Chromeをフォアグラウンド化していること。「＋」と「写真とファイルを追加」を画面上の実UIでクリックし、OSダイアログ #32770 が出てからUWSCでベース画像2枚を添付します。生成画像はD:\\downloadsへ保存される想定で、後で public/images/thumbnails/ へ移動・リネームしてください。",
+      thumbnailRetryPolicy: "UWSC添付が1回で成功しなかった場合は、ダイアログが残っていれば同じUWSCを最大3回まで再実行する。画像生成自体に失敗した場合は、Claude in Chromeが最大3回までプロンプト送信をリトライ（1・2回目は同一、3回目は簡略版）。3回失敗で「サムネイル生成失敗・最終確認待ち」として記録する。",
+      browserClickPolicy: "hidden file inputの直接クリック、JavaScriptでのfile input直接発火、file_upload APIは使わない。「＋」も「写真とファイルを追加」も画面上の実UIをクリックする。",
       automatedCompleted: [
         "source取得",
         "分類",
@@ -209,7 +211,13 @@ async function main() {
         "必要に応じてChatGPT台本チャットで本文・資料・最終版サムネイルプロンプトを再生成する",
         "ChatGPT回答完了を待ち、全文コピーして指定パスへ保存する",
         "保存後、ファイル存在と内容の完了を自動確認する",
-        "サムネイル画像生成失敗時は最大3回まで自動リトライし、失敗時は最終確認待ちとして記録する",
+        "サムネイル画像生成専用の新規ChatGPTチャットを開く（使い回し禁止）",
+        "新規タブをChromeウィンドウの可視タブにし、ChromeをSetForegroundWindowでフォアグラウンド化する",
+        "「＋」→「写真とファイルを追加」を実UIでクリックする",
+        "OSダイアログ #32770 をポーリングし、出現確認後にUWSCを実行してベース画像2枚を添付する",
+        "添付2件確認後、最終版サムネイルプロンプトを送信する",
+        "画像生成完了後、ダウンロードして public/images/thumbnails/ へ移動・リネームする",
+        "添付・生成失敗時は最大3回まで自動リトライし、失敗時は最終確認待ちとして記録する",
       ],
       nextClaudeCode: [
         "生成ファイルを読み込み、MDX化・サムネ反映・build・preview pushを実行する",
@@ -260,7 +268,8 @@ async function main() {
       generatedDraftPath: handoffPaths.generatedDraftPath,
       materialsDraftPath: handoffPaths.materialsDraftPath,
       finalThumbnailPromptPath: handoffPaths.finalThumbnailPromptPath,
-      thumbnailChatUrl: `${config.chatgptTargets.thumbnailChatUrl} (参考・例外運用。標準手順では同じ台本チャット内で生成)`,
+      thumbnailNewChatUrl: config.chatgptTargets.thumbnailNewChatUrl,
+      thumbnailAttach: config.thumbnailAttach,
       thumbnailPromptPath,
       thumbnailOutputPath: handoffPaths.thumbnailOutputPath,
       handoffPath,
@@ -269,9 +278,10 @@ async function main() {
       doNotUse: config.browserPolicy.doNotUse,
       refinementReminder: "ChatGPTの初稿をそのまま保存せず、Claude in Chromeが精錬後の最終稿だけを指定パスへ保存します。",
       materialsReminder: "最終稿本文とは別に、Claude in Chromeがブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存します。本文ファイルとは混ぜません。",
-      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。標準手順では同じ台本チャット内で画像生成まで行います。",
-      thumbnailImageReminder: "生成画像はいったん通常のダウンロード先に保存される想定です。後で public/images/thumbnails/ へ移動・リネームしてください。",
-      thumbnailRetryPolicy: "サムネイル画像生成でエラーが出た場合は、Claude in Chromeが最大3回まで自動リトライします。1回目・2回目は同じプロンプト、3回目は簡略版プロンプトで再試行します。3回失敗した場合はサムネイル生成失敗・最終確認待ちとして残します。",
+      thumbnailPromptReminder: "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。",
+      thumbnailImageReminder: "サムネイル画像生成は毎回新規ChatGPTチャットで行います。Chromeウィンドウの可視タブが新規タブであり、Chromeをフォアグラウンド化していること。「＋」と「写真とファイルを追加」を画面上の実UIでクリックし、OSダイアログ #32770 が出てからUWSCでベース画像2枚を添付します。生成画像はD:\\downloadsへ保存される想定で、後で public/images/thumbnails/ へ移動・リネームしてください。",
+      thumbnailRetryPolicy: "UWSC添付が1回で成功しなかった場合は、ダイアログが残っていれば同じUWSCを最大3回まで再実行する。画像生成自体に失敗した場合は、Claude in Chromeが最大3回までプロンプト送信をリトライ（1・2回目は同一、3回目は簡略版）。3回失敗で「サムネイル生成失敗・最終確認待ち」として記録する。",
+      browserClickPolicy: "hidden file inputの直接クリック、JavaScriptでのfile input直接発火、file_upload APIは使わない。「＋」も「写真とファイルを追加」も画面上の実UIをクリックする。",
       automatedCompleted: [
         "source取得",
         "分類",
@@ -283,7 +293,13 @@ async function main() {
         "必要に応じてChatGPT台本チャットで本文・資料・最終版サムネイルプロンプトを再生成する",
         "ChatGPT回答完了を待ち、全文コピーして指定パスへ保存する",
         "保存後、ファイル存在と内容の完了を自動確認する",
-        "サムネイル画像生成失敗時は最大3回まで自動リトライし、失敗時は最終確認待ちとして記録する",
+        "サムネイル画像生成専用の新規ChatGPTチャットを開く（使い回し禁止）",
+        "新規タブをChromeウィンドウの可視タブにし、ChromeをSetForegroundWindowでフォアグラウンド化する",
+        "「＋」→「写真とファイルを追加」を実UIでクリックする",
+        "OSダイアログ #32770 をポーリングし、出現確認後にUWSCを実行してベース画像2枚を添付する",
+        "添付2件確認後、最終版サムネイルプロンプトを送信する",
+        "画像生成完了後、ダウンロードして public/images/thumbnails/ へ移動・リネームする",
+        "添付・生成失敗時は最大3回まで自動リトライし、失敗時は最終確認待ちとして記録する",
       ],
       nextClaudeCode: [
         "生成ファイルを読み込み、MDX化・サムネ反映・build・preview pushを実行する",

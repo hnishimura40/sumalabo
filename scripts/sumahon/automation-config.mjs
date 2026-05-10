@@ -3,11 +3,22 @@ import { readJson } from "./utils.mjs";
 const defaultConfig = {
   chatgptTargets: {
     articleProjectUrl: "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/project",
-    thumbnailChatUrl: "https://chatgpt.com/g/g-p-69e8682b346c8191a2d09562e86a1f57/c/69e99484-b0d4-83e8-98d4-1c49a209c2a5",
+    thumbnailNewChatUrl: "https://chatgpt.com/",
   },
   browserPolicy: {
     useBrowser: "Chrome",
     doNotUse: "Edge",
+  },
+  thumbnailAttach: {
+    uwscExe: "D:\\documents\\uwsc5302\\UWSC.exe",
+    uwscScript: "scripts/automation/chatgpt-attach-base-images.uws",
+    baseImageDir: "public/images/characters/base",
+    baseImages: ["himari-base.png", "labomaru-base.png"],
+    downloadsDir: "D:\\downloads",
+    policy:
+      "サムネイル生成は毎回新規ChatGPTチャットで行う。Chromeウィンドウの可視タブが新規タブであり、ChromeをSetForegroundWindowで前面化していること。「＋」ボタンと「写真とファイルを追加」を画面上の実UIとしてクリックし、OSファイル選択ダイアログ #32770 が出てからUWSCを実行する。hidden file inputの直接クリックや file_upload API は使わない。",
+    retryPolicy:
+      "UWSCで添付できなかった場合は、ダイアログが開いたままなら同じスクリプトを最大3回まで再実行する。3回失敗で「サムネイル生成失敗・最終確認待ち」として記録する。",
   },
   paths: {
     articleBriefDir: "logs/brief",
@@ -34,6 +45,10 @@ export async function loadAutomationConfig() {
     browserPolicy: {
       ...defaultConfig.browserPolicy,
       ...(config.browserPolicy || {}),
+    },
+    thumbnailAttach: {
+      ...defaultConfig.thumbnailAttach,
+      ...(config.thumbnailAttach || {}),
     },
     paths: {
       ...defaultConfig.paths,
