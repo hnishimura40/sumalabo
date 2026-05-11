@@ -20,6 +20,8 @@ updated: "2026-05-11"
 publishAt: "2026-05-11T07:22:48+09:00"
 ---
 
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
 iPhone 18 Proでは、画面上部の「Dynamic Island」が大きく変わるかもしれない、という噂が出ています。今回はこの噂を、普通の人向けにやさしく整理します。
 
 <div class="summary-box">
@@ -202,10 +204,14 @@ iPhone 18 Proは、まだAppleから正式発表されていません。
 
 そのため、Appleがいきなり全部を画面下に隠すのではなく、まずは一部だけを移して、Dynamic Islandを少しずつ目立ちにくくしていく可能性はあります。
 
-> ひまり：
-> 「なるほど。いきなり完全な全画面になるというより、少しずつ近づいている途中って見ればいいんだね」
-> らぼまる：
-> 「そうだね。今は『消えるかも』より、『どこまで目立たなくなるか』を見る段階だね」
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "結局、大きく変わるって決めつけない方がよさそうだね。" },
+    { speaker: "らぼまる", text: "そうだね。今は『Dynamic Islandが消える』より、『少し見た目が変わるかも』くらいで見るのが安全だよ。" },
+    { speaker: "ひまり", text: "買い替え判断の決め手にするには、正式発表まで様子見だね。" },
+  ]}
+/>
 
 ## 今のiPhoneユーザーはどうすればいい？
 

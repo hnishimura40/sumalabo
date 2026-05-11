@@ -43,6 +43,40 @@ function extractReferenceSection(body) {
   return nextHeading === -1 ? rest : rest.slice(0, nextHeading);
 }
 
+const CHARACTER_TEXT_NEEDLES = ["ひまり", "らぼまる"];
+const CHARACTER_VISUAL_PATTERNS = [
+  /<CharacterDialogue[\s/>]/,
+  /<CharacterCallout[\s/>]/,
+  /<CharacterGuideCard[\s/>]/,
+  /\/images\/characters\//,
+];
+
+/**
+ * 本文にひまり・らぼまるが画像つきブロック（CharacterDialogue / CharacterCallout /
+ * CharacterGuideCard / public/images/characters/ への参照）として登場しているかを判定する。
+ * 名前テキストのみ・テキストすら無い場合は warning を返す。
+ */
+export function validateCharacterVisualPresence(body, { frontmatterRecommended = false } = {}) {
+  const plain = body.replace(/<[^>]+>/g, "");
+  const hasCharacterText = CHARACTER_TEXT_NEEDLES.some((needle) => plain.includes(needle));
+  const hasCharacterVisual = CHARACTER_VISUAL_PATTERNS.some((re) => re.test(body));
+
+  const warnings = [];
+  if (hasCharacterText && !hasCharacterVisual) {
+    warnings.push("character_visual_missing");
+  } else if (!hasCharacterText && !hasCharacterVisual) {
+    warnings.push("character_presence_missing");
+  }
+
+  return {
+    hasCharacterText,
+    hasCharacterVisual,
+    frontmatterRecommended: Boolean(frontmatterRecommended),
+    warnings,
+    ok: warnings.length === 0,
+  };
+}
+
 export function validateSourceReferences(body, { source = {} } = {}) {
   const hasReferenceSection = REFERENCE_SECTION_RE.test(body);
   const referenceSection = extractReferenceSection(body);
@@ -235,6 +269,30 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists })
         "missing_reporting_notice",
         "major",
         "報道ベースの記事ですが、本文中に「公式発表ではない／報道ベース／今後変わる可能性」などの注意文が見当たりません。冒頭または参考情報の注記に1文追加してください。",
+      ),
+    );
+  }
+
+  // === character presence check ===
+  // ニュース記事を中心に、本文に「ひまり」「らぼまる」が画像付きブロックとして
+  // 入っているかを確認する。名前だけ言及で画像なしは warning にして、すまラボ
+  // らしさが弱いまま公開されることを防ぐ。詳細は validateCharacterVisualPresence。
+  const characterCheck = validateCharacterVisualPresence(body);
+
+  if (characterCheck.warnings.includes("character_visual_missing")) {
+    issues.push(
+      makeIssue(
+        "character_visual_missing",
+        "warning",
+        "本文にひまり・らぼまるの名前は出ていますが、画像付きの会話/案内コンポーネントが見当たりません。CharacterDialogue / CharacterCallout / CharacterGuideCard などで画像付き要素を1回入れてください。",
+      ),
+    );
+  } else if (characterCheck.warnings.includes("character_presence_missing")) {
+    issues.push(
+      makeIssue(
+        "character_presence_missing",
+        "warning",
+        "本文にひまり・らぼまるの言及も画像付きブロックも見当たりません。すまラボらしさを出すため、CharacterDialogue / CharacterCallout / CharacterGuideCard などで1回だけ画像付きブロックを入れることを推奨します。",
       ),
     );
   }
