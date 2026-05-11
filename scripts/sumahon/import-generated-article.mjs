@@ -111,7 +111,14 @@ export async function importGeneratedArticle({ slug, filePath, articleBrief, sou
       ? `${thumbnailBrief.headlineIdeas[0]}について、すまラボが普通の人向けに整理しているサムネイル`
       : `${title}について、すまラボが普通の人向けに整理しているサムネイル`;
   const description = makeDescription(articleBrief, body);
-  const review = validateGeneratedArticle({ body, source: sourceLog || {}, thumbnailExists });
+  const category = "ニュースをかみくだく"; // 現状の import-generated はニュース系前提で frontmatter にこのカテゴリを書き込む
+  const review = validateGeneratedArticle({
+    body,
+    source: sourceLog || {},
+    thumbnailExists,
+    frontmatterTitle: title,
+    category,
+  });
   const mdx = `${frontmatter({ slug, title, description, thumbnail, thumbnailAlt, articleBrief })}\n\n${body}\n`;
 
   return {

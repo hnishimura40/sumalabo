@@ -92,10 +92,23 @@ async function main() {
     containsSumahonPublicReference: false,
     notes: "sourceCheckが計算されていません。",
   };
+  const articleQualityCheck = imported.review.articleQualityCheck || {
+    ok: true,
+    titleDuplicate: false,
+    markdownResidue: false,
+    characterPresence: "n/a",
+    boxHeadingWarnings: [],
+    articleStructure: "ok",
+    issues: [],
+    reasons: [],
+  };
   const sourceCheckPassed = !!sourceCheck.ok;
-  const blockingRisk = !sourceCheckPassed;
-  const provisionalDecision = sourceCheckPassed ? imported.review.provisionalDecision : "要修正";
-  const publishable = sourceCheckPassed && imported.review.publishable;
+  const articleQualityPassed = !!articleQualityCheck.ok;
+  // blocking条件: sourceCheck NG または articleQualityCheck NG（titleDuplicate / markdownResidue）
+  const overallBlocking = !sourceCheckPassed || !articleQualityPassed;
+  const blockingRisk = overallBlocking;
+  const provisionalDecision = overallBlocking ? "要修正" : imported.review.provisionalDecision;
+  const publishable = !overallBlocking && imported.review.publishable;
   const doNotPublish = !publishable;
 
   const factcheckHumanCheckRequired = [
@@ -110,10 +123,18 @@ async function main() {
     "参考情報セクションに公式情報・元報道・関連報道のURLが2件以上あるか",
   ];
 
-  if (!sourceCheckPassed) {
-    console.log("source check failed:");
-    for (const reason of sourceCheck.reasons || [sourceCheck.notes]) {
-      console.log("  - " + reason);
+  if (overallBlocking) {
+    if (!sourceCheckPassed) {
+      console.log("source check failed:");
+      for (const reason of sourceCheck.reasons || [sourceCheck.notes]) {
+        console.log("  - " + reason);
+      }
+    }
+    if (!articleQualityPassed) {
+      console.log("article quality check failed:");
+      for (const reason of articleQualityCheck.reasons || []) {
+        console.log("  - " + reason);
+      }
     }
     console.log("Preview branch creation and push are skipped. Fix the article and rerun.");
 
@@ -125,6 +146,7 @@ async function main() {
       materials: resolvedMaterialsInfo,
       mdxPath: null,
       sourceCheck,
+      articleQualityCheck,
       blockingRisk,
       publishable,
       provisionalDecision,
@@ -134,11 +156,25 @@ async function main() {
       sourceUrl: sourceLog?.sourceUrl || articleBrief.sourceUrl,
       humanCheckRequired: factcheckHumanCheckRequired,
       issues: imported.review.issues.filter((issue) =>
-        ["source_respect", "missing_reference_section", "insufficient_reference_urls", "sumahon_public_exposure", "missing_reporting_notice"].includes(issue.code),
+        [
+          "source_respect",
+          "missing_reference_section",
+          "insufficient_reference_urls",
+          "sumahon_public_exposure",
+          "missing_reporting_notice",
+          "title_h1_in_body",
+          "title_repeated_at_top",
+          "markdown_residue",
+          "character_missing_for_news",
+          "box_heading_too_large",
+          "article_starts_with_structure",
+          "article_intro_too_short",
+        ].includes(issue.code),
       ),
       provisionalDecision,
       blockingRisk,
       sourceCheck,
+      articleQualityCheck,
       materials: resolvedMaterialsInfo,
     });
     await writeJson(previewLogPath, {
@@ -146,7 +182,7 @@ async function main() {
       articlePath: null,
       generatedDraftPath: filePath,
       materialsPath: resolvedMaterialsInfo?.path || "",
-      expectedPreview: "Preview deployment skipped: sourceCheck failed.",
+      expectedPreview: "Preview deployment skipped: sourceCheck or articleQualityCheck failed.",
       checkUrls: [],
       publishable,
       provisionalDecision,
@@ -155,6 +191,7 @@ async function main() {
       blockingRisk,
       previewCreated: false,
       sourceCheck,
+      articleQualityCheck,
       thumbnail: imported.thumbnail,
       thumbnailExists: imported.thumbnailExists,
       thumbnailSourcePath: imported.thumbnailPath,
@@ -187,6 +224,13 @@ async function main() {
       containsSumahonPublicReference: !!sourceCheck.containsSumahonPublicReference,
       sourceCheckReasons: sourceCheck.reasons || [],
       sourceCheckNotes: sourceCheck.notes || "",
+      articleQualityPassed,
+      titleDuplicate: !!articleQualityCheck.titleDuplicate,
+      markdownResidue: !!articleQualityCheck.markdownResidue,
+      characterPresence: articleQualityCheck.characterPresence,
+      boxHeadingWarnings: articleQualityCheck.boxHeadingWarnings || [],
+      articleStructure: articleQualityCheck.articleStructure,
+      articleQualityReasons: articleQualityCheck.reasons || [],
       updated: todayJst(),
     }, null, 2));
 
@@ -206,6 +250,7 @@ async function main() {
     materials: resolvedMaterialsInfo,
     mdxPath,
     sourceCheck,
+    articleQualityCheck,
     blockingRisk,
     publishable,
     provisionalDecision,
@@ -215,11 +260,25 @@ async function main() {
     sourceUrl: sourceLog?.sourceUrl || articleBrief.sourceUrl,
     humanCheckRequired: factcheckHumanCheckRequired,
     issues: imported.review.issues.filter((issue) =>
-      ["source_respect", "missing_reference_section", "insufficient_reference_urls", "sumahon_public_exposure", "missing_reporting_notice"].includes(issue.code),
+      [
+        "source_respect",
+        "missing_reference_section",
+        "insufficient_reference_urls",
+        "sumahon_public_exposure",
+        "missing_reporting_notice",
+        "title_h1_in_body",
+        "title_repeated_at_top",
+        "markdown_residue",
+        "character_missing_for_news",
+        "box_heading_too_large",
+        "article_starts_with_structure",
+        "article_intro_too_short",
+      ].includes(issue.code),
     ),
     provisionalDecision,
     blockingRisk,
     sourceCheck,
+    articleQualityCheck,
     materials: resolvedMaterialsInfo,
   });
   await writeJson(previewLogPath, {
@@ -241,6 +300,7 @@ async function main() {
     blockingRisk,
     previewCreated: true,
     sourceCheck,
+    articleQualityCheck,
     thumbnail: imported.thumbnail,
     thumbnailExists: imported.thumbnailExists,
     thumbnailSourcePath: imported.thumbnailPath,
@@ -323,6 +383,13 @@ async function main() {
     containsSumahonPublicReference: !!sourceCheck.containsSumahonPublicReference,
     sourceCheckReasons: sourceCheck.reasons || [],
     sourceCheckNotes: sourceCheck.notes || "",
+    articleQualityPassed,
+    titleDuplicate: !!articleQualityCheck.titleDuplicate,
+    markdownResidue: !!articleQualityCheck.markdownResidue,
+    characterPresence: articleQualityCheck.characterPresence,
+    boxHeadingWarnings: articleQualityCheck.boxHeadingWarnings || [],
+    articleStructure: articleQualityCheck.articleStructure,
+    articleQualityReasons: articleQualityCheck.reasons || [],
     notifyLogPath,
     notifySent: notifyResult.ok === true,
     notifySkipped: notifyResult.skipped === true,
