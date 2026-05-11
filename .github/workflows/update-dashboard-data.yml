@@ -1,0 +1,90 @@
+name: Build and Deploy Dashboard
+
+# 個人用ダッシュボード (dashboard/) のビルドと Cloudflare Pages への Direct Upload。
+#
+# 設計方針 (PUBLIC リポジトリ向け):
+#   - GA4 / Search Console から取得した実データを含む dashboard-latest.json は **絶対に commit しない**。
+#   - 取得・ビルド・配備はすべて GitHub Actions ランナー内で完結させ、Wrangler で
+#     Cloudflare Pages にバンドル成果物 (dashboard/dist) を Direct Upload する。
+#   - これにより、リポジトリには「サンプルデータ」と「コード」しか残らない。
+#
+# Cloudflare Pages 側の設定:
+#   - Pages プロジェクトは事前に作成しておく (Direct Upload 専用)。
+#   - Git 連携は **使わない** (Git 連携を有効にすると Preview Deployment が外部に
+#     露出するリスクがあるため。詳細は dashboard/README.md 参照)。
+#
+# Phase 2 (現状):
+#   - scripts/fetch-dashboard-data.mjs は sample-dashboard.json をベースに JSON を吐くだけ。
+#
+# Phase 3 (実 API 連携):
+#   - 下記 Google 系 Secrets を登録すると fetch-dashboard-data.mjs が GA4 / Search Console を呼ぶ実装に切り替わる。
+
+on:
+  workflow_dispatch:
+  schedule:
+    # JST 06:00 / 12:00 / 18:00 相当 (UTC 21:00 / 03:00 / 09:00)。
+    - cron: "0 21 * * *"
+    - cron: "0 3 * * *"
+    - cron: "0 9 * * *"
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: build-deploy-dashboard
+  cancel-in-progress: false
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboard
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate dashboard-latest.json (runner-local only)
+        env:
+          # Phase 3 で使う想定。未登録なら fetch-dashboard-data.mjs は sample fallback で動作する。
+          GA4_PROPERTY_ID_AINITORYU: ${{ secrets.GA4_PROPERTY_ID_AINITORYU }}
+          GA4_PROPERTY_ID_SUMALAB: ${{ secrets.GA4_PROPERTY_ID_SUMALAB }}
+          GA4_PROPERTY_ID_MIRADIA: ${{ secrets.GA4_PROPERTY_ID_MIRADIA }}
+          GA4_SERVICE_ACCOUNT_JSON: ${{ secrets.GA4_SERVICE_ACCOUNT_JSON }}
+          SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON: ${{ secrets.SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON }}
+          SEARCH_CONSOLE_SITE_AINITORYU: ${{ secrets.SEARCH_CONSOLE_SITE_AINITORYU }}
+          SEARCH_CONSOLE_SITE_SUMALAB: ${{ secrets.SEARCH_CONSOLE_SITE_SUMALAB }}
+          SEARCH_CONSOLE_SITE_MIRADIA: ${{ secrets.SEARCH_CONSOLE_SITE_MIRADIA }}
+        run: npm run fetch-data
+
+      - name: Verify live JSON is gitignored (safety check)
+        # 万一 commit されかけたら CI を落とすための保険。
+        run: |
+          if git check-ignore public/data/dashboard-latest.json > /dev/null; then
+            echo "OK: public/data/dashboard-latest.json is gitignored."
+          else
+            echo "ERROR: public/data/dashboard-latest.json must be gitignored on a public repo."
+            exit 1
+          fi
+
+      - name: Build (vite)
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages (Direct Upload)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: dashboard
+          command: pages deploy dist --project-name=${{ secrets.CLOUDFLARE_PAGES_PROJECT }} --branch=main

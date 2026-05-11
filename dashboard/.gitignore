@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-tsc-node/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+
+# 本番ダッシュボードデータは絶対にcommitしない。
+# 理由: 公開リポジトリの場合、実 GA4 / Search Console データ (PV / 検索クエリ等) が
+#       GitHub 上で誰でも閲覧可能になってしまう。
+# 生成は CI のランタイム (GitHub Actions ランナー) のみ。
+# 配備は Cloudflare Pages への Direct Upload (Wrangler) で行い、git には乗せない。
+public/data/dashboard-latest.json
