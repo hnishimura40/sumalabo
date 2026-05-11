@@ -1,4 +1,12 @@
-# ChatGPTサムネイル添付フロー（UWSC連携）
+# ChatGPTサムネイル添付フロー（UWSC連携・フォールバック）
+
+> **位置づけ**: 2026-05 以降、すまラボの標準フローは **CF_HDROP クリップボード貼り付け**（共通ヘルパー `scripts/automation/chatgpt-attach-files-clipboard.ps1`、解説 `docs/chatgpt_file_attach_clipboard.md`）に切り替えました。本ドキュメントは以下のケースに使う **フォールバック手順** として残しています:
+>
+> - `Clipboard.SetFileDropList` が COM エラーで失敗する
+> - クリップボードを別アプリが上書きし続けてしまう
+> - Chrome の paste handler が CF_HDROP を読まなくなった
+>
+> Edge は引き続き触らない / hidden file input は触らない / `file_upload` API は使わない、というポリシーはフォールバック時も同じです。
 
 すまラボ自動化のサムネイル生成工程で、Claude in Chromeがローカル画像（ひまり・らぼまるのベース絵）をChatGPTへ添付するための実証済みフロー。
 
