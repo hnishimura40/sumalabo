@@ -10,6 +10,7 @@
     "article:from-sumahon": "node scripts/run/create-from-sumahon.mjs",
     "article:prepare-from-sumahon": "node scripts/run/prepare-from-sumahon.mjs",
     "article:import-generated": "node scripts/run/import-generated.mjs",
+    "sumahon:watch": "node scripts/run/sumahon-watch.mjs",
     "sumahon:notify-review-ready": "node scripts/run/notify-review-ready.mjs",
     "social:generate-x-post": "node scripts/run/generate-x-post.mjs",
     "social:post-to-x": "node scripts/run/post-to-x.mjs",

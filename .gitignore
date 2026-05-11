@@ -40,3 +40,12 @@ project/
 
 # visual-review internal logs (screenshots + review .md) — never push to main
 logs/visual-review/
+
+# automation runtime state (queue / locks) — never committed
+data/automation/sumahon-queue.json
+data/automation/locks/
+
+# automation logs (per-run files) — never committed; .gitkeep stays
+logs/automation/*.log
+logs/automation/*-sumahon-watch.json
+logs/automation/scheduler-empty-gitconfig
