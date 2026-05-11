@@ -92,9 +92,48 @@ Cloudflare Pages の Settings → Functions → KV namespace bindings に
 - **iOS/iPadOS 16.4 以降のホーム画面追加版PWAでのみ通知可**。Safariブラウザの通常タブでは通知不可。
 - 初回の権限ダイアログは「通知を有効にする」をタップしたユーザー操作の中で出る必要がある（自動で出ない）。
 
-## Windows タスクとの接続
+## 自動処理側からの呼び出し
 
-自動処理の最後で、以下のように HTTPS POST を 1 回叩く。`REVIEW_NOTIFY_SECRET` はサーバー側に登録した値と一致させる。
+### CLI から（推奨）
+
+`scripts/run/notify-review-ready.mjs` を直接または `npm run sumahon:notify-review-ready` 経由で実行する。`REVIEW_NOTIFY_SECRET` は環境変数から読まれる。
+
+```
+REVIEW_NOTIFY_SECRET=<secret> \
+npm run sumahon:notify-review-ready -- \
+  --slug 202605-xxx \
+  --title "..." \
+  --branch preview/xxx \
+  --previewUrl "https://<host>/articles/202605-xxx/" \
+  --prUrl "https://github.com/.../pull/N" \
+  --thumbnail "/images/thumbnails/202605-xxx.png" \
+  --sourceCheckPassed true
+```
+
+`logs/preview/{slug}.notify.json` にAPIレスポンスが保存され、終了コードは以下のとおり：
+
+- `0` … 通知送信成功（API側 `ok: true`）
+- `2` … 通知が送れなかったが致命ではない（`REVIEW_NOTIFY_SECRET` 未設定、接続失敗、401など）
+- `1` … 引数エラー等で実行不能
+
+呼び出し元（Windowsタスク等）は `2` を **warning** として扱い、後続を継続できる。
+
+### `article:import-generated` からの自動呼び出し
+
+`npm run article:import-generated` の **commit/push 完了直後** に、内部で `notifyReviewReady()` がベストエフォートで呼ばれる。失敗してもimport自体は成功扱いのまま継続する。`logs/preview/{slug}.notify.json` に結果を保存し、最終出力JSONに `notifySent` / `notifySkipped` / `notifySubscribers` / `notifyDelivered` / `notifyFailed` / `notifyLogPath` が含まれる。
+
+ローカルから実行する場合、以下の環境変数を設定しておく：
+
+```
+REVIEW_NOTIFY_SECRET=<secret>            # 必須（未設定だと自動でskipされる）
+REVIEW_NOTIFY_API_URL=https://sumalabo.com/api/push/notify-review-ready  # 任意（既定この値）
+SUMALABO_PREVIEW_BASE_URL=https://sumalabo.com  # 任意（previewUrl組立用）
+SUMALABO_PR_URL=https://github.com/hnishimura40/sumalabo/pull/123  # 任意（既知ならcommit時に渡せる）
+```
+
+## Windows タスクからの直接呼び出し（手動 / 緊急用）
+
+`article:import-generated` 経由で通知がスキップされたとき、または別フローで通知だけ送りたいときに使う。
 
 PowerShell の例：
 

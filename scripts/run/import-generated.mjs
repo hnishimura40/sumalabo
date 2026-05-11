@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { importGeneratedArticle } from "../sumahon/import-generated-article.mjs";
+import { notifyReviewReady } from "../sumahon/notify-review-ready.mjs";
 import { writeMdx } from "../sumahon/write-mdx.mjs";
 import { assertNoTrackedChanges, commitAndPushPreview, createPreviewBranch, getCurrentBranch } from "../sumahon/push-preview.mjs";
 import {
@@ -262,6 +263,42 @@ async function main() {
     branchName,
   });
 
+  // ベストエフォートでPWA Push通知。失敗してもPreview作成は成功扱いのまま継続する。
+  // REVIEW_NOTIFY_SECRET が未設定の場合は自動でスキップ（skipped: true）になる。
+  const notifyItem = {
+    slug,
+    title: imported.title,
+    branch: branchName,
+    previewUrl: typeof process.env.SUMALABO_PREVIEW_BASE_URL === "string" && process.env.SUMALABO_PREVIEW_BASE_URL
+      ? `${process.env.SUMALABO_PREVIEW_BASE_URL.replace(/\/+$/, "")}/articles/${slug}/`
+      : `https://sumalabo.com/articles/${slug}/`,
+    prUrl: typeof process.env.SUMALABO_PR_URL === "string" ? process.env.SUMALABO_PR_URL : undefined,
+    thumbnail: imported.thumbnail || undefined,
+    status: "review",
+    sourceCheckPassed,
+  };
+  let notifyResult;
+  try {
+    notifyResult = await notifyReviewReady({ item: notifyItem });
+  } catch (err) {
+    notifyResult = { ok: false, error: String(err && err.message ? err.message : err), message: "notifyReviewReady threw unexpectedly.", meta: { item: notifyItem } };
+  }
+  const notifyLogPath = path.join("logs", "preview", `${slug}.notify.json`);
+  try {
+    await writeJson(notifyLogPath, notifyResult);
+  } catch (err) {
+    console.warn(`warning: failed to write notify log to ${notifyLogPath}:`, err && err.message ? err.message : err);
+  }
+  if (!notifyResult.ok) {
+    if (notifyResult.skipped) {
+      console.warn(`warning: PWA notification skipped (${notifyResult.reason}): ${notifyResult.message || ""}`);
+    } else {
+      console.warn(`warning: PWA notification failed (status=${notifyResult.status || 0}): ${notifyResult.message || notifyResult.error || ""}`);
+    }
+  } else {
+    console.log(`PWA notification sent: subscribers=${notifyResult.response?.subscribers ?? "?"} sent=${notifyResult.response?.sent ?? "?"} failed=${notifyResult.response?.failed ?? "?"}`);
+  }
+
   console.log(JSON.stringify({
     slug,
     importedTitle: imported.title,
@@ -286,6 +323,12 @@ async function main() {
     containsSumahonPublicReference: !!sourceCheck.containsSumahonPublicReference,
     sourceCheckReasons: sourceCheck.reasons || [],
     sourceCheckNotes: sourceCheck.notes || "",
+    notifyLogPath,
+    notifySent: notifyResult.ok === true,
+    notifySkipped: notifyResult.skipped === true,
+    notifySubscribers: notifyResult.response?.subscribers,
+    notifyDelivered: notifyResult.response?.sent,
+    notifyFailed: notifyResult.response?.failed,
     updated: todayJst(),
   }, null, 2));
 }
