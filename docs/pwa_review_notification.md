@@ -213,8 +213,38 @@ PWA 側で承認操作そのものを行わないのは、
 | 「購読の保存に失敗しました」 | KV namespace 未binding | Cloudflare Pages の Functions → KV bindings 設定 |
 | 通知が来ない（API は ok 返す） | iOS デバイスがロックされていて Apple Push Notification Service が遅延 | 数分待つ、画面起こす |
 | `sent=0, failed=N` | 古い購読が全て gone (404/410) | 通知許可をやり直して再subscribe |
-| 401「secret一致しません」 | `REVIEW_NOTIFY_SECRET` が一致していない | 環境変数とリクエストヘッダーを再確認 |
+| 401「secret一致しません」 | `REVIEW_NOTIFY_SECRET` が一致していない | 環境変数とリクエストヘッダーを再確認。下記の `/api/push/check-secret` で一致確認 |
 | `failures` に複数のpush serviceエラー | VAPID JWT が拒否されている／鍵不一致 | `VAPID_PUBLIC_KEY` と `VAPID_PRIVATE_KEY` がペアか再確認 |
+
+## secretの一致確認（`/api/push/check-secret`）
+
+Cloudflare 側の Secret 値は管理画面で表示できないため、ローカル側で持っている `REVIEW_NOTIFY_SECRET` と Cloudflare に登録された値が一致しているかは目視で確認できない。これを安全に確認するための専用エンドポイント `POST /api/push/check-secret` を用意している。
+
+このエンドポイントは秘密値そのものは絶対に返さない。`headerLength` と `envSecretLength` だけ返すため、PowerShell 側の文字列に空白や改行が混ざっていないかも分かる。
+
+### curl
+
+```
+curl -X POST https://sumalabo.com/api/push/check-secret \
+  -H "X-Notify-Secret: $REVIEW_NOTIFY_SECRET"
+```
+
+### PowerShell
+
+```powershell
+Invoke-RestMethod -Method Post -Uri "https://sumalabo.com/api/push/check-secret" `
+  -Headers @{ "X-Notify-Secret" = $env:REVIEW_NOTIFY_SECRET }
+```
+
+### 返り値の読み方
+
+| 返り値 | 意味 | 対処 |
+|---|---|---|
+| `{ ok: true, matched: true, headerLength: n, envSecretLength: m }` | 一致 | OK。`/api/push/notify-review-ready` が動くはず |
+| `{ ok: false, matched: false, headerLength: n, envSecretLength: m }` (HTTP 401) | 不一致 | n と m を比べる：等しいなら中身違い、違えば改行・空白混入の可能性 |
+| `{ ok: false, envSecretConfigured: false }` (HTTP 500) | Cloudflare側未設定 | Cloudflare Pages → Settings → Environment variables に `REVIEW_NOTIFY_SECRET` を登録（Preview/Production 両方を推奨） |
+
+`headerLength` と `envSecretLength` は **文字数のみ** で、内容そのものや先頭/末尾の文字、hash値は一切返さない。比較は定数時間で行うため、長さ違いによるタイミング差で値を推測できないようになっている。
 
 ## 既知の制限
 
