@@ -9,7 +9,7 @@
 | チェック | 対象 | 実装 | 検出する観点 |
 |---|---|---|---|
 | `sourceCheck` (`validateSourceReferences`) | MDX | 機械的 | 参考情報セクションの有無、URL 数、すまほん非露出、報道ベース注意文 |
-| `articleQualityCheck` (`validateArticleQuality`) | MDX | 機械的 | タイトル重複、本文 H1、Markdown 残骸、ボックス内見出し、キャラ要素不足、冒頭構造 |
+| `articleQualityCheck` (`validateArticleQuality`) | MDX | 機械的 | タイトル重複、本文 H1、Markdown 残骸、ボックス内見出し、キャラ要素不足、キャラ画像つきブロックの有無 (`character_visual_missing`)、冒頭構造 |
 | **`visualPreviewReview` (本ドキュメント)** | Preview スクショ | Claude in Chrome + ChatGPT 2 パス | スマホ表示崩れ、読み味、トーン、煽りすぎ、サムネと本文の温度差、機械検査では拾えないファクトの違和感 |
 
 3 つは並列で動かす前提。`sourceCheck` / `articleQualityCheck` が blocking、`visualPreviewReview` は warning 中心（致命だけ blocking 化する想定）。
@@ -75,6 +75,9 @@ mobile-01〜mobile-03 がスマホ表示、desktop-01〜desktop-02 がPC表示�
 - 「最終稿として」「初稿」「以下、本文」などのメタ的な残骸が表示されていないか
 - 孤立した `**` や ```md フェンスが残っていないか
 - ひまり・らぼまるが「ニュース理解後の反応」になっているか（質問→説明の固定構図になっていないか）
+- **ひまり・らぼまるが本文内で画像つきで見えているか**（サムネだけでなく本文中にも CharacterDialogue / CharacterCallout / CharacterGuideCard などの画像つき案内ブロックがあること。名前テキストだけで画像なしは NG）
+- **キャラクターブロックが大きすぎず、本文の邪魔をしていないか**（スマホ表示で画像高さがビューポートの半分を超えていないか、上下の余白が詰まりすぎていないか）
+- サムネだけでなく、記事本文にもすまラボらしい案内要素（補助ボックスや画像つきブロックの混在）があるか
 - 記事として導入→展開→まとめの流れが読み取れるか
 - 末尾に ## 参考情報 セクションが見える位置にあるか
 
