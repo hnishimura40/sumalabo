@@ -1,0 +1,47 @@
+{
+  "slug": "202605-iphone-18-pro-dynamic-island-top-left-rumor",
+  "reviewedAt": "2026-05-11T18:50:00+09:00",
+  "previewUrl": "https://6cf7f865.sumalabo.pages.dev/articles/202605-iphone-18-pro-dynamic-island-top-left-rumor/",
+  "branchPreviewUrl": "https://preview-iphone-18-dynamic-is.sumalabo.pages.dev/",
+  "pr": "https://github.com/hnishimura40/sumalabo/pull/17",
+  "screenshots": [
+    "logs/visual-review/202605-iphone-18-pro-dynamic-island-top-left-rumor/screenshots/mobile-01.png",
+    "logs/visual-review/202605-iphone-18-pro-dynamic-island-top-left-rumor/screenshots/mobile-02.png",
+    "logs/visual-review/202605-iphone-18-pro-dynamic-island-top-left-rumor/screenshots/mobile-03.png",
+    "logs/visual-review/202605-iphone-18-pro-dynamic-island-top-left-rumor/screenshots/desktop-01.png"
+  ],
+  "reviews": {
+    "pass1": "logs/visual-review/202605-iphone-18-pro-dynamic-island-top-left-rumor/review-1.md",
+    "pass2": "logs/visual-review/202605-iphone-18-pro-dynamic-island-top-left-rumor/review-2.md",
+    "merged": "logs/visual-review/202605-iphone-18-pro-dynamic-island-top-left-rumor/merged-fixes.md",
+    "factcheck": "logs/visual-review/202605-iphone-18-pro-dynamic-island-top-left-rumor/factcheck-notes.md"
+  },
+  "reviewer": "claude",
+  "reviewerNote": "今セッション中のChrome複数ウィンドウとMCPタブ可視性の不安定さにより、chatgpt-attach-files-clipboard.ps1経由のChatGPT実添付ではなく、Claudeがdocs/visual_preview_review.mdの2パスプロンプト/観点を直接適用してレビューを実施。次回以降は同フローでChatGPTへ実添付して回す前提。",
+  "fixes": [],
+  "deferred": [
+    {
+      "id": "def-001",
+      "category": "layout",
+      "note": "mobile幅515pxでタイトルH1が4行折り返し。読めるが詰まる印象。サイト全体のタイポグラフィ調整課題として別タスク化。"
+    },
+    {
+      "id": "def-002",
+      "category": "preview-only",
+      "note": "Preview限定の『この記事を承認して公開』ボタンがmobile末尾で大きく場所を取る。PreviewApprovalButtonの仕様で本記事修正対象外。"
+    },
+    {
+      "id": "def-003",
+      "category": "fact",
+      "note": "MacRumors / AppleInsider参考URLの到達性は本Preview環境でクリック確認していない。人間の最終確認時にチェック推奨。"
+    }
+  ],
+  "summary": {
+    "pass1Blocking": 0,
+    "pass1Recommended": 0,
+    "pass2Blocking": 0,
+    "pass2Recommended": 0,
+    "totalDeferred": 3,
+    "result": "no_changes_required"
+  }
+}
