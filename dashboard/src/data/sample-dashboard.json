@@ -1,0 +1,258 @@
+{
+  "generatedAt": "2026-05-11T07:00:00+09:00",
+  "sites": [
+    {
+      "site": {
+        "id": "ainitoryu",
+        "name": "AI二刀流",
+        "url": "https://www.ainitoryu.com/",
+        "category": "野球・競馬",
+        "accent": "#2563eb"
+      },
+      "metrics": {
+        "todayViews": 1284,
+        "yesterdayViews": 1108,
+        "last7DaysViews": 7920,
+        "last28DaysViews": 28930,
+        "users": 5840,
+        "sessions": 6920,
+        "searchClicks": 3120,
+        "searchImpressions": 84210,
+        "searchCtr": 0.037,
+        "averagePosition": 18.4
+      },
+      "dailyViews": [
+        { "date": "2026-04-14", "views": 920 },
+        { "date": "2026-04-15", "views": 880 },
+        { "date": "2026-04-16", "views": 940 },
+        { "date": "2026-04-17", "views": 1010 },
+        { "date": "2026-04-18", "views": 1180 },
+        { "date": "2026-04-19", "views": 1240 },
+        { "date": "2026-04-20", "views": 1060 },
+        { "date": "2026-04-21", "views": 960 },
+        { "date": "2026-04-22", "views": 970 },
+        { "date": "2026-04-23", "views": 1020 },
+        { "date": "2026-04-24", "views": 1110 },
+        { "date": "2026-04-25", "views": 1280 },
+        { "date": "2026-04-26", "views": 1300 },
+        { "date": "2026-04-27", "views": 1090 },
+        { "date": "2026-04-28", "views": 980 },
+        { "date": "2026-04-29", "views": 1020 },
+        { "date": "2026-04-30", "views": 1090 },
+        { "date": "2026-05-01", "views": 1150 },
+        { "date": "2026-05-02", "views": 1270 },
+        { "date": "2026-05-03", "views": 1310 },
+        { "date": "2026-05-04", "views": 1120 },
+        { "date": "2026-05-05", "views": 1040 },
+        { "date": "2026-05-06", "views": 1080 },
+        { "date": "2026-05-07", "views": 1140 },
+        { "date": "2026-05-08", "views": 1190 },
+        { "date": "2026-05-09", "views": 1240 },
+        { "date": "2026-05-10", "views": 1108 },
+        { "date": "2026-05-11", "views": 1284 }
+      ],
+      "topPages": [
+        { "path": "/baseball/dh-rule-2026", "title": "2026年DH制度の最新ルールまとめ", "views": 1820 },
+        { "path": "/horse/g1-spring-preview", "title": "春G1完全プレビュー", "views": 1410 },
+        { "path": "/baseball/wbc-2026-roster", "title": "WBC 2026 注目選手ロースター", "views": 1180 },
+        { "path": "/horse/jockey-stats-2026", "title": "騎手成績ランキング2026", "views": 960 },
+        { "path": "/baseball/sabermetrics-intro", "title": "セイバーメトリクス入門", "views": 720 }
+      ],
+      "risingPages": [
+        { "path": "/baseball/dh-rule-2026", "title": "2026年DH制度の最新ルールまとめ", "views": 1820, "delta": 0.62 },
+        { "path": "/horse/g1-spring-preview", "title": "春G1完全プレビュー", "views": 1410, "delta": 0.41 },
+        { "path": "/baseball/rookie-watch-2026", "title": "ルーキー注目株 2026", "views": 540, "delta": 0.38 }
+      ],
+      "topQueries": [
+        { "query": "DH制 2026", "clicks": 612, "impressions": 9820, "ctr": 0.0623, "position": 6.2 },
+        { "query": "春G1 予想", "clicks": 480, "impressions": 7400, "ctr": 0.0649, "position": 7.4 },
+        { "query": "WBC 2026 メンバー", "clicks": 410, "impressions": 12100, "ctr": 0.0339, "position": 9.8 },
+        { "query": "セイバーメトリクス 入門", "clicks": 240, "impressions": 5100, "ctr": 0.0471, "position": 5.1 }
+      ],
+      "improvements": [
+        {
+          "path": "/horse/jockey-stats-2026",
+          "title": "騎手成績ランキング2026",
+          "reason": "Impression は伸びているがCTRが平均以下。タイトルとmeta descriptionを見直す価値あり。",
+          "priority": "high"
+        },
+        {
+          "path": "/baseball/sabermetrics-intro",
+          "title": "セイバーメトリクス入門",
+          "reason": "平均掲載順位11位前後。内部リンクと追記で10位以内を狙える。",
+          "priority": "medium"
+        }
+      ],
+      "source": "sample",
+      "fetchedAt": "2026-05-11T07:00:00+09:00"
+    },
+    {
+      "site": {
+        "id": "sumalab",
+        "name": "すまラボ",
+        "url": "",
+        "category": "AI・IT・ガジェット",
+        "accent": "#10b981"
+      },
+      "metrics": {
+        "todayViews": 642,
+        "yesterdayViews": 710,
+        "last7DaysViews": 4830,
+        "last28DaysViews": 17240,
+        "users": 3210,
+        "sessions": 3760,
+        "searchClicks": 1520,
+        "searchImpressions": 52800,
+        "searchCtr": 0.0288,
+        "averagePosition": 22.6
+      },
+      "dailyViews": [
+        { "date": "2026-04-14", "views": 520 },
+        { "date": "2026-04-15", "views": 540 },
+        { "date": "2026-04-16", "views": 600 },
+        { "date": "2026-04-17", "views": 580 },
+        { "date": "2026-04-18", "views": 620 },
+        { "date": "2026-04-19", "views": 650 },
+        { "date": "2026-04-20", "views": 590 },
+        { "date": "2026-04-21", "views": 610 },
+        { "date": "2026-04-22", "views": 640 },
+        { "date": "2026-04-23", "views": 670 },
+        { "date": "2026-04-24", "views": 700 },
+        { "date": "2026-04-25", "views": 720 },
+        { "date": "2026-04-26", "views": 690 },
+        { "date": "2026-04-27", "views": 660 },
+        { "date": "2026-04-28", "views": 640 },
+        { "date": "2026-04-29", "views": 680 },
+        { "date": "2026-04-30", "views": 700 },
+        { "date": "2026-05-01", "views": 730 },
+        { "date": "2026-05-02", "views": 750 },
+        { "date": "2026-05-03", "views": 720 },
+        { "date": "2026-05-04", "views": 690 },
+        { "date": "2026-05-05", "views": 670 },
+        { "date": "2026-05-06", "views": 700 },
+        { "date": "2026-05-07", "views": 720 },
+        { "date": "2026-05-08", "views": 740 },
+        { "date": "2026-05-09", "views": 720 },
+        { "date": "2026-05-10", "views": 710 },
+        { "date": "2026-05-11", "views": 642 }
+      ],
+      "topPages": [
+        { "path": "/cheap-sim-guide", "title": "格安SIM完全ガイド", "views": 1240 },
+        { "path": "/iphone-battery-tips", "title": "iPhoneバッテリー寿命を延ばすコツ", "views": 980 },
+        { "path": "/ai-chat-comparison", "title": "AIチャット主要サービス比較", "views": 870 },
+        { "path": "/wifi-router-2026", "title": "2026年おすすめWi-Fiルーター", "views": 620 },
+        { "path": "/cloud-storage-roundup", "title": "クラウドストレージ料金まとめ", "views": 510 }
+      ],
+      "risingPages": [
+        { "path": "/ai-chat-comparison", "title": "AIチャット主要サービス比較", "views": 870, "delta": 0.45 },
+        { "path": "/wifi-router-2026", "title": "2026年おすすめWi-Fiルーター", "views": 620, "delta": 0.31 },
+        { "path": "/cloud-storage-roundup", "title": "クラウドストレージ料金まとめ", "views": 510, "delta": 0.22 }
+      ],
+      "topQueries": [
+        { "query": "格安SIM おすすめ", "clicks": 410, "impressions": 14200, "ctr": 0.0289, "position": 14.2 },
+        { "query": "iPhone バッテリー 持ち", "clicks": 280, "impressions": 9100, "ctr": 0.0308, "position": 11.8 },
+        { "query": "AIチャット 比較", "clicks": 220, "impressions": 6400, "ctr": 0.0344, "position": 9.4 },
+        { "query": "Wi-Fiルーター おすすめ 2026", "clicks": 140, "impressions": 4900, "ctr": 0.0286, "position": 12.7 }
+      ],
+      "improvements": [
+        {
+          "path": "/cheap-sim-guide",
+          "title": "格安SIM完全ガイド",
+          "reason": "PVは高いが内部リンクが少ない。関連記事への導線を追加して回遊率改善。",
+          "priority": "high"
+        },
+        {
+          "title": "AIカテゴリのトップページ強化",
+          "reason": "AIチャット系の流入が急増中。カテゴリトップを整備するとさらに伸びそう。",
+          "priority": "medium"
+        }
+      ],
+      "source": "sample",
+      "fetchedAt": "2026-05-11T07:00:00+09:00"
+    },
+    {
+      "site": {
+        "id": "miradia",
+        "name": "ミラディア",
+        "url": "",
+        "category": "まとめ・ニュース導線",
+        "accent": "#ec4899"
+      },
+      "metrics": {
+        "todayViews": 410,
+        "yesterdayViews": 380,
+        "last7DaysViews": 2680,
+        "last28DaysViews": 9740,
+        "users": 1980,
+        "sessions": 2240,
+        "searchClicks": 720,
+        "searchImpressions": 28900,
+        "searchCtr": 0.0249,
+        "averagePosition": 26.1
+      },
+      "dailyViews": [
+        { "date": "2026-04-14", "views": 290 },
+        { "date": "2026-04-15", "views": 310 },
+        { "date": "2026-04-16", "views": 340 },
+        { "date": "2026-04-17", "views": 320 },
+        { "date": "2026-04-18", "views": 360 },
+        { "date": "2026-04-19", "views": 380 },
+        { "date": "2026-04-20", "views": 350 },
+        { "date": "2026-04-21", "views": 330 },
+        { "date": "2026-04-22", "views": 360 },
+        { "date": "2026-04-23", "views": 390 },
+        { "date": "2026-04-24", "views": 410 },
+        { "date": "2026-04-25", "views": 420 },
+        { "date": "2026-04-26", "views": 400 },
+        { "date": "2026-04-27", "views": 370 },
+        { "date": "2026-04-28", "views": 360 },
+        { "date": "2026-04-29", "views": 380 },
+        { "date": "2026-04-30", "views": 400 },
+        { "date": "2026-05-01", "views": 430 },
+        { "date": "2026-05-02", "views": 410 },
+        { "date": "2026-05-03", "views": 380 },
+        { "date": "2026-05-04", "views": 360 },
+        { "date": "2026-05-05", "views": 350 },
+        { "date": "2026-05-06", "views": 370 },
+        { "date": "2026-05-07", "views": 390 },
+        { "date": "2026-05-08", "views": 400 },
+        { "date": "2026-05-09", "views": 410 },
+        { "date": "2026-05-10", "views": 380 },
+        { "date": "2026-05-11", "views": 410 }
+      ],
+      "topPages": [
+        { "path": "/news/weekly-digest", "title": "今週のニュースダイジェスト", "views": 540 },
+        { "path": "/matome/ai-trend-2026", "title": "AIトレンドまとめ2026", "views": 420 },
+        { "path": "/news/gadget-buzz", "title": "話題のガジェットまとめ", "views": 360 },
+        { "path": "/matome/sports-headlines", "title": "スポーツ見出しまとめ", "views": 280 },
+        { "path": "/news/entertainment", "title": "エンタメ速報まとめ", "views": 240 }
+      ],
+      "risingPages": [
+        { "path": "/matome/ai-trend-2026", "title": "AIトレンドまとめ2026", "views": 420, "delta": 0.55 },
+        { "path": "/news/gadget-buzz", "title": "話題のガジェットまとめ", "views": 360, "delta": 0.28 },
+        { "path": "/news/weekly-digest", "title": "今週のニュースダイジェスト", "views": 540, "delta": 0.12 }
+      ],
+      "topQueries": [
+        { "query": "AI トレンド 2026", "clicks": 180, "impressions": 6200, "ctr": 0.029, "position": 13.4 },
+        { "query": "今週のニュース まとめ", "clicks": 140, "impressions": 4800, "ctr": 0.0292, "position": 15.1 },
+        { "query": "ガジェット 話題", "clicks": 110, "impressions": 3900, "ctr": 0.0282, "position": 16.8 },
+        { "query": "エンタメ 速報", "clicks": 90, "impressions": 3300, "ctr": 0.0273, "position": 18.2 }
+      ],
+      "improvements": [
+        {
+          "title": "まとめ記事の更新サイクルを短く",
+          "reason": "急上昇記事が偏っている。週次の更新パターンを作ると安定して伸ばしやすい。",
+          "priority": "medium"
+        },
+        {
+          "path": "/news/entertainment",
+          "title": "エンタメ速報まとめ",
+          "reason": "平均掲載順位18位台。タイトルにトレンドワードを追加するとクリック増の見込み。",
+          "priority": "low"
+        }
+      ],
+      "source": "sample",
+      "fetchedAt": "2026-05-11T07:00:00+09:00"
+    }
+  ]
+}
