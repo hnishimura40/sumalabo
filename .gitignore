@@ -37,3 +37,6 @@ design/reference/
 # local-only source materials
 articles/sources/
 project/
+
+# visual-review internal logs (screenshots + review .md) — never push to main
+logs/visual-review/
