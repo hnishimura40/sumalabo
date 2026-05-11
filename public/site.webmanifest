@@ -3,7 +3,7 @@
   "short_name": "すまラボ",
   "description": "むずかしいスマホ・AI・ガジェットの話を、わかりやすく。",
   "lang": "ja",
-  "start_url": "/",
+  "start_url": "/review/?utm_source=pwa",
   "scope": "/",
   "display": "standalone",
   "background_color": "#f7fbf9",
@@ -18,6 +18,20 @@
       "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "レビュー",
+      "short_name": "レビュー",
+      "description": "確認待ち記事の一覧と承認",
+      "url": "/review/"
     }
   ]
 }

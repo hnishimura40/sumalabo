@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { importGeneratedArticle } from "../sumahon/import-generated-article.mjs";
+import { notifyReviewReady } from "../sumahon/notify-review-ready.mjs";
 import { writeMdx } from "../sumahon/write-mdx.mjs";
 import { assertNoTrackedChanges, commitAndPushPreview, createPreviewBranch, getCurrentBranch } from "../sumahon/push-preview.mjs";
 import {
@@ -91,10 +92,23 @@ async function main() {
     containsSumahonPublicReference: false,
     notes: "sourceCheckが計算されていません。",
   };
+  const articleQualityCheck = imported.review.articleQualityCheck || {
+    ok: true,
+    titleDuplicate: false,
+    markdownResidue: false,
+    characterPresence: "n/a",
+    boxHeadingWarnings: [],
+    articleStructure: "ok",
+    issues: [],
+    reasons: [],
+  };
   const sourceCheckPassed = !!sourceCheck.ok;
-  const blockingRisk = !sourceCheckPassed;
-  const provisionalDecision = sourceCheckPassed ? imported.review.provisionalDecision : "要修正";
-  const publishable = sourceCheckPassed && imported.review.publishable;
+  const articleQualityPassed = !!articleQualityCheck.ok;
+  // blocking条件: sourceCheck NG または articleQualityCheck NG（titleDuplicate / markdownResidue）
+  const overallBlocking = !sourceCheckPassed || !articleQualityPassed;
+  const blockingRisk = overallBlocking;
+  const provisionalDecision = overallBlocking ? "要修正" : imported.review.provisionalDecision;
+  const publishable = !overallBlocking && imported.review.publishable;
   const doNotPublish = !publishable;
 
   const factcheckHumanCheckRequired = [
@@ -109,10 +123,18 @@ async function main() {
     "参考情報セクションに公式情報・元報道・関連報道のURLが2件以上あるか",
   ];
 
-  if (!sourceCheckPassed) {
-    console.log("source check failed:");
-    for (const reason of sourceCheck.reasons || [sourceCheck.notes]) {
-      console.log("  - " + reason);
+  if (overallBlocking) {
+    if (!sourceCheckPassed) {
+      console.log("source check failed:");
+      for (const reason of sourceCheck.reasons || [sourceCheck.notes]) {
+        console.log("  - " + reason);
+      }
+    }
+    if (!articleQualityPassed) {
+      console.log("article quality check failed:");
+      for (const reason of articleQualityCheck.reasons || []) {
+        console.log("  - " + reason);
+      }
     }
     console.log("Preview branch creation and push are skipped. Fix the article and rerun.");
 
@@ -124,6 +146,7 @@ async function main() {
       materials: resolvedMaterialsInfo,
       mdxPath: null,
       sourceCheck,
+      articleQualityCheck,
       blockingRisk,
       publishable,
       provisionalDecision,
@@ -133,11 +156,25 @@ async function main() {
       sourceUrl: sourceLog?.sourceUrl || articleBrief.sourceUrl,
       humanCheckRequired: factcheckHumanCheckRequired,
       issues: imported.review.issues.filter((issue) =>
-        ["source_respect", "missing_reference_section", "insufficient_reference_urls", "sumahon_public_exposure", "missing_reporting_notice"].includes(issue.code),
+        [
+          "source_respect",
+          "missing_reference_section",
+          "insufficient_reference_urls",
+          "sumahon_public_exposure",
+          "missing_reporting_notice",
+          "title_h1_in_body",
+          "title_repeated_at_top",
+          "markdown_residue",
+          "character_missing_for_news",
+          "box_heading_too_large",
+          "article_starts_with_structure",
+          "article_intro_too_short",
+        ].includes(issue.code),
       ),
       provisionalDecision,
       blockingRisk,
       sourceCheck,
+      articleQualityCheck,
       materials: resolvedMaterialsInfo,
     });
     await writeJson(previewLogPath, {
@@ -145,7 +182,7 @@ async function main() {
       articlePath: null,
       generatedDraftPath: filePath,
       materialsPath: resolvedMaterialsInfo?.path || "",
-      expectedPreview: "Preview deployment skipped: sourceCheck failed.",
+      expectedPreview: "Preview deployment skipped: sourceCheck or articleQualityCheck failed.",
       checkUrls: [],
       publishable,
       provisionalDecision,
@@ -154,6 +191,7 @@ async function main() {
       blockingRisk,
       previewCreated: false,
       sourceCheck,
+      articleQualityCheck,
       thumbnail: imported.thumbnail,
       thumbnailExists: imported.thumbnailExists,
       thumbnailSourcePath: imported.thumbnailPath,
@@ -186,6 +224,13 @@ async function main() {
       containsSumahonPublicReference: !!sourceCheck.containsSumahonPublicReference,
       sourceCheckReasons: sourceCheck.reasons || [],
       sourceCheckNotes: sourceCheck.notes || "",
+      articleQualityPassed,
+      titleDuplicate: !!articleQualityCheck.titleDuplicate,
+      markdownResidue: !!articleQualityCheck.markdownResidue,
+      characterPresence: articleQualityCheck.characterPresence,
+      boxHeadingWarnings: articleQualityCheck.boxHeadingWarnings || [],
+      articleStructure: articleQualityCheck.articleStructure,
+      articleQualityReasons: articleQualityCheck.reasons || [],
       updated: todayJst(),
     }, null, 2));
 
@@ -205,6 +250,7 @@ async function main() {
     materials: resolvedMaterialsInfo,
     mdxPath,
     sourceCheck,
+    articleQualityCheck,
     blockingRisk,
     publishable,
     provisionalDecision,
@@ -214,11 +260,25 @@ async function main() {
     sourceUrl: sourceLog?.sourceUrl || articleBrief.sourceUrl,
     humanCheckRequired: factcheckHumanCheckRequired,
     issues: imported.review.issues.filter((issue) =>
-      ["source_respect", "missing_reference_section", "insufficient_reference_urls", "sumahon_public_exposure", "missing_reporting_notice"].includes(issue.code),
+      [
+        "source_respect",
+        "missing_reference_section",
+        "insufficient_reference_urls",
+        "sumahon_public_exposure",
+        "missing_reporting_notice",
+        "title_h1_in_body",
+        "title_repeated_at_top",
+        "markdown_residue",
+        "character_missing_for_news",
+        "box_heading_too_large",
+        "article_starts_with_structure",
+        "article_intro_too_short",
+      ].includes(issue.code),
     ),
     provisionalDecision,
     blockingRisk,
     sourceCheck,
+    articleQualityCheck,
     materials: resolvedMaterialsInfo,
   });
   await writeJson(previewLogPath, {
@@ -240,6 +300,7 @@ async function main() {
     blockingRisk,
     previewCreated: true,
     sourceCheck,
+    articleQualityCheck,
     thumbnail: imported.thumbnail,
     thumbnailExists: imported.thumbnailExists,
     thumbnailSourcePath: imported.thumbnailPath,
@@ -261,6 +322,42 @@ async function main() {
     message: `feat(article): import generated draft for ${slug}`,
     branchName,
   });
+
+  // ベストエフォートでPWA Push通知。失敗してもPreview作成は成功扱いのまま継続する。
+  // REVIEW_NOTIFY_SECRET が未設定の場合は自動でスキップ（skipped: true）になる。
+  const notifyItem = {
+    slug,
+    title: imported.title,
+    branch: branchName,
+    previewUrl: typeof process.env.SUMALABO_PREVIEW_BASE_URL === "string" && process.env.SUMALABO_PREVIEW_BASE_URL
+      ? `${process.env.SUMALABO_PREVIEW_BASE_URL.replace(/\/+$/, "")}/articles/${slug}/`
+      : `https://sumalabo.com/articles/${slug}/`,
+    prUrl: typeof process.env.SUMALABO_PR_URL === "string" ? process.env.SUMALABO_PR_URL : undefined,
+    thumbnail: imported.thumbnail || undefined,
+    status: "review",
+    sourceCheckPassed,
+  };
+  let notifyResult;
+  try {
+    notifyResult = await notifyReviewReady({ item: notifyItem });
+  } catch (err) {
+    notifyResult = { ok: false, error: String(err && err.message ? err.message : err), message: "notifyReviewReady threw unexpectedly.", meta: { item: notifyItem } };
+  }
+  const notifyLogPath = path.join("logs", "preview", `${slug}.notify.json`);
+  try {
+    await writeJson(notifyLogPath, notifyResult);
+  } catch (err) {
+    console.warn(`warning: failed to write notify log to ${notifyLogPath}:`, err && err.message ? err.message : err);
+  }
+  if (!notifyResult.ok) {
+    if (notifyResult.skipped) {
+      console.warn(`warning: PWA notification skipped (${notifyResult.reason}): ${notifyResult.message || ""}`);
+    } else {
+      console.warn(`warning: PWA notification failed (status=${notifyResult.status || 0}): ${notifyResult.message || notifyResult.error || ""}`);
+    }
+  } else {
+    console.log(`PWA notification sent: subscribers=${notifyResult.response?.subscribers ?? "?"} sent=${notifyResult.response?.sent ?? "?"} failed=${notifyResult.response?.failed ?? "?"}`);
+  }
 
   console.log(JSON.stringify({
     slug,
@@ -286,6 +383,19 @@ async function main() {
     containsSumahonPublicReference: !!sourceCheck.containsSumahonPublicReference,
     sourceCheckReasons: sourceCheck.reasons || [],
     sourceCheckNotes: sourceCheck.notes || "",
+    articleQualityPassed,
+    titleDuplicate: !!articleQualityCheck.titleDuplicate,
+    markdownResidue: !!articleQualityCheck.markdownResidue,
+    characterPresence: articleQualityCheck.characterPresence,
+    boxHeadingWarnings: articleQualityCheck.boxHeadingWarnings || [],
+    articleStructure: articleQualityCheck.articleStructure,
+    articleQualityReasons: articleQualityCheck.reasons || [],
+    notifyLogPath,
+    notifySent: notifyResult.ok === true,
+    notifySkipped: notifyResult.skipped === true,
+    notifySubscribers: notifyResult.response?.subscribers,
+    notifyDelivered: notifyResult.response?.sent,
+    notifyFailed: notifyResult.response?.failed,
     updated: todayJst(),
   }, null, 2));
 }

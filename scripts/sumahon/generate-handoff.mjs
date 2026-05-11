@@ -76,35 +76,63 @@ export function generateThumbnailImageFlowMarkdown({ finalThumbnailPromptPath, t
   const baseDir = (thumbnailAttach && thumbnailAttach.baseImageDir) || "public/images/characters/base";
   const baseImages = (thumbnailAttach && thumbnailAttach.baseImages) || ["himari-base.png", "labomaru-base.png"];
   const downloadsDir = (thumbnailAttach && thumbnailAttach.downloadsDir) || "D:\\downloads";
+  const baseImagePaths = baseImages.map((name) => `${baseDir.replace(/\//g, "\\")}\\${name}`);
 
-  return `## サムネイル画像生成フロー（UWSC連携・新規ChatGPTチャット）
+  return `## サムネイル画像生成フロー（クリップボード貼り付け・新規ChatGPTチャット）
 
-サムネイル画像生成は **毎回新規ChatGPTチャット** で行います。使い回しチャットや台本チャットの中では生成しません。ローカルのキャラクターベース画像をChatGPTへ添付するため、Claude in Chromeが「＋」→「写真とファイルを追加」までを画面上の実UIで操作し、開いたWindowsファイル選択ダイアログをUWSCで操作します。
+サムネイル画像生成は **毎回新規ChatGPTチャット** で行います。使い回しチャットや台本チャットの中では生成しません。ローカルのキャラクターベース画像をChatGPTへ添付するため、Claude in ChromeがWindowsの **CF_HDROP クリップボードに1ファイルずつコピー → Ctrl+V を 2 回** 送って2枚を順次添付します。`+"\n\n"+`従来は UWSC で OS ファイル選択ダイアログを操作していましたが、クリップボード経路の方が失敗ポイントが少ないため標準フローを切り替えました。UWSC 経路はフォールバックとして残しています。詳細は \`docs/chatgpt_file_attach_clipboard.md\`、Preview スクショレビュー時の使い回しは \`docs/visual_preview_review.md\`、UWSC フォールバックは \`docs/uwsc_chatgpt_file_attach_test.md\` を参照してください。
 
-### Claude in Chromeが自動実行する手順
+### Claude in Chromeが自動実行する手順（共通ヘルパー経由）
+
+推奨経路は \`scripts/automation/chatgpt-attach-files-clipboard.ps1\` を 1 度呼ぶだけ。引数で渡したファイルを順次 1 ファイルずつ CF_HDROP → Ctrl+V してくれる（ヘルパー側で Chrome フォアグラウンド化・Edge 拒否・貼り付け間 2.5 秒待機・ファイル存在チェックを行う）。
 
 1. Chromeで新規ChatGPTチャットを開く（\`https://chatgpt.com/\`）
-2. 開いた新規タブをChromeウィンドウの**可視タブ**にする（古いタブを閉じるか、対象タブを最前面に切り替える。背景タブのままだとOSダイアログが上がらない）
-3. PowerShellでChromeウィンドウを\`SetForegroundWindow\`し、フォアグラウンド化する
-4. 入力欄左の「＋」ボタン（aria-label \`ファイルの追加など\`）を画面上の実UIとしてクリックする
-   - hidden file input は直接クリックしない
-   - JavaScriptで file input を直接 \`.click()\` しない
-   - \`file_upload\` API は使わない
-5. 開いたメニューから「写真とファイルを追加」menuitem を画面上の実UIとしてクリックする
-6. Windowsファイル選択ダイアログ（クラス \`#32770\`）が出るまで200msごとにポーリングする（最大2秒程度）
-7. ダイアログが出たら、PowerShellでUWSCを実行する
+2. 開いた新規タブをChromeウィンドウの**可視タブ**にする（古いタブを閉じるか、対象タブを最前面に切り替える。背景タブのままだとCtrl+VがChatGPTへ届かない）
+3. ProseMirror（\`#prompt-textarea\`）に \`pm.focus()\` でフォーカスし、\`Selection.collapse(false)\` で末尾にキャレットを置く
+4. PowerShellでヘルパーを呼ぶ
+   \`\`\`powershell
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File \`
+     "scripts\\automation\\chatgpt-attach-files-clipboard.ps1" \`
+     -Files "${baseImagePaths[0]}", \`
+            "${baseImagePaths[1] || baseImagePaths[0]}"
    \`\`\`
-   & "${uwscExe}" "${uwscScript}"
+5. DOMで添付2件を確認する
+   \`\`\`js
+   document.querySelectorAll('button[aria-label^="ファイル"][aria-label*="削除"]').length === 2
    \`\`\`
-8. UWSCは ${baseDir} を開き、\`"${baseImages.join('" "')}"\` をファイル名欄に入れて2画像を選択する
-9. UWSC終了後、ChatGPT入力欄に2件添付されたかDOMで確認する
-10. もし添付できておらず\`#32770\`がまだ開いているなら、同じUWSCスクリプトをそのまま再実行する（最大3回）。3回失敗で「サムネイル生成失敗・最終確認待ち」として記録する
-11. 添付2件確認後、${finalPromptPath} を入力欄に貼り付けて送信する
-12. ChatGPTが回答中・画像生成中の間は次の操作をしない
-13. 画像生成完了を待ち、\`alt="画像が生成されました"\` の \`<img>\` を取得する
-14. 生成画像を fetch + Blob + \`<a download>\` でダウンロードする（${downloadsDir} に保存される想定）
-15. ${downloadsDir} の最新画像を ${outputPath} に移動・リネームする（拡張子は元の拡張子に合わせる。無理にpngへ変えない）
-16. ファイル存在を自動確認する
+6. もし \`[data-testid="modal-duplicate-file"]\` モーダルが出ていれば OK ボタンを押して閉じる（同一コンテンツの過去アップロード履歴で出る。閉じれば添付済み扱い）
+7. 1件しか入っていなければ、ヘルパーをもう一度実行する。最大3回までで諦め、UWSC 経路（\`& "${uwscExe}" "${uwscScript}"\`）にフォールバックする
+
+### Claude in Chromeが自動実行する手順（手動: ヘルパーを使わない場合の参考）
+
+ヘルパーが使えない / デバッグ目的の場合は、PowerShell で同等の処理を直接書く:
+
+A. PowerShellで\`AttachThreadInput\` + \`BringWindowToTop\` + \`SetForegroundWindow\`を使い、ChromeウィンドウをフォアグラウンドWindow（\`GetForegroundWindow()\`の戻り値）にする
+B. \`document.visibilityState === "visible"\` と \`document.hasFocus()\` を確認する
+C. CF_HDROPクリップボードに1枚目（${baseImagePaths[0]}）をセットし、Ctrl+V を送る
+   \`\`\`powershell
+   Add-Type -AssemblyName System.Windows.Forms
+   $files = New-Object System.Collections.Specialized.StringCollection
+   $files.Add('${baseImagePaths[0]}') | Out-Null
+   [System.Windows.Forms.Clipboard]::SetFileDropList($files)
+   [System.Windows.Forms.SendKeys]::SendWait('^v')
+   \`\`\`
+D. 2.5〜3秒待機する（アップロード完了待ち）
+E. CF_HDROPクリップボードに2枚目（${baseImagePaths[1] || baseImagePaths[0]}）をセットし、Ctrl+V を送る
+F. 2.5〜3秒待機する
+G. DOMで添付2件を確認する
+13. 添付2件確認後、${finalPromptPath} を入力欄に貼り付けて送信する
+14. ChatGPTが回答中・画像生成中の間は次の操作をしない
+15. 画像生成完了を待ち、\`alt="画像が生成されました"\` の \`<img>\` を取得する
+16. 生成画像を fetch + Blob + \`<a download>\` でダウンロードする（${downloadsDir} に保存される想定）
+17. ${downloadsDir} の最新画像を ${outputPath} に移動・リネームする（拡張子は元の拡張子に合わせる。無理にpngへ変えない）
+18. ファイル存在を自動確認する
+
+### クリップボード経路の注意
+
+- CF_HDROP に 2 ファイルまとめてセットして Ctrl+V を 1 回送るだけでは **1 ファイルしか添付されない**（ChatGPT の onpaste が \`clipboardData.files[0]\` 相当しか処理しない）。必ず 1 枚ずつ 2 回貼り付ける
+- クリップボード自動上書きツール（Ditto / ClipMate 等）が走っていると CF_HDROP がテキストへ上書きされる。検証中は停止する
+- SendKeys は **フォアグラウンドWindow** に送られる。Ctrl+V 直前に \`GetForegroundWindow()\` の戻り値が Chrome ハンドルと一致することを必ず確認する
 
 ### 失敗時の自動リトライ
 
@@ -215,11 +243,10 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
 
 - 初期サムネイル案・参考プロンプト: ${paths.thumbnailPromptPath}
 - 実際に使う最終版サムネイル画像生成プロンプト: ${paths.finalThumbnailPromptPath}
-- 標準手順: 毎回サムネイル生成専用の新規ChatGPTチャットを開き、ベース画像2枚をUWSC経由で添付してから最終版プロンプトを送信する
+- 標準手順: 毎回サムネイル生成専用の新規ChatGPTチャットを開き、ベース画像2枚を **CF_HDROP クリップボード貼り付け（Ctrl+V を 2 回）** で添付してから最終版プロンプトを送信する
 - 新規ChatGPTチャットURL: ${thumbnailNewChatUrl}
 - 生成画像の最終保存先: ${paths.thumbnailOutputPath}
-- UWSC実行ファイル: ${uwscExe}
-- UWSCスクリプト: ${uwscScript}
+- フォールバック（クリップボード経路が通らないとき）: PowerShell から \`& "${uwscExe}" "${uwscScript}"\` を実行して UWSC で OS ファイル選択ダイアログを操作する
 - 補足: 生成画像は通常のダウンロード先に保存される想定。あとから ${paths.thumbnailOutputPath} へ移動・リネームする。拡張子だけ無理にpngへ変えない。
 
 ## ブラウザ操作ポリシー
@@ -247,27 +274,38 @@ export function generateHandoffMarkdown({ source, slug, paths, config }) {
 12. 回答完了後、最終版サムネイル画像生成プロンプトを全文コピーし、${paths.finalThumbnailPromptPath} に保存する
 13. 保存後、ファイル存在とプロンプトの完了を自動確認する
 14. **サムネイル画像生成専用の新規ChatGPTチャットを開く**（使い回しチャットや台本チャットの中では生成しない）
-15. 新規タブをChromeウィンドウの**可視タブ**にし、Chromeを\`SetForegroundWindow\`でフォアグラウンド化する
-16. 入力欄左の「＋」ボタン（aria-label \`ファイルの追加など\`）を画面上の実UIとしてクリックする
-17. 開いたメニューから「写真とファイルを追加」menuitem を画面上の実UIとしてクリックする
-18. Windowsファイル選択ダイアログ（\`#32770\`）が出るまでポーリングする
-19. ダイアログ確認後、PowerShellで\`& "${uwscExe}" "${uwscScript}"\` を実行し、ベース画像2枚を添付する
-20. 1回目で添付できなければ、ダイアログが残っていれば同じUWSCを最大3回まで再実行する
-21. 添付2件をDOMで確認する
-22. ${paths.finalThumbnailPromptPath} を入力欄に貼り付けて送信する
-23. ChatGPTが画像生成中の間は次の操作をしない
-24. 画像生成完了を待ち、生成画像をダウンロードする
-25. ダウンロード完了を自動確認する
-26. その後、${paths.thumbnailOutputPath} へ移動・リネームする（元拡張子に合わせる）
+15. 新規タブをChromeウィンドウの**可視タブ**にし、Chromeを\`AttachThreadInput\` + \`SetForegroundWindow\`でフォアグラウンド化する
+16. ProseMirror（\`#prompt-textarea\`）にフォーカスし、末尾にキャレットを置く
+17. PowerShellで \`scripts/automation/chatgpt-attach-files-clipboard.ps1\` を呼び、ベース画像 himari-base.png と labomaru-base.png を順次添付する（ヘルパー側で1ファイルずつCF_HDROP→Ctrl+V→2.5秒待機）
+18. DOMで添付2件（\`button[aria-label^="ファイル"][aria-label*="削除"]\` が2件）を確認する。\`modal-duplicate-file\` が出ていれば OK ボタンを押して閉じる
+19. 1件しか入っていなければヘルパーをもう一度呼ぶ。最大3回で諦め、UWSC経路（\`& "${uwscExe}" "${uwscScript}"\`）にフォールバック
+20. ${paths.finalThumbnailPromptPath} を入力欄に貼り付けて送信する
+21. ChatGPTが画像生成中の間は次の操作をしない
+22. 画像生成完了を待ち、生成画像をダウンロードする
+23. ダウンロード完了を自動確認する
+24. その後、${paths.thumbnailOutputPath} へ移動・リネームする（元拡張子に合わせる）
+
+### Preview スクショレビュー（visualPreviewReview）
+
+公開直前の Preview デプロイが立ち上がったら、Claude in Chrome が **mobile-01〜03 + desktop-01〜02 のスクショ** を撮り、新規 ChatGPT チャットへ同じ \`chatgpt-attach-files-clipboard.ps1\` を使って 1 枚ずつ貼り付ける。2 パスで（読みやすさ → ファクトチェック）レビューさせ、結果を \`logs/visual-review/${slug}/\` に保存する。詳細は \`docs/visual_preview_review.md\` を参照。
 
 ## Claude Codeが自動実行する作業
 
 1. ${paths.generatedDraftPath} と ${paths.materialsDraftPath} を読み込む
 2. サムネイル画像が配置済みなら ${paths.thumbnailOutputPath} を記事frontmatterへ反映する
-3. article:import-generated でMDX化する
+3. article:import-generated でMDX化する（\`sourceCheck\` + \`articleQualityCheck\` が走る）
 4. review / factcheck / previewログを保存する
 5. npm run build を実行する
 6. build成功後、previewブランチへcommit / pushする
+7. Preview が立ち上がったら Claude in Chrome に visualPreviewReview を依頼する（\`docs/visual_preview_review.md\`）
+
+## レビュー工程の役割分担
+
+| チェック | 対象 | 実装 | 検出する観点 |
+|---|---|---|---|
+| \`sourceCheck\` | MDX | 機械的 (\`validateSourceReferences\`) | 参考情報の有無、URL 2件以上、すまほん非露出、報道ベース注意文 |
+| \`articleQualityCheck\` | MDX | 機械的 (\`validateArticleQuality\`) | タイトル重複、Markdown残骸、ボックス過大、キャラ要素不足、冒頭構造 |
+| \`visualPreviewReview\` | Preview スクショ | ChatGPT 2 パス (\`docs/visual_preview_review.md\`) | スマホ表示、読み味、トーン、ファクトの違和感 (Apple系/AI系の追加チェックあり) |
 
 ## 最後に人間が確認すること
 
@@ -292,7 +330,7 @@ ${thumbnailImageFlow}
 - 本文ファイルとブログ化用資料ファイルを混ぜないでください。
 - ${paths.thumbnailPromptPath} は初期サムネイル案・参考プロンプトです。実際に主で使うのは、台本チャットで本文・資料一式を踏まえて作る ${paths.finalThumbnailPromptPath} です。
 - サムネイル画像生成は毎回サムネイル専用の新規ChatGPTチャットで行い、使い回しチャットは使わないでください。
-- UWSC連携を含む添付フローの詳細は docs/uwsc_chatgpt_file_attach_test.md を参照。
+- 添付フロー（標準: CF_HDROP クリップボード貼り付け）の詳細は docs/chatgpt_file_attach_clipboard.md を参照。フォールバックの UWSC 経路は docs/uwsc_chatgpt_file_attach_test.md を参照。
 `;
 }
 
@@ -374,7 +412,7 @@ ${refinementFlow}
 
 ${materialsFlow}
 
-## サムネイル画像生成（標準手順・新規ChatGPTチャット + UWSC連携）
+## サムネイル画像生成（標準手順・新規ChatGPTチャット + クリップボード貼り付け）
 
 1. Chromeで新規ChatGPTチャットを開く
 
@@ -382,37 +420,44 @@ ${materialsFlow}
 
 2. 開いた新規タブをChromeウィンドウの**可視タブ**にする（古いタブを閉じるか、対象タブを最前面に切り替える）
 
-3. ChromeウィンドウをPowerShellで\`SetForegroundWindow\`し、フォアグラウンド化する
+3. ProseMirror（\`#prompt-textarea\`）に \`pm.focus()\` でフォーカスし、\`Selection.collapse(false)\` で末尾にキャレットを置く
 
-4. 入力欄左の「＋」ボタン（aria-label \`ファイルの追加など\`）を画面上の実UIとしてクリックする
-
-5. 開いたメニューから「写真とファイルを追加」menuitem を画面上の実UIとしてクリックする
-
-6. Windowsファイル選択ダイアログ（クラス \`#32770\`）が出るまでポーリングする（200msごと、最大2秒程度）
-
-7. ダイアログ確認後、PowerShellでUWSCを実行する
+4. PowerShellで共通ヘルパーを呼び、ベース画像2枚を1ファイルずつ CF_HDROP → Ctrl+V で添付する
 
    \`\`\`
-   & "${uwscExe}" "${uwscScript}"
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File \`
+     "scripts\\automation\\chatgpt-attach-files-clipboard.ps1" \`
+     -Files "${baseDir.replace(/\//g, "\\\\")}\\\\${baseImages[0]}", \`
+            "${baseDir.replace(/\//g, "\\\\")}\\\\${baseImages[1] || baseImages[0]}"
    \`\`\`
 
-   UWSCは ${baseDir} を開き、\`"${baseImages.join('" "')}"\` をファイル名欄に入れて2画像を選択する
+5. DOMで添付2件を確認する
 
-8. UWSC終了後、ChatGPT入力欄に2件添付されたかDOMで確認する
+   \`\`\`
+   document.querySelectorAll('button[aria-label^="ファイル"][aria-label*="削除"]').length === 2
+   \`\`\`
 
-9. 1回目で添付できなければ、ダイアログがまだ開いている場合は同じUWSCをそのまま再実行する（最大3回）
+6. \`[data-testid="modal-duplicate-file"]\` モーダルが出ていれば OK ボタンを押して閉じる（同一コンテンツの過去アップロードで出るが、添付済み扱いでよい）
 
-10. 添付2件確認後、以下の最終版サムネイル画像生成プロンプトを入力欄に貼り付けて送信する
+7. 1件しか入っていなければヘルパーをもう一度実行する。最大3回で諦め、UWSC 経路にフォールバックする（hidden file input / file_upload API は引き続き禁止）
+
+    \`\`\`
+    & "${uwscExe}" "${uwscScript}"
+    \`\`\`
+
+   注意: 2ファイルまとめて CF_HDROP セット → Ctrl+V 1 回はChatGPT側で1ファイルしか拾われないので使わない（必ず1ファイルずつ2回貼る）。
+
+8. 添付2件確認後、以下の最終版サムネイル画像生成プロンプトを入力欄に貼り付けて送信する
 
    ${paths.finalThumbnailPromptPath}
 
-11. ChatGPTが回答中・画像生成中の間は次の操作をしない
+13. ChatGPTが回答中・画像生成中の間は次の操作をしない
 
-12. 生成完了を待ち、生成画像をダウンロードする（fetch + Blob + \`<a download>\`）
+14. 生成完了を待ち、生成画像をダウンロードする（fetch + Blob + \`<a download>\`）
 
-13. ダウンロード完了を自動確認する
+15. ダウンロード完了を自動確認する
 
-14. その後、Claude in ChromeまたはClaude Codeが以下へ移動・リネームする
+16. その後、Claude in ChromeまたはClaude Codeが以下へ移動・リネームする
 
    ${paths.thumbnailOutputPath}
 
@@ -423,7 +468,22 @@ ${thumbnailImageFlow}
 補足:
 - ${paths.thumbnailPromptPath} はCLIが作る初期サムネイル案・参考プロンプトです。
 - 実際に主で使うのは、台本チャットで本文・資料一式を踏まえて作った ${paths.finalThumbnailPromptPath} です。
-- 添付フローのトラブルシューティングは docs/uwsc_chatgpt_file_attach_test.md を参照。
+- 添付フロー（標準: クリップボード貼り付け、ヘルパー \`scripts/automation/chatgpt-attach-files-clipboard.ps1\`）のトラブルシューティングは docs/chatgpt_file_attach_clipboard.md を参照。
+- フォールバック（UWSC 経由 OS ファイル選択ダイアログ操作）は docs/uwsc_chatgpt_file_attach_test.md を参照。
+
+## Preview スクショレビュー（visualPreviewReview）
+
+Preview デプロイが立ち上がったあと、Claude in Chrome が mobile/desktop スクショを撮り、同じ \`chatgpt-attach-files-clipboard.ps1\` を使って ChatGPT へ 1 枚ずつ添付し、**2 パス（読みやすさ → ファクトチェック）** でレビューさせる。レビュー結果は \`logs/visual-review/${slug}/\` に保存する。
+
+1. Preview URL を Claude in Chrome で開く
+2. mobile-01〜03 (冒頭・中盤・末尾) と desktop-01〜02 (冒頭・参考情報) のスクショを撮って \`logs/visual-review/${slug}/screenshots/\` に保存
+3. 新規 ChatGPT チャットを開き、ヘルパーで全スクショを順次貼り付ける
+4. 1 パス目: 読みやすさ・見た目・スマホ表示・煽りすぎ・メタ残骸・キャラ表現を確認 → \`logs/visual-review/${slug}/review-1.md\`
+5. 2 パス目: 編集者目線 + ファクトチェック（すまほん非露出、参考URL 2件以上、断定の有無、Apple系/AI系の追加観点） → \`logs/visual-review/${slug}/review-2.md\`
+6. 統合: 修正必須 / 修正推奨 / 今回は見送り に分けて \`logs/visual-review/${slug}/merged-fixes.md\` と \`logs/visual-review/${slug}/factcheck-notes.md\` を保存
+7. Claude Code が修正必須項目を反映して \`logs/visual-review/${slug}/applied-fixes.json\` に記録
+
+詳細プロンプトと観点リスト（共通チェック、iPhone/Apple系、AI/ガジェット系）は \`docs/visual_preview_review.md\` を参照。
 
 ## 自動確認するファイル
 

@@ -43,40 +43,6 @@ function extractReferenceSection(body) {
   return nextHeading === -1 ? rest : rest.slice(0, nextHeading);
 }
 
-const CHARACTER_TEXT_NEEDLES = ["ひまり", "らぼまる"];
-const CHARACTER_VISUAL_PATTERNS = [
-  /<CharacterDialogue[\s/>]/,
-  /<CharacterCallout[\s/>]/,
-  /<CharacterGuideCard[\s/>]/,
-  /\/images\/characters\//,
-];
-
-/**
- * 本文にひまり・らぼまるが画像つきブロック（CharacterDialogue / CharacterCallout /
- * CharacterGuideCard / public/images/characters/ への参照）として登場しているかを判定する。
- * 名前テキストのみ・テキストすら無い場合は warning を返す。
- */
-export function validateCharacterVisualPresence(body, { frontmatterRecommended = false } = {}) {
-  const plain = body.replace(/<[^>]+>/g, "");
-  const hasCharacterText = CHARACTER_TEXT_NEEDLES.some((needle) => plain.includes(needle));
-  const hasCharacterVisual = CHARACTER_VISUAL_PATTERNS.some((re) => re.test(body));
-
-  const warnings = [];
-  if (hasCharacterText && !hasCharacterVisual) {
-    warnings.push("character_visual_missing");
-  } else if (!hasCharacterText && !hasCharacterVisual) {
-    warnings.push("character_presence_missing");
-  }
-
-  return {
-    hasCharacterText,
-    hasCharacterVisual,
-    frontmatterRecommended: Boolean(frontmatterRecommended),
-    warnings,
-    ok: warnings.length === 0,
-  };
-}
-
 export function validateSourceReferences(body, { source = {} } = {}) {
   const hasReferenceSection = REFERENCE_SECTION_RE.test(body);
   const referenceSection = extractReferenceSection(body);
@@ -175,7 +141,232 @@ const metaPhrases = [
   "handoff",
 ];
 
-export function validateGeneratedArticle({ body, source = {}, thumbnailExists }) {
+// 補助ボックスの見出し化を検出するためのDOM風スキャン。
+// HTMLブロック開始からの相対位置で h2/h3 が現れたら、補助ラベルの見出し化と判定する。
+const BOX_CLASS_NEEDLES = ["summary-box", "check-box", "info-box", "table-card"];
+
+// 公開記事本文には現れてはいけないメタ表現（precision重視で短いものに絞る）。
+// 各パターンは「行頭から始まる」「短いフレーズ単位」で誤検出を避けつつ網羅する。
+const META_RESIDUE_PATTERNS = [
+  { code: "meta_intro_following", re: /^(以下、|以下より|以下が)本文/m, label: "以下、本文" },
+  { code: "meta_intro_starting", re: /^(ここから|ここより)本文/m, label: "ここから本文" },
+  { code: "meta_final_draft", re: /^最終稿/m, label: "最終稿" },
+  { code: "meta_initial_draft", re: /^初稿/m, label: "初稿" },
+  { code: "meta_draft_label", re: /^草案/m, label: "草案" },
+  { code: "meta_send_intro", re: /^(.{0,12})?本文をお送り(します|いたします)/m, label: "本文をお送りします" },
+];
+
+function normalizeTitleForCompare(value = "") {
+  return String(value)
+    .toLowerCase()
+    .replace(/[\s　]+/g, "")
+    .replace(/[「」『』【】〔〕()()[\]［］<>＜＞]/g, "")
+    .replace(/[・,，.。:：;；!！?？〜~ー\-―−ｰ_/／|｜]/g, "");
+}
+
+function titleSimilarity(a, b) {
+  // 完全一致でなくても、片方が長い場合は包含関係を許す。
+  const na = normalizeTitleForCompare(a);
+  const nb = normalizeTitleForCompare(b);
+  if (!na || !nb) return 0;
+  if (na === nb) return 1;
+  if (na.length >= 8 && nb.includes(na)) return 0.95;
+  if (nb.length >= 8 && na.includes(nb)) return 0.95;
+  // Levenshtein風の超ラフな一致率：長い方の文字が短い方に何文字残るか。
+  const [shorter, longer] = na.length <= nb.length ? [na, nb] : [nb, na];
+  let matched = 0;
+  let lastIdx = 0;
+  for (const ch of shorter) {
+    const idx = longer.indexOf(ch, lastIdx);
+    if (idx >= 0) {
+      matched++;
+      lastIdx = idx + 1;
+    }
+  }
+  return matched / longer.length;
+}
+
+export function validateArticleQuality(body, { title = "", category = "" } = {}) {
+  const issues = [];
+  const reasons = [];
+
+  // --- 1) titleDuplicateCheck ---
+  // 判定方針:
+  //   - 本文H1が frontmatter title と高一致（>=0.85）= blocking（major、titleDuplicate=true）
+  //   - 本文H1があるが frontmatter title とは大きく違う = warning（titleDuplicate=false）
+  //     ※ Astro ArticleLayout は frontmatter title を H1 として描画するため、本文H1は
+  //       SEO/HTML的には二重H1になるが、文言が違えばすぐ止めるほどではないので warning
+  //   - 冒頭段落が frontmatter title の再掲（>=0.9）= blocking
+  const h1Matches = (body.match(/^#\s+[^\n]+/gm) || []).map((line) => line.replace(/^#\s+/, "").trim());
+  const h1Count = h1Matches.length;
+  let titleDuplicate = false;
+  const titleDuplicateDetails = [];
+  let h1HighSimilarity = false;
+
+  if (h1Count > 0) {
+    for (const h of h1Matches) {
+      const sim = titleSimilarity(h, title);
+      titleDuplicateDetails.push({ h1: h, similarityToFrontmatterTitle: sim });
+      if (sim >= 0.85) h1HighSimilarity = true;
+    }
+
+    if (h1HighSimilarity) {
+      titleDuplicate = true;
+      issues.push({
+        code: "title_h1_in_body",
+        severity: "major",
+        message: `本文内のH1が frontmatter title とほぼ同じです。frontmatter title は layout 側で H1 として描画されるため、本文H1は削除してください。例: ${h1Matches[0].slice(0, 60)}`,
+      });
+      reasons.push("本文H1が frontmatter title と高一致（タイトル重複）");
+    } else {
+      // H1自体は body にあるが、frontmatter title とは別の文言。
+      // SEO的には二重H1なので warning にする（NEW: blockingではない）。
+      issues.push({
+        code: "body_h1_present",
+        severity: "warning",
+        message: `本文内にH1見出しがあります（${h1Count}件、frontmatter title とは違う文言）。layout側でも別途H1が描画されるため、本文側はH2以下に下げるかリードに置き換えるのが望ましいです。例: ${h1Matches[0].slice(0, 60)}`,
+      });
+    }
+  }
+
+  if (!titleDuplicate && title) {
+    // H1自体は無くても、冒頭段落で frontmatter title を再掲しているケース（強い一致）
+    const firstPara = (body.split(/\n\s*\n/)[0] || "").trim().replace(/^#\s+/, "");
+    const sim = titleSimilarity(firstPara, title);
+    if (sim >= 0.9 && firstPara.length >= 8) {
+      titleDuplicate = true;
+      titleDuplicateDetails.push({ firstParagraph: firstPara.slice(0, 80), similarityToFrontmatterTitle: sim });
+      issues.push({
+        code: "title_repeated_at_top",
+        severity: "major",
+        message: `本文冒頭段落が frontmatter title の再掲になっています（similarity=${sim.toFixed(2)}）。導入文または summary-box から始めてください。`,
+      });
+      reasons.push("本文冒頭が frontmatter title の再掲になっています");
+    }
+  }
+
+  // --- 2) markdownResidueCheck ---
+  const markdownResidueHits = [];
+
+  // 表示用に残った「**」（pairになっておらず孤立しているもの）
+  const asteriskPairs = (body.match(/\*\*/g) || []).length;
+  if (asteriskPairs % 2 !== 0) {
+    markdownResidueHits.push("対になっていない `**`（孤立した強調マーカー）");
+  }
+  // ```md / ```markdown フェンス
+  if (/```(?:md|markdown)\b/i.test(body)) {
+    markdownResidueHits.push("Markdownフェンス（```md / ```markdown）が本文に残っています");
+  }
+  // 表示できない裸の `# title` 行（H1）は上で検出済み。H2/H3直前の空行不足は無視。
+  // メタ表現
+  for (const pat of META_RESIDUE_PATTERNS) {
+    if (pat.re.test(body)) markdownResidueHits.push(`メタ表現「${pat.label}」が本文に残っています`);
+  }
+
+  const markdownResidue = markdownResidueHits.length > 0;
+  if (markdownResidue) {
+    issues.push({
+      code: "markdown_residue",
+      severity: "major",
+      message: `本文にMarkdown残骸またはメタ表現があります: ${markdownResidueHits.join(" / ")}`,
+    });
+    for (const h of markdownResidueHits) reasons.push(h);
+  }
+
+  // --- 3) characterPresenceCheck ---
+  let characterPresence = "n/a";
+  if (category && category.includes("ニュース")) {
+    // 「ひまり」「らぼまる」「ひまり：」「らぼまる：」「<CharacterCallout」「duo_talk」等が本文に最低1回あるか
+    const characterNeedles = ["ひまり", "らぼまる", "CharacterCallout", "duo_talk", "duo_guide"];
+    const found = characterNeedles.some((n) => body.includes(n));
+    characterPresence = found ? "present" : "missing";
+    if (!found) {
+      issues.push({
+        code: "character_missing_for_news",
+        severity: "warning",
+        message: "ニュース系記事ですが、ひまり・らぼまるの短い補助会話・案内ブロックが本文に見当たりません。1回だけ自然に入れてください。",
+      });
+    }
+  }
+
+  // --- 4) boxHeadingCheck ---
+  // summary-box / check-box / info-box / table-card の開始タグから次の </div> までを抜き出し、
+  // その中で # / ## / ### / <h1-h3> が現れたら warning に積む。
+  const boxHeadingWarnings = [];
+  for (const cls of BOX_CLASS_NEEDLES) {
+    // 行頭からのHTMLブロックを想定。`class="...cls..."` を持つ <div を探す。
+    const re = new RegExp(`<div\\b[^>]*class\\s*=\\s*"[^"]*\\b${cls}\\b[^"]*"[\\s\\S]*?</div>`, "g");
+    let m;
+    while ((m = re.exec(body)) !== null) {
+      const block = m[0];
+      const headingMarkdown = block.match(/(^|\n)\s*#{1,3}\s+[^\n]+/g) || [];
+      const headingHtml = block.match(/<h[1-3]\b[^>]*>/gi) || [];
+      if (headingMarkdown.length || headingHtml.length) {
+        boxHeadingWarnings.push({
+          boxClass: cls,
+          headingMarkdownCount: headingMarkdown.length,
+          headingHtmlCount: headingHtml.length,
+          sample: (headingMarkdown[0] || headingHtml[0] || "").trim().slice(0, 60),
+        });
+      }
+    }
+  }
+  if (boxHeadingWarnings.length) {
+    issues.push({
+      code: "box_heading_too_large",
+      severity: "warning",
+      message: `補助ボックス（summary-box / check-box 等）の中にH1〜H3見出しがあります（${boxHeadingWarnings.length}件）。box-label または短い段落に置き換えてください。`,
+    });
+  }
+
+  // --- 5) articleStructureCheck ---
+  // 冒頭ブロックが、summary-box か短い段落か、整形済みリストかをざっくり判定。
+  const trimmedBody = body.trim();
+  const startsWithSummaryBox = /^<div\b[^>]*class\s*=\s*"[^"]*\bsummary-box\b/.test(trimmedBody);
+  const startsWithTable = /^\|.*\|\s*\n\|/.test(trimmedBody);
+  const startsWithList = /^[-*+]\s+/.test(trimmedBody);
+  const firstParagraph = (trimmedBody.split(/\n\s*\n/)[0] || "").trim();
+  const firstParagraphPlain = firstParagraph.replace(/<[^>]+>/g, "").replace(/\*\*/g, "");
+  const firstParagraphLen = firstParagraphPlain.length;
+  const opensWithConclusion = /結論|ポイント|要点|まずは|結局|つまり/.test(firstParagraphPlain);
+
+  let articleStructure = "ok";
+  if (startsWithTable || startsWithList) {
+    articleStructure = "starts_with_table_or_list";
+    issues.push({
+      code: "article_starts_with_structure",
+      severity: "warning",
+      message: "本文がいきなり表またはリストから始まっています。冒頭3スクロール以内に結論が分かる短い導入を置いてください。",
+    });
+  } else if (!startsWithSummaryBox && !opensWithConclusion && firstParagraphLen < 30) {
+    articleStructure = "intro_too_short";
+    issues.push({
+      code: "article_intro_too_short",
+      severity: "warning",
+      message: "冒頭段落が短すぎて結論が伝わりません。短い導入＋結論を最初に置いてください。",
+    });
+  }
+
+  const titleOk = !titleDuplicate;
+  const markdownOk = !markdownResidue;
+  const ok = titleOk && markdownOk; // blocking 条件はこの2つ
+
+  return {
+    ok,
+    titleDuplicate,
+    titleDuplicateDetails,
+    h1Count,
+    markdownResidue,
+    markdownResidueHits,
+    characterPresence,
+    boxHeadingWarnings,
+    articleStructure,
+    issues,
+    reasons,
+  };
+}
+
+export function validateGeneratedArticle({ body, source = {}, thumbnailExists, frontmatterTitle = "", category = "" }) {
   const issues = [];
   const plain = body.replace(/<[^>]+>/g, "");
   const normalized = normalizeText(plain);
@@ -273,28 +464,9 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists })
     );
   }
 
-  // === character presence check ===
-  // ニュース記事を中心に、本文に「ひまり」「らぼまる」が画像付きブロックとして
-  // 入っているかを確認する。名前だけ言及で画像なしは warning にして、すまラボ
-  // らしさが弱いまま公開されることを防ぐ。詳細は validateCharacterVisualPresence。
-  const characterCheck = validateCharacterVisualPresence(body);
-
-  if (characterCheck.warnings.includes("character_visual_missing")) {
-    issues.push(
-      makeIssue(
-        "character_visual_missing",
-        "warning",
-        "本文にひまり・らぼまるの名前は出ていますが、画像付きの会話/案内コンポーネントが見当たりません。CharacterDialogue / CharacterCallout / CharacterGuideCard などで画像付き要素を1回入れてください。",
-      ),
-    );
-  } else if (characterCheck.warnings.includes("character_presence_missing")) {
-    issues.push(
-      makeIssue(
-        "character_presence_missing",
-        "warning",
-        "本文にひまり・らぼまるの言及も画像付きブロックも見当たりません。すまラボらしさを出すため、CharacterDialogue / CharacterCallout / CharacterGuideCard などで1回だけ画像付きブロックを入れることを推奨します。",
-      ),
-    );
+  const articleQualityCheck = validateArticleQuality(body, { title: frontmatterTitle, category });
+  for (const qIssue of articleQualityCheck.issues) {
+    issues.push(qIssue);
   }
 
   const hasMajorIssue = issues.some((issue) => issue.severity === "major");
@@ -307,6 +479,7 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists })
     missingTopics,
     issues,
     sourceCheck,
+    articleQualityCheck,
     publishable: !hasMajorIssue,
     provisionalDecision: hasMajorIssue ? "要修正" : "preview確認後に公開可",
   };
