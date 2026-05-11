@@ -52,7 +52,7 @@ npm run fetch-data   # public/data/dashboard-latest.json を生成 (gitignore済
 
 - **前提**: **workflow ファイルを `main` ブランチに push しない限り Actions タブには表示されず、手動 dispatch ボタンも出ない**。フィーチャーブランチ上に置いただけでは認識されないので注意。
 - **手動**: GitHub → Actions → "Build and Deploy Dashboard" → Run workflow (branch: `main`)
-- **自動 (cron)**: JST 06:00 / 12:00 / 18:00 (UTC 21:00 / 03:00 / 09:00)
+- **自動 (cron)**: JST 06:00 / 12:00 / 18:00 (UTC 21:00 / 03:00 / 09:00) — ⚠️ **現在は本番前セットアップ完了まで一時停止中**。Cloudflare Pages プロジェクト / Secrets 3 件 / Access 設定がすべて完了し、`workflow_dispatch` で 1 回成功確認できたら、ワークフロー内の `schedule:` ブロックのコメントを外して再開する。
 
 ### フロー
 

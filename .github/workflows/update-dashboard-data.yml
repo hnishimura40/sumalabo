@@ -21,11 +21,18 @@ name: Build and Deploy Dashboard
 
 on:
   workflow_dispatch:
-  schedule:
-    # JST 06:00 / 12:00 / 18:00 相当 (UTC 21:00 / 03:00 / 09:00)。
-    - cron: "0 21 * * *"
-    - cron: "0 3 * * *"
-    - cron: "0 9 * * *"
+  # schedule は Cloudflare Pages / Secrets / Access の本番前セットアップが完了するまで一時停止。
+  # 未登録 Secrets で cron が発火すると Wrangler ステップで毎回失敗通知が来てしまうため。
+  # 再開条件 (すべて ✅ にしてから schedule ブロックのコメントを外す):
+  #   1. CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_PAGES_PROJECT を GitHub Secrets 登録済み
+  #   2. Cloudflare Pages プロジェクトを Direct Upload で作成済み
+  #   3. Cloudflare Access の Application を apex + wildcard の 2 つで保護済み
+  #   4. workflow_dispatch で 1 回成功 + シークレットウィンドウで Access 検証済み
+  # schedule:
+  #   # JST 06:00 / 12:00 / 18:00 相当 (UTC 21:00 / 03:00 / 09:00)。
+  #   - cron: "0 21 * * *"
+  #   - cron: "0 3 * * *"
+  #   - cron: "0 9 * * *"
 
 permissions:
   contents: read
