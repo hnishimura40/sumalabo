@@ -150,7 +150,14 @@ async function processOne(entry, { dryRun }) {
   try {
     const { stdout } = await spawnNode("scripts/run/create-from-sumahon.mjs", ["--url", entry.url]);
     const trail = extractTrailingJson(stdout) || {};
-    const slug = typeof trail.slug === "string" ? trail.slug : null;
+    // create-from-sumahon の最終 JSON には slug が直接含まれないので、
+    // mdxPath ("content/articles/{slug}.mdx") から派生させる。
+    // 将来 create-from-sumahon が slug を出力するようになれば trail.slug を優先する。
+    let slug = typeof trail.slug === "string" ? trail.slug : null;
+    if (!slug && typeof trail.mdxPath === "string") {
+      const m = trail.mdxPath.match(/[\\/]([^\\/]+)\.mdx$/);
+      if (m) slug = m[1];
+    }
     const branch = typeof trail.branchName === "string" ? trail.branchName : null;
     const title = typeof trail.generatedTitle === "string" ? trail.generatedTitle : entry.title;
 
