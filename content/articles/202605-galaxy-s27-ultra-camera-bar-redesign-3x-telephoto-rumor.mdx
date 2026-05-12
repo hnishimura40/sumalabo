@@ -21,6 +21,8 @@ updated: "2026-05-12"
 publishAt: "2026-05-12T22:48:02+09:00"
 ---
 
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
 <div class="summary-box">
 <p class="box-label">先に結論</p>
 <p>Galaxy S27 Ultraで、背面カメラのデザインが横長のバー型に変わるかもしれない、という情報が出ています。</p>
@@ -110,11 +112,13 @@ Galaxy Ultraシリーズは、望遠撮影に強いスマホとして知られ�
 
 つまり、もしGalaxy S27 Ultraが3眼構成になったとしても、それだけで「退化」とは言えません。逆に、カメラの数を減らしても、メインカメラや望遠カメラの質が上がるなら、使いやすくなる可能性もあります。
 
-<div class="info-box">
-<p class="box-label">らぼまる・ひまりの整理</p>
-<p><strong>ひまり：</strong>「カメラが減るかもって聞くと、ちょっと不安になるね。」</p>
-<p><strong>らぼまる：</strong>「うん。でも見るべきなのは数より“どの距離をきれいに撮れるか”だよ。正式発表までは、デザインとカメラ構成の見直しが噂されている段階、と考えるのが安全だね。」</p>
-</div>
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "カメラが減るかもって聞くと、ちょっと不安になるね。" },
+    { speaker: "らぼまる", text: "うん。でも見るべきなのは数より“どの距離をきれいに撮れるか”だよ。正式発表までは、デザインとカメラ構成の見直しが噂されている段階、と考えるのが安全だね。" },
+  ]}
+/>
 
 ## 今すぐ買うべき？待つべき？
 
