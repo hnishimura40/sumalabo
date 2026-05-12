@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
-    "fetch-data": "node scripts/fetch-dashboard-data.mjs"
+    "fetch-data": "node scripts/fetch-dashboard-data.mjs",
+    "deploy:local": "node scripts/deploy-local.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

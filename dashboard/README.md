@@ -44,7 +44,71 @@ npm run fetch-data   # public/data/dashboard-latest.json を生成 (gitignore済
 `src/lib/dataLoader.ts` がこの優先順で読み込む。fetch が 404 / JSON エラーになった場合は静かにサンプルへフォールバックし、画面は必ず描画される。
 ライブ vs サンプルはヘッダー右上のバッジ (🟢 ライブデータ / 🟡 サンプル表示) で判別できる。
 
-## GitHub Actions ワークフロー
+## 0 円ローカルデプロイ (GitHub Actions 不使用)
+
+GitHub Actions の Budgets 設定で Actions が停止する状態でも、**ローカルからの Wrangler Direct Upload** だけで配備できる。GitHub Free 維持 / 支払い方法不要 / Secrets ファイル保存なし。
+
+### 前提
+
+- Node.js 20 系
+- Wrangler がアカウント認証済み (1 回だけ実行):
+  ```bash
+  npx wrangler login
+  ```
+  ブラウザで Cloudflare の OAuth 同意画面 → wrangler が自前のクレデンシャルキャッシュに保存。**API Token をリポジトリや `.env` に保存しない**。
+- (代替) `CLOUDFLARE_API_TOKEN=...` を **shell セッションで `export` するだけ**でも可。値はファイルに残さない。
+
+### 手順 (1 コマンド)
+
+```bash
+cd dashboard
+npm ci            # 初回 / lock 更新後のみ
+npm run deploy:local
+```
+
+`npm run deploy:local` は以下を順に実行する:
+
+1. `npm run fetch-data` — GA4 Secrets 未設定なら sample fallback で `public/data/dashboard-latest.json` を生成 (gitignore 対象)
+2. `npm run build` — Vite で `dist/` を作成 (`dist/data/dashboard-latest.json` も同梱)
+3. `npx wrangler pages deploy dist --project-name media-command-center --branch main` — Direct Upload
+
+### 環境変数 (どれもオプション)
+
+| 名前 | 用途 | デフォルト |
+|---|---|---|
+| `CLOUDFLARE_PAGES_PROJECT` | Pages プロジェクト名 | `media-command-center` |
+| `WRANGLER_BRANCH` | Production 扱いするブランチ名 | `main` |
+| `CLOUDFLARE_API_TOKEN` | OAuth セッションの代替 | (なくても OAuth で動く) |
+
+### GA4 を 0 円ローカル運用で接続したい場合
+
+GitHub Secrets を使わず、ローカル shell に直接 export する:
+
+```bash
+# どのファイルにも書かない。シェルセッション中だけ有効。
+export GA4_SERVICE_ACCOUNT_JSON="$(cat /path/to/service-account.json)"
+export GA4_PROPERTY_ID_AINITORYU="123456789"
+export GA4_PROPERTY_ID_SUMALAB="..."
+export GA4_PROPERTY_ID_MIRADIA="..."
+
+cd dashboard
+npm run deploy:local
+```
+
+- shell を閉じれば変数は消える
+- `history` に値が残る可能性があるので、`set +o history` で履歴を切ってから export するか、`HISTFILE=/dev/null` 経由でセッション分離する
+- 鍵 JSON ファイルは終わったら削除推奨
+
+### 注意
+
+- `dashboard/public/data/dashboard-latest.json` は **絶対に commit しない**(gitignore で保護済)
+- Cloudflare Access の保護 (apex + wildcard) は本ローカルデプロイと無関係に維持される
+- workflow の `schedule:` は引き続きコメントアウト維持(GitHub Actions を完全に止めている運用)
+
+## GitHub Actions ワークフロー (現在は使用停止中)
+
+GitHub の Budgets 設定で Actions が account-level で停止しているため、本リポジトリでは上記「0 円ローカルデプロイ」が主経路。
+以下の workflow ドキュメントは Actions が復活したら使えるが、現状は参考のみ。
 
 `/.github/workflows/update-dashboard-data.yml` (name: **Build and Deploy Dashboard**)
 
