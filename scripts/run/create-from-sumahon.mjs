@@ -267,6 +267,18 @@ async function main() {
       action: "needs_regeneration",
       note: "Article body is too thin or missing required sections for automated publication. Regenerate via the proper article-generation flow (ChatGPT/Claude refinement) instead of rule-based generator alone.",
     }, null, 2));
+    // ベストエフォートで main に戻す。これをしないと、次の scheduler run が
+    // auto/sumahon-* に居残ったまま assertNoTrackedChanges で詰まる
+    // (2026-05-13 03:00 / 04:00 / 05:00 の連続失敗で観測)。
+    // 作業ファイル (content/articles/{slug}.mdx, logs/source/{slug}.json など)
+    // は untracked のまま残るが、ignored ではないファイルは create-from-sumahon
+    // が後段 commit の前に exit するので tracked dirty にはならない。
+    // checkout が万一失敗しても exit code 2 (needs_regeneration) は保つ。
+    try {
+      await runCommand("git", ["checkout", currentBranch || "main"], { stdio: "inherit" });
+    } catch (e) {
+      console.warn("[publish-gate] best-effort checkout failed:", e && e.message ? e.message : e);
+    }
     process.exit(2);
   }
 
