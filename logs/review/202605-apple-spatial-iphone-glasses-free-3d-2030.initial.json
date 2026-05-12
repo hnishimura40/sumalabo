@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-05-12T11:06:48.564Z",
+  "sourceUrl": "https://smhn.info/202605-apple-spatial-iphone-glasses-free-3d-2030",
+  "articleTitle": "Apple、裸眼3D「空間iPhone」開発か？とは？普通の人向けに要点を整理",
+  "reviews": {
+    "editor": {
+      "ok": true,
+      "notes": "単なるニュース要約ではなく、読者への関係と未確定点を分けているかを確認。"
+    },
+    "reader": {
+      "ok": true,
+      "notes": "見出しだけで流れが追えるかを確認。"
+    },
+    "factcheck": {
+      "ok": false,
+      "notes": "公式発表、報道、噂、予測を混同していないかを確認。"
+    },
+    "sourceRespect": {
+      "ok": true,
+      "notes": "元記事の長文コピーや単純な言い換えになっていないかを確認。"
+    },
+    "quality": {
+      "ok": true,
+      "notes": "title、description、内部リンク、サムネイル案、X投稿案を確認。"
+    }
+  },
+  "findings": [
+    {
+      "review": "factcheck",
+      "severity": "major",
+      "message": "断定・煽りに見える表現があります。"
+    }
+  ],
+  "publishable": false,
+  "provisionalDecision": "要修正"
+}

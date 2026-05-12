@@ -1,0 +1,57 @@
+{
+  "slug": "202605-apple-spatial-iphone-glasses-free-3d-2030",
+  "articleTitle": "Apple、裸眼3D「空間iPhone」開発か？とは？普通の人向けに要点を整理",
+  "sourceMedia": "すまほん",
+  "sourceUrl": "https://smhn.info/202605-apple-spatial-iphone-glasses-free-3d-2030",
+  "sourceTitle": "Apple、裸眼3D「空間iPhone」開発か？",
+  "sourcePublishedAt": "",
+  "category": "ニュースをかみくだく",
+  "articleType": "news",
+  "sumalaboUse": "short_explainer",
+  "topicCategory": "iPhone",
+  "priority": "high",
+  "reason": "スマホ・AI・ガジェット・ITニュースとして、普通の人向けに噛み砕く余地があります。",
+  "recommendedAction": "send_to_chatgpt_5_5_article_project",
+  "coreAngle": "単なるニュース紹介ではなく、普通の人が何を知ればよいか、何をまだ待てばよいかを整理する。",
+  "sourceKeyPoints": [
+    "眼鏡なしでホログラフィック、まさかのiPhone。",
+    "Appleが「Spatial iPhone（空間iPhone）」を開発中だという噂が浮上しました。",
+    "情報源はX上のリーカー「Schrödinger（@phonefuturist）」。",
+    "Apple が「Spatial iPhone（空間iPhone）」を開発中だという噂が浮上しました。",
+    "Samsung 関連のハードウェア予測で実績があるとされるアカウントで、サプライチェーン関係者を名乗る人物とのやり取りの スクリーンショット を公開しています。",
+    "Samsung側の表示技術のコードネームは 「MH1」（Mobile Holographic 1）または「H1」 とされ、将来の「Spatial iPhone 」に使われる可能性が取り沙汰されています。"
+  ],
+  "suggestedStructure": [
+    "先に結論",
+    "何が話題なのか",
+    "難しいポイントをかみくだく",
+    "普通の人にどう関係するのか",
+    "まだ分からないこと",
+    "すまラボ的な見方",
+    "関連記事への導線"
+  ],
+  "internalLinkCandidates": [
+    {
+      "label": "iPhoneとAndroidの違いを見る",
+      "href": "/articles/iphone-vs-android/",
+      "description": "スマホ選びの基本軸を整理できます。"
+    },
+    {
+      "label": "3万円台スマホの選び方を見る",
+      "href": "/articles/smartphone-under-30000-guide/",
+      "description": "価格を抑えて選ぶときの注意点を確認できます。"
+    },
+    {
+      "label": "ニュースをかみくだくカテゴリを見る",
+      "href": "/categories/news/",
+      "description": "スマホ・AI・ガジェットのニュースを普通の人向けに整理しています。"
+    }
+  ],
+  "cautions": [
+    "元記事の本文や長い表現をコピーしない",
+    "公式発表・報道・噂・予測を混同しない",
+    "価格・発売日・対応機種・日本展開を断定しすぎない",
+    "体験していない内容をレビュー風に書かない",
+    "煽りすぎず、判断材料として整理する"
+  ]
+}

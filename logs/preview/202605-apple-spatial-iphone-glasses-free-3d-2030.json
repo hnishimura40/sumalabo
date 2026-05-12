@@ -1,0 +1,94 @@
+{
+  "branchName": "auto/sumahon-202605-apple-spatial-iphone-glasses-free-3-202605121106",
+  "articlePath": "content\\articles\\202605-apple-spatial-iphone-glasses-free-3d-2030.mdx",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/sumahon-202605-apple-spatial-iphone-glasses-free-3-202605121106.",
+  "checkUrls": [
+    "/articles/202605-apple-spatial-iphone-glasses-free-3d-2030/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": false,
+  "doNotPublish": false,
+  "previewCreated": true,
+  "previewPolicy": "buildが成功した記事は、本番公開可否に関係なくCloudflare Pages Previewへ送り、最後に人間がファクトチェックと公開判断を行う。",
+  "encodingNote": "PowerShellでJSONを確認する場合は Get-Content -Encoding UTF8 を推奨。",
+  "thumbnailPrompt": "1200x675、16:9、すまラボのミント/ティール系デザイン。\nテーマ: Apple、裸眼3D「空間iPhone」開発か？とは？普通の人向けに要点を整理\n普通の人向けにiPhoneニュースを整理するイメージ。\nひまりとらぼまるは控えめに配置し、文字は大きく読みやすく。\n煽りすぎず、ニュース解説・判断材料の雰囲気にする。",
+  "thumbnailBriefPath": "logs/thumbnail/202605-apple-spatial-iphone-glasses-free-3d-2030.brief.json",
+  "thumbnailPromptPath": "logs/thumbnail/202605-apple-spatial-iphone-glasses-free-3d-2030.prompt.md",
+  "thumbnailHeadlineIdeas": [
+    "Apple、裸眼3D空間iPhon…って何？",
+    "iPhoneニュースを整理",
+    "普通の人はここだけ確認"
+  ],
+  "thumbnailSublineIdeas": [
+    "何が変わるのかをやさしく解説",
+    "買う・待つ・様子見の判断材料に",
+    "iPhoneの話題をかみくだく"
+  ],
+  "thumbnailCoreIdea": "iPhoneニュースの細かなスペック紹介ではなく、「普通の人が今知っておくと判断しやすい変化」を1枚で見せる。",
+  "chatgptHandoff": {
+    "articleProjectUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/project",
+    "articlePromptPath": "logs/prompt/202605-apple-spatial-iphone-glasses-free-3d-2030.article.md",
+    "generatedDraftPath": "drafts/generated/202605-apple-spatial-iphone-glasses-free-3d-2030.md",
+    "materialsDraftPath": "drafts/materials/202605-apple-spatial-iphone-glasses-free-3d-2030.materials.md",
+    "finalThumbnailPromptPath": "drafts/materials/202605-apple-spatial-iphone-glasses-free-3d-2030.thumbnail-prompt.md",
+    "thumbnailNewChatUrl": "https://chatgpt.com/",
+    "thumbnailAttach": {
+      "uwscExe": "D:\\documents\\uwsc5302\\UWSC.exe",
+      "uwscScript": "scripts/automation/chatgpt-attach-base-images.uws",
+      "baseImageDir": "public/images/characters/base",
+      "baseImages": [
+        "himari-base.png",
+        "labomaru-base.png"
+      ],
+      "downloadsDir": "D:\\downloads",
+      "policy": "サムネイル生成は毎回新規ChatGPTチャットで行う。Chromeウィンドウの可視タブが新規タブであり、ChromeをSetForegroundWindowで前面化していること。「＋」ボタンと「写真とファイルを追加」を画面上の実UIとしてクリックし、OSファイル選択ダイアログ #32770 が出てからUWSCを実行する。hidden file inputの直接クリックや file_upload API は使わない。",
+      "retryPolicy": "UWSCで添付できなかった場合は、ダイアログが開いたままなら同じスクリプトを最大3回まで再実行する。3回失敗で「サムネイル生成失敗・最終確認待ち」として記録する。"
+    },
+    "thumbnailPromptPath": "logs/thumbnail/202605-apple-spatial-iphone-glasses-free-3d-2030.prompt.md",
+    "thumbnailOutputPath": "public/images/thumbnails/202605-apple-spatial-iphone-glasses-free-3d-2030.png",
+    "handoffPath": "logs/handoff/202605-apple-spatial-iphone-glasses-free-3d-2030.handoff.md",
+    "chromeStepsPath": "logs/handoff/202605-apple-spatial-iphone-glasses-free-3d-2030.chrome-steps.md",
+    "browser": "Chrome",
+    "doNotUse": "Edge",
+    "refinementReminder": "ChatGPTの初稿をそのまま保存せず、Claude in Chromeが精錬後の最終稿だけを指定パスへ保存します。",
+    "materialsReminder": "最終稿本文とは別に、Claude in Chromeがブログ化用の資料一式を drafts/materials/{slug}.materials.md に保存します。本文ファイルとは混ぜません。",
+    "thumbnailPromptReminder": "logs/thumbnail/{slug}.prompt.md は初期サムネイル案です。最終版は台本チャットで作り、drafts/materials/{slug}.thumbnail-prompt.md に保存します。",
+    "thumbnailImageReminder": "サムネイル画像生成は毎回新規ChatGPTチャットで行います。Chromeウィンドウの可視タブが新規タブであり、Chromeをフォアグラウンド化していること。「＋」と「写真とファイルを追加」を画面上の実UIでクリックし、OSダイアログ #32770 が出てからUWSCでベース画像2枚を添付します。生成画像はD:\\downloadsへ保存される想定で、後で public/images/thumbnails/ へ移動・リネームしてください。",
+    "thumbnailRetryPolicy": "UWSC添付が1回で成功しなかった場合は、ダイアログが残っていれば同じUWSCを最大3回まで再実行する。画像生成自体に失敗した場合は、Claude in Chromeが最大3回までプロンプト送信をリトライ（1・2回目は同一、3回目は簡略版）。3回失敗で「サムネイル生成失敗・最終確認待ち」として記録する。",
+    "browserClickPolicy": "hidden file inputの直接クリック、JavaScriptでのfile input直接発火、file_upload APIは使わない。「＋」も「写真とファイルを追加」も画面上の実UIをクリックする。",
+    "automatedCompleted": [
+      "source取得",
+      "分類",
+      "MDX下書き生成",
+      "review / revise",
+      "npm run build"
+    ],
+    "nextClaudeInChrome": [
+      "必要に応じてChatGPT台本チャットで本文・資料・最終版サムネイルプロンプトを再生成する",
+      "ChatGPT回答完了を待ち、全文コピーして指定パスへ保存する",
+      "保存後、ファイル存在と内容の完了を自動確認する",
+      "サムネイル画像生成専用の新規ChatGPTチャットを開く（使い回し禁止）",
+      "新規タブをChromeウィンドウの可視タブにし、ChromeをSetForegroundWindowでフォアグラウンド化する",
+      "「＋」→「写真とファイルを追加」を実UIでクリックする",
+      "OSダイアログ #32770 をポーリングし、出現確認後にUWSCを実行してベース画像2枚を添付する",
+      "添付2件確認後、最終版サムネイルプロンプトを送信する",
+      "画像生成完了後、ダウンロードして public/images/thumbnails/ へ移動・リネームする",
+      "添付・生成失敗時は最大3回まで自動リトライし、失敗時は最終確認待ちとして記録する"
+    ],
+    "nextClaudeCode": [
+      "生成ファイルを読み込み、MDX化・サムネ反映・build・preview pushを実行する"
+    ],
+    "humanFinalReview": [
+      "公式情報と矛盾していないか",
+      "未確定情報を断定していないか",
+      "料金・日付・対象プランなどが最新か",
+      "画像・サムネイルに問題がないか",
+      "公開してよいか"
+    ]
+  },
+  "xPostDraft": "Apple、裸眼3D「空間iPhone」開発か？とは？普通の人向けに要点を整理\n\n何が話題なのか、普通の人にはどう関係するのかをすまラボ向けに整理しました。\n#すまラボ #スマホ #AI #ガジェット"
+}

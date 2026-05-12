@@ -30,5 +30,12 @@
     "title": "iPhone 18 Pro、Dynamic Islandはあんまり変わらないかも",
     "classification": "news",
     "note": "Seeded from logs/source/ — predates sumahon:watch automation"
+  },
+  {
+    "sourceUrl": "https://smhn.info/202605-apple-spatial-iphone-glasses-free-3d-2030",
+    "slug": "202605-apple-spatial-iphone-glasses-free-3d-2030",
+    "processedAt": "2026-05-12T11:06:48.610Z",
+    "title": "Apple、裸眼3D「空間iPhone」開発か？とは？普通の人向けに要点を整理",
+    "classification": "short_explainer"
   }
 ]
