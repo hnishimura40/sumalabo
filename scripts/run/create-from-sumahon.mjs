@@ -13,6 +13,8 @@ import { reviewArticle } from "../sumahon/review-article.mjs";
 import { reviseArticle } from "../sumahon/revise-article.mjs";
 import { writeMdx } from "../sumahon/write-mdx.mjs";
 import { assertNoTrackedChanges, commitAndPushPreview, createPreviewBranch, getCurrentBranch } from "../sumahon/push-preview.mjs";
+import { validateForAutomatedPublish } from "../sumahon/validate-for-automated-publish.mjs";
+import { readFile as fsReadFile } from "node:fs/promises";
 import {
   assertSumahonUrl,
   parseArgs,
@@ -235,6 +237,41 @@ async function main() {
 
   if (!finalReview.publishable) {
     console.log("Build succeeded. Review marked this article as not publishable, but preview push will continue for final human fact-check and publish decision.");
+  }
+
+  // === Quality gate ===
+  // rule-based generator が薄い記事 (タイトルだけ・定型句・参考情報なし) を作るケースが
+  // 2026-05-12 で 3 件 (Galaxy / Pixel / Apple spatial iPhone) 観測されたため、
+  // commitAndPushPreview の直前で必ず通す publish gate を追加。
+  //   - jpChars < 1500 / h2 < 3 / 参考情報セクション無し / URL < 2 / placeholder /
+  //     filler フレーズ多数 のいずれかで blocking
+  //   - 失敗時は exit code 2 (= needs_regeneration) で抜ける
+  //   - sumahon-watch 側で exit 2 を捕捉し status=needs_regeneration として記録する
+  const mdxRaw = await fsReadFile(mdxPath, "utf-8");
+  const mdxFm = mdxRaw.match(/^---\r?\n[\s\S]*?\r?\n---\r?\n([\s\S]*)$/);
+  const mdxBody = mdxFm ? mdxFm[1] : mdxRaw;
+  const publishGate = validateForAutomatedPublish(mdxBody, {
+    frontmatterTitle: generated.title,
+    isReporting: classification.articleType === "news" || true,
+  });
+
+  if (!publishGate.ok) {
+    console.error("[publish-gate] BLOCKED: article fails automated publish gate; not pushing.");
+    console.error(JSON.stringify({
+      slug,
+      branchName,
+      mdxPath,
+      blockingReasons: publishGate.blockingReasons,
+      warningReasons: publishGate.warningReasons,
+      metrics: publishGate.metrics,
+      action: "needs_regeneration",
+      note: "Article body is too thin or missing required sections for automated publication. Regenerate via the proper article-generation flow (ChatGPT/Claude refinement) instead of rule-based generator alone.",
+    }, null, 2));
+    process.exit(2);
+  }
+
+  if (publishGate.warningReasons.length > 0) {
+    console.warn("[publish-gate] WARNINGS (non-blocking):", publishGate.warningReasons.join("; "));
   }
 
   await commitAndPushPreview({
