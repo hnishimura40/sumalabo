@@ -42,23 +42,63 @@ import {
   PATHS,
 } from "../sumahon/queue-store.mjs";
 import { toIsoJst } from "../sumahon/utils.mjs";
+import { notifyReviewReady } from "../sumahon/notify-review-ready.mjs";
 
 // node.exe (process.execPath) を直接 spawn する。shell: true だとパスに含まれる
 // スペース ("C:\Program Files\nodejs\node.exe") で 'C:\Program' is not recognized
 // エラーになるため、明示的に shell: false にする。.exe ファイルは Node 24+ でも
 // shell なしで spawn できる (CVE-2024-27980 の制約は .cmd / .bat に限定)。
+//
+// stdout は capture もする (create-from-sumahon が末尾に JSON で結果を出力する。
+// slug / branchName / mdxPath を後段の notify で使うため)。stderr は parent の
+// stderr へ inherit して runner のログに残す。
 function spawnNode(scriptPath, args = []) {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [scriptPath, ...args], {
-      stdio: "inherit",
+      stdio: ["ignore", "pipe", "inherit"],
       shell: false,
     });
+    let stdoutBuf = "";
+    child.stdout.on("data", (chunk) => {
+      const s = chunk.toString();
+      stdoutBuf += s;
+      process.stdout.write(s); // ログにも残す
+    });
     child.on("exit", (code) => {
-      if (code === 0) resolve();
+      if (code === 0) resolve({ stdout: stdoutBuf });
       else reject(new Error(`${process.execPath} ${scriptPath} ${args.join(" ")} failed with exit code ${code}`));
     });
     child.on("error", reject);
   });
+}
+
+// create-from-sumahon が末尾に出力する JSON.stringify(...) を後ろから走査して
+// パース。複数行に渡るかもしれないので、最終 `{}` ブロックを抽出する。
+function extractTrailingJson(stdout) {
+  if (!stdout) return null;
+  const trimmed = stdout.trim();
+  const lastBrace = trimmed.lastIndexOf("}");
+  if (lastBrace < 0) return null;
+  // 最後の { から最後の } までを取り出してパースを試みる
+  let depth = 0;
+  let start = -1;
+  for (let i = lastBrace; i >= 0; i--) {
+    const c = trimmed[i];
+    if (c === "}") depth++;
+    else if (c === "{") {
+      depth--;
+      if (depth === 0) {
+        start = i;
+        break;
+      }
+    }
+  }
+  if (start < 0) return null;
+  try {
+    return JSON.parse(trimmed.slice(start, lastBrace + 1));
+  } catch {
+    return null;
+  }
 }
 
 function parseArgs(argv) {
@@ -104,11 +144,39 @@ async function processOne(entry, { dryRun }) {
   if (dryRun) {
     return { ok: true, dryRun: true, note: "dry-run, would call create-from-sumahon" };
   }
-  // 既存実装に委譲: create-from-sumahon が source fetch → MDX 作成 → Preview ブランチ push → PR 作成 → processed-urls 追記 までやる
-  // X 投稿は呼ばない（create-from-sumahon に X 投稿ステップは含まれない、本 watch でも呼ばない）
+  // 既存実装に委譲: create-from-sumahon が source fetch → MDX 作成 → Preview ブランチ push まで。
+  // 完了後、stdout 末尾の JSON から slug/branch を取り出して notify-review-ready を呼ぶ。
+  // X 投稿は呼ばない (CLAUDE.md ポリシー準拠)。
   try {
-    await spawnNode("scripts/run/create-from-sumahon.mjs", ["--url", entry.url]);
-    return { ok: true };
+    const { stdout } = await spawnNode("scripts/run/create-from-sumahon.mjs", ["--url", entry.url]);
+    const trail = extractTrailingJson(stdout) || {};
+    const slug = typeof trail.slug === "string" ? trail.slug : null;
+    const branch = typeof trail.branchName === "string" ? trail.branchName : null;
+    const title = typeof trail.generatedTitle === "string" ? trail.generatedTitle : entry.title;
+
+    let notifyResult = null;
+    if (slug && branch) {
+      // Cloudflare Pages の branch preview URL は branch 名から派生する規約。
+      // 厳密な URL は PR コメントで取得するのが安全だが、ここでは候補として渡す。
+      const branchSlug = branch.replace(/\//g, "-").slice(0, 60);
+      const previewUrlHint = `https://${branchSlug}.sumalabo.pages.dev`;
+      try {
+        notifyResult = await notifyReviewReady({
+          item: {
+            slug,
+            title,
+            branch,
+            previewUrl: previewUrlHint,
+            status: "review",
+            createdAt: new Date().toISOString(),
+          },
+        });
+      } catch (notifyErr) {
+        notifyResult = { ok: false, error: notifyErr.message || String(notifyErr) };
+      }
+    }
+
+    return { ok: true, slug, branch, title, notifyResult };
   } catch (e) {
     return { ok: false, error: e.message || String(e) };
   }
@@ -197,9 +265,21 @@ async function main() {
         await updateStatus(entry.url, {
           status: "preview_created",
           completedAt: new Date().toISOString(),
+          slug: result.slug || null,
+          branch: result.branch || null,
+          notifySent: Boolean(result.notifyResult?.ok),
+          notifySkippedReason: result.notifyResult?.reason || null,
         });
         processedCount++;
-        events.push({ type: "job_completed", url: entry.url, status: "preview_created" });
+        events.push({
+          type: "job_completed",
+          url: entry.url,
+          status: "preview_created",
+          slug: result.slug,
+          branch: result.branch,
+          notifyOk: Boolean(result.notifyResult?.ok),
+          notifySkippedReason: result.notifyResult?.reason || null,
+        });
       } else {
         await updateStatus(entry.url, {
           status: "failed",
