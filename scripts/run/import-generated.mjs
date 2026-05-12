@@ -15,6 +15,7 @@ import {
 } from "../sumahon/utils.mjs";
 import { findEntryBySlug, updateStatus, PATHS as QUEUE_PATHS } from "../sumahon/queue-store.mjs";
 import { readProof, validateProof, proofPath } from "../sumahon/phase-b-proof.mjs";
+import { verifyPreviewUrl } from "../sumahon/verify-preview-url.mjs";
 
 function assertRequired(value, name) {
   if (!value || value === true) {
@@ -382,15 +383,71 @@ async function main() {
     status: "review",
     sourceCheckPassed,
   };
-  let notifyResult;
+  // Preview URL 健全性チェック。
+  // PR #40 で、Cloudflare Pages の branch preview が無いまま production URL
+  // (sumalabo.com/articles/{slug}/) を通知してしまい、購読者が SPA fallback
+  // (HTTP 200 + <title>すまラボ</title> だけ) を見る事故が発生した。再発防止の
+  // ため、ここで実際の URL が記事ページを返しているかを必ず確認する。
+  let previewVerification = null;
   try {
-    notifyResult = await notifyReviewReady({ item: notifyItem });
+    previewVerification = await verifyPreviewUrl({
+      url: notifyItem.previewUrl,
+      slug,
+      titlePrefix: (imported.title || "").slice(0, 16),
+    });
   } catch (err) {
-    notifyResult = { ok: false, error: String(err && err.message ? err.message : err), message: "notifyReviewReady threw unexpectedly.", meta: { item: notifyItem } };
+    previewVerification = {
+      ok: false,
+      reason: "verifier_threw",
+      error: String(err && err.message ? err.message : err),
+      url: notifyItem.previewUrl,
+      evidence: {},
+    };
+  }
+
+  let notifyResult;
+  if (!previewVerification || !previewVerification.ok) {
+    notifyResult = {
+      ok: false,
+      skipped: true,
+      reason: "preview_unavailable",
+      message:
+        `Preview URL verification failed: ${previewVerification?.reason || "unknown"}. ` +
+        `URL=${notifyItem.previewUrl}. Notification suppressed to avoid sending purchasers to a SPA fallback page.`,
+      meta: { item: notifyItem, previewVerification },
+    };
+    console.warn(`[preview-verify] BLOCKED notify: ${notifyResult.message}`);
+    console.warn(`[preview-verify] evidence:`, JSON.stringify(previewVerification?.evidence || {}));
+    // Roll the queue entry back so it doesn't sit in "preview_created" lying about reality.
+    if (queueEntry) {
+      try {
+        await updateStatus(queueEntry.url, {
+          status: "preview_unavailable",
+          previewUnavailableAt: new Date().toISOString(),
+          previewUnavailableReason: notifyResult.message.slice(0, 800),
+          previewVerification: previewVerification ? {
+            ok: previewVerification.ok,
+            reason: previewVerification.reason,
+            status: previewVerification.status,
+            url: previewVerification.url,
+            evidence: previewVerification.evidence,
+          } : null,
+        });
+      } catch (err) {
+        console.warn("warning: failed to roll queue entry to preview_unavailable:", err && err.message ? err.message : err);
+      }
+    }
+  } else {
+    console.log(`[preview-verify] OK: ${notifyItem.previewUrl} (title="${previewVerification.evidence?.titleSeen?.slice(0, 60) || ""}")`);
+    try {
+      notifyResult = await notifyReviewReady({ item: notifyItem });
+    } catch (err) {
+      notifyResult = { ok: false, error: String(err && err.message ? err.message : err), message: "notifyReviewReady threw unexpectedly.", meta: { item: notifyItem } };
+    }
   }
   const notifyLogPath = path.join("logs", "preview", `${slug}.notify.json`);
   try {
-    await writeJson(notifyLogPath, notifyResult);
+    await writeJson(notifyLogPath, { ...notifyResult, previewVerification });
   } catch (err) {
     console.warn(`warning: failed to write notify log to ${notifyLogPath}:`, err && err.message ? err.message : err);
   }
