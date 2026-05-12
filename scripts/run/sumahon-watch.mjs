@@ -52,8 +52,12 @@ import { notifyReviewReady } from "../sumahon/notify-review-ready.mjs";
 // stdout は capture もする (create-from-sumahon が末尾に JSON で結果を出力する。
 // slug / branchName / mdxPath を後段の notify で使うため)。stderr は parent の
 // stderr へ inherit して runner のログに残す。
+// 終了コード規約 (sumahon-watch との契約):
+//   0 = 正常完了 (Preview ブランチ push まで成功)
+//   2 = quality gate で blocking (= needs_regeneration、再生成が必要)
+//   その他 = 通常の failure (= failed)
 function spawnNode(scriptPath, args = []) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const child = spawn(process.execPath, [scriptPath, ...args], {
       stdio: ["ignore", "pipe", "inherit"],
       shell: false,
@@ -65,10 +69,12 @@ function spawnNode(scriptPath, args = []) {
       process.stdout.write(s); // ログにも残す
     });
     child.on("exit", (code) => {
-      if (code === 0) resolve({ stdout: stdoutBuf });
-      else reject(new Error(`${process.execPath} ${scriptPath} ${args.join(" ")} failed with exit code ${code}`));
+      // 例外を投げず exit code を resolve する。呼び出し側で 0 / 2 / その他 を分岐。
+      resolve({ exitCode: code ?? 1, stdout: stdoutBuf });
     });
-    child.on("error", reject);
+    child.on("error", (err) => {
+      resolve({ exitCode: 1, stdout: stdoutBuf, error: err });
+    });
   });
 }
 
@@ -144,49 +150,65 @@ async function processOne(entry, { dryRun }) {
   if (dryRun) {
     return { ok: true, dryRun: true, note: "dry-run, would call create-from-sumahon" };
   }
-  // 既存実装に委譲: create-from-sumahon が source fetch → MDX 作成 → Preview ブランチ push まで。
-  // 完了後、stdout 末尾の JSON から slug/branch を取り出して notify-review-ready を呼ぶ。
+  // 既存実装に委譲: create-from-sumahon が source fetch → MDX 作成 → quality gate → push まで。
+  // exit code 規約:
+  //   0  = preview_created (本記事 push 済み)
+  //   2  = needs_regeneration (quality gate で blocking、本文が薄い等)
+  //   それ以外 = failed (途中で例外)
   // X 投稿は呼ばない (CLAUDE.md ポリシー準拠)。
-  try {
-    const { stdout } = await spawnNode("scripts/run/create-from-sumahon.mjs", ["--url", entry.url]);
+  const { exitCode, stdout, error } = await spawnNode("scripts/run/create-from-sumahon.mjs", ["--url", entry.url]);
+
+  if (exitCode === 2) {
+    // quality gate blocked: stdout の末尾には publish-gate の JSON が出ているはず
     const trail = extractTrailingJson(stdout) || {};
-    // create-from-sumahon の最終 JSON には slug が直接含まれないので、
-    // mdxPath ("content/articles/{slug}.mdx") から派生させる。
-    // 将来 create-from-sumahon が slug を出力するようになれば trail.slug を優先する。
-    let slug = typeof trail.slug === "string" ? trail.slug : null;
-    if (!slug && typeof trail.mdxPath === "string") {
-      const m = trail.mdxPath.match(/[\\/]([^\\/]+)\.mdx$/);
-      if (m) slug = m[1];
-    }
-    const branch = typeof trail.branchName === "string" ? trail.branchName : null;
-    const title = typeof trail.generatedTitle === "string" ? trail.generatedTitle : entry.title;
-
-    let notifyResult = null;
-    if (slug && branch) {
-      // Cloudflare Pages の branch preview URL は branch 名から派生する規約。
-      // 厳密な URL は PR コメントで取得するのが安全だが、ここでは候補として渡す。
-      const branchSlug = branch.replace(/\//g, "-").slice(0, 60);
-      const previewUrlHint = `https://${branchSlug}.sumalabo.pages.dev`;
-      try {
-        notifyResult = await notifyReviewReady({
-          item: {
-            slug,
-            title,
-            branch,
-            previewUrl: previewUrlHint,
-            status: "review",
-            createdAt: new Date().toISOString(),
-          },
-        });
-      } catch (notifyErr) {
-        notifyResult = { ok: false, error: notifyErr.message || String(notifyErr) };
-      }
-    }
-
-    return { ok: true, slug, branch, title, notifyResult };
-  } catch (e) {
-    return { ok: false, error: e.message || String(e) };
+    return {
+      ok: false,
+      needsRegeneration: true,
+      error: "quality_gate_blocked",
+      gateMetrics: trail.metrics || null,
+      gateReasons: trail.blockingReasons || null,
+    };
   }
+
+  if (exitCode !== 0) {
+    return { ok: false, error: error?.message || `create-from-sumahon exited with code ${exitCode}` };
+  }
+
+  const trail = extractTrailingJson(stdout) || {};
+  // create-from-sumahon の最終 JSON には slug が直接含まれないので、
+  // mdxPath ("content/articles/{slug}.mdx") から派生させる。
+  // 将来 create-from-sumahon が slug を出力するようになれば trail.slug を優先する。
+  let slug = typeof trail.slug === "string" ? trail.slug : null;
+  if (!slug && typeof trail.mdxPath === "string") {
+    const m = trail.mdxPath.match(/[\\/]([^\\/]+)\.mdx$/);
+    if (m) slug = m[1];
+  }
+  const branch = typeof trail.branchName === "string" ? trail.branchName : null;
+  const title = typeof trail.generatedTitle === "string" ? trail.generatedTitle : entry.title;
+
+  let notifyResult = null;
+  if (slug && branch) {
+    // Cloudflare Pages の branch preview URL は branch 名から派生する規約。
+    // 厳密な URL は PR コメントで取得するのが安全だが、ここでは候補として渡す。
+    const branchSlug = branch.replace(/\//g, "-").slice(0, 60);
+    const previewUrlHint = `https://${branchSlug}.sumalabo.pages.dev`;
+    try {
+      notifyResult = await notifyReviewReady({
+        item: {
+          slug,
+          title,
+          branch,
+          previewUrl: previewUrlHint,
+          status: "review",
+          createdAt: new Date().toISOString(),
+        },
+      });
+    } catch (notifyErr) {
+      notifyResult = { ok: false, error: notifyErr.message || String(notifyErr) };
+    }
+  }
+
+  return { ok: true, slug, branch, title, notifyResult };
 }
 
 async function main() {
@@ -287,6 +309,23 @@ async function main() {
           notifyOk: Boolean(result.notifyResult?.ok),
           notifySkippedReason: result.notifyResult?.reason || null,
         });
+      } else if (result.needsRegeneration) {
+        await updateStatus(entry.url, {
+          status: "needs_regeneration",
+          errorReason: "quality_gate_blocked: body too thin / missing sections (rule-based generator output not suitable for publish)",
+          gateMetrics: result.gateMetrics || null,
+          gateReasons: result.gateReasons || null,
+          needsRegenerationAt: new Date().toISOString(),
+        });
+        failedCount++;
+        events.push({
+          type: "job_needs_regeneration",
+          url: entry.url,
+          gateMetrics: result.gateMetrics,
+          gateReasons: result.gateReasons,
+        });
+        // 1 件 needs_regeneration で停止（後続を巻き込まない）
+        break;
       } else {
         await updateStatus(entry.url, {
           status: "failed",
