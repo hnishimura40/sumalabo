@@ -31,6 +31,7 @@
 import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { spawn } from "node:child_process";
 import { fetchSumahonFeed } from "../sumahon/sumahon-feed.mjs";
 import {
   enqueueIfNew,
@@ -40,7 +41,25 @@ import {
   summarizeQueue,
   PATHS,
 } from "../sumahon/queue-store.mjs";
-import { runCommand, toIsoJst } from "../sumahon/utils.mjs";
+import { toIsoJst } from "../sumahon/utils.mjs";
+
+// node.exe (process.execPath) を直接 spawn する。shell: true だとパスに含まれる
+// スペース ("C:\Program Files\nodejs\node.exe") で 'C:\Program' is not recognized
+// エラーになるため、明示的に shell: false にする。.exe ファイルは Node 24+ でも
+// shell なしで spawn できる (CVE-2024-27980 の制約は .cmd / .bat に限定)。
+function spawnNode(scriptPath, args = []) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [scriptPath, ...args], {
+      stdio: "inherit",
+      shell: false,
+    });
+    child.on("exit", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`${process.execPath} ${scriptPath} ${args.join(" ")} failed with exit code ${code}`));
+    });
+    child.on("error", reject);
+  });
+}
 
 function parseArgs(argv) {
   const args = { maxJobs: 1 };
@@ -88,11 +107,7 @@ async function processOne(entry, { dryRun }) {
   // 既存実装に委譲: create-from-sumahon が source fetch → MDX 作成 → Preview ブランチ push → PR 作成 → processed-urls 追記 までやる
   // X 投稿は呼ばない（create-from-sumahon に X 投稿ステップは含まれない、本 watch でも呼ばない）
   try {
-    await runCommand(process.execPath, [
-      "scripts/run/create-from-sumahon.mjs",
-      "--url",
-      entry.url,
-    ]);
+    await spawnNode("scripts/run/create-from-sumahon.mjs", ["--url", entry.url]);
     return { ok: true };
   } catch (e) {
     return { ok: false, error: e.message || String(e) };
