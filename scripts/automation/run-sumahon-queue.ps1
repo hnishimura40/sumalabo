@@ -102,6 +102,66 @@ try {
     Write-RunLog "  git status command exited with code $LASTEXITCODE"
   }
 
+  # === Reset to main if a previous run left us on a preview branch ===
+  # 2026-05-13 02:00 で publish-gate がブロックしたあと、create-from-sumahon が
+  # auto/sumahon-... に切り替えたまま終了し、03:00 / 04:00 / 05:00 の
+  # assertNoTrackedChanges が "M data/automation/processed-urls.json" を理由に
+  # 連続失敗した。これを避けるため、runner 入口で main 以外なら main へ戻し、
+  # tracked dirty があれば安全停止する (ignored / untracked は無視)。
+  #
+  # 注意 (PS 5.1 + ErrorActionPreference=Stop):
+  #   git は正常実行でも stderr に "Switched to branch 'main'" / "From https://..."
+  #   などを出す。$ErrorActionPreference=Stop 下では 2>&1 経由でこれらが
+  #   NativeCommandError として fatal 扱いになり runner が落ちる
+  #   (2026-05-13 08:00 の dry-run で実観測)。npm 区間と同じく
+  #   $ErrorActionPreference="Continue" でラップして LASTEXITCODE だけで成否判定する。
+  $PrevErrorActionPreferenceGit = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  $shouldExitFromBranchReset = $false
+  try {
+    $currentBranchOutput = & git -c "safe.directory=$SafeProjectRoot" branch --show-current 2>&1
+    $currentBranch = ($currentBranchOutput | Out-String).Trim()
+    if (-not $currentBranch) {
+      Write-RunLog "Could not detect current branch. Continuing without reset."
+    } elseif ($currentBranch -ne "main") {
+      Write-RunLog "Current branch is '$currentBranch' (not main). Attempting safe reset to main."
+      $trackedDirty = & git -c "safe.directory=$SafeProjectRoot" status --porcelain --untracked-files=no 2>&1
+      $trackedDirtyText = ($trackedDirty | Out-String).Trim()
+      if ($trackedDirtyText) {
+        Write-RunLog "Tracked dirty files detected; refusing to discard. Listing:"
+        $trackedDirtyText -split "`r?`n" | ForEach-Object {
+          $line = $_.Trim()
+          if ($line) { Write-RunLog "  $line" }
+        }
+        Write-RunLog "Resolve tracked changes manually (commit or revert) before next run. Exiting safely."
+        $shouldExitFromBranchReset = $true
+      } else {
+        & git -c "safe.directory=$SafeProjectRoot" checkout main 2>&1 | ForEach-Object { Write-RunLog "  $_" }
+        $checkoutExit = $LASTEXITCODE
+        if ($checkoutExit -ne 0) {
+          Write-RunLog "  git checkout main failed with code $checkoutExit. Exiting safely."
+          $shouldExitFromBranchReset = $true
+        } else {
+          & git -c "safe.directory=$SafeProjectRoot" pull --ff-only origin main 2>&1 | ForEach-Object { Write-RunLog "  $_" }
+          $pullExit = $LASTEXITCODE
+          if ($pullExit -ne 0) {
+            Write-RunLog "  git pull failed (non-fatal, code=$pullExit); continuing with local main."
+          }
+          $confirmedBranchOutput = & git -c "safe.directory=$SafeProjectRoot" branch --show-current 2>&1
+          $confirmedBranch = ($confirmedBranchOutput | Out-String).Trim()
+          Write-RunLog "Now on branch: $confirmedBranch"
+        }
+      }
+    } else {
+      Write-RunLog "Already on main."
+    }
+  } finally {
+    $ErrorActionPreference = $PrevErrorActionPreferenceGit
+  }
+  if ($shouldExitFromBranchReset) {
+    exit 0
+  }
+
   $hasWatchScript = Test-NpmScript "sumahon:watch"
   if (-not $hasWatchScript) {
     Write-RunLog "npm script 'sumahon:watch' is not available in this branch."
