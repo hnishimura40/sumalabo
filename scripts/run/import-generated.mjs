@@ -13,6 +13,8 @@ import {
   todayJst,
   writeJson,
 } from "../sumahon/utils.mjs";
+import { findEntryBySlug, updateStatus, PATHS as QUEUE_PATHS } from "../sumahon/queue-store.mjs";
+import { readProof, validateProof, proofPath } from "../sumahon/phase-b-proof.mjs";
 
 function assertRequired(value, name) {
   if (!value || value === true) {
@@ -43,6 +45,49 @@ async function main() {
 
   if (materialsPath && !existsSync(materialsPath)) {
     throw new Error(`Materials file was not found: ${materialsPath}`);
+  }
+
+  // === Phase B proof gate ===
+  // queue にこの slug の entry があり、再生成パイプライン経由
+  // (status === "awaiting_chatgpt_generation" or "awaiting_import") の場合、
+  // logs/automation/{slug}.phase-b-proof.json を読んで Chrome MCP + ChatGPT で
+  // Phase B を実際に通った証跡を確認する。
+  //
+  // 証跡が無い / completed!==true / 必須メタが欠けている → blocking 終了。
+  // queue は awaiting_chatgpt_generation に戻し、Phase B やり直しを促す。
+  //
+  // 通常の手動 import (queue に該当 slug 無し or 別 status) はゲート対象外。
+  //
+  // 注意: このゲートは assertNoTrackedChanges() より前に置く。working tree が
+  // 汚れている状態でも証跡不足は最初に検知して止めるべきで、また smoke test 時に
+  // 自己のスクリプト変更で弾かれて gate が動かないという矛盾を避けるため。
+  const queueEntry = await findEntryBySlug(slug);
+  const regenerationStatuses = ["awaiting_chatgpt_generation", "awaiting_import"];
+  if (queueEntry && regenerationStatuses.includes(queueEntry.status)) {
+    const proof = await readProof(slug);
+    const verdict = validateProof(proof);
+    if (!verdict.ok) {
+      console.error("[phase-b-proof] BLOCKED: Phase B 証跡が不足しているため import を中止します。");
+      console.error(JSON.stringify({
+        slug,
+        proofPath: proofPath(slug),
+        queueStatus: queueEntry.status,
+        blockingReasons: verdict.blockingReasons,
+        warningReasons: verdict.warningReasons,
+        action: "queue is rolled back to awaiting_chatgpt_generation; please run Phase B (Chrome MCP + ChatGPT) properly and record the proof.",
+      }, null, 2));
+      // queue 状態を awaiting_chatgpt_generation に戻す（Phase A 成果物は保持）
+      await updateStatus(queueEntry.url, {
+        status: "awaiting_chatgpt_generation",
+        phaseB_gate_blocked_at: new Date().toISOString(),
+        phaseB_gate_blocking_reasons: verdict.blockingReasons,
+      });
+      process.exit(2);
+    }
+    if (verdict.warningReasons.length > 0) {
+      console.warn("[phase-b-proof] warnings:", verdict.warningReasons.join("; "));
+    }
+    console.log("[phase-b-proof] PASS:", proofPath(slug));
   }
 
   const currentBranch = await getCurrentBranch();

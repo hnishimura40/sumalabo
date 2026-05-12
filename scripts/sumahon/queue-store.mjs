@@ -64,6 +64,16 @@ export function findQueueEntry(queue, url) {
 }
 
 /**
+ * queue 内で entry.slug === slug の要素を探す。
+ * 再生成パイプライン (Phase A で slug を保存) の Phase C ゲートで利用。
+ */
+export async function findEntryBySlug(slug, queuePath = QUEUE_PATH) {
+  if (!slug) return null;
+  const queue = await readQueue(queuePath);
+  return queue.find((q) => q.slug === slug) || null;
+}
+
+/**
  * 新規 URL であり、まだ processed-urls にも queue にも入っていなければキューに追加して返す。
  * 既存（processed または queue にあり）の場合は null。
  */
