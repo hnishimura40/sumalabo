@@ -36,10 +36,25 @@ function Test-NpmScript {
 
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 New-Item -ItemType Directory -Force -Path $LockDir | Out-Null
-$GitConfigPath = Join-Path $LogDir "scheduler-empty-gitconfig"
-if (-not (Test-Path $GitConfigPath)) {
-  Set-Content -Path $GitConfigPath -Value "" -Encoding UTF8
-}
+
+# scheduler-gitconfig: 以前は空ファイルだったが、それだと credential.helper が
+# 読み込まれず `git push origin auto/sumahon-...` が認証なしで失敗する
+# (2026-05-12 14:00 / 15:00 の実行で観測)。
+# 必要最小限の設定 (credential.helper=manager, gpg 署名 OFF) を持つ scheduler
+# 専用 gitconfig を生成して、ユーザー側の Credential Manager を使えるようにする。
+# gpgsign=false は無人実行でも gpg agent を起動しないため。
+$GitConfigPath = Join-Path $LogDir "scheduler-gitconfig"
+$GitConfigContent = @"
+[credential]
+	helper = manager
+[commit]
+	gpgsign = false
+[tag]
+	gpgsign = false
+[core]
+	autocrlf = false
+"@
+Set-Content -Path $GitConfigPath -Value $GitConfigContent -Encoding UTF8
 $env:GIT_CONFIG_GLOBAL = $GitConfigPath
 $env:GIT_CONFIG_NOSYSTEM = "1"
 $env:XDG_CONFIG_HOME = $LogDir
@@ -107,11 +122,31 @@ try {
     exit 0
   }
 
-  Write-RunLog "Running build."
-  npm.cmd run build 2>&1 | ForEach-Object { Write-RunLog "  $_" }
+  # npm.cmd 経由で実行される子プロセスは、git の "Switched to a new branch"
+  # のような正常な stderr 出力でも PowerShell 5.1 では $ErrorActionPreference=Stop
+  # + 2>&1 パイプライン下で fatal error として扱われ、runner が exit 1 で停止する
+  # (2026-05-12 14:00 / 15:00 で観測。MDX commit までは進んだが push 前に kill)。
+  # npm 実行中だけ $ErrorActionPreference="Continue" にし、stderr を error 扱いせず
+  # ログに通す。LASTEXITCODE で明示的に exit code をチェックして真の失敗だけ throw。
+  $PrevErrorActionPreference = $ErrorActionPreference
+  $ErrorActionPreference = "Continue"
+  try {
+    Write-RunLog "Running build."
+    npm.cmd run build 2>&1 | ForEach-Object { Write-RunLog "  $_" }
+    $buildExit = $LASTEXITCODE
+    if ($buildExit -ne 0) {
+      throw "npm run build failed with exit code $buildExit"
+    }
 
-  Write-RunLog "Running Sumahon watch queue. Max jobs per run: 1"
-  npm.cmd run sumahon:watch -- --max-jobs 1 2>&1 | ForEach-Object { Write-RunLog "  $_" }
+    Write-RunLog "Running Sumahon watch queue. Max jobs per run: 1"
+    npm.cmd run sumahon:watch -- --max-jobs 1 2>&1 | ForEach-Object { Write-RunLog "  $_" }
+    $watchExit = $LASTEXITCODE
+    if ($watchExit -ne 0) {
+      throw "npm run sumahon:watch failed with exit code $watchExit"
+    }
+  } finally {
+    $ErrorActionPreference = $PrevErrorActionPreference
+  }
 
   Write-RunLog "Sumahon queue runner completed."
 } catch {
