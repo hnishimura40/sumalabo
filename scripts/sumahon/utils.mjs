@@ -134,6 +134,10 @@ export async function readJson(filePath, fallback) {
 
 export function runCommand(command, args, options = {}) {
   return new Promise((resolve, reject) => {
+    // Windows では npm.cmd など .cmd ファイルを spawn するために shell: true が必要
+    // (Node 24+ は shell: false の .cmd 起動を EINVAL で拒否する CVE-2024-27980 対策)
+    // DEP0190 deprecation warning は親プロセス側で NODE_OPTIONS=--no-deprecation
+    // を設定して抑制する (Windows タスクの runner スクリプトで設定済み)。
     const child = spawn(command, args, {
       stdio: "inherit",
       shell: process.platform === "win32",

@@ -44,6 +44,20 @@ $env:GIT_CONFIG_GLOBAL = $GitConfigPath
 $env:GIT_CONFIG_NOSYSTEM = "1"
 $env:XDG_CONFIG_HOME = $LogDir
 
+# Node.js の DeprecationWarning (例: DEP0190 spawn shell:true) を抑制する。
+# Windows タスク経由の Windows PowerShell 5.1 では $ErrorActionPreference=Stop +
+# `npm ... 2>&1 | ForEach-Object` の組み合わせで stderr に出た deprecation
+# warning が fatal error 扱いになり、runner が exit 1 で停止していたため
+# (2026-05-12 02/03/04/05 の 4 回の実行で観測)。
+# NODE_OPTIONS=--no-deprecation は子プロセス (npm.cmd → node) に inherit され、
+# 全 descendant の deprecation warning を抑える (NODE_NO_DEPRECATION 環境変数では
+# DEP0190 は抑制されないことを実測で確認)。
+if ($env:NODE_OPTIONS) {
+  $env:NODE_OPTIONS = "$($env:NODE_OPTIONS) --no-deprecation"
+} else {
+  $env:NODE_OPTIONS = "--no-deprecation"
+}
+
 try {
   Set-Location $ProjectRoot
   Write-RunLog "Sumalabo Sumahon queue runner started. DryRun=$DryRun"
