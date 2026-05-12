@@ -69,7 +69,106 @@ export interface SiteDashboard {
   fetchedAt: string;
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Phase 3A 統計データ構造 (GA4 由来の生統計を後段分析できる形で保持)        */
+/*                                                                            */
+/*  既存 UI は SiteDashboard.metrics / dailyViews / topPages / risingPages を */
+/*  そのまま使う。statsBlock はオプショナルで、表示用とは独立の生統計を入れる */
+/*  ことで、ランキングや 7/28/90 日切替などの分析を後付けできるようにする。   */
+/* -------------------------------------------------------------------------- */
+
+export interface DailySitePoint {
+  /** YYYY-MM-DD */
+  date: string;
+  views: number;
+  users: number;
+  sessions: number;
+  engagedSessions: number;
+  /** 0–1 の小数 (sessions == 0 のときは 0) */
+  engagementRate: number;
+}
+
+export interface PageStatExtended {
+  path: string;
+  title: string;
+  views7d: number;
+  views28d: number;
+  views90d: number;
+  users28d: number;
+  sessions28d: number;
+}
+
+export interface ChannelStat {
+  /** GA4 の sessionDefaultChannelGroup 値 */
+  channel: string;
+  views: number;
+  users: number;
+  sessions: number;
+}
+
+export interface DeviceStat {
+  /** GA4 の deviceCategory 値 (desktop / mobile / tablet) */
+  device: string;
+  views: number;
+  users: number;
+  sessions: number;
+}
+
+export interface TrendScore {
+  path: string;
+  title: string;
+  views7d: number;
+  views28d: number;
+  views90d: number;
+  /** (views7d / 7) / (views28d / 28) に相当する増勢スコア。1.0 が定常、>1 が急上昇 */
+  trendScore: number;
+}
+
+export interface SiteStatsBlock {
+  siteId: SiteId;
+  totals: {
+    views7d: number;
+    views28d: number;
+    views90d: number;
+    users28d: number;
+    sessions28d: number;
+    avgEngagementRate28d: number;
+  };
+  /** 日付昇順、最大 90 点 */
+  dailySiteStats: DailySitePoint[];
+  /** views90d 降順、最大 50 行。7/28/90 日 PV をマージ済み */
+  pageStats: PageStatExtended[];
+  /** 直近 28 日のチャネル別集計、views 降順 */
+  channelStats: ChannelStat[];
+  /** 直近 28 日のデバイス別集計、views 降順 */
+  deviceStats: DeviceStat[];
+  /** trendScore 降順、最大 10 件 (views28d が一定以上のページのみ) */
+  trendScores: TrendScore[];
+  /** このサイトに限ったデータ取得元 */
+  source: 'ga4' | 'sample';
+  fetchedAt: string;
+}
+
+export interface DashboardStats {
+  generatedAt: string;
+  dataRange: {
+    /** YYYY-MM-DD (含む) */
+    start: string;
+    /** YYYY-MM-DD (含む) */
+    end: string;
+    days: number;
+  };
+  meta: {
+    warnings: string[];
+    source: 'ga4' | 'sample' | 'mixed';
+  };
+  siteStats: SiteStatsBlock[];
+}
+
 export interface DashboardSnapshot {
   generatedAt: string;
+  /** 既存 UI 互換のサイト別表示データ */
   sites: SiteDashboard[];
+  /** Phase 3A で追加: 後段分析用の生統計。未取得時は省略可 */
+  stats?: DashboardStats;
 }

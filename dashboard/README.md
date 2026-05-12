@@ -81,21 +81,62 @@ npm run fetch-data   # public/data/dashboard-latest.json を生成 (gitignore済
 - Account Resources: 対象アカウントのみ
 - 他の権限は付けない (最小権限)
 
-### GA4 / Search Console (⚠️ Phase 3 まで登録禁止)
+### GA4 (Phase 3A 用 — このフェーズで段階的に登録)
 
-**「実データ投入前チェックリスト」がすべて ✅ になるまで以下 8 件は一切登録しないこと。**
-先に登録すると、次回 cron か手動 dispatch でライブデータの取得・配備が走り出してしまう。Access 設定が漏れていた場合に取り返しがつかない。
-
+GA4 Data API は `scripts/fetch-dashboard-data.mjs` で実装済み。**Cloudflare Access の動作確認後に**以下 4 件を登録すると、次回 dispatch でライブデータ取得が始まる。
 
 | Secret 名 | 用途 |
 |---|---|
-| `GA4_PROPERTY_ID_AINITORYU` / `_SUMALAB` / `_MIRADIA` | GA4 プロパティID (数値) |
-| `GA4_SERVICE_ACCOUNT_JSON` | GA4 Data API サービスアカウント鍵 JSON |
-| `SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON` | Search Console API サービスアカウント鍵 JSON |
+| `GA4_SERVICE_ACCOUNT_JSON` | GA4 Data API サービスアカウント鍵 JSON 全文 (3 サイト兼用) |
+| `GA4_PROPERTY_ID_AINITORYU` | AI二刀流の GA4 プロパティID (数値文字列) |
+| `GA4_PROPERTY_ID_SUMALAB` | すまラボの GA4 プロパティID |
+| `GA4_PROPERTY_ID_MIRADIA` | ミラディアの GA4 プロパティID |
+
+`GA4_SERVICE_ACCOUNT_JSON` がなければ全サイトサンプル fallback。あっても個別 `GA4_PROPERTY_ID_*` がないサイトは当該サイトだけサンプル維持 (画面の `stats.meta.warnings` にメッセージ記録)。
+
+### Search Console (⚠️ Phase 3B まで登録禁止)
+
+**Phase 3A の GA4 単独動作確認が完了するまで以下 4 件は登録しない。**
+先に登録しても fetch-dashboard-data.mjs はまだ Search Console API を呼ばないので無害だが、混乱を避けるため Phase 3B 着手まで保留する。
+
+| Secret 名 | 用途 |
+|---|---|
+| `SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON` | Search Console API サービスアカウント鍵 JSON (GA4 と同じ鍵で兼用可) |
 | `SEARCH_CONSOLE_SITE_AINITORYU` / `_SUMALAB` / `_MIRADIA` | Search Console プロパティ (`https://...` または `sc-domain:...`) |
 
-Google Cloud Console でサービスアカウントを 1 つ作り、GA4 Data API と Search Console API を有効化。
-GA4 / Search Console 側でそのサービスアカウントメールに「閲覧者」権限を付与する (3サイト分)。
+Google Cloud Console でサービスアカウントを 1 つ作り、GA4 Data API と (Phase 3B で) Search Console API を有効化。
+GA4 / Search Console 側でそのサービスアカウントメールに「閲覧者」権限を付与する (3 サイト × 各 API)。
+
+### Phase 3A の stats JSON 構造
+
+`public/data/dashboard-latest.json` には既存 UI 互換の `sites[]` に加え、`stats` が追加される (Phase 3A 以降):
+
+```json
+{
+  "generatedAt": "...",
+  "sites": [ /* 既存 UI 用 (GA4 ライブ + Search Console は sample 値) */ ],
+  "stats": {
+    "generatedAt": "...",
+    "dataRange": { "start": "YYYY-MM-DD", "end": "YYYY-MM-DD", "days": 90 },
+    "meta": { "warnings": [], "source": "ga4" | "sample" | "mixed" },
+    "siteStats": [
+      {
+        "siteId": "ainitoryu",
+        "totals": { "views7d": 0, "views28d": 0, "views90d": 0, "users28d": 0, "sessions28d": 0, "avgEngagementRate28d": 0 },
+        "dailySiteStats": [ { "date": "YYYY-MM-DD", "views": 0, "users": 0, "sessions": 0, "engagedSessions": 0, "engagementRate": 0 } ],
+        "pageStats":   [ { "path": "/", "title": "...", "views7d": 0, "views28d": 0, "views90d": 0, "users28d": 0, "sessions28d": 0 } ],
+        "channelStats":[ { "channel": "Organic Search", "views": 0, "users": 0, "sessions": 0 } ],
+        "deviceStats": [ { "device": "mobile", "views": 0, "users": 0, "sessions": 0 } ],
+        "trendScores": [ { "path": "/", "title": "...", "views7d": 0, "views28d": 0, "views90d": 0, "trendScore": 1.0 } ],
+        "source": "ga4" | "sample",
+        "fetchedAt": "..."
+      }
+    ]
+  }
+}
+```
+
+詳細は [`src/types/dashboard.ts`](src/types/dashboard.ts) を参照。`stats` はオプショナル (`?:`) なので、未取得時は省略可。既存 UI は `stats` を参照していないので破壊的変更はなし。
 
 ## Cloudflare Pages 設定値
 
