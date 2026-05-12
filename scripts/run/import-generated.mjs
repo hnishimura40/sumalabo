@@ -13,6 +13,9 @@ import {
   todayJst,
   writeJson,
 } from "../sumahon/utils.mjs";
+import { findEntryBySlug, updateStatus, PATHS as QUEUE_PATHS } from "../sumahon/queue-store.mjs";
+import { readProof, validateProof, proofPath } from "../sumahon/phase-b-proof.mjs";
+import { verifyPreviewUrl } from "../sumahon/verify-preview-url.mjs";
 
 function assertRequired(value, name) {
   if (!value || value === true) {
@@ -43,6 +46,49 @@ async function main() {
 
   if (materialsPath && !existsSync(materialsPath)) {
     throw new Error(`Materials file was not found: ${materialsPath}`);
+  }
+
+  // === Phase B proof gate ===
+  // queue にこの slug の entry があり、再生成パイプライン経由
+  // (status === "awaiting_chatgpt_generation" or "awaiting_import") の場合、
+  // logs/automation/{slug}.phase-b-proof.json を読んで Chrome MCP + ChatGPT で
+  // Phase B を実際に通った証跡を確認する。
+  //
+  // 証跡が無い / completed!==true / 必須メタが欠けている → blocking 終了。
+  // queue は awaiting_chatgpt_generation に戻し、Phase B やり直しを促す。
+  //
+  // 通常の手動 import (queue に該当 slug 無し or 別 status) はゲート対象外。
+  //
+  // 注意: このゲートは assertNoTrackedChanges() より前に置く。working tree が
+  // 汚れている状態でも証跡不足は最初に検知して止めるべきで、また smoke test 時に
+  // 自己のスクリプト変更で弾かれて gate が動かないという矛盾を避けるため。
+  const queueEntry = await findEntryBySlug(slug);
+  const regenerationStatuses = ["awaiting_chatgpt_generation", "awaiting_import"];
+  if (queueEntry && regenerationStatuses.includes(queueEntry.status)) {
+    const proof = await readProof(slug);
+    const verdict = validateProof(proof);
+    if (!verdict.ok) {
+      console.error("[phase-b-proof] BLOCKED: Phase B 証跡が不足しているため import を中止します。");
+      console.error(JSON.stringify({
+        slug,
+        proofPath: proofPath(slug),
+        queueStatus: queueEntry.status,
+        blockingReasons: verdict.blockingReasons,
+        warningReasons: verdict.warningReasons,
+        action: "queue is rolled back to awaiting_chatgpt_generation; please run Phase B (Chrome MCP + ChatGPT) properly and record the proof.",
+      }, null, 2));
+      // queue 状態を awaiting_chatgpt_generation に戻す（Phase A 成果物は保持）
+      await updateStatus(queueEntry.url, {
+        status: "awaiting_chatgpt_generation",
+        phaseB_gate_blocked_at: new Date().toISOString(),
+        phaseB_gate_blocking_reasons: verdict.blockingReasons,
+      });
+      process.exit(2);
+    }
+    if (verdict.warningReasons.length > 0) {
+      console.warn("[phase-b-proof] warnings:", verdict.warningReasons.join("; "));
+    }
+    console.log("[phase-b-proof] PASS:", proofPath(slug));
   }
 
   const currentBranch = await getCurrentBranch();
@@ -337,15 +383,71 @@ async function main() {
     status: "review",
     sourceCheckPassed,
   };
-  let notifyResult;
+  // Preview URL 健全性チェック。
+  // PR #40 で、Cloudflare Pages の branch preview が無いまま production URL
+  // (sumalabo.com/articles/{slug}/) を通知してしまい、購読者が SPA fallback
+  // (HTTP 200 + <title>すまラボ</title> だけ) を見る事故が発生した。再発防止の
+  // ため、ここで実際の URL が記事ページを返しているかを必ず確認する。
+  let previewVerification = null;
   try {
-    notifyResult = await notifyReviewReady({ item: notifyItem });
+    previewVerification = await verifyPreviewUrl({
+      url: notifyItem.previewUrl,
+      slug,
+      titlePrefix: (imported.title || "").slice(0, 16),
+    });
   } catch (err) {
-    notifyResult = { ok: false, error: String(err && err.message ? err.message : err), message: "notifyReviewReady threw unexpectedly.", meta: { item: notifyItem } };
+    previewVerification = {
+      ok: false,
+      reason: "verifier_threw",
+      error: String(err && err.message ? err.message : err),
+      url: notifyItem.previewUrl,
+      evidence: {},
+    };
+  }
+
+  let notifyResult;
+  if (!previewVerification || !previewVerification.ok) {
+    notifyResult = {
+      ok: false,
+      skipped: true,
+      reason: "preview_unavailable",
+      message:
+        `Preview URL verification failed: ${previewVerification?.reason || "unknown"}. ` +
+        `URL=${notifyItem.previewUrl}. Notification suppressed to avoid sending purchasers to a SPA fallback page.`,
+      meta: { item: notifyItem, previewVerification },
+    };
+    console.warn(`[preview-verify] BLOCKED notify: ${notifyResult.message}`);
+    console.warn(`[preview-verify] evidence:`, JSON.stringify(previewVerification?.evidence || {}));
+    // Roll the queue entry back so it doesn't sit in "preview_created" lying about reality.
+    if (queueEntry) {
+      try {
+        await updateStatus(queueEntry.url, {
+          status: "preview_unavailable",
+          previewUnavailableAt: new Date().toISOString(),
+          previewUnavailableReason: notifyResult.message.slice(0, 800),
+          previewVerification: previewVerification ? {
+            ok: previewVerification.ok,
+            reason: previewVerification.reason,
+            status: previewVerification.status,
+            url: previewVerification.url,
+            evidence: previewVerification.evidence,
+          } : null,
+        });
+      } catch (err) {
+        console.warn("warning: failed to roll queue entry to preview_unavailable:", err && err.message ? err.message : err);
+      }
+    }
+  } else {
+    console.log(`[preview-verify] OK: ${notifyItem.previewUrl} (title="${previewVerification.evidence?.titleSeen?.slice(0, 60) || ""}")`);
+    try {
+      notifyResult = await notifyReviewReady({ item: notifyItem });
+    } catch (err) {
+      notifyResult = { ok: false, error: String(err && err.message ? err.message : err), message: "notifyReviewReady threw unexpectedly.", meta: { item: notifyItem } };
+    }
   }
   const notifyLogPath = path.join("logs", "preview", `${slug}.notify.json`);
   try {
-    await writeJson(notifyLogPath, notifyResult);
+    await writeJson(notifyLogPath, { ...notifyResult, previewVerification });
   } catch (err) {
     console.warn(`warning: failed to write notify log to ${notifyLogPath}:`, err && err.message ? err.message : err);
   }
