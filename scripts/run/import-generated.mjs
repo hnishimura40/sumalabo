@@ -16,6 +16,7 @@ import {
 import { findEntryBySlug, updateStatus, PATHS as QUEUE_PATHS } from "../sumahon/queue-store.mjs";
 import { readProof, validateProof, proofPath } from "../sumahon/phase-b-proof.mjs";
 import { verifyPreviewUrl } from "../sumahon/verify-preview-url.mjs";
+import { deployPreviewToCloudflarePages } from "../sumahon/cloudflare-pages-deploy.mjs";
 
 function assertRequired(value, name) {
   if (!value || value === true) {
@@ -369,40 +370,86 @@ async function main() {
     branchName,
   });
 
-  // ベストエフォートでPWA Push通知。失敗してもPreview作成は成功扱いのまま継続する。
-  // REVIEW_NOTIFY_SECRET が未設定の場合は自動でスキップ（skipped: true）になる。
+  // Cloudflare Pages へ preview を direct-upload (wrangler pages deploy).
+  // 背景: このリポジトリの CF Pages は GitHub Apps 連携を使っておらず、
+  // PR ブランチに自動 preview deploy が生成されない (PR #40 で発覚)。そのため
+  // ここで明示的に `wrangler pages deploy dist --branch <branchName>` を叩いて
+  // preview URL を取得し、それを notifyReviewReady に渡す。
+  //
+  // CLOUDFLARE_API_TOKEN が未設定なら ok:false で帰ってくる。その場合は
+  // verifier 側で production URL が SPA fallback と判定されて notify が止まる
+  // ので、購読者に壊れた URL を配ることはない (preview_unavailable に降格)。
+  let cfDeployResult = null;
+  try {
+    cfDeployResult = await deployPreviewToCloudflarePages({
+      distDir: "dist",
+      branch: branchName,
+      commitMessage: `import ${slug}`,
+    });
+  } catch (err) {
+    cfDeployResult = {
+      ok: false,
+      reason: "deploy_threw",
+      error: String(err && err.message ? err.message : err),
+    };
+  }
+  if (cfDeployResult?.ok) {
+    console.log(`[cf-pages-deploy] OK: ${cfDeployResult.previewUrl}${cfDeployResult.branchAliasUrl ? " (alias: " + cfDeployResult.branchAliasUrl + ")" : ""}`);
+  } else {
+    console.warn(`[cf-pages-deploy] FAILED reason=${cfDeployResult?.reason || "unknown"}; notify will fall through to verifier guard.`);
+  }
+
+  // 通知に使う previewUrl の決定順:
+  //  1. CF wrangler deploy が成功 → そのコミット specific URL
+  //  2. SUMALABO_PREVIEW_BASE_URL 環境変数指定があればそれを使う (alias 等)
+  //  3. fallback: production の sumalabo.com (verifier が SPA fallback を弾く)
+  let resolvedPreviewUrl;
+  if (cfDeployResult?.ok && cfDeployResult.previewUrl) {
+    const base = cfDeployResult.previewUrl.replace(/\/+$/, "");
+    resolvedPreviewUrl = `${base}/articles/${slug}/`;
+  } else if (typeof process.env.SUMALABO_PREVIEW_BASE_URL === "string" && process.env.SUMALABO_PREVIEW_BASE_URL) {
+    resolvedPreviewUrl = `${process.env.SUMALABO_PREVIEW_BASE_URL.replace(/\/+$/, "")}/articles/${slug}/`;
+  } else {
+    resolvedPreviewUrl = `https://sumalabo.com/articles/${slug}/`;
+  }
+
   const notifyItem = {
     slug,
     title: imported.title,
     branch: branchName,
-    previewUrl: typeof process.env.SUMALABO_PREVIEW_BASE_URL === "string" && process.env.SUMALABO_PREVIEW_BASE_URL
-      ? `${process.env.SUMALABO_PREVIEW_BASE_URL.replace(/\/+$/, "")}/articles/${slug}/`
-      : `https://sumalabo.com/articles/${slug}/`,
+    previewUrl: resolvedPreviewUrl,
     prUrl: typeof process.env.SUMALABO_PR_URL === "string" ? process.env.SUMALABO_PR_URL : undefined,
     thumbnail: imported.thumbnail || undefined,
     status: "review",
     sourceCheckPassed,
   };
-  // Preview URL 健全性チェック。
-  // PR #40 で、Cloudflare Pages の branch preview が無いまま production URL
-  // (sumalabo.com/articles/{slug}/) を通知してしまい、購読者が SPA fallback
-  // (HTTP 200 + <title>すまラボ</title> だけ) を見る事故が発生した。再発防止の
-  // ため、ここで実際の URL が記事ページを返しているかを必ず確認する。
+
+  // Preview URL 健全性チェック (verify-preview-url.mjs)。
+  // CF deploy が成功してもまだ伝播待ちの可能性があるので、最大 4 回まで
+  // 短く再試行する。
   let previewVerification = null;
-  try {
-    previewVerification = await verifyPreviewUrl({
-      url: notifyItem.previewUrl,
-      slug,
-      titlePrefix: (imported.title || "").slice(0, 16),
-    });
-  } catch (err) {
-    previewVerification = {
-      ok: false,
-      reason: "verifier_threw",
-      error: String(err && err.message ? err.message : err),
-      url: notifyItem.previewUrl,
-      evidence: {},
-    };
+  const VERIFY_ATTEMPTS = cfDeployResult?.ok ? 4 : 1;
+  for (let attempt = 1; attempt <= VERIFY_ATTEMPTS; attempt++) {
+    try {
+      previewVerification = await verifyPreviewUrl({
+        url: notifyItem.previewUrl,
+        slug,
+        titlePrefix: (imported.title || "").slice(0, 16),
+      });
+    } catch (err) {
+      previewVerification = {
+        ok: false,
+        reason: "verifier_threw",
+        error: String(err && err.message ? err.message : err),
+        url: notifyItem.previewUrl,
+        evidence: {},
+      };
+    }
+    if (previewVerification?.ok) break;
+    if (attempt < VERIFY_ATTEMPTS) {
+      console.log(`[preview-verify] attempt ${attempt}/${VERIFY_ATTEMPTS} failed (${previewVerification?.reason || "unknown"}); waiting 6s for CF propagation...`);
+      await new Promise((r) => setTimeout(r, 6000));
+    }
   }
 
   let notifyResult;
@@ -447,7 +494,18 @@ async function main() {
   }
   const notifyLogPath = path.join("logs", "preview", `${slug}.notify.json`);
   try {
-    await writeJson(notifyLogPath, { ...notifyResult, previewVerification });
+    await writeJson(notifyLogPath, {
+      ...notifyResult,
+      previewVerification,
+      cfDeploy: cfDeployResult ? {
+        ok: cfDeployResult.ok,
+        reason: cfDeployResult.reason || null,
+        previewUrl: cfDeployResult.previewUrl || null,
+        branchAliasUrl: cfDeployResult.branchAliasUrl || null,
+        durationMs: cfDeployResult.durationMs || null,
+        evidence: cfDeployResult.evidence || null,
+      } : null,
+    });
   } catch (err) {
     console.warn(`warning: failed to write notify log to ${notifyLogPath}:`, err && err.message ? err.message : err);
   }
