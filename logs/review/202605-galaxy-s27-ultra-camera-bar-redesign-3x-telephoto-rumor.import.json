@@ -1,0 +1,61 @@
+{
+  "checkedAt": "2026-05-12T12:08:20.300Z",
+  "wordCountApprox": 2538,
+  "h2Count": 8,
+  "presentTopics": [
+    "先に結論",
+    "何が起きたのか",
+    "何が新しいのか",
+    "難しいポイントのかみくだき",
+    "普通の人にどう関係するのか",
+    "まだ分からないこと",
+    "すまラボ的な見方",
+    "まとめ"
+  ],
+  "missingTopics": [],
+  "issues": [
+    {
+      "code": "thumbnail_missing",
+      "severity": "warning",
+      "message": "サムネイル画像が未配置です。frontmatter thumbnailは空にしています。"
+    }
+  ],
+  "sourceCheck": {
+    "ok": true,
+    "hasReferenceSection": true,
+    "urlCount": 3,
+    "referenceUrls": [
+      "https://www.tomsguide.com/phones/samsung-phones/galaxy-s27-ultra-camera-bar-rumor",
+      "https://www.androidpolice.com/galaxy-s27-ultra-horizontal-camera-bar-rumor/",
+      "https://www.samsung.com/jp/smartphones/galaxy-s25/galaxy-s25-ultra/"
+    ],
+    "containsSumahonPublicReference": false,
+    "sumahonHits": [],
+    "isReportingTopic": true,
+    "hasReportingNotice": true,
+    "reportingNoticeRequired": true,
+    "reasons": [],
+    "notes": "公開記事用の参考情報セクションがあり、内部参考元の露出もありません。"
+  },
+  "articleQualityCheck": {
+    "ok": true,
+    "titleDuplicate": false,
+    "titleDuplicateDetails": [],
+    "h1Count": 0,
+    "markdownResidue": false,
+    "markdownResidueHits": [],
+    "characterPresence": "visual",
+    "boxHeadingWarnings": [],
+    "articleStructure": "ok",
+    "issues": [],
+    "reasons": []
+  },
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "sourceUrl": "https://smhn.info/202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor",
+  "articleTitle": "Galaxy S27 Ultra、背面カメラが横長バー型へ刷新かとは？普通の人向けに要点を整理",
+  "generatedDraftPath": "drafts/generated/202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor.md",
+  "materials": null,
+  "mdxPath": "content\\articles\\202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor.mdx",
+  "blockingRisk": false
+}
