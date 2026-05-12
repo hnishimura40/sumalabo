@@ -104,6 +104,24 @@ export async function pickNextQueued(queuePath = QUEUE_PATH) {
 }
 
 /**
+ * status が needs_regeneration のものを1件 pick して status=preparing_regeneration に更新。
+ * rule-based generator の薄い出力で publish-gate に blocking された entry を、
+ * 正式な生成フロー (ChatGPT 経由) に回すためのピックアップ。
+ * 戻り値: ピックされた entry または null。
+ */
+export async function pickNextNeedsRegeneration(queuePath = QUEUE_PATH) {
+  const queue = await readQueue(queuePath);
+  const idx = queue.findIndex((q) => q.status === "needs_regeneration");
+  if (idx < 0) return null;
+  const entry = queue[idx];
+  entry.status = "preparing_regeneration";
+  entry.statusUpdatedAt = new Date().toISOString();
+  entry.regenerationAttempts = (entry.regenerationAttempts || 0) + 1;
+  await writeQueue(queue, queuePath);
+  return entry;
+}
+
+/**
  * 既存 entry の status を更新して保存。
  */
 export async function updateStatus(url, patch, queuePath = QUEUE_PATH) {
