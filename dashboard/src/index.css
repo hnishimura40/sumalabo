@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 /*
- * iPhone Safari の白フラッシュ防止 + PWA standalone 時の Safe Area 対応。
+ * 常時ダーク UI 運用 (iPhone Safari / PWA standalone / デスクトップ共通)。
  *
- *   - html / body の地色をダーク (#0f1320) にして、ステータスバー直下や
- *     overscroll バウンス時に白がチラつかないようにする。
+ *   - html / body の地色を ink-900 (#0f1320) で塗り、PWA 起動・overscroll
+ *     バウンス・状態遷移中のいずれでも白いフラッシュが出ないようにする。
  *   - color-scheme: dark でフォームコントロール / スクロールバー /
- *     ネイティブ UI もダーク扱いにする。
- *   - 実際のダッシュボードカード本体は React 側の <div className="bg-ink-50"> で
- *     描画されるので、ライトな読みやすさは維持される。
- *     ダークな地色は overscroll / safe area / 描画前のごく短時間にしか見えない。
+ *     ネイティブ UI もダーク扱いに統一。
+ *   - カードや表は React 側で ink-800 (#151a2a) / white/5 などの暗色サーフェスを
+ *     ハードコードし、文字は ink-50 / slate-300 / slate-400 で階調を付ける。
+ *     OS のダーク設定の有無に関わらず常時このダーク UI を強制する。
  */
 
 html {
@@ -24,7 +24,9 @@ body,
 #root {
   min-height: 100%;
   background-color: #0f1320;
-  color: #0f1320;
+  /* ダーク UI 常時運用なので、デフォルト文字色も白寄りに。
+     各コンポーネントの Tailwind text-ink-50 / text-slate-* が上書きする。 */
+  color: #f7f8fb;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   /* iOS の overscroll bounce 時の白い領域を消す */
@@ -42,9 +44,8 @@ body {
   padding-left: env(safe-area-inset-left);
 }
 
-/* ダッシュボード本体の親領域: ライトな bg-ink-50 をフルブリードで広げ、
-   safe-area 内側はライト UI、外側 (status bar 直下 / overscroll) は地色のダーク
-   と棲み分けする。 */
+/* ダッシュボード本体は常時ダーク (bg-ink-900) をフルブリードで広げ、
+   safe-area 内側 / 外側ともダークで連続するようにする。 */
 #root {
   display: flex;
   flex-direction: column;

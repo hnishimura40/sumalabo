@@ -10,10 +10,10 @@ interface Props {
 export function DeltaBadge({ delta, label, size = 'sm' }: Props) {
   const tone =
     delta.tone === 'up'
-      ? 'bg-emerald-50 text-emerald-700 ring-emerald-200'
+      ? 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/30'
       : delta.tone === 'down'
-        ? 'bg-rose-50 text-rose-700 ring-rose-200'
-        : 'bg-ink-100 text-ink-500 ring-ink-200';
+        ? 'bg-rose-500/15 text-rose-300 ring-rose-500/30'
+        : 'bg-white/5 text-slate-400 ring-white/10';
   const arrow = delta.tone === 'up' ? '▲' : delta.tone === 'down' ? '▼' : '—';
   const sizing = size === 'md' ? 'text-sm px-2.5 py-1' : 'text-xs px-2 py-0.5';
   return (

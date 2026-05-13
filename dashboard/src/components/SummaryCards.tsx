@@ -54,8 +54,8 @@ export function SummaryCards({ sites }: Props) {
       label: '検索クリック / 表示 (CTR)',
       value: `${formatNumber(clicks)} / ${formatNumber(impressions)}`,
       sub: (
-        <span className="text-xs text-ink-500">
-          CTR <strong className="text-ink-700">{(ctr * 100).toFixed(2)}%</strong>
+        <span className="text-xs text-slate-400">
+          CTR <strong className="text-ink-50">{(ctr * 100).toFixed(2)}%</strong>
         </span>
       ),
     },
@@ -66,12 +66,12 @@ export function SummaryCards({ sites }: Props) {
       {tiles.map((t) => (
         <div
           key={t.label}
-          className="rounded-2xl bg-white p-4 shadow-soft ring-1 ring-ink-100"
+          className="rounded-2xl bg-ink-800 p-4 shadow-dark-soft ring-1 ring-white/10"
         >
-          <div className="text-[0.7rem] font-medium uppercase tracking-wider text-ink-500">
+          <div className="text-[0.7rem] font-medium uppercase tracking-wider text-slate-400">
             {t.label}
           </div>
-          <div className="mt-1 text-2xl font-bold tabular-nums text-ink-900 sm:text-3xl">
+          <div className="mt-1 text-2xl font-bold tabular-nums text-ink-50 sm:text-3xl">
             {t.value}
           </div>
           {t.sub ? <div className="mt-2">{t.sub}</div> : null}

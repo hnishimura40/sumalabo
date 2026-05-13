@@ -23,8 +23,8 @@ export default function App() {
   if (error) {
     return (
       <div className="mx-auto max-w-2xl p-6">
-        <h1 className="text-xl font-bold text-rose-700">読み込みエラー</h1>
-        <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-rose-50 p-3 text-sm text-rose-900">
+        <h1 className="text-xl font-bold text-rose-300">読み込みエラー</h1>
+        <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-rose-950/40 p-3 text-sm text-rose-100 ring-1 ring-rose-500/30">
           {error}
         </pre>
       </div>
@@ -33,32 +33,32 @@ export default function App() {
 
   if (!snapshot) {
     return (
-      <div className="grid min-h-screen place-items-center text-ink-500">
+      <div className="grid min-h-screen place-items-center bg-ink-900 text-slate-400">
         読み込み中…
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-ink-50 text-ink-900">
-      <header className="sticky top-0 z-10 border-b border-ink-200/60 bg-white/80 backdrop-blur">
+    <div className="min-h-screen bg-ink-900 text-ink-50">
+      <header className="sticky top-0 z-10 border-b border-white/10 bg-ink-900/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-wrap items-baseline justify-between gap-2 px-4 py-3 sm:px-6">
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-ink-900 sm:text-xl">
+            <h1 className="text-lg font-bold tracking-tight text-ink-50 sm:text-xl">
               📡 メディア司令室
             </h1>
-            <p className="text-[0.7rem] text-ink-500">
+            <p className="text-[0.7rem] text-slate-400">
               生成: {formatDateTime(snapshot.generatedAt)} · データソース:{' '}
               {snapshot.sites.every((s) => s.source === 'sample') ? 'sample-dashboard.json' : 'mixed'}
             </p>
           </div>
-          <div className="flex items-center gap-2 text-[0.7rem] text-ink-500">
+          <div className="flex items-center gap-2 text-[0.7rem] text-slate-400">
             {snapshot.sites.every((s) => s.source === 'sample') ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 font-medium text-amber-700 ring-1 ring-amber-200">
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2 py-0.5 font-medium text-amber-300 ring-1 ring-amber-500/30">
                 サンプル表示
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-medium text-emerald-700 ring-1 ring-emerald-200">
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 font-medium text-emerald-300 ring-1 ring-emerald-500/30">
                 ライブデータ
               </span>
             )}
@@ -89,7 +89,7 @@ export default function App() {
 
         <SearchInsights sites={snapshot.sites} />
 
-        <footer className="pb-4 pt-2 text-center text-[0.7rem] text-ink-500">
+        <footer className="pb-4 pt-2 text-center text-[0.7rem] text-slate-500">
           個人用ダッシュボード / 外部公開しない設定で運用
         </footer>
       </main>
