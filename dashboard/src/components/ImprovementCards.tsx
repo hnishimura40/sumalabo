@@ -17,9 +17,9 @@ const priorityOrder: Record<ImprovementHint['priority'], number> = {
 };
 
 const priorityStyle: Record<ImprovementHint['priority'], string> = {
-  high: 'bg-rose-50 text-rose-700 ring-rose-200',
-  medium: 'bg-amber-50 text-amber-700 ring-amber-200',
-  low: 'bg-ink-100 text-ink-500 ring-ink-200',
+  high: 'bg-rose-500/15 text-rose-300 ring-rose-500/30',
+  medium: 'bg-amber-500/15 text-amber-300 ring-amber-500/30',
+  low: 'bg-white/5 text-slate-400 ring-white/10',
 };
 
 const priorityLabel: Record<ImprovementHint['priority'], string> = {
@@ -42,23 +42,23 @@ export function ImprovementCards({ sites }: Props) {
   return (
     <section
       aria-label="改善候補カード"
-      className="rounded-2xl bg-white p-4 shadow-soft ring-1 ring-ink-100 sm:p-5"
+      className="rounded-2xl bg-ink-800 p-4 shadow-dark-soft ring-1 ring-white/10 sm:p-5"
     >
       <header className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-base font-semibold text-ink-900 sm:text-lg">
+        <h2 className="text-base font-semibold text-ink-50 sm:text-lg">
           💡 改善候補
         </h2>
-        <p className="text-xs text-ink-500">手動メモ + 将来の自動シグナル候補</p>
+        <p className="text-xs text-slate-400">手動メモ + 将来の自動シグナル候補</p>
       </header>
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {rows.map((r, idx) => (
           <li
             key={`${r.siteId}-${idx}`}
-            className="flex flex-col gap-2 rounded-xl bg-ink-50 p-3 sm:p-4"
+            className="flex flex-col gap-2 rounded-xl bg-white/5 p-3 ring-1 ring-white/5 sm:p-4"
           >
             <div className="flex items-center justify-between gap-2">
               <span
-                className="inline-flex items-center gap-1.5 rounded-full bg-white px-2 py-0.5 text-[0.7rem] font-medium ring-1 ring-ink-200"
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-[0.7rem] font-medium ring-1 ring-white/10"
                 style={{ color: r.accent }}
               >
                 <span
@@ -75,12 +75,12 @@ export function ImprovementCards({ sites }: Props) {
               </span>
             </div>
             <div>
-              <div className="text-sm font-semibold text-ink-900">{r.title}</div>
+              <div className="text-sm font-semibold text-ink-50">{r.title}</div>
               {r.path ? (
-                <div className="mt-0.5 truncate text-[0.7rem] text-ink-500">{r.path}</div>
+                <div className="mt-0.5 truncate text-[0.7rem] text-slate-400">{r.path}</div>
               ) : null}
             </div>
-            <p className="text-xs leading-relaxed text-ink-700">{r.reason}</p>
+            <p className="text-xs leading-relaxed text-slate-300">{r.reason}</p>
           </li>
         ))}
       </ul>

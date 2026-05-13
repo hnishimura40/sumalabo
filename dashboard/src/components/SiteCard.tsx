@@ -14,7 +14,7 @@ export function SiteCard({ site }: Props) {
 
   return (
     <article
-      className="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-ink-100"
+      className="overflow-hidden rounded-2xl bg-ink-800 shadow-dark-soft ring-1 ring-white/10"
       style={{ borderTop: `4px solid ${site.site.accent}` }}
     >
       <header className="flex flex-wrap items-baseline justify-between gap-2 p-4 sm:p-5">
@@ -25,9 +25,9 @@ export function SiteCard({ site }: Props) {
               style={{ backgroundColor: site.site.accent }}
               aria-hidden
             />
-            <h3 className="truncate text-lg font-bold text-ink-900">{site.site.name}</h3>
+            <h3 className="truncate text-lg font-bold text-ink-50">{site.site.name}</h3>
           </div>
-          <p className="mt-0.5 text-xs text-ink-500">
+          <p className="mt-0.5 text-xs text-slate-400">
             {site.site.category}
             {site.site.url ? (
               <>
@@ -36,13 +36,13 @@ export function SiteCard({ site }: Props) {
                   href={site.site.url}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="underline decoration-ink-200 hover:decoration-ink-500"
+                  className="underline decoration-white/30 hover:decoration-white/70"
                 >
                   サイトを開く
                 </a>
               </>
             ) : (
-              <span className="ml-1 rounded-full bg-ink-100 px-2 py-0.5 text-[0.65rem] text-ink-500">
+              <span className="ml-1 rounded-full bg-white/10 px-2 py-0.5 text-[0.65rem] text-slate-300">
                 URL未設定
               </span>
             )}
@@ -51,7 +51,7 @@ export function SiteCard({ site }: Props) {
         <DeltaBadge delta={dailyDelta} label="前日比" size="md" />
       </header>
 
-      <div className="grid grid-cols-2 gap-px bg-ink-100">
+      <div className="grid grid-cols-2 gap-px bg-white/5">
         <Stat label="今日のPV" value={formatNumber(metrics.todayViews)} accent />
         <Stat label="昨日のPV" value={formatNumber(metrics.yesterdayViews)} />
         <Stat
@@ -86,13 +86,13 @@ function Stat({
   badge?: React.ReactNode;
 }) {
   return (
-    <div className="bg-white p-3 sm:p-4">
-      <div className="text-[0.65rem] font-medium uppercase tracking-wider text-ink-500">
+    <div className="bg-ink-800 p-3 sm:p-4">
+      <div className="text-[0.65rem] font-medium uppercase tracking-wider text-slate-400">
         {label}
       </div>
       <div
-        className={`mt-0.5 tabular-nums font-bold ${
-          accent ? 'text-2xl text-ink-900 sm:text-3xl' : 'text-xl text-ink-900'
+        className={`mt-0.5 tabular-nums font-bold text-ink-50 ${
+          accent ? 'text-2xl sm:text-3xl' : 'text-xl'
         }`}
       >
         {value}
@@ -104,11 +104,11 @@ function Stat({
 
 function SearchStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-ink-50 px-3 py-2">
-      <div className="text-[0.65rem] font-medium uppercase tracking-wider text-ink-500">
+    <div className="rounded-lg bg-white/5 px-3 py-2 ring-1 ring-white/5">
+      <div className="text-[0.65rem] font-medium uppercase tracking-wider text-slate-400">
         {label}
       </div>
-      <div className="text-sm font-semibold tabular-nums text-ink-900">{value}</div>
+      <div className="text-sm font-semibold tabular-nums text-ink-50">{value}</div>
     </div>
   );
 }
