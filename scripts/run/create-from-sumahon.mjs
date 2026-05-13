@@ -14,7 +14,7 @@ import { reviseArticle } from "../sumahon/revise-article.mjs";
 import { writeMdx } from "../sumahon/write-mdx.mjs";
 import { assertNoTrackedChanges, commitAndPushPreview, createPreviewBranch, getCurrentBranch } from "../sumahon/push-preview.mjs";
 import { validateForAutomatedPublish } from "../sumahon/validate-for-automated-publish.mjs";
-import { readFile as fsReadFile } from "node:fs/promises";
+import { readFile as fsReadFile, unlink as fsUnlink } from "node:fs/promises";
 import {
   assertSumahonUrl,
   parseArgs,
@@ -60,6 +60,62 @@ async function updateAutomationData({ sourceUrl, classification, slug, generated
 function makeBranchName(slug) {
   const suffix = new Date().toISOString().replace(/[-:T.Z]/g, "").slice(0, 12);
   return `auto/sumahon-${slug.slice(0, 42)}-${suffix}`;
+}
+
+// === A2: publish-gate cleanup ===
+// publish-gate が rule-based 薄文を blocking した場合、writeMdx() で
+// content/articles/{slug}.mdx と関連 logs を既に書いてしまっている。これらが
+// working tree に残ると、後段の wrangler build が拾って production に shipped
+// される事故 (2026-05-13 で gpt-5-5 / evan-blass の 2 件発生) が起きる。
+//
+// 対策: publish-gate fail 直後に
+//   1. 当該 run が書いた per-article ファイル群を best-effort で削除
+//   2. updateAutomationData() で processed-urls.json / topic-ledger.json に
+//      append したエントリも rollback (= 当該 sourceUrl / slug のエントリを除去)
+// する。失敗しても exit code 2 は維持。
+async function cleanupOnPublishGateBlock({ filesToDelete, sourceUrl, slug }) {
+  const deleted = [];
+  const failed = [];
+  for (const p of filesToDelete) {
+    try {
+      await fsUnlink(p);
+      deleted.push(p);
+    } catch (e) {
+      if (e && e.code === "ENOENT") {
+        // already gone — fine
+      } else {
+        failed.push({ path: p, error: e.message });
+      }
+    }
+  }
+
+  const automationRollback = { processedRemoved: 0, ledgerRemoved: 0, error: null };
+  try {
+    const processedPath = path.join("data", "automation", "processed-urls.json");
+    const ledgerPath = path.join("data", "automation", "topic-ledger.json");
+    const processed = await readJson(processedPath, []);
+    const ledger = await readJson(ledgerPath, []);
+    const beforeP = processed.length;
+    const beforeL = ledger.length;
+    const filteredProcessed = Array.isArray(processed)
+      ? processed.filter((it) => it && it.sourceUrl !== sourceUrl)
+      : processed;
+    const filteredLedger = Array.isArray(ledger)
+      ? ledger.filter((it) => it && it.slug !== slug)
+      : ledger;
+    if (filteredProcessed.length !== beforeP) {
+      await writeJson(processedPath, filteredProcessed);
+      automationRollback.processedRemoved = beforeP - filteredProcessed.length;
+    }
+    if (filteredLedger.length !== beforeL) {
+      await writeJson(ledgerPath, filteredLedger);
+      automationRollback.ledgerRemoved = beforeL - filteredLedger.length;
+    }
+  } catch (e) {
+    automationRollback.error = e && e.message ? e.message : String(e);
+  }
+
+  return { deleted, failed, automationRollback };
 }
 
 async function main() {
@@ -267,12 +323,36 @@ async function main() {
       action: "needs_regeneration",
       note: "Article body is too thin or missing required sections for automated publication. Regenerate via the proper article-generation flow (ChatGPT/Claude refinement) instead of rule-based generator alone.",
     }, null, 2));
-    // ベストエフォートで main に戻す。これをしないと、次の scheduler run が
-    // auto/sumahon-* に居残ったまま assertNoTrackedChanges で詰まる
-    // (2026-05-13 03:00 / 04:00 / 05:00 の連続失敗で観測)。
-    // 作業ファイル (content/articles/{slug}.mdx, logs/source/{slug}.json など)
-    // は untracked のまま残るが、ignored ではないファイルは create-from-sumahon
-    // が後段 commit の前に exit するので tracked dirty にはならない。
+
+    // === A2 cleanup ===
+    // 旧版コメント (「作業ファイル … は untracked のまま残るが … tracked dirty
+    // にはならない」) は誤り。untracked のまま残ると、後段で wrangler build が
+    // 拾って production に shipped する事故 (2026-05-13 gpt-5-5 / evan-blass)
+    // が起きるため、本 run が書いた per-article 成果物を全削除する。
+    // automation ledger (processed-urls.json / topic-ledger.json) は当該 entry
+    // のみ rollback (ファイルそのものは保持)。
+    const cleanup = await cleanupOnPublishGateBlock({
+      filesToDelete: [
+        mdxPath,
+        sourceLogPath,
+        initialReviewPath,
+        finalReviewPath,
+        articleBriefPath,
+        articlePromptPath,
+        thumbnailBriefPath,
+        thumbnailPromptPath,
+        handoffPath,
+        chromeStepsPath,
+        factcheckPath,
+        previewLogPath,
+      ],
+      sourceUrl,
+      slug,
+    });
+    console.error("[publish-gate] cleanup:" + JSON.stringify(cleanup));
+
+    // ベストエフォートで main に戻す (auto/sumahon-* 居残り回避、
+    // 2026-05-13 03:00 / 04:00 / 05:00 の連続失敗で観測)。
     // checkout が万一失敗しても exit code 2 (needs_regeneration) は保つ。
     try {
       await runCommand("git", ["checkout", currentBranch || "main"], { stdio: "inherit" });
