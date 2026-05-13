@@ -34,12 +34,61 @@
 //   const result = await deployPreviewToCloudflarePages({ distDir: "dist", branch: "auto/imported-xxx" });
 //   if (result.ok) console.log(result.previewUrl);
 
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 
 const DEFAULT_PROJECT = "sumalabo";
 const DEFAULT_TIMEOUT_MS = 180000;
 const PROTECTED_BRANCHES = new Set(["main", "master", "production", "prod"]);
+
+// === A1: untracked content guard ===
+// 本番に「git に無い」記事 / サムネ画像が wrangler 経由でリークする事故 (2026-05-13
+// Galaxy S27 production deploy で発覚) を再発防止するためのガード。
+//
+// 監視対象パス: content/articles/ と public/images/thumbnails/。
+// 該当パス配下に「??」(untracked) または「 M」(modified, unstaged) が 1 件でも
+// あれば deploy を拒否する。修正・追加した記事は **必ず commit してから**
+// deploy する運用に強制する。
+//
+// 解除方法: 環境変数 SUMALAB_ALLOW_UNTRACKED_DEPLOY=1 で明示的に bypass 可能。
+// 任意の人間判断で例外を出したいケース (ex. 局所的なローカル検証) のみ使うこと。
+const GUARDED_DEPLOY_PATHS = ["content/articles", "public/images/thumbnails"];
+
+function checkUntrackedDeployContent() {
+  if (process.env.SUMALAB_ALLOW_UNTRACKED_DEPLOY === "1") {
+    return { ok: true, bypassed: true };
+  }
+  const args = ["status", "--porcelain", "--", ...GUARDED_DEPLOY_PATHS];
+  const result = spawnSync("git", args, { encoding: "utf-8", shell: false });
+  if (result.error || result.status !== 0) {
+    return {
+      ok: false,
+      reason: "git_status_failed",
+      evidence: { error: result.error?.message || `exit=${result.status}`, stderr: (result.stderr || "").trim() },
+    };
+  }
+  const lines = (result.stdout || "")
+    .split(/\r?\n/)
+    .map((l) => l.replace(/\s+$/, ""))
+    .filter((l) => l.length > 0);
+  if (lines.length === 0) {
+    return { ok: true };
+  }
+  // Classify lines for better diagnostics (untracked=??, modified=" M", added="A " etc.)
+  const summary = lines.map((l) => ({ status: l.slice(0, 2), path: l.slice(3) }));
+  return {
+    ok: false,
+    reason: "untracked_or_uncommitted_content",
+    evidence: {
+      paths: GUARDED_DEPLOY_PATHS,
+      lines: summary,
+      hint:
+        "Refusing to deploy: untracked / uncommitted files in content/articles or public/images/thumbnails would be shipped to production. " +
+        "Commit, .gitignore, or remove these files before deploying. " +
+        "To bypass (rare, e.g. controlled local test): set SUMALAB_ALLOW_UNTRACKED_DEPLOY=1.",
+    },
+  };
+}
 
 function pickPreviewUrlsFromWranglerOutput(raw) {
   const urls = [];
@@ -112,6 +161,17 @@ export async function deployPreviewToCloudflarePages({
   }
   if (!existsSync(distDir)) {
     return { ok: false, reason: "dist_dir_missing", evidence: { distDir } };
+  }
+  // === A1 guard: refuse deploy if content/articles or public/images/thumbnails
+  // contain untracked or unstaged-modified files. Prevents accidental shipping of
+  // non-committed articles or thumbnails (see GUARDED_DEPLOY_PATHS comment above).
+  const untrackedCheck = checkUntrackedDeployContent();
+  if (!untrackedCheck.ok) {
+    return {
+      ok: false,
+      reason: untrackedCheck.reason,
+      evidence: untrackedCheck.evidence,
+    };
   }
   const token = (process.env.CLOUDFLARE_API_TOKEN || "").trim();
   if (!token) {
