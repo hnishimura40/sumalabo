@@ -1,0 +1,62 @@
+{
+  "branchName": "auto/imported-202605-galaxy-s27-ultra-camera-bar-redesign-3x-t-202605121348",
+  "articlePath": "content\\articles\\202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor.mdx",
+  "generatedDraftPath": "drafts/generated/202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor.md",
+  "materialsPath": "",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/imported-202605-galaxy-s27-ultra-camera-bar-redesign-3x-t-202605121348.",
+  "checkUrls": [
+    "/articles/202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": true,
+  "doNotPublish": false,
+  "blockingRisk": false,
+  "previewCreated": true,
+  "sourceCheck": {
+    "ok": true,
+    "hasReferenceSection": true,
+    "urlCount": 4,
+    "referenceUrls": [
+      "https://www.tomsguide.com/phones/samsung-phones/finally-something-different-leaker-teases-samsung-galaxy-s27-ultra-concept-with-a-new-camera-bar-design?utm_source=chatgpt.com",
+      "https://www.androidpolice.com/samsung-galaxy-s27-ultra-could-fix-biggest-camera-flaw/?utm_source=chatgpt.com",
+      "https://www.sammobile.com/news/galaxy-s27-ultra-may-not-feature-3x-telephoto-camera/?utm_source=chatgpt.com",
+      "https://www.samsung.com/us/mobile/phones/galaxy-s/?utm_source=chatgpt.com"
+    ],
+    "containsSumahonPublicReference": false,
+    "sumahonHits": [],
+    "isReportingTopic": true,
+    "hasReportingNotice": true,
+    "reportingNoticeRequired": true,
+    "reasons": [],
+    "notes": "公開記事用の参考情報セクションがあり、内部参考元の露出もありません。"
+  },
+  "articleQualityCheck": {
+    "ok": true,
+    "titleDuplicate": false,
+    "titleDuplicateDetails": [],
+    "h1Count": 0,
+    "markdownResidue": false,
+    "markdownResidueHits": [],
+    "characterPresence": "text_only",
+    "boxHeadingWarnings": [],
+    "articleStructure": "ok",
+    "issues": [
+      {
+        "code": "character_visual_missing",
+        "severity": "warning",
+        "message": "本文にひまり・らぼまるの名前は出ていますが、画像付きのブロック（CharacterDialogue / CharacterCallout / CharacterGuideCard、または /images/characters/ への参照）が見当たりません。サムネ以外でも本文中にすまラボらしい画像つき要素を1回入れてください。"
+      }
+    ],
+    "reasons": []
+  },
+  "thumbnail": "",
+  "thumbnailExists": false,
+  "thumbnailSourcePath": "public\\images\\thumbnails\\202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor.png",
+  "thumbnailBriefPath": "logs\\thumbnail\\202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor.brief.json",
+  "thumbnailPromptPath": "logs\\thumbnail\\202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor.prompt.md",
+  "materials": null
+}
