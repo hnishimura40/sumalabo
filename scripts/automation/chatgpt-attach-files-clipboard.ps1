@@ -128,5 +128,5 @@ foreach ($file in $Files) {
   Start-Sleep -Milliseconds $PasteWaitMs
 }
 
-Write-Host ("paste complete: {0} file(s) sent. Verify attachment count via DOM (button[aria-label^=\"ファイル\"][aria-label*=\"削除\"])." -f $Files.Count)
+Write-Host ("paste complete: {0} file(s) sent. Verify attachment count via DOM (button[aria-label^=""ファイル""][aria-label*=""削除""])." -f $Files.Count)
 exit 0
