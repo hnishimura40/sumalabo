@@ -1,0 +1,65 @@
+{
+  "branchName": "auto/imported-202605-xperia-1-viii-202605131429",
+  "articlePath": "content\\articles\\202605-xperia-1-viii.mdx",
+  "generatedDraftPath": "drafts/generated/202605-xperia-1-viii.md",
+  "materialsPath": "",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/imported-202605-xperia-1-viii-202605131429.",
+  "checkUrls": [
+    "/articles/202605-xperia-1-viii/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": true,
+  "doNotPublish": false,
+  "blockingRisk": false,
+  "previewCreated": true,
+  "sourceCheck": {
+    "ok": true,
+    "hasReferenceSection": true,
+    "urlCount": 7,
+    "referenceUrls": [
+      "https://www.sony.jp/xperia/products/xperia1m8/",
+      "https://www.sony.jp/xperia/special/xperia1m8/",
+      "https://pur.store.sony.jp/xperia/products/xperia1m8/xperia1m8_purchase/",
+      "https://www.docomo.ne.jp/info/news_release/2026/05/13_01.html",
+      "https://k-tai.watch.impress.co.jp/docs/news/2107906.html",
+      "https://pc.watch.impress.co.jp/docs/news/2107803.html",
+      "https://ai.watch.impress.co.jp/docs/news/2108223.html"
+    ],
+    "containsSumahonPublicReference": false,
+    "sumahonHits": [],
+    "isReportingTopic": true,
+    "hasReportingNotice": true,
+    "reportingNoticeRequired": true,
+    "reasons": [],
+    "notes": "公開記事用の参考情報セクションがあり、内部参考元の露出もありません。"
+  },
+  "articleQualityCheck": {
+    "ok": true,
+    "titleDuplicate": false,
+    "titleDuplicateDetails": [],
+    "h1Count": 0,
+    "markdownResidue": false,
+    "markdownResidueHits": [],
+    "characterPresence": "text_only",
+    "boxHeadingWarnings": [],
+    "articleStructure": "ok",
+    "issues": [
+      {
+        "code": "character_visual_missing",
+        "severity": "warning",
+        "message": "本文にひまり・らぼまるの名前は出ていますが、画像付きのブロック（CharacterDialogue / CharacterCallout / CharacterGuideCard、または /images/characters/ への参照）が見当たりません。サムネ以外でも本文中にすまラボらしい画像つき要素を1回入れてください。"
+      }
+    ],
+    "reasons": []
+  },
+  "thumbnail": "/images/thumbnails/202605-xperia-1-viii.png",
+  "thumbnailExists": true,
+  "thumbnailSourcePath": "public\\images\\thumbnails\\202605-xperia-1-viii.png",
+  "thumbnailBriefPath": "logs\\thumbnail\\202605-xperia-1-viii.brief.json",
+  "thumbnailPromptPath": "logs\\thumbnail\\202605-xperia-1-viii.prompt.md",
+  "materials": null
+}
