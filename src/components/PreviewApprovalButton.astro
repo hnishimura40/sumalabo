@@ -1,82 +1,203 @@
 ---
-// Preview環境（CloudflarePagesのpreview/* デプロイ）でだけ表示する承認ボタン。
-// build時の環境変数 CF_PAGES_BRANCH を見て、preview/ で始まるブランチのときのみ
-// HTML/JSを出力する。本番main、ローカル開発、未設定環境では何も描画しない。
+// Preview承認ボタン (v2 — 2026-05-13)
+//
+// 背景:
+//   v1 は build時の CF_PAGES_BRANCH が "preview/" 始まりのときだけ <aside> を出していた。
+//   - 問題1: CF Pages の GitHub Apps 連携を使っておらず、wrangler direct upload で
+//     deploy しているため CF_PAGES_BRANCH が build時に空。
+//   - 問題2: 実際の deploy branch は `auto/imported-…` / `auto/sumahon-…` で
+//     `preview/` 始まりではない。
+//   結果、PWA 通知から開いた Preview ページに承認ボタンが描画されなかった。
+//
+// v2 方針:
+//   - <aside> は build時には常に hidden で emit (本番 main build を除く)
+//   - runtime script で:
+//       (a) ホストが本番 (sumalabo.com) なら何もしない
+//       (b) build時の CF_PAGES_BRANCH があればそれを使う
+//       (c) なければ slug から /api/review-items を引いて branch / prUrl を解決
+//   - branch が許可 prefix のいずれかで始まれば <aside> を表示
+//       (env APPROVE_ALLOWED_BRANCH_PREFIXES、CSV、default
+//        "preview/,auto/imported-,auto/sumahon-")
+//   - 解決できない / 許可 prefix でない場合は hidden のまま (オプションで理由表示)
+//
+// セキュリティ:
+//   - API 側 (functions/api/approve-preview.ts) でも prefix list を再チェック
+//   - GITHUB_TOKEN はサーバー専用、フロントに露出しない
+//   - main 確定の本番 deploy では aside そのものを emit しない
 
-const allowedPrefix = (import.meta.env.APPROVE_ALLOWED_BRANCH_PREFIX || "preview/") + "";
+type Props = { slug?: string };
+const { slug } = Astro.props;
 
-// Cloudflare Pages はビルド時に CF_PAGES_BRANCH を設定する。
-// ローカルや明示テストのため PREVIEW_BRANCH_OVERRIDE も見る（PUBLIC_ プレフィックスを使わないことで
-// 値が JS バンドルに展開されないようにする）。
+// 環境変数 (build時) — 後方互換で APPROVE_ALLOWED_BRANCH_PREFIX (単数) も受ける
+const csvPrefixes = (
+  import.meta.env.APPROVE_ALLOWED_BRANCH_PREFIXES ||
+  import.meta.env.APPROVE_ALLOWED_BRANCH_PREFIX ||
+  "preview/,auto/imported-,auto/sumahon-"
+) + "";
+const allowedPrefixes = csvPrefixes
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
 const cfBranch = (import.meta.env.CF_PAGES_BRANCH || "") + "";
 const overrideBranch = (import.meta.env.PREVIEW_BRANCH_OVERRIDE || "") + "";
-const previewBranch = overrideBranch || cfBranch;
+const buildtimeBranch = overrideBranch || cfBranch;
 
-const isPreview =
-  previewBranch.length > 0 &&
-  previewBranch !== "main" &&
-  previewBranch !== "master" &&
-  previewBranch.startsWith(allowedPrefix);
+// 本番 main の deploy では描画しない (本番ドメインに承認ボタンを露出させない安全装置)
+const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
+
+// production host (sumalabo.com) のフィルタは runtime 側でも再チェックする
 ---
 
-{isPreview && (
-  <aside class="preview-approval" data-preview-approval data-branch={previewBranch} aria-label="Preview承認">
+{!isMainBuild && (
+  <aside
+    class="preview-approval"
+    data-preview-approval
+    data-slug={slug || ""}
+    data-branch={buildtimeBranch}
+    data-allowed-prefixes={allowedPrefixes.join(",")}
+    aria-label="Preview承認"
+    hidden
+  >
     <p class="preview-approval__hint">確認後、このPreviewブランチを main へマージします</p>
-    <button type="button" class="preview-approval__button" data-approval-button>
+    <button type="button" class="preview-approval__button" data-approval-button disabled>
       この記事を承認して公開
     </button>
     <p class="preview-approval__status" role="status" aria-live="polite" data-approval-status></p>
-    <p class="preview-approval__meta">対象ブランチ: <code>{previewBranch}</code></p>
+    <p class="preview-approval__meta" data-approval-meta></p>
   </aside>
 )}
 
 <script>
+  // Preview承認ボタン runtime resolver
+  // 本ファイルは Astro の `<script>` (ESM、bundle される) として実行される。
+  //
+  // 流れ:
+  //   1. wrapper 要素を探す。なければ何もしない (本番 main build はそもそも emit されない)
+  //   2. location.host が production (sumalabo.com) なら hidden のまま終了
+  //   3. branch を解決
+  //      a. data-branch (build時 CF_PAGES_BRANCH)
+  //      b. なければ /api/review-items を fetch して slug 一致の entry から branch
+  //      c. それも無ければ hidden のまま終了 (理由を data-approval-meta に書く)
+  //   4. branch が許可 prefix のいずれかにマッチしないなら hidden + 理由表示
+  //   5. マッチしたら wrapper を hidden 解除し、button を enable、PR URL があれば meta に表示
+
   const wrapper = document.querySelector<HTMLElement>("[data-preview-approval]");
   if (wrapper) {
     const button = wrapper.querySelector<HTMLButtonElement>("[data-approval-button]");
-    const status = wrapper.querySelector<HTMLParagraphElement>("[data-approval-status]");
-    const branch = wrapper.dataset.branch || "";
+    const statusEl = wrapper.querySelector<HTMLParagraphElement>("[data-approval-status]");
+    const metaEl = wrapper.querySelector<HTMLParagraphElement>("[data-approval-meta]");
 
-    if (button && status) {
-      let pending = false;
+    const PRODUCTION_HOSTS = new Set(["sumalabo.com", "www.sumalabo.com"]);
+    const isProductionHost = PRODUCTION_HOSTS.has(location.host);
 
-      button.addEventListener("click", async () => {
-        if (pending) return;
-        pending = true;
-        button.disabled = true;
-        status.textContent = "承認中...";
+    const allowedPrefixes = (wrapper.dataset.allowedPrefixes || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
 
-        try {
-          const res = await fetch("/api/approve-preview", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ branch }),
-          });
+    const buildtimeBranch = (wrapper.dataset.branch || "").trim();
+    const slugFromData = (wrapper.dataset.slug || "").trim();
+    const slugFromUrl = (() => {
+      // /articles/<slug>/  …  trailing slash 有無の両対応
+      const m = location.pathname.match(/\/articles\/([^/]+)\/?$/);
+      return m ? decodeURIComponent(m[1]) : "";
+    })();
+    const slug = slugFromData || slugFromUrl;
 
-          let data: { ok?: boolean; message?: string; pullNumber?: number; merged?: boolean } = {};
+    const matchesAllowedPrefix = (branch: string): boolean =>
+      allowedPrefixes.some((p) => p && branch.startsWith(p));
+
+    const renderHidden = (reason: string) => {
+      // 本番ホストでは reason を表示しない (露出抑制)
+      wrapper.hidden = true;
+      if (metaEl && !isProductionHost) {
+        metaEl.textContent = reason;
+      }
+    };
+
+    if (isProductionHost) {
+      renderHidden("");
+    } else {
+      void (async () => {
+        let branch = buildtimeBranch;
+        let prUrl = "";
+        if (!branch && slug) {
           try {
-            data = await res.json();
+            const r = await fetch("/api/review-items", { method: "GET" });
+            if (r.ok) {
+              const body = (await r.json()) as { items?: Array<{ slug?: string; branch?: string; prUrl?: string }> };
+              if (Array.isArray(body.items)) {
+                const item = body.items.find((it) => it && it.slug === slug);
+                if (item && typeof item.branch === "string" && item.branch) {
+                  branch = item.branch;
+                  if (typeof item.prUrl === "string") prUrl = item.prUrl;
+                }
+              }
+            }
           } catch {
-            /* fallthrough */
+            /* fall through — branch will remain "" */
           }
-
-          if (res.ok && data.ok) {
-            const prSuffix = data.pullNumber ? `（PR #${data.pullNumber}）` : "";
-            status.textContent = `承認しました。本番反映を待っています。${prSuffix}`;
-            button.textContent = "承認済み";
-            // ボタンは無効のまま
-          } else {
-            const message = data.message || `承認に失敗しました（HTTP ${res.status}）`;
-            status.textContent = message;
-            button.disabled = false;
-            pending = false;
-          }
-        } catch (err) {
-          status.textContent = "通信エラーで承認できませんでした。再読み込みしてもう一度試してください。";
-          button.disabled = false;
-          pending = false;
         }
-      });
+
+        if (!branch) {
+          renderHidden("Preview branch を特定できませんでした（KV / CF_PAGES_BRANCH 共に解決不可）。");
+          return;
+        }
+        if (!matchesAllowedPrefix(branch)) {
+          renderHidden(`Preview承認は ${allowedPrefixes.join(" / ")} 始まりの branch だけが対象です。検出: ${branch}`);
+          return;
+        }
+
+        // OK — wrapper を表示してボタンを使える状態にする
+        wrapper.hidden = false;
+        if (button) button.disabled = false;
+        if (metaEl) {
+          const prChip = prUrl ? ` / PR: ${prUrl}` : "";
+          metaEl.innerHTML = `対象ブランチ: <code>${branch.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string))}</code>${prChip}`;
+        }
+
+        if (button && statusEl) {
+          let pending = false;
+          button.addEventListener("click", async () => {
+            if (pending) return;
+            pending = true;
+            button.disabled = true;
+            statusEl.textContent = "承認中...";
+
+            try {
+              const res = await fetch("/api/approve-preview", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ branch }),
+              });
+
+              let data: { ok?: boolean; message?: string; pullNumber?: number; merged?: boolean } = {};
+              try {
+                data = await res.json();
+              } catch {
+                /* fallthrough */
+              }
+
+              if (res.ok && data.ok) {
+                const prSuffix = data.pullNumber ? `（PR #${data.pullNumber}）` : "";
+                statusEl.textContent = `承認しました。本番反映を待っています。${prSuffix}`;
+                button.textContent = "承認済み";
+                // ボタンは無効のまま
+              } else {
+                const message = data.message || `承認に失敗しました（HTTP ${res.status}）`;
+                statusEl.textContent = message;
+                button.disabled = false;
+                pending = false;
+              }
+            } catch (err) {
+              statusEl.textContent = "通信エラーで承認できませんでした。再読み込みしてもう一度試してください。";
+              button.disabled = false;
+              pending = false;
+            }
+          });
+        }
+      })();
     }
   }
 </script>
@@ -85,7 +206,6 @@ const isPreview =
   /*
     配色は src/styles/global.css 由来のCSS変数（--teal / --teal-tint / --bg-elev / --line / --fg-mid）
     を使うため、ライトモード/ダークモード切り替えに自動追従する。
-    ボタン色は --teal を背景、--bg-elev を文字色として、ダークモード時はトーンが反転する。
   */
   .preview-approval {
     margin: 28px 0 32px;
@@ -97,6 +217,10 @@ const isPreview =
       linear-gradient(135deg, var(--teal-tint), transparent 70%),
       var(--bg-elev);
     box-shadow: var(--shadow-sm);
+  }
+
+  .preview-approval[hidden] {
+    display: none;
   }
 
   .preview-approval__hint {

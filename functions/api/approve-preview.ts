@@ -5,22 +5,26 @@
 //   送られてくる branch 名を受け取り、対応する open PR を main へ merge する。
 //
 // 必要なCloudflare Pages環境変数:
-//   - GITHUB_TOKEN                  : pull requestをmergeできる最小権限のトークン
+//   - GITHUB_TOKEN                     : pull requestをmergeできる最小権限のトークン
 //   - GITHUB_OWNER (任意, default: hnishimura40)
 //   - GITHUB_REPO  (任意, default: sumalabo)
-//   - APPROVE_ALLOWED_BRANCH_PREFIX (任意, default: preview/)
+//   - APPROVE_ALLOWED_BRANCH_PREFIXES (任意、CSV、default
+//        "preview/,auto/imported-,auto/sumahon-")
+//     後方互換で APPROVE_ALLOWED_BRANCH_PREFIX (単数) も受ける。
 //
 // セキュリティ:
 //   - GITHUB_TOKENはサーバー側でのみ使用し、レスポンスにも含めない。
 //   - フロントエンドへトークンを露出しないよう PUBLIC_ プレフィックスは使わない。
-//   - branchは APPROVE_ALLOWED_BRANCH_PREFIX で前方一致するもののみ許可。
+//   - branchは APPROVE_ALLOWED_BRANCH_PREFIXES のいずれかで前方一致するもののみ許可。
 //   - main宛て・mainブランチ自身は弾く。
 //   - PR検索は base=main, state=open に限定。
+//   - PR の draft / mergeable=false は弾く (clean / has_hooks / unstable は許容)。
 
 interface Env {
   GITHUB_TOKEN?: string;
   GITHUB_OWNER?: string;
   GITHUB_REPO?: string;
+  APPROVE_ALLOWED_BRANCH_PREFIXES?: string;
   APPROVE_ALLOWED_BRANCH_PREFIX?: string;
 }
 
@@ -55,7 +59,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
 
   const branch = typeof body.branch === "string" ? body.branch.trim() : "";
-  const allowedPrefix = (env.APPROVE_ALLOWED_BRANCH_PREFIX || "preview/").trim();
+  const csvPrefixes = (
+    env.APPROVE_ALLOWED_BRANCH_PREFIXES ||
+    env.APPROVE_ALLOWED_BRANCH_PREFIX ||
+    "preview/,auto/imported-,auto/sumahon-"
+  ).trim();
+  const allowedPrefixes = csvPrefixes
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
   const owner = (env.GITHUB_OWNER || "hnishimura40").trim();
   const repo = (env.GITHUB_REPO || "sumalabo").trim();
 
@@ -65,9 +77,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (branch === "main" || branch === "master") {
     return jsonResponse({ ok: false, message: "mainブランチは承認操作の対象外です。" }, 400);
   }
-  if (!branch.startsWith(allowedPrefix)) {
+  if (!allowedPrefixes.some((p) => branch.startsWith(p))) {
     return jsonResponse(
-      { ok: false, message: `承認対象は "${allowedPrefix}" で始まるブランチだけです。` },
+      {
+        ok: false,
+        message: `承認対象は次の prefix のいずれかで始まるブランチだけです: ${allowedPrefixes.join(", ")}`,
+      },
       400,
     );
   }
@@ -126,6 +141,24 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (pr.draft) {
     return jsonResponse(
       { ok: false, message: `PR #${pr.number} はドラフト状態です。Ready for reviewにしてから再試行してください。`, pullNumber: pr.number },
+      409,
+    );
+  }
+  if (pr.state && pr.state !== "open") {
+    return jsonResponse(
+      { ok: false, message: `PR #${pr.number} は state=${pr.state} です。open のものだけが対象です。`, pullNumber: pr.number },
+      409,
+    );
+  }
+  // mergeable は GitHub 側で初回 PR open 直後に null (計算中) になり得る。
+  // false 確定なら拒否し、true / null なら通す (merge API が最終判定する)。
+  if (pr.mergeable === false) {
+    return jsonResponse(
+      {
+        ok: false,
+        message: `PR #${pr.number} は mergeable=false の状態です (state: ${pr.mergeable_state || "unknown"})。GitHub 上でコンフリクトや必須チェックを解消してください。`,
+        pullNumber: pr.number,
+      },
       409,
     );
   }
