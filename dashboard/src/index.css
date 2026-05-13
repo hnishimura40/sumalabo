@@ -2,16 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * iPhone Safari の白フラッシュ防止 + PWA standalone 時の Safe Area 対応。
+ *
+ *   - html / body の地色をダーク (#0f1320) にして、ステータスバー直下や
+ *     overscroll バウンス時に白がチラつかないようにする。
+ *   - color-scheme: dark でフォームコントロール / スクロールバー /
+ *     ネイティブ UI もダーク扱いにする。
+ *   - 実際のダッシュボードカード本体は React 側の <div className="bg-ink-50"> で
+ *     描画されるので、ライトな読みやすさは維持される。
+ *     ダークな地色は overscroll / safe area / 描画前のごく短時間にしか見えない。
+ */
+
+html {
+  color-scheme: dark;
+  background-color: #0f1320;
+}
+
 html,
 body,
 #root {
   min-height: 100%;
-  background-color: #f7f8fb;
+  background-color: #0f1320;
   color: #0f1320;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* iOS の overscroll bounce 時の白い領域を消す */
+  overscroll-behavior-y: none;
 }
 
 body {
   font-feature-settings: 'palt';
+  /* PWA standalone 起動 + ノッチ機種 (iPhone 14 等) でも上下の余白が
+     ハードウェアにぶつからないようにする。
+     既存レイアウト内 padding と二重にしないよう env() ベースで保険的に。 */
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* ダッシュボード本体の親領域: ライトな bg-ink-50 をフルブリードで広げ、
+   safe-area 内側はライト UI、外側 (status bar 直下 / overscroll) は地色のダーク
+   と棲み分けする。 */
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* iPhone 等の狭幅で長いテキストや URL が横にはみ出して横スクロールに
+   ならないようにする保険。テーブル/コードは個別ラッパで上書き可。 */
+@media (max-width: 640px) {
+  body,
+  #root {
+    overflow-x: hidden;
+  }
+  table {
+    /* TopPagesTable の各列が長文タイトルで突き抜けるのを抑える。
+       コンポーネント側は overflow-x-auto を持っているので、最終手段。 */
+    max-width: 100%;
+  }
 }
