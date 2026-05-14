@@ -3,6 +3,8 @@
 // 役割:
 //   Preview環境で表示される「この記事を承認して公開」ボタンから
 //   送られてくる branch 名を受け取り、対応する open PR を main へ merge する。
+//   merge 後、KV 上の review item を status: "approved" に更新し、レスポンスで
+//   後続オペレーション (production deploy / queue sync) が必要であることを示す。
 //
 // 必要なCloudflare Pages環境変数:
 //   - GITHUB_TOKEN                     : pull requestをmergeできる最小権限のトークン
@@ -11,6 +13,11 @@
 //   - APPROVE_ALLOWED_BRANCH_PREFIXES (任意、CSV、default
 //        "preview/,auto/imported-,auto/sumahon-")
 //     後方互換で APPROVE_ALLOWED_BRANCH_PREFIX (単数) も受ける。
+//
+// 任意 binding:
+//   - SUMALABO_REVIEW_KV (KVNamespace) : 紐づいていれば merge 後に当該 branch の
+//     review item を status: "approved" + prUrl に更新する。失敗しても承認自体は
+//     成功扱いのまま (best-effort)。
 //
 // セキュリティ:
 //   - GITHUB_TOKENはサーバー側でのみ使用し、レスポンスにも含めない。
@@ -26,6 +33,80 @@ interface Env {
   GITHUB_REPO?: string;
   APPROVE_ALLOWED_BRANCH_PREFIXES?: string;
   APPROVE_ALLOWED_BRANCH_PREFIX?: string;
+  SUMALABO_REVIEW_KV?: KVNamespace;
+}
+
+interface ReviewItemRecord {
+  slug: string;
+  title?: string;
+  branch?: string;
+  previewUrl?: string;
+  prUrl?: string;
+  thumbnail?: string;
+  status?: string;
+  sourceCheckPassed?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  // 任意の追記項目
+  approvedAt?: string;
+  approvedByMergeCommit?: string;
+}
+
+type ReviewItemUpdate =
+  | { updated: true; slug: string; previousStatus?: string }
+  | { updated: false; reason: string; detail?: string };
+
+// merge 後に branch から KV review item を探し当てて status を approved に更新する。
+// 失敗しても merge 自体は成功扱いを維持するため、例外を投げず常に値を返す。
+async function markReviewItemApprovedByBranch(
+  kv: KVNamespace,
+  branch: string,
+  prUrl: string,
+  mergeCommitSha: string | undefined,
+): Promise<ReviewItemUpdate> {
+  try {
+    const indexRaw = await kv.get("review:index", "text");
+    if (!indexRaw) return { updated: false, reason: "review_index_empty" };
+    let slugs: unknown;
+    try {
+      slugs = JSON.parse(indexRaw);
+    } catch {
+      return { updated: false, reason: "review_index_unparseable" };
+    }
+    if (!Array.isArray(slugs)) return { updated: false, reason: "review_index_not_array" };
+    for (const s of slugs) {
+      if (typeof s !== "string" || !s) continue;
+      const raw = await kv.get(`review:item:${s}`, "text");
+      if (!raw) continue;
+      let item: ReviewItemRecord;
+      try {
+        item = JSON.parse(raw) as ReviewItemRecord;
+      } catch {
+        continue;
+      }
+      if (item && item.branch === branch) {
+        const previousStatus = item.status;
+        const now = new Date().toISOString();
+        const updated: ReviewItemRecord = {
+          ...item,
+          status: "approved",
+          prUrl: item.prUrl && item.prUrl.length > 0 ? item.prUrl : prUrl,
+          approvedAt: now,
+          approvedByMergeCommit: mergeCommitSha,
+          updatedAt: now,
+        };
+        await kv.put(`review:item:${s}`, JSON.stringify(updated));
+        return { updated: true, slug: s, previousStatus };
+      }
+    }
+    return { updated: false, reason: "no_matching_review_item" };
+  } catch (err) {
+    return {
+      updated: false,
+      reason: "kv_update_threw",
+      detail: String(err && (err as Error).message ? (err as Error).message : err).slice(0, 200),
+    };
+  }
 }
 
 type PullSummary = {
@@ -183,12 +264,39 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   if (mergeRes.ok) {
     const mergeJson = (await mergeRes.json()) as { merged?: boolean; sha?: string; message?: string };
+
+    // merge 成功後、KV の review item を status: "approved" に best-effort で更新する。
+    // KV binding 不在・該当 item 不在・KV エラーのいずれでも、承認自体は成功扱いを
+    // 維持する (承認ボタンを押した時点で merge は完了しているため)。
+    const prUrlForKv = `https://github.com/${owner}/${repo}/pull/${pr.number}`;
+    let reviewItemUpdate: ReviewItemUpdate = { updated: false, reason: "kv_not_bound" };
+    if (env.SUMALABO_REVIEW_KV) {
+      reviewItemUpdate = await markReviewItemApprovedByBranch(
+        env.SUMALABO_REVIEW_KV,
+        branch,
+        prUrlForKv,
+        mergeJson.sha,
+      );
+    }
+
     return jsonResponse({
       ok: true,
       message: "Previewを承認し、mainへマージしました。",
       pullNumber: pr.number,
       merged: mergeJson.merged === true,
       sha: mergeJson.sha,
+      reviewItemUpdate,
+      // フロント側に「次は何が必要か」を明示する。GitHub Apps 連携を使っていないため
+      // main merge では本番に自動デプロイされない。queue (data/automation/sumahon-queue.json)
+      // はサーバー側からは更新できないので、CLI 側で sync する必要がある。
+      needsProductionDeploy: true,
+      productionDeployHint:
+        "main にマージされましたが、Cloudflare Pages の GitHub Apps 連携を使っていないため本番には自動デプロイされません。" +
+        "`npx wrangler pages deploy dist --project-name sumalabo --branch main` を別途実行してください。",
+      needsQueueSync: true,
+      queueSyncHint:
+        "data/automation/sumahon-queue.json の該当 entry を status: \"published\" 相当に更新してください。" +
+        "Workerからは直接書き込めないため、サーバー側 CLI / nightly タスクで /api/review-items を参照して同期するのが安全です。",
     });
   }
 
