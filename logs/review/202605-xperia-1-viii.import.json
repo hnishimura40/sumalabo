@@ -1,0 +1,77 @@
+{
+  "checkedAt": "2026-05-13T14:29:37.656Z",
+  "wordCountApprox": 6451,
+  "h2Count": 12,
+  "presentTopics": [
+    "先に結論",
+    "何が起きたのか",
+    "何が新しいのか",
+    "難しいポイントのかみくだき",
+    "普通の人にどう関係するのか",
+    "まだ分からないこと",
+    "すまラボ的な見方"
+  ],
+  "missingTopics": [
+    "まとめ"
+  ],
+  "issues": [
+    {
+      "code": "missing_required_topics_warning",
+      "severity": "warning",
+      "message": "不足している可能性がある要素: まとめ"
+    },
+    {
+      "code": "character_visual_missing",
+      "severity": "warning",
+      "message": "本文にひまり・らぼまるの名前は出ていますが、画像付きのブロック（CharacterDialogue / CharacterCallout / CharacterGuideCard、または /images/characters/ への参照）が見当たりません。サムネ以外でも本文中にすまラボらしい画像つき要素を1回入れてください。"
+    }
+  ],
+  "sourceCheck": {
+    "ok": true,
+    "hasReferenceSection": true,
+    "urlCount": 7,
+    "referenceUrls": [
+      "https://www.sony.jp/xperia/products/xperia1m8/",
+      "https://www.sony.jp/xperia/special/xperia1m8/",
+      "https://pur.store.sony.jp/xperia/products/xperia1m8/xperia1m8_purchase/",
+      "https://www.docomo.ne.jp/info/news_release/2026/05/13_01.html",
+      "https://k-tai.watch.impress.co.jp/docs/news/2107906.html",
+      "https://pc.watch.impress.co.jp/docs/news/2107803.html",
+      "https://ai.watch.impress.co.jp/docs/news/2108223.html"
+    ],
+    "containsSumahonPublicReference": false,
+    "sumahonHits": [],
+    "isReportingTopic": true,
+    "hasReportingNotice": true,
+    "reportingNoticeRequired": true,
+    "reasons": [],
+    "notes": "公開記事用の参考情報セクションがあり、内部参考元の露出もありません。"
+  },
+  "articleQualityCheck": {
+    "ok": true,
+    "titleDuplicate": false,
+    "titleDuplicateDetails": [],
+    "h1Count": 0,
+    "markdownResidue": false,
+    "markdownResidueHits": [],
+    "characterPresence": "text_only",
+    "boxHeadingWarnings": [],
+    "articleStructure": "ok",
+    "issues": [
+      {
+        "code": "character_visual_missing",
+        "severity": "warning",
+        "message": "本文にひまり・らぼまるの名前は出ていますが、画像付きのブロック（CharacterDialogue / CharacterCallout / CharacterGuideCard、または /images/characters/ への参照）が見当たりません。サムネ以外でも本文中にすまラボらしい画像つき要素を1回入れてください。"
+      }
+    ],
+    "reasons": []
+  },
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "sourceUrl": "https://smhn.info/202605-xperia-1-viii",
+  "articleTitle": "ソニー、Xperia 1 VIII発表とは？普通の人向けに要点を整理",
+  "generatedDraftPath": "drafts/generated/202605-xperia-1-viii.md",
+  "materials": null,
+  "mdxPath": "content\\articles\\202605-xperia-1-viii.mdx",
+  "blockingRisk": false
+}
