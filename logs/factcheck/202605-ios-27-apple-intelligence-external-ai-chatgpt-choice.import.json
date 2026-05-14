@@ -1,0 +1,59 @@
+{
+  "checkedAt": "2026-05-14T09:50:08.279Z",
+  "sourceUrl": "https://smhn.info/202605-ios-27-apple-intelligence-external-ai-chatgpt-choice",
+  "humanCheckRequired": [
+    "ChatGPT生成本文の事実関係",
+    "公式発表、報道、噂、予測の区別",
+    "元記事の長文コピーや近すぎる表現が残っていないか",
+    "価格、発売時期、対応機種、日本展開などの最新確認",
+    "公式情報と矛盾していないか",
+    "元報道の内容を誤って断定していないか",
+    "発売日・価格・日本展開・対応機種を断定していないか",
+    "公開記事本文・参考情報・リンクにすまほん（smhn.info）が出ていないか",
+    "参考情報セクションに公式情報・元報道・関連報道のURLが2件以上あるか"
+  ],
+  "issues": [],
+  "provisionalDecision": "preview確認後に公開可",
+  "blockingRisk": false,
+  "sourceCheck": {
+    "ok": true,
+    "hasReferenceSection": true,
+    "urlCount": 7,
+    "referenceUrls": [
+      "https://www.bloomberg.com/news/articles/2026-05-05/ios-27-features-apple-plans-to-let-users-swap-models-across-apple-intelligence",
+      "https://www.bloomberg.com/jp/news/articles/2026-05-05/TEKQSQT96OSH00",
+      "https://www.theverge.com/tech/924515/apple-intelligence-third-party-chatbot-extensions-ios-27",
+      "https://www.apple.com/apple-intelligence/",
+      "https://support.apple.com/ja-jp/guide/iphone/iph00fd3c8c2/ios",
+      "https://support.apple.com/guide/iphone/use-apple-intelligence-with-siri-iph17bafe0f6/ios",
+      "https://help.openai.com/ja-jp/articles/10263570-apple-intelligence-siri-faq"
+    ],
+    "containsSumahonPublicReference": false,
+    "sumahonHits": [],
+    "isReportingTopic": true,
+    "hasReportingNotice": true,
+    "reportingNoticeRequired": true,
+    "reasons": [],
+    "notes": "公開記事用の参考情報セクションがあり、内部参考元の露出もありません。"
+  },
+  "articleQualityCheck": {
+    "ok": true,
+    "titleDuplicate": false,
+    "titleDuplicateDetails": [],
+    "h1Count": 0,
+    "markdownResidue": false,
+    "markdownResidueHits": [],
+    "characterPresence": "text_only",
+    "boxHeadingWarnings": [],
+    "articleStructure": "ok",
+    "issues": [
+      {
+        "code": "character_visual_missing",
+        "severity": "warning",
+        "message": "本文にひまり・らぼまるの名前は出ていますが、画像付きのブロック（CharacterDialogue / CharacterCallout / CharacterGuideCard、または /images/characters/ への参照）が見当たりません。サムネ以外でも本文中にすまラボらしい画像つき要素を1回入れてください。"
+      }
+    ],
+    "reasons": []
+  },
+  "materials": null
+}
