@@ -21,6 +21,8 @@ updated: "2026-05-13"
 publishAt: "2026-05-13T23:29:37+09:00"
 ---
 
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
 <div class="summary-box">
 <p class="box-label">先に結論</p>
 <p>Xperia 1 VIIIは、ソニーが発表した新しい最上位Androidスマホです。ポイントは「本格カメラ」「AIによる撮影サポート」「かなり高い価格」の3つです。</p>
@@ -297,10 +299,13 @@ Xperia 1 VIIIのような高額モデルでは、数万円単位で判断が変�
 
 スマホカメラは、すでにかなりきれいに撮れるようになっています。そこで次に差が出るのは、「どう撮るかを迷わないこと」「自分好みに仕上げやすいこと」「失敗写真を減らすこと」です。
 
-<div class="info-box">
-<p><strong>ひまり：</strong>AIカメラって、写真が得意な人向けというより、むしろ迷う人にも助かる機能なんだね。</p>
-<p><strong>らぼまる：</strong>そうだね。Xperia 1 VIIIは高級機だけど、AIで“撮る前の迷い”を減らす流れは、普通の人のスマホ選びにも関係してくるよ。</p>
-</div>
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "AIカメラって、写真が得意な人向けというより、むしろ迷う人にも助かる機能なんだね。" },
+    { speaker: "らぼまる", text: "そうだね。Xperia 1 VIIIは高級機だけど、AIで“撮る前の迷い”を減らす流れは、普通の人のスマホ選びにも関係してくるよ。" },
+  ]}
+/>
 
 たとえば、スマホ選びでこんな悩みがある人は多いはずです。
 
