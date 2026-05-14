@@ -1,0 +1,65 @@
+{
+  "branchName": "auto/imported-202605-xperia-1-viii-carrier-270k-simfree-230k-202605141400",
+  "articlePath": "content\\articles\\202605-xperia-1-viii-carrier-270k-simfree-230k.mdx",
+  "generatedDraftPath": "drafts/generated/202605-xperia-1-viii-carrier-270k-simfree-230k.md",
+  "materialsPath": "",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/imported-202605-xperia-1-viii-carrier-270k-simfree-230k-202605141400.",
+  "checkUrls": [
+    "/articles/202605-xperia-1-viii-carrier-270k-simfree-230k/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": true,
+  "doNotPublish": false,
+  "blockingRisk": false,
+  "previewCreated": true,
+  "sourceCheck": {
+    "ok": true,
+    "hasReferenceSection": true,
+    "urlCount": 7,
+    "referenceUrls": [
+      "https://www.sony.jp/xperia/products/xperia1m8/",
+      "https://pur.store.sony.jp/xperia/products/xperia1m8/xperia1m8_purchase/",
+      "https://www.docomo.ne.jp/info/news_release/2026/05/13_01.html",
+      "https://www.au.com/mobile/product/smartphone/xperia_1_viii/",
+      "https://newsroom.kddi.com/news/detail/kddi_nr-1011_4484.html",
+      "https://www.softbank.jp/corp/news/press/sbkk/2026/20260513_01/",
+      "https://k-tai.watch.impress.co.jp/docs/news/2108144.html"
+    ],
+    "containsSumahonPublicReference": false,
+    "sumahonHits": [],
+    "isReportingTopic": true,
+    "hasReportingNotice": true,
+    "reportingNoticeRequired": true,
+    "reasons": [],
+    "notes": "公開記事用の参考情報セクションがあり、内部参考元の露出もありません。"
+  },
+  "articleQualityCheck": {
+    "ok": true,
+    "titleDuplicate": false,
+    "titleDuplicateDetails": [],
+    "h1Count": 0,
+    "markdownResidue": false,
+    "markdownResidueHits": [],
+    "characterPresence": "text_only",
+    "boxHeadingWarnings": [],
+    "articleStructure": "ok",
+    "issues": [
+      {
+        "code": "character_visual_missing",
+        "severity": "warning",
+        "message": "本文にひまり・らぼまるの名前は出ていますが、画像付きのブロック（CharacterDialogue / CharacterCallout / CharacterGuideCard、または /images/characters/ への参照）が見当たりません。サムネ以外でも本文中にすまラボらしい画像つき要素を1回入れてください。"
+      }
+    ],
+    "reasons": []
+  },
+  "thumbnail": "/images/thumbnails/202605-xperia-1-viii-carrier-270k-simfree-230k.png",
+  "thumbnailExists": true,
+  "thumbnailSourcePath": "public\\images\\thumbnails\\202605-xperia-1-viii-carrier-270k-simfree-230k.png",
+  "thumbnailBriefPath": "logs\\thumbnail\\202605-xperia-1-viii-carrier-270k-simfree-230k.brief.json",
+  "thumbnailPromptPath": "logs\\thumbnail\\202605-xperia-1-viii-carrier-270k-simfree-230k.prompt.md",
+  "materials": null
+}
