@@ -4,6 +4,7 @@ import { classifyTopic } from "../sumahon/classify-topic.mjs";
 import { loadAutomationConfig } from "../sumahon/automation-config.mjs";
 import { generateArticleBrief } from "../sumahon/generate-article-brief.mjs";
 import { generateArticlePrompt } from "../sumahon/generate-article-prompt.mjs";
+import { generateArticleUnderstanding } from "../sumahon/generate-article-understanding.mjs";
 import { generateExplainer } from "../sumahon/generate-explainer.mjs";
 import { buildHandoffPaths, generateChromeStepsMarkdown, generateHandoffMarkdown } from "../sumahon/generate-handoff.mjs";
 import { generateThumbnailBrief } from "../sumahon/generate-thumbnail-brief.mjs";
@@ -34,12 +35,21 @@ async function main() {
   const classification = classifyTopic(source);
   const generated = generateExplainer({ source, classification, slug });
   const articleBrief = generateArticleBrief({ source, classification, generated });
+  // articleUnderstanding fixes WHAT the article is fundamentally about
+  // (theme / reader question / decision axis / character reactions /
+  // thumbnail props / composition / required visual blocks) BEFORE any
+  // prompt is generated. The article prompt + initial thumbnail prompt
+  // both consume this so the resulting body and image are article-aware,
+  // not template.
+  const articleUnderstanding = generateArticleUnderstanding({ articleBrief, source, classification });
   const thumbnailBrief = generateThumbnailBrief({ source, classification, generated });
   const thumbnailPrompt = generateThumbnailPrompt(thumbnailBrief, {
     thumbnailNewChatUrl: config.chatgptTargets.thumbnailNewChatUrl,
+    understanding: articleUnderstanding,
   });
   const handoffPaths = buildHandoffPaths({ slug, config });
-  const articlePrompt = generateArticlePrompt({ articleBrief, thumbnailBrief, config });
+  const articlePrompt = generateArticlePrompt({ articleBrief, thumbnailBrief, understanding: articleUnderstanding, config });
+  const understandingPath = `logs/understanding/${slug}.json`;
   const handoffMarkdown = generateHandoffMarkdown({ source, slug, paths: handoffPaths, config });
   const chromeStepsMarkdown = generateChromeStepsMarkdown({ slug, paths: handoffPaths, config });
   const sourceLogPath = `logs/source/${slug}.json`;
@@ -54,6 +64,7 @@ async function main() {
     note: "元記事本文の丸ごと保存はしない。ChatGPT 5.5 handoffのための最小メモのみ保存。",
   });
   await writeJson(handoffPaths.articleBriefPath, articleBrief);
+  await writeJson(understandingPath, articleUnderstanding);
   await writeText(handoffPaths.articlePromptPath, articlePrompt);
   await writeJson(handoffPaths.thumbnailBriefPath, thumbnailBrief);
   await writeText(handoffPaths.thumbnailPromptPath, thumbnailPrompt);
@@ -68,6 +79,7 @@ async function main() {
     priority: classification.priority,
     sourceLogPath,
     articleBriefPath: handoffPaths.articleBriefPath,
+    articleUnderstandingPath: understandingPath,
     articlePromptPath: handoffPaths.articlePromptPath,
     generatedDraftPath: handoffPaths.generatedDraftPath,
     materialsDraftPath: handoffPaths.materialsDraftPath,
