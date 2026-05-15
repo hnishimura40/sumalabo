@@ -1,0 +1,64 @@
+{
+  "branchName": "auto/imported-202605-pixel-11-tensor-g6-leak-2nm-gpu-2021-202605151315",
+  "articlePath": "content\\articles\\202605-pixel-11-tensor-g6-leak-2nm-gpu-2021.mdx",
+  "generatedDraftPath": "drafts/generated/202605-pixel-11-tensor-g6-leak-2nm-gpu-2021.md",
+  "materialsPath": "",
+  "expectedPreview": "Cloudflare Pages will create a preview deployment for branch auto/imported-202605-pixel-11-tensor-g6-leak-2nm-gpu-2021-202605151315.",
+  "checkUrls": [
+    "/articles/202605-pixel-11-tensor-g6-leak-2nm-gpu-2021/",
+    "/articles/",
+    "/categories/news/",
+    "/"
+  ],
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "humanReviewRequired": true,
+  "doNotPublish": false,
+  "blockingRisk": false,
+  "previewCreated": true,
+  "sourceCheck": {
+    "ok": true,
+    "hasReferenceSection": true,
+    "urlCount": 6,
+    "referenceUrls": [
+      "https://www.androidauthority.com/google-tensor-g6-full-specs-pixel-11-leak-3663212/",
+      "https://www.androidauthority.com/tensor-g6-gpu-leak-3661734/",
+      "https://blog.google/products-and-platforms/devices/pixel/tensor-g5-pixel-10/",
+      "https://blog.google/intl/ja-jp/products/devices-services/tensor-g5-pixel-10/",
+      "https://www.tsmc.com/english/dedicatedFoundry/technology/logic/l_2nm",
+      "https://www.imaginationtech.com/news/imagination-launches-the-most-advanced-ray-tracing-gpu/"
+    ],
+    "containsSumahonPublicReference": false,
+    "sumahonHits": [],
+    "isReportingTopic": true,
+    "hasReportingNotice": true,
+    "reportingNoticeRequired": true,
+    "reasons": [],
+    "notes": "公開記事用の参考情報セクションがあり、内部参考元の露出もありません。"
+  },
+  "articleQualityCheck": {
+    "ok": true,
+    "titleDuplicate": false,
+    "titleDuplicateDetails": [],
+    "h1Count": 0,
+    "markdownResidue": false,
+    "markdownResidueHits": [],
+    "characterPresence": "text_only",
+    "boxHeadingWarnings": [],
+    "articleStructure": "ok",
+    "issues": [
+      {
+        "code": "character_visual_missing",
+        "severity": "warning",
+        "message": "本文にひまり・らぼまるの名前は出ていますが、画像付きのブロック（CharacterDialogue / CharacterCallout / CharacterGuideCard、または /images/characters/ への参照）が見当たりません。サムネ以外でも本文中にすまラボらしい画像つき要素を1回入れてください。"
+      }
+    ],
+    "reasons": []
+  },
+  "thumbnail": "/images/thumbnails/202605-pixel-11-tensor-g6-leak-2nm-gpu-2021.png",
+  "thumbnailExists": true,
+  "thumbnailSourcePath": "public\\images\\thumbnails\\202605-pixel-11-tensor-g6-leak-2nm-gpu-2021.png",
+  "thumbnailBriefPath": "logs\\thumbnail\\202605-pixel-11-tensor-g6-leak-2nm-gpu-2021.brief.json",
+  "thumbnailPromptPath": "logs\\thumbnail\\202605-pixel-11-tensor-g6-leak-2nm-gpu-2021.prompt.md",
+  "materials": null
+}
