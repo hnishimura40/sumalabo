@@ -2,8 +2,37 @@ function listItems(items = []) {
   return items.map((item) => `- ${item}`).join("\n");
 }
 
+function renderUnderstandingForThumbnail(u) {
+  if (!u) return "";
+  const props = Array.isArray(u.thumbnailProps) && u.thumbnailProps.length
+    ? u.thumbnailProps.map((p) => `「${p}」`).join(" / ")
+    : "(指定なし)";
+  return `## この記事の理解 (サムネに必ず反映)
+
+このサムネは、タイトルだけで描いてはいけません。次を反映してください。
+
+- 記事テーマ: ${u.articleTheme || "(未設定)"}
+- 読者の疑問: ${u.readerQuestion || "(未設定)"}
+- 読者が判断したい点: ${u.readerDecisionPoint || "(未設定)"}
+- ひまりの反応 (記事内容を読んだ後): ${u.himariReaction || "(未設定)"}
+- らぼまるの役割 (整理係): ${u.labomaruRole || "(未設定)"}
+- サムネで使う道具の候補: ${props}
+- サムネ構図の方向性: ${u.thumbnailCompositionIdea || "(未設定)"}
+
+サムネ思想 (絶対):
+- ひまり・らぼまるが記事内容を理解し、その内容に対して感情・表情・道具・構図で自由に反応する
+- テンプレ化・置物化・無難化は禁止
+- 安全化を理由に、感情・面白さ・自由さを削らない
+- 文字を減らすこと自体を目的にしない (情報量は維持)
+- 大きな文字は2つまで / 補助文字は2つまで
+- 実在ロゴ・実機写真コピーは使わない
+
+`;
+}
+
 export function generateThumbnailPrompt(brief, options = {}) {
   const thumbnailNewChatUrl = options.thumbnailNewChatUrl || "https://chatgpt.com/";
+  const understanding = options.understanding || null;
   const referenceText = brief.referenceAssetsMissing
     ? "既存キャラクター素材が見つからない場合は、らぼまる・ひまりの特徴を守って新規イラストとして自然に描く。"
     : `既存キャラクター素材を参照する前提。候補:\n${listItems(brief.referenceAssets)}`;
@@ -22,7 +51,7 @@ export function generateThumbnailPrompt(brief, options = {}) {
 ## 記事
 ${brief.articleTitle}
 
-## 1枚で伝えたい芯
+${renderUnderstandingForThumbnail(understanding)}## 1枚で伝えたい芯
 ${brief.coreIdea}
 
 ## 雰囲気
@@ -40,6 +69,7 @@ ${brief.mainSubject}
 - 「ひまりが質問、らぼまるが説明」の固定構図にしない
 - 2人とも記事内容を理解した後の反応を見せる
 - 良いニュースなら前向きな反応、悪いニュースなら悲しむ・心配する反応、判断が分かれる話なら慎重・困惑など、話題に応じたリアクションにする
+- 上記「ひまりの反応」「らぼまるの役割」を起点に、置物化させない
 
 ${referenceText}
 
@@ -59,10 +89,11 @@ ${listItems(brief.sublineIdeas)}
 - ニュースのテーマそのものを主役にする
 - 毎回同じテンプレ構図にしない
 - 文字は短く、大きく、スマホでも読める量にする
-- キャラクターを使う場合も、記事理解を助ける役に留める
+- キャラクターを使う場合も、記事理解を助ける役に留める (ただし置物にしない / 感情を出す)
 - 実在企業ロゴは入れない
 - 元記事画像や実在写真を再現しない
 - 煽りすぎず、「気になる」「理解できる」方向で見せる
+- 安全化のために感情・自由さを削らない (劣化禁止)
 
 ## 避けること
 ${listItems(brief.avoid)}

@@ -8,7 +8,59 @@ function linkItems(items = []) {
   return items.map((item) => `- ${item.label}: ${item.href}\n  ${item.description}`).join("\n");
 }
 
-export function generateArticlePrompt({ articleBrief, thumbnailBrief, config }) {
+function renderUnderstanding(understanding) {
+  if (!understanding) return "";
+  const props = Array.isArray(understanding.thumbnailProps) && understanding.thumbnailProps.length
+    ? understanding.thumbnailProps.map((p) => `「${p}」`).join(" / ")
+    : "(指定なし)";
+  const blocks = Array.isArray(understanding.visualExplainBlocksNeeded) && understanding.visualExplainBlocksNeeded.length
+    ? understanding.visualExplainBlocksNeeded.map((b) => `- ${b}`).join("\n")
+    : "- (指定なし)";
+  return `## この記事の理解 (本文・サムネを作る前に把握すること)
+
+この記事は、タイトルだけで書いてはいけません。次の理解を必ず本文とサムネ提案に反映してください。
+
+- 記事テーマ: ${understanding.articleTheme || "(未設定)"}
+- 読者の疑問: ${understanding.readerQuestion || "(未設定)"}
+- 読者の不安: ${understanding.readerAnxiety || "(未設定)"}
+- 読者が判断したい点: ${understanding.readerDecisionPoint || "(未設定)"}
+- 普通の人にとっての変化: ${understanding.whatChangesForNormalUsers || "(未設定)"}
+- 判断軸: ${understanding.buyWaitOrWatch || "(未設定)"}
+- ひまりの反応 (記事内容を読んだ後): ${understanding.himariReaction || "(未設定)"}
+- らぼまるの役割 (整理係): ${understanding.labomaruRole || "(未設定)"}
+- サムネで使う道具の候補: ${props}
+- サムネ構図の方向性: ${understanding.thumbnailCompositionIdea || "(未設定)"}
+
+## 必須の視覚整理ブロック (本文に必ず含める)
+
+本文は文字の壁にしません。冒頭に次を順に置き、難しい話は表・カードに逃がします。
+
+${blocks}
+
+具体的な書き方:
+1. 本文冒頭は \`<div class="summary-box">\` で「3行でわかるまとめ」を3つの bullet で出す
+2. その直下に \`<div class="check-box">\` で「この記事で整理すること」を4 bullet 前後で出す
+3. その下に既存の \`<div class="summary-box">\` 「先に結論」を 2-3 段落で出す (詳細な前提・出典・但し書き)
+4. 本文中盤で「判断軸 (${understanding.buyWaitOrWatch || "買う / 待つ / 様子見"})」を比較表または判断カードで表現する
+5. 用語説明は \`<table>\` または \`<div class="table-card">\` で表に整理する (本文ベタ書き禁止)
+6. 長い段落 (400字超) が続くようなら \`<div class="info-box">\` などに分割する
+
+## サムネの作り方 (台本チャット内で最終版を作る際に守る)
+
+- ひまりとらぼまるは記事内容を理解した上で描く。**置物にしない。**
+- 表情・ポーズは上記の「ひまりの反応」「らぼまるの役割」に基づき、喜怒哀楽を出す
+- 道具は上記「サムネで使う道具の候補」から記事に合うものを 2-3 個選ぶ
+- 構図は上記「サムネ構図の方向性」を起点に、テンプレ化しない
+- 安全化を理由に、感情・面白さ・自由さを削らない
+- ベース画像 \`himari-base.png\` / \`labomaru-base.png\` を canvas + DataTransfer 経路で添付する前提でプロンプトを書く
+- 大きな文字は 2 つまで、補助文字は 2 つまで (文字で全部説明しない)
+- 実在ロゴ・実機写真コピーは使わない
+- 「悲報」「化石」「爆死」など強い煽り表現は使わない (AUP 回避だが、感情そのものは削らない)
+
+`;
+}
+
+export function generateArticlePrompt({ articleBrief, thumbnailBrief, understanding, config }) {
   const articleProjectUrl = config.chatgptTargets.articleProjectUrl;
   const generatedDraftPath = `${config.paths.generatedDraftDir}/${articleBrief.slug}.md`;
   const materialsDraftPath = `${config.paths.materialsDraftDir}/${articleBrief.slug}.materials.md`;
@@ -30,6 +82,8 @@ ${articleProjectUrl}
 以下のニュース素材をもとに、すまラボ向けの記事本文を作成してください。
 
 すまラボは、スマホ・AI・ガジェットの難しい話を普通の人にもわかるように整理するメディアです。単なるニュース紹介ではなく、「何の話か」「なぜ話題か」「普通の人にどう関係するか」「今すぐ動くべきか、様子見でよいか」まで整理してください。
+
+${renderUnderstanding(understanding)}
 
 ## 対象記事
 
