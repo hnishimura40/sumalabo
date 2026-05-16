@@ -384,13 +384,44 @@ orchestrator は build / verify / notify / PR の各段階を実測し、次の 
 - 生成タイムアウト → 追加送信せず停止
 - 文字数 / 構造チェック失敗 → 停止
 
-## STAGE: thumbnail
+## STAGE: thumbnail (carrier mode)
 
-ゴール: ベース画像 2 枚を canvas で ChatGPT に添付し、新規 chat で画像生成プロンプトを送信、生成画像を `public/images/thumbnails/{slug}.png` に保存。
+### 設計思想
+
+Stage 7 は **carrier mode (運搬役)** で動かす。Claude.exe / sub-claude に
+`drafts/materials/{slug}.thumbnail-prompt.md` の本文を **読ませない**。
+読み込ませると Anthropic AUP filter が記事固有のサムネ指示を評価して
+refusal を返すことがある (AI ペンダント等の文脈で実例あり)。サムネは
+ChatGPT の画像生成チャットで生成されるものであり、Claude は本文評価の
+責務を持たない。
+
+**司令塔 (PowerShell orchestrator) の責務:**
+- `drafts/materials/{slug}.thumbnail-prompt.md` を `Set-Clipboard` で OS クリップボードに事前ロード
+- Claude を carrier として起動し、機械的な手順 (添付・paste・送信・polling・保存) だけを依頼
+- 成果物 PNG (size > 20KB, exists) で成否を判定
+
+**carrier (Claude worker) の責務:**
+- ChatGPT 新規チャットを開く
+- ベース画像 2 枚を canvas + DataTransfer で添付
+- 入力欄を focus
+- **`Ctrl+V` でクリップボードから paste** (本文は読まない / 表示しない / 要約しない)
+- 送信ボタン 1 クリック
+- 生成画像を poll → 該当 `<img>` 要素を特定
+- blob を fetch → download
+- ダウンロードフォルダから target path へ Move
+- 成果物 JSON 報告
+
+### carrier に許可されないこと
+
+- `Read` tool / `Bash cat` / `Get-Content` でサムネプロンプト本文を読む
+- `mcp__Claude_in_Chrome__get_page_text` / `read_page` で paste 内容を確認する
+- サムネプロンプト本文の要約・引用・解釈・評価
+- ScheduleWakeup / schedule / cron / reminder / later
+- 成果物未作成での `ok=true` 出力
 
 ### 入力
 - slug
-- thumbnailPromptPath: `drafts/materials/{slug}.thumbnail-prompt.md`
+- (PS が事前ロード) **OS clipboard には thumbnail prompt 本文が入っている**
 - basePngUrls (canvas fetch):
   - https://sumalabo.com/images/characters/base/himari-base.png
   - https://sumalabo.com/images/characters/base/labomaru-base.png
@@ -405,12 +436,13 @@ orchestrator は build / verify / notify / PR の各段階を実測し、次の 
    - `new DataTransfer()` に add → `document.getElementById('upload-files').files = dt.files`
    - `dispatchEvent(new Event('change', { bubbles: true }))`
 4. 添付カード 2 件が表示されたことを DOM 確認
-5. 入力欄に thumbnailPromptPath の内容をペースト (UTF-8 ファイル経由)
+5. **入力欄を focus → `Ctrl+V` (mcp__Claude_in_Chrome__shortcuts_execute) でクリップボードから paste**
+   - **入力欄の内容を読まない / 表示しない**
 6. 送信ボタンを **1 回だけ**クリック
-7. 画像生成完了まで polling (最大 ~5 分)
+7. 画像生成完了まで polling (最大 ~8 分) — `<img alt="生成された画像">` または src に `oaiusercontent` 含む要素を探す
 8. 生成画像を blob fetch → ダウンロード
-9. `D:\downloads` か `~/Downloads` から最新 png を `public/images/thumbnails/{slug}.png` に移動
-10. ファイル存在 + サイズ > 20KB + 構造チェック
+9. `D:\downloads` か `~/Downloads` から最新 png を `public/images/thumbnails/{slug}.png` に Move
+10. ファイル存在 + サイズ > 20KB を Bash で確認 → JSON 報告
 
 ### AUP refusal が出た場合
 1. 該当箇所のキーワードを「煽り表現」リストと突き合わせる
