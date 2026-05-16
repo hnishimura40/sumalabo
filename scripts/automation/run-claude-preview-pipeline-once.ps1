@@ -1308,6 +1308,86 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
   Write-RunLog ("  Gate hasDecisionGuide=" + $hasDecisionGuide)
   Write-RunLog ("  Gate hasReferenceSection=" + $hasReferenceSection)
 
+  # ============================================================
+  # Quality-density hard gates (Phase 6 quality uplift, 2026-05-16).
+  # Existence checks alone are not enough — "20 gates all true" still
+  # produced a text-wall article (Apple AIペンダント). These gates
+  # measure block DENSITY and tone in the mdx + dist HTML.
+  # ============================================================
+  $visualBlockDensityOk = $true
+  $earlyVisualImpactOk = $false
+  $publicCopyToneOk = $true
+  if (Test-Path $AbsArticleMdxPath) {
+    $mdxRawQ = Get-Content -LiteralPath $AbsArticleMdxPath -Raw -Encoding UTF8
+
+    # visualBlockDensityOk: walk through the H2 segments and check that
+    # no 3 consecutive H2 sections lack a visual block (summary-box /
+    # info-box / check-box / table-card / table / decision-guide-*).
+    # If a body has 14 H2 but 5 H2 in a row are pure text, that fails.
+    $h2Segments = $mdxRawQ -split "(?m)^##\s+"
+    $consecutiveTextOnly = 0
+    $maxConsecutiveTextOnly = 0
+    for ($i = 1; $i -lt $h2Segments.Count; $i++) {
+      $seg = $h2Segments[$i]
+      $hasBlock = ($seg -match 'class="summary-box"' -or
+                   $seg -match 'class="info-box"' -or
+                   $seg -match 'class="check-box"' -or
+                   $seg -match 'class="table-card"' -or
+                   $seg -match '<table[\s>]' -or
+                   $seg -match 'class="decision-guide-panel"' -or
+                   $seg -match 'class="decision-list"' -or
+                   $seg -match 'class="decision-guide-grid"' -or
+                   $seg -match '<CharacterDialogue' -or
+                   $seg -match '<CharacterCallout' -or
+                   $seg -match '<CharacterGuideCard')
+      if ($hasBlock) {
+        $consecutiveTextOnly = 0
+      } else {
+        $consecutiveTextOnly++
+        if ($consecutiveTextOnly -gt $maxConsecutiveTextOnly) { $maxConsecutiveTextOnly = $consecutiveTextOnly }
+      }
+    }
+    if ($maxConsecutiveTextOnly -ge 3) { $visualBlockDensityOk = $false }
+    Write-RunLog ("  Gate visualBlockDensityOk=" + $visualBlockDensityOk + " (maxConsecutiveTextOnlyH2=" + $maxConsecutiveTextOnly + ")")
+
+    # earlyVisualImpactOk: in the first ~1500 chars (judgment zone), at
+    # least 2 structural blocks must appear (3行まとめ + この記事で整理する + 先に結論 + maybe a table).
+    $earlyZoneQ = $mdxRawQ.Substring(0, [Math]::Min(1500, $mdxRawQ.Length))
+    $earlyBlockCount = 0
+    foreach ($p in @('class="summary-box"', 'class="check-box"', 'class="info-box"', 'class="table-card"', '<table[\s>]', 'class="decision-guide-grid"')) {
+      $earlyBlockCount += ([regex]::Matches($earlyZoneQ, $p)).Count
+    }
+    if ($earlyBlockCount -ge 2) { $earlyVisualImpactOk = $true }
+    Write-RunLog ("  Gate earlyVisualImpactOk=" + $earlyVisualImpactOk + " (earlyBlockCount=" + $earlyBlockCount + ")")
+
+    # publicCopyToneOk: external-visible copy (frontmatter title /
+    # description / thumbnailAlt + body) should not lean on the internal
+    # phrasing "普通の人". Allow up to 2 occurrences in the body for
+    # quotation / source paraphrase, but ZERO in frontmatter.
+    $frontmatterMatch = [regex]::Match($mdxRawQ, "(?s)^---\s*?\n(.+?)\n---")
+    $frontmatterText = if ($frontmatterMatch.Success) { $frontmatterMatch.Groups[1].Value } else { "" }
+    $bodyText = $mdxRawQ
+    if ($frontmatterMatch.Success) {
+      $bodyText = $mdxRawQ.Substring($frontmatterMatch.Index + $frontmatterMatch.Length)
+    }
+    $frontmatterTone = ([regex]::Matches($frontmatterText, "普通の人")).Count
+    $bodyTone = ([regex]::Matches($bodyText, "普通の人")).Count
+    if ($frontmatterTone -gt 0 -or $bodyTone -gt 2) { $publicCopyToneOk = $false }
+    Write-RunLog ("  Gate publicCopyToneOk=" + $publicCopyToneOk + " (frontmatter='普通の人'=" + $frontmatterTone + " body='普通の人'=" + $bodyTone + ")")
+  }
+
+  # Quality-density warnings (not blocking, but reported).
+  $textWallWarning = $null
+  if (Test-Path $AbsArticleMdxPath) {
+    $mdxRawW = Get-Content -LiteralPath $AbsArticleMdxPath -Raw -Encoding UTF8
+    $bigParaCount = 0
+    foreach ($block in ($mdxRawW -split "(?m)\r?\n\r?\n")) {
+      if ($block.Length -gt 300 -and $block -notmatch '^<|^```|^#') { $bigParaCount++ }
+    }
+    $textWallWarning = ($bigParaCount -ge 5)
+    Write-RunLog ("  Warning textWallWarning=" + $textWallWarning + " (300+chars paragraphs=" + $bigParaCount + ")")
+  }
+
   # Warning fields (not hard gates): measured for the report but do not
   # block preview_created promotion on their own.
   $firstScrollWithinBudget = $null
@@ -1457,6 +1537,9 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
     hasComparisonTable = [bool]$hasComparisonTable
     hasDecisionGuide = [bool]$hasDecisionGuide
     hasReferenceSection = [bool]$hasReferenceSection
+    visualBlockDensityOk = [bool]$visualBlockDensityOk
+    earlyVisualImpactOk = [bool]$earlyVisualImpactOk
+    publicCopyToneOk = [bool]$publicCopyToneOk
     notifyOk = [bool]$notifyOk
     prOk = [bool]$prOk
     queueUpdatedOk = [bool]$queueUpdatedOk
@@ -1469,8 +1552,12 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
   $visualWarnings = [ordered]@{
     firstScrollWithinBudget = $firstScrollWithinBudget
     tooManyLongParagraphs = $tooManyLongParagraphs
+    textWallWarning = $textWallWarning
     flowOrDiagramPresent = $flowOrDiagramPresent
     endingHasCTAOrNextRead = $endingHasCTAOrNextRead
+    # Thumbnail action/prop warnings (hard to auto-judge, manual review).
+    thumbnailCharacterActionOk = "manualReviewRequired"
+    thumbnailPropUsageOk = "manualReviewRequired"
   }
   $failedGates = @()
   foreach ($k in $allGates.Keys) { if (-not $allGates[$k]) { $failedGates += $k } }

@@ -97,9 +97,13 @@ function ensureMdxImports(body) {
   return `${importsToPrepend.join("\n")}\n\n${body}`;
 }
 
+// Public-facing tone: avoid the internal phrasing "普通の人" in
+// auto-generated frontmatter copy (title / description / thumbnailAlt).
+// External readers see this text on social previews and the article page;
+// the internal "普通の人向け" framing reads as defensive boilerplate.
 function makeDescription(articleBrief, body) {
   if (articleBrief?.coreAngle) {
-    return `${articleBrief.coreAngle} 普通の人にもわかるように、何が話題で何を確認すべきかを整理します。`.slice(0, 160);
+    return `${articleBrief.coreAngle} 買う前・待つ前に押さえたいポイントを整理します。`.slice(0, 160);
   }
 
   const firstText = body
@@ -108,7 +112,7 @@ function makeDescription(articleBrief, body) {
     .replace(/\s+/g, " ")
     .trim();
 
-  return firstText.slice(0, 140) || "スマホ・AI・ガジェットのニュースを、普通の人にもわかるように整理します。";
+  return firstText.slice(0, 140) || "スマホ・AI・ガジェットのニュースを、買う前・待つ前の判断軸で整理します。";
 }
 
 function relatedSlugs(articleBrief) {
@@ -156,10 +160,12 @@ export async function importGeneratedArticle({ slug, filePath, articleBrief, sou
   const thumbnailPath = path.join("public", "images", "thumbnails", `${slug}.png`);
   const thumbnailExists = existsSync(thumbnailPath);
   const thumbnail = thumbnailExists ? `/images/thumbnails/${slug}.png` : "";
+  // Public-facing alt: avoid "普通の人" (internal phrasing). Keep it
+  // short and descriptive of the article's decision axis.
   const thumbnailAlt =
     thumbnailBrief?.headlineIdeas?.[0]
-      ? `${thumbnailBrief.headlineIdeas[0]}について、すまラボが普通の人向けに整理しているサムネイル`
-      : `${title}について、すまラボが普通の人向けに整理しているサムネイル`;
+      ? `${thumbnailBrief.headlineIdeas[0]}について、ひまり・らぼまるが買う前・待つ前のポイントを整理するサムネイル`
+      : `${title}について、ひまり・らぼまるが買う前・待つ前のポイントを整理するサムネイル`;
   const description = makeDescription(articleBrief, body);
   const category = "ニュースをかみくだく"; // 現状の import-generated はニュース系前提で frontmatter にこのカテゴリを書き込む
   const review = validateGeneratedArticle({
