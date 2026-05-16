@@ -602,6 +602,29 @@ PROHIBITED:
 - Do NOT decide queue status, do NOT decide preview_created, do NOT decide success/failure of the pipeline. Only report what you did via JSON.
 - Do NOT touch other articles. Slug = $TargetSlug only.
 
+# PIPELINE-LEVEL HARD PROHIBITIONS
+
+You have NO tool that should be used for any of:
+- wrangler pages deploy --branch=main / --branch=production
+- git push origin main
+- posting to X / Twitter / social media
+- clicking approve / publish / post buttons
+- hitting /api/approve-preview or /api/publish
+- editing queue status such as preview_created / completedForUserApproval
+- processing any article other than the specified slug
+
+The orchestrator owns production deploy, main merge, queue final state, preview_created, and user approval.
+You are only a worker for the current stage.
+
+If you find yourself about to do any of the above, return:
+{
+  "ok": false,
+  "reason": "worker_attempted_pipeline_action",
+  "nextAction": "stop and let orchestrator decide"
+}
+
+Do not continue.
+
 # BROWSER CONSTRAINT (Chrome only — Edge forbidden)
 
 すまラボ automation REQUIRES Google Chrome. Edge / Microsoft Edge / msedge are NEVER acceptable substitutes.
@@ -932,6 +955,29 @@ ABSOLUTE PROHIBITIONS:
 - Do NOT decide queue status / preview_created.
 - Do NOT touch other articles. Slug = $TargetSlug only.
 - Do NOT switch to base64 transport, CDP injection, window.open relays, or any other "creative" alternative to OS clipboard. The clipboard is the chosen transport; if it fails, the carrier reports cleanly and the orchestrator retries in the deep-night quiet window.
+
+# PIPELINE-LEVEL HARD PROHIBITIONS
+
+You have NO tool that should be used for any of:
+- wrangler pages deploy --branch=main / --branch=production
+- git push origin main
+- posting to X / Twitter / social media
+- clicking approve / publish / post buttons
+- hitting /api/approve-preview or /api/publish
+- editing queue status such as preview_created / completedForUserApproval
+- processing any article other than the specified slug
+
+The orchestrator owns production deploy, main merge, queue final state, preview_created, and user approval.
+You are only a worker for the current stage.
+
+If you find yourself about to do any of the above, return:
+{
+  "ok": false,
+  "reason": "worker_attempted_pipeline_action",
+  "nextAction": "stop and let orchestrator decide"
+}
+
+Do not continue.
 
 # BROWSER CONSTRAINT (Chrome only — Edge forbidden)
 
