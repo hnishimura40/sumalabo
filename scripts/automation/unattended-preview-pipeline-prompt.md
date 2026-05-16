@@ -369,8 +369,14 @@ orchestrator は build / verify / notify / PR の各段階を実測し、次の 
 - conversationProjectUrl: https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/project
 
 ### 手順
-1. `list_connected_browsers` → 1 台でなければ blockedBy="browser_selection" で停止
-2. `select_browser`, `tabs_context_mcp(createIfEmpty)`, navigate to project URL
+0. **ブラウザ Chrome 固定確認**:
+   - `list_connected_browsers` で候補列挙
+   - 候補名 / process に "Microsoft Edge" / "Edge" / "msedge" / "msedge.exe" を含むものは reject
+   - Chrome の候補が存在しなければ `chrome_not_connected` で停止
+   - `switch_browser` で Edge にフォールバックしない
+   - Chrome が見つかった場合のみ次へ
+1. `list_connected_browsers` → Chrome が 0 台なら `chrome_not_connected` で停止
+2. `select_browser` で Chrome を選択, `tabs_context_mcp(createIfEmpty)`, navigate to project URL
 3. 既存チャット (この slug 用) が無ければ新規でOK。但し他 slug の既存チャットに乗らない
 4. 入力欄に articlePromptPath ファイルの内容をペースト
 5. 送信ボタンを **1 回だけ**クリック → 初稿生成完了まで polling (最大 ~5 分)
@@ -427,8 +433,13 @@ ChatGPT の画像生成チャットで生成されるものであり、Claude �
   - https://sumalabo.com/images/characters/base/labomaru-base.png
 
 ### 手順
-1. `list_connected_browsers` → 1 台でなければ停止
-2. `select_browser`, `tabs_create_mcp`, navigate to https://chatgpt.com/ (新規 chat)
+0. **ブラウザ Chrome 固定確認** (Edge 拒否):
+   - `list_connected_browsers` で候補列挙
+   - "Microsoft Edge" / "Edge" / "msedge" / "msedge.exe" は reject
+   - Chrome 候補が無ければ `chrome_not_connected` または `browser_mismatch` で停止
+   - **Edge にフォールバックしない**
+1. `list_connected_browsers` → Chrome が選べない場合は停止 (reason=chrome_not_connected | browser_mismatch | chrome_mcp_unavailable)
+2. `select_browser` で Chrome 固定, `tabs_create_mcp`, navigate to https://chatgpt.com/ (新規 chat)
 3. canvas attach:
    - JS で `<img crossOrigin="anonymous">` を 2 枚作って basePngUrls から load
    - canvas に drawImage して `canvas.toBlob('image/png')` で Blob 化
@@ -436,19 +447,43 @@ ChatGPT の画像生成チャットで生成されるものであり、Claude �
    - `new DataTransfer()` に add → `document.getElementById('upload-files').files = dt.files`
    - `dispatchEvent(new Event('change', { bubbles: true }))`
 4. 添付カード 2 件が表示されたことを DOM 確認
-5. **入力欄を focus → `Ctrl+V` (mcp__Claude_in_Chrome__shortcuts_execute) でクリップボードから paste**
+5. **クリップボード verify-and-wait loop** (この時間帯は他プロセスが clipboard を上書きする可能性がある):
+   - PS orchestrator が STA guardian を 1 秒周期で 30 分起動済み (期待長は PS が prompt 内で通知)
+   - `navigator.clipboard.readText()` で長さ取得
+   - 期待長 ± 30 以内なら次へ
+   - そうでなければ 1.5 秒待って再読み込み (最大 60 回 ≒ 90 秒)
+   - 収束しない場合は `clipboard_overwritten` で停止。**深夜帯 (22:00–06:00 JST) の quiet window に再実行する** 旨を nextAction に書く
+6. **入力欄を focus → `Ctrl+V` (mcp__Claude_in_Chrome__shortcuts_execute) でクリップボードから paste**
    - **入力欄の内容を読まない / 表示しない**
-6. 送信ボタンを **1 回だけ**クリック
-7. 画像生成完了まで polling (最大 ~8 分) — `<img alt="生成された画像">` または src に `oaiusercontent` 含む要素を探す
-8. 生成画像を blob fetch → ダウンロード
-9. `D:\downloads` か `~/Downloads` から最新 png を `public/images/thumbnails/{slug}.png` に Move
-10. ファイル存在 + サイズ > 20KB を Bash で確認 → JSON 報告
+   - paste 後 500ms 待って入力欄の文字数を確認し、期待長の 80% 未満なら verify-and-wait をもう1回 → Ctrl+V 再試行 (最大3回)
+   - それでも反映されなければ `paste_did_not_land` で停止
+7. 送信ボタンを **1 回だけ**クリック
+8. 画像生成完了まで polling (最大 ~10 分) — `<img alt="生成された画像">` または src に `oaiusercontent` 含む要素を探す
+9. 生成画像を blob fetch → ダウンロード
+10. `D:\downloads` か `~/Downloads` から最新 png を `public/images/thumbnails/{slug}.png` に Move
+11. ファイル存在 + サイズ > 20KB を Bash で確認 → JSON 報告 (dimensions / sha256 も含めると良い)
+
+### 失敗 reason 標準語彙
+clipboard 経路を維持する前提で、失敗は以下のいずれかで報告:
+- `browser_mismatch` (Edge 等を検出)
+- `chrome_not_connected`
+- `chrome_mcp_unavailable`
+- `clipboard_overwritten` (verify-and-wait が収束せず)
+- `clipboard_content_mismatch` (長さは合うが内容 head が違う)
+- `paste_did_not_land`
+- `image_generation_timeout`
+- `image_download_failed`
+- `png_too_small`
+- `aup_refused`
+- `worker_handoff_attempted`
+
+nextAction は **常に「retry in deep-night quiet window (22:00–06:00 JST) with Chrome only」** 系の表現にする。base64 transport / CDP 直接投入 / Edge フォールバックを勝手に提案しない。
 
 ### AUP refusal が出た場合
 1. 該当箇所のキーワードを「煽り表現」リストと突き合わせる
 2. プロンプトを安全寄りに書き換える (元プロンプトは保存)
 3. **ただし禁止語リストをプロンプトに書かない** (フィルタが拾う)
-4. 1 回だけリトライ。再度 refusal なら停止
+4. 1 回だけリトライ。再度 refusal なら停止 (reason=`aup_refused`)
 
 ## 共通注意
 

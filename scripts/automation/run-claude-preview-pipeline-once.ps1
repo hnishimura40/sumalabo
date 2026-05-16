@@ -204,6 +204,60 @@ try {
   $script:Report.details.preFlight = @{ ok = $true; branch = "main" }
 
   # ============================================================
+  # Stage 1b: browser+quiet-window guard
+  #
+  # すまラボ自動化は ChatGPT/Claude 操作を Chrome 固定で行う。Edge は使わない。
+  # サムネ生成 (Stage 7 carrier mode) は OS クリップボード経由で動くため、
+  # 別アプリ/別 Claude セッションがクリップボードを書き換える時間帯では
+  # 失敗しやすい。深夜帯 (22:00–06:00 JST) は静かで成功率が高い。
+  # ここではブロックしないが、quietWindow=false の場合は warning を残し、
+  # 失敗時の reason 分類で "ran outside quiet window" を読み取れるようにする。
+  # ============================================================
+  $script:Report.stage = "browser_check"
+  Write-RunLog "Stage 1b: browser+quiet-window guard"
+
+  $hourJst = [int](Get-Date).ToString("HH")
+  $quietWindow = ($hourJst -ge 22 -or $hourJst -lt 6)
+  Write-RunLog ("  hourJst=" + $hourJst + " quietWindow=" + $quietWindow)
+  if (-not $quietWindow) {
+    Write-RunLog "  WARN: Stage 7 thumbnail carrier runs OS clipboard transport; daytime clipboard contention from concurrent Claude sessions / other automation is documented. Failures during this run are NOT a reason to drop the clipboard transport — retry in deep-night quiet window (22:00–06:00 JST)."
+  }
+
+  $chromeProc = @(Get-Process -Name chrome -ErrorAction SilentlyContinue)
+  $edgeProc = @(Get-Process -Name msedge -ErrorAction SilentlyContinue)
+  $chromeRunning = ($chromeProc.Count -gt 0)
+  $edgeRunning = ($edgeProc.Count -gt 0)
+  Write-RunLog ("  chromeRunning=" + $chromeRunning + " (count=" + $chromeProc.Count + ") edgeRunning=" + $edgeRunning + " (count=" + $edgeProc.Count + ")")
+  if (-not $chromeRunning) {
+    # Phase B and Stage 7 both require Chrome MCP. Fail fast with a
+    # structured reason rather than letting Claude attempt to fall back
+    # to Edge.
+    $script:Report.reason = "chrome_not_running"
+    $script:Report.details.browserCheck = @{
+      ok = $false
+      reason = "chrome_not_running"
+      chromeRunning = $false
+      edgeRunning = $edgeRunning
+      nextAction = "Start Chrome with the Claude-in-Chrome extension and ChatGPT logged in, then re-run. Edge is NOT an acceptable substitute."
+    }
+    Fail-Stage "browser_check" "chrome_not_running: Chrome is not running. Edge fallback is forbidden by すまラボ automation policy."
+  }
+  if ($edgeRunning) {
+    Write-RunLog "  WARN: Edge is also running. If Claude in Chrome MCP picks Edge by mistake, the carrier will fail with browser_mismatch."
+  }
+
+  $script:Report.details.browserCheck = @{
+    ok = $true
+    quietWindow = $quietWindow
+    hourJst = $hourJst
+    chromeRunning = $true
+    chromeProcessCount = $chromeProc.Count
+    edgeRunning = $edgeRunning
+    edgeProcessCount = $edgeProc.Count
+    note = "Chrome is the only supported browser for ChatGPT/Claude operations. Edge fallback is forbidden."
+  }
+
+  # ============================================================
   # Stage 2: candidate selection (deterministic Node)
   # ============================================================
   $script:Report.stage = "candidate_selection"
@@ -548,6 +602,29 @@ PROHIBITED:
 - Do NOT decide queue status, do NOT decide preview_created, do NOT decide success/failure of the pipeline. Only report what you did via JSON.
 - Do NOT touch other articles. Slug = $TargetSlug only.
 
+# BROWSER CONSTRAINT (Chrome only — Edge forbidden)
+
+すまラボ automation REQUIRES Google Chrome. Edge / Microsoft Edge / msedge are NEVER acceptable substitutes.
+
+BEFORE any browser operation (tabs_create_mcp / navigate / javascript_tool), you MUST verify the active browser is Chrome:
+
+1. mcp__Claude_in_Chrome__list_connected_browsers — must list at least one entry.
+2. For each candidate, inspect the browser name / process name. Reject any of:
+     - "Microsoft Edge"
+     - "Edge"
+     - "msedge"
+     - "msedge.exe"
+3. mcp__Claude_in_Chrome__select_browser MUST pick a Chrome entry. If only Edge is connected, do NOT proceed; return ok=false with reason="browser_mismatch" or "chrome_not_connected".
+4. Do NOT use mcp__Claude_in_Chrome__switch_browser to fall back to Edge. The only acceptable browser is Chrome.
+5. If the Chrome MCP extension reports an Edge tab as the active context (e.g. via tabs_context_mcp), abort with reason="browser_mismatch".
+
+If Chrome cannot be reached, return ok=false with one of:
+  - "chrome_not_connected"   (no Chrome browser registered with the MCP)
+  - "chrome_mcp_unavailable" (the MCP server itself is not responding)
+  - "browser_mismatch"       (a non-Chrome browser was selected / detected)
+
+Provide a brief nextAction such as "user must start Chrome with Claude-in-Chrome extension and ChatGPT logged in" — NEVER suggest using Edge.
+
 REQUIRED OUTPUT (last line of your response, on its own line, parseable JSON):
 SUCCESS:  {"ok": true,  "stage": "phase_b", "slug": "$TargetSlug", "outputs": ["$DraftPath"], "summary": "<short>"}
 FAILURE:  {"ok": false, "stage": "phase_b", "slug": "$TargetSlug", "reason": "<why>", "nextAction": "<what should happen>"}
@@ -756,11 +833,84 @@ import('$QueueStoreImportUrl').then(async m => {
     # ============================================================
     $thumbContent = Get-Content -LiteralPath $AbsThumbnailPromptPath -Raw -Encoding UTF8
     $thumbContentLen = $thumbContent.Length
+
+    # Clipboard idle check — if another process is actively spamming the
+    # clipboard right now, we lose the race before the carrier even starts.
+    # Sample 5 times at 400ms intervals; if 2+ samples differ from each
+    # other, treat as "contended" and warn (don't block; deep-night runs
+    # naturally pass this).
+    $idleSamples = @()
+    for ($i = 0; $i -lt 5; $i++) {
+      try { $s = Get-Clipboard -Raw -ErrorAction SilentlyContinue } catch { $s = $null }
+      $idleSamples += ($(if ($s) { $s.Length } else { 0 }))
+      Start-Sleep -Milliseconds 400
+    }
+    $uniqueSampleCount = ($idleSamples | Select-Object -Unique).Count
+    $clipboardContended = ($uniqueSampleCount -ge 3)
+    Write-RunLog ("  clipboard idle-check samples=" + ($idleSamples -join ",") + " unique=" + $uniqueSampleCount + " contended=" + $clipboardContended)
+    if ($clipboardContended -and -not $quietWindow) {
+      Write-RunLog "  WARN: clipboard is actively contended outside quiet window. Stage 7 will still attempt, but failure reason='clipboard_overwritten' is expected. Retry recommended in deep-night quiet window (22:00–06:00 JST)."
+    }
+
     try {
       Set-Clipboard -Value $thumbContent
-      Write-RunLog ("  pre-loaded OS clipboard with thumbnail prompt (length=" + $thumbContentLen + " chars; content body NOT logged)")
     } catch {
       Fail-Stage "thumbnail" ("Set-Clipboard failed (carrier mode requires clipboard access): " + $_.Exception.Message)
+    }
+    Start-Sleep -Milliseconds 300
+    $verifyBack = $null
+    try { $verifyBack = Get-Clipboard -Raw -ErrorAction SilentlyContinue } catch {}
+    $verifyBackLen = 0; if ($verifyBack) { $verifyBackLen = $verifyBack.Length }
+    if ($verifyBackLen -lt ($thumbContentLen - 30)) {
+      $script:Report.details.thumbnail = @{
+        ok = $false
+        reason = "clipboard_overwritten"
+        expectedLen = $thumbContentLen
+        actualLen = $verifyBackLen
+        clipboardContended = $clipboardContended
+        idleSamples = $idleSamples
+        quietWindow = $quietWindow
+        nextAction = "retry in deep-night quiet window (22:00–06:00 JST)"
+      }
+      Fail-Stage "thumbnail" ("clipboard_overwritten before carrier launch: expected=" + $thumbContentLen + " actual=" + $verifyBackLen + " (idleSamples=" + ($idleSamples -join ",") + ")")
+    }
+    Write-RunLog ("  pre-loaded OS clipboard with thumbnail prompt (length=" + $thumbContentLen + " chars verified=" + $verifyBackLen + "; content body NOT logged)")
+
+    # Start STA clipboard guardian — re-asserts the prompt every ~1s for 30
+    # min. Carrier verifies clipboard length within ±30 before pasting; the
+    # guardian gives the carrier a moving "good window" to catch.
+    $guardScriptPath = Join-Path $LogDir ("thumbnail-clip-guardian-" + $Stamp + ".ps1")
+    $guardScriptBody = @'
+param([string]$promptFile, [int]$expectedLen, [string]$logFile)
+$content = [System.IO.File]::ReadAllText($promptFile, [System.Text.Encoding]::UTF8)
+$iters = 0
+while ($iters -lt 1800) {
+  Start-Sleep -Milliseconds 1000
+  try {
+    $back = Get-Clipboard -Raw -ErrorAction SilentlyContinue
+    $bl = 0; if ($back) { $bl = $back.Length }
+    if ($bl -lt ($expectedLen - 50)) {
+      Set-Clipboard -Value $content
+      if (($iters % 30) -eq 0) {
+        Add-Content -Path $logFile -Value ("[" + (Get-Date).ToString("HH:mm:ss") + "] thumb-guardian: re-set (was " + $bl + ")")
+      }
+    }
+  } catch {}
+  $iters++
+}
+'@
+    $gbom = [System.Text.Encoding]::UTF8.GetPreamble()
+    $gbody = [System.Text.Encoding]::UTF8.GetBytes($guardScriptBody)
+    $gcombined = New-Object byte[] ($gbom.Length + $gbody.Length)
+    [Array]::Copy($gbom, 0, $gcombined, 0, $gbom.Length)
+    [Array]::Copy($gbody, 0, $gcombined, $gbom.Length, $gbody.Length)
+    [System.IO.File]::WriteAllBytes($guardScriptPath, $gcombined)
+    $guardProc = $null
+    try {
+      $guardProc = Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile","-ExecutionPolicy","Bypass","-STA","-File",$guardScriptPath,$AbsThumbnailPromptPath,$thumbContentLen,$LogPath) -PassThru -WindowStyle Hidden
+      Write-RunLog ("  clipboard guardian (STA, 1s interval, 30min) started pid=" + $guardProc.Id)
+    } catch {
+      Write-RunLog ("  WARN: guardian start failed: " + $_.Exception.Message + " — carrier may see stale clipboard")
     }
 
     $thumbPrompt = @"
@@ -768,56 +918,116 @@ You are a CARRIER for the すまラボ pipeline.
 
 # CARRIER CONTRACT (mandatory)
 
-You are NOT a content reviewer. You do NOT evaluate, summarize, interpret, or comment on the article's thumbnail prompt. The PowerShell orchestrator already placed the thumbnail prompt in the OS clipboard. Your only job: move bytes from clipboard to ChatGPT, wait for the generated image, save it to disk.
+You are NOT a content reviewer. You do NOT evaluate, summarize, interpret, or comment on the article's thumbnail prompt. The PowerShell orchestrator already placed the thumbnail prompt on the OS clipboard. Your only job: verify Chrome is the active browser, wait until the clipboard reads the expected $thumbContentLen-char prompt, paste, send, wait for the generated image, save it.
 
 ABSOLUTE PROHIBITIONS:
-- Do NOT use the Read tool on drafts/materials/$TargetSlug.thumbnail-prompt.md or any thumbnail prompt file. The body is already in the OS clipboard; you do not need to see it.
+- Do NOT use the Read tool on drafts/materials/$TargetSlug.thumbnail-prompt.md or any thumbnail prompt file. The body is already on the OS clipboard.
 - Do NOT use Bash cat / Get-Content / type on the thumbnail prompt file.
-- Do NOT use mcp__Claude_in_Chrome__get_page_text / read_page / read_console_messages to inspect what was pasted into the ChatGPT input. You do not need to verify the paste content.
-- Do NOT summarize, paraphrase, or quote any part of the thumbnail prompt body in your output.
-- Do NOT use ScheduleWakeup, schedule, cron, reminder, /loop, mcp__ccd_session, or any "later / continue later" mechanism. Finish in THIS invocation.
-- Do NOT say "I'll let the scheduled wakeup take over", "I'll continue later", "I'll hand off", or any phrase implying future session handoff.
-- Do NOT call AskUserQuestion. There is no user.
-- Do NOT exit with ok=true unless the PNG file exists on disk at $ThumbnailPath with size > 20000 bytes. The orchestrator validates the artifact.
-- Do NOT decide queue status / preview_created / success or failure of the pipeline. Only report what you did via JSON.
+- Do NOT use mcp__Claude_in_Chrome__get_page_text / read_page / read_console_messages to inspect what was pasted into the ChatGPT input.
+- Do NOT summarize, paraphrase, or quote any part of the thumbnail prompt body.
+- Do NOT use ScheduleWakeup, schedule, cron, reminder, /loop, mcp__ccd_session, or any "later / continue later" mechanism.
+- Do NOT say "I'll let the scheduled wakeup take over", "I'll continue later", "I'll hand off".
+- Do NOT call AskUserQuestion.
+- Do NOT exit ok=true unless the PNG exists at $ThumbnailPath, size > 20000 bytes, AND mtime is from THIS invocation.
+- Do NOT decide queue status / preview_created.
 - Do NOT touch other articles. Slug = $TargetSlug only.
+- Do NOT switch to base64 transport, CDP injection, window.open relays, or any other "creative" alternative to OS clipboard. The clipboard is the chosen transport; if it fails, the carrier reports cleanly and the orchestrator retries in the deep-night quiet window.
+
+# BROWSER CONSTRAINT (Chrome only — Edge forbidden)
+
+すまラボ automation REQUIRES Google Chrome. Edge / Microsoft Edge / msedge are NEVER acceptable substitutes, even if the Claude in Chrome MCP can technically reach them.
+
+BEFORE step 3 (tab create) you MUST verify Chrome:
+
+1. mcp__Claude_in_Chrome__list_connected_browsers — capture every browser the MCP knows about.
+2. For each candidate, inspect the displayed browser name / product / process name. Reject any of:
+     - "Microsoft Edge"
+     - "Edge"
+     - "msedge"
+     - "msedge.exe"
+3. mcp__Claude_in_Chrome__select_browser MUST pick a Chrome entry.
+4. Do NOT use mcp__Claude_in_Chrome__switch_browser to bind to Edge as a fallback.
+5. After select_browser, optionally call tabs_context_mcp once to read the active tab's user-agent / window title. If "Edg/" or "Edge" appears, abort with reason="browser_mismatch".
+
+If Chrome cannot be reached, return ok=false with reason in:
+  - "chrome_not_connected"
+  - "chrome_mcp_unavailable"
+  - "browser_mismatch"
+nextAction must say "user must start Chrome with Claude-in-Chrome extension and ChatGPT logged in" — NEVER suggest Edge.
 
 REQUIRED OUTPUT (last line, JSON):
-SUCCESS:  {"ok": true,  "stage": "thumbnail", "slug": "$TargetSlug", "outputs": ["$ThumbnailPath"], "summary": "<bytes/dimensions only; no prompt content>"}
-FAILURE:  {"ok": false, "stage": "thumbnail", "slug": "$TargetSlug", "reason": "<technical reason; no prompt content>", "nextAction": "<what should happen>"}
+SUCCESS:  {"ok": true,  "stage": "thumbnail", "slug": "$TargetSlug", "outputs": ["$ThumbnailPath"], "summary": "<bytes/dimensions/sha256 only; no prompt content>"}
+FAILURE reason MUST be one of:
+  - "browser_mismatch"          (Edge or non-Chrome detected)
+  - "chrome_not_connected"      (no Chrome registered with MCP)
+  - "chrome_mcp_unavailable"    (MCP server unresponsive)
+  - "clipboard_overwritten"     (clipboard never converged on expected $thumbContentLen-char content within retry budget)
+  - "clipboard_content_mismatch" (clipboard length matched but content head differed)
+  - "paste_did_not_land"        (Ctrl+V completed but input remained empty/short after retries)
+  - "image_generation_timeout"  (poll loop exceeded 10 min without an oaiusercontent image)
+  - "image_download_failed"     (download/move did not produce a valid PNG)
+  - "png_too_small"             (file exists but < 20000 bytes)
+  - "aup_refused"               (Anthropic AUP filter blocked something)
+  - "worker_handoff_attempted"  (you caught yourself trying to defer; record and abort)
 
-# MECHANICAL STEPS (execute in order, do NOT skip, do NOT improvise)
+FAILURE:  {"ok": false, "stage": "thumbnail", "slug": "$TargetSlug", "reason": "<one of the above>", "nextAction": "retry in deep-night quiet window (22:00–06:00 JST) with Chrome only"}
 
-1. mcp__Claude_in_Chrome__list_connected_browsers → must be exactly 1. If 0 or >1, return ok=false.
-2. mcp__Claude_in_Chrome__select_browser → pick the 1 connected browser.
-3. mcp__Claude_in_Chrome__tabs_create_mcp → new tab at https://chatgpt.com/ (fresh chat).
-4. ATTACH BASE PNGs via canvas + DataTransfer. Use mcp__Claude_in_Chrome__javascript_tool with a script that:
+# MECHANICAL STEPS (execute in order; do NOT improvise alternative transports)
+
+1. Verify Chrome (see BROWSER CONSTRAINT above). Reject Edge.
+2. mcp__Claude_in_Chrome__tabs_create_mcp → fresh tab at https://chatgpt.com/.
+3. ATTACH BASE PNGs via canvas + DataTransfer. Use mcp__Claude_in_Chrome__javascript_tool with a script that:
    - creates two <img crossOrigin="anonymous"> loading from:
        https://sumalabo.com/images/characters/base/himari-base.png
        https://sumalabo.com/images/characters/base/labomaru-base.png
    - draws each to canvas + canvas.toBlob('image/png')
-   - new File([blob], 'himari-base.png') and 'labomaru-base.png'
-   - new DataTransfer().items.add(...) twice
+   - new File([blob], 'himari-base.png') / 'labomaru-base.png'
+   - new DataTransfer().items.add(...) ×2
    - document.getElementById('upload-files').files = dt.files
    - input.dispatchEvent(new Event('change', { bubbles: true }))
-   Poll for 2 attachment thumbnails in DOM (max 30 sec). If !=2, return ok=false.
-5. FOCUS the ChatGPT input field via mcp__Claude_in_Chrome__javascript_tool. Selector: contenteditable=true under main, or textarea/composer. Call .focus() ONLY. Do NOT read or log the current value.
-6. PASTE from clipboard. The OS clipboard already contains the thumbnail prompt. Use mcp__Claude_in_Chrome__shortcuts_execute to send Ctrl+V. Do NOT inspect input afterward.
-7. CLICK Send. Use mcp__Claude_in_Chrome__javascript_tool to click data-testid="send-button" (one click only).
-8. POLL for image generation via mcp__Claude_in_Chrome__javascript_tool every ~10 seconds (max 8 minutes). Look for an <img> whose alt contains '生成された画像' OR src includes 'oaiusercontent' OR a similar OpenAI-served image URL. Return that image src when found. Do NOT call get_page_text.
-9. DOWNLOAD via mcp__Claude_in_Chrome__javascript_tool: fetch the image src as blob, create <a href=URL.createObjectURL(blob) download="$TargetSlug.png">, click it. Browser saves to D:\downloads or similar.
-10. MOVE the latest .png from downloads to the target path. Use Bash:
+   Poll for 2 attachment thumbnails in DOM (max 30s). If !=2, return ok=false reason="image_generation_timeout".
+
+4. FOCUS the ChatGPT input via mcp__Claude_in_Chrome__javascript_tool: document.querySelector('[contenteditable=true]')?.focus(); Do NOT read the current value.
+
+5. CLIPBOARD VERIFY-AND-WAIT LOOP (critical — external processes may briefly overwrite clipboard):
+
+   The orchestrator placed $thumbContentLen chars on the OS clipboard, AND launched a guardian process that re-asserts the prompt every ~1 second for the next 30 minutes. Your job: read the clipboard via mcp__Claude_in_Chrome__javascript_tool, and ONLY proceed to paste when the read length is within ±30 chars of $thumbContentLen.
+
+   for attempt in 1..60:
+     const t = await navigator.clipboard.readText();
+     if (t.length >= $($thumbContentLen - 30) && t.length <= $($thumbContentLen + 30)) {
+       // converged — break
+     } else {
+       await new Promise(r => setTimeout(r, 1500));  // wait for guardian
+     }
+   end
+
+   If after 60 attempts (~90s) the clipboard never converges, return ok=false with reason="clipboard_overwritten" and nextAction="retry in deep-night quiet window". Do NOT paste partial / mismatched content. Do NOT fall back to navigator.clipboard fallback chains. Do NOT proceed.
+
+6. PASTE: mcp__Claude_in_Chrome__shortcuts_execute with key="Ctrl+V" (one keystroke). Wait 500ms. Then verify:
+     const input = document.querySelector('[contenteditable=true]') || document.querySelector('textarea');
+     const len = (input.innerText || input.value || '').length;
+   If len < $($thumbContentLen * 0.8): re-run the clipboard verify-and-wait loop ONCE, then retry Ctrl+V. Max 3 paste attempts total. If still short, return ok=false reason="paste_did_not_land".
+
+7. CLICK Send: click data-testid="send-button" once.
+
+8. POLL for image generation every ~10s (max 10 min). Match <img> whose src contains 'oaiusercontent' or similar OpenAI-served URL. If no match by deadline, return ok=false reason="image_generation_timeout".
+
+9. DOWNLOAD: fetch the image src as blob, create <a download="$TargetSlug.png">, click. Browser saves to D:\downloads.
+
+10. MOVE via Bash:
     powershell.exe -NoProfile -Command "Get-ChildItem 'D:\downloads\*.png' | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | Move-Item -Destination 'D:\documents\動画作成関連\すまラボ\$ThumbnailPath' -Force"
-11. VERIFY the file exists at $AbsThumbnailPath with size > 20000 bytes. If 'missing' or < 20000, return ok=false.
+
+11. VERIFY the file at $AbsThumbnailPath exists, size > 20000 bytes. If missing → reason="image_download_failed". If too small → reason="png_too_small".
 
 # WHAT YOU DO NOT NEED TO KNOW
 
-You do NOT need to know what the thumbnail depicts, what text it contains, or whether it follows any particular policy. The orchestrator validated the prompt source. Your job is mechanical only.
+You do NOT need to know what the thumbnail depicts, what text it contains, or whether it follows any particular policy. Your job is mechanical only. If anything blocks you (clipboard, browser, paste, generation, download), STOP and report a structured reason from the list above. The orchestrator decides whether to retry tonight in the quiet window.
 
 Slug: $TargetSlug
 Target output path (relative): $ThumbnailPath
 Target output path (absolute): $AbsThumbnailPath
-Clipboard already contains the thumbnail prompt ($thumbContentLen chars).
+Clipboard expected length: $thumbContentLen chars (a guardian re-asserts every ~1s for 30 min)
 Budget cap: ~$ThumbnailMaxBudgetUsd USD.
 "@
     $thumbPromptFile = Join-Path $LogDir ("thumb-prompt-" + $Stamp + ".txt")
@@ -831,16 +1041,87 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
     $ErrorActionPreference = $PrevErrT
     Write-RunLog ("thumbnail claude exit=" + $thumbEc)
 
-    if (-not (Test-Path $AbsThumbnailPath)) { Fail-Stage "thumbnail" ("thumbnail not created: " + $ThumbnailPath) }
+    # Stop clipboard guardian — orchestrator no longer needs to protect.
+    if ($guardProc) {
+      try { Stop-Process -Id $guardProc.Id -Force -ErrorAction SilentlyContinue; Write-RunLog ("  clipboard guardian pid=" + $guardProc.Id + " stopped") } catch {}
+    }
+
+    # Parse carrier's last JSON line to surface structured failure reason
+    # in the orchestrator's report. This lets queue-update + later runs
+    # discriminate clipboard_overwritten / browser_mismatch / etc.
+    $carrierReason = $null
+    $carrierNextAction = $null
+    try {
+      $stdoutText = Get-Content -LiteralPath $thumbStdoutFile -Raw -Encoding UTF8 -ErrorAction SilentlyContinue
+      $jsonMatch = [regex]::Match($stdoutText, '\{[^{}]*"stage"\s*:\s*"thumbnail"[^{}]*\}')
+      if ($jsonMatch.Success) {
+        $parsed = $null
+        try { $parsed = $jsonMatch.Value | ConvertFrom-Json } catch {}
+        if ($parsed) {
+          if ($parsed.reason) { $carrierReason = $parsed.reason }
+          if ($parsed.nextAction) { $carrierNextAction = $parsed.nextAction }
+        }
+      }
+    } catch {}
+    if ($carrierReason) {
+      Write-RunLog ("  carrier reason=" + $carrierReason + " nextAction=" + $carrierNextAction)
+    }
+
+    if (-not (Test-Path $AbsThumbnailPath)) {
+      $reasonCategory = if ($carrierReason) { $carrierReason } else { "png_not_created" }
+      $script:Report.details.thumbnail = @{
+        ok = $false
+        reason = $reasonCategory
+        carrierReason = $carrierReason
+        carrierNextAction = $carrierNextAction
+        quietWindow = $quietWindow
+        clipboardContended = $clipboardContended
+        idleSamples = $idleSamples
+        outputPath = $ThumbnailPath
+        nextAction = if ($carrierNextAction) { $carrierNextAction } else { "retry in deep-night quiet window (22:00–06:00 JST); do NOT switch transport or use Edge" }
+      }
+      Fail-Stage "thumbnail" ("thumbnail not created (reason=" + $reasonCategory + ", quietWindow=" + $quietWindow + "): " + $ThumbnailPath)
+    }
     $thumbBytes = (Get-Item $AbsThumbnailPath).Length
-    if ($thumbBytes -lt 20000) { Fail-Stage "thumbnail" ("thumbnail too small: " + $thumbBytes + " bytes") }
+    if ($thumbBytes -lt 20000) {
+      $script:Report.details.thumbnail = @{
+        ok = $false
+        reason = "png_too_small"
+        bytes = $thumbBytes
+        outputPath = $ThumbnailPath
+        quietWindow = $quietWindow
+        nextAction = "retry in deep-night quiet window (22:00–06:00 JST)"
+      }
+      Fail-Stage "thumbnail" ("png_too_small: " + $thumbBytes + " bytes")
+    }
+    $thumbSha256 = (Get-FileHash -LiteralPath $AbsThumbnailPath -Algorithm SHA256).Hash
+    $thumbMtime = (Get-Item $AbsThumbnailPath).LastWriteTime.ToString("o")
+    # Best-effort PNG dimension read (IHDR chunk: bytes 16-23 BE).
+    $thumbWidth = $null
+    $thumbHeight = $null
+    try {
+      $head = [byte[]]::new(24)
+      $fs = [System.IO.File]::OpenRead($AbsThumbnailPath)
+      $null = $fs.Read($head, 0, 24)
+      $fs.Close()
+      if ($head[0] -eq 0x89 -and $head[1] -eq 0x50 -and $head[2] -eq 0x4E -and $head[3] -eq 0x47) {
+        $thumbWidth = ([int]$head[16] -shl 24) -bor ([int]$head[17] -shl 16) -bor ([int]$head[18] -shl 8) -bor [int]$head[19]
+        $thumbHeight = ([int]$head[20] -shl 24) -bor ([int]$head[21] -shl 16) -bor ([int]$head[22] -shl 8) -bor [int]$head[23]
+      }
+    } catch {}
+    Write-RunLog ("  thumbnail OK bytes=" + $thumbBytes + " dim=" + $thumbWidth + "x" + $thumbHeight + " sha256=" + $thumbSha256.Substring(0, 16) + "...")
     $script:Report.details.thumbnail = @{
       ok = $true
       thumbnailAlreadyExists = $false
       outputPath = $ThumbnailPath
       bytes = $thumbBytes
+      width = $thumbWidth
+      height = $thumbHeight
+      sha256 = $thumbSha256
+      mtime = $thumbMtime
       promptPath = $ThumbnailPromptPath
       promptSource = $ThumbnailPromptSource
+      quietWindow = $quietWindow
     }
   }
 
