@@ -7,6 +7,75 @@
 このプロンプトは **記事 1 本を「ユーザーが承認できる状態」まで持っていく** ためのものです。
 Preview deploy できただけでは未完了です。
 
+## 新標準記事構成 (絶対)
+
+すまラボの記事は、**「長文を短くする」のではなく、「判断・比較・注意点を、表・カード・図解・フローで先に見せる」** 方針にする。文字数を削るのが目的ではない。情報量は維持し、構造で読みやすくする。
+
+### 3-tier スクロールモデル (全タイプ共通)
+
+| Zone | スマホ表示位置 | 役割 |
+|---|---|---|
+| Zone 1: 判断ゾーン | 冒頭 1 スクロール以内 | 読者がここだけで「自分に関係あるか / 読む価値あるか」を判定 |
+| Zone 2: 理解ゾーン | 記事中盤 | 詳細な意味づけと判断材料。**ここで表・カード・図解を集中投下** |
+| Zone 3: 深掘りゾーン | 末尾 | 背景・出典・関連リンク・CTA |
+
+### 全タイプ共通の必須ブロック
+
+冒頭 1 スクロール以内に必ず置く:
+1. `<div class="summary-box"><p class="box-label">3行でわかるまとめ</p>` + 3 bullet
+2. `<div class="check-box"><p class="box-label">この記事で整理すること</p>` + 4 bullet 前後
+3. `<div class="summary-box"><p class="box-label">先に結論</p>` + 2-3 段落
+
+中盤に必ず置く:
+4. `<div class="table-card"><table>...</table></div>` または `<table>` (用語整理または比較)
+5. `<section class="decision-guide-panel">` + `<ul class="decision-list">` (「○○な人 / ○○な人」を提示)
+6. `<CharacterDialogue image="/images/characters/duo_talk_half.webp" lines={[...]}/>` 1 回以上 (内容を理解した後の反応)
+
+末尾に必ず置く:
+7. `## 参考情報` (公式情報 + 元報道リンク最低 2 件)
+
+長段落 (400 字超) が続いたら `<div class="info-box">` / `<div class="check-box">` に分割する。
+
+### 記事タイプ別の追加ブロック
+
+**news (ニュース記事)**:
+- リーク / 噂 / 公式発表前なら Zone 2 冒頭に `<div class="info-box">` で「公式発表ではない」注記
+- Zone 2 に `<div class="check-box">` 「期待できること / 注意したいこと / 普通の人への影響」
+- Zone 2 に `<section class="decision-guide-panel">` 「待つ人 / 待たなくてよい人 / 比較すべき人」
+- Zone 3 に `## 今すぐできる判断` (現時点で取れるアクション 2-4 個)
+
+**comparison (比較記事)** (slug に "comparison" または "-vs-" を含む foundation):
+- Zone 1 末尾に `<div class="decision-guide-grid">` で「あなたはどっち？」2-3 カード並列
+- Zone 2 に **メイン比較表** (`<div class="table-card">` で比較対象 × 観点)
+- Zone 2 に `<section class="decision-guide-panel">` 「用途別おすすめ」
+- Zone 2 に `<div class="info-box">` 「失敗しやすい選び方」
+- 任意で価格帯別 / メーカー別の decision-guide-panel
+
+**foundation (基礎解説記事)**:
+- Zone 2 の核心位置に **用語表** (`<div class="table-card">` で 用語 × 意味 × 普通の人への影響)
+- Zone 2 に「仕組みを 1 段落で」(`<div class="info-box">` または本文)
+- Zone 2 に `<section class="decision-guide-panel">` 「向いている人 / 向いていない人」
+- Zone 3 に `## 次に読むべき記事` (基礎 → 比較 / ニュース への導線)
+
+### 完了条件 (Hard gate) — 視覚構造関連
+
+以下が **すべて true でない限り** `preview_created` / `completedForUserApproval=true` にしない:
+
+- `hasThreeLineSummary` — Zone 1 に `summary-box` + 「3行でわかるまとめ」
+- `hasArticleRoadmap` — Zone 1 に `check-box` + 「この記事で整理すること」
+- `hasDetailedConclusion` — Zone 1 に 2 つ目の `summary-box` (先に結論)
+- `hasComparisonTable` — 本文に `table-card` または `<table>` が ≥ 1
+- `hasDecisionGuide` — 本文に `decision-guide-panel` / `decision-list` / `decision-guide-grid` のいずれか ≥ 1
+- `hasReferenceSection` — 末尾に `## 参考情報` セクション
+- `characterDialogueVisualOk` — dist HTML に CharacterDialogue 出力 + 残存「<strong>ひまり：</strong>」「<strong>らぼまる：</strong>」 = 0
+
+### 警告 (warning, 単独では block しないがレビュー対象)
+
+- `firstScrollWithinBudget` — 判断ゾーンが 6000 bytes 以内 (1 スクロール想定)
+- `tooManyLongParagraphs` — 400 字超段落が 5 個以上 = 警告
+- `flowOrDiagramPresent` — 順序付きリストや `<ol>` などの図解相当があるか
+- `endingHasCTAOrNextRead` — 末尾に「次に読む」「今すぐできる」などの CTA があるか
+
 ## 劣化禁止 (最優先)
 
 別の不具合修正・AUP 回避・安全化のついでに、サムネ・本文・キャラクター表現を **勝手に劣化させない**。

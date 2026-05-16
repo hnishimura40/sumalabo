@@ -1117,6 +1117,91 @@ Return a JSON line at end: {"ok": true/false, "outputPath": "...", "bytes": N, "
     Write-RunLog ("  Gate articleStructureOk=" + $articleStructureOk + " (mdxChars=" + $mdxChars + " structured=" + $structuredCount + " required>=" + $minStructured + ")")
   }
 
+  # ============================================================
+  # Visual-structure hard gates (new standard, feat/article-visual-structure-rules).
+  # All measured against the mdx file. The first-scroll budget gate is
+  # measured against the built dist HTML.
+  # ============================================================
+  $hasThreeLineSummary = $false
+  $hasArticleRoadmap = $false
+  $hasDetailedConclusion = $false
+  $hasComparisonTable = $false
+  $hasDecisionGuide = $false
+  $hasReferenceSection = $false
+  if (Test-Path $AbsArticleMdxPath) {
+    $mdxRaw3 = Get-Content -LiteralPath $AbsArticleMdxPath -Raw -Encoding UTF8
+    # "Zone 1" = first ~2500 chars (judgment scroll). Most box-label
+    # patterns we look for must appear here.
+    $z1End = [Math]::Min(2500, $mdxRaw3.Length)
+    $zone1 = $mdxRaw3.Substring(0, $z1End)
+    # "Zone 1 wider" includes the third summary-box (先に結論) which may
+    # live a little past the strict 2500-char boundary.
+    $z1WideEnd = [Math]::Min(4500, $mdxRaw3.Length)
+    $zone1Wide = $mdxRaw3.Substring(0, $z1WideEnd)
+
+    if ($zone1 -match "3行でわかるまとめ|3行まとめ") { $hasThreeLineSummary = $true }
+    if ($zone1 -match "この記事で整理すること") { $hasArticleRoadmap = $true }
+    # 先に結論 must appear AND be inside a summary-box (avoid false-positive on body mentions).
+    $summaryBoxMatches = [regex]::Matches($zone1Wide, 'class="summary-box"')
+    if ($summaryBoxMatches.Count -ge 2 -and $zone1Wide -match "先に結論") { $hasDetailedConclusion = $true }
+
+    # Comparison table: any table-card or table tag in the body.
+    if ($mdxRaw3 -match 'class="table-card"' -or $mdxRaw3 -match '<table[\s>]') { $hasComparisonTable = $true }
+    # Decision guide: any decision-guide-panel / decision-list / decision-guide-grid.
+    if ($mdxRaw3 -match 'class="decision-guide-panel"' -or $mdxRaw3 -match 'class="decision-list"' -or $mdxRaw3 -match 'class="decision-guide-grid"') { $hasDecisionGuide = $true }
+    # Reference section in the tail.
+    if ($mdxRaw3 -match "(?m)^##\s+参考情報") { $hasReferenceSection = $true }
+  }
+  Write-RunLog ("  Gate hasThreeLineSummary=" + $hasThreeLineSummary)
+  Write-RunLog ("  Gate hasArticleRoadmap=" + $hasArticleRoadmap)
+  Write-RunLog ("  Gate hasDetailedConclusion=" + $hasDetailedConclusion)
+  Write-RunLog ("  Gate hasComparisonTable=" + $hasComparisonTable)
+  Write-RunLog ("  Gate hasDecisionGuide=" + $hasDecisionGuide)
+  Write-RunLog ("  Gate hasReferenceSection=" + $hasReferenceSection)
+
+  # Warning fields (not hard gates): measured for the report but do not
+  # block preview_created promotion on their own.
+  $firstScrollWithinBudget = $null
+  $tooManyLongParagraphs = $null
+  $flowOrDiagramPresent = $null
+  $endingHasCTAOrNextRead = $null
+  if (Test-Path $distHtmlPath) {
+    $distHtmlFull = Get-Content -LiteralPath $distHtmlPath -Raw -Encoding UTF8
+    # Find the article-content block start and measure bytes until the
+    # 3rd </div> we encounter past the first summary-box opening. As a
+    # cheap heuristic: byte count from the first summary-box opening to
+    # the next H2. < 6000 bytes is roughly one scroll on a phone.
+    $firstSummaryIdx = $distHtmlFull.IndexOf('class="summary-box"')
+    if ($firstSummaryIdx -ge 0) {
+      $afterSummary = $distHtmlFull.Substring($firstSummaryIdx)
+      $firstH2Idx = $afterSummary.IndexOf('<h2')
+      if ($firstH2Idx -ge 0) {
+        $judgmentZoneBytes = $firstH2Idx
+        $firstScrollWithinBudget = ($judgmentZoneBytes -lt 6000)
+        Write-RunLog ("  Warning firstScrollWithinBudget=" + $firstScrollWithinBudget + " (judgmentZoneBytes=" + $judgmentZoneBytes + ")")
+      }
+    }
+  }
+  if (Test-Path $AbsArticleMdxPath) {
+    $mdxRaw4 = Get-Content -LiteralPath $AbsArticleMdxPath -Raw -Encoding UTF8
+    $longParaCount2 = 0
+    foreach ($block in ($mdxRaw4 -split "(?m)\r?\n\r?\n")) {
+      if ($block.Length -gt 400 -and $block -notmatch '^<|^```|^#') { $longParaCount2++ }
+    }
+    $tooManyLongParagraphs = ($longParaCount2 -ge 5)
+    Write-RunLog ("  Warning tooManyLongParagraphs=" + $tooManyLongParagraphs + " (count=" + $longParaCount2 + ")")
+    # Flow/diagram: ordered list (1. 2. 3.) of >=3 items, or any <ol> tag,
+    # OR a structured "判断フロー / 仕組み" label.
+    $orderedListCount = ([regex]::Matches($mdxRaw4, "(?m)^\s*\d+\.\s+")).Count
+    $flowOrDiagramPresent = ($orderedListCount -ge 3 -or $mdxRaw4 -match "<ol[\s>]|判断フロー|仕組み図")
+    Write-RunLog ("  Warning flowOrDiagramPresent=" + $flowOrDiagramPresent)
+    # CTA at end: scan last 2000 chars.
+    $tailStart = [Math]::Max(0, $mdxRaw4.Length - 2000)
+    $tail = $mdxRaw4.Substring($tailStart)
+    $endingHasCTAOrNextRead = ($tail -match "次に読む|今すぐできる|## 関連記事|次に読むべき記事")
+    Write-RunLog ("  Warning endingHasCTAOrNextRead=" + $endingHasCTAOrNextRead)
+  }
+
   # Gate 9: queueUpdatedOk — placeholder; set true after the actual queue
   # update below. We pre-compute as $true to allow the gate evaluation to
   # short-circuit early; if the queue write fails, Stage 13 sets this false.
@@ -1217,6 +1302,12 @@ Return a JSON line at end: {"ok": true/false, "outputPath": "...", "bytes": N, "
     articleImportedOk = [bool]$articleImportedOk
     characterDialogueVisualOk = [bool]$characterDialogueVisualOk
     articleStructureOk = [bool]$articleStructureOk
+    hasThreeLineSummary = [bool]$hasThreeLineSummary
+    hasArticleRoadmap = [bool]$hasArticleRoadmap
+    hasDetailedConclusion = [bool]$hasDetailedConclusion
+    hasComparisonTable = [bool]$hasComparisonTable
+    hasDecisionGuide = [bool]$hasDecisionGuide
+    hasReferenceSection = [bool]$hasReferenceSection
     notifyOk = [bool]$notifyOk
     prOk = [bool]$prOk
     queueUpdatedOk = [bool]$queueUpdatedOk
@@ -1224,6 +1315,13 @@ Return a JSON line at end: {"ok": true/false, "outputPath": "...", "bytes": N, "
     mainDirectPushNotRun = [bool]$mainDirectPushNotRun
     xPostNotRun = [bool]$xPostNotRun
     processedOnlyOneArticle = [bool]$processedOnlyOneArticle
+  }
+  # Visual-structure warning fields (not hard gates).
+  $visualWarnings = [ordered]@{
+    firstScrollWithinBudget = $firstScrollWithinBudget
+    tooManyLongParagraphs = $tooManyLongParagraphs
+    flowOrDiagramPresent = $flowOrDiagramPresent
+    endingHasCTAOrNextRead = $endingHasCTAOrNextRead
   }
   $failedGates = @()
   foreach ($k in $allGates.Keys) { if (-not $allGates[$k]) { $failedGates += $k } }
@@ -1236,6 +1334,7 @@ Return a JSON line at end: {"ok": true/false, "outputPath": "...", "bytes": N, "
   $script:Report.failedGate = $failedGate
   $script:Report.qualityBody = $qualityBody
   $script:Report.qualityThumbnail = $qualityThumbnail
+  $script:Report.visualWarnings = $visualWarnings
   $script:Report.previewDeployOk = $previewDeployOk
   $script:Report.verifyOk = $verifyOk
   $script:Report.notifyOk = $notifyOk

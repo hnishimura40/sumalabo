@@ -8,6 +8,106 @@ function linkItems(items = []) {
   return items.map((item) => `- ${item.label}: ${item.href}\n  ${item.description}`).join("\n");
 }
 
+/**
+ * Detects whether an article is a "comparison" article based on slug or
+ * sumalaboUse. Comparison articles use `type: foundation` in frontmatter
+ * but require a different visual structure (decision-guide-grid + table
+ * as the centerpiece).
+ */
+function detectArticleVariant(articleBrief) {
+  const slug = (articleBrief?.slug || "").toLowerCase();
+  const sumalaboUse = (articleBrief?.sumalaboUse || "").toLowerCase();
+  const baseType = (articleBrief?.articleType || "foundation").toLowerCase();
+  if (slug.includes("comparison") || slug.includes("-vs-") || sumalaboUse.includes("comparison")) {
+    return "comparison";
+  }
+  if (baseType === "news") return "news";
+  return "foundation";
+}
+
+/**
+ * Renders the "新標準記事構成" contract for the ChatGPT Phase B prompt.
+ * This is the system-level fix for the "文字の壁" problem: every article
+ * (news / comparison / foundation) gets a fixed visual structure with
+ * required blocks per type. ChatGPT is told to comply with these blocks
+ * before writing the body.
+ */
+function renderTypeContract(articleBrief) {
+  const variant = detectArticleVariant(articleBrief);
+
+  const commonRequired = `### 全タイプ共通の必須ブロック
+
+本文は次の順を厳守してください。各ブロックを省略しないでください。
+
+**[Zone 1: 判断ゾーン] — 冒頭 1 スクロール以内に置く (1500 字以内)**
+1. \`<div class="summary-box"><p class="box-label">3行でわかるまとめ</p>\` + 3 bullet (1 行ずつ)
+2. \`<div class="check-box"><p class="box-label">この記事で整理すること</p>\` + 4 bullet 前後
+3. \`<div class="summary-box"><p class="box-label">先に結論</p>\` + 2-3 段落の詳細結論
+
+**[Zone 2: 理解ゾーン] — 記事中盤**
+4. **必須**: \`<div class="table-card"><table>...</table></div>\` または \`<table>\` で用語整理または比較を表に
+5. **必須**: \`<section class="decision-guide-panel"><ul class="decision-list">...</ul></section>\` で「○○な人 / ○○な人」を提示
+6. **必須**: \`<CharacterDialogue image="/images/characters/duo_talk_half.webp" lines={[...]}/>\` を 1 回 (内容を理解した後の反応)
+
+**[Zone 3: 深掘りゾーン] — 記事末尾**
+7. **必須**: \`## 参考情報\` セクション (公式・元報道リンク最低 2 件)
+
+長い段落 (400 字超) が続いたら \`<div class="info-box">\` や \`<div class="check-box">\` に分割してください。
+**「長文を短くする」のではなく、「判断・比較・注意点を、表・カード・図解・フローで先に見せる」方針です。**
+`;
+
+  if (variant === "news") {
+    return `## 記事構成契約 (本文を書く前に必ず読む)
+
+このプロンプトは記事タイプ **news (ニュース記事)** として扱われます。
+
+${commonRequired}
+
+### ニュース記事の追加必須ブロック
+
+- リーク / 噂 / 公式発表前の話題の場合は、Zone 2 の冒頭に \`<div class="info-box">\` で「公式発表ではなく報道・リーク段階の情報である」旨を 1 段落で注記する
+- Zone 2 に \`<div class="check-box">\` で「期待できること / 注意したいこと / 普通の人への影響」 を 3-5 bullet で配置
+- Zone 2 に \`<section class="decision-guide-panel">\` で「待つ人 / 待たなくてよい人 / 比較すべき人」 の 3 軸 (\`<ul class="decision-list">\`)
+- Zone 3 に \`## 今すぐできる判断\` を必ず置く (現時点で読者が取れるアクションを 2-4 個)
+- Zone 3 末尾に \`## 参考情報\` (公式情報 + 元報道)
+`;
+  }
+
+  if (variant === "comparison") {
+    return `## 記事構成契約 (本文を書く前に必ず読む)
+
+このプロンプトは記事タイプ **comparison (比較記事)** として扱われます。
+
+${commonRequired}
+
+### 比較記事の追加必須ブロック
+
+- Zone 1 (判断ゾーン) の末尾に \`<div class="decision-guide-grid">\` で「あなたはどっち？」の 2-3 カード並列を置く
+- Zone 2 の最も目立つ位置に **メイン比較表** (\`<div class="table-card"><table>...</table></div>\`) — 比較対象 × 観点 のマトリクス
+- Zone 2 に \`<section class="decision-guide-panel">\` で「用途別おすすめ」 (\`<ul class="decision-list">\`)
+- Zone 2 に \`<div class="info-box">\` で「失敗しやすい選び方」 を 1-3 注意点
+- Zone 2 の任意で「価格帯別」または「メーカー別」の \`<section class="decision-guide-panel">\` を追加してよい
+- Zone 3 末尾に \`## 参考情報\`
+`;
+  }
+
+  // foundation (基礎解説)
+  return `## 記事構成契約 (本文を書く前に必ず読む)
+
+このプロンプトは記事タイプ **foundation (基礎解説記事)** として扱われます。
+
+${commonRequired}
+
+### 基礎解説記事の追加必須ブロック
+
+- Zone 2 の核心位置に **用語表** (\`<div class="table-card"><table>...</table></div>\`) — 用語 × 意味 × 普通の人にとっての影響 のマトリクス
+- Zone 2 に「仕組みを 1 段落で」 (\`<div class="info-box">\` 内に 1 段落、または本文 1 段落で要点だけ)
+- Zone 2 に \`<section class="decision-guide-panel">\` で「向いている人 / 向いていない人」 (\`<ul class="decision-list">\`)
+- Zone 3 に \`## 次に読むべき記事\` を必ず置く (基礎 → 比較 / ニュース への導線、関連記事 2-3 個)
+- Zone 3 末尾に \`## 参考情報\`
+`;
+}
+
 function renderUnderstanding(understanding) {
   if (!understanding) return "";
   const props = Array.isArray(understanding.thumbnailProps) && understanding.thumbnailProps.length
@@ -84,6 +184,8 @@ ${articleProjectUrl}
 すまラボは、スマホ・AI・ガジェットの難しい話を普通の人にもわかるように整理するメディアです。単なるニュース紹介ではなく、「何の話か」「なぜ話題か」「普通の人にどう関係するか」「今すぐ動くべきか、様子見でよいか」まで整理してください。
 
 ${renderUnderstanding(understanding)}
+
+${renderTypeContract(articleBrief)}
 
 ## 対象記事
 
