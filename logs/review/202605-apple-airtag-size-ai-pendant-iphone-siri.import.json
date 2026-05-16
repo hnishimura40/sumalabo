@@ -1,0 +1,57 @@
+{
+  "checkedAt": "2026-05-16T06:05:06.397Z",
+  "wordCountApprox": 7334,
+  "h2Count": 14,
+  "presentTopics": [
+    "先に結論",
+    "何が起きたのか",
+    "何が新しいのか",
+    "難しいポイントのかみくだき",
+    "普通の人にどう関係するのか",
+    "まだ分からないこと",
+    "すまラボ的な見方",
+    "まとめ"
+  ],
+  "missingTopics": [],
+  "issues": [],
+  "sourceCheck": {
+    "ok": true,
+    "hasReferenceSection": true,
+    "urlCount": 5,
+    "referenceUrls": [
+      "https://www.bloomberg.com/news/articles/2026-02-17/apple-ramps-up-work-on-glasses-pendant-and-camera-airpods-for-ai-era",
+      "https://www.macrumors.com/2026/05/07/apple-still-working-on-pendant-report/",
+      "https://www.apple.com/jp/apple-intelligence/",
+      "https://www.apple.com/jp/siri/",
+      "https://www.reuters.com/technology/apple-says-some-ai-improvements-siri-delayed-2026-2025-03-07/"
+    ],
+    "containsSumahonPublicReference": false,
+    "sumahonHits": [],
+    "isReportingTopic": true,
+    "hasReportingNotice": true,
+    "reportingNoticeRequired": true,
+    "reasons": [],
+    "notes": "公開記事用の参考情報セクションがあり、内部参考元の露出もありません。"
+  },
+  "articleQualityCheck": {
+    "ok": true,
+    "titleDuplicate": false,
+    "titleDuplicateDetails": [],
+    "h1Count": 0,
+    "markdownResidue": false,
+    "markdownResidueHits": [],
+    "characterPresence": "visual",
+    "boxHeadingWarnings": [],
+    "articleStructure": "ok",
+    "issues": [],
+    "reasons": []
+  },
+  "publishable": true,
+  "provisionalDecision": "preview確認後に公開可",
+  "sourceUrl": "https://smhn.info/202605-apple-airtag-size-ai-pendant-iphone-siri",
+  "articleTitle": "Apple、超小型「AIペンダント」を開発か？とは？普通の人向けに要点を整理",
+  "generatedDraftPath": "drafts/generated/202605-apple-airtag-size-ai-pendant-iphone-siri.md",
+  "materials": null,
+  "mdxPath": "content\\articles\\202605-apple-airtag-size-ai-pendant-iphone-siri.mdx",
+  "blockingRisk": false
+}
