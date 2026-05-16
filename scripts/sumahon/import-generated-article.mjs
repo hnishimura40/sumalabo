@@ -47,6 +47,56 @@ function normalizeBody(markdown, title) {
   return body;
 }
 
+/**
+ * Auto-insert MDX import statements for character components if the
+ * body references them but the corresponding import is missing.
+ *
+ * Root cause: ChatGPT Phase B output sometimes contains <CharacterDialogue>
+ * JSX without the required `import CharacterDialogue from ...` line at
+ * the top of the body. When the importer assembles the final mdx and
+ * Astro tries to render it, the build fails with:
+ *   "Expected component `CharacterDialogue` to be defined: you likely
+ *    forgot to import, pass, or provide it."
+ *
+ * This helper normalizes the body by:
+ * 1. Detecting which character components (CharacterDialogue /
+ *    CharacterCallout / CharacterGuideCard) are referenced in JSX form.
+ * 2. Detecting which corresponding `import X from "../../src/components/
+ *    characters/X.astro"` statements already exist in the body.
+ * 3. Prepending missing import statements at the top of the body.
+ *
+ * Imports are placed BEFORE the body content but AFTER the frontmatter
+ * (the frontmatter is concatenated separately by the caller). Existing
+ * imports are not duplicated.
+ *
+ * @param {string} body  — body markdown WITHOUT frontmatter (post-normalize)
+ * @returns {string} body with required imports prepended (or unchanged)
+ */
+function ensureMdxImports(body) {
+  if (!body || typeof body !== "string") return body;
+
+  const components = [
+    { name: "CharacterDialogue", importPath: "../../src/components/characters/CharacterDialogue.astro" },
+    { name: "CharacterCallout", importPath: "../../src/components/characters/CharacterCallout.astro" },
+    { name: "CharacterGuideCard", importPath: "../../src/components/characters/CharacterGuideCard.astro" },
+  ];
+
+  const importsToPrepend = [];
+  for (const c of components) {
+    // Used as a JSX tag? e.g., <CharacterDialogue ... or <CharacterDialogue/>
+    const useRegex = new RegExp(`<${c.name}(\\s|/|>)`);
+    if (!useRegex.test(body)) continue;
+    // Already imported? Match import name from any path containing the
+    // component file name, to be liberal about relative path variations.
+    const importRegex = new RegExp(`import\\s+${c.name}\\s+from\\s+["'][^"']+${c.name}\\.astro["']`);
+    if (importRegex.test(body)) continue;
+    importsToPrepend.push(`import ${c.name} from "${c.importPath}";`);
+  }
+
+  if (importsToPrepend.length === 0) return body;
+  return `${importsToPrepend.join("\n")}\n\n${body}`;
+}
+
 function makeDescription(articleBrief, body) {
   if (articleBrief?.coreAngle) {
     return `${articleBrief.coreAngle} 普通の人にもわかるように、何が話題で何を確認すべきかを整理します。`.slice(0, 160);
@@ -119,7 +169,13 @@ export async function importGeneratedArticle({ slug, filePath, articleBrief, sou
     frontmatterTitle: title,
     category,
   });
-  const mdx = `${frontmatter({ slug, title, description, thumbnail, thumbnailAlt, articleBrief })}\n\n${body}\n`;
+  // Auto-insert MDX imports for character components referenced in body
+  // (CharacterDialogue / CharacterCallout / CharacterGuideCard) so the
+  // Astro build does not fail with "Expected component X to be defined".
+  // This handles the Phase B output gap where ChatGPT sometimes emits
+  // the JSX tag without the required import statement.
+  const bodyWithImports = ensureMdxImports(body);
+  const mdx = `${frontmatter({ slug, title, description, thumbnail, thumbnailAlt, articleBrief })}\n\n${bodyWithImports}\n`;
 
   return {
     mdx,
