@@ -218,7 +218,18 @@ const q = JSON.parse(fs.readFileSync('data/automation/sumahon-queue.json', 'utf-
 // pending) OR a preview_deployed entry (Preview deployed but Stage 11/12
 // incomplete) takes absolute priority over new candidate selection.
 // productionDeployPending entries are excluded even here.
-const RESUMABLE_STATUSES = ['awaiting_import', 'preview_deployed'];
+// State-machine resumable statuses. The orchestrator further refines
+// the resume point by inspecting actual artifacts (resolveResumePoint),
+// so this list is intentionally broad: any status that means "work
+// started but pipeline did not complete to preview_created" is pickable.
+const RESUMABLE_STATUSES = [
+  'awaiting_chatgpt_generation',
+  'awaiting_thumbnail',
+  'awaiting_import',
+  'preview_deployed',
+  'draft_ready',
+  'thumbnail_ready',
+];
 const awaitingImport = q.filter(i => i && i.url && RESUMABLE_STATUSES.includes(i.status) && i.productionDeployPending !== true)
   .map(i => {
     const slug = i.slug || (i.url.split('/').pop());
@@ -232,7 +243,15 @@ const awaitingImport = q.filter(i => i && i.url && RESUMABLE_STATUSES.includes(i
 
 const isExcluded = (i) => {
   if (!i || !i.url) return true;
-  if (['published','preview_created','preview_deployed','awaiting_import','approved','failed','draft'].includes(i.status)) return true;
+  // Exclude anything that is either done, in-flight (any resumable status),
+  // failed, or marked for production deploy. Resumable entries are picked
+  // up separately above; here we filter NEW candidates only.
+  if ([
+    'published','preview_created','preview_deployed',
+    'awaiting_chatgpt_generation','awaiting_thumbnail','awaiting_import',
+    'draft_ready','thumbnail_ready',
+    'approved','failed','draft'
+  ].includes(i.status)) return true;
   if (i.productionDeployPending === true) return true;
   return false;
 };
@@ -393,6 +412,39 @@ console.log('OK wrote ' + outPath);
   }
 
   # ============================================================
+  # resolveResumePoint(): inspect actual artifacts and determine which
+  # stage to resume from. This OVERRIDES the legacy "all-of-3-6 skip"
+  # branch below for resume-mode targets. Artifact-based so that queue
+  # status drift cannot corrupt resume decisions.
+  # ============================================================
+  $hasArticlePrompt   = Test-Path $AbsArticlePromptPath
+  $hasDraft           = Test-Path $AbsDraftPath
+  $hasThumbnail       = Test-Path $AbsThumbnailPath
+  # Thumbnail on remote canonical preview branch (filled later in Stage 7
+  # for non-resume runs; here we do a quick check for resume decisions).
+  $hasMdxInMain       = Test-Path $AbsArticleMdxPath  # always false here (we just guarded above)
+  # ResumeStage values: phase_a / phase_b / thumbnail / import / preview_deploy / verify_notify / pr_create / completion_gates / queue_update_final
+  $ResumeStage = "phase_a"
+  if ($hasArticlePrompt) { $ResumeStage = "phase_b" }
+  if ($hasDraft)         { $ResumeStage = "thumbnail" }
+  if ($hasDraft -and $hasThumbnail) { $ResumeStage = "import_generated" }
+  # If queue entry has a previewBranch+previewUrl already (= came from previous
+  # run that already pushed), advance further; we'll let Stage 8/9 detect
+  # the existing canonical branch and skip duplicate work.
+  if ($candidateInfo.pickedTop.status -eq "preview_deployed") {
+    # preview_deployed = image-gen complete + canonical branch exists, only
+    # notify/PR/gates pending.
+    $ResumeStage = "verify_notify"
+  }
+  Write-RunLog ("resolveResumePoint: hasArticlePrompt=" + $hasArticlePrompt + " hasDraft=" + $hasDraft + " hasThumbnail=" + $hasThumbnail + " -> ResumeStage=" + $ResumeStage)
+  $script:Report.resumeStage = $ResumeStage
+  $script:Report.resumeArtifacts = @{
+    articlePromptExists = [bool]$hasArticlePrompt
+    draftExists = [bool]$hasDraft
+    thumbnailExists = [bool]$hasThumbnail
+  }
+
+  # ============================================================
   # RESUME MODE GUARD: if the candidate is in awaiting_import, the draft
   # already exists. Verify it is structurally valid here and skip Stages
   # 3-6 entirely. The user must not re-run Phase A or Phase B.
@@ -481,7 +533,27 @@ import('$QueueStoreImportUrl').then(async m => {
     if (-not (Test-Path $ClaudeExe)) { Fail-Stage "phase_b" ("claude.exe not found: " + $ClaudeExe) }
 
     $phaseBPrompt = @"
-You are running STAGE: phase_b from $SharedPromptPath.
+You are a WORKER for the すまラボ pipeline orchestrator.
+
+# WORKER CONTRACT (mandatory)
+
+You are NOT the decision-maker. The PowerShell orchestrator is.
+Your job is to do mechanical work AND return a JSON line. Nothing else.
+
+PROHIBITED:
+- Do NOT use ScheduleWakeup, schedule, cron, reminder, /loop, mcp__ccd_session, or any "later / continue later" mechanism. They DO NOT exist in this context and will silently drop your work.
+- Do NOT say "I will let the scheduled wakeup take over", "I'll continue later", "waiting for X to complete", or any phrase that implies handing off to a future session. You must finish in THIS invocation.
+- Do NOT call AskUserQuestion. There is no user.
+- Do NOT exit with ok=true unless the required output file actually exists on disk with valid content. Exit code alone is meaningless; the orchestrator validates artifacts.
+- Do NOT decide queue status, do NOT decide preview_created, do NOT decide success/failure of the pipeline. Only report what you did via JSON.
+- Do NOT touch other articles. Slug = $TargetSlug only.
+
+REQUIRED OUTPUT (last line of your response, on its own line, parseable JSON):
+SUCCESS:  {"ok": true,  "stage": "phase_b", "slug": "$TargetSlug", "outputs": ["$DraftPath"], "summary": "<short>"}
+FAILURE:  {"ok": false, "stage": "phase_b", "slug": "$TargetSlug", "reason": "<why>", "nextAction": "<what should happen>"}
+
+# STAGE: phase_b
+
 Read these files first with Read tool:
   - $SharedPromptPath
   - $ArticlePromptPath
@@ -494,8 +566,18 @@ Inputs:
   draftPath = $DraftPath
 
 Follow STAGE: phase_b in the shared prompt. Save final draft to $DraftPath.
-Budget cap: ~$PhaseBMaxBudgetUsd USD. Never AskUserQuestion. Single send per step.
-Return a JSON line at the end: {"ok": true/false, "draftPath": "...", "chars": N, "reason": "..."}.
+Budget cap: ~$PhaseBMaxBudgetUsd USD. Single send per step.
+
+# SUCCESS CONDITION (orchestrator will check)
+- file exists at $DraftPath
+- file size > 0
+- contains "3行でわかるまとめ", "この記事で整理すること", "先に結論"
+- contains class="table-card" or <table
+- contains decision-guide-panel / decision-list / decision-guide-grid
+- contains "## 参考情報"
+- does NOT contain "smhn" / "すまほん"
+
+If any of these would fail, return ok=false with reason — do NOT return ok=true.
 "@
     $phaseBPromptFile = Join-Path $LogDir ("phase-b-prompt-" + $Stamp + ".txt")
     Set-Content -Path $phaseBPromptFile -Value $phaseBPrompt -Encoding UTF8
@@ -660,16 +742,44 @@ import('$QueueStoreImportUrl').then(async m => {
     Write-RunLog "  (DryRun) would invoke claude.exe for thumbnail"
   } else {
     $thumbPrompt = @"
-You are running STAGE: thumbnail from $SharedPromptPath.
+You are a WORKER for the すまラボ pipeline orchestrator.
+
+# WORKER CONTRACT (mandatory)
+
+You are NOT the decision-maker. The PowerShell orchestrator is.
+Your job is to do mechanical work AND return a JSON line. Nothing else.
+
+PROHIBITED:
+- Do NOT use ScheduleWakeup, schedule, cron, reminder, /loop, mcp__ccd_session, or any "later / continue later" mechanism. They DO NOT exist in this context and will silently drop your work.
+- Do NOT say "I will let the scheduled wakeup take over", "I'll continue later", "waiting for image generation to complete (and exit)", "I'll hand off", or any phrase that implies handing off to a future session. You MUST finish in THIS invocation — INCLUDING the actual ChatGPT image download to disk.
+- Do NOT call AskUserQuestion. There is no user.
+- Do NOT exit with ok=true unless the PNG file actually exists on disk at $ThumbnailPath with size > 20000 bytes. Exit code alone is meaningless; the orchestrator validates the artifact.
+- Do NOT decide queue status, do NOT decide success/failure of the pipeline. Only report what you did via JSON.
+- Do NOT touch other articles. Slug = $TargetSlug only.
+
+REQUIRED OUTPUT (last line of your response, on its own line, parseable JSON):
+SUCCESS:  {"ok": true,  "stage": "thumbnail", "slug": "$TargetSlug", "outputs": ["$ThumbnailPath"], "summary": "<short, includes bytes / dimensions>"}
+FAILURE:  {"ok": false, "stage": "thumbnail", "slug": "$TargetSlug", "reason": "<why>", "nextAction": "<what should happen>"}
+
+If the ChatGPT image generation is taking long, KEEP polling within this invocation (mcp__Claude_in_Chrome__javascript_tool / preview_eval, etc.) until either the image is downloaded OR your budget runs out. If your budget runs out before the PNG is saved, return ok=false with reason. Never return ok=true and exit before the PNG exists on disk.
+
+# STAGE: thumbnail
+
 Read $SharedPromptPath first. Then read $ThumbnailPromptPath.
 Inputs:
   slug = $TargetSlug
   thumbnailPromptPath = $ThumbnailPromptPath
   outputPath = $ThumbnailPath
 Follow STAGE: thumbnail. Use canvas+DataTransfer route to attach the 2 base PNGs.
-Budget cap: ~$ThumbnailMaxBudgetUsd USD. Never AskUserQuestion. Single send.
+Budget cap: ~$ThumbnailMaxBudgetUsd USD. Single send.
 Save the generated PNG to $ThumbnailPath.
-Return a JSON line at end: {"ok": true/false, "outputPath": "...", "bytes": N, "reason": "..."}.
+
+# SUCCESS CONDITION (orchestrator will check)
+- file exists at $ThumbnailPath
+- file size > 20000 bytes
+- file is a valid PNG (PowerShell will Get-FileHash + Get-Item.Length verify)
+
+If these would fail, return ok=false with reason. Do NOT return ok=true if the file is missing or empty.
 "@
     $thumbPromptFile = Join-Path $LogDir ("thumb-prompt-" + $Stamp + ".txt")
     Set-Content -Path $thumbPromptFile -Value $thumbPrompt -Encoding UTF8

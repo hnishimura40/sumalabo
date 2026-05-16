@@ -76,6 +76,70 @@ Preview deploy できただけでは未完了です。
 - `flowOrDiagramPresent` — 順序付きリストや `<ol>` などの図解相当があるか
 - `endingHasCTAOrNextRead` — 末尾に「次に読む」「今すぐできる」などの CTA があるか
 
+## 司令塔と作業員 (アーキテクチャ)
+
+このパイプラインは **State Machine** です。司令塔は PowerShell/Node オーケストレーター (`run-claude-preview-pipeline-once.ps1`)。Claude.exe / sub-claude は **作業員** にすぎません。
+
+### 作業員 (Claude worker) に許可されること
+- ChatGPT への入力 / 本文取得
+- サムネ生成チャットの操作
+- 生成物 (draft / 画像) の保存
+- **JSON で結果報告**
+
+### 作業員に禁止されること (絶対)
+- 「あとで続きをやる」判断
+- `ScheduleWakeup` / `schedule` / `reminder` / `/loop` / `mcp__ccd_session` の使用
+- 「待機します」「scheduled wakeup に引き継ぐ」「continue later」と言って exit
+- 成果物未作成で `ok=true` を返すこと
+- queue status / preview_created / 成功失敗の最終判断
+- production deploy / main 直 push / X 投稿
+- 別記事への波及
+- AskUserQuestion (ユーザーはいない)
+
+### 作業員出力フォーマット (最終行は必ず JSON 1 行)
+- 成功: `{"ok": true, "stage": "...", "slug": "...", "outputs": [...], "summary": "..."}`
+- 失敗: `{"ok": false, "stage": "...", "slug": "...", "reason": "...", "nextAction": "..."}`
+
+### 司令塔 (orchestrator) が必ず実行すること
+1. 作業員 stdout を保存
+2. JSON を parse
+3. JSON 無し → 失敗
+4. `ok=true` でも成果物がなければ失敗
+5. 成果物 (size / hash / 内容) を検査
+6. 失敗時は queue を実態に合う status に
+7. preview_created には絶対に進めない (20 hard gate 全 true 以外)
+
+## State Machine — Stage 一覧 + 成功条件 (artifact-based)
+
+| # | stageName | 主要成果物 | 成功条件 |
+|---|---|---|---|
+| 1 | `pre_flight` | (git state) | main / pull / clean tree |
+| 2 | `candidate_selection` | (pickedTop) | 1 件選定 + resumeStage 決定 |
+| 3 | `phase_a_prepare` | `logs/prompt/{slug}.article.md` + `logs/understanding/{slug}.json` | 両ファイル存在 |
+| 4 | `queue_awaiting_chatgpt_generation` | queue | status 更新 |
+| 5 | `phase_b_chatgpt` | `drafts/generated/{slug}.md` | size>0 + 3行まとめ + この記事で整理すること + 先に結論 + table-card/table + decision-guide + 参考情報 + smhn=0 |
+| 6 | `queue_awaiting_import` | queue | status 更新 |
+| 7 | `thumbnail_generation` | `public/images/thumbnails/{slug}.png` | exists + size>20KB + 画像として読める |
+| 8 | `import_generated` | `content/articles/{slug}.mdx` | frontmatter + thumbnail 参照 + status=review |
+| 9 | `preview_branch_push` | preview branch on origin | canonical 1 本 |
+| 10 | `preview_deploy` | wrangler URL | deploy URL + alias URL parsed |
+| 11 | `verify_notify` | notify result | 200 fetch + non-fallback + notify ok=true + sent>=1 (or idempotent skip) |
+| 12 | `pr_create` | PR URL | gh / API で取得 + state=OPEN |
+| 13 | `completion_gates` | (20 gates) | すべて true |
+| 14 | `queue_update_final` | queue | `preview_created` + completedForUserApproval=true |
+
+### Resume point (artifact-based, queue status 依存ではない)
+orchestrator は **実ファイル** を見て resume 地点を決定:
+
+- article prompt なし → `phase_a_prepare`
+- article prompt あり / draft なし → `phase_b_chatgpt`
+- draft あり / thumbnail なし → **`thumbnail_generation`**
+- draft + thumbnail あり / mdx なし → `import_generated`
+- mdx あり / preview URL なし → `preview_deploy`
+- preview URL あり / notify なし → `verify_notify`
+- notify あり / PR なし → `pr_create`
+- 全部あり / gates 未評価 → `completion_gates`
+
 ## 劣化禁止 (最優先)
 
 別の不具合修正・AUP 回避・安全化のついでに、サムネ・本文・キャラクター表現を **勝手に劣化させない**。
