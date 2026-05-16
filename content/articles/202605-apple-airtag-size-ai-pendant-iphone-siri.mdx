@@ -60,75 +60,90 @@ import CharacterDialogue from "../../src/components/characters/CharacterDialogue
 
 </div>
 
-<div class="table-card">
-<table>
-<thead>
-<tr>
-<th>区分</th>
-<th>今わかっている内容</th>
-<th>確定度</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>開発の存在</td>
-<td>BloombergのMark Gurman氏が報道</td>
-<td>報道段階（Apple非公表）</td>
-</tr>
-<tr>
-<td>形・サイズ</td>
-<td>AirTagサイズの円盤型ペンダントとされる</td>
-<td>噂・リーク</td>
-</tr>
-<tr>
-<td>iPhone連携</td>
-<td>iPhoneと組み合わせる前提と見られる</td>
-<td>観測・推測</td>
-</tr>
-<tr>
-<td>発売時期</td>
-<td>早くて2027年との報道もある</td>
-<td>未確定</td>
-</tr>
-<tr>
-<td>価格・日本展開</td>
-<td>不明</td>
-<td>未確定</td>
-</tr>
-<tr>
-<td>Siri進化との関係</td>
-<td>Apple Intelligenceの流れに乗る可能性</td>
-<td>観測・推測</td>
-</tr>
-</tbody>
-</table>
+<div class="visual-dashboard">
+  <div class="metric metric--mid">
+    <span class="metric-label">期待度</span>
+    <span class="metric-value">中</span>
+    <span class="metric-note">面白い噂だが、まだ Apple 公式の発表は無し</span>
+  </div>
+  <div class="metric metric--low">
+    <span class="metric-label">確定度</span>
+    <span class="metric-value">低</span>
+    <span class="metric-note">Bloomberg 報道ベース / 仕様・時期・価格すべて未確定</span>
+  </div>
+  <div class="metric metric--low">
+    <span class="metric-label">買い替え影響</span>
+    <span class="metric-value">低</span>
+    <span class="metric-note">iPhone 連携前提と見られ、本体買い替えとは別軸</span>
+  </div>
+  <div class="metric metric--warn">
+    <span class="metric-label">プライバシー注意</span>
+    <span class="metric-value">高</span>
+    <span class="metric-note">胸元のカメラ・マイクは周囲視点の設計が要</span>
+  </div>
 </div>
 
-<div class="check-box">
-<p class="box-label">できそうなこと / まだ分からないこと</p>
-
-* できそう: 声でSiriに頼む入口を、胸元や服に置く
-* できそう: カメラで周囲を見て、AIが状況を理解する
-* できそう: iPhoneを取り出さずに「今見えてるもの」を渡す
-* できそう: Apple Watch / AirPodsと組み合わせて、AIを生活に広げる
-* 未確定: 本当に発売されるのか、試作段階で終わるのか
-* 未確定: 日本語Siri / Apple Intelligence でどこまで動くか
-* 未確定: カメラ・マイクの作動表示、プライバシー設計
-* 未確定: 価格、バッテリー持ち、対応iPhone
-
+<div class="verdict-cards">
+  <div class="verdict verdict--confirmed">
+    <span class="verdict-label">報道されている（観測）</span>
+    <ul>
+      <li>Apple が AirTag サイズの「AIペンダント」を開発しているという報道（Bloomberg / Mark Gurman 氏）</li>
+      <li>iPhone と組み合わせる前提のアクセサリと見られている</li>
+      <li>カメラ / マイクで周囲を拾う設計の可能性</li>
+      <li>Apple Intelligence の流れに乗りそう</li>
+    </ul>
+  </div>
+  <div class="verdict verdict--rumor">
+    <span class="verdict-label">未確定（噂・推測）</span>
+    <ul>
+      <li>製品化されるかどうか自体</li>
+      <li>発売時期（早くて2027年との見方もある）</li>
+      <li>価格・日本展開・対応 iPhone</li>
+      <li>カメラ・マイク作動表示などプライバシー設計</li>
+      <li>日本語 Siri / Apple Intelligence でどこまで動くか</li>
+    </ul>
+  </div>
 </div>
 
-<div class="info-box">
-<p class="box-label">AIペンダントの位置づけ（仕組みの見方）</p>
+<div class="pros-cons-grid">
+  <div class="pros">
+    <h4>できそうなこと</h4>
+    <ul>
+      <li>声で Siri に頼む入口を、胸元や服に置く</li>
+      <li>カメラで周囲を見て、AI が状況を理解する</li>
+      <li>iPhone を取り出さずに「今見えてるもの」を渡す</li>
+      <li>Apple Watch / AirPods と組み合わせて、AI を生活に広げる</li>
+    </ul>
+  </div>
+  <div class="cons">
+    <h4>まだ分からないこと</h4>
+    <ul>
+      <li>本当に発売されるのか、試作段階で終わるのか</li>
+      <li>日本語 Siri / Apple Intelligence でどこまで動くか</li>
+      <li>カメラ・マイクの作動表示、プライバシー設計</li>
+      <li>価格、バッテリー持ち、対応 iPhone</li>
+    </ul>
+  </div>
+</div>
 
-| 役割 | 担当 | やること |
-|---|---|---|
-| 入口 | AIペンダント（胸元/服） | カメラ・マイクで周囲をすくう |
-| 中継 | iPhone | 通信・処理・画面表示 |
-| 賢さ | Apple Intelligence / Siri | 要約・翻訳・案内・文脈理解 |
-
-身につけたペンダントは「入口」、iPhoneが「中継」、Apple Intelligenceが「賢さの源」。3つが噛み合って初めて、便利なAI体験になる構造です。
-
+<div class="visual-flow">
+  <div class="flow-step flow-step--input">
+    <span class="flow-label">入口</span>
+    <span class="flow-title">AIペンダント</span>
+    <span class="flow-text">胸元/服に身につけて、カメラ・マイクで周囲をすくう</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--relay">
+    <span class="flow-label">中継</span>
+    <span class="flow-title">iPhone</span>
+    <span class="flow-text">通信・処理・画面表示を担う中核デバイス</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--brain">
+    <span class="flow-label">賢さ</span>
+    <span class="flow-title">Apple Intelligence / Siri</span>
+    <span class="flow-text">要約・翻訳・案内・文脈理解の AI 機能</span>
+  </div>
 </div>
 
 ## Appleの「AIペンダント」って何？
@@ -495,11 +510,12 @@ AirPodsは、耳につける音の入口です。音楽、通話、ノイズキ�
 
 もし報道どおりの方向なら、カメラとマイクを使って、周囲の状況をAIに渡す入口になりそうです。
 
-<div class="table-card">
+<div class="wide-comparison">
 <table>
 <thead>
 <tr>
 <th>デバイス</th>
+<th>つける場所</th>
 <th>主な役割</th>
 <th>AIペンダントとの違い</th>
 </tr>
@@ -507,28 +523,33 @@ AirPodsは、耳につける音の入口です。音楽、通話、ノイズキ�
 <tbody>
 <tr>
 <td>iPhone</td>
-<td>画面操作、アプリ、通信、写真、決済の中心</td>
-<td>AIペンダントが使う処理や表示の中心になりそうです。</td>
+<td>手・ポケット</td>
+<td>画面・通信・アプリ・決済の中心</td>
+<td>処理と表示の中心。AIペンダントが頼る相手。</td>
 </tr>
 <tr>
 <td>Apple Watch</td>
-<td>通知、健康管理、運動記録、決済</td>
-<td>腕で見る・測るデバイスです。周囲を見るAIの入口とは役割が違います。</td>
+<td>腕</td>
+<td>通知・健康・運動・決済</td>
+<td>腕で見る/測る。周囲を見るAIの入口とは別物。</td>
 </tr>
 <tr>
 <td>AirPods</td>
-<td>音楽、通話、音声操作、Siri</td>
-<td>耳で聞く・話すデバイスです。カメラによる状況認識は中心ではありません。</td>
+<td>耳</td>
+<td>音楽・通話・音声操作・Siri</td>
+<td>耳で聞く/話す。カメラ認識は得意ではない。</td>
 </tr>
 <tr>
 <td>AirTag</td>
-<td>鍵・バッグの場所探し（紛失防止タグ）</td>
-<td>形だけ似ているが役割は別物。AIペンダントとは中身が違います。</td>
+<td>鍵・バッグ</td>
+<td>場所探し（紛失防止タグ）</td>
+<td>形は近いが役割は別物。AI ではない。</td>
 </tr>
 <tr>
 <td>AIペンダント</td>
-<td>周囲の状況を拾い、SiriやiPhoneとつなぐ可能性</td>
-<td>胸元や服から、AIに「今見えているもの」を伝える入口になるかもしれません。</td>
+<td>胸元・服</td>
+<td>周囲を拾いSiri/iPhoneにつなぐ可能性</td>
+<td>「今見えてるもの」を AI に渡す入口。</td>
 </tr>
 </tbody>
 </table>
@@ -713,17 +734,16 @@ Apple Intelligenceだけでなく、AIスマホ・スマートグラス・AIイ�
 
 要するに、今回は「今すぐ買うべき新製品」ではなく、「AppleがAIをどこまで生活に入り込ませようとしているか」を見るニュースです。
 
-<div class="check-box">
-<p class="box-label">正式発表後に最初にチェックしたい6項目</p>
+<p class="box-label" style="margin: 28px 0 12px; color: var(--teal-deep); font-family: var(--font-mono); font-size: 12px; font-weight: 800; letter-spacing: 0.06em;">正式発表後に最初にチェックしたい6項目</p>
 
-* 発売時期（年・四半期どこまで具体化されたか）
-* 対応 iPhone（どのモデル/iOS から動くか）
-* 日本展開（同時発売 / 後追い / 未定）
-* 価格（円表記 + 競合 AirPods Pro / Apple Watch との比較）
-* カメラ作動シグナル（録画ランプ・録音インジケータの有無）
-* Siri / Apple Intelligence の日本語対応範囲
-
-</div>
+<ul class="checkpoint-list">
+  <li><strong>発売時期</strong>年・四半期どこまで具体化されたか</li>
+  <li><strong>対応 iPhone</strong>どのモデル / iOS から動くか</li>
+  <li><strong>日本展開</strong>同時発売 / 後追い / 未定</li>
+  <li><strong>価格</strong>円表記 + 競合 AirPods Pro / Apple Watch との比較</li>
+  <li><strong>カメラ作動シグナル</strong>録画ランプ・録音インジケータの有無</li>
+  <li><strong>日本語AI対応</strong>Siri / Apple Intelligence の日本語対応範囲</li>
+</ul>
 
 ## まとめ
 

@@ -704,4 +704,407 @@ const typeLabels = {
       white-space: nowrap;
     }
   }
+
+  /* =========================================================================
+   * Visual-first article components (Apple AIペンダント 用に拡張)
+   *
+   * PC では本文幅より広いキャンバスを使って判断ブロックを大きく見せ、
+   * スマホでは 1 列カードに自動で崩す。
+   * 通常本文 (p / ul / ol) は読みやすい行長 760px に抑える。
+   * ========================================================================= */
+
+  /* news 記事の shell を拡張: 通常 852px → wide 1080px */
+  .article-shell--news {
+    width: min(1080px, calc(100% - 32px));
+  }
+
+  /* news 記事の本文段落・リストは行長 760px に抑える (読みやすさ重視) */
+  .article-shell--news .article-content :global(p),
+  .article-shell--news .article-content :global(ul),
+  .article-shell--news .article-content :global(ol) {
+    max-width: 760px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* wide block 系 (visual-dashboard / pros-cons / verdict / flow / wide-comparison / checkpoint /
+   * article-wide-block / table-card / decision-guide-* / summary-box / info-box / check-box) は
+   * 行長制約から外し、shell 全幅を使う */
+  .article-shell--news .article-content :global(.article-wide-block),
+  .article-shell--news .article-content :global(.visual-dashboard),
+  .article-shell--news .article-content :global(.pros-cons-grid),
+  .article-shell--news .article-content :global(.wide-comparison),
+  .article-shell--news .article-content :global(.verdict-cards),
+  .article-shell--news .article-content :global(.visual-flow),
+  .article-shell--news .article-content :global(.checkpoint-list),
+  .article-shell--news .article-content :global(.table-card),
+  .article-shell--news .article-content :global(.decision-guide-grid),
+  .article-shell--news .article-content :global(.decision-guide-panel),
+  .article-shell--news .article-content :global(.summary-box),
+  .article-shell--news .article-content :global(.info-box),
+  .article-shell--news .article-content :global(.check-box),
+  .article-shell--news .article-content :global(table) {
+    max-width: none;
+    width: 100%;
+  }
+
+  /* --- visual-dashboard: 冒頭の4セル メトリクス --- */
+  .article-content :global(.visual-dashboard) {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 28px 0 36px;
+  }
+
+  .article-content :global(.visual-dashboard .metric) {
+    padding: 18px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.visual-dashboard .metric--high) {
+    border-left: 4px solid var(--teal);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--teal-tint) 60%, transparent), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.visual-dashboard .metric--mid) {
+    border-left: 4px solid var(--amber);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--amber-tint) 60%, transparent), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.visual-dashboard .metric--low) {
+    border-left: 4px solid color-mix(in srgb, var(--fg-soft) 40%, var(--line));
+  }
+
+  .article-content :global(.visual-dashboard .metric--warn) {
+    border-left: 4px solid #d97706;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, #d97706 8%, var(--bg-elev)), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.visual-dashboard .metric-label) {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .article-content :global(.visual-dashboard .metric--warn .metric-label) {
+    color: #b45309;
+  }
+
+  .article-content :global(.visual-dashboard .metric-value) {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--fg);
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+  .article-content :global(.visual-dashboard .metric-note) {
+    display: block;
+    color: var(--fg-soft);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  /* --- pros-cons-grid: 便利 / 気になる 左右カード --- */
+  .article-content :global(.pros-cons-grid) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 28px 0 34px;
+  }
+
+  .article-content :global(.pros-cons-grid .pros),
+  .article-content :global(.pros-cons-grid .cons) {
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.pros-cons-grid .pros) {
+    border-left: 5px solid var(--teal);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.pros-cons-grid .cons) {
+    border-left: 5px solid #d97706;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--amber-tint) 80%, var(--bg-elev)), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.pros-cons-grid h4) {
+    margin: 0 0 12px;
+    color: var(--fg);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  .article-content :global(.pros-cons-grid .pros h4) {
+    color: var(--teal-deep);
+  }
+
+  .article-content :global(.pros-cons-grid .cons h4) {
+    color: #b45309;
+  }
+
+  .article-content :global(.pros-cons-grid ul) {
+    margin: 0;
+    padding-left: 1.2em;
+    max-width: none;
+  }
+
+  .article-content :global(.pros-cons-grid li) {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* --- visual-flow: 3-step 横方向 (PC) / 縦方向 (mobile) --- */
+  .article-content :global(.visual-flow) {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: stretch;
+    gap: 0;
+    margin: 28px 0 34px;
+  }
+
+  .article-content :global(.visual-flow .flow-step) {
+    padding: 20px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+  }
+
+  .article-content :global(.visual-flow .flow-step--input) { border-top: 4px solid var(--teal); }
+  .article-content :global(.visual-flow .flow-step--relay) { border-top: 4px solid var(--amber); }
+  .article-content :global(.visual-flow .flow-step--brain) { border-top: 4px solid #7c3aed; }
+
+  .article-content :global(.visual-flow .flow-arrow) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    color: var(--teal);
+    font-size: 24px;
+    font-weight: 900;
+  }
+
+  .article-content :global(.visual-flow .flow-label) {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .article-content :global(.visual-flow .flow-title) {
+    display: block;
+    margin: 0 0 8px;
+    color: var(--fg);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .article-content :global(.visual-flow .flow-text) {
+    display: block;
+    color: var(--fg-soft);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* --- verdict-cards: 噂 vs 確定 2-col --- */
+  .article-content :global(.verdict-cards) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 28px 0 34px;
+  }
+
+  .article-content :global(.verdict-cards .verdict) {
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.verdict-cards .verdict--rumor) {
+    border-left: 5px solid #6b7280;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, #6b7280 10%, var(--bg-elev)), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.verdict-cards .verdict--confirmed) {
+    border-left: 5px solid var(--teal);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.verdict-cards .verdict-label) {
+    display: block;
+    margin: 0 0 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .article-content :global(.verdict-cards .verdict--rumor .verdict-label) {
+    color: #4b5563;
+  }
+
+  .article-content :global(.verdict-cards .verdict--confirmed .verdict-label) {
+    color: var(--teal-deep);
+  }
+
+  .article-content :global(.verdict-cards ul) {
+    margin: 0;
+    padding-left: 1.2em;
+    max-width: none;
+  }
+
+  .article-content :global(.verdict-cards li) {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .article-content :global(.verdict-cards li + li) {
+    margin-top: 6px;
+  }
+
+  /* --- wide-comparison: 比較表用ラッパー (PC で広く / モバイルで横スクロール) --- */
+  .article-content :global(.wide-comparison) {
+    margin: 28px 0 34px;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .article-content :global(.wide-comparison table) {
+    margin: 0;
+    display: table;
+    width: 100%;
+    white-space: normal;
+  }
+
+  .article-content :global(.wide-comparison th),
+  .article-content :global(.wide-comparison td) {
+    min-width: 120px;
+  }
+
+  /* --- checkpoint-list: チェック項目を3列カード化 --- */
+  .article-content :global(.checkpoint-list) {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 28px 0 34px;
+    padding: 0;
+    list-style: none;
+    max-width: none;
+  }
+
+  .article-content :global(.checkpoint-list li) {
+    position: relative;
+    padding: 16px 16px 16px 46px;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--teal);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+    font-size: 14px;
+    line-height: 1.65;
+    margin-top: 0;
+  }
+
+  .article-content :global(.checkpoint-list li::before) {
+    position: absolute;
+    left: 12px;
+    top: 14px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--teal-tint);
+    color: var(--teal-deep);
+    content: "✓";
+    font-weight: 900;
+    text-align: center;
+    line-height: 24px;
+    font-size: 13px;
+  }
+
+  .article-content :global(.checkpoint-list strong) {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--fg);
+    font-weight: 800;
+  }
+
+  /* mobile: 全 wide-block を 1 列に縦積み */
+  @media (max-width: 720px) {
+    .article-content :global(.visual-dashboard) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .article-content :global(.pros-cons-grid) {
+      grid-template-columns: 1fr;
+    }
+
+    .article-content :global(.visual-flow) {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .article-content :global(.visual-flow .flow-arrow) {
+      transform: rotate(90deg);
+      padding: 4px 0;
+      font-size: 20px;
+    }
+
+    .article-content :global(.verdict-cards) {
+      grid-template-columns: 1fr;
+    }
+
+    .article-content :global(.checkpoint-list) {
+      grid-template-columns: 1fr;
+    }
+
+    .article-content :global(.wide-comparison table) {
+      display: block;
+      white-space: nowrap;
+    }
+
+    .article-shell--news {
+      width: min(1080px, calc(100% - 24px));
+    }
+
+    .article-shell--news .article-content :global(p),
+    .article-shell--news .article-content :global(ul),
+    .article-shell--news .article-content :global(ol) {
+      max-width: 100%;
+    }
+  }
 </style>
