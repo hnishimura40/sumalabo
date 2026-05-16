@@ -4,18 +4,21 @@ function escapeYaml(value = "") {
   return String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
 
+// Public-facing title/description: avoid the internal phrasing "普通の人"
+// (it reads as defensive boilerplate on social previews + article H1).
+// Use scan-friendly external-facing tone instead.
 function makeTitle(sourceTitle) {
   const base = sourceTitle.replace(/【.*?】/g, "").trim();
 
-  if (base.length <= 34) {
-    return `${base}とは？普通の人向けに要点を整理`;
+  if (base.length <= 36) {
+    return `${base}｜買う前・待つ前のポイント`;
   }
 
-  return `${base.slice(0, 34)}…とは？普通の人向けに要点を整理`;
+  return `${base.slice(0, 36)}…｜買う前・待つ前のポイント`;
 }
 
 function makeDescription(sourceTitle, topicCategory) {
-  return `${sourceTitle}について、何が話題なのか、普通の人にはどう関係するのか、まだ確認が必要な点をすまラボ向けにわかりやすく整理します。`;
+  return `${sourceTitle}について、何が話題なのか、買う前・待つ前にどこを見ておけばよいのかを整理します。`;
 }
 
 function makeThumbnailPrompt(title, topicCategory) {
@@ -108,7 +111,7 @@ type: "news"
 category: "ニュースをかみくだく"
 description: "${escapeYaml(description)}"
 thumbnail: ""
-thumbnailAlt: "${escapeYaml(`${title}について、ひまりとらぼまるが普通の人向けに要点を整理しているイメージ`)}"
+thumbnailAlt: "${escapeYaml(`${title}について、ひまり・らぼまるが買う前・待つ前のポイントを整理するサムネイル`)}"
 status: "review"
 priority: ${classification.priority === "high" ? 1 : 2}
 characterUse:
