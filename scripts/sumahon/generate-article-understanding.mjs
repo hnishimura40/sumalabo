@@ -141,13 +141,57 @@ function pickReaderDecision(tone) {
   }
 }
 
-function pickVisualBlocks(tone, hasComplexTopic) {
-  const blocks = ["3行まとめ", "この記事で整理すること", "先に結論"];
-  if (tone === "concern") blocks.push("影響を受ける人 / 受けない人カード", "対処フロー");
-  if (tone === "positive") blocks.push("嬉しい人 / 様子見でよい人カード", "比較表");
-  if (tone === "rumor") blocks.push("確定 vs 噂の整理表", "今動く人 / 待つ人カード");
-  if (hasComplexTopic) blocks.push("仕組み図 (簡易)", "用語整理表");
-  blocks.push("参考情報");
+/**
+ * Detect article variant (news / comparison / foundation). Comparison
+ * articles are foundation-type with a slug containing "comparison" or
+ * "-vs-". Used by pickVisualBlocks() to emit the right per-type recipe.
+ */
+function detectVariant(articleBrief) {
+  const slug = (articleBrief?.slug || "").toLowerCase();
+  const sumalaboUse = (articleBrief?.sumalaboUse || "").toLowerCase();
+  const baseType = (articleBrief?.articleType || "foundation").toLowerCase();
+  if (slug.includes("comparison") || slug.includes("-vs-") || sumalaboUse.includes("comparison")) {
+    return "comparison";
+  }
+  if (baseType === "news") return "news";
+  return "foundation";
+}
+
+/**
+ * Per-type required visual block list (HUMAN-readable labels). The
+ * orchestrator and the article prompt both reference these labels;
+ * MDX class enforcement is in renderTypeContract() + completion gates.
+ */
+function pickVisualBlocks({ variant, tone, hasComplexTopic }) {
+  const blocks = [
+    "3行まとめ (Zone 1, summary-box)",
+    "この記事で整理すること (Zone 1, check-box)",
+    "先に結論 (Zone 1, summary-box)",
+  ];
+
+  if (variant === "news") {
+    blocks.push("期待できること / 注意したいこと / 普通の人への影響 (Zone 2, check-box)");
+    blocks.push("待つ / 待たない / 比較する (Zone 2, decision-guide-panel)");
+    blocks.push("今すぐできる判断 (Zone 3, H2 + アクションリスト)");
+    if (tone === "rumor") blocks.push("公式発表ではない注記 (Zone 2, info-box)");
+    if (tone === "concern") blocks.push("影響を受ける人 / 受けない人カード (Zone 2, decision-guide-panel)");
+  } else if (variant === "comparison") {
+    blocks.push("あなたはどっち？ (Zone 1, decision-guide-grid 2-3 カード)");
+    blocks.push("メイン比較表 (Zone 2, table-card)");
+    blocks.push("用途別おすすめ (Zone 2, decision-guide-panel)");
+    blocks.push("判断フローまたは価格帯 / 条件別カード (Zone 2)");
+    blocks.push("失敗しやすい選び方 (Zone 2, info-box)");
+  } else {
+    // foundation (基礎解説)
+    blocks.push("用語表 (Zone 2, table-card, 用語 × 意味 × 普通の人への影響)");
+    blocks.push("仕組みを1段落で (Zone 2, info-box または本文)");
+    blocks.push("向いている人 / 向いていない人 (Zone 2, decision-guide-panel)");
+    blocks.push("次に読むべき記事 (Zone 3, H2 + 関連記事)");
+    if (hasComplexTopic) blocks.push("仕組み図 (簡易) — 順序付きリストまたは図 (Zone 2)");
+  }
+
+  blocks.push("CharacterDialogue 1 回以上 (Zone 2 末尾, ひまり・らぼまるの反応)");
+  blocks.push("参考情報 (Zone 3, H2)");
   return blocks;
 }
 
@@ -182,9 +226,12 @@ export function generateArticleUnderstanding({ articleBrief, source, classificat
   // Detect tone (concern / positive / rumor / neutral).
   const tone = inferToneFromTitle(sourceTitle);
   const hasComplexTopic = /チップ|GPU|2nm|3nm|AI|アーキテクチャ|プロセス/.test(text);
+  // Detect article variant (news / comparison / foundation).
+  const variant = detectVariant(articleBrief);
 
   return {
     slug: articleBrief.slug,
+    articleVariant: variant,
     articleTheme: theme,
     readerQuestion: pickReaderQuestion(sourceTitle),
     readerAnxiety: pickReaderAnxiety(tone),
@@ -195,11 +242,12 @@ export function generateArticleUnderstanding({ articleBrief, source, classificat
     labomaruRole: labomaruByTone(tone, theme),
     thumbnailProps: props,
     thumbnailCompositionIdea: compositionIdea,
-    visualExplainBlocksNeeded: pickVisualBlocks(tone, hasComplexTopic),
+    visualExplainBlocksNeeded: pickVisualBlocks({ variant, tone, hasComplexTopic }),
     // Diagnostic / non-instructive fields. Useful for debugging the
     // heuristic; the article prompt does not need to display these.
     _meta: {
       tone,
+      variant,
       detectedTopic: topic ? topic.topic : null,
       hasComplexTopic,
       generatedAt: new Date().toISOString(),
