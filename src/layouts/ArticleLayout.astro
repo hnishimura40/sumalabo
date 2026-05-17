@@ -732,6 +732,8 @@ const typeLabels = {
    * 行長制約から外し、shell 全幅を使う */
   .article-shell--news .article-content :global(.article-wide-block),
   .article-shell--news .article-content :global(.article-slide-figure),
+  .article-shell--news .article-content :global(.article-slide-section),
+  .article-shell--news .article-content :global(.slide-reading-note),
   .article-shell--news .article-content :global(.visual-dashboard),
   .article-shell--news .article-content :global(.pros-cons-grid),
   .article-shell--news .article-content :global(.wide-comparison),
@@ -1015,6 +1017,99 @@ const typeLabels = {
   .article-content :global(.wide-comparison th),
   .article-content :global(.wide-comparison td) {
     min-width: 120px;
+  }
+
+  /* --- article-slide-section: 図解スライドの導入文・画像・読み取りポイントを
+   * 同じ幅に揃える wide-block ラッパー --- */
+  .article-content :global(.article-slide-section) {
+    margin: 36px 0 38px;
+  }
+
+  .article-content :global(.article-slide-section .slide-intro) {
+    margin: 0 0 14px;
+    max-width: none;
+    color: var(--fg-mid);
+    font-size: 15.5px;
+    line-height: 1.8;
+  }
+
+  /* article-slide-section 内では figure と reading-note を視覚的につなぐ
+   * (上は角丸、下は角丸を切って下のカードに繋ぐ) */
+  .article-content :global(.article-slide-section .article-slide-figure) {
+    margin: 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .article-content :global(.article-slide-section .article-slide-figure img) {
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .article-content :global(.article-slide-section .article-slide-figure figcaption) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .article-content :global(.article-slide-section .slide-reading-note) {
+    margin: 0;
+    border-top: 0;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  /* --- slide-reading-note: 読み取りポイント (wide block / カード型) --- */
+  .article-content :global(.slide-reading-note) {
+    margin: 14px 0 36px;
+    padding: 18px 22px 20px;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--teal);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--teal-tint) 32%, transparent), transparent 75%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.slide-reading-note p:first-child) {
+    margin: 0 0 10px;
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    max-width: none;
+  }
+
+  .article-content :global(.slide-reading-note p:first-child strong) {
+    color: var(--teal-deep);
+    font-weight: 800;
+  }
+
+  .article-content :global(.slide-reading-note ul) {
+    margin: 0;
+    padding-left: 1.2em;
+    max-width: none;
+  }
+
+  .article-content :global(.slide-reading-note li) {
+    color: var(--fg-mid);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  .article-content :global(.slide-reading-note li + li) {
+    margin-top: 6px;
+  }
+
+  .article-content :global(.slide-reading-note strong) {
+    color: var(--fg);
+    font-weight: 800;
+  }
+
+  @media (max-width: 720px) {
+    .article-content :global(.slide-reading-note) {
+      padding: 16px 16px 18px;
+    }
+    .article-content :global(.article-slide-section .slide-intro) {
+      font-size: 15px;
+    }
   }
 
   /* --- article-slide-figure: 図解スライド画像用 (wide block) --- */
