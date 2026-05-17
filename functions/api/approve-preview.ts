@@ -34,6 +34,10 @@ interface Env {
   APPROVE_ALLOWED_BRANCH_PREFIXES?: string;
   APPROVE_ALLOWED_BRANCH_PREFIX?: string;
   SUMALABO_REVIEW_KV?: KVNamespace;
+  // 承認 → 本番 deploy を Cloudflare Pages Deploy Hook で発火するための URL。
+  // 値は dashboard 側で secret として設定する。コード・ログには絶対に出さない。
+  // 未設定の場合はフロントに deployTriggered=false を返し、手動 deploy が必要だと示す。
+  CF_PAGES_DEPLOY_HOOK_URL?: string;
 }
 
 interface ReviewItemRecord {
@@ -50,6 +54,12 @@ interface ReviewItemRecord {
   // 任意の追記項目
   approvedAt?: string;
   approvedByMergeCommit?: string;
+  deployTriggeredAt?: string;
+  publishedAt?: string;
+  productionUrl?: string;
+  productionDeployId?: string;
+  productionCommit?: string;
+  publicationVerifyError?: string;
 }
 
 type ReviewItemUpdate =
@@ -63,7 +73,8 @@ async function markReviewItemApprovedByBranch(
   branch: string,
   prUrl: string,
   mergeCommitSha: string | undefined,
-): Promise<ReviewItemUpdate> {
+  deployTriggered: boolean,
+): Promise<ReviewItemUpdate & { slug?: string }> {
   try {
     const indexRaw = await kv.get("review:index", "text");
     if (!indexRaw) return { updated: false, reason: "review_index_empty" };
@@ -93,6 +104,9 @@ async function markReviewItemApprovedByBranch(
           prUrl: item.prUrl && item.prUrl.length > 0 ? item.prUrl : prUrl,
           approvedAt: now,
           approvedByMergeCommit: mergeCommitSha,
+          // deploy hook を発火したら時刻を記録。後段の verify-publication が
+          // この値を参照して deploy 完了タイムアウトを判定できる。
+          deployTriggeredAt: deployTriggered ? now : item.deployTriggeredAt,
           updatedAt: now,
         };
         await kv.put(`review:item:${s}`, JSON.stringify(updated));
@@ -105,6 +119,44 @@ async function markReviewItemApprovedByBranch(
       updated: false,
       reason: "kv_update_threw",
       detail: String(err && (err as Error).message ? (err as Error).message : err).slice(0, 200),
+    };
+  }
+}
+
+// branch 名から slug を推定する。
+// 形式想定: auto/imported-{slug}-{14digit-timestamp} / preview/{slug} /
+// auto/sumahon-{slug}-{timestamp} など。
+function inferSlugFromBranch(branch: string): string | null {
+  // 既知 prefix を剥がしたあと末尾の timestamp 風サフィックスを除去
+  const stripped = branch
+    .replace(/^auto\/imported-/, "")
+    .replace(/^auto\/sumahon-/, "")
+    .replace(/^preview\//, "");
+  // 末尾の "-YYYYMMDDhhmmss" / "-YYYYMMDDhhmm" を取り除く
+  const withoutStamp = stripped.replace(/-\d{12,14}$/, "");
+  return withoutStamp || null;
+}
+
+// Cloudflare Pages Deploy Hook を発火する。
+// hook URL は env から読み、レスポンス・ログに絶対に出さない。
+// 失敗しても承認自体は成功扱いを維持する (best-effort)。
+async function fireDeployHook(
+  hookUrl: string | undefined,
+): Promise<{ triggered: boolean; reason?: string; status?: number }> {
+  if (!hookUrl) {
+    return { triggered: false, reason: "deploy_hook_not_configured" };
+  }
+  try {
+    const res = await fetch(hookUrl, { method: "POST" });
+    if (!res.ok) {
+      return { triggered: false, reason: "deploy_hook_non_2xx", status: res.status };
+    }
+    return { triggered: true, status: res.status };
+  } catch (err) {
+    return {
+      triggered: false,
+      reason: "deploy_hook_threw",
+      // err.message の内容は記録するが、hookUrl 自体は含まないことを保証
     };
   }
 }
@@ -265,38 +317,49 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (mergeRes.ok) {
     const mergeJson = (await mergeRes.json()) as { merged?: boolean; sha?: string; message?: string };
 
-    // merge 成功後、KV の review item を status: "approved" に best-effort で更新する。
-    // KV binding 不在・該当 item 不在・KV エラーのいずれでも、承認自体は成功扱いを
-    // 維持する (承認ボタンを押した時点で merge は完了しているため)。
+    // 承認 → 本番 deploy までを 1 つのフローにまとめる。
+    // 1. Cloudflare Pages Deploy Hook を発火 (GitHub Actions に依存しない)
+    // 2. KV review item を status: "approved" + deployTriggeredAt に更新
+    // フロント側は /api/verify-publication?slug=... を polling して
+    // 本番反映を厳格に検証する。
+    const deployResult = await fireDeployHook(env.CF_PAGES_DEPLOY_HOOK_URL);
+
     const prUrlForKv = `https://github.com/${owner}/${repo}/pull/${pr.number}`;
-    let reviewItemUpdate: ReviewItemUpdate = { updated: false, reason: "kv_not_bound" };
+    let reviewItemUpdate: (ReviewItemUpdate & { slug?: string }) = { updated: false, reason: "kv_not_bound" };
     if (env.SUMALABO_REVIEW_KV) {
       reviewItemUpdate = await markReviewItemApprovedByBranch(
         env.SUMALABO_REVIEW_KV,
         branch,
         prUrlForKv,
         mergeJson.sha,
+        deployResult.triggered,
       );
     }
 
+    // slug はフロントの polling 用に必須なので、KV 解決できない場合でも
+    // branch 名から推定する。
+    const slug = reviewItemUpdate.updated && reviewItemUpdate.slug
+      ? reviewItemUpdate.slug
+      : inferSlugFromBranch(branch);
+
     return jsonResponse({
       ok: true,
-      message: "Previewを承認し、mainへマージしました。",
+      message: deployResult.triggered
+        ? "Previewを承認し、mainへマージ→本番デプロイを開始しました。"
+        : "Previewを承認し、mainへマージしました。本番デプロイ起動に失敗したため手動でのデプロイが必要です。",
       pullNumber: pr.number,
       merged: mergeJson.merged === true,
       sha: mergeJson.sha,
       reviewItemUpdate,
-      // フロント側に「次は何が必要か」を明示する。GitHub Apps 連携を使っていないため
-      // main merge では本番に自動デプロイされない。queue (data/automation/sumahon-queue.json)
-      // はサーバー側からは更新できないので、CLI 側で sync する必要がある。
-      needsProductionDeploy: true,
-      productionDeployHint:
-        "main にマージされましたが、Cloudflare Pages の GitHub Apps 連携を使っていないため本番には自動デプロイされません。" +
-        "`npx wrangler pages deploy dist --project-name sumalabo --branch main` を別途実行してください。",
+      slug,
+      deployTriggered: deployResult.triggered,
+      deployTriggerReason: deployResult.reason,
+      // フロントは publication verify を /api/verify-publication?slug=... で
+      // polling する。本番反映前にボタンを「公開完了」にしない。
+      verifyEndpoint: slug ? `/api/verify-publication?slug=${encodeURIComponent(slug)}` : null,
+      // queue.json は Worker から書けないため、サーバー側 CLI / nightly タスクで
+      // /api/review-items を参照して同期する想定 (既存仕様を維持)。
       needsQueueSync: true,
-      queueSyncHint:
-        "data/automation/sumahon-queue.json の該当 entry を status: \"published\" 相当に更新してください。" +
-        "Workerからは直接書き込めないため、サーバー側 CLI / nightly タスクで /api/review-items を参照して同期するのが安全です。",
     });
   }
 

@@ -159,11 +159,75 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
 
         if (button && statusEl) {
           let pending = false;
+
+          // verify-publication を polling し、published / failed まで段階的に UI を更新する。
+          // 公開完了前にボタンを「公開完了」にしない (実態と表示を一致させる)。
+          const pollPublication = async (verifyEndpoint: string): Promise<void> => {
+            const POLL_INTERVAL_MS = 10000; // 10 秒間隔
+            const POLL_MAX_ATTEMPTS = 36;   // 10s × 36 = 6 分
+            let attempt = 0;
+            statusEl.textContent = "本番デプロイ中... (1/36)";
+            return new Promise<void>((resolve) => {
+              const tick = async () => {
+                attempt++;
+                let body: {
+                  ok?: boolean;
+                  status?: "published" | "deploying" | "failed";
+                  failedChecks?: string[];
+                  productionUrl?: string;
+                } = {};
+                try {
+                  const r = await fetch(verifyEndpoint, { method: "GET", cache: "no-store" });
+                  try {
+                    body = await r.json();
+                  } catch {
+                    /* leave body empty */
+                  }
+                } catch {
+                  /* network error — treat as deploying and retry */
+                }
+
+                if (body.status === "published") {
+                  statusEl.textContent = `本番公開を確認しました。`;
+                  const prodLink = body.productionUrl
+                    ? ` <a href="${body.productionUrl}" target="_blank" rel="noopener">本番URLを開く</a>`
+                    : "";
+                  if (metaEl) {
+                    metaEl.innerHTML = `<strong>公開完了</strong>${prodLink}`;
+                  }
+                  button.textContent = "公開完了";
+                  resolve();
+                  return;
+                }
+
+                if (body.status === "failed") {
+                  const reason = (body.failedChecks || []).join(", ");
+                  statusEl.textContent = `本番反映が確認できません。失敗 check: ${reason || "unknown"}。手動確認してください。`;
+                  button.textContent = "公開失敗";
+                  resolve();
+                  return;
+                }
+
+                // status === "deploying" もしくは未取得 → 続行
+                if (attempt < POLL_MAX_ATTEMPTS) {
+                  statusEl.textContent = `本番反映を確認中... (${attempt}/${POLL_MAX_ATTEMPTS})`;
+                  setTimeout(tick, POLL_INTERVAL_MS);
+                } else {
+                  statusEl.textContent =
+                    "本番反映の確認がタイムアウトしました。少し待ってから本番URLを直接確認してください。";
+                  button.textContent = "公開未確認";
+                  resolve();
+                }
+              };
+              tick();
+            });
+          };
+
           button.addEventListener("click", async () => {
             if (pending) return;
             pending = true;
             button.disabled = true;
-            statusEl.textContent = "承認中...";
+            statusEl.textContent = "承認処理中...";
 
             try {
               const res = await fetch("/api/approve-preview", {
@@ -172,7 +236,16 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
                 body: JSON.stringify({ branch }),
               });
 
-              let data: { ok?: boolean; message?: string; pullNumber?: number; merged?: boolean } = {};
+              let data: {
+                ok?: boolean;
+                message?: string;
+                pullNumber?: number;
+                merged?: boolean;
+                slug?: string;
+                deployTriggered?: boolean;
+                deployTriggerReason?: string;
+                verifyEndpoint?: string | null;
+              } = {};
               try {
                 data = await res.json();
               } catch {
@@ -181,9 +254,26 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
 
               if (res.ok && data.ok) {
                 const prSuffix = data.pullNumber ? `（PR #${data.pullNumber}）` : "";
-                statusEl.textContent = `承認しました。本番反映を待っています。${prSuffix}`;
-                button.textContent = "承認済み";
-                // ボタンは無効のまま
+                if (data.deployTriggered === false) {
+                  // PR merge は成功したが、deploy hook の発火に失敗。
+                  // 手動 deploy が必要なことをはっきり表示する。
+                  statusEl.textContent =
+                    `mainへマージ完了${prSuffix}。ただし本番デプロイ起動に失敗 (${data.deployTriggerReason || "unknown"})。手動でデプロイしてください。`;
+                  button.textContent = "デプロイ手動実行が必要";
+                  return;
+                }
+
+                statusEl.textContent = `mainへマージ→本番デプロイ開始${prSuffix}。`;
+                button.textContent = "公開確認中…";
+
+                if (data.verifyEndpoint) {
+                  await pollPublication(data.verifyEndpoint);
+                } else {
+                  // slug が解決できなかった場合のフォールバック
+                  statusEl.textContent =
+                    `デプロイは開始されましたが、verify endpoint が解決できませんでした。手動で本番URLを確認してください。`;
+                  button.textContent = "公開未確認";
+                }
               } else {
                 const message = data.message || `承認に失敗しました（HTTP ${res.status}）`;
                 statusEl.textContent = message;
