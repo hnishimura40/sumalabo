@@ -229,7 +229,7 @@ export function generateArticleUnderstanding({ articleBrief, source, classificat
   // Detect article variant (news / comparison / foundation).
   const variant = detectVariant(articleBrief);
 
-  return {
+  const base = {
     slug: articleBrief.slug,
     articleVariant: variant,
     articleTheme: theme,
@@ -252,5 +252,300 @@ export function generateArticleUnderstanding({ articleBrief, source, classificat
       hasComplexTopic,
       generatedAt: new Date().toISOString(),
     },
+  };
+
+  // -----------------------------------------------------------------------
+  // 追加: スライド主役型パイプライン用フィールド (PR-A スキーマ拡張)
+  //
+  // slideNeeded / slidePlan / thumbnailIntent は後続パイプライン (PR-B 以降) で
+  // 使用される。ここでは初期値のみ生成し、Phase B 後の slide_plan_finalize 段階で
+  // 本文要約を踏まえて再計算される。
+  //
+  // 重要:
+  // - slidePlan の枚数は記事内容で決まる。固定枚数禁止。
+  //   原則目安: 2〜8 枚 (短い速報・軽いニュースでは 0〜2 枚も許容)。
+  //   3 枚未満を即 fail にしない。明らかな異常値 (10 枚超など) だけ blocking。
+  // - slidePlan / thumbnailIntent の中身に「普通の人」表現を入れない
+  //   (公開コピーに漏れるため。既存の readerQuestion 等は既存運用を維持し、
+  //   新フィールドだけ外向きコピーを適用)。
+  // -----------------------------------------------------------------------
+  base.slideNeeded = inferSlideNeeded({ variant, tone, sourceTitle, hasComplexTopic });
+  base.slidePlan = generateInitialSlidePlan({
+    variant,
+    tone,
+    theme,
+    hasComplexTopic,
+    sourceTitle,
+    keyPoints: source?.keyPoints,
+  });
+  base.thumbnailIntent = generateThumbnailIntent({
+    variant,
+    tone,
+    theme,
+    sourceTitle,
+    props,
+  });
+
+  return base;
+}
+
+// -----------------------------------------------------------------------
+// PR-A: 追加ヘルパー関数群
+// -----------------------------------------------------------------------
+
+/**
+ * その記事がスライド付きの構成にすべきかを判定する。
+ * 速報・短いお知らせのみ false (0 枚運用)。標準は true。
+ */
+function inferSlideNeeded({ variant, tone, sourceTitle, hasComplexTopic }) {
+  // 短い速報 (本文も短いはず) で、複雑トピックでもなく中立トーンなら 0 枚運用 OK
+  const t = (sourceTitle || "").toString();
+  const looksLikeShortAlert =
+    /^\s*(速報|ベータ|配信開始|公開|発表だけ|お知らせ)/.test(t) &&
+    !hasComplexTopic &&
+    tone === "neutral";
+  if (looksLikeShortAlert) return false;
+  return true;
+}
+
+/**
+ * 初期 slidePlan を生成する。本文未生成段階のヒューリスティック判定。
+ *
+ * 枚数ルール:
+ *   - 短い速報 (slideNeeded=false 相当) は 0 枚
+ *   - foundation の単純トピック: 2〜3 枚
+ *   - news 通常: 3〜5 枚
+ *   - news + 噂/不安トーン: 4〜6 枚 (期待 / 注意 / 判断 / チェックの分量増)
+ *   - comparison 系: 4〜6 枚
+ *   - 複雑トピック (hasComplexTopic): +1 枚 (構造図 or 流れ図を追加)
+ *   - 上限は 8 枚を目安。10 枚以上は異常値として PR-B gate で blocking 判定。
+ */
+function generateInitialSlidePlan({ variant, tone, theme, hasComplexTopic, sourceTitle, keyPoints }) {
+  // typical purposes: overview / pros-cons / decision-guide / comparison /
+  //                    checkpoints / flow / structure
+  const purposes = [];
+
+  // 1. overview は news/comparison でほぼ必須、foundation でも導入として推奨
+  purposes.push("overview");
+
+  if (variant === "news") {
+    purposes.push("pros-cons");
+    purposes.push("decision-guide");
+    if (tone === "rumor") {
+      // 噂段階のニュースは「他選択肢比較」も入れて視野を広げる
+      purposes.push("comparison");
+    }
+    purposes.push("checkpoints");
+  } else if (variant === "comparison") {
+    purposes.push("comparison");
+    purposes.push("comparison");
+    purposes.push("decision-guide");
+    purposes.push("checkpoints");
+  } else {
+    // foundation
+    purposes.push("structure");
+    purposes.push("decision-guide");
+  }
+
+  if (hasComplexTopic && !purposes.includes("flow") && !purposes.includes("structure")) {
+    purposes.push("flow");
+  }
+
+  // 枚数上限を超えないよう trim (目安: 8)
+  const slidesCount = Math.min(purposes.length, 8);
+  const usedPurposes = purposes.slice(0, slidesCount);
+
+  const reasonParts = [];
+  reasonParts.push(`variant=${variant}, tone=${tone}`);
+  if (hasComplexTopic) reasonParts.push("複雑トピックのため流れ図を追加");
+  reasonParts.push(`論点 ${usedPurposes.length} 個を ${usedPurposes.length} 枚に展開`);
+
+  const slides = usedPurposes.map((purpose, i) =>
+    buildSlideEntry({ purpose, index: i + 1, theme, tone, sourceTitle, keyPoints }),
+  );
+
+  return {
+    count: slides.length,
+    reason: reasonParts.join(" / "),
+    slides,
+  };
+}
+
+/**
+ * purpose に応じた slide entry を作る。
+ * characterRole は必ず空文字を返さない (gate で「置物化」検出されないため)。
+ */
+function buildSlideEntry({ purpose, index, theme, tone, sourceTitle, keyPoints }) {
+  const id = `fig${String(index).padStart(2, "0")}-${purpose}`;
+  const safeTheme = (theme || "本記事").toString();
+
+  const recipes = {
+    overview: {
+      title: `これは何の話？`,
+      format: "card-3col",
+      mustInclude: [
+        `${safeTheme} の全体像を 3 点で整理`,
+        "報道・噂段階か、公式情報かを明示",
+        "iPhone / Android / AI / 周辺機器など、関連カテゴリを示す",
+      ],
+      characterRole: {
+        himari: `驚き／興味の表情。「${safeTheme} って何？」と素直に確かめる役`,
+        labomaru: "整理係。3 点の箇条書きを指し棒で示す",
+      },
+      props: ["吹き出し", "メモカード", "対象アイテム風アイコン"],
+      factCaveats: tone === "rumor" ? ["公式発表ではない", "報道・噂段階"] : [],
+    },
+    "pros-cons": {
+      title: "期待できること / 注意したいこと",
+      format: "card-3col",
+      mustInclude: [
+        "期待できる点 (買う前に魅力に感じる側)",
+        "注意したい点 (未確定要素 / 価格 / プライバシー等)",
+        "現時点の見方 (今動くか様子見か)",
+      ],
+      characterRole: {
+        himari: "期待側で笑顔。便利そうな道具を手に取って見る",
+        labomaru: "注意カードを掲げる。バランス役",
+      },
+      props: ["比較ボード", "注意カード", "笑顔の吹き出し"],
+      factCaveats: tone === "rumor" ? ["未確定情報は『未確定』と明示"] : [],
+    },
+    "decision-guide": {
+      title: "今どう考える？ 判断ガイド",
+      format: "decision-3way",
+      mustInclude: [
+        "今動く / 様子見 / 比較してから の 3 分岐",
+        "各分岐に該当する人物像を 1 行で",
+        "判断軸 (価格 / 日本語対応 / 対応機種 など)",
+      ],
+      characterRole: {
+        himari: "迷い顔。3 つの選択肢を見比べる",
+        labomaru: "フローチャート板を持ち、矢印で誘導する",
+      },
+      props: ["フローチャート板", "選択肢カード×3", "矢印"],
+      factCaveats: [],
+    },
+    comparison: {
+      title: "他の選択肢との違いを比較",
+      format: "table-4col",
+      mustInclude: [
+        "比較対象 4 件 (例: 主役 / 競合 A / 競合 B / 既存代替)",
+        "比較軸 4 件 (使い方 / 強み / 気になる点 / 向いている人)",
+        "差別化ポイントを 1 行で言語化",
+      ],
+      characterRole: {
+        himari: "比較ボードの片側で「どっちが合うかな？」",
+        labomaru: "もう片側で軸を整理する",
+      },
+      props: ["比較ボード", "虫眼鏡", "アイコン列"],
+      factCaveats: [],
+    },
+    checkpoints: {
+      title: "続報で確認したいチェックポイント",
+      format: "card-list",
+      mustInclude: [
+        "確認すべき項目 5〜6 個 (発売時期 / 価格 / 対応機種 / 日本語対応 / バッテリー / プライバシー など)",
+        "各項目に短い解説を添える",
+        "結論: 確定情報が出るまで情報収集と比較がベスト",
+      ],
+      characterRole: {
+        himari: "チェックリストを覗き込む。「これも見ておこう」",
+        labomaru: "虫眼鏡を持ち、各項目を点検する",
+      },
+      props: ["チェックリスト", "虫眼鏡", "番号付きカード"],
+      factCaveats: [],
+    },
+    flow: {
+      title: "仕組み・流れを 1 枚で",
+      format: "flow-3step",
+      mustInclude: [
+        "入口 → 中継 → 出口 (or 入力 → 処理 → 出力) の 3 ステップ",
+        "各ステップが何を担当しているかを 1 行で",
+        "全体として何が変わるかを最後に 1 文",
+      ],
+      characterRole: {
+        himari: "ステップ間を指でなぞる。「ここからここに行くのか」",
+        labomaru: "フロー板に矢印を書き込む",
+      },
+      props: ["フロー板", "矢印", "ステップカード×3"],
+      factCaveats: [],
+    },
+    structure: {
+      title: "基本構造を整理",
+      format: "structure-diagram",
+      mustInclude: [
+        "用語 / 構成要素を 4〜6 個",
+        "各要素が何を意味するかを 1 行で",
+        "「読者にとって何が大事か」を結論で",
+      ],
+      characterRole: {
+        himari: "用語カードを並び替えながら理解する役",
+        labomaru: "全体図を指し棒で示す",
+      },
+      props: ["用語カード", "指し棒", "全体図枠"],
+      factCaveats: [],
+    },
+  };
+
+  const recipe = recipes[purpose] || recipes.overview;
+  return {
+    id,
+    purpose,
+    format: recipe.format,
+    title: recipe.title,
+    mustInclude: recipe.mustInclude,
+    characterRole: recipe.characterRole,
+    props: recipe.props,
+    factCaveats: recipe.factCaveats,
+  };
+}
+
+/**
+ * thumbnailIntent を生成する。サムネ用の意図 (大コピー候補・キャラ反応・道具) を
+ * articleUnderstanding の文脈から導出する。
+ *
+ * 公開コピーに「普通の人」「みんな」「全員」を漏らさない (forbiddenCopy に明示)。
+ */
+function generateThumbnailIntent({ variant, tone, theme, sourceTitle, props }) {
+  const safeTheme = (theme || "本記事").toString();
+  const mainCopyByTone = {
+    concern: `${safeTheme}どう備える？`,
+    positive: `${safeTheme}どう活かす？`,
+    rumor: `${safeTheme}どう見る？`,
+    neutral: `${safeTheme}どう見る？`,
+  };
+  const subCopyByTone = {
+    concern: ["影響範囲 / 対処 / 様子見"],
+    positive: ["嬉しい点 / 注意 / 今見るべき点"],
+    rumor: ["期待 / 注意 / 様子見"],
+    neutral: ["買う前・待つ前のポイント"],
+  };
+
+  const himariByToneText = {
+    concern: `${safeTheme}に少し心配そう。「自分も影響あるかな？」`,
+    positive: `${safeTheme}に前向きな興味。「これ便利そう」`,
+    rumor: `${safeTheme}に興味＋少し不安。「気になるけど確定？」`,
+    neutral: `${safeTheme}に素直な関心。「どう考えればいい？」`,
+  };
+  const labomaruByToneText = {
+    concern: "影響範囲と対処を整理する案内役。チェックリストと注意カード",
+    positive: "嬉しい点と注意点を整理する案内役。比較ボードを持つ",
+    rumor: "噂と確定情報を切り分ける案内役。虫眼鏡とチェックリスト",
+    neutral: "判断軸を整理する案内役。フローチャート板と指し棒",
+  };
+
+  const propsRequired = props.slice(0, 2);
+  const propsOptional = props.slice(2);
+
+  return {
+    mainCopy: mainCopyByTone[tone] || mainCopyByTone.neutral,
+    subCopyCandidates: subCopyByTone[tone] || subCopyByTone.neutral,
+    himariReaction: himariByToneText[tone] || himariByToneText.neutral,
+    labomaruRole: labomaruByToneText[tone] || labomaruByToneText.neutral,
+    propsRequired,
+    propsOptional,
+    moodWords: ["気になる", "整理して見る", "ガジェット好きも引っかかる"],
+    // 公開コピーに使ってはいけないフレーズ。サムネ生成プロンプト側で機械チェックする。
+    forbiddenCopy: ["普通の人", "みんな", "全員", "誰でも", "万人向け"],
   };
 }
