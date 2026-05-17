@@ -731,6 +731,7 @@ const typeLabels = {
    * article-wide-block / table-card / decision-guide-* / summary-box / info-box / check-box) は
    * 行長制約から外し、shell 全幅を使う */
   .article-shell--news .article-content :global(.article-wide-block),
+  .article-shell--news .article-content :global(.article-slide-figure),
   .article-shell--news .article-content :global(.visual-dashboard),
   .article-shell--news .article-content :global(.pros-cons-grid),
   .article-shell--news .article-content :global(.wide-comparison),
@@ -1014,6 +1015,40 @@ const typeLabels = {
   .article-content :global(.wide-comparison th),
   .article-content :global(.wide-comparison td) {
     min-width: 120px;
+  }
+
+  /* --- article-slide-figure: 図解スライド画像用 (wide block) --- */
+  .article-content :global(.article-slide-figure) {
+    margin: 32px 0 36px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--teal-tint) 28%, transparent), transparent 70%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .article-content :global(.article-slide-figure img) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .article-content :global(.article-slide-figure figcaption) {
+    margin: 0;
+    padding: 12px 18px;
+    color: var(--fg-soft);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.55;
+    background: var(--bg-elev);
   }
 
   /* --- checkpoint-list: チェック項目を3列カード化 --- */
