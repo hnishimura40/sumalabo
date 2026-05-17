@@ -734,6 +734,7 @@ const typeLabels = {
   .article-shell--news .article-content :global(.article-slide-figure),
   .article-shell--news .article-content :global(.article-slide-section),
   .article-shell--news .article-content :global(.slide-reading-note),
+  .article-shell--news .article-content :global(.slide-transcript),
   .article-shell--news .article-content :global(.visual-dashboard),
   .article-shell--news .article-content :global(.pros-cons-grid),
   .article-shell--news .article-content :global(.wide-comparison),
@@ -1091,16 +1092,69 @@ const typeLabels = {
   .article-content :global(.slide-reading-note li) {
     color: var(--fg-mid);
     font-size: 15px;
-    line-height: 1.7;
+    line-height: 1.75;
   }
 
   .article-content :global(.slide-reading-note li + li) {
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
   .article-content :global(.slide-reading-note strong) {
     color: var(--fg);
     font-weight: 800;
+  }
+
+  /* --- slide-transcript: 図解スライドの完全テキスト (折りたたみ optional) --- */
+  .article-content :global(.slide-transcript) {
+    margin: 12px 0 36px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.slide-transcript summary) {
+    margin: 0;
+    padding: 14px 18px;
+    color: var(--teal-deep);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    list-style: none;
+  }
+
+  .article-content :global(.slide-transcript summary::-webkit-details-marker) {
+    display: none;
+  }
+
+  .article-content :global(.slide-transcript summary::before) {
+    content: "▶";
+    display: inline-block;
+    margin-right: 8px;
+    color: var(--teal);
+    font-size: 11px;
+    transition: transform 0.15s;
+  }
+
+  .article-content :global(.slide-transcript[open] summary::before) {
+    transform: rotate(90deg);
+  }
+
+  .article-content :global(.slide-transcript > div),
+  .article-content :global(.slide-transcript > ul) {
+    padding: 0 22px 18px;
+    margin: 0;
+    color: var(--fg-mid);
+    font-size: 14.5px;
+    line-height: 1.75;
+    max-width: none;
+  }
+
+  .article-content :global(.slide-transcript ul) {
+    padding-left: 1.3em;
   }
 
   @media (max-width: 720px) {

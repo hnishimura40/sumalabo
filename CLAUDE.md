@@ -104,6 +104,57 @@
 問題なければ Preview の「この記事を承認して公開」ボタンを押してください。
 ```
 
+## 図解スライドを記事に入れる場合のルール（必須）
+
+**「スライド画像を入れる場合は、必ずコピー可能な HTML 要約をセットにする」** が標準です。画像内文字はコピーできず、SEO・アクセシビリティでも弱いため、画像は視覚理解用、HTML は読み取り・コピー・補足用としてセットで扱います。
+
+### 必須構成（各図解 1 ブロック）
+
+```mdx
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">短い導入文 1 文（何を見る図か）</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/{slug}/figNN-name.png"
+         alt="図の内容を 1〜2 文で説明（スクリーンリーダー向け）"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：図のタイトル</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>項目1</strong>：画像内の重要テキストを HTML でも読める形で（短く）</li>
+      <li><strong>項目2</strong>：1 行は短く、bullet は 2〜5 個まで</li>
+      <li><strong>項目3</strong>：完全な文字起こしではなく、読者がコピーしたい要点に絞る</li>
+      <li><strong>結論</strong>：そのスライドから持ち帰る一言</li>
+    </ul>
+  </div>
+</section>
+```
+
+### ルール
+
+1. **画像と HTML 要約は同じ wide-block 幅で揃える**（PC では 1080px シェル全幅）。`article-wide-block` クラスは必須。
+2. `alt` 属性は必ず入れる（スクリーンリーダー / 画像が表示されない環境のフォールバック）。
+3. `figcaption` も必ず入れる（画像が表示される環境で何の図かを示す）。
+4. `slide-reading-note` の bullet は **2〜5 個**、各 bullet は **1 行で読める長さ** に抑える。
+5. 画像内の **全テキストを書き起こさない**。読者がコピーしたい要点だけを HTML 化する。
+6. 画像と同じ内容を本文の長文段落で繰り返さない（重複削減）。
+7. 完全な文字起こしが必要なときは `<details class="slide-transcript article-wide-block">` で折りたたみを追加してよい。ただしページが重く見えるなら `slide-reading-note` だけで十分。
+
+### 使うクラス（既存）
+
+- `article-slide-section` — 導入文・図・読み取りポイントを wide-block でまとめるラッパー
+- `slide-intro` — 短い導入文
+- `article-slide-figure` — 画像 + figcaption
+- `slide-reading-note` — コピー可能な読み取りポイント（teal の上ボーダー + ミントの BG）
+- `slide-transcript` — 完全テキスト用の折りたたみ（任意）
+- `article-wide-block` — 行長制約から外し、shell 全幅を使うためのフラグクラス
+
+### 実装場所
+
+- CSS: `src/layouts/ArticleLayout.astro` の `<style>` ブロック末尾
+- 参考実装: `content/articles/202605-apple-airtag-size-ai-pendant-iphone-siri.mdx` の fig01〜fig05
+
 ## 関連ドキュメント
 
 - `docs/visual_preview_review.md` — Preview スクショ 2 パスレビューの手順とチェック観点
