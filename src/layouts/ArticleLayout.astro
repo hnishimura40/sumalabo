@@ -268,14 +268,19 @@ const typeLabels = {
     margin-top: 8px;
   }
 
+  /* =========================================================================
+   * Table defaults — PC では横スクロールなしを原則とし、セル内文章は折り返す。
+   * 横スクロールが本当に必要な大型表だけ .is-scrollable で opt-in する。
+   * revenue 系は元の block + scroll 挙動を別途維持。
+   * ========================================================================= */
   .article-content :global(table) {
-    display: block;
+    display: table;
     width: 100%;
     max-width: 100%;
     margin: 28px 0 32px;
     border-collapse: collapse;
-    overflow-x: auto;
-    white-space: nowrap;
+    table-layout: auto;
+    white-space: normal;
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     background: var(--bg-elev);
@@ -283,6 +288,8 @@ const typeLabels = {
   }
 
   .article-shell--revenue .article-content :global(table) {
+    display: block;
+    overflow-x: auto;
     white-space: normal;
   }
 
@@ -292,6 +299,25 @@ const typeLabels = {
     padding: 14px 16px;
     text-align: left;
     vertical-align: top;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* opt-in: .is-scrollable を付けた表だけ PC でも横スクロール許可。
+   * 6 列以上の詳細比較表 / 数値・スペック密度が高い表 / 折り返すと著しく
+   * 読みにくくなる表のみで使うこと。 */
+  .article-content :global(.is-scrollable) {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .article-content :global(.is-scrollable > table),
+  .article-content :global(.is-scrollable table) {
+    display: block;
+    width: max-content;
+    max-width: none;
+    white-space: nowrap;
   }
 
   .article-shell--revenue .article-content :global(th),
@@ -700,8 +726,12 @@ const typeLabels = {
       width: min(100% - 24px, 1200px);
     }
 
+    /* mobile: revenue の table は元の挙動（scroll + 折り返し）。news 系は
+     * デフォルトで折り返し継続（.is-scrollable opt-in のみ scroll 許可）。 */
     .article-shell--revenue .article-content :global(table) {
-      white-space: nowrap;
+      display: block;
+      overflow-x: auto;
+      white-space: normal;
     }
   }
 
@@ -1024,23 +1054,27 @@ const typeLabels = {
     margin-top: 6px;
   }
 
-  /* --- wide-comparison: 比較表用ラッパー (PC で広く / モバイルで横スクロール) --- */
+  /* --- wide-comparison: 比較表用ラッパー
+   * PC は折り返して shell 全幅に収める（横スクロールなし）。
+   * モバイルでは画面幅が足りない場合のみ overflow-x: auto を許可。
+   * .is-scrollable を併用すると PC でも横スクロール可能。 */
   .article-content :global(.wide-comparison) {
     margin: 28px 0 34px;
     width: 100%;
-    overflow-x: auto;
   }
 
   .article-content :global(.wide-comparison table) {
     margin: 0;
     display: table;
     width: 100%;
+    table-layout: fixed;
     white-space: normal;
   }
 
   .article-content :global(.wide-comparison th),
   .article-content :global(.wide-comparison td) {
-    min-width: 120px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   /* --- article-slide-section: 図解スライドの導入文・画像・読み取りポイントを
@@ -1299,9 +1333,16 @@ const typeLabels = {
       grid-template-columns: 1fr;
     }
 
+    /* mobile: wide-comparison は折り返しを基本にしつつ、列数が多くて
+     * どうしても収まらないときは ラッパーに overflow-x: auto を許可。
+     * 通常の wide-comparison（4 列まで）は折り返しで OK。 */
+    .article-content :global(.wide-comparison) {
+      overflow-x: auto;
+    }
+
     .article-content :global(.wide-comparison table) {
-      display: block;
-      white-space: nowrap;
+      table-layout: auto;
+      min-width: 0;
     }
 
     .article-shell--news {

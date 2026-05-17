@@ -210,6 +210,31 @@
 - スライドの直後に、同じ内容を長文で書き直す
 - 「先に結論」に 3 段落の長文を並べる
 
+### 横スクロール標準（PC 原則禁止）
+
+PC 表示では **横スクロールを原則使わない**。スマホでも基本は折り返しで収める。横スクロール
+は「列数が非常に多い詳細比較表 / 数値・スペック密度が高い表 / 折り返すと著しく読みにくく
+なる表」のみで明示的に許可する。
+
+- **PC**：すべての `<table>` は `display: table; white-space: normal; word-break: break-word;
+  overflow-wrap: anywhere;` で折り返し前提
+- **opt-in**：横スクロールを許可したい大型表は **`.is-scrollable`** をラッパー or 自体に付ける
+  と PC でも横スクロール可能（`overflow-x: auto; display: block; white-space: nowrap;`）
+- **`.wide-comparison`**：PC は折り返し、モバイルだけ自動 overflow-x: auto を許可（4 列前後
+  までの比較表向けデフォルト）
+- **revenue 系**：`.article-shell--revenue` の table は引き続き `display: block; overflow-x:
+  auto;` を維持（料金比較などの密度の高い表のため）
+- 表のセル内文章は **短く保つ**（1 セル 30 文字以内が目安。長い説明は本文側に逃がす）
+- `min-width` を `<th>` / `<td>` に固定しない（列幅は表の中身に任せる）
+
+`.is-scrollable` を使う条件:
+- 6 列以上の詳細比較表
+- 数値・スペックが多い表
+- 折り返すと著しく読みにくくなる表
+
+それ以外は PC で必ず折り返して収める。スライド画像 / `slide-reading-note` / 本文段落・
+リスト / `.lead` が横にはみ出さないことを `npm run build` 後に必ず確認すること。
+
 ### CSS の場所
 
 - `.lead` / `.article-slide-section` / `.slide-intro` / `.slide-reading-note` /
