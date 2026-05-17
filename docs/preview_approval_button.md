@@ -4,7 +4,24 @@
 
 ## 仕組み（一行で）
 
-Cloudflare Pages Preview の記事ページに置いたボタンを押すと、Cloudflare Pages Functions（`/api/approve-preview`）がサーバー側で GitHub API を叩き、対応する `preview/*` → `main` の open PR を merge する。
+Cloudflare Pages Preview の記事ページに置いたボタンを押すと、Cloudflare Pages Functions（`/api/approve-preview`）がサーバー側で **GitHub API で PR merge → Cloudflare Pages Deploy Hook 発火** を順に実行し、その後フロントが **`/api/verify-publication?slug=...` を polling して本番反映を厳格に確認** する。verify が pass した時点で KV review item の status が `published` に更新され、ボタンが「公開完了」に確定する。
+
+```
+[承認ボタン押下]
+     ↓
+[POST /api/approve-preview]
+     ├─ GitHub API で PR を merge
+     ├─ Cloudflare Pages Deploy Hook を fetch (GitHub Actions 非依存)
+     └─ KV review item を status: "approved" + deployTriggeredAt に更新
+     ↓
+[フロントが /api/verify-publication?slug=… を 10s ごと polling (最大 6 分)]
+     ├─ HTTP 200 / title / slug / body / thumbnail / fallback判定 / index掲載 をチェック
+     ├─ 全 pass → KV を status: "published" + publishedAt + productionUrl に更新
+     ├─ HTTP 200 だが fallback (deploying) → 続行
+     └─ HTTP 5xx / 4xx → failed (KV に publicationVerifyError を記録)
+```
+
+**重要**: HTTP 200 だけでは公開成功扱いにしない。homepage fallback (`<title>すまラボ</title>` で記事 body / thumbnail が無い状態) は `deploying` として再 polling する。
 
 ## どこでボタンが表示されるか
 
@@ -30,6 +47,8 @@ Cloudflare Pages の **Settings → Environment variables** で以下を設定�
 | `GITHUB_OWNER` | 任意 | `hnishimura40` | リポジトリオーナー名 |
 | `GITHUB_REPO` | 任意 | `sumalabo` | リポジトリ名 |
 | `APPROVE_ALLOWED_BRANCH_PREFIX` | 任意 | `preview/` | 承認対象として許可するブランチ名のプレフィックス。これ以外で始まるブランチはAPI側で拒否する |
+| `CF_PAGES_DEPLOY_HOOK_URL` | **強く推奨** | なし | Cloudflare Pages の Deploy Hook URL。承認 API が PR merge 後に fetch(POST) で本番 deploy を発火する。**コード・ログ・レスポンスに値を含めない**。未設定なら `deployTriggered: false` を返し、手動 deploy が必要な旨フロントに表示される |
+| `PRODUCTION_HOST` | 任意 | `sumalabo.com` | `/api/verify-publication` が verify 対象とする本番ホスト名 |
 
 ボタン側の表示制御に使う変数:
 
