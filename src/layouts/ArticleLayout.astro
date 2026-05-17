@@ -268,14 +268,19 @@ const typeLabels = {
     margin-top: 8px;
   }
 
+  /* =========================================================================
+   * Table defaults — PC では横スクロールなしを原則とし、セル内文章は折り返す。
+   * 横スクロールが本当に必要な大型表だけ .is-scrollable で opt-in する。
+   * revenue 系は元の block + scroll 挙動を別途維持。
+   * ========================================================================= */
   .article-content :global(table) {
-    display: block;
+    display: table;
     width: 100%;
     max-width: 100%;
     margin: 28px 0 32px;
     border-collapse: collapse;
-    overflow-x: auto;
-    white-space: nowrap;
+    table-layout: auto;
+    white-space: normal;
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     background: var(--bg-elev);
@@ -283,6 +288,8 @@ const typeLabels = {
   }
 
   .article-shell--revenue .article-content :global(table) {
+    display: block;
+    overflow-x: auto;
     white-space: normal;
   }
 
@@ -292,6 +299,25 @@ const typeLabels = {
     padding: 14px 16px;
     text-align: left;
     vertical-align: top;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* opt-in: .is-scrollable を付けた表だけ PC でも横スクロール許可。
+   * 6 列以上の詳細比較表 / 数値・スペック密度が高い表 / 折り返すと著しく
+   * 読みにくくなる表のみで使うこと。 */
+  .article-content :global(.is-scrollable) {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .article-content :global(.is-scrollable > table),
+  .article-content :global(.is-scrollable table) {
+    display: block;
+    width: max-content;
+    max-width: none;
+    white-space: nowrap;
   }
 
   .article-shell--revenue .article-content :global(th),
@@ -700,8 +726,633 @@ const typeLabels = {
       width: min(100% - 24px, 1200px);
     }
 
+    /* mobile: revenue の table は元の挙動（scroll + 折り返し）。news 系は
+     * デフォルトで折り返し継続（.is-scrollable opt-in のみ scroll 許可）。 */
     .article-shell--revenue .article-content :global(table) {
-      white-space: nowrap;
+      display: block;
+      overflow-x: auto;
+      white-space: normal;
+    }
+  }
+
+  /* =========================================================================
+   * Visual-first article components (Apple AIペンダント 用に拡張)
+   *
+   * PC では本文幅より広いキャンバスを使って判断ブロックを大きく見せ、
+   * スマホでは 1 列カードに自動で崩す。
+   * 通常本文 (p / ul / ol) は読みやすい行長 760px に抑える。
+   * ========================================================================= */
+
+  /* news 記事の shell を拡張: 通常 852px → wide 1080px */
+  .article-shell--news {
+    width: min(1080px, calc(100% - 32px));
+  }
+
+  /* news 記事の本文段落・リストは 940px (1 行 50〜55 文字) を上限に。
+   * 旧設定の 760px だと画像 (shell 全幅 ~988px) との右端の差が大きく、
+   * 「画像だけ広く本文だけ細い」印象になっていたため広げた。 */
+  .article-shell--news .article-content :global(p),
+  .article-shell--news .article-content :global(ul),
+  .article-shell--news .article-content :global(ol) {
+    max-width: 940px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* lead / 先に結論の一行サマリ用。本文 940px より少しだけタイト、
+   * かつフォントサイズを上げて視線を止める。 */
+  .article-content :global(.lead) {
+    margin: 0 0 16px;
+    max-width: 940px;
+    color: var(--fg);
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.75;
+  }
+
+  .article-shell--news .article-content :global(.lead) {
+    max-width: 940px;
+  }
+
+  @media (max-width: 720px) {
+    .article-content :global(.lead) {
+      font-size: 17px;
+    }
+  }
+
+  /* wide block 系 (visual-dashboard / pros-cons / verdict / flow / wide-comparison / checkpoint /
+   * article-wide-block / table-card / decision-guide-* / summary-box / info-box / check-box) は
+   * 行長制約から外し、shell 全幅を使う */
+  .article-shell--news .article-content :global(.article-wide-block),
+  .article-shell--news .article-content :global(.article-slide-figure),
+  .article-shell--news .article-content :global(.article-slide-section),
+  .article-shell--news .article-content :global(.slide-reading-note),
+  .article-shell--news .article-content :global(.slide-transcript),
+  .article-shell--news .article-content :global(.visual-dashboard),
+  .article-shell--news .article-content :global(.pros-cons-grid),
+  .article-shell--news .article-content :global(.wide-comparison),
+  .article-shell--news .article-content :global(.verdict-cards),
+  .article-shell--news .article-content :global(.visual-flow),
+  .article-shell--news .article-content :global(.checkpoint-list),
+  .article-shell--news .article-content :global(.table-card),
+  .article-shell--news .article-content :global(.decision-guide-grid),
+  .article-shell--news .article-content :global(.decision-guide-panel),
+  .article-shell--news .article-content :global(.summary-box),
+  .article-shell--news .article-content :global(.info-box),
+  .article-shell--news .article-content :global(.check-box),
+  .article-shell--news .article-content :global(table) {
+    max-width: none;
+    width: 100%;
+  }
+
+  /* --- visual-dashboard: 冒頭の4セル メトリクス --- */
+  .article-content :global(.visual-dashboard) {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 28px 0 36px;
+  }
+
+  .article-content :global(.visual-dashboard .metric) {
+    padding: 18px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.visual-dashboard .metric--high) {
+    border-left: 4px solid var(--teal);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--teal-tint) 60%, transparent), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.visual-dashboard .metric--mid) {
+    border-left: 4px solid var(--amber);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--amber-tint) 60%, transparent), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.visual-dashboard .metric--low) {
+    border-left: 4px solid color-mix(in srgb, var(--fg-soft) 40%, var(--line));
+  }
+
+  .article-content :global(.visual-dashboard .metric--warn) {
+    border-left: 4px solid #d97706;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, #d97706 8%, var(--bg-elev)), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.visual-dashboard .metric-label) {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .article-content :global(.visual-dashboard .metric--warn .metric-label) {
+    color: #b45309;
+  }
+
+  .article-content :global(.visual-dashboard .metric-value) {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--fg);
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+  .article-content :global(.visual-dashboard .metric-note) {
+    display: block;
+    color: var(--fg-soft);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  /* --- pros-cons-grid: 便利 / 気になる 左右カード --- */
+  .article-content :global(.pros-cons-grid) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin: 28px 0 34px;
+  }
+
+  .article-content :global(.pros-cons-grid .pros),
+  .article-content :global(.pros-cons-grid .cons) {
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.pros-cons-grid .pros) {
+    border-left: 5px solid var(--teal);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.pros-cons-grid .cons) {
+    border-left: 5px solid #d97706;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--amber-tint) 80%, var(--bg-elev)), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.pros-cons-grid h4) {
+    margin: 0 0 12px;
+    color: var(--fg);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  .article-content :global(.pros-cons-grid .pros h4) {
+    color: var(--teal-deep);
+  }
+
+  .article-content :global(.pros-cons-grid .cons h4) {
+    color: #b45309;
+  }
+
+  .article-content :global(.pros-cons-grid ul) {
+    margin: 0;
+    padding-left: 1.2em;
+    max-width: none;
+  }
+
+  .article-content :global(.pros-cons-grid li) {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* --- visual-flow: 3-step 横方向 (PC) / 縦方向 (mobile) --- */
+  .article-content :global(.visual-flow) {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    align-items: stretch;
+    gap: 0;
+    margin: 28px 0 34px;
+  }
+
+  .article-content :global(.visual-flow .flow-step) {
+    padding: 20px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+  }
+
+  .article-content :global(.visual-flow .flow-step--input) { border-top: 4px solid var(--teal); }
+  .article-content :global(.visual-flow .flow-step--relay) { border-top: 4px solid var(--amber); }
+  .article-content :global(.visual-flow .flow-step--brain) { border-top: 4px solid #7c3aed; }
+
+  .article-content :global(.visual-flow .flow-arrow) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    color: var(--teal);
+    font-size: 24px;
+    font-weight: 900;
+  }
+
+  .article-content :global(.visual-flow .flow-label) {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .article-content :global(.visual-flow .flow-title) {
+    display: block;
+    margin: 0 0 8px;
+    color: var(--fg);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .article-content :global(.visual-flow .flow-text) {
+    display: block;
+    color: var(--fg-soft);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* --- verdict-cards: 噂 vs 確定 2-col --- */
+  .article-content :global(.verdict-cards) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 28px 0 34px;
+  }
+
+  .article-content :global(.verdict-cards .verdict) {
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.verdict-cards .verdict--rumor) {
+    border-left: 5px solid #6b7280;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, #6b7280 10%, var(--bg-elev)), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.verdict-cards .verdict--confirmed) {
+    border-left: 5px solid var(--teal);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 70%),
+      var(--bg-elev);
+  }
+
+  .article-content :global(.verdict-cards .verdict-label) {
+    display: block;
+    margin: 0 0 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+  }
+
+  .article-content :global(.verdict-cards .verdict--rumor .verdict-label) {
+    color: #4b5563;
+  }
+
+  .article-content :global(.verdict-cards .verdict--confirmed .verdict-label) {
+    color: var(--teal-deep);
+  }
+
+  .article-content :global(.verdict-cards ul) {
+    margin: 0;
+    padding-left: 1.2em;
+    max-width: none;
+  }
+
+  .article-content :global(.verdict-cards li) {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .article-content :global(.verdict-cards li + li) {
+    margin-top: 6px;
+  }
+
+  /* --- wide-comparison: 比較表用ラッパー
+   * PC は折り返して shell 全幅に収める（横スクロールなし）。
+   * モバイルでは画面幅が足りない場合のみ overflow-x: auto を許可。
+   * .is-scrollable を併用すると PC でも横スクロール可能。 */
+  .article-content :global(.wide-comparison) {
+    margin: 28px 0 34px;
+    width: 100%;
+  }
+
+  .article-content :global(.wide-comparison table) {
+    margin: 0;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    white-space: normal;
+  }
+
+  .article-content :global(.wide-comparison th),
+  .article-content :global(.wide-comparison td) {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* --- article-slide-section: 図解スライドの導入文・画像・読み取りポイントを
+   * 同じ幅に揃える wide-block ラッパー --- */
+  .article-content :global(.article-slide-section) {
+    margin: 36px 0 38px;
+  }
+
+  .article-content :global(.article-slide-section .slide-intro) {
+    margin: 0 0 14px;
+    max-width: none;
+    color: var(--fg-mid);
+    font-size: 15.5px;
+    line-height: 1.8;
+  }
+
+  /* article-slide-section 内では figure と reading-note を視覚的につなぐ
+   * (上は角丸、下は角丸を切って下のカードに繋ぐ) */
+  .article-content :global(.article-slide-section .article-slide-figure) {
+    margin: 0;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .article-content :global(.article-slide-section .article-slide-figure img) {
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .article-content :global(.article-slide-section .article-slide-figure figcaption) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .article-content :global(.article-slide-section .slide-reading-note) {
+    margin: 0;
+    border-top: 0;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  /* --- slide-reading-note: 読み取りポイント (wide block / カード型) --- */
+  .article-content :global(.slide-reading-note) {
+    margin: 14px 0 36px;
+    padding: 18px 22px 20px;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--teal);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--teal-tint) 32%, transparent), transparent 75%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.slide-reading-note p:first-child) {
+    margin: 0 0 10px;
+    color: var(--teal-deep);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    max-width: none;
+  }
+
+  .article-content :global(.slide-reading-note p:first-child strong) {
+    color: var(--teal-deep);
+    font-weight: 800;
+  }
+
+  .article-content :global(.slide-reading-note ul) {
+    margin: 0;
+    padding-left: 1.2em;
+    max-width: none;
+  }
+
+  .article-content :global(.slide-reading-note li) {
+    color: var(--fg-mid);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  .article-content :global(.slide-reading-note li + li) {
+    margin-top: 8px;
+  }
+
+  .article-content :global(.slide-reading-note strong) {
+    color: var(--fg);
+    font-weight: 800;
+  }
+
+  /* --- slide-transcript: 図解スライドの完全テキスト (折りたたみ optional) --- */
+  .article-content :global(.slide-transcript) {
+    margin: 12px 0 36px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-content :global(.slide-transcript summary) {
+    margin: 0;
+    padding: 14px 18px;
+    color: var(--teal-deep);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    list-style: none;
+  }
+
+  .article-content :global(.slide-transcript summary::-webkit-details-marker) {
+    display: none;
+  }
+
+  .article-content :global(.slide-transcript summary::before) {
+    content: "▶";
+    display: inline-block;
+    margin-right: 8px;
+    color: var(--teal);
+    font-size: 11px;
+    transition: transform 0.15s;
+  }
+
+  .article-content :global(.slide-transcript[open] summary::before) {
+    transform: rotate(90deg);
+  }
+
+  .article-content :global(.slide-transcript > div),
+  .article-content :global(.slide-transcript > ul) {
+    padding: 0 22px 18px;
+    margin: 0;
+    color: var(--fg-mid);
+    font-size: 14.5px;
+    line-height: 1.75;
+    max-width: none;
+  }
+
+  .article-content :global(.slide-transcript ul) {
+    padding-left: 1.3em;
+  }
+
+  @media (max-width: 720px) {
+    .article-content :global(.slide-reading-note) {
+      padding: 16px 16px 18px;
+    }
+    .article-content :global(.article-slide-section .slide-intro) {
+      font-size: 15px;
+    }
+  }
+
+  /* --- article-slide-figure: 図解スライド画像用 (wide block) --- */
+  .article-content :global(.article-slide-figure) {
+    margin: 32px 0 36px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--teal-tint) 28%, transparent), transparent 70%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .article-content :global(.article-slide-figure img) {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .article-content :global(.article-slide-figure figcaption) {
+    margin: 0;
+    padding: 12px 18px;
+    color: var(--fg-soft);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.55;
+    background: var(--bg-elev);
+  }
+
+  /* --- checkpoint-list: チェック項目を3列カード化 --- */
+  .article-content :global(.checkpoint-list) {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 28px 0 34px;
+    padding: 0;
+    list-style: none;
+    max-width: none;
+  }
+
+  .article-content :global(.checkpoint-list li) {
+    position: relative;
+    padding: 16px 16px 16px 46px;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--teal);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+    font-size: 14px;
+    line-height: 1.65;
+    margin-top: 0;
+  }
+
+  .article-content :global(.checkpoint-list li::before) {
+    position: absolute;
+    left: 12px;
+    top: 14px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--teal-tint);
+    color: var(--teal-deep);
+    content: "✓";
+    font-weight: 900;
+    text-align: center;
+    line-height: 24px;
+    font-size: 13px;
+  }
+
+  .article-content :global(.checkpoint-list strong) {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--fg);
+    font-weight: 800;
+  }
+
+  /* mobile: 全 wide-block を 1 列に縦積み */
+  @media (max-width: 720px) {
+    .article-content :global(.visual-dashboard) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .article-content :global(.pros-cons-grid) {
+      grid-template-columns: 1fr;
+    }
+
+    .article-content :global(.visual-flow) {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .article-content :global(.visual-flow .flow-arrow) {
+      transform: rotate(90deg);
+      padding: 4px 0;
+      font-size: 20px;
+    }
+
+    .article-content :global(.verdict-cards) {
+      grid-template-columns: 1fr;
+    }
+
+    .article-content :global(.checkpoint-list) {
+      grid-template-columns: 1fr;
+    }
+
+    /* mobile: wide-comparison は折り返しを基本にしつつ、列数が多くて
+     * どうしても収まらないときは ラッパーに overflow-x: auto を許可。
+     * 通常の wide-comparison（4 列まで）は折り返しで OK。 */
+    .article-content :global(.wide-comparison) {
+      overflow-x: auto;
+    }
+
+    .article-content :global(.wide-comparison table) {
+      table-layout: auto;
+      min-width: 0;
+    }
+
+    .article-shell--news {
+      width: min(1080px, calc(100% - 24px));
+    }
+
+    .article-shell--news .article-content :global(p),
+    .article-shell--news .article-content :global(ul),
+    .article-shell--news .article-content :global(ol) {
+      max-width: 100%;
     }
   }
 </style>

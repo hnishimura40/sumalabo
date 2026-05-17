@@ -104,6 +104,148 @@
 問題なければ Preview の「この記事を承認して公開」ボタンを押してください。
 ```
 
+## 図解スライドを記事に入れる場合のルール（必須）
+
+**「スライド画像を入れる場合は、必ずコピー可能な HTML 要約をセットにする」** が標準です。画像内文字はコピーできず、SEO・アクセシビリティでも弱いため、画像は視覚理解用、HTML は読み取り・コピー・補足用としてセットで扱います。
+
+### 必須構成（各図解 1 ブロック）
+
+```mdx
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">短い導入文 1 文（何を見る図か）</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/{slug}/figNN-name.png"
+         alt="図の内容を 1〜2 文で説明（スクリーンリーダー向け）"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：図のタイトル</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>項目1</strong>：画像内の重要テキストを HTML でも読める形で（短く）</li>
+      <li><strong>項目2</strong>：1 行は短く、bullet は 2〜5 個まで</li>
+      <li><strong>項目3</strong>：完全な文字起こしではなく、読者がコピーしたい要点に絞る</li>
+      <li><strong>結論</strong>：そのスライドから持ち帰る一言</li>
+    </ul>
+  </div>
+</section>
+```
+
+### ルール
+
+1. **画像と HTML 要約は同じ wide-block 幅で揃える**（PC では 1080px シェル全幅）。`article-wide-block` クラスは必須。
+2. `alt` 属性は必ず入れる（スクリーンリーダー / 画像が表示されない環境のフォールバック）。
+3. `figcaption` も必ず入れる（画像が表示される環境で何の図かを示す）。
+4. `slide-reading-note` の bullet は **2〜5 個**、各 bullet は **1 行で読める長さ** に抑える。
+5. 画像内の **全テキストを書き起こさない**。読者がコピーしたい要点だけを HTML 化する。
+6. 画像と同じ内容を本文の長文段落で繰り返さない（重複削減）。
+7. 完全な文字起こしが必要なときは `<details class="slide-transcript article-wide-block">` で折りたたみを追加してよい。ただしページが重く見えるなら `slide-reading-note` だけで十分。
+
+### 使うクラス（既存）
+
+- `article-slide-section` — 導入文・図・読み取りポイントを wide-block でまとめるラッパー
+- `slide-intro` — 短い導入文
+- `article-slide-figure` — 画像 + figcaption
+- `slide-reading-note` — コピー可能な読み取りポイント（teal の上ボーダー + ミントの BG）
+- `slide-transcript` — 完全テキスト用の折りたたみ（任意）
+- `article-wide-block` — 行長制約から外し、shell 全幅を使うためのフラグクラス
+
+### 実装場所
+
+- CSS: `src/layouts/ArticleLayout.astro` の `<style>` ブロック末尾
+- 参考実装: `content/articles/202605-apple-airtag-size-ai-pendant-iphone-siri.mdx` の fig01〜fig05
+
+## 深掘り記事の構成標準（スライド主役 / lead-first / 図解中心）
+
+すまラボの深掘り記事（ニュース解説・比較・基礎解説）では、**長文だけで押し切らない**。
+重要論点は **図解スライド・比較表・判断ガイド・チェックポイント一覧** に分解し、本文は
+**「図解の補足」と「判断の言語化」** に集中させる。
+
+### 基本ルール
+
+1. **「先に結論」は長文 3 段落ではなく、ひとこと結論 + 要点整理 + 短い補足** で組む:
+   - 見出し `先に結論` の直下に `<p class="lead">…</p>`（19px 太字 / 1 文）
+   - 続けて 3 bullet で要点
+   - 補足は短い 1〜2 段落だけ
+   - 「今見るべき N 点」など別ボックスに切り出す
+2. **H2 直下にも `.lead`** を置き、そのセクションの主張を 1 文で先出しする
+3. **長文段落の連続を避ける**:
+   - 1 段落は 3〜4 行（150 字目安）に抑える
+   - 4 段落以上連続して同じ話題を続けない
+   - `box / list / table / slide` を**視線の止まる場所**として一定間隔で挟む
+4. **スライド・図解で説明した内容を、本文の長文段落で再説明しない**:
+   - スライド直下は `slide-reading-note` の短い箇条書きだけで止める
+   - 「読み取りポイント」「補足」「判断ポイント」を短い box / list で
+5. **キャラクター（ひまり・らぼまる）を使った図解** は、理解補助・比較補助・チェック補助の役割として有効。サムネだけでなく、本文内の図解スライドにも積極的に登場させてよい
+6. **外向きコピー**: 「普通の人向け」は禁止。代わりに「買う前に見るポイント」「今見るべき点」「判断ガイド」「便利？それとも様子見？」など
+7. **行長（PC）**: news 系の本文段落・リストは `max-width: 940px`、wide-block（slide / dashboard / pros-cons / verdict / wide-comparison / decision-guide / summary-box / info-box / check-box / table-card）は shell 全幅（PC 1080px）。本文行長と画像幅の差が大きくならないように
+
+### 推奨テンプレ（1 H2）
+
+```mdx
+## セクション見出し
+
+<p class="lead">そのセクションの主張を 1 文で先出し。<strong>キーワード</strong>は太字で。</p>
+
+（必要なら）2〜4 行の導入段落 1〜2 個
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">何を見る図か 1 文</p>
+  <figure class="article-slide-figure">…</figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>キーワード</strong>：短い解説</li>
+      <li>2〜5 個まで、各行は短く</li>
+    </ul>
+  </div>
+</section>
+
+（必要なら）読み取り後の短い結論 1 段落
+```
+
+### 避けたい形
+
+- H2 → 長文段落 5〜8 個 → table → 長文段落 3 個 → box → 長文段落 2 個
+- スライドの直後に、同じ内容を長文で書き直す
+- 「先に結論」に 3 段落の長文を並べる
+
+### 横スクロール標準（PC 原則禁止）
+
+PC 表示では **横スクロールを原則使わない**。スマホでも基本は折り返しで収める。横スクロール
+は「列数が非常に多い詳細比較表 / 数値・スペック密度が高い表 / 折り返すと著しく読みにくく
+なる表」のみで明示的に許可する。
+
+- **PC**：すべての `<table>` は `display: table; white-space: normal; word-break: break-word;
+  overflow-wrap: anywhere;` で折り返し前提
+- **opt-in**：横スクロールを許可したい大型表は **`.is-scrollable`** をラッパー or 自体に付ける
+  と PC でも横スクロール可能（`overflow-x: auto; display: block; white-space: nowrap;`）
+- **`.wide-comparison`**：PC は折り返し、モバイルだけ自動 overflow-x: auto を許可（4 列前後
+  までの比較表向けデフォルト）
+- **revenue 系**：`.article-shell--revenue` の table は引き続き `display: block; overflow-x:
+  auto;` を維持（料金比較などの密度の高い表のため）
+- 表のセル内文章は **短く保つ**（1 セル 30 文字以内が目安。長い説明は本文側に逃がす）
+- `min-width` を `<th>` / `<td>` に固定しない（列幅は表の中身に任せる）
+
+`.is-scrollable` を使う条件:
+- 6 列以上の詳細比較表
+- 数値・スペックが多い表
+- 折り返すと著しく読みにくくなる表
+
+それ以外は PC で必ず折り返して収める。スライド画像 / `slide-reading-note` / 本文段落・
+リスト / `.lead` が横にはみ出さないことを `npm run build` 後に必ず確認すること。
+
+### CSS の場所
+
+- `.lead` / `.article-slide-section` / `.slide-intro` / `.slide-reading-note` /
+  `.article-slide-figure` / `.slide-transcript` / その他 wide-block の各クラスは
+  `src/layouts/ArticleLayout.astro` の `<style>` ブロックに集約
+
+### 参考実装
+
+- `content/articles/202605-apple-airtag-size-ai-pendant-iphone-siri.mdx`
+  （Apple AIペンダント記事。先に結論 + 5 図解スライド + 各 H2 lead 配置の例）
+
 ## 関連ドキュメント
 
 - `docs/visual_preview_review.md` — Preview スクショ 2 パスレビューの手順とチェック観点
