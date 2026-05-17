@@ -718,13 +718,36 @@ const typeLabels = {
     width: min(1080px, calc(100% - 32px));
   }
 
-  /* news 記事の本文段落・リストは行長 760px に抑える (読みやすさ重視) */
+  /* news 記事の本文段落・リストは 940px (1 行 50〜55 文字) を上限に。
+   * 旧設定の 760px だと画像 (shell 全幅 ~988px) との右端の差が大きく、
+   * 「画像だけ広く本文だけ細い」印象になっていたため広げた。 */
   .article-shell--news .article-content :global(p),
   .article-shell--news .article-content :global(ul),
   .article-shell--news .article-content :global(ol) {
-    max-width: 760px;
+    max-width: 940px;
     margin-left: 0;
     margin-right: 0;
+  }
+
+  /* lead / 先に結論の一行サマリ用。本文 940px より少しだけタイト、
+   * かつフォントサイズを上げて視線を止める。 */
+  .article-content :global(.lead) {
+    margin: 0 0 16px;
+    max-width: 940px;
+    color: var(--fg);
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.75;
+  }
+
+  .article-shell--news .article-content :global(.lead) {
+    max-width: 940px;
+  }
+
+  @media (max-width: 720px) {
+    .article-content :global(.lead) {
+      font-size: 17px;
+    }
   }
 
   /* wide block 系 (visual-dashboard / pros-cons / verdict / flow / wide-comparison / checkpoint /

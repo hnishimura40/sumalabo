@@ -155,6 +155,72 @@
 - CSS: `src/layouts/ArticleLayout.astro` の `<style>` ブロック末尾
 - 参考実装: `content/articles/202605-apple-airtag-size-ai-pendant-iphone-siri.mdx` の fig01〜fig05
 
+## 深掘り記事の構成標準（スライド主役 / lead-first / 図解中心）
+
+すまラボの深掘り記事（ニュース解説・比較・基礎解説）では、**長文だけで押し切らない**。
+重要論点は **図解スライド・比較表・判断ガイド・チェックポイント一覧** に分解し、本文は
+**「図解の補足」と「判断の言語化」** に集中させる。
+
+### 基本ルール
+
+1. **「先に結論」は長文 3 段落ではなく、ひとこと結論 + 要点整理 + 短い補足** で組む:
+   - 見出し `先に結論` の直下に `<p class="lead">…</p>`（19px 太字 / 1 文）
+   - 続けて 3 bullet で要点
+   - 補足は短い 1〜2 段落だけ
+   - 「今見るべき N 点」など別ボックスに切り出す
+2. **H2 直下にも `.lead`** を置き、そのセクションの主張を 1 文で先出しする
+3. **長文段落の連続を避ける**:
+   - 1 段落は 3〜4 行（150 字目安）に抑える
+   - 4 段落以上連続して同じ話題を続けない
+   - `box / list / table / slide` を**視線の止まる場所**として一定間隔で挟む
+4. **スライド・図解で説明した内容を、本文の長文段落で再説明しない**:
+   - スライド直下は `slide-reading-note` の短い箇条書きだけで止める
+   - 「読み取りポイント」「補足」「判断ポイント」を短い box / list で
+5. **キャラクター（ひまり・らぼまる）を使った図解** は、理解補助・比較補助・チェック補助の役割として有効。サムネだけでなく、本文内の図解スライドにも積極的に登場させてよい
+6. **外向きコピー**: 「普通の人向け」は禁止。代わりに「買う前に見るポイント」「今見るべき点」「判断ガイド」「便利？それとも様子見？」など
+7. **行長（PC）**: news 系の本文段落・リストは `max-width: 940px`、wide-block（slide / dashboard / pros-cons / verdict / wide-comparison / decision-guide / summary-box / info-box / check-box / table-card）は shell 全幅（PC 1080px）。本文行長と画像幅の差が大きくならないように
+
+### 推奨テンプレ（1 H2）
+
+```mdx
+## セクション見出し
+
+<p class="lead">そのセクションの主張を 1 文で先出し。<strong>キーワード</strong>は太字で。</p>
+
+（必要なら）2〜4 行の導入段落 1〜2 個
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">何を見る図か 1 文</p>
+  <figure class="article-slide-figure">…</figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>キーワード</strong>：短い解説</li>
+      <li>2〜5 個まで、各行は短く</li>
+    </ul>
+  </div>
+</section>
+
+（必要なら）読み取り後の短い結論 1 段落
+```
+
+### 避けたい形
+
+- H2 → 長文段落 5〜8 個 → table → 長文段落 3 個 → box → 長文段落 2 個
+- スライドの直後に、同じ内容を長文で書き直す
+- 「先に結論」に 3 段落の長文を並べる
+
+### CSS の場所
+
+- `.lead` / `.article-slide-section` / `.slide-intro` / `.slide-reading-note` /
+  `.article-slide-figure` / `.slide-transcript` / その他 wide-block の各クラスは
+  `src/layouts/ArticleLayout.astro` の `<style>` ブロックに集約
+
+### 参考実装
+
+- `content/articles/202605-apple-airtag-size-ai-pendant-iphone-siri.mdx`
+  （Apple AIペンダント記事。先に結論 + 5 図解スライド + 各 H2 lead 配置の例）
+
 ## 関連ドキュメント
 
 - `docs/visual_preview_review.md` — Preview スクショ 2 パスレビューの手順とチェック観点
