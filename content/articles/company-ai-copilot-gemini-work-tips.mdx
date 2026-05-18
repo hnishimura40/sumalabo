@@ -1,0 +1,630 @@
+---
+title: "会社でCopilotやGeminiしか使えない人へ。仕事でAIを賢く使う7つのコツ"
+slug: "company-ai-copilot-gemini-work-tips"
+type: "foundation"
+category: "ニュースをかみくだく"
+description: "会社でCopilotやGeminiしか使えない人向けに、仕事でAIを賢く使うコツを解説。重要なのはプロンプトよりも会議録・社内ルール・過去資料などのコンテキスト整理。社内ルールを守りながらAI活用を伸ばす方法をまとめます。"
+thumbnail: "/images/thumbnails/company-ai-copilot-gemini-thumbnail.png"
+thumbnailAlt: "会社でCopilotやGeminiしか使えない人向けに、仕事でAIを賢く使うコツをひまり・らぼまるが整理したサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 1
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_normal_icon.webp"
+tags:
+  - "AI活用"
+  - "Copilot"
+  - "Gemini"
+  - "仕事術"
+  - "生成AI"
+  - "Microsoft 365"
+  - "Google Workspace"
+  - "すまラボ"
+related:
+  - "what-is-ai-smartphone"
+  - "202605-github-copilot-shifts-to-token-based-pricing-june-1"
+  - "moonix-ai-smart-glasses"
+pubDate: "2026-05-18"
+updated: "2026-05-18"
+publishAt: "2026-05-18T20:00:00+09:00"
+---
+
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
+<div class="summary-box">
+<p class="box-label">3行でわかるまとめ</p>
+
+* 会社で使えるAIがMicrosoft 365 CopilotやGemini for Google Workspaceだけでも、仕事でAI活用を伸ばすことはできます。
+* 重要なのはプロンプトの技術より、**会議録・社内ルール・過去資料などの「コンテキスト（前提情報）」を整えること**です。
+* 一方で、会社が禁止している外部AIに社内情報を入れるのは危険。**「使っていいAI」と「入れていい情報」は別問題**として扱う必要があります。
+
+</div>
+
+<div class="check-box">
+<p class="box-label">この記事で整理すること</p>
+
+* CopilotやGeminiしか使えない会社で、まず何をすればいいか
+* AIの回答精度を上げる「コンテキスト」の集め方
+* 会社ルールを破らず、安全にAI活用を進める考え方
+* 仕事でAI活用を伸ばす7つのコツと、まず試したい使い方
+
+</div>
+
+<div class="summary-box">
+<p class="box-label">先に結論</p>
+
+<p class="lead">仕事でAIを賢く使う鍵は、<strong>「強いAIを探すこと」より「AIに渡す材料＝コンテキストを整えること」</strong>です。</p>
+
+* CopilotやGeminiが物足りなく感じるのは、AI が弱いのではなく **会社の事情を知らないだけ** のことが多い
+* 会議録・社内ルール・過去資料・目的・制約 を渡せば、一般論から実務寄りの回答に変わる
+* ただし **「使っていいAI」と「入れていい情報」は別**。Copilot や Gemini でも、社内規程と情シスのルールが最優先
+
+派手な裏技より、白い範囲で積み上げる。会社員にとって、これが一番現実的なAI活用です。
+
+</div>
+
+<div class="info-box">
+<p class="box-label">今押さえるべき3点</p>
+
+* **AIに渡す材料を整える** — 会議録・社内ルール・過去資料・判断基準を集めるだけで回答の質は変わる
+* **目的・制約・出力形式をセットで伝える** — 「誰向け／何のため／何字／どの形式」を指示に入れる
+* **会社ルールを最優先する** — 何を入力していいかは、社内規程・契約・情シスのルールが基準
+
+</div>
+
+<div class="info-box">
+<p class="box-label">この記事の前提</p>
+
+会社ごとにAIの利用ルール、扱える情報、契約しているサービスの範囲は大きく異なります。この記事は一般的な考え方の整理であり、最終判断は **自社の社内規程・情報システム部門のルール・ご契約条件** に従ってください。CopilotやGeminiの企業向け保護があっても、社内で何を入力してよいかは別問題です。
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは「会社でCopilotやGeminiしか使えなくても大丈夫？」を 1 枚で整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/company-ai-copilot-gemini-work-tips/slide01-overview.png" alt="会社でCopilotやGeminiしか使えなくても大丈夫かを整理した図解。使える・差がつく・注意の3観点と、大事なのは“裏技”より“AIに渡す材料”を整えることだという結論を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：会社でCopilotやGeminiしか使えなくても大丈夫？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>使える</strong>：CopilotやGeminiでも、下準備を整えれば仕事で十分使える</li>
+      <li><strong>差がつく</strong>：AIの賢さより、渡す材料・過去資料・コンテキストが回答の質を決める</li>
+      <li><strong>注意</strong>：社内ルール・契約・情シス基準を守って、白い範囲で活用する</li>
+      <li><strong>まず試す</strong>：使えるAIに「使い方・伝え方を整える」ところから始める</li>
+      <li><strong>結論</strong>：派手な裏技より、白い範囲での積み上げが現実的</li>
+    </ul>
+  </div>
+</section>
+
+<div class="visual-flow">
+  <div class="flow-step flow-step--input">
+    <span class="flow-label">材料</span>
+    <span class="flow-title">コンテキスト</span>
+    <span class="flow-text">会議録 / 社内ルール / 過去資料 / 目的 / 制約</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--relay">
+    <span class="flow-label">道具</span>
+    <span class="flow-title">Copilot / Gemini</span>
+    <span class="flow-text">会社で使ってよい範囲のAIサービス</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--brain">
+    <span class="flow-label">成果</span>
+    <span class="flow-title">実務に使える答え</span>
+    <span class="flow-text">人が最終確認したうえで仕事に反映</span>
+  </div>
+</div>
+
+## CopilotやGeminiは「弱いAI」なのか
+
+<p class="lead">物足りなく感じる原因は、多くの場合 <strong>AI そのものの賢さではなく、AI に渡している前提情報の少なさ</strong> にあります。</p>
+
+個人でChatGPTやClaudeを使い込んでいる人ほど、次のような感想を持ちやすいです。
+
+* 「Copilotは思ったより気が利かない」
+* 「Geminiに聞いても一般論しか返ってこない」
+* 「本当はもっと強いAIを使いたい」
+
+ただ、仕事でAIを使うときの体感の差は、AIの賢さよりも、AIがどれだけ仕事の前提を知っているかで決まりやすいです。会社のルール、部署の事情、顧客との過去のやり取り、上司が重視するポイントは、AIが最初から知っているわけではありません。
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>使い方</th>
+<th>AIに渡る材料</th>
+<th>返ってくる答えの傾向</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>「提案書を作って」だけ</td>
+<td>テーマだけ</td>
+<td>一般的な提案書のひな形</td>
+</tr>
+<tr>
+<td>「部長向け / 来月の予算要求 / 800字」</td>
+<td>目的・読み手・分量</td>
+<td>狙いに近い構成のたたき台</td>
+</tr>
+<tr>
+<td>上記＋過去議事録＋社内フォーマット</td>
+<td>目的＋実務の前提</td>
+<td>実務に使える原案に近づく</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## 仕事でAIを使うカギは「コンテキスト」
+
+<p class="lead">コンテキストとは、AIが仕事を理解するための前提情報。<strong>同じ依頼でも、前提情報の有無で精度は変わります。</strong></p>
+
+具体的には、次のような情報がコンテキストにあたります。
+
+* 会議の情報（議事録・録音文字起こし）
+* 社内ルール（フォーマット・稟議の書き方・社外メールの表現）
+* 過去資料（似た案件、前回の提案書、報告書）
+* 顧客との経緯（過去のやり取り、温度感）
+* 作業条件（期限・予算・関係者）
+* 判断基準（上司が重視するポイント、評価軸）
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">同じ依頼でも、AI に渡す「材料」の有無で精度がどう変わるかを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/company-ai-copilot-gemini-work-tips/slide02-context.png" alt="AIの回答精度はプロンプトだけでなく、渡す材料（会議録・社内ルール・過去資料・顧客との経緯・期限予算・判断基準）で変わることを説明した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：AIの答えは「材料」で変わる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>材料が少ないと</strong>：一般論になりやすい／自社事情が入らない／顧客との温度感が反映されない</li>
+      <li><strong>材料がそろうと</strong>：社内の提案書の構成寄りに／目的・読み手に合った言い回しに／実務に近い下書きに</li>
+      <li><strong>渡したいコンテキスト</strong>：会議録／社内ルール／過去資料／顧客との経緯／期限・予算／判断基準</li>
+      <li><strong>結論</strong>：プロンプトだけでなく、何を渡すかが精度を左右する</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>材料の量</th>
+<th>AI の答えの傾向</th>
+<th>そのまま仕事に使えるか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>少ない</td>
+<td>一般論・教科書的</td>
+<td>そのままは使いにくい</td>
+</tr>
+<tr>
+<td>そこそこ</td>
+<td>テーマに沿った下書き</td>
+<td>修正前提なら十分使える</td>
+</tr>
+<tr>
+<td>そろっている</td>
+<td>実務に近い原案</td>
+<td>人の確認後、すぐ叩き台にできる</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "AIって、いいプロンプトを書けば賢くなるんじゃないの？" },
+    { speaker: "らぼまる", text: "それも大事だけど、仕事では“前提情報”の方がもっと大事だよ。AIは会社の事情を知らないから、会議内容や社内ルールを渡さないと一般論になりやすいんだ。" },
+  ]}
+/>
+
+## 「プロンプト術」より先にやるべきこと
+
+<p class="lead">プロンプト術はもちろん大事。ただ、仕事では <strong>「指示の言い回し」より「渡す材料と目的・制約の明示」</strong> の方が、出力に与える影響が大きいです。</p>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>切り口</th>
+<th>プロンプトだけ磨く</th>
+<th>プロンプト＋コンテキストを整える</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>得意な使い方</td>
+<td>一般的な依頼・要約・言い換え</td>
+<td>社内資料・実務の下書き・判断補助</td>
+</tr>
+<tr>
+<td>限界</td>
+<td>自社事情が反映されない</td>
+<td>材料の整理に手間がかかる</td>
+</tr>
+<tr>
+<td>必要なスキル</td>
+<td>言い回しの工夫</td>
+<td>情報整理・要件定義</td>
+</tr>
+<tr>
+<td>仕事での再現性</td>
+<td>場面依存</td>
+<td>テンプレ化で安定しやすい</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+「新商品の提案書を作ってください」だけでは、AIは一般的な提案書を作るしかありません。一方で、
+
+* 誰向けの資料か
+* 何を目的にしているか
+* どんな制約があるか
+* 過去にどんな経緯があるか
+* どの形式で出してほしいか
+
+を伝えると、AIの出力は実務に近づきます。
+
+## Copilot・Geminiしか使えない会社でAI活用を伸ばす7つのコツ
+
+<p class="lead">どれも「会社ルール内」で実行できる基本動作です。<strong>派手な裏技ではなく、情報整理＋確認の積み上げ</strong>が効きます。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">会社ルール内でまず押さえたい、AI 活用を伸ばす 7 つのコツを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/company-ai-copilot-gemini-work-tips/slide03-seven-tips.png" alt="会社ルール内でAI活用を伸ばす7つのコツ（会議録を残す／議事録を整理する／社内ルールをまとめる／目的・制約・形式を伝える／指示文をテンプレ化／相談材料を作る／最後は人が確認）を整理した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：AI活用を伸ばす7つのコツ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1. 会議録を残す</strong>：決定・保留・次のToDoを残す</li>
+      <li><strong>2. 議事録を整理する</strong>：プロジェクト／顧客／日付で分ける</li>
+      <li><strong>3. 社内ルールをまとめる</strong>：稟議・報告書・社外メールの型を共有</li>
+      <li><strong>4. 目的・制約・形式を伝える</strong>：読み手／字数／用語の方針を指示に入れる</li>
+      <li><strong>5. 指示文をテンプレ化</strong>：うまくいった依頼文を再利用</li>
+      <li><strong>6. 相談材料を作る</strong>：情シス・上司への提案を効率と安全の両面で整理</li>
+      <li><strong>7. 最後は人が確認</strong>：数字・日付・契約・顧客向けは人が最終チェック</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>コツ</th>
+<th>やること</th>
+<th>効果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 会議録を残す</td>
+<td>決定・保留・次ToDoを必ず記録</td>
+<td>要約・タスク抽出・報告整理が一気に効く</td>
+</tr>
+<tr>
+<td>2. 議事録を整理する</td>
+<td>プロジェクト／顧客／日付で分類</td>
+<td>あとからAIに渡しやすい</td>
+</tr>
+<tr>
+<td>3. 社内ルールをまとめる</td>
+<td>稟議・報告・メールの型を共有</td>
+<td>「らしさ」のある文体に近づく</td>
+</tr>
+<tr>
+<td>4. 目的・制約・形式を伝える</td>
+<td>読み手／字数／用語方針を指示に入れる</td>
+<td>仕事で使いやすい出力になる</td>
+</tr>
+<tr>
+<td>5. 指示文をテンプレ化</td>
+<td>うまくいった依頼文を保存・再利用</td>
+<td>毎回ゼロから書かない</td>
+</tr>
+<tr>
+<td>6. 相談材料を作る</td>
+<td>用途／情報／効率／リスク対策を整理</td>
+<td>情シス・上司への提案が通りやすい</td>
+</tr>
+<tr>
+<td>7. 最後は人が確認</td>
+<td>数字・日付・契約・顧客向けは人が確認</td>
+<td>事実誤りや表現ミスを防げる</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+### 1. 会議録を残す
+
+会議には、仕事のコンテキストが一気に集まります。誰が何を言ったのか、何が決まったのか、何が保留になったのか、次に誰が何をするのか。こうした情報を残しておくと、AIで要約したり、ToDoを抽出したり、報告用に整理したりしやすくなります。
+
+### 2. 議事録をプロジェクトごとに整理する
+
+会議録は、ただ残すだけでは使いにくいです。プロジェクトごと、顧客ごと、日付ごとに整理しておくと、あとからAIに渡しやすくなります。
+
+### 3. 社内ルールをAIに渡せる形にする
+
+稟議の書き方、報告書のフォーマット、社外メールの表現、上司がよく見るポイントなどは、AIにとって大事な前提情報です。会社の「らしさ」をAIに伝えるための材料として整理しておきます。
+
+### 4. 目的・制約・出力形式をセットで伝える
+
+AIに頼むときは、作業内容だけでなく、目的と制約も伝えます。たとえば、
+
+* 「この資料は部長向けです」
+* 「目的は来月の予算要求の方向性を説明することです」
+* 「専門用語は少なめにしてください」
+* 「800字程度でお願いします」
+
+のように指定すると、仕事で使いやすい出力に近づきます。
+
+### 5. うまくいった指示文をテンプレ化する
+
+議事録要約、メール返信、報告書チェック、提案書構成など、よく使う指示文はテンプレート化しておくと便利です。毎回ゼロから書く必要がなくなります。
+
+### 6. 情シスや上司に相談できる材料を作る
+
+「AIを使わせてください」だけではなく、
+
+* 何に使うのか
+* どの情報を扱うのか
+* どの作業がどれくらい短縮できそうか
+* リスク対策はどうするか
+
+を整理して相談する方が現実的です。社内で AI 活用を広げるときの土台になります。
+
+### 7. AIの出力を必ず人間が確認する
+
+数字、日付、契約、制度、顧客向けの表現などは、必ず人間が確認してください。AIは便利ですが、間違えることがあります。
+
+## CopilotやGeminiでまず試したい使い方
+
+<p class="lead">最初の一歩は、<strong>会議後の整理</strong>がおすすめ。やりたいこと・どう使うか・注意点をセットで押さえると、効果を実感しやすくなります。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">CopilotやGeminiで始めやすい実務例と、その注意点を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/company-ai-copilot-gemini-work-tips/slide04-use-cases.png" alt="CopilotやGeminiで始めやすい実務例（議事録作成・ToDo整理・メール返信案・資料のたたき台・文章チェック）の使い方と注意点を整理した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：まず試したい使い方</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>議事録作成</strong>：会議の文字起こしを要約／決定・未決・次ToDoを抽出</li>
+      <li><strong>ToDo整理</strong>：担当者ごとに作業を仕分け／期限順に並べ替え</li>
+      <li><strong>メール返信案</strong>：過去のやり取りを踏まえた下書き作成（顧客情報の扱いは要確認）</li>
+      <li><strong>資料のたたき台</strong>：構成案や見出しの提案／事実確認は人が担当</li>
+      <li><strong>文章チェック</strong>：読みやすさ・表現の改善案／最終判断は人</li>
+      <li><strong>最初の一歩</strong>：会議後の整理から始めると効果を実感しやすい</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>やりたいこと</th>
+<th>どう使うか</th>
+<th>注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>議事録作成</td>
+<td>会議の文字起こしから要約・ToDo抽出</td>
+<td>録音・文字起こし可否は社内ルール確認</td>
+</tr>
+<tr>
+<td>ToDo整理</td>
+<td>担当者・期限ごとに作業を仕分け</td>
+<td>決定事項と未決事項を分ける</td>
+</tr>
+<tr>
+<td>メール返信案</td>
+<td>過去のやり取りを踏まえて下書き</td>
+<td>顧客情報の取り扱いに注意</td>
+</tr>
+<tr>
+<td>資料のたたき台</td>
+<td>構成案・見出し・要点の提案</td>
+<td>事実確認は人が担当</td>
+</tr>
+<tr>
+<td>文章チェック</td>
+<td>読みやすさ・表現の改善案</td>
+<td>AI 出力を最後に人が確認</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+特におすすめなのは、会議後の整理です。会議の文字起こしが使える場合は、決定事項・未決事項・次回までのToDo・担当者ごとの作業を整理するだけでも効果を実感しやすくなります。ただし、録音・文字起こし・共有ルールは会社ごとに異なるため、社内ルールを確認してから使ってください。
+
+## 「使っていいAI」と「入れていい情報」は別問題
+
+<p class="lead">Microsoft 365 Copilot や Gemini for Google Workspace に企業向けのデータ保護があっても、<strong>「自分の会社で何を入力してよいか」は別問題</strong>。社内規程・契約条件・情シスのルールが最優先です。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「使っていいAI」と「入れていい情報」を分けて考える理由を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/company-ai-copilot-gemini-work-tips/slide05-security-rule.png" alt="使っていいAIと入れていい情報は別であることを示した図解。Microsoft 365 CopilotやGemini for Google Workspaceに企業向け保護があっても、社内規程・情報システム部門ルールが優先という注意点を整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：「使っていいAI」と「入れていい情報」は別</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>知っておきたい</strong>：Copilot や Gemini には企業向けの保護や権限管理の考え方がある</li>
+      <li><strong>ただし</strong>：何を入力してよいかは、社内規程・契約条件・情シスのルールが優先</li>
+      <li><strong>入力に慎重にしたい情報</strong>：顧客情報／個人情報／契約・未公開情報／人事情報／取引先資料</li>
+      <li><strong>避けたい使い方</strong>：個人アカウントに社内資料を入れる／未承認の外部AIに業務情報を渡す／「バレなければいい」運用</li>
+      <li><strong>結論</strong>：安心材料があっても、最終判断は会社ルール</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>視点</th>
+<th>確認すべきこと</th>
+<th>誰に聞くか</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>サービス側</td>
+<td>企業向けの保護・データ取扱い方針</td>
+<td>公式ドキュメント・契約条件</td>
+</tr>
+<tr>
+<td>会社側</td>
+<td>社内規程・運用ガイドライン</td>
+<td>情シス／法務／コンプライアンス</td>
+</tr>
+<tr>
+<td>情報の種類</td>
+<td>顧客情報／個人情報／契約／未公開情報</td>
+<td>担当部署・直属の上長</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="check-box">
+<p class="box-label">入力前に確認したい情報の種類</p>
+
+* 顧客情報・個人情報を含むか
+* 契約情報・未公開情報を含むか
+* 人事情報・取引先資料を含むか
+* 社外秘・部内限などのラベルがついていないか
+* 社内規程やガイドラインに該当する記述がないか
+
+</div>
+
+## やってはいけないAI活用
+
+<p class="lead">「便利だから」だけで突っ走るのは危険。<strong>グレーな抜け道ではなく、白い範囲でAIを使いこなす</strong>のが目指す姿です。</p>
+
+<div class="check-box">
+<p class="box-label">避けたい使い方</p>
+
+* 会社が禁止している外部AIに社内資料を入れる
+* 顧客情報や個人情報を個人アカウントのAIに入力する
+* 未公開の販売戦略や契約情報を許可なくAIに渡す
+* 会社PCから持ち出した資料を個人のAI環境で処理する
+* AIが作った内容を確認せず、そのまま社外に出す
+* 「バレなければいい」という考えで使う
+
+</div>
+
+## AIを使える人と使えない人の差は広がる
+
+今後、AIが資料作成・調査・議事録・分析・文章作成にさらに深く入ってくると、日常的にAIを使っている人と、ほとんど使っていない人では、仕事の進め方そのものが変わってくる可能性があります。会社で使えるAIが限られていても、まったく触らないのはもったいないです。
+
+<div class="info-box">
+<p class="box-label">まず慣れておきたい基本動作</p>
+
+* AIに前提を渡す（コンテキストを添える）
+* 表に整理させる
+* チェックリストを作らせる
+* 出力を人が修正・確認する
+
+</div>
+
+## それでも会社でAIが使いづらい場合はどうする？
+
+<p class="lead">いきなり全社導入を目指す必要はありません。<strong>状況に合わせて、次の一歩を選ぶ</strong>のが現実的です。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">会社の状況別に「次にどう動くか」を整理した判断ガイドを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/company-ai-copilot-gemini-work-tips/slide06-decision-guide.png" alt="会社の状況に合わせて次の一歩を決める判断ガイドの図解。Copilot/Geminiが使える／使えるがルールが曖昧／ほぼ使えないの3パターンと、今見るべき3点を整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：今どう動く？判断ガイド</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Copilot / Gemini が使える</strong>：会議録整理・ToDo整理・下書き作成から始める</li>
+      <li><strong>使えるがルールが曖昧</strong>：用途・情報・効率・リスクを整理して情シス／上司へ相談</li>
+      <li><strong>仕事ではほぼ使えない</strong>：個人で公開情報・架空ケースを使って練習する</li>
+      <li><strong>今見るべき3点</strong>：使えるAIを知る／入力していい情報を確認／小さく成果を出す</li>
+      <li><strong>結論</strong>：派手な抜け道より、「白い範囲でAIに慣れること」が一番強い</li>
+    </ul>
+  </div>
+</section>
+
+<section class="decision-guide-panel">
+<ul class="decision-list">
+<li><strong>Copilot / Gemini が使える人</strong><br />まず会議録の要約・ToDo整理・下書き作成から試す。基本動作に慣れることが優先。</li>
+<li><strong>使えるがルールが曖昧な人</strong><br />用途・情報・効率・リスク対策を 1 枚にまとめ、情シス／上司に相談。小さな用途から提案。</li>
+<li><strong>会社では AI がほぼ使えない人</strong><br />会社情報を入れない前提で、公開情報・架空ケース・資格学習などで個人練習。AIに前提を渡す動作に慣れる。</li>
+<li><strong>AIをスキルにしたい人</strong><br />今の会社で進めるか、AIを使える環境に動くかを中期目線で考えておく。</li>
+</ul>
+</section>
+
+### 会社情報を入れずに個人学習する
+
+個人でAIを使う場合は、**会社の情報を入れないこと**が大前提です。そのうえで、一般的な文章作成、公開情報の整理、架空ケースでの練習、資格学習、個人プロジェクトなどに使うことはできます。
+
+### 社内で小さく提案する
+
+議事録の要約、社内FAQの整理、報告書の文章チェック、定型メールの下書き、会議ToDoの抽出など、影響範囲が小さい用途から提案する方が通りやすいです。
+
+### AIを使える部署・環境を考える
+
+AI活用が仕事のスキルとして重要になるなら、自分がどの環境で経験を積むかも大事になります。今の会社で進めるのか、AIを使える部署に移るのか、個人でAIスキルを磨くのか。すぐに結論を出す必要はありませんが、「AIを使えないままでいいのか」は一度考えておく価値があります。
+
+## まとめ
+
+会社でCopilotやGeminiしか使えないと、少し不自由に感じるかもしれません。でも、AI活用の本質は「どのAIを使うか」だけではなく、AIに渡す材料と確認の積み上げです。
+
+会議録を残す。社内ルールを整理する。過去資料を活かす。目的と制約をAIに伝える。AIの出力を人間が確認する。こうした基本を押さえるだけで、仕事でのAI活用はかなり変わります。
+
+一方で、会社が禁止している外部AIに社内情報を入れるような使い方は避けるべきです。派手な裏技よりも、白い範囲で積み上げる。それが、会社員にとって一番現実的なAI活用です。
+
+<div class="check-box">
+<p class="box-label">この記事のポイント</p>
+
+* CopilotやGeminiしか使えなくても、コンテキスト整理で仕事のAI活用は伸ばせる
+* プロンプトより、会議録・社内ルール・過去資料を渡す方が精度が変わりやすい
+* 「使っていいAI」と「入れていい情報」は別。社内規程・情シス基準が最優先
+* やってはいけない使い方（外部AIに社内資料／個人アカウントに顧客情報など）を避ける
+* 状況に合わせて「会社で使う／提案する／個人で慣れる」を選んで進める
+
+</div>
+
+スマホ・AI・働き方の話をまとめて見たい人は、[ニュースをかみくだくカテゴリ](/categories/news/)もあわせて確認してみてください。
+
+## あわせて読みたい
+
+<div class="article-cta">
+  <p>AIの基本やAIサービスの動向もあわせて確認すると、会社でのAI活用の文脈が見えやすくなります。</p>
+  <a href="/articles/what-is-ai-smartphone/">AIスマホとは何かを読む</a>
+  <a href="/articles/202605-github-copilot-shifts-to-token-based-pricing-june-1/">GitHub Copilotの料金体系変更ニュースを読む</a>
+  <a href="/articles/moonix-ai-smart-glasses/">AIスマートグラスの記事を読む</a>
+  <a href="/categories/news/">ニュースをかみくだくカテゴリを見る</a>
+</div>
+
+## 参考情報
+
+* Microsoft Learn「[Microsoft 365 Copilot のデータ、プライバシー、セキュリティ](https://learn.microsoft.com/ja-jp/copilot/microsoft-365/microsoft-365-copilot-privacy)」
+* Microsoft Support「[Microsoft 365 Copilot で職場のデータがどのように保護されるか](https://support.microsoft.com/ja-jp/topic/how-your-organizational-data-is-protected-in-microsoft-365-copilot-c3032b81-6dcb-4934-be15-371b9a5101fd)」
+* Google Workspace「[Gemini for Workspace のプライバシーとセキュリティ](https://support.google.com/a/answer/15706919)」
+* Google Cloud「[Gemini for Google Workspace のセキュリティとプライバシー](https://workspace.google.com/learning/content/gemini-security-privacy-guide)」
+
+※この記事は、CopilotやGeminiを仕事で使うときの一般的な考え方を整理したものです。何を入力してよいか、どのサービスを使ってよいかは、**自社の社内規程・情報システム部門のルール・ご契約条件** に従ってください。
