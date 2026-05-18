@@ -160,9 +160,45 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
         if (button && statusEl) {
           let pending = false;
 
-          // verify-publication を polling し、published / failed まで段階的に UI を更新する。
+          // verify-publication を polling し、published / failed / approved_deploy_pending
+          // まで段階的に UI を更新する。
           // 公開完了前にボタンを「公開完了」にしない (実態と表示を一致させる)。
-          const pollPublication = async (verifyEndpoint: string): Promise<void> => {
+          //
+          // approved_deploy_pending (wrangler fallback 必要) と判定された場合は、
+          // フロント側で X 投稿フローへ進めないよう UI を停止し、ユーザーに
+          // CLI コマンド hint (secret 非含) を表示する。
+          const escapeHtml = (s: string): string =>
+            (s + "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
+
+          const renderFallbackBanner = (info: {
+            pullNumber?: number;
+            deployTriggered?: boolean;
+            fallbackCommandHint?: string;
+            publicationVerifyError?: string;
+          }): void => {
+            const prChip = info.pullNumber ? `PR #${info.pullNumber} merge済み` : "PR merge済み";
+            const hookChip = info.deployTriggered
+              ? "Deploy Hook 発火済み（ただし本番反映未確認）"
+              : "Deploy Hook 未発火";
+            const hint = info.fallbackCommandHint
+              ? `<br><code>${escapeHtml(info.fallbackCommandHint)}</code> を手元で実行してください。`
+              : "";
+            statusEl.innerHTML =
+              "承認とPR mergeは完了しましたが、本番反映が未確認です。<strong>wrangler fallback が必要です</strong>。X投稿はまだしないでください。" + hint;
+            if (metaEl) {
+              const reasonChip = info.publicationVerifyError
+                ? `<br>原因: <code>${escapeHtml(info.publicationVerifyError)}</code>`
+                : "";
+              metaEl.innerHTML =
+                `状態: ${prChip} / ${hookChip} / 本番verify未成功 / fallbackが必要${reasonChip}`;
+            }
+            button.textContent = "wrangler fallback 待ち";
+          };
+
+          const pollPublication = async (
+            verifyEndpoint: string,
+            initial: { pullNumber?: number; deployTriggered?: boolean }
+          ): Promise<void> => {
             const POLL_INTERVAL_MS = 10000; // 10 秒間隔
             const POLL_MAX_ATTEMPTS = 36;   // 10s × 36 = 6 分
             let attempt = 0;
@@ -172,9 +208,12 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
                 attempt++;
                 let body: {
                   ok?: boolean;
-                  status?: "published" | "deploying" | "failed";
+                  status?: "published" | "deploying" | "failed" | "approved_deploy_pending";
                   failedChecks?: string[];
                   productionUrl?: string;
+                  needsWranglerFallback?: boolean;
+                  fallbackCommandHint?: string;
+                  publicationVerifyError?: string;
                 } = {};
                 try {
                   const r = await fetch(verifyEndpoint, { method: "GET", cache: "no-store" });
@@ -200,6 +239,19 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
                   return;
                 }
 
+                if (body.status === "approved_deploy_pending" || body.needsWranglerFallback) {
+                  // verify-publication が wrangler fallback 必須と判定。
+                  // 以後 polling しても無駄なので即停止し、UI にバナーを出す。
+                  renderFallbackBanner({
+                    pullNumber: initial.pullNumber,
+                    deployTriggered: initial.deployTriggered,
+                    fallbackCommandHint: body.fallbackCommandHint,
+                    publicationVerifyError: body.publicationVerifyError,
+                  });
+                  resolve();
+                  return;
+                }
+
                 if (body.status === "failed") {
                   const reason = (body.failedChecks || []).join(", ");
                   statusEl.textContent = `本番反映が確認できません。失敗 check: ${reason || "unknown"}。手動確認してください。`;
@@ -213,9 +265,15 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
                   statusEl.textContent = `本番反映を確認中... (${attempt}/${POLL_MAX_ATTEMPTS})`;
                   setTimeout(tick, POLL_INTERVAL_MS);
                 } else {
-                  statusEl.textContent =
-                    "本番反映の確認がタイムアウトしました。少し待ってから本番URLを直接確認してください。";
-                  button.textContent = "公開未確認";
+                  // POLL timeout — Cloudflare 反映が verify をクリアしなかった。
+                  // wrangler fallback バナーに切り替える (X 投稿は実行しない)。
+                  renderFallbackBanner({
+                    pullNumber: initial.pullNumber,
+                    deployTriggered: initial.deployTriggered,
+                    fallbackCommandHint:
+                      "node scripts/automation/deploy-production-from-main.mjs --slug=<slug>",
+                    publicationVerifyError: "verify_timeout_after_deploy_hook",
+                  });
                   resolve();
                 }
               };
@@ -245,6 +303,8 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
                 deployTriggered?: boolean;
                 deployTriggerReason?: string;
                 verifyEndpoint?: string | null;
+                needsWranglerFallback?: boolean;
+                fallbackCommandHint?: string;
               } = {};
               try {
                 data = await res.json();
@@ -253,21 +313,30 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
               }
 
               if (res.ok && data.ok) {
-                const prSuffix = data.pullNumber ? `（PR #${data.pullNumber}）` : "";
-                if (data.deployTriggered === false) {
+                if (data.deployTriggered === false || data.needsWranglerFallback === true) {
                   // PR merge は成功したが、deploy hook の発火に失敗。
-                  // 手動 deploy が必要なことをはっきり表示する。
-                  statusEl.textContent =
-                    `mainへマージ完了${prSuffix}。ただし本番デプロイ起動に失敗 (${data.deployTriggerReason || "unknown"})。手動でデプロイしてください。`;
-                  button.textContent = "デプロイ手動実行が必要";
+                  // wrangler fallback バナーに切り替える (X 投稿はしない)。
+                  renderFallbackBanner({
+                    pullNumber: data.pullNumber,
+                    deployTriggered: false,
+                    fallbackCommandHint:
+                      data.fallbackCommandHint ||
+                      "node scripts/automation/deploy-production-from-main.mjs --slug=<slug>",
+                    publicationVerifyError:
+                      data.deployTriggerReason || "deploy_hook_not_triggered",
+                  });
                   return;
                 }
 
+                const prSuffix = data.pullNumber ? `（PR #${data.pullNumber}）` : "";
                 statusEl.textContent = `mainへマージ→本番デプロイ開始${prSuffix}。`;
                 button.textContent = "公開確認中…";
 
                 if (data.verifyEndpoint) {
-                  await pollPublication(data.verifyEndpoint);
+                  await pollPublication(data.verifyEndpoint, {
+                    pullNumber: data.pullNumber,
+                    deployTriggered: data.deployTriggered === true,
+                  });
                 } else {
                   // slug が解決できなかった場合のフォールバック
                   statusEl.textContent =

@@ -12,16 +12,83 @@ Cloudflare Pages Preview の記事ページに置いたボタンを押すと、C
 [POST /api/approve-preview]
      ├─ GitHub API で PR を merge
      ├─ Cloudflare Pages Deploy Hook を fetch (GitHub Actions 非依存)
-     └─ KV review item を status: "approved" + deployTriggeredAt に更新
+     │   ├─ 成功 → KV: status="approved" + deployTriggered=true + deployTriggeredAt
+     │   └─ 失敗 → KV: status="approved_deploy_pending" + needsWranglerFallback=true
+     └─ レスポンスに needsWranglerFallback / fallbackCommandHint を載せる
      ↓
 [フロントが /api/verify-publication?slug=… を 10s ごと polling (最大 6 分)]
      ├─ HTTP 200 / title / slug / body / thumbnail / fallback判定 / index掲載 をチェック
      ├─ 全 pass → KV を status: "published" + publishedAt + productionUrl に更新
+     ├─ deployTriggered=false → 即座に status="approved_deploy_pending" + wrangler fallback 案内
+     ├─ deployTriggeredAt から DEPLOY_PENDING_TIMEOUT_MS (default 6分) 経過 & verify 未成功
+     │     → status="approved_deploy_pending" + wrangler fallback 案内
      ├─ HTTP 200 だが fallback (deploying) → 続行
      └─ HTTP 5xx / 4xx → failed (KV に publicationVerifyError を記録)
 ```
 
-**重要**: HTTP 200 だけでは公開成功扱いにしない。homepage fallback (`<title>すまラボ</title>` で記事 body / thumbnail が無い状態) は `deploying` として再 polling する。
+**重要 (1)**: HTTP 200 だけでは公開成功扱いにしない。homepage fallback (`<title>すまラボ</title>` で記事 body / thumbnail が無い状態) は `deploying` として再 polling する。
+
+**重要 (2)**: Cloudflare Pages の **Git 連携が壊れている** ケース (「The repository cannot be accessed」「Cloning git repository — FAILED」) では、Deploy Hook 経由の production deploy が成立しない。このため:
+
+- approve-preview が deploy hook 発火失敗を検出した場合、または verify-publication が deployTriggeredAt 経過後も未成功と判断した場合、レスポンスに `needsWranglerFallback: true` / `fallbackCommandHint: "node scripts/automation/deploy-production-from-main.mjs --slug=<slug>"` を含める
+- フロント側はその時点で polling を停止し、「**承認とPR mergeは完了しましたが、本番反映が未確認です。wrangler fallback が必要です**」を表示する。X 投稿フローには進めない
+- 運用者は手元で `npm run deploy:production:fallback -- --slug=<slug>` を実行し、wrangler 経由で再 deploy → strict verify 完了後にのみ KV を published 化
+
+## Wrangler fallback の使い方
+
+Cloudflare Pages Git 連携が「Cloning git repository — FAILED」状態の暫定運用として、`scripts/automation/deploy-production-from-main.mjs` を提供する。
+
+### 前提
+
+- ローカルで `git switch main && git pull --ff-only origin main` 済み（main HEAD と origin/main が一致）
+- `CLOUDFLARE_API_TOKEN` 環境変数が設定済み（**値は表示しない**）
+- 任意で `CLOUDFLARE_ACCOUNT_ID` 環境変数
+
+### 通常実行（dry-run で先に検査）
+
+```sh
+# 事前検査のみ (git sync / build / dist 検査だけ、wrangler は走らせない)
+node scripts/automation/deploy-production-from-main.mjs --slug=<slug> --dry-run
+
+# 本番反映
+node scripts/automation/deploy-production-from-main.mjs --slug=<slug>
+# = npm run deploy:production:fallback -- --slug=<slug>
+```
+
+### 処理ステップ
+
+1. `git fetch origin main` → ローカル HEAD と origin/main の一致確認（zonbie diff の警告のみ、致命ではない）
+2. `npm run build` → `dist/` 生成
+3. `dist/articles/{slug}/index.html` / `dist/articles/index.html` / `dist/index.html` / `dist/images/thumbnails/{slug}.*` の存在を必須チェック
+4. `wrangler pages deploy dist --project-name=sumalabo --branch=main --commit-dirty=true` を実行（dry-run のときはスキップ）
+5. `/api/verify-publication?slug=<slug>` を 10 秒間隔で polling し、`status: "published"` を確認
+
+### 終了条件
+
+- 全 step OK → exit 0、stdout に `RESULT JSON` を出力（slug / productionUrl / steps 詳細）
+- いずれか failure → exit 1、`errorReason` に最初の失敗段階を記録
+- 引数エラー → exit 2
+
+### 主要オプション
+
+| オプション | 用途 |
+|---|---|
+| `--slug=<slug>` | **必須**。dist 検査対象 |
+| `--dry-run` | wrangler 実行をスキップ。事前検査だけ通したいとき用 |
+| `--skip-build` | 直前に build 済みのテスト用 |
+| `--skip-git-sync` | CI 等で既に main 上にいる前提のときだけ |
+| `--no-verify` | deploy 後の verify polling をスキップ |
+| `--verify-url=URL` | verify endpoint を明示指定 (default `https://sumalabo.com/api/verify-publication?slug=<slug>`) |
+| `--verify-timeout-ms=N` | verify polling の合計タイムアウト (default 360000 = 6 分) |
+| `--output=PATH` | result JSON の保存先 (stdout には常に出る) |
+
+### 禁止事項
+
+- ❌ main への直接 push はしない（main は既に approve-preview が merge 済み）
+- ❌ 記事生成は行わない
+- ❌ X 投稿はしない（**verify 成功後に別フローで実行**）
+- ❌ queue.json を直接書き換えない（verify-publication が KV → queue 同期する想定）
+- ❌ `CLOUDFLARE_API_TOKEN` / Deploy Hook URL / secret の値を ログ / result JSON に出さない（存在フラグ true/false のみ）
 
 ## どこでボタンが表示されるか
 
@@ -49,6 +116,7 @@ Cloudflare Pages の **Settings → Environment variables** で以下を設定�
 | `APPROVE_ALLOWED_BRANCH_PREFIX` | 任意 | `preview/` | 承認対象として許可するブランチ名のプレフィックス。これ以外で始まるブランチはAPI側で拒否する |
 | `CF_PAGES_DEPLOY_HOOK_URL` | **強く推奨** | なし | Cloudflare Pages の Deploy Hook URL。承認 API が PR merge 後に fetch(POST) で本番 deploy を発火する。**コード・ログ・レスポンスに値を含めない**。未設定なら `deployTriggered: false` を返し、手動 deploy が必要な旨フロントに表示される |
 | `PRODUCTION_HOST` | 任意 | `sumalabo.com` | `/api/verify-publication` が verify 対象とする本番ホスト名 |
+| `DEPLOY_PENDING_TIMEOUT_MS` | 任意 | `360000` (6 分) | `/api/verify-publication` が「wrangler fallback 必要」と判定するまでの deploy 経過時間 (ms)。60s〜30min にクランプ |
 
 ボタン側の表示制御に使う変数:
 

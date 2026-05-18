@@ -55,12 +55,24 @@ interface ReviewItemRecord {
   approvedAt?: string;
   approvedByMergeCommit?: string;
   deployTriggeredAt?: string;
+  // deploy hook を実際に発火できたかの真偽値。
+  // false の場合は wrangler fallback が必要。
+  deployTriggered?: boolean;
   publishedAt?: string;
   productionUrl?: string;
   productionDeployId?: string;
   productionCommit?: string;
   publicationVerifyError?: string;
+  // verify endpoint が timeout / deploy hook 失敗を判定したときに true 化する。
+  // 値そのものに secret は含まない (CLI コマンド hint のみ別フィールドに保持)。
+  needsWranglerFallback?: boolean;
+  fallbackCommandHint?: string;
 }
+
+// 承認後、wrangler fallback を案内する CLI hint。
+// secret や Deploy Hook URL を含まないことを保証。
+const FALLBACK_COMMAND_HINT =
+  "node scripts/automation/deploy-production-from-main.mjs --slug=<slug>";
 
 type ReviewItemUpdate =
   | { updated: true; slug: string; previousStatus?: string }
@@ -98,15 +110,22 @@ async function markReviewItemApprovedByBranch(
       if (item && item.branch === branch) {
         const previousStatus = item.status;
         const now = new Date().toISOString();
+        // deploy hook が発火できなかった場合は status を即座に
+        // approved_deploy_pending にする (wrangler fallback 必須シグナル)。
+        const nextStatus = deployTriggered ? "approved" : "approved_deploy_pending";
         const updated: ReviewItemRecord = {
           ...item,
-          status: "approved",
+          status: nextStatus,
           prUrl: item.prUrl && item.prUrl.length > 0 ? item.prUrl : prUrl,
           approvedAt: now,
           approvedByMergeCommit: mergeCommitSha,
           // deploy hook を発火したら時刻を記録。後段の verify-publication が
           // この値を参照して deploy 完了タイムアウトを判定できる。
           deployTriggeredAt: deployTriggered ? now : item.deployTriggeredAt,
+          deployTriggered: !!deployTriggered,
+          needsWranglerFallback: deployTriggered ? item.needsWranglerFallback : true,
+          fallbackCommandHint: deployTriggered ? item.fallbackCommandHint : FALLBACK_COMMAND_HINT,
+          publicationVerifyError: deployTriggered ? item.publicationVerifyError : "deploy_hook_not_triggered",
           updatedAt: now,
         };
         await kv.put(`review:item:${s}`, JSON.stringify(updated));
@@ -346,7 +365,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       ok: true,
       message: deployResult.triggered
         ? "Previewを承認し、mainへマージ→本番デプロイを開始しました。"
-        : "Previewを承認し、mainへマージしました。本番デプロイ起動に失敗したため手動でのデプロイが必要です。",
+        : "Previewを承認し、mainへマージしました。本番デプロイ起動に失敗したため wrangler fallback が必要です。",
       pullNumber: pr.number,
       merged: mergeJson.merged === true,
       sha: mergeJson.sha,
@@ -354,6 +373,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
       slug,
       deployTriggered: deployResult.triggered,
       deployTriggerReason: deployResult.reason,
+      // wrangler fallback を案内する。deploy hook 発火失敗時は即座に true。
+      // 成功時は false (verify-publication 側で timeout 後に true 化される可能性あり)。
+      needsWranglerFallback: !deployResult.triggered,
+      // CLI hint は secret を含まないテンプレ文字列。
+      fallbackCommandHint: !deployResult.triggered ? FALLBACK_COMMAND_HINT : undefined,
       // フロントは publication verify を /api/verify-publication?slug=... で
       // polling する。本番反映前にボタンを「公開完了」にしない。
       verifyEndpoint: slug ? `/api/verify-publication?slug=${encodeURIComponent(slug)}` : null,
