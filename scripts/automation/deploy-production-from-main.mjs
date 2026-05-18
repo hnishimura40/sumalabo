@@ -105,11 +105,29 @@ function makeResult() {
 }
 
 // ----- step helpers -----
+// Windows で .cmd / .bat (npm.cmd / npx.cmd) を spawnSync する場合、
+// Node.js 20.12+ のセキュリティ対策で shell:true なしだと EINVAL を返す。
+// platform==='win32' のときだけ shell:true を有効にする。Linux/macOS では
+// shell の意味論が変わるため引数のエスケープを避けて従来通り shell:false。
+function isWindowsShellCommand(cmd) {
+  if (process.platform !== "win32") return false;
+  const lower = (cmd || "").toLowerCase();
+  return lower.endsWith(".cmd") || lower.endsWith(".bat");
+}
+
 function runSync(cmd, args, opts = {}) {
-  return spawnSync(cmd, args, {
+  const useShell = isWindowsShellCommand(cmd);
+  // shell:true のときは引数の空白を保護するためにダブルクォートで包む。
+  // ここで扱う引数は build / wrangler の固定値で、ユーザー入力 (--slug 等) を
+  // 含まない。slug は main 関数側で /^[a-z0-9][a-z0-9-]*$/i で検証済み。
+  const safeArgs = useShell
+    ? args.map((a) => (/[\s"]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a))
+    : args;
+  return spawnSync(cmd, safeArgs, {
     cwd: ROOT,
     stdio: opts.captureOutput ? ["ignore", "pipe", "pipe"] : "inherit",
     env: process.env,
+    shell: useShell || Boolean(opts.spawnOpts && opts.spawnOpts.shell),
     ...opts.spawnOpts,
   });
 }
