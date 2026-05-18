@@ -390,6 +390,101 @@ orchestrator は build / verify / notify / PR の各段階を実測し、次の 
 - 生成タイムアウト → 追加送信せず停止
 - 文字数 / 構造チェック失敗 → 停止
 
+## STAGE: slide_plan_finalize (deterministic, no Claude/Chrome)
+
+PR-B で追加された slide pipeline の第 1 段階。本文生成後に決定論的 Node スクリプトで
+最終 slidePlan を確定する。Claude/Chrome は使わない。
+
+### 入力
+- slug
+- understanding: `logs/understanding/{slug}.json`
+- draft: `drafts/generated/{slug}.md` (任意。本文要約として活用)
+
+### 手順
+1. orchestrator が `node scripts/run/slide-plan-finalize.mjs --slug ... --understanding ... --draft ...` を実行
+2. `drafts/slides/{slug}/slide-plan.json` が生成される
+3. slidePlan.slides[] は各 slide に `purpose / format / title / mustInclude /
+   characterRole.himari / characterRole.labomaru / props / factCaveats` を持つ
+4. slideNeeded=false の場合は count=0 で書き出し、後続 slide stage をスキップ
+
+### 失敗条件
+- understanding.json が存在しない → no-op で `slideNeeded=false` placeholder を保存
+- スクリプト exit != 0 → `Fail-Stage "slide_plan_finalize"`
+
+### 禁止
+- 固定枚数の slidePlan を勝手に作らない (記事内容で動的決定)
+- 「普通の人」「みんな」「全員」を slidePlan のいかなる文字列にも入れない
+- claude.exe / Chrome MCP を呼ばない (この stage は決定論的)
+
+## STAGE: slide_draft_generation (PR-B では prompt 生成まで)
+
+各 slide の画像生成プロンプトを生成し `drafts/slides/{slug}/prompts/{id}.md` に
+書き出す。PR-B では **claude.exe carrier の invoke は行わない**。実画像生成は深夜
+quiet-window でこの prompt を使って後続実走する。
+
+### 入力
+- slidePlan: `drafts/slides/{slug}/slide-plan.json`
+- understanding: `logs/understanding/{slug}.json`
+
+### 手順
+1. orchestrator が `node scripts/run/slide-prompts-batch.mjs` を実行
+2. slide ごとに prompt md を出力
+3. queue: `slide_draft_ready` に遷移
+
+### 失敗条件
+- スクリプト exit != 0 → `Fail-Stage "slide_draft_generation"`
+
+### 後続 (深夜 carrier で実走)
+- prompt を OS clipboard 経由で ChatGPT に渡し、画像生成
+- 生成画像を `drafts/slides/{slug}/images/{id}.png` に保存
+- Chrome 固定 / Edge 禁止 / clipboard guardian / worker contract を維持
+- ScheduleWakeup / later / reminder 禁止
+
+## STAGE: slide_factcheck (PR-B では prompt 生成まで)
+
+slide 全枚数の事実誤認・キャラ整合・道具の意味・文字密度をまとめて点検するプロンプト
+を `drafts/slides/{slug}/factcheck-prompt.md` に書き出す。実 factcheck (Claude in
+Chrome に画像添付) は別途。
+
+### 入力
+- slidePlan, understanding, draft, slide images
+
+### 手順
+1. orchestrator が `node scripts/run/slide-factcheck-prompt-build.mjs` を実行
+2. prompt md を生成
+3. queue: `awaiting_slide_factcheck` に遷移
+4. carrier 実走後、結果 JSON を `drafts/slides/{slug}/factcheck.json` に保存
+   (slides[].verdict = ok / needs_revision / ok_with_warning)
+
+### 失敗条件
+- スクリプト exit != 0
+- factcheck.json が空 / unparseable
+
+### 禁止
+- 画像未生成のまま factcheck pass 扱いにしない (`slideFactcheckPassed` gate で
+  blocking)
+
+## STAGE: slide_revision (PR-B では prompt 生成まで)
+
+factcheck で `needs_revision` の slide だけ修正版 prompt を生成する差分修正型。
+
+### 入力
+- slidePlan, understanding, factcheck.json
+
+### 手順
+1. orchestrator が `node scripts/run/slide-revision-prompts-build.mjs` を実行
+2. needs_revision の slide ごとに `drafts/slides/{slug}/revision-prompts/{id}.md` 出力
+3. queue: `slide_ready` に遷移
+4. carrier 実走後、修正画像を `drafts/slides/{slug}/images/{id}.png` に上書き
+
+### 失敗条件
+- スクリプト exit != 0
+- factcheck.json 不在で実行を試みた
+
+### 禁止
+- 全 slide を無条件再生成しない (差分のみ)
+- 元 slide の title / purpose / format / mustInclude / characterRole を勝手に変えない
+
 ## STAGE: thumbnail (carrier mode)
 
 ### 設計思想

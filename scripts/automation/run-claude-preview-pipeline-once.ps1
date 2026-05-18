@@ -276,8 +276,19 @@ const q = JSON.parse(fs.readFileSync('data/automation/sumahon-queue.json', 'utf-
 // the resume point by inspecting actual artifacts (resolveResumePoint),
 // so this list is intentionally broad: any status that means "work
 // started but pipeline did not complete to preview_created" is pickable.
+//
+// PR-B (slide-pipeline pr-b-orchestrator): added 6 slide-stage statuses
+// (awaiting_slide_generation / slide_draft_ready / awaiting_slide_factcheck
+// / slide_factchecked / awaiting_slide_revision / slide_ready). Resume
+// from any of these via artifact-based resolveResumePoint.
 const RESUMABLE_STATUSES = [
   'awaiting_chatgpt_generation',
+  'awaiting_slide_generation',
+  'slide_draft_ready',
+  'awaiting_slide_factcheck',
+  'slide_factchecked',
+  'awaiting_slide_revision',
+  'slide_ready',
   'awaiting_thumbnail',
   'awaiting_import',
   'preview_deployed',
@@ -300,9 +311,13 @@ const isExcluded = (i) => {
   // Exclude anything that is either done, in-flight (any resumable status),
   // failed, or marked for production deploy. Resumable entries are picked
   // up separately above; here we filter NEW candidates only.
+  // PR-B: added 6 slide-stage statuses.
   if ([
     'published','preview_created','preview_deployed',
     'awaiting_chatgpt_generation','awaiting_thumbnail','awaiting_import',
+    'awaiting_slide_generation','slide_draft_ready',
+    'awaiting_slide_factcheck','slide_factchecked',
+    'awaiting_slide_revision','slide_ready',
     'draft_ready','thumbnail_ready',
     'approved','failed','draft'
   ].includes(i.status)) return true;
@@ -438,6 +453,24 @@ console.log('OK wrote ' + outPath);
   $ArticleMdxPath = "content/articles/" + $TargetSlug + ".mdx"
   $AbsArticleMdxPath = Join-Path $ProjectRoot $ArticleMdxPath
 
+  # ============================================================
+  # PR-B: slide pipeline artifact paths
+  # ============================================================
+  $SlideDir          = "drafts/slides/" + $TargetSlug
+  $SlidePlanPath     = $SlideDir + "/slide-plan.json"
+  $SlidePromptsDir   = $SlideDir + "/prompts"
+  $SlideImagesDir    = $SlideDir + "/images"
+  $SlideFactcheckPath = $SlideDir + "/factcheck.json"
+  $SlideFactcheckPromptPath = $SlideDir + "/factcheck-prompt.md"
+  $SlideRevisionDir  = $SlideDir + "/revision-prompts"
+  $AbsSlideDir              = Join-Path $ProjectRoot $SlideDir
+  $AbsSlidePlanPath         = Join-Path $ProjectRoot $SlidePlanPath
+  $AbsSlidePromptsDir       = Join-Path $ProjectRoot $SlidePromptsDir
+  $AbsSlideImagesDir        = Join-Path $ProjectRoot $SlideImagesDir
+  $AbsSlideFactcheckPath    = Join-Path $ProjectRoot $SlideFactcheckPath
+  $AbsSlideFactcheckPromptPath = Join-Path $ProjectRoot $SlideFactcheckPromptPath
+  $AbsSlideRevisionDir      = Join-Path $ProjectRoot $SlideRevisionDir
+
   Write-RunLog ("DraftPath=" + $DraftPath)
   Write-RunLog ("ArticlePromptPath=" + $ArticlePromptPath + " exists=" + (Test-Path $AbsArticlePromptPath))
   Write-RunLog ("UnderstandingPath=" + $UnderstandingPath + " exists=" + (Test-Path $AbsUnderstandingPath))
@@ -470,28 +503,138 @@ console.log('OK wrote ' + outPath);
   # stage to resume from. This OVERRIDES the legacy "all-of-3-6 skip"
   # branch below for resume-mode targets. Artifact-based so that queue
   # status drift cannot corrupt resume decisions.
+  #
+  # PR-B: extended with 4 new slide stages between phase_b and thumbnail.
+  # ResumeStage values:
+  #   phase_a / phase_b /
+  #   slide_plan_finalize / slide_draft_generation /
+  #   slide_factcheck / slide_revision /
+  #   thumbnail / import_generated / preview_deploy /
+  #   verify_notify / pr_create / completion_gates / queue_update_final
   # ============================================================
   $hasArticlePrompt   = Test-Path $AbsArticlePromptPath
   $hasDraft           = Test-Path $AbsDraftPath
   $hasThumbnail       = Test-Path $AbsThumbnailPath
-  # Thumbnail on remote canonical preview branch (filled later in Stage 7
-  # for non-resume runs; here we do a quick check for resume decisions).
   $hasMdxInMain       = Test-Path $AbsArticleMdxPath  # always false here (we just guarded above)
-  # ResumeStage values: phase_a / phase_b / thumbnail / import / preview_deploy / verify_notify / pr_create / completion_gates / queue_update_final
+
+  # ---- slide artifact checks ----
+  $hasSlidePlan       = Test-Path $AbsSlidePlanPath
+  $slideNeeded        = $true
+  $slidePlanCount     = 0
+  if ($hasSlidePlan) {
+    try {
+      $slidePlanObj = Get-Content -LiteralPath $AbsSlidePlanPath -Raw -Encoding UTF8 | ConvertFrom-Json
+      $slideNeeded = ($slidePlanObj.slideNeeded -ne $false)
+      if ($slidePlanObj.slides) {
+        $slidePlanCount = @($slidePlanObj.slides).Count
+      }
+    } catch {
+      Write-RunLog ("  WARN: failed to parse slidePlan: " + $_.Exception.Message)
+    }
+  } elseif (Test-Path $AbsUnderstandingPath) {
+    # Fall back to understanding.json for early slideNeeded read (before plan exists)
+    try {
+      $uForSlide = Get-Content -LiteralPath $AbsUnderstandingPath -Raw -Encoding UTF8 | ConvertFrom-Json
+      if ($uForSlide.slideNeeded -ne $null) { $slideNeeded = ($uForSlide.slideNeeded -ne $false) }
+    } catch {}
+  }
+  $allSlidePromptsExist = $false
+  $allSlideImagesExist  = $false
+  if ($hasSlidePlan -and $slidePlanCount -gt 0) {
+    $promptMissing = $false
+    $imageMissing  = $false
+    foreach ($s in @($slidePlanObj.slides)) {
+      $sid = [string]$s.id
+      if (-not (Test-Path (Join-Path $AbsSlidePromptsDir ($sid + ".md")))) { $promptMissing = $true }
+      if (-not (Test-Path (Join-Path $AbsSlideImagesDir ($sid + ".png")))) { $imageMissing = $true }
+    }
+    $allSlidePromptsExist = (-not $promptMissing)
+    $allSlideImagesExist  = (-not $imageMissing)
+  } elseif (-not $slideNeeded) {
+    # slideNeeded=false means no slides expected; treat as "all exist" for
+    # resume purposes (Stages will short-circuit).
+    $allSlidePromptsExist = $true
+    $allSlideImagesExist  = $true
+  }
+  $hasSlideFactcheck    = Test-Path $AbsSlideFactcheckPath
+  $slideRevisionNeeded  = $false
+  if ($hasSlideFactcheck) {
+    try {
+      $fcObj = Get-Content -LiteralPath $AbsSlideFactcheckPath -Raw -Encoding UTF8 | ConvertFrom-Json
+      if ($fcObj.slides) {
+        foreach ($e in @($fcObj.slides)) {
+          if ($e.verdict -eq "needs_revision") { $slideRevisionNeeded = $true; break }
+        }
+      }
+    } catch {}
+  }
+
+  # SAFETY (post-review): slide-ready.json completion marker. Without this,
+  # the orchestrator MUST NOT advance to thumbnail when slide pipeline is
+  # enabled. This prevents promoting to awaiting_import with partial slide
+  # state (prompts only / images missing / factcheck pending).
+  $slidePipelineEnabledForResume = ($env:SUMALABO_ENABLE_SLIDE_PIPELINE -eq "true")
+  $hasSlideReadyMarker = Test-Path (Join-Path $ProjectRoot ("drafts/slides/" + $TargetSlug + "/slide-ready.json"))
+
   $ResumeStage = "phase_a"
   if ($hasArticlePrompt) { $ResumeStage = "phase_b" }
-  if ($hasDraft)         { $ResumeStage = "thumbnail" }
-  if ($hasDraft -and $hasThumbnail) { $ResumeStage = "import_generated" }
-  # If queue entry has a previewBranch+previewUrl already (= came from previous
-  # run that already pushed), advance further; we'll let Stage 8/9 detect
-  # the existing canonical branch and skip duplicate work.
+  if ($hasDraft) {
+    if ($slidePipelineEnabledForResume) {
+      # slide pipeline enabled: route through slide stages
+      $ResumeStage = "slide_plan_finalize"
+      if ($hasSlidePlan) {
+        if (-not $slideNeeded) {
+          # No slides needed; require slide-ready.json marker before advancing
+          if ($hasSlideReadyMarker) {
+            $ResumeStage = "thumbnail"
+          } else {
+            $ResumeStage = "slide_plan_finalize"  # re-emit marker
+          }
+        } elseif (-not $allSlidePromptsExist -or -not $allSlideImagesExist) {
+          $ResumeStage = "slide_draft_generation"
+        } elseif (-not $hasSlideFactcheck) {
+          $ResumeStage = "slide_factcheck"
+        } elseif ($slideRevisionNeeded) {
+          $ResumeStage = "slide_revision"
+        } elseif ($hasSlideReadyMarker) {
+          $ResumeStage = "thumbnail"
+        } else {
+          # All slide artifacts present but slide-ready.json not yet emitted —
+          # stay at slide_factcheck so the orchestrator re-checks and emits marker.
+          $ResumeStage = "slide_factcheck"
+        }
+      }
+    } else {
+      # Feature flag OFF: legacy direct-to-thumbnail flow
+      $ResumeStage = "thumbnail"
+    }
+  }
+  if ($hasDraft -and $hasThumbnail) {
+    if ($slidePipelineEnabledForResume) {
+      # When slide pipeline is enabled, never advance to import_generated
+      # without slide-ready.json.
+      if ($hasSlideReadyMarker) {
+        $ResumeStage = "import_generated"
+      }
+    } else {
+      $ResumeStage = "import_generated"
+    }
+  }
   if ($candidateInfo.pickedTop.status -eq "preview_deployed") {
-    # preview_deployed = image-gen complete + canonical branch exists, only
-    # notify/PR/gates pending.
     $ResumeStage = "verify_notify"
   }
-  Write-RunLog ("resolveResumePoint: hasArticlePrompt=" + $hasArticlePrompt + " hasDraft=" + $hasDraft + " hasThumbnail=" + $hasThumbnail + " -> ResumeStage=" + $ResumeStage)
+  Write-RunLog ("resolveResumePoint: hasArticlePrompt=" + $hasArticlePrompt + " hasDraft=" + $hasDraft + " hasSlidePlan=" + $hasSlidePlan + " slideNeeded=" + $slideNeeded + " slidesAllPrompts=" + $allSlidePromptsExist + " slidesAllImages=" + $allSlideImagesExist + " hasFactcheck=" + $hasSlideFactcheck + " revisionNeeded=" + $slideRevisionNeeded + " hasThumbnail=" + $hasThumbnail + " -> ResumeStage=" + $ResumeStage)
   $script:Report.resumeStage = $ResumeStage
+  $script:Report.slideArtifacts = @{
+    slidePlanPath = $SlidePlanPath
+    slidePlanExists = [bool]$hasSlidePlan
+    slideNeeded = [bool]$slideNeeded
+    slidePlanCount = [int]$slidePlanCount
+    allSlidePromptsExist = [bool]$allSlidePromptsExist
+    allSlideImagesExist = [bool]$allSlideImagesExist
+    factcheckExists = [bool]$hasSlideFactcheck
+    revisionNeeded = [bool]$slideRevisionNeeded
+  }
   $script:Report.resumeArtifacts = @{
     articlePromptExists = [bool]$hasArticlePrompt
     draftExists = [bool]$hasDraft
@@ -718,16 +861,20 @@ If any of these would fail, return ok=false with reason — do NOT return ok=tru
   }
 
   # ============================================================
-  # Stage 6: queue -> awaiting_import
+  # Stage 6: queue -> awaiting_slide_generation
+  #
+  # PR-B: Phase B 完了直後の queue 状態を旧 `awaiting_import` から
+  # `awaiting_slide_generation` に変更。slide 4 stage を経たあと
+  # `awaiting_import` に遷移する (Stage 6.5)。
   # ============================================================
-  $script:Report.stage = "queue_awaiting_import"
-  Write-RunLog "Stage 6: queue update -> awaiting_import"
+  $script:Report.stage = "queue_awaiting_slide_generation"
+  Write-RunLog "Stage 6: queue update -> awaiting_slide_generation"
   if ($DryRun) {
     Write-RunLog "  (DryRun) would updateStatus"
   } else {
     $queueScript6 = @"
 import('$QueueStoreImportUrl').then(async m => {
-  const r = await m.updateStatus('$TargetUrl', { status: 'awaiting_import', draftReadyAt: new Date().toISOString() });
+  const r = await m.updateStatus('$TargetUrl', { status: 'awaiting_slide_generation', draftReadyAt: new Date().toISOString() });
   console.log(JSON.stringify({ ok: !!r, changed: r && r.changed }));
 }).catch(e => { console.error(e.message); process.exit(1); });
 "@
@@ -738,11 +885,341 @@ import('$QueueStoreImportUrl').then(async m => {
     & node $queueScript6File 2>&1 | ForEach-Object { Write-RunLog ("  queue: " + $_) }
     $q6Exit = $LASTEXITCODE
     $ErrorActionPreference = $PrevErr6
-    if ($q6Exit -ne 0) { Fail-Stage "queue_awaiting_import" ("queue update exit=" + $q6Exit) }
+    if ($q6Exit -ne 0) { Fail-Stage "queue_awaiting_slide_generation" ("queue update exit=" + $q6Exit) }
   }
-  $script:Report.details.queueAwaitingImport = @{ ok = $true }
+  $script:Report.details.queueAwaitingSlideGeneration = @{ ok = $true }
 
   } # end of: if (-not $ResumeMode) { ... } wrapping Stages 3-6
+
+  # =================================================================
+  # PR-B: Stages 6.1 - 6.5 — slide pipeline (FEATURE-FLAGGED, default OFF)
+  #
+  # 各 stage は決定論的に prompt artifact だけを生成する (PR-B 範囲)。
+  # 画像生成・factcheck 実行・revision 画像再生成は carrier 経由で別途
+  # 走らせる前提 (今回は invoke しない)。
+  #
+  # SAFETY: PR-B では既存パイプラインを壊さないため、デフォルトで
+  # SUMALABO_ENABLE_SLIDE_PIPELINE=false。flag を明示的に true にした時のみ
+  # slide stage が動く。
+  #
+  # SAFETY: slide pipeline が有効でも、slide-ready.json (完了マーカー) が
+  # 生成されない限り awaiting_import に進めない。実画像 + factcheck まで
+  # 揃ったときだけ、orchestrator が slide-ready.json を書き出す。
+  # =================================================================
+
+  $slidePipelineEnabled = $false
+  if ($env:SUMALABO_ENABLE_SLIDE_PIPELINE -eq "true") {
+    $slidePipelineEnabled = $true
+  }
+  $SlideReadyMarkerPath = $SlideDir + "/slide-ready.json"
+  $AbsSlideReadyMarkerPath = Join-Path $ProjectRoot $SlideReadyMarkerPath
+  Write-RunLog ("Stage 6.x: slide pipeline feature flag = " + $slidePipelineEnabled + " (SUMALABO_ENABLE_SLIDE_PIPELINE)")
+  $script:Report.slidePipelineEnabled = $slidePipelineEnabled
+  if (-not $slidePipelineEnabled) {
+    Write-RunLog "  slide pipeline is DISABLED. Stages 6.1-6.5 will be skipped; legacy awaiting_import flow continues."
+  }
+
+  if ($slidePipelineEnabled) {
+
+  # ---- Stage 6.1: slide_plan_finalize ----
+  $script:Report.stage = "slide_plan_finalize"
+  Write-RunLog "Stage 6.1: slide_plan_finalize"
+  $slidePlanFinalizeOk = $false
+  $slidePlanCountFinal = 0
+  $slideNeededFinal = $true
+  if (Test-Path $AbsSlidePlanPath) {
+    Write-RunLog ("  slide-plan.json already exists; reading existing.")
+    try {
+      $existingPlan = Get-Content -LiteralPath $AbsSlidePlanPath -Raw -Encoding UTF8 | ConvertFrom-Json
+      $slideNeededFinal = ($existingPlan.slideNeeded -ne $false)
+      if ($existingPlan.slides) { $slidePlanCountFinal = @($existingPlan.slides).Count }
+      $slidePlanFinalizeOk = $true
+    } catch {
+      Write-RunLog ("  WARN: existing slide-plan.json unparseable: " + $_.Exception.Message)
+    }
+  }
+  if (-not $slidePlanFinalizeOk -and -not $DryRun) {
+    if (-not (Test-Path $AbsUnderstandingPath)) {
+      Write-RunLog "  understanding.json missing — defaulting slideNeeded=false (no slides)"
+      $slideNeededFinal = $false
+      $slidePlanCountFinal = 0
+      New-Item -ItemType Directory -Force -Path $AbsSlideDir | Out-Null
+      $placeholder = @{ slug = $TargetSlug; slideNeeded = $false; count = 0; reason = "understanding_missing_fallback"; slides = @(); generatedAt = (Get-Date).ToString("o") } | ConvertTo-Json -Depth 5
+      Set-Content -LiteralPath $AbsSlidePlanPath -Value $placeholder -Encoding UTF8
+      $slidePlanFinalizeOk = $true
+    } else {
+      $finalizeArgs = @("--slug", $TargetSlug, "--understanding", $UnderstandingPath)
+      if (Test-Path $AbsDraftPath) { $finalizeArgs += @("--draft", $DraftPath) }
+      $finalizeStdoutFile = Join-Path $LogDir ("slide-plan-finalize-" + $Stamp + ".log")
+      $PrevErrS = $ErrorActionPreference
+      $ErrorActionPreference = "Continue"
+      $finalizeOut = (& node (Join-Path $ProjectRoot "scripts\run\slide-plan-finalize.mjs") @finalizeArgs 2>&1 | Out-String).Trim()
+      $finalizeExit = $LASTEXITCODE
+      $ErrorActionPreference = $PrevErrS
+      Set-Content -Path $finalizeStdoutFile -Value $finalizeOut -Encoding UTF8
+      $finalizeJson = $null
+      try { $finalizeJson = $finalizeOut | ConvertFrom-Json } catch {}
+      if ($finalizeExit -ne 0 -or -not $finalizeJson -or -not $finalizeJson.ok) {
+        Fail-Stage "slide_plan_finalize" ("slide-plan-finalize failed exit=" + $finalizeExit + " out=" + $finalizeOut.Substring(0, [Math]::Min(300, $finalizeOut.Length)))
+      }
+      $slideNeededFinal = ($finalizeJson.slideNeeded -ne $false)
+      $slidePlanCountFinal = [int]$finalizeJson.count
+      Write-RunLog ("  slide-plan.json generated: count=" + $slidePlanCountFinal + " slideNeeded=" + $slideNeededFinal)
+      $slidePlanFinalizeOk = $true
+    }
+  }
+  $script:Report.details.slidePlanFinalize = @{
+    ok = $slidePlanFinalizeOk
+    slidePlanPath = $SlidePlanPath
+    slideCount = $slidePlanCountFinal
+    slideNeeded = $slideNeededFinal
+  }
+
+  # If slideNeeded=false, skip remaining slide stages and transition directly
+  # to awaiting_import. Emit slide-ready.json with slideCount=0 so resume can
+  # detect "no slides needed, this is done".
+  if (-not $slideNeededFinal) {
+    Write-RunLog "  slideNeeded=false; bypassing Stages 6.2-6.4 and emitting slide-ready.json (no slides)."
+    if (-not $DryRun) {
+      $markerNone = [ordered]@{
+        ok = $true
+        slug = $TargetSlug
+        slideCount = 0
+        finalImages = @()
+        factcheckVerdict = "ok_no_slides_intentional"
+        createdAt = (Get-Date).ToString("o")
+      } | ConvertTo-Json -Depth 5
+      Set-Content -LiteralPath $AbsSlideReadyMarkerPath -Value $markerNone -Encoding UTF8
+    }
+  } else {
+    # ---- Stage 6.2: slide_draft_generation (prompt build only in PR-B) ----
+    $script:Report.stage = "slide_draft_generation"
+    Write-RunLog ("Stage 6.2: slide_draft_generation (prompt files only; image gen deferred to deep-night)")
+    if (-not $DryRun) {
+      $promptsArgs = @("--slug", $TargetSlug, "--understanding", $UnderstandingPath, "--plan", $SlidePlanPath)
+      $promptsStdoutFile = Join-Path $LogDir ("slide-prompts-batch-" + $Stamp + ".log")
+      $PrevErrSP = $ErrorActionPreference
+      $ErrorActionPreference = "Continue"
+      $promptsOut = (& node (Join-Path $ProjectRoot "scripts\run\slide-prompts-batch.mjs") @promptsArgs 2>&1 | Out-String).Trim()
+      $promptsExit = $LASTEXITCODE
+      $ErrorActionPreference = $PrevErrSP
+      Set-Content -Path $promptsStdoutFile -Value $promptsOut -Encoding UTF8
+      $promptsJson = $null
+      try { $promptsJson = $promptsOut | ConvertFrom-Json } catch {}
+      if ($promptsExit -ne 0 -or -not $promptsJson -or -not $promptsJson.ok) {
+        Fail-Stage "slide_draft_generation" ("slide-prompts-batch failed exit=" + $promptsExit + " out=" + $promptsOut.Substring(0, [Math]::Min(300, $promptsOut.Length)))
+      }
+      Write-RunLog ("  slide prompts written: count=" + $promptsJson.count)
+      $script:Report.details.slideDraftGeneration = @{
+        ok = $true
+        slidePromptDir = $SlidePromptsDir
+        count = [int]$promptsJson.count
+        imageGenDeferred = $true
+        note = "PR-B emits prompt artifacts only; image generation via carrier is run in a separate deep-night pass."
+      }
+    }
+    # Queue: slide_draft_ready
+    if (-not $DryRun) {
+      $queueScript62 = @"
+import('$QueueStoreImportUrl').then(async m => {
+  const r = await m.updateStatus('$TargetUrl', { status: 'slide_draft_ready' });
+  console.log(JSON.stringify({ ok: !!r, changed: r && r.changed }));
+}).catch(e => { console.error(e.message); process.exit(1); });
+"@
+      $queueScript62File = Join-Path $LogDir ("queue-step62-" + $Stamp + ".mjs")
+      Set-Content -Path $queueScript62File -Value $queueScript62 -Encoding UTF8
+      $PrevErr62 = $ErrorActionPreference
+      $ErrorActionPreference = "Continue"
+      & node $queueScript62File 2>&1 | ForEach-Object { Write-RunLog ("  queue: " + $_) }
+      $ErrorActionPreference = $PrevErr62
+    }
+
+    # ---- Stage 6.3: slide_factcheck (prompt build only in PR-B) ----
+    $script:Report.stage = "slide_factcheck"
+    Write-RunLog ("Stage 6.3: slide_factcheck (prompt build only; Claude factcheck execution deferred)")
+    if (-not $DryRun) {
+      $fcArgs = @("--slug", $TargetSlug, "--understanding", $UnderstandingPath, "--plan", $SlidePlanPath, "--draft", $DraftPath, "--images-dir", $SlideImagesDir)
+      $fcStdoutFile = Join-Path $LogDir ("slide-factcheck-build-" + $Stamp + ".log")
+      $PrevErrFC = $ErrorActionPreference
+      $ErrorActionPreference = "Continue"
+      $fcOut = (& node (Join-Path $ProjectRoot "scripts\run\slide-factcheck-prompt-build.mjs") @fcArgs 2>&1 | Out-String).Trim()
+      $fcExit = $LASTEXITCODE
+      $ErrorActionPreference = $PrevErrFC
+      Set-Content -Path $fcStdoutFile -Value $fcOut -Encoding UTF8
+      $fcJson = $null
+      try { $fcJson = $fcOut | ConvertFrom-Json } catch {}
+      if ($fcExit -ne 0 -or -not $fcJson -or -not $fcJson.ok) {
+        Fail-Stage "slide_factcheck" ("slide-factcheck-prompt-build failed exit=" + $fcExit + " out=" + $fcOut.Substring(0, [Math]::Min(300, $fcOut.Length)))
+      }
+      Write-RunLog ("  factcheck-prompt.md written: imagePathsListed=" + $fcJson.imagePathsListed)
+      $script:Report.details.slideFactcheck = @{
+        ok = $true
+        factcheckPromptPath = $SlideFactcheckPromptPath
+        factcheckJsonPath = $SlideFactcheckPath
+        factcheckJsonExists = (Test-Path $AbsSlideFactcheckPath)
+        executionDeferred = $true
+      }
+    }
+    # Queue: awaiting_slide_factcheck
+    if (-not $DryRun) {
+      $queueScript63 = @"
+import('$QueueStoreImportUrl').then(async m => {
+  const r = await m.updateStatus('$TargetUrl', { status: 'awaiting_slide_factcheck' });
+  console.log(JSON.stringify({ ok: !!r, changed: r && r.changed }));
+}).catch(e => { console.error(e.message); process.exit(1); });
+"@
+      $queueScript63File = Join-Path $LogDir ("queue-step63-" + $Stamp + ".mjs")
+      Set-Content -Path $queueScript63File -Value $queueScript63 -Encoding UTF8
+      $PrevErr63 = $ErrorActionPreference
+      $ErrorActionPreference = "Continue"
+      & node $queueScript63File 2>&1 | ForEach-Object { Write-RunLog ("  queue: " + $_) }
+      $ErrorActionPreference = $PrevErr63
+    }
+
+    # ---- Stage 6.4: slide_revision (only when factcheck.json exists) ----
+    $script:Report.stage = "slide_revision"
+    Write-RunLog ("Stage 6.4: slide_revision (skipped if no factcheck.json present)")
+    $revisionNeededCount = 0
+    if ((Test-Path $AbsSlideFactcheckPath) -and -not $DryRun) {
+      $revArgs = @("--slug", $TargetSlug, "--understanding", $UnderstandingPath, "--plan", $SlidePlanPath, "--factcheck", $SlideFactcheckPath)
+      $revStdoutFile = Join-Path $LogDir ("slide-revision-build-" + $Stamp + ".log")
+      $PrevErrRV = $ErrorActionPreference
+      $ErrorActionPreference = "Continue"
+      $revOut = (& node (Join-Path $ProjectRoot "scripts\run\slide-revision-prompts-build.mjs") @revArgs 2>&1 | Out-String).Trim()
+      $revExit = $LASTEXITCODE
+      $ErrorActionPreference = $PrevErrRV
+      Set-Content -Path $revStdoutFile -Value $revOut -Encoding UTF8
+      $revJson = $null
+      try { $revJson = $revOut | ConvertFrom-Json } catch {}
+      if ($revExit -ne 0 -or -not $revJson -or -not $revJson.ok) {
+        Fail-Stage "slide_revision" ("slide-revision-prompts-build failed exit=" + $revExit + " out=" + $revOut.Substring(0, [Math]::Min(300, $revOut.Length)))
+      }
+      $revisionNeededCount = [int]$revJson.revisionsNeeded
+      Write-RunLog ("  revision prompts: " + $revisionNeededCount + " slides flagged")
+      $script:Report.details.slideRevision = @{
+        ok = $true
+        revisionPromptDir = $SlideRevisionDir
+        revisionsNeeded = $revisionNeededCount
+        executionDeferred = $true
+      }
+    } else {
+      Write-RunLog "  factcheck.json not present yet; slide_revision is a no-op (resume from this stage when factcheck.json is filled)"
+      $script:Report.details.slideRevision = @{
+        ok = $true
+        skipped = $true
+        reason = "factcheck_json_absent"
+      }
+    }
+
+    # ---- Stage 6.5: completion gate — slide-ready.json を書くかどうか ----
+    # 実画像 + factcheck が揃っているときだけ slide-ready.json を発行する。
+    # PR-B では prompt artifact だけしか生成しないので、ここで slide-ready.json
+    # は書かれない (= awaiting_import に進まない)。深夜 carrier 実走後に
+    # orchestrator を再実行したとき、resolveResumePoint が slide_factcheck →
+    # slide_revision を経由してすべて満たした時にここに到達する。
+    $allImagesPresent = $true
+    $allRevisionsApplied = $true
+    $factcheckOk = $false
+    if (Test-Path $AbsSlidePlanPath) {
+      try {
+        $planCheck = Get-Content -LiteralPath $AbsSlidePlanPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        foreach ($s in @($planCheck.slides)) {
+          $sid = [string]$s.id
+          if (-not (Test-Path (Join-Path $AbsSlideImagesDir ($sid + ".png")))) {
+            $allImagesPresent = $false; break
+          }
+        }
+        if (Test-Path $AbsSlideFactcheckPath) {
+          $fcCheck = Get-Content -LiteralPath $AbsSlideFactcheckPath -Raw -Encoding UTF8 | ConvertFrom-Json
+          $anyBlocking = $false
+          foreach ($e in @($fcCheck.slides)) {
+            if ($e.verdict -eq "needs_revision") { $anyBlocking = $true; break }
+          }
+          $factcheckOk = (-not $anyBlocking)
+        }
+      } catch {}
+    }
+
+    $shouldEmitSlideReady = ($allImagesPresent -and $factcheckOk -and $allRevisionsApplied -and (Test-Path $AbsSlidePlanPath) -and (Test-Path $AbsSlideFactcheckPath))
+    if ($shouldEmitSlideReady -and -not $DryRun) {
+      $finalImages = @()
+      try {
+        $planFin = Get-Content -LiteralPath $AbsSlidePlanPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        foreach ($s in @($planFin.slides)) {
+          $finalImages += @{ id = [string]$s.id; path = ($SlideImagesDir + "/" + [string]$s.id + ".png") }
+        }
+      } catch {}
+      $marker = [ordered]@{
+        ok = $true
+        slug = $TargetSlug
+        slideCount = $slidePlanCountFinal
+        finalImages = $finalImages
+        factcheckVerdict = "ok"
+        createdAt = (Get-Date).ToString("o")
+      } | ConvertTo-Json -Depth 5
+      Set-Content -LiteralPath $AbsSlideReadyMarkerPath -Value $marker -Encoding UTF8
+      Write-RunLog ("  slide-ready.json emitted: " + $SlideReadyMarkerPath)
+
+      # queue: slide_ready
+      $queueScript65 = @"
+import('$QueueStoreImportUrl').then(async m => {
+  const r = await m.updateStatus('$TargetUrl', { status: 'slide_ready' });
+  console.log(JSON.stringify({ ok: !!r, changed: r && r.changed }));
+}).catch(e => { console.error(e.message); process.exit(1); });
+"@
+      $queueScript65File = Join-Path $LogDir ("queue-step65-" + $Stamp + ".mjs")
+      Set-Content -Path $queueScript65File -Value $queueScript65 -Encoding UTF8
+      $PrevErr65 = $ErrorActionPreference
+      $ErrorActionPreference = "Continue"
+      & node $queueScript65File 2>&1 | ForEach-Object { Write-RunLog ("  queue: " + $_) }
+      $ErrorActionPreference = $PrevErr65
+    } else {
+      Write-RunLog ("  slide-ready.json NOT emitted yet — allImagesPresent=" + $allImagesPresent + " factcheckOk=" + $factcheckOk + " allRevisionsApplied=" + $allRevisionsApplied + ". Stopping before awaiting_import.")
+      $script:Report.details.slideReady = @{
+        ok = $false
+        emitted = $false
+        allImagesPresent = $allImagesPresent
+        factcheckOk = $factcheckOk
+        allRevisionsApplied = $allRevisionsApplied
+        nextAction = "Run image-gen + factcheck (deep-night carrier) before re-invoking orchestrator. awaiting_import is BLOCKED until slide-ready.json exists."
+      }
+      # SAFETY: do NOT promote to awaiting_import. Stop here so resume can pick
+      # up at slide_draft_generation / slide_factcheck / slide_revision later.
+      $script:Report.stage = "slide_pending_completion"
+      $script:Report.reason = "slide_pipeline_incomplete"
+      Save-Report
+      if (Test-Path $LockPath) { Remove-Item -LiteralPath $LockPath -Force -ErrorAction SilentlyContinue }
+      try { Stop-Transcript | Out-Null } catch {}
+      exit 0
+    }
+  }
+
+  } # end of: if ($slidePipelineEnabled) wrapping Stages 6.1-6.5
+
+  # ---- Stage 6.5b: queue -> awaiting_import (re-join existing pipeline) ----
+  #
+  # SAFETY: if slide pipeline is enabled and slideNeeded=true, only run this
+  # transition when slide-ready.json exists. The block above already exits
+  # early if slide-ready.json was not emitted, so reaching here means EITHER
+  # slidePipelineEnabled=false (legacy path) OR slideNeeded=false OR
+  # slide-ready.json exists. Otherwise this transition is unreachable.
+  $script:Report.stage = "queue_awaiting_import"
+  Write-RunLog "Stage 6.5b: queue update -> awaiting_import (post-slide transition)"
+  if (-not $DryRun) {
+    $queueScript6Import = @"
+import('$QueueStoreImportUrl').then(async m => {
+  const r = await m.updateStatus('$TargetUrl', { status: 'awaiting_import' });
+  console.log(JSON.stringify({ ok: !!r, changed: r && r.changed }));
+}).catch(e => { console.error(e.message); process.exit(1); });
+"@
+    $queueScript6ImportFile = Join-Path $LogDir ("queue-step6import-" + $Stamp + ".mjs")
+    Set-Content -Path $queueScript6ImportFile -Value $queueScript6Import -Encoding UTF8
+    $PrevErr6I = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    & node $queueScript6ImportFile 2>&1 | ForEach-Object { Write-RunLog ("  queue: " + $_) }
+    $ErrorActionPreference = $PrevErr6I
+  }
+  $script:Report.details.queueAwaitingImport = @{ ok = $true }
 
   # ============================================================
   # Stage 7: thumbnail (claude.exe sub-session)
@@ -1849,8 +2326,150 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
   Write-RunLog ("  qualityBody (warning-level): " + ($qualityBody | ConvertTo-Json -Compress -Depth 4))
   Write-RunLog ("  qualityThumbnail (warning-level): " + ($qualityThumbnail | ConvertTo-Json -Compress -Depth 4))
 
-  # Aggregate all 13 gates. previewDeployOk / verifyOk / notifyOk / prOk
+  # ---- PR-B: 6 new slide-pipeline gates ----
+  # gates are: slidePlanExists (blocking) / slideCharacterUsageOk (blocking) /
+  #            slideFactcheckPassed (blocking) / slideCountReasonable (warning-only) /
+  #            slideTextDensityOk (warning-only) / slideThemeCoverageOk (warning-only).
+  # Warning-only gates are stored in $visualWarnings for review without
+  # blocking the run. Blocking gates go into $allGates.
+  #
+  # SAFETY (post-review): when slide pipeline is DISABLED via feature flag,
+  # all slide gates are auto-pass with reason="skipped_pipeline_disabled".
+  # When ENABLED + slideNeeded=true, slideFactcheckPassed BLOCKS if
+  # factcheck.json is missing (no longer warning_pending).
+  $slidePlanExists = $true
+  $slideCharacterUsageOk = $true
+  $slideFactcheckPassed = $true
+  $slideCountReasonable = "warning_pending"
+  $slideTextDensityOk = "warning_pending"
+  $slideThemeCoverageOk = "warning_pending"
+  $slidePipelineNotes = @()
+
+  if (-not $slidePipelineEnabled) {
+    # Feature flag OFF — skip all slide gate evaluation.
+    $slideCountReasonable = "skipped_pipeline_disabled"
+    $slideTextDensityOk = "skipped_pipeline_disabled"
+    $slideThemeCoverageOk = "skipped_pipeline_disabled"
+    Write-RunLog ("  slide gates: pipeline disabled — skipped all")
+  } else {
+  try {
+    if (Test-Path $AbsSlidePlanPath) {
+      $planObjForGate = Get-Content -LiteralPath $AbsSlidePlanPath -Raw -Encoding UTF8 | ConvertFrom-Json
+      $slideNeededForGate = ($planObjForGate.slideNeeded -ne $false)
+      $slideCountForGate  = if ($planObjForGate.slides) { @($planObjForGate.slides).Count } else { 0 }
+      if ($slideNeededForGate) {
+        $slidePlanExists = ($slideCountForGate -ge 1)
+        # blocking only at extreme count (>= 10)
+        if ($slideCountForGate -ge 10) {
+          $slidePlanExists = $false  # treat as blocking by routing through slidePlanExists
+          $slidePipelineNotes += "slide_count_too_high:$slideCountForGate"
+        }
+        # warning thresholds
+        if ($slideCountForGate -lt 2 -or $slideCountForGate -gt 8) {
+          $slideCountReasonable = "warning_count_unusual:$slideCountForGate"
+        } else {
+          $slideCountReasonable = "ok"
+        }
+        # character placeholder check
+        foreach ($s in @($planObjForGate.slides)) {
+          if (-not $s.characterRole -or -not $s.characterRole.himari -or -not $s.characterRole.labomaru) {
+            $slideCharacterUsageOk = $false
+            $slidePipelineNotes += ("character_role_missing:" + [string]$s.id)
+            break
+          }
+          $cmb = ([string]$s.characterRole.himari) + " " + ([string]$s.characterRole.labomaru)
+          if ($cmb -match "置物|立っているだけ|無表情|待機") {
+            $slideCharacterUsageOk = $false
+            $slidePipelineNotes += ("character_static:" + [string]$s.id)
+            break
+          }
+        }
+        # theme coverage warning: news 系で overview と (comparison or decision-guide) と checkpoints があるか
+        $purposes = @($planObjForGate.slides | ForEach-Object { $_.purpose })
+        $hasOverview = ($purposes -contains "overview")
+        $hasDecide   = ($purposes -contains "decision-guide") -or ($purposes -contains "comparison")
+        $hasCheck    = ($purposes -contains "checkpoints")
+        if ($hasOverview -and $hasDecide -and $hasCheck) {
+          $slideThemeCoverageOk = "ok"
+        } else {
+          $slideThemeCoverageOk = "warning_theme_coverage_missing"
+        }
+        # text density: PR-B では画像非検査のため一律 warning_pending
+        $slideTextDensityOk = "warning_pending_image_inspection_not_implemented"
+        # factcheck pass: SAFETY (post-review) — slide pipeline 有効 +
+        # slideNeeded=true の場合、factcheck.json 不在は BLOCKING に変更。
+        # slide-ready.json も無いと自動的に preview_created に到達しない。
+        if (-not (Test-Path $AbsSlideFactcheckPath)) {
+          $slideFactcheckPassed = $false
+          $slidePipelineNotes += "factcheck_json_missing_blocking"
+        } else {
+          try {
+            $fcGate = Get-Content -LiteralPath $AbsSlideFactcheckPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            $hasBlocking = $false
+            foreach ($e in @($fcGate.slides)) {
+              if ($e.verdict -eq "needs_revision") { $hasBlocking = $true; break }
+            }
+            # If revision prompts exist for every blocked entry, consider remediation in progress.
+            # PR-B: simple pass: needs_revision exists → blocking
+            if ($hasBlocking) {
+              # check whether revision images would have been regenerated; PR-B
+              # can't verify that yet, so mark blocking but note that the next
+              # quiet-night pass should re-verify.
+              $slideFactcheckPassed = $false
+              $slidePipelineNotes += "factcheck_needs_revision_pending_rerun"
+            }
+          } catch {
+            $slideFactcheckPassed = $false
+            $slidePipelineNotes += "factcheck_json_unparseable"
+          }
+        }
+      } else {
+        # slideNeeded=false の場合は全部 OK (pass-through)
+        $slidePlanExists = $true
+        $slideCountReasonable = "ok_no_slides_intentional"
+        $slideCharacterUsageOk = $true
+        $slideFactcheckPassed = $true
+        $slideTextDensityOk = "ok_no_slides_intentional"
+        $slideThemeCoverageOk = "ok_no_slides_intentional"
+      }
+    } else {
+      # slide-plan.json 不在: understanding.slideNeeded を確認
+      $slideNeededRaw = $true
+      if (Test-Path $AbsUnderstandingPath) {
+        try {
+          $uRaw = Get-Content -LiteralPath $AbsUnderstandingPath -Raw -Encoding UTF8 | ConvertFrom-Json
+          if ($uRaw.slideNeeded -ne $null) { $slideNeededRaw = ($uRaw.slideNeeded -ne $false) }
+        } catch {}
+      }
+      if ($slideNeededRaw) {
+        $slidePlanExists = $false
+        $slidePipelineNotes += "slide_plan_json_missing"
+      } else {
+        $slidePlanExists = $true
+        $slideCountReasonable = "ok_no_slides_intentional"
+      }
+    }
+  } catch {
+    Write-RunLog ("  WARN: slide gate evaluation failed: " + $_.Exception.Message)
+  }
+
+  # SAFETY (post-review): slide pipeline enabled かつ slide-ready.json が無ければ
+  # slideFactcheckPassed を blocking 化する。これにより、prompt artifact だけある
+  # 状態 (PR-B 標準) で preview_created に進むことを防ぐ。
+  # slideNeeded=false でも slide-ready.json は (slideCount=0 で) 必ず emit される
+  # ため、不在 = pipeline 未完了。
+  if (-not (Test-Path $AbsSlideReadyMarkerPath)) {
+    $slideFactcheckPassed = $false
+    $slidePipelineNotes += "slide_ready_marker_missing_blocking"
+  }
+  } # end of: if ($slidePipelineEnabled) { ... } else block (pipeline disabled = auto-pass)
+  Write-RunLog ("  slide gates: slidePlanExists=" + $slidePlanExists + " slideCharacterUsageOk=" + $slideCharacterUsageOk + " slideFactcheckPassed=" + $slideFactcheckPassed + " slideCountReasonable=" + $slideCountReasonable + " slideTextDensityOk=" + $slideTextDensityOk + " slideThemeCoverageOk=" + $slideThemeCoverageOk + " notes=[" + ($slidePipelineNotes -join ",") + "]")
+
+  # Aggregate all gates. previewDeployOk / verifyOk / notifyOk / prOk
   # were set by Stages 10/11/12 earlier.
+  # PR-B adds 3 new BLOCKING gates: slidePlanExists / slideCharacterUsageOk /
+  # slideFactcheckPassed. The other 3 (slideCountReasonable / slideTextDensityOk
+  # / slideThemeCoverageOk) are warning-level and live in $visualWarnings.
   $allGates = [ordered]@{
     previewDeployOk = [bool]$previewDeployOk
     verifyOk = [bool]$verifyOk
@@ -1874,8 +2493,13 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
     mainDirectPushNotRun = [bool]$mainDirectPushNotRun
     xPostNotRun = [bool]$xPostNotRun
     processedOnlyOneArticle = [bool]$processedOnlyOneArticle
+    slidePlanExists = [bool]$slidePlanExists
+    slideCharacterUsageOk = [bool]$slideCharacterUsageOk
+    slideFactcheckPassed = [bool]$slideFactcheckPassed
   }
   # Visual-structure warning fields (not hard gates).
+  # PR-B: added 3 slide warning gates (slideCountReasonable / slideTextDensityOk /
+  # slideThemeCoverageOk) and slidePipelineNotes.
   $visualWarnings = [ordered]@{
     firstScrollWithinBudget = $firstScrollWithinBudget
     tooManyLongParagraphs = $tooManyLongParagraphs
@@ -1885,6 +2509,11 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
     # Thumbnail action/prop warnings (hard to auto-judge, manual review).
     thumbnailCharacterActionOk = "manualReviewRequired"
     thumbnailPropUsageOk = "manualReviewRequired"
+    # Slide warning gates (warning-from-start per design)
+    slideCountReasonable = $slideCountReasonable
+    slideTextDensityOk = $slideTextDensityOk
+    slideThemeCoverageOk = $slideThemeCoverageOk
+    slidePipelineNotes = $slidePipelineNotes
   }
   $failedGates = @()
   foreach ($k in $allGates.Keys) { if (-not $allGates[$k]) { $failedGates += $k } }
