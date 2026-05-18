@@ -16,7 +16,8 @@
     "social:generate-x-post": "node scripts/run/generate-x-post.mjs",
     "social:post-to-x": "node scripts/run/post-to-x.mjs",
     "automation:run-queue": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/run-sumahon-queue.ps1",
-    "automation:register-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/register-sumahon-tasks.ps1"
+    "automation:register-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/register-sumahon-tasks.ps1",
+    "deploy:production:fallback": "node scripts/automation/deploy-production-from-main.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",
