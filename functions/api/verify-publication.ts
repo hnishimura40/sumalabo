@@ -296,7 +296,11 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     notHomepageFallback: { ok: !looksLikeHomepageFallback(html, slug) },
     hasArticleBody: { ok: /class="article-content\b/i.test(html) || /class="article-shell\b/i.test(html) },
     hasThumbnailRef: {
-      ok: new RegExp(`/images/thumbnails/${slug.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}\\.png`).test(html),
+      // サムネ拡張子は WebP 移行後も既存 PNG / JPEG / AVIF を許容する。
+      // mdx の frontmatter で `thumbnail: "/images/thumbnails/{slug}.<ext>"` を
+      // 使うかぎり、HTML に <link rel="preload"> / og:image / <img src> として
+      // 出力されるため、拡張子だけ拡張すれば既存 PNG 記事も壊さない。
+      ok: new RegExp(`/images/thumbnails/${slug.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}\\.(png|webp|jpe?g|avif)`, "i").test(html),
     },
     noProhibitedCopy: (() => {
       const matches = (html.match(/普通の人/g) || []).length;
