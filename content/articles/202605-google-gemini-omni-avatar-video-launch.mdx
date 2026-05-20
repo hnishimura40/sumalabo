@@ -1,0 +1,460 @@
+---
+title: "Googleの新AI「Gemini Omni」とは？自分のアバターで動画を作れる時代へ"
+slug: "202605-google-gemini-omni-avatar-video-launch"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Googleの新AI「Gemini Omni」を生活者向けに整理。会話で動画を作って編集する、自分のアバターを使う、YouTube Shortsをリミックスするなど、何が便利でどこに注意すべきかをまとめます。"
+thumbnail: "/images/thumbnails/202605-google-gemini-omni-avatar-video-launch.png"
+thumbnailAlt: "Googleの新AI「Gemini Omni」とは？会話で動画を作る・編集する、自分アバター・Shorts対応をひまり・らぼまるが整理したサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 1
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_normal_icon.webp"
+tags:
+  - "Google"
+  - "Gemini"
+  - "Gemini Omni"
+  - "AI動画"
+  - "YouTube Shorts"
+  - "アバター"
+  - "SynthID"
+  - "すまラボ"
+related:
+  - "what-is-ai-smartphone"
+  - "company-ai-copilot-gemini-work-tips"
+  - "moonix-ai-smart-glasses"
+pubDate: "2026-05-20"
+updated: "2026-05-20"
+publishAt: "2026-05-20T19:00:00+09:00"
+---
+
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
+<div class="summary-box">
+<p class="box-label">3行でわかるまとめ</p>
+
+* Gemini Omni は、Google が発表した新しい **動画生成・動画編集の AI モデル** です。
+* 文章・画像・動画を素材として、**会話するように動画を作って編集** できるのが特徴。自分の顔と声をもとにしたアバター機能や、YouTube Shorts のリミックスにも対応します。
+* 便利な一方、本人そっくり動画・素材の権利・日本語/日本での利用範囲には注意が必要。**作る側と見る側、両方にリテラシーが必要なニュース** です。
+
+</div>
+
+<div class="check-box">
+<p class="box-label">この記事で整理すること</p>
+
+* Gemini Omni がどんな AI なのか
+* 何ができて、何に使えるのか
+* 自分のアバター機能と、その利用条件
+* YouTube Shorts への影響（作る人・見る人それぞれ）
+* 便利になることと注意すべきこと
+* 生活者として、どう付き合えばいいか
+
+</div>
+
+<div class="summary-box">
+<p class="box-label">先に結論</p>
+
+<p class="lead">Gemini Omni のポイントは、動画 AI が <strong>「ゼロから作る」から「素材と会話で編集する」へ近づいた</strong> ことです。</p>
+
+* 文章・画像・動画を渡して、**自然な言葉で動画を編集** できる（最初のモデルは Gemini Omni Flash）
+* 自分の顔と声で **アバターを作って動画に登場** させられる（18 歳以上 / 個人は Google AI プラン要 / 現状英語のみ）
+* YouTube Shorts Remix と YouTube Create に組み込まれ、**見る側も AI 動画を意識** する場面が増える
+* Google は SynthID（不可視のデジタル透かし）で AI 生成動画を識別できると説明
+
+今すぐ何かを買う・契約する話というより、**動画の意味が「証拠」から「作れる表現」に近づいていく** ことを知っておくニュースです。
+
+</div>
+
+<div class="info-box">
+<p class="box-label">今押さえるべき3点</p>
+
+* **会話で動画を編集できる** — 「背景だけ変えて」「人物はそのままで場所だけカフェに」のような指示で動かせる方向
+* **自分のアバター機能** — 顔出ししたくない人の発信が広がる可能性。ただし利用条件・本人なりすましリスクに注意
+* **AI 動画の見極めが大事になる** — SynthID や透かしがあっても、見る人が毎回確認するとは限らない
+
+</div>
+
+<div class="info-box">
+<p class="box-label">この記事の前提</p>
+
+Gemini Omni は 2026 年 5 月時点の Google 発表ニュースを元に整理しています。提供範囲・対応言語・利用条件・プラン要件は今後変わる可能性があります。実際に契約・利用する前に、Google の公式ヘルプ（記事末尾の参考情報リンク）で最新条件を確認してください。
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは「Gemini Omni って何の話？」を 1 枚で整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-omni-avatar-video-launch/slide01-overview.png" alt="Gemini Omni の全体像を整理した図解。テキスト・画像・動画・音声参照を素材にして会話で動画を作成・編集できる新しいAIモデルで、最初のモデルは Gemini Omni Flash、Gemini アプリや Google Flow などで展開されることを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Gemini Omni とは？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Google の新しい AI モデル</strong>：会話で動画を作って編集できる方向の生成 AI</li>
+      <li><strong>入力素材</strong>：テキスト／画像／動画／一部の音声参照を組み合わせ可能</li>
+      <li><strong>最初のモデル</strong>：Gemini Omni Flash（Omni ファミリーの第一弾）</li>
+      <li><strong>展開先</strong>：Gemini アプリ／Google Flow／YouTube Shorts／YouTube Create など</li>
+      <li><strong>見方</strong>：「動画 AI が次の段階に入った」ニュースとしてつかむ</li>
+    </ul>
+  </div>
+</section>
+
+<div class="visual-flow">
+  <div class="flow-step flow-step--input">
+    <span class="flow-label">素材</span>
+    <span class="flow-title">テキスト/画像/動画</span>
+    <span class="flow-text">自分の手持ち素材や指示文を渡す</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--relay">
+    <span class="flow-label">AI</span>
+    <span class="flow-title">Gemini Omni</span>
+    <span class="flow-text">会話で作成・編集・リミックス</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--brain">
+    <span class="flow-label">出力</span>
+    <span class="flow-title">動画 + SynthID 透かし</span>
+    <span class="flow-text">AI 生成かどうかを後から確認できる</span>
+  </div>
+</div>
+
+## Gemini Omni とは？
+
+<p class="lead">Gemini Omni は Google の新しい生成 AI モデル。<strong>動画まわりの「作る・直す・出演させる・リミックスする」を会話で進める方向</strong>の AI です。</p>
+
+これまでの動画生成 AI は「プロンプトを入れて短い動画が出てくる」のが中心でした。Gemini Omni はそこから一歩進んで、手持ちの動画や画像をもとに編集・リミックスまで広げようとしているのが特徴です。
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>種類</td>
+<td>Google の新しい生成 AI モデル</td>
+</tr>
+<tr>
+<td>最初のモデル</td>
+<td>Gemini Omni Flash</td>
+</tr>
+<tr>
+<td>主な用途</td>
+<td>動画の生成・編集・リミックス</td>
+</tr>
+<tr>
+<td>入力できる素材</td>
+<td>テキスト／画像／動画／一部の音声参照など</td>
+</tr>
+<tr>
+<td>使える場所</td>
+<td>Gemini アプリ／Google Flow／YouTube Shorts／YouTube Create など</td>
+</tr>
+<tr>
+<td>特徴</td>
+<td>会話するように動画を作成・編集できる</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## 何ができる？素材を渡して、会話で動画を作る
+
+<p class="lead">分かりやすいのは <strong>「素材を組み合わせて、言葉で編集できる」</strong> ところ。動画編集の入口が、編集ソフトを覚える話から、やりたいことを伝える話に近づきます。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Gemini Omni でできる作業を「会話でできる 8 つのこと」として 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-omni-avatar-video-launch/slide02-capabilities.png" alt="Gemini Omni でできることを 8 つに整理した図解。文章から動画作成・写真をもとに動画化・手持ちの動画を編集・背景や雰囲気を変える・キャラクターや物体を置き換える・カメラアングルを変える・音や音楽に合わせた演出・自分のアバターを動画に登場させる、をまとめたスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：何ができるの？会話でサクッと、いろいろできる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1. 文章から動画を作成</strong></li>
+      <li><strong>2. 写真をもとに動画化</strong></li>
+      <li><strong>3. 手持ちの動画を編集</strong></li>
+      <li><strong>4. 背景や雰囲気を変える</strong></li>
+      <li><strong>5. キャラクターや物体を置き換える</strong></li>
+      <li><strong>6. カメラアングルを変える</strong></li>
+      <li><strong>7. 音や音楽に合わせた演出を加える</strong></li>
+      <li><strong>8. 自分のアバターを動画に登場させる</strong></li>
+      <li><strong>共通点</strong>：簡単な編集なら「言葉で指示しやすい」流れに近づく</li>
+    </ul>
+  </div>
+</section>
+
+AI に対して「背景だけ変えて」「人物はそのままで場所をカフェにして」「商品紹介っぽく見せて」のように頼める方向です。もちろん、AI が必ず思い通りに作ってくれるわけではなく、細かい品質調整や違和感のチェックは引き続き必要です。
+
+## 自分のアバターで動画を作れるのが大きい
+
+<p class="lead">今回のニュースで注目したいのが <strong>自分のアバター機能</strong>。顔出しせずに発信したい人にとっては大きな選択肢ですが、<strong>利用条件と「本人なりすまし」リスクの両面</strong>を見ておく必要があります。</p>
+
+Google のヘルプでは、Gemini Apps で自分の顔と声を録画してアバターを作成し、そのアバターを Gemini Omni での動画作成に使えると説明されています。ただし、アバター作成は **18 歳以上** が対象で、個人アカウントで使う場合は **Google AI プランが必要**。さらに **現時点では英語のみ対応** とされています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">アバター機能で広がる使い方と、知っておくべき利用条件を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-omni-avatar-video-launch/slide03-avatar.png" alt="Gemini Omni の自分アバター機能で広がる使い方（顔出しせずに説明動画／アバターが商品紹介／講座・研修動画／SNS やブログ用の自分風ショート動画）と、利用条件（18 歳以上対象／個人利用は Google AI プラン必須／現時点は英語のみ／EEA・スイス・英国では利用不可）を整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：自分アバター活用と利用条件</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>顔出しせずに説明動画を作る</strong></li>
+      <li><strong>アバターが商品紹介をする</strong></li>
+      <li><strong>講座・研修の動画を作る</strong></li>
+      <li><strong>SNS やブログ用に、自分風ショート動画を作る</strong></li>
+      <li><strong>利用条件</strong>：18 歳以上／個人は Google AI プラン必要／現状英語のみ／EEA・スイス・英国は利用不可</li>
+      <li><strong>注意</strong>：便利だけど条件は必ず確認</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p class="box-label">アバター機能を使うときに気をつけたいこと</p>
+
+* 自分のアバターを **自分で使う** のが大前提（他人の顔・声を勝手に使わない）
+* 動画の公開先で **「AI 生成だと分かる形」** を保つ
+* 商用利用やビジネス用途は、契約条件・社内ルールを必ず確認
+* SNS で「本人発信」と誤解されない見せ方にする
+* 日本のユーザーが日本語で自由に使えるようになる時期は **未確定**
+
+</div>
+
+## YouTube Shorts にも入る。見る側にも関係ある
+
+<p class="lead">Gemini Omni は <strong>YouTube Shorts Remix と YouTube Create に組み込まれる</strong>ため、動画を見るだけの人にも関係します。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Gemini Omni が YouTube Shorts でどう使われるか、見分けるための仕組みも 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-omni-avatar-video-launch/slide04-shorts.png" alt="Gemini Omni が YouTube Shorts に広がる流れを整理した図解。対象の Shorts を選ぶ・プロンプトや画像を追加・新しい表現にリミックスの 3 ステップと、見分けるための仕組み（デジタル透かし／識別用メタデータ／元動画へのリンク／クリエイターはオプトアウト可能）を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Shorts にも広がる。YouTube Shorts でも使われる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1. 対象の Shorts を選ぶ</strong>（リミックスしたい Shorts を選択）</li>
+      <li><strong>2. プロンプトや画像を追加</strong>（指示や素材を加えてカスタマイズ）</li>
+      <li><strong>3. 新しい表現にリミックス</strong>（AI が新しい Shorts を生成）</li>
+      <li><strong>見分けるための仕組み</strong>：デジタル透かし／識別用メタデータ／元動画へのリンク／クリエイターはオプトアウト可能</li>
+      <li><strong>見る側</strong>：「ありリミックスかも？」と意識しよう</li>
+    </ul>
+  </div>
+</section>
+
+YouTube は、Omni でリミックスされた Shorts にデジタル透かし・識別メタデータ・元動画へのリンクが付き、クリエイターは Shorts の視覚的リミックスをオプトアウトできると説明しています。安心材料ではありますが、**見る人が毎回これらを確認するとは限らない** ことは押さえておきたい点です。
+
+## 便利になること
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Gemini Omni のような AI 動画機能が広がると、便利になる場面を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-omni-avatar-video-launch/slide05-benefits.png" alt="Gemini Omni のような AI 動画機能が広がって便利になるポイント（編集の入口が低くなる／小さなお店や個人にも使いやすい／顔出ししにくい人も発信しやすい／短い動画の作成やアレンジが SNS 向けにも相性がよい）を整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：便利になるポイント — 動画づくりのハードルが下がる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>編集の入口が低くなる</strong>：言葉で指示しやすくなる</li>
+      <li><strong>小さなお店や個人にも使いやすい</strong>：商品紹介や告知に使いやすい</li>
+      <li><strong>顔出ししにくい人も発信しやすい</strong>：自分風アバターが選択肢に</li>
+      <li><strong>短い動画の作成やアレンジ</strong>：SNS 向けにも相性がよい</li>
+      <li><strong>狙い</strong>：思いついたアイデアを、もっと気軽に動画にしやすい</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>場面</th>
+<th>使いやすくなる例</th>
+<th>気になる点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>個人発信</td>
+<td>顔出しせず、アバターで短い説明動画</td>
+<td>「本人発信か AI か」が見える設計が必要</td>
+</tr>
+<tr>
+<td>小さなお店</td>
+<td>商品紹介・イベント告知の動画化</td>
+<td>権利のある素材・他人の顔の扱いに注意</td>
+</tr>
+<tr>
+<td>SNS 投稿</td>
+<td>Shorts 向けに短い動画を量産</td>
+<td>リミックス元の表記やリンク</td>
+</tr>
+<tr>
+<td>ブログ補足</td>
+<td>記事内容をアバターが説明する短い動画</td>
+<td>誤情報を動画化しないチェック</td>
+</tr>
+<tr>
+<td>研修・講座</td>
+<td>マニュアルや導入動画の量産</td>
+<td>社内ルール・契約条件を確認</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## 注意すべきこと
+
+<p class="lead">便利さの裏には、<strong>本人そっくり動画／素材の権利／日本語・日本での利用範囲</strong>という 3 つの大きな注意点があります。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Gemini Omni のような AI 動画で注意したい 4 つのポイントを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-omni-avatar-video-launch/slide06-risks.png" alt="Gemini Omni を含む AI 動画で注意したいポイント（本人そっくり動画のリスク／AI 生成でも本物っぽく見えること／権利のある素材だけ使うこと／日本語での使い勝手はまだ確認段階）の 4 つを整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：注意したいポイント — 便利さと一緒に、リスクも確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1. 本人そっくり動画のリスク</strong>：なりすましにつながる恐れ</li>
+      <li><strong>2. AI 生成でも本物っぽく見える</strong>：見る側のリテラシーが必要</li>
+      <li><strong>3. 権利のある素材だけ使う</strong>：無断利用はトラブルの原因</li>
+      <li><strong>4. 日本語での使い勝手は未確定</strong>：アバター機能は英語のみ対応</li>
+      <li><strong>結論</strong>：便利さの裏のリスクも、先に知っておこう</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p class="box-label">公開前に必ず確認したいチェックリスト</p>
+
+* 実在の人物に誤解を与えていないか
+* 他人の顔や声を勝手に使っていないか
+* 権利のある素材を無断で使っていないか
+* AI 生成だと分かる形になっているか
+* 見る人をだます内容になっていないか
+* SynthID や透かしを意図的に消そうとしていないか
+
+</div>
+
+Google は、Gemini Omni で作られた動画には不可視のデジタル透かし SynthID が含まれ、Gemini アプリ・Gemini in Chrome・Google 検索などで AI 生成動画かどうか確認できるようにすると説明しています。技術的には確認できる仕組みですが、**SNS で短い動画が一瞬で広がる現実** を考えると、見る側の「少し立ち止まる力」も同じくらい大事になります。
+
+## どんな人に関係ある？
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Gemini Omni は「作る人」だけのニュースではない、という対象別の整理を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-omni-avatar-video-launch/slide07-who-cares.png" alt="Gemini Omni に関係ある人を整理した図解。YouTube を見る人／SNS 投稿する人／顔出ししたくない人／店舗・個人事業主／クリエイター／保護者・教育関係者の 6 区分で、それぞれに関係する論点を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：関係あるのは誰？ — 作る人にも、見る人にも関わるニュース</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>YouTube を見る人</strong>：AI リミックス動画に出会う機会が増える可能性</li>
+      <li><strong>SNS 投稿する人</strong>：ショート動画を作るハードルが下がる</li>
+      <li><strong>顔出ししたくない人</strong>：自分風アバターが選択肢に</li>
+      <li><strong>店舗・個人事業主</strong>：商品紹介や告知動画を作りやすく</li>
+      <li><strong>クリエイター</strong>：自分の動画がリミックスされる可能性</li>
+      <li><strong>保護者・教育関係者</strong>：子どもが AI 動画を誤解しないよう配慮が必要</li>
+      <li><strong>共通点</strong>：作る側・見る側、どちらにも新しいリテラシーが大事</li>
+    </ul>
+  </div>
+</section>
+
+特に大きいのは、**「作る側」と「見る側」の両方に関係する**ことです。作る側にとっては動画制作が楽になり、見る側にとっては動画の見極めが少し難しくなります。これをセットで考えるのが、AI 動画時代の付き合い方の基本になります。
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "AIで動画を作れるって聞くとすごそうだけど、普通の人にも関係あるの？" },
+    { speaker: "らぼまる", text: "あるよ。作る人だけじゃなくて、YouTube や SNS で動画を見る人にも関係してくる話なんだ。これからは「誰が作ったか」「元動画は何か」「AI 生成の表示があるか」まで見る習慣がいるね。" },
+  ]}
+/>
+
+## すまラボ的な見方：動画は「証拠」から「作れる表現」に近づく
+
+<p class="lead">Gemini Omni を「すごい動画 AI が出た」で終わらせないのが大事。<strong>動画の意味が「証拠」から「作れる表現」へ少しずつ移っていく</strong>のが、この記事で覚えておきたい本筋です。</p>
+
+これまで動画は、写真や文章よりも「本当に起きたこと」に近いものとして見られがちでした。もちろん編集や加工は以前からありましたが、それでも動画には「実際に撮られたもの」という印象が強くありました。
+
+AI で自然な動画を作れるようになると、動画は少しずつ「証拠」ではなく「作れる表現」に近づいていきます。これは、作る人にも見る人にも、新しい確認習慣を求める変化です。
+
+## 生活者として、どう付き合えばいい？
+
+<p class="lead">立場ごとに、いまの動き方は変わります。<strong>「作る側」「見る側」「保護する側」</strong>で見ると整理しやすいです。</p>
+
+<section class="decision-guide-panel">
+<ul class="decision-list">
+<li><strong>作る側（個人・小規模事業者・発信者）</strong><br />SNS 用の短い動画、説明動画、告知動画から試す。公開前に「実在の人物に誤解を与えないか」「素材の権利は OK か」を必ずチェック。</li>
+<li><strong>見る側（YouTube・SNS をよく見る人）</strong><br />「本人が言っているように見える動画」でも、AI 生成かもしれないことを意識する。政治家・有名人・事件・災害に関する動画は特に慎重に。</li>
+<li><strong>顔出ししたくない発信者</strong><br />アバター機能は強力。ただし利用条件（18 歳以上／個人は Google AI プラン／英語のみ）を確認し、自分の顔・声以外を使わない。</li>
+<li><strong>保護者・教育関係者</strong><br />子どもが AI 動画を本物と誤解しないように、「これは AI かもしれない」を一緒に確認する習慣を持つ。</li>
+</ul>
+</section>
+
+## まとめ：Gemini Omni は便利。でも動画の信頼性も揺らす
+
+Gemini Omni は、AI 動画をかなり身近にする可能性がある新しい生成 AI です。文章だけでなく、画像や動画を素材にして、会話するように動画を作ったり編集したりできる。自分の顔と声をもとにしたアバターを使い、動画に登場させることもできる。さらに、YouTube Shorts のリミックスにも入り、動画文化そのものに影響していく可能性があります。
+
+一方で、便利さだけを見ていると危うい部分もあります。本人そっくりの AI 動画、許可のない素材利用、AI リミックスによる誤解、動画を本物だと思い込むリスク。こうした問題も、同時に考える必要があります。
+
+AI が作れる範囲が広がるほど、**人間側の判断**がますます大事になります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、この記事のまとめと「両方を見る」視点を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-omni-avatar-video-launch/slide08-summary.png" alt="Gemini Omni のまとめと見方を整理した図解。素材を組み合わせて会話しながら動画を作成・編集／条件付きで自分のアバターも使える／YouTube Shorts のリミックスにも対応の 3 点と、信頼性の見方（何を作るか／誰の素材を使うか／見る人が誤解しないか／AI 生成の表示があるか）を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：まとめと見方 — 便利さと注意点を、両方で見る</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1. 素材を組み合わせて会話しながら動画を作成・編集</strong></li>
+      <li><strong>2. 条件付きで自分のアバターも使える</strong></li>
+      <li><strong>3. YouTube Shorts のリミックスにも対応</strong></li>
+      <li><strong>同時に、信頼性の見方も大事</strong>：何を作るか／誰の素材を使うか／見る人が誤解しないか／AI 生成の表示があるか</li>
+      <li><strong>結論</strong>：便利さとリスクの両方を理解して、上手に活用していく</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p class="box-label">この記事のポイント</p>
+
+* Gemini Omni は会話で動画を作って編集する Google の新しい AI（最初は Gemini Omni Flash）
+* 自分のアバターを動画に登場させられる（利用条件あり・現状英語のみ）
+* YouTube Shorts Remix にも組み込まれ、見る側にも関係する
+* SynthID や透かしで AI 生成と分かる仕組みはある
+* それでも、見る側に「立ち止まって確認する力」が必要
+* 公開する前に、素材の権利・なりすましリスクは必ずチェック
+
+</div>
+
+スマホ・AI まわりのニュースをまとめて見たい人は、[ニュースをかみくだくカテゴリ](/categories/news/)もあわせて確認してみてください。
+
+## あわせて読みたい
+
+<div class="article-cta">
+  <p>AI の基本や、仕事での AI 活用の文脈と合わせて読むと、Gemini Omni のニュースが立体的に見えてきます。</p>
+  <a href="/articles/what-is-ai-smartphone/">AIスマホとは何かを読む</a>
+  <a href="/articles/company-ai-copilot-gemini-work-tips/">会社で Copilot や Gemini を賢く使うコツを読む</a>
+  <a href="/articles/moonix-ai-smart-glasses/">AIスマートグラスの記事を読む</a>
+  <a href="/categories/news/">ニュースをかみくだくカテゴリを見る</a>
+</div>
+
+## 参考情報
+
+* Google 公式ブログ「[Introducing Gemini Omni](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-omni/)」 — Gemini Omni Flash、動画編集、マルチモーダル入力、アバター、SynthID、提供先について説明されています。
+* Google ヘルプ「[Create and use an avatar in Gemini Apps](https://support.google.com/gemini/answer/16984474)」 — 自分の顔と声を録画してアバターを作成し、Gemini Omni で使う方法や利用条件が説明されています。
+* YouTube 公式ブログ「[All the YouTube news from today's Google I/O](https://blog.youtube/news-and-events/youtube-news-google-io-2026/)」 — Gemini Omni を使った YouTube Shorts Remix、YouTube Create、透かし、メタデータ、元動画リンク、オプトアウトについて説明されています。
+
+※この記事は 2026 年 5 月時点の Google 公式情報・YouTube 公式情報をもとに整理しています。提供範囲・対応言語・利用条件・プラン要件は今後変わる可能性があるため、契約・利用前に必ず最新の公式情報を確認してください。
