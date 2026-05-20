@@ -1,0 +1,357 @@
+---
+title: "Google AI Ultraに月額100ドル新プラン。AI料金の見方が変わる話"
+slug: "202605-google-ai-ultra-100-dollar-plan-launch"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Google AI Ultra に月額100ドル（日本では14,500円〜）の新プランが追加。AI料金が「月額固定」から「使った処理の重さ（compute-used）」に変わる流れと、Ultra が向いている人・不要な人、日本で使うときの注意点をまとめます。"
+thumbnail: "/images/thumbnails/202605-google-ai-ultra-100-dollar-plan-launch.webp"
+thumbnailAlt: "Google AI Ultra 5x 登場！料金や機能の違い・どんな人に必要かをひまり・らぼまるが徹底解説するサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 1
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_normal_icon.webp"
+tags:
+  - "Google"
+  - "Gemini"
+  - "Google AI Ultra"
+  - "Google AI Pro"
+  - "AIサブスク"
+  - "compute-used"
+  - "すまラボ"
+related:
+  - "202605-google-gemini-3-5-flash-search-ai-mode"
+  - "202605-google-gemini-omni-avatar-video-launch"
+  - "202605-github-copilot-shifts-to-token-based-pricing-june-1"
+pubDate: "2026-05-20"
+updated: "2026-05-20"
+publishAt: "2026-05-20T21:10:00+09:00"
+---
+
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
+<div class="summary-box">
+<p class="box-label">3行でわかるまとめ</p>
+
+* Google AI に **月額100ドル（日本では14,500円〜）の新プラン「AI Ultra 5x」** が追加されました。最上位「20x」は月額200ドル（日本では32,000円〜）に値下げ。
+* Gemini アプリの利用制限が **「毎日のプロンプト数」から「compute-used（計算量ベース）」** に移行。軽い質問と重い動画生成では、消費する量が大きく変わります。
+* **いきなり Ultra を選ぶ必要はありません**。AI 利用が日常的に多い人、動画生成や開発支援で重い作業をする人向け。まずは無料版や Pro で使い方を見るのが現実的です。
+
+</div>
+
+<div class="check-box">
+<p class="box-label">この記事で整理すること</p>
+
+* 月額100ドルの「AI Ultra 5x」プランで何が変わるか
+* 「compute-used（計算量ベース）」とは何か
+* どのプランがどんな人に向くか（無料/Pro/Ultra 5x/Ultra 20x）
+* 日本で使うときに確認すべきポイント
+
+</div>
+
+<div class="summary-box">
+<p class="box-label">先に結論</p>
+
+<p class="lead">大事なのは「Ultra が高いか安いか」ではなく <strong>「AI 料金が使った処理の重さで決まる方向に移った」</strong>こと。</p>
+
+* AI Ultra 5x（月額14,500円〜）が新登場。AI Ultra 20x（月額32,000円〜）は値下げ
+* 利用制限は **compute-used（プロンプトの複雑さ・機能・チャットの長さ）** で計算
+* Ultra は「AI を仕事道具として深く使う人」向け。動画生成・大量分析・開発支援が日常の人に向く
+* Pro / 無料版で **自分の使い方を見てから** 上げるのが安全。Ultra は年間17万〜38万円規模の出費
+
+</div>
+
+<div class="info-box">
+<p class="box-label">今押さえるべき3点</p>
+
+* **3 つの軸が同時に動いた**：100ドル新プラン／20xの値下げ／compute-used移行
+* **計算量ベースの考え方** — 「何回使ったか」より「どれくらい重い処理を使ったか」
+* **日本で全機能が使えるとは限らない** — Gemini Spark / AI Inbox / Daily Brief は米国先行
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは「Google AI Ultra とは？」を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-ai-ultra-100-dollar-plan-launch/slide01-overview.webp" alt="Google AI Ultra とは何かを整理した図解。月額100ドル（日本14,500円〜）の AI Ultra 5x が新登場、最上位 AI Ultra 20x は月額200ドル（日本32,000円〜）へ値下げ、両プラン共通で YouTube Premium 個人プラン・Gemini / Flow / Antigravity などへ広くアクセス可能、をまとめたスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Google AI Ultra とは？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>AI Ultra 5x</strong>：月額100ドル / 日本14,500円〜 / Pro比 5倍の利用上限 / 20TBストレージ</li>
+      <li><strong>AI Ultra 20x</strong>：月額200ドル / 日本32,000円〜 / 旧Pro比 20倍 / 30TBストレージ</li>
+      <li><strong>共通の主な特典</strong>：YouTube Premium 個人プラン／Gemini / Flow / Antigravity など</li>
+      <li><strong>5xと20xの違い</strong>：上限の差が大きい（5倍 vs 20倍）</li>
+      <li><strong>位置づけ</strong>：新しい選択肢が増えたが、誰もが入るプランではない</li>
+    </ul>
+  </div>
+</section>
+
+<div class="visual-flow">
+  <div class="flow-step flow-step--input">
+    <span class="flow-label">使い方</span>
+    <span class="flow-title">AIの利用量</span>
+    <span class="flow-text">軽い相談から重い動画生成まで幅がある</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--relay">
+    <span class="flow-label">計測</span>
+    <span class="flow-title">compute-used</span>
+    <span class="flow-text">プロンプトの複雑さ・機能・チャット長で計算</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--brain">
+    <span class="flow-label">判断</span>
+    <span class="flow-title">プラン選び</span>
+    <span class="flow-text">無料 / Pro / Ultra 5x / Ultra 20x</span>
+  </div>
+</div>
+
+## 4 プランをざっくり比較
+
+<p class="lead">「Ultra を選ぶ前に、自分が <strong>どこにいるか</strong>」を確かめると失敗しません。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">無料版・Pro・Ultra 5x・Ultra 20x の 4 プランを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-ai-ultra-100-dollar-plan-launch/slide02-plan-comparison.webp" alt="Google AI プランをざっくり比較した図解。無料版（0円・15GB・まず試す）、AI Pro（2,900円・5TB・文章作成と調べもの中心）、AI Ultra 5x（14,500円〜・20TB・開発と動画生成と大量作業）、AI Ultra 20x（32,000円〜・30TB・AIを非常に多く使うプロ事業者）の 4 段階を、料金・容量・向いている人と一緒にまとめたスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：プランをざっくり比較</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>無料版</strong>：0円 / 15GB / たまに AI を使う人 / まず試す</li>
+      <li><strong>AI Pro</strong>：月額2,900円 / 5TB / 文章作成・調べもの・資料整理をよく使う人</li>
+      <li><strong>AI Ultra 5x</strong>：月額14,500円〜 / 20TB / 開発・動画生成・大量作業を日常的に行う人</li>
+      <li><strong>AI Ultra 20x</strong>：月額32,000円〜 / 30TB / AI を非常に多く使うプロ・事業者</li>
+      <li><strong>選び方のコツ</strong>：「使い方」と「必要な量」のバランスで判断</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>プラン</th>
+<th>月額の目安</th>
+<th>向いている使い方</th>
+<th>すまラボ的な見方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>無料版</td>
+<td>0 円</td>
+<td>たまに AI を使う</td>
+<td>まず試すならここで十分</td>
+</tr>
+<tr>
+<td>Google AI Pro</td>
+<td>2,900 円</td>
+<td>文章作成・調べもの・資料整理</td>
+<td>日常使いの現実的な候補</td>
+</tr>
+<tr>
+<td>Google AI Ultra 5x</td>
+<td>14,500 円〜</td>
+<td>開発・動画生成・大量分析</td>
+<td>AI を仕事道具として深く使う人</td>
+</tr>
+<tr>
+<td>Google AI Ultra 20x</td>
+<td>32,000 円〜</td>
+<td>AI を非常に多く使うプロ・事業者</td>
+<td>趣味利用には重すぎる</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## 「計算量ベース」ってどういうこと？
+
+<p class="lead">スマホ料金で言えば <strong>「何回電話したか」より「どれくらいデータ通信を使ったか」</strong> に近い考え方です。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">軽い使い方と重い使い方の例、compute の考え方を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-ai-ultra-100-dollar-plan-launch/slide03-compute-used.webp" alt="計算量ベース（compute-used）の考え方を整理した図解。軽い使い方（明日の予定整理／文章を少し丁寧に／言葉の意味を教えて）と、重い使い方（長い PDF を読み込み要約／動画を生成／大量のコードを分析／複雑な調査をしてレポート作成／長い会話を踏まえた作業）を対比し、毎日の回数ではなく使った計算量で上限を管理する考え方を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：「計算量ベース」ってどういうこと？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>軽い使い方</strong>：明日の予定整理／文章を少し丁寧に／言葉の意味を教えて</li>
+      <li><strong>重い使い方</strong>：長い PDF を読み込み要約／動画を生成／大量のコードを分析／複雑な調査でレポート作成／長い会話を踏まえた作業</li>
+      <li><strong>compute のポイント</strong>：毎日の回数ではなく、使った計算量で上限を管理</li>
+      <li><strong>影響</strong>：プロンプトの複雑さ・使う機能・チャットの長さを考慮</li>
+      <li><strong>回復タイミング</strong>：上限は 5 時間ごとに回復／週ごとの上限もあり</li>
+    </ul>
+  </div>
+</section>
+
+短い質問なら従来通りの感覚で使えますが、長文要約・動画生成・大量分析を頻繁にする人は、**計算量で見たほうが料金感がつかみやすい** 仕組みになっています。
+
+## Ultra が向いている人
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「AI を仕事道具として深く使う人」のチェックリストを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-ai-ultra-100-dollar-plan-launch/slide04-who-fits.webp" alt="Google AI Ultra が向いている人を整理した図解。毎日 AI で資料・文章を作る／長い PDF や議事録を読ませて要約・比較／動画・画像・SNS 素材を大量に作る／コードを書いたり開発の補助に使う／Pro の上限で作業が止まることが多い／Flow・Antigravity・NotebookLM・AI Studio をまとめて活用、をまとめたスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Google AI Ultra が向いている人</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>毎日のように AI で資料や文章を作る</strong></li>
+      <li><strong>長い PDF や議事録を読ませて要約・比較</strong></li>
+      <li><strong>動画・画像・SNS 素材を大量に作る</strong></li>
+      <li><strong>コードを書いたり、開発の補助に使う</strong></li>
+      <li><strong>Pro の上限で作業が止まることが多い</strong></li>
+      <li><strong>Flow / Antigravity / NotebookLM / AI Studio をまとめて活用</strong></li>
+      <li><strong>判断軸</strong>：毎日ガッツリ使う側ほど価値が出やすい</li>
+    </ul>
+  </div>
+</section>
+
+## Ultra が不要な人
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「いきなり Ultra は不要」な人の特徴を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-ai-ultra-100-dollar-plan-launch/slide05-who-doesnt.webp" alt="いきなり Ultra が不要な人を整理した図解。Gemini をたまに検索代わりに使うだけ／メール文や文章の言い換えが中心／スマホで少し AI を試している段階／動画生成やコーディング支援はほとんど使わない／毎月1万円超の AI 料金を回収できる使い道がまだない、という 5 パターンを示し、料金以上の価値があるかをチェックする判断ガイドを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：いきなり Ultra は不要な人</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Gemini をたまに検索代わりに使うだけ</strong></li>
+      <li><strong>メール文や文章の言い換えが中心</strong></li>
+      <li><strong>スマホで少し AI を試している段階</strong></li>
+      <li><strong>動画生成やコーディング支援はほとんど使わない</strong></li>
+      <li><strong>毎月1万円超の AI 料金を回収できる使い道がまだない</strong></li>
+      <li><strong>大事なのは「料金以上の価値があるか」</strong>：時間短縮や売上を見える化</li>
+    </ul>
+  </div>
+</section>
+
+<div class="info-box">
+<p class="box-label">年間コストで見ると</p>
+
+* AI Ultra 5x: 月14,500円 → **年間約17万円超**
+* AI Ultra 20x: 月32,000円 → **年間約38万円超**
+
+「なんとなく便利そう」だけで入るには高い金額。仕事の時短や売上で **回収できる見込み** が立ってから上げるのが安心です。
+
+</div>
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "月額100ドルって、けっこう高いよね……？" },
+    { speaker: "らぼまる", text: "うん。だからこれは「みんなが入るプラン」じゃなくて、「AI を仕事道具としてかなり使う人向け」と見るのが近いよ。Pro か無料で自分の使い方を確かめてから上げよう。" },
+  ]}
+/>
+
+## 日本で使うときの注意点
+
+<p class="lead">高いプランに入れば <strong>全機能が日本で使えるとは限りません</strong>。米国限定・英語限定の機能が混ざります。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">日本で使うときに確認したい 3 つのポイントを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-ai-ultra-100-dollar-plan-launch/slide06-japan-caveats.webp" alt="Google AI Ultra を日本で使うときの注意点を整理した図解。一部機能は米国限定・英語限定（Gemini Spark / AI Inbox in Gmail / Daily Brief in the Gemini app）と、契約前に確認したい 3 つのポイント（自分が使いたい機能が日本で使えるか／日本語で問題なく使えるか／Web・アプリ・Google アプリ内で同じ範囲が使えるか）を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：日本で使うときの注意点</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>米国限定・英語限定の機能例</strong>：Gemini Spark／AI Inbox in Gmail／Daily Brief in the Gemini app</li>
+      <li><strong>契約前に確認</strong>：1. 自分が使いたい機能が日本で使えるか</li>
+      <li><strong>契約前に確認</strong>：2. 日本語で問題なく使えるか</li>
+      <li><strong>契約前に確認</strong>：3. Web・アプリ・Google アプリ内で同じ範囲が使えるか</li>
+      <li><strong>結論</strong>：料金だけでなく「使えるか」もチェック</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p class="box-label">契約前に確認したいチェックリスト</p>
+
+* 自分が使いたい機能が日本で提供されているか
+* 日本語で問題なく使える機能か（英語限定のものはないか）
+* Web 版・スマホアプリ版・Google アプリ内 Gemini で機能差はないか
+* 追加クレジット・利用条件は日本向けで明記されているか
+* 解約・プラン変更条件
+* 仕事アカウントの場合、組織のポリシーで使えるか
+
+</div>
+
+## 本質は「AI 料金の見方が変わること」
+
+今回の本当のポイントは、Ultra の値段そのものよりも **「AI 料金が使った処理の重さで決まる方向に動いた」** こと。GitHub Copilot の AI Credits 移行と同じ流れです。
+
+| これまでの AI サブスク | これからの AI サブスク |
+|---|---|
+| 月額固定でなんとなく使い放題感 | 軽い使い方はプラン内、重い作業は上位プラン |
+| 「何回使えるか」中心 | 「どれくらい重い処理か」を反映 |
+| 単一の上限 | 5時間ごと回復 + 週上限など多層管理 |
+| プランの差は容量や特典中心 | プランの差は **使える処理量** が中心 |
+
+## 生活者としての選び方
+
+<section class="decision-guide-panel">
+<ul class="decision-list">
+<li><strong>AI を試している段階の人</strong><br />無料版で十分。まず日常で「どんな使い方をするか」を確かめる。</li>
+<li><strong>日常的に文章作成・調べもの・資料整理に使う人</strong><br />Pro（月額2,900円）を 1〜3 か月使い、上限に当たるか・時短効果があるかを見る。</li>
+<li><strong>動画生成・大量分析・開発支援が増えてきた人</strong><br />Ultra 5x（月額14,500円〜）を検討。回収できる使い道があるかを先に整理。</li>
+<li><strong>AI を非常に多く使うプロ・事業者</strong><br />Ultra 20x（月額32,000円〜）も視野。ただし日本での提供範囲は機能ごとに要確認。</li>
+</ul>
+</section>
+
+## まとめ：Ultra より大事なのは「自分の使い方」
+
+Google AI Ultra の月額100ドルプランは、AI を本格的に使う人にとって意味のある選択肢ですが、誰もがいきなり入る必要はありません。
+
+これからの AI サブスク選びでは:
+
+* どの AI モデルが使えるか
+* どの機能が日本で使えるか
+* どれくらい重い作業までできるか
+* 上限に当たったときどうなるか
+* 自分の使い方で料金分の価値があるか
+
+までセットで見るのがコツです。
+
+<div class="check-box">
+<p class="box-label">この記事のポイント</p>
+
+* Google AI Ultra に月額100ドル（日本14,500円〜）の 5x プランが新登場
+* 20x は月額200ドル（日本32,000円〜）へ値下げ
+* Gemini アプリの利用制限は compute-used（計算量ベース）に移行
+* 無料 / Pro / Ultra 5x / Ultra 20x の 4 段階を「使い方の重さ」で見分ける
+* 日本では一部機能が米国限定・英語限定の可能性
+* 契約前に「使いたい機能が日本で使えるか」を必ず確認
+
+</div>
+
+## あわせて読みたい
+
+<div class="article-cta">
+  <p>AI サブスクと AI 利用の文脈は、一緒に押さえると見通しが良くなります。</p>
+  <a href="/articles/202605-google-gemini-3-5-flash-search-ai-mode/">Gemini 3.5 Flash と Google 検索 AI Mode の解説を読む</a>
+  <a href="/articles/202605-google-gemini-omni-avatar-video-launch/">Gemini Omni（動画 AI）の解説を読む</a>
+  <a href="/articles/202605-github-copilot-shifts-to-token-based-pricing-june-1/">GitHub Copilot の料金体系変更ニュースを読む</a>
+  <a href="/categories/news/">ニュースをかみくだくカテゴリを見る</a>
+</div>
+
+## 参考情報
+
+* Google 公式ブログ「[Google AI subscription updates from Google I/O 2026](https://blog.google/products-and-platforms/products/google-one/google-ai-subscriptions/)」 — AI サブスクのアップデート、compute-used 移行、20x 値下げ
+* Gemini 公式「[Google AI Pro & Ultra](https://gemini.google/jp/subscriptions/?hl=ja)」 — 日本向けプラン情報
+* Google One「[Google AI Plans with Cloud Storage](https://one.google.com/about/google-ai-plans/)」 — Google AI プランの内容と提供条件
+
+※この記事は 2026 年 5 月時点の Google 公式情報をもとに整理しています。プラン内容・料金・対象地域は今後変わる可能性があるため、契約前に必ず日本向け公式ページで最新情報を確認してください。
