@@ -1,0 +1,486 @@
+---
+title: "Google「Gemini Spark」とは？AIに“聞く”から“作業を預ける”時代へ"
+slug: "202605-google-gemini-spark-personal-ai-agent-gmail"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Google が発表した「Gemini Spark」は、Gmail・Googleカレンダー・Drive・Docs・Sheets・Slidesなどと連携してユーザーの代わりに作業を進める24時間動く個人向けAIエージェント。仕事と日常生活でどう役立つか、まだ任せない方がいい作業、日本での提供状況までやさしく整理します。"
+thumbnail: "/images/thumbnails/202605-google-gemini-spark-personal-ai-agent-gmail.webp"
+thumbnailAlt: "Gemini Sparkとは？AIに聞くからAIに任せるへ、24時間動く個人向けAIエージェントをひまり・らぼまるが解説するサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 1
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_normal_icon.webp"
+tags:
+  - "Google"
+  - "Gemini"
+  - "Gemini Spark"
+  - "AIエージェント"
+  - "Gmail"
+  - "Googleカレンダー"
+  - "Google Workspace"
+  - "すまラボ"
+related:
+  - "202605-google-gemini-daily-brief-morning-assistant-launches-us"
+  - "202605-google-ai-ultra-100-dollar-plan-launch"
+  - "202605-google-gemini-3-5-flash-search-ai-mode"
+pubDate: "2026-05-21"
+updated: "2026-05-21"
+publishAt: "2026-05-21T08:00:00+09:00"
+---
+
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
+<div class="summary-box">
+<p class="box-label">3行でわかるまとめ</p>
+
+* **Gemini Spark** は Google が発表した **24時間動く個人向けAIエージェント**。Gmail・Googleカレンダー・Drive・Docs・Sheets・Slides・YouTube・Googleマップなどと連携できます。
+* これまでの Gemini が「質問に答えるAI」だったのに対し、Gemini Spark は **メール・予定・資料・請求書などをまたいで作業の下準備を進めるAI** という位置づけ。
+* 現時点では **米国の Google AI Ultra 加入者向けに先行ベータ提供**。日本での一般提供時期は未確定。**「すぐ使う機能」より「AIエージェント時代の方向性を示す発表」** として見るのがちょうどよいです。
+
+</div>
+
+<div class="check-box">
+<p class="box-label">この記事で整理すること</p>
+
+* Gemini Spark とは何か、これまでの Gemini と何が違うか
+* 仕事で役に立つ場面（メール整理／会議準備／議事録／資料作成／請求書管理）
+* 日常生活で役に立つ場面（学校連絡／家族予定／旅行準備／家の管理）
+* AI に任せていい作業と、まだ任せない方がいい作業の線引き
+* 日本での提供状況と、注意したいポイント
+
+</div>
+
+<div class="summary-box">
+<p class="box-label">先に結論</p>
+
+<p class="lead">Gemini Spark のポイントは <strong>「AIに作業を預ける」方向に踏み込んだこと</strong>。完成品を AI に丸投げするのではなく、<strong>下準備をAIが進めて、最終確認は人間が行う</strong> 形が現実的です。</p>
+
+* Gmail / カレンダー / Drive / Docs / Sheets / Slides などをまたいで動くエージェント
+* 接続は最初から勝手にオンにならず、**ユーザーが設定から有効化** する仕組み
+* メール送信・支払いなど影響の大きい操作は **事前確認** が入る設計
+* 米国の Google AI Ultra 加入者向けに先行ベータ
+* 日本の一般ユーザーが今すぐ使う段階ではない
+
+</div>
+
+<div class="info-box">
+<p class="box-label">今押さえるべき3点</p>
+
+* **「答えるAI」から「作業を進めるAI」へ** — 質問への回答だけでなく、探す・まとめる・整理する・下書きするまで支援
+* **複数アプリをまたぐ** — Gmail のメールから Drive の資料を探し、Docs で下書きまで作る方向
+* **重要操作は確認つき** — 便利さと安全性のバランスを設計で担保
+
+</div>
+
+<div class="info-box">
+<p class="box-label">この記事の前提</p>
+
+Gemini Spark は 2026 年 5 月時点では **米国の Google AI Ultra 加入者向けに先行ベータ提供** されている機能で、日本の一般ユーザーがすぐに使える段階ではありません。提供範囲・対応言語・連携対象アプリ・利用条件は今後変わる可能性があるため、契約・利用前に必ず最新の公式情報を確認してください。
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは「Gemini Spark とは何か？」を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-spark-personal-ai-agent-gmail/slide01-overview.webp" alt="Gemini Spark の全体像を整理した図解。24時間動く個人向けAIエージェントで、Gmail・カレンダー・Drive・Docs・Sheets・Slides といった Google サービスと連携し、複数アプリをまたいで動く・下準備や整理を手伝う・重要操作は確認つきという 3 つの特徴を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Gemini Spark とは？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>「AIに聞く」から「AIに作業を預ける」へ</strong></li>
+      <li><strong>24時間動く個人向けAIエージェント</strong></li>
+      <li><strong>連携対象</strong>：Gmail／カレンダー／Drive／Docs／Sheets／Slides など</li>
+      <li><strong>1. 複数のGoogleサービスをまたいで動く</strong></li>
+      <li><strong>2. 下準備や整理を手伝う</strong></li>
+      <li><strong>3. 重要操作は確認つき</strong></li>
+      <li><strong>注意</strong>：現時点では提供対象は限定的</li>
+    </ul>
+  </div>
+</section>
+
+<div class="visual-flow">
+  <div class="flow-step flow-step--input">
+    <span class="flow-label">指示</span>
+    <span class="flow-title">「○○を整理して」</span>
+    <span class="flow-text">自然な言葉で目的を伝える</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--relay">
+    <span class="flow-label">AI</span>
+    <span class="flow-title">Gemini Spark</span>
+    <span class="flow-text">探す → まとめる → 整理 → 下書き</span>
+  </div>
+  <div class="flow-arrow" aria-hidden="true">→</div>
+  <div class="flow-step flow-step--brain">
+    <span class="flow-label">確認</span>
+    <span class="flow-title">人間が最終判断</span>
+    <span class="flow-text">送信・支払いは確認つきで実行</span>
+  </div>
+</div>
+
+## これまでの Gemini と何が違う？
+
+<p class="lead">これまでの Gemini は <strong>「開いて使うAI」</strong>。Gemini Spark は <strong>「作業の流れに入り込むAI」</strong>。役割が一段変わります。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「答えるAI」と「作業を進めるAI」の違いを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-spark-personal-ai-agent-gmail/slide02-vs-previous.webp" alt="これまでの Gemini と Gemini Spark の違いを整理した図解。これまでの Gemini（その場で質問・答えや文章を返す・人が次の作業をする）と Gemini Spark（目的や依頼を伝える・情報を探して整理する・下準備を進める）を対比し、回答役から作業の補助役へ変わる方向と高リスク操作は確認ありを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：何がこれまでと違う？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>これまでの Gemini</strong>：その場で質問／答えや文章を返す／人が次の作業をする</li>
+      <li><strong>Gemini Spark</strong>：目的や依頼を伝える／情報を探して整理する／下準備を進める</li>
+      <li><strong>方向性</strong>：回答役 → 作業の補助役</li>
+      <li><strong>注意</strong>：高リスク操作は確認あり（メール送信／カレンダー追加 等）</li>
+      <li><strong>姿勢</strong>：人は最後の判断に集中する</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>これまでの Gemini</th>
+<th>Gemini Spark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主な役割</td>
+<td>質問への回答、文章作成、要約</td>
+<td>作業の実行・整理・下準備</td>
+</tr>
+<tr>
+<td>使い方</td>
+<td>ユーザーがその場で依頼</td>
+<td>継続的なタスクを任せる方向</td>
+</tr>
+<tr>
+<td>連携範囲</td>
+<td>Gemini単体や一部アプリ連携</td>
+<td>Gmail／Calendar／Drive／Docs などをまたぐ</td>
+</tr>
+<tr>
+<td>動き方</td>
+<td>画面を開いて使う感覚が強い</td>
+<td>クラウド上で動き続ける</td>
+</tr>
+<tr>
+<td>注意点</td>
+<td>回答の正確性</td>
+<td>権限管理・確認操作・個人情報の扱い</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## Gemini Spark でできる 5 つの基本機能
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Gemini Spark の中核となる 5 機能を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-spark-personal-ai-agent-gmail/slide03-five-functions.webp" alt="Gemini Spark の 5 つの基本機能を整理した図解。1. 探す（メール・資料・請求書）／2. まとめる（長文・会議メモを要約）／3. 整理する（ToDo・締切・予定）／4. 下書きする（返信・議事録・案内文）／5. 定期確認する（学校連絡・サブスク）と、複数サービスをまたいで動くことを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Gemini Spark でできること</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1. 探す</strong>：メール／資料／請求書</li>
+      <li><strong>2. まとめる</strong>：長文／会議メモを要約</li>
+      <li><strong>3. 整理する</strong>：ToDo／締切／予定</li>
+      <li><strong>4. 下書きする</strong>：返信／議事録／案内文</li>
+      <li><strong>5. 定期確認する</strong>：学校連絡／サブスク</li>
+      <li><strong>共通点</strong>：1 つのアプリではなく、複数サービスをまたいで動く</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>できること</th>
+<th>具体例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>探す</td>
+<td>Gmail や Drive から必要なメール、資料、請求書、予定を探す</td>
+</tr>
+<tr>
+<td>まとめる</td>
+<td>長いメール、会議メモ、資料、ニュースを要約する</td>
+</tr>
+<tr>
+<td>整理する</td>
+<td>ToDo、締切、予定、支払い、資料を分類する</td>
+</tr>
+<tr>
+<td>下書きする</td>
+<td>返信メール、議事録、企画書、案内文、共有メモを作る</td>
+</tr>
+<tr>
+<td>定期的に確認する</td>
+<td>学校連絡、サブスク料金、請求書、予定などを見つけやすくする</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## 仕事ではどこで役立つ？
+
+<p class="lead">派手な作業より <strong>「地味だけど時間を取られる作業」</strong> に強いのが Gemini Spark の特徴です。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">仕事で時間を取られる 6 つの作業と、AI に任せられる範囲を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-spark-personal-ai-agent-gmail/slide04-work-uses.webp" alt="Gemini Spark が仕事で役立つ場面を整理した図解。メール整理（返信が必要な連絡を抽出）／会議準備（関連資料と過去メールを集める）／議事録整理（決定事項・宿題・期限を整理）／資料のたたき台（構成案や下書きを作る）／請求書・領収書管理（支払期限や未処理を見つけやすい）の 5 シーンと、AIに任せるのは下準備までが基本という結論を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：仕事ではどこで役立つ？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>メール整理</strong>：返信が必要な連絡を抽出</li>
+      <li><strong>会議準備</strong>：関連資料と過去メールを集める</li>
+      <li><strong>議事録整理</strong>：決定事項・宿題・期限を整理</li>
+      <li><strong>資料のたたき台</strong>：構成案や下書きを作る</li>
+      <li><strong>請求書・領収書管理</strong>：支払期限や未処理を見つけやすい</li>
+      <li><strong>結論</strong>：AI に任せるのは「下準備まで」が基本（送信・決裁・支払いは人が確認）</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>シーン</th>
+<th>AI に任せること</th>
+<th>人間が確認すること</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>メール整理</td>
+<td>返信が必要なメール、期限付きメールの抽出</td>
+<td>優先度が合っているか</td>
+</tr>
+<tr>
+<td>会議準備</td>
+<td>関連メール、過去資料、論点の整理</td>
+<td>重要資料の抜け漏れ</td>
+</tr>
+<tr>
+<td>議事録</td>
+<td>決定事項、宿題、期限の整理</td>
+<td>発言の意味や責任の所在</td>
+</tr>
+<tr>
+<td>資料作成</td>
+<td>構成案、たたき台、要約</td>
+<td>数字、結論、表現の正確性</td>
+</tr>
+<tr>
+<td>経費管理</td>
+<td>請求書、領収書、サブスクの抽出</td>
+<td>金額、期限、支払い状況</td>
+</tr>
+<tr>
+<td>定期確認</td>
+<td>重要連絡や予定のチェック</td>
+<td>見落としや誤分類</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+「探す・まとめる・整理する・下書きする」は AI へ。「送信・決裁・公開・支払い・契約変更」は人間へ。この線引きが現実的です。
+
+## 日常生活でも役立つ場面
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">日常生活で活きる 4 シーンと、相性の良いポイントを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-spark-personal-ai-agent-gmail/slide05-life-uses.webp" alt="Gemini Spark が日常生活で役立つ 4 シーンを整理した図解。学校連絡（提出物と締切を整理）／家族の予定（予定の整理を助ける）／旅行準備（予約メールや日程をまとめる）／家の管理（交換時期や買い物を整理）と、覚えておくのが面倒なことと相性がいいことを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：日常生活では？家族の情報整理にも向く</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>学校連絡</strong>：提出物と締切を整理</li>
+      <li><strong>家族の予定</strong>：予定の整理を助ける</li>
+      <li><strong>旅行準備</strong>：予約メールや日程をまとめる</li>
+      <li><strong>家の管理</strong>：交換時期や買い物を整理</li>
+      <li><strong>相性</strong>：「覚えておくのが面倒なこと」に向く</li>
+      <li><strong>注意</strong>：個人情報の扱いに注意（家族・子どもの情報など）</li>
+    </ul>
+  </div>
+</section>
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "家族の予定や学校連絡がバラバラだと、けっこう見落としそうだよね。AI がまとめてくれるなら助かるかも。" },
+    { speaker: "らぼまる", text: "うん、相性は良さそう。ただ学校や家族の情報は個人情報でもあるから、どこまで AI につなぐかは設定でしっかり確認したいね。" },
+  ]}
+/>
+
+## 注意点と見極め方
+
+<p class="lead">便利さの裏で、Gemini Spark には <strong>「接続をユーザーが有効化する」「重要操作は確認つき」「個人情報の扱いに自分の判断が要る」</strong> といった前提があります。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">注意したいポイントと、向く人・待っていい人を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-gemini-spark-personal-ai-agent-gmail/slide06-cautions.webp" alt="Gemini Spark の注意点と見極め方を整理した図解。注意したいポイント（接続はユーザーが有効化する／重要操作は確認つき／個人情報の扱いも確認／AI の提案は人が見直す）と、今すぐ向く人（Gmail や Docs をよく使う／整理作業が多い）と待っていい人（Google サービス中心ではない／日本での提供を待ちたい）の対比を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：注意点と見極め方</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>注意したいポイント</strong>：接続はユーザーが有効化する／重要操作は確認つき／個人情報の扱いも確認／AI の提案は人が見直す</li>
+      <li><strong>今すぐ向く人</strong>：Gmail や Docs をよく使う／整理作業が多い</li>
+      <li><strong>待っていい人</strong>：Google サービス中心ではない／日本での提供を待ちたい</li>
+      <li><strong>姿勢</strong>：まずは「便利な整理役」として見るのがちょうどよい</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p class="box-label">AI にまだ任せきりにしない方がいい作業</p>
+
+* 取引先への正式メール送信
+* 契約書や法的文書の判断
+* 金額が大きい支払い
+* 採用や人事評価
+* 医療・法律・税務の最終判断
+* 社外秘資料の共有
+* 顧客情報や個人情報を含む作業
+* 学校・家庭・子どもに関する重要な連絡
+
+</div>
+
+AI は便利な整理役ですが、責任を取るのは人間です。特に仕事では、会社の情報管理ルールやセキュリティ方針と一緒に確認するのが安心です。
+
+## どんな人に向いているか
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>向いている人</th>
+<th>まだ急がなくていい人</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gmail を仕事でよく使う</td>
+<td>Apple メール・Microsoft 365 中心</td>
+</tr>
+<tr>
+<td>Google カレンダーで予定管理</td>
+<td>Notion / Slack 中心の情報フロー</td>
+</tr>
+<tr>
+<td>Google Drive に資料を保存</td>
+<td>会社が外部 AI 連携を禁止している</td>
+</tr>
+<tr>
+<td>Docs / Sheets / Slides をよく使う</td>
+<td>日本での正式提供を待ちたい</td>
+</tr>
+<tr>
+<td>会議やメール対応が多い</td>
+<td>個人情報を AI に渡したくない</td>
+</tr>
+<tr>
+<td>請求書や領収書の管理が面倒</td>
+<td>無料の範囲で AI を試している段階</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## 日本でいつ使える？
+
+<p class="lead">現時点では <strong>米国の Google AI Ultra 加入者向け先行ベータ</strong>。日本の一般ユーザーがすぐに使う段階ではありません。</p>
+
+Google は Gemini Spark をまず信頼できるテスター向けに展開し、その後、米国の Google AI Ultra 加入者向けにベータ提供する予定と説明しています。Google のサブスクリプション案内でも、Gemini Spark は **米国限定・英語限定** の機能として案内されています。
+
+<div class="info-box">
+<p class="box-label">日本の読者が今やっておくと良いこと</p>
+
+* Google サービスの使い方を整理しておく（Gmail のラベル、Drive のフォルダ構成など）
+* 「自分は AI にどこまで任せたいか」を一度言語化しておく
+* 仕事用と個人用のアカウントを分けて、混ざらない運用にしておく
+* AI が連携できる範囲・設定・履歴削除方法を確認するクセを持つ
+
+</div>
+
+## スマホ・PC 選びにも関係してくる
+
+Gemini Spark のような AI エージェントが広がると、スマホや PC を選ぶ理由にも **「AI の使いやすさ」** が加わっていきます。
+
+| これまでの選び方 | これから加わる視点 |
+|---|---|
+| カメラ・バッテリー・処理性能・価格 | どの AI が標準で使えるか |
+| 通信回線・本体サイズ | Gmail / カレンダーとの連携深さ |
+| 画面サイズ・キーボード | 日本語で自然に使えるか |
+| ストレージ・拡張性 | 無料・有料プランの差 |
+| OS の好み | 個人情報の管理画面が分かりやすいか |
+| サポート期間 | 重要操作の確認設計があるか |
+
+「AI スマホ」「AI パソコン」も、単に「AI 機能が入っています」では弱くなり、**「自分の生活や仕事に役立つ形で AI が動くか」** が問われる方向です。
+
+## まとめ：AI は「調べる道具」から「一緒に作業を進める相棒」へ
+
+Gemini Spark は、Google が発表した 24 時間動く個人向け AI エージェント。Gmail / カレンダー / Drive / Docs / Sheets / Slides といったサービスと連携して、ユーザーの指示に沿って作業を進める方向を目指しています。
+
+仕事では **メール整理・会議準備・議事録・資料の下準備・請求書管理**、日常では **学校連絡・家族予定・旅行準備・家の管理** に役立つ可能性があります。
+
+ただし提供対象は限定的で、日本の一般ユーザーがすぐに使える機能ではありません。**送信・支払いなど影響の大きい操作は確認つき** の設計で、**人間の最終確認** が前提です。
+
+すまラボ的には、Gemini Spark は単に「すごい新機能」というより、**「AI が下準備を進める時代に入る」** ことを具体的に見せた発表として押さえておくのが大事です。
+
+<div class="check-box">
+<p class="box-label">この記事のポイント</p>
+
+* Gemini Spark は 24 時間動く個人向け AI エージェント
+* Gmail / カレンダー / Drive / Docs などをまたいで動く方向
+* 質問に答える AI から、作業の下準備を進める AI へ
+* メール整理・会議準備・議事録・請求書管理に効きやすい
+* 重要操作（送信・支払い）は確認つきの設計
+* 米国の Google AI Ultra 加入者向けに先行ベータ
+* 日本での一般提供時期は未確定
+* AI に任せるのは「下準備まで」、最終判断は人間が行う
+
+</div>
+
+## あわせて読みたい
+
+<div class="article-cta">
+  <p>Google の AI ニュースは合わせて読むと、全体の方向性が見えやすくなります。</p>
+  <a href="/articles/202605-google-gemini-daily-brief-morning-assistant-launches-us/">Gemini Daily Brief（朝の予定整理）の解説を読む</a>
+  <a href="/articles/202605-google-ai-ultra-100-dollar-plan-launch/">Google AI Ultra 100ドル新プランの解説を読む</a>
+  <a href="/articles/202605-google-gemini-3-5-flash-search-ai-mode/">Gemini 3.5 Flash と Google 検索 AI Mode の解説を読む</a>
+  <a href="/categories/news/">ニュースをかみくだくカテゴリを見る</a>
+</div>
+
+## 参考情報
+
+* Gemini 公式「[Gemini Spark – Your 24/7 personal AI agent for productivity](https://gemini.google/overview/agent/spark/)」 — Gemini Spark の概要、対応アプリ、接続設定
+* Google 公式ブログ「[The Gemini app becomes more agentic, delivering proactive, 24/7 help](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/)」 — Gemini Spark を含む Gemini アプリのエージェント化
+* Google Workspace 公式ブログ「[New ways to create and get stuff done in Google Workspace](https://blog.google/products-and-platforms/products/workspace/workspace-updates)」 — 行動する AI への変化
+* Google 公式「[I/O 2026: Welcome to the agentic Gemini era](https://blog.google/innovation-and-ai/sundar-pichai-io-2026/)」 — I/O 2026 での Gemini Spark 展開予定
+
+※この記事は 2026 年 5 月時点の Google 公式情報をもとに整理しています。提供範囲・対応言語・対象地域は今後変わる可能性があるため、契約・利用前に必ず最新の公式情報を確認してください。
