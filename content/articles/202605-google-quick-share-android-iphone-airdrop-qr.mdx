@@ -1,0 +1,334 @@
+---
+title: "Quick ShareでAndroid→iPhoneのファイル共有がラクに。AirDrop連携とQRコード共有を整理"
+slug: "202605-google-quick-share-android-iphone-airdrop-qr"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Googleが Quick Share を強化し、対応 Android では AirDrop 受信中の iPhone/iPad/Mac へ送れるように。非対応 Android でも QR コード経由で送信可能に。AndroidとiPhoneのファイル共有がどう変わるかを生活者向けにやさしく整理します。"
+thumbnail: "/images/thumbnails/202605-google-quick-share-android-iphone-airdrop-qr.webp"
+thumbnailAlt: "Quick Share 進化。AndroidからiPhoneへのファイル共有がもっとラクに、AirDrop連携・QRコード共有をひまり・らぼまるが整理するサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 1
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_normal_icon.webp"
+tags:
+  - "Google"
+  - "Android"
+  - "Quick Share"
+  - "AirDrop"
+  - "iPhone"
+  - "ファイル共有"
+  - "QRコード"
+  - "すまラボ"
+related:
+  - "202605-google-gemini-spark-personal-ai-agent-gmail"
+  - "what-is-ai-smartphone"
+  - "iphone-vs-android"
+pubDate: "2026-05-21"
+updated: "2026-05-21"
+publishAt: "2026-05-21T09:00:00+09:00"
+---
+
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
+<div class="summary-box">
+<p class="box-label">3行でわかるまとめ</p>
+
+* **対応する一部の Android** では、Quick Share から **AirDrop 受信中の iPhone・iPad・Mac へ直接送りやすく** なりました。
+* **非対応の Android でも、QR コード経由** で iPhone 側にファイルを渡せるようになります。ファイルはエンドツーエンド暗号化され、24時間ダウンロード可能。
+* 「全 Android が AirDrop になる」話ではなく、**AndroidからiPhoneへ送る手段が増える**アップデート。家族や職場でデバイスが混在する場面の小さな不便が減ります。
+
+</div>
+
+<div class="check-box">
+<p class="box-label">この記事で整理すること</p>
+
+* Quick Share と今回のアップデートの全体像
+* 対応 Android からの「直接送信」と、非対応 Android からの「QR コード共有」の違い
+* LINE / Google Drive / AirDrop との使い分け
+* 便利な場面と、使う前に知っておきたい注意点
+
+</div>
+
+<div class="summary-box">
+<p class="box-label">先に結論</p>
+
+<p class="lead">今回のポイントは <strong>「Apple 端末を相手にしても、AndroidからサッとファイルをiPhoneに渡せる道が増える」</strong> こと。</p>
+
+* 対応 Android（Pixel 9 系の一部、Samsung / Oppo / OnePlus / Vivo の一部）→ AirDrop 受信中の Apple 端末へ直接送信
+* 非対応 Android → QR コードを表示し、iPhone のカメラで読み取って受信
+* QR コード方式は **24 時間有効・最大 10GB/日・1 回 1,000 ファイル・最大 20 台** までなど制限あり
+* 個人の Google Drive 容量は消費しない設計
+* 仕事で使う場合は **会社・学校のセキュリティルール** を必ず確認
+
+</div>
+
+<div class="info-box">
+<p class="box-label">今押さえるべき3点</p>
+
+* **送信経路が 2 つ**：直接（AirDrop 受信）／QR コード経由（クラウド一時転送）
+* **iPhone 側にも操作が必要**：AirDrop 受信設定 or QR 読み取り
+* **長期保存には向かない**：QR 方式は 24 時間で受信終了
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは「これは何の話？」を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-quick-share-android-iphone-airdrop-qr/slide01-overview.webp" alt="Android と iPhone のファイル共有がしやすくなる Quick Share アップデートの全体像を整理した図解。一部の Android は iPhone・iPad・Mac へ直接送りやすく、対応していない Android でも QR コード経由で iPhone に送れる、を 2 行で示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Android と iPhone のファイル共有がしやすくなる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>対応 Android</strong>：iPhone・iPad・Mac へ <strong>直接送りやすい</strong>（AirDrop 受信中の端末へ）</li>
+      <li><strong>非対応 Android</strong>：QR コードを使って iPhone 側にファイルを渡せる</li>
+      <li><strong>狙い</strong>：AndroidからiPhoneへ写真や PDF を送る不便を減らす</li>
+      <li><strong>注意</strong>：全 Android が AirDrop と同じに使えるわけではない</li>
+    </ul>
+  </div>
+</section>
+
+## Quick Share とは？
+
+<p class="lead">Android 端末で使える <strong>「近くの端末へサッと送受信する」機能</strong>。今回のアップデートで iPhone・iPad・Mac との共有も進化します。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Quick Share の基本と、今回のアップデートで広がる範囲を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-quick-share-android-iphone-airdrop-qr/slide02-what-is.webp" alt="Quick Share の基本機能を整理した図解。Android 端末で使える近くの端末へサッとファイルを送受信できる機能で、写真・動画・PDF・リンクなどを共有可能。これまでは Android 同士や Windows PC との共有が中心だったが、今回のアップデートで iPhone・iPad・Mac との共有も進化することを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Quick Share とは？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>送れるもの</strong>：写真・動画／PDF・ファイル／リンク など</li>
+      <li><strong>今までの相手</strong>：Android 同士／Windows PC が中心</li>
+      <li><strong>今回追加</strong>：iPhone・iPad・Mac との共有も進化</li>
+      <li><strong>位置づけ</strong>：近くにいる人へ「今すぐ渡す」ための機能</li>
+    </ul>
+  </div>
+</section>
+
+## 今回のアップデート 2 つのポイント
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「直接送信」と「QR コード共有」の 2 経路を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-quick-share-android-iphone-airdrop-qr/slide03-two-updates.webp" alt="Quick Share の進化ポイント 2 つを整理した図解。1 一部の Android は Apple 端末へ直接送りやすくなる（AirDrop 受信中の端末へ送信）、2 対応していない Android でも QR コードを使って iPhone 側に送れる（ブラウザ経由で受け取り）の 2 経路を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：今回の進化ポイントは2つ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1. 一部の Android は Apple 端末へ直接送りやすくなる</strong>：AirDrop 受信中の端末へ送信</li>
+      <li><strong>2. 対応していない Android でも、QR コードで iPhone に送れる</strong>：ブラウザ経由で受け取り</li>
+      <li><strong>どちらの方法も使える</strong>：自分の端末と相手の環境で選べる</li>
+    </ul>
+  </div>
+</section>
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "AndroidからiPhoneに写真を送るときって、地味に面倒だったよね。" },
+    { speaker: "らぼまる", text: "そうなんだ。今回のQuick Share強化は、その面倒を少し減らす話だよ。ただし、全部のAndroidで同じ使い方ができるわけではない点は押さえておこう。" },
+  ]}
+/>
+
+## 直接送信の流れ（対応 Android → iPhone・iPad・Mac）
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">対応端末で AirDrop 受信中の Apple 端末に送る 6 ステップを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-quick-share-android-iphone-airdrop-qr/slide04-direct-send.webp" alt="Quick Share から AirDrop 受信中の Apple 端末へ直接送信する 6 ステップ（1 iPhone/iPad で AirDrop の受信設定を開く／2 すべての人 10 分間にする／3 Android で送りたい写真やファイルを開く／4 共有メニューから Quick Share を選ぶ／5 近くに表示された Apple 端末を選ぶ／6 受け取り側が許可する）を整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：対応 Android からの直接送信ステップ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1.</strong> iPhone / iPad / Mac 側で AirDrop の受信設定を開く</li>
+      <li><strong>2.</strong> 「すべての人 10 分間」にする</li>
+      <li><strong>3.</strong> Android で送りたい写真・ファイルを開く</li>
+      <li><strong>4.</strong> 共有メニューから Quick Share を選ぶ</li>
+      <li><strong>5.</strong> 近くに表示された Apple 端末を選ぶ</li>
+      <li><strong>6.</strong> 受け取り側が許可する</li>
+      <li><strong>対応端末例</strong>：Pixel 9 系（9a を除く）／一部の Samsung・Oppo・OnePlus・Vivo</li>
+    </ul>
+  </div>
+</section>
+
+## QR コード共有の流れ（どの Android でも使える）
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">QR コードで iPhone に渡す経路と、その仕組みを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-quick-share-android-iphone-airdrop-qr/slide05-qr-transfer.webp" alt="Quick Share の QR コード共有の流れを整理した図解。Android で共有ファイルを選び QR コードを表示、iPhone のカメラで QR を読み取り、ブラウザ経由でファイルを受け取る経路。ファイルはエンドツーエンド暗号化され Google サーバーで 24 時間ダウンロード可能、個人の Google Drive 容量は消費しないことを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：QR コード経由で iPhone に渡す</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Android</strong>：共有したいファイルを選び、Quick Share から QR コードを表示</li>
+      <li><strong>iPhone</strong>：カメラで QR コードを読み取り、表示されたページから受信</li>
+      <li><strong>暗号化</strong>：ファイルはエンドツーエンド暗号化</li>
+      <li><strong>有効期間</strong>：24 時間ダウンロード可能</li>
+      <li><strong>容量</strong>：個人の Google Drive 容量は消費しない</li>
+      <li><strong>注意</strong>：インターネット接続が必要（モバイル通信時はデータ量に注意）</li>
+    </ul>
+  </div>
+</section>
+
+## LINE / AirDrop / Google Drive と何が違う？
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">主な共有手段の使い分けを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-quick-share-android-iphone-airdrop-qr/slide06-compare-methods.webp" alt="ファイル共有方法を比較した図解。LINE は気軽だが画質やファイル管理が気になる、AirDrop は Apple 端末同士が中心、Google Drive は保存共有に強いが手順が増える、Quick Share は近くの相手にその場で渡す機能で対応端末や方法に違いがある、と整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：主な共有方法の使い分け</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>LINE</strong>：気軽に送れる／画質やファイル管理が気になることも</li>
+      <li><strong>AirDrop</strong>：Apple 端末同士が中心</li>
+      <li><strong>Google Drive</strong>：保存・共有に強い／アップロードとリンク共有の手間</li>
+      <li><strong>Quick Share</strong>：近くの相手にその場で渡す／対応端末や方法に違いあり</li>
+      <li><strong>位置づけ</strong>：保存ではなく「いま渡す」ための機能</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>向いている使い方</th>
+<th>注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LINE</td>
+<td>友人・家族に気軽に送る</td>
+<td>画質やファイル管理が気になることも</td>
+</tr>
+<tr>
+<td>AirDrop</td>
+<td>Apple 端末同士でサッと送る</td>
+<td>基本は iPhone・iPad・Mac 同士向け</td>
+</tr>
+<tr>
+<td>Google Drive</td>
+<td>資料を保存・共有する</td>
+<td>アップロードやリンク共有の手間</td>
+</tr>
+<tr>
+<td>Quick Share</td>
+<td>近くの相手にその場で渡す</td>
+<td>対応端末・共有方法に違いあり</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## 便利な場面
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">どんな場面で効くかを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-quick-share-android-iphone-airdrop-qr/slide07-use-cases.webp" alt="Quick Share が便利な日常シーンを整理した図解。旅行先で写真を渡す／職場で PDF や画像を共有／家族で Android と iPhone が混ざる／LINE 交換せずに一時的に渡す、の 4 場面とそれぞれの相性の良さを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：便利な場面</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>旅行先</strong>：撮った写真を iPhone ユーザーへその場で</li>
+      <li><strong>職場</strong>：会議室で資料の写真や PDF を近くの人に</li>
+      <li><strong>家族</strong>：Android と iPhone が混ざっていても渡しやすい</li>
+      <li><strong>イベント・勉強会</strong>：LINE 交換せずに一時的にファイルを渡す</li>
+      <li><strong>仕事利用</strong>：会社・学校のセキュリティルールに従う</li>
+    </ul>
+  </div>
+</section>
+
+## 使う前のチェックリスト
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">注意点と確認したいポイントを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-google-quick-share-android-iphone-airdrop-qr/slide08-check-before-use.webp" alt="Quick Share を使う前のチェックポイントを整理した図解。すべての Android で同じに使えるわけではない／iPhone 側にも操作が必要／QR 方式はネット接続が必要／容量・ファイル数に制限／QR 共有は 24 時間限定／個人情報や機密の安易な共有は避ける、の 6 点を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：使う前に知っておきたいこと</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>すべての Android で同じに使えるわけではない</strong></li>
+      <li><strong>iPhone 側にも操作が必要</strong>（AirDrop 受信設定 or QR 読み取り）</li>
+      <li><strong>QR 方式はネット接続が必要</strong>（通信量に注意）</li>
+      <li><strong>容量・ファイル数に制限</strong>（24 時間 10GB / 1,000 ファイル / 20 端末まで）</li>
+      <li><strong>QR 共有は 24 時間限定</strong>（長期保存は別経路）</li>
+      <li><strong>個人情報・機密情報の安易な共有は避ける</strong></li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p class="box-label">仕事で使うときに確認したいこと</p>
+
+* 会社・学校のセキュリティルールに反していないか
+* 個人情報・機密資料を扱っていないか
+* 受信側にも組織ルールがあるか
+* ファイルが第三者の端末に渡る経路に問題はないか
+* 一時共有後の取り扱い（受け取った側のコピー先）
+
+</div>
+
+## どんな人にうれしい？
+
+| こんな人 | 効きやすさ |
+|---|---|
+| 周りに iPhone ユーザーが多い Android ユーザー | ◎ |
+| Pixel・Galaxy など対応端末を使っている人 | ◎ |
+| LINE を交換せずファイルだけ渡したい人 | ○ |
+| Google Drive アップが面倒だった人 | ○ |
+| iPhone 同士でしか共有しない人 | △（恩恵は小さい） |
+| 長期保存・共同編集が目的の人 | △（クラウド向き） |
+
+## まとめ：Android と iPhone の壁が少し低くなる
+
+今回の Quick Share 強化は、Android と iPhone の間にあったファイル共有の不便を少し減らすアップデートです。AirDrop が完全に置き換わるわけではありませんが、「Android にすると周りの iPhone ユーザーと共有しにくいかも」という不安は少し減ります。
+
+身近に言えば、**「写真送って」が少しラクになる**。スマホの種類をあまり意識しなくて済む方向に進む、地味だけど便利な変化です。
+
+<div class="check-box">
+<p class="box-label">この記事のポイント</p>
+
+* 対応 Android は AirDrop 受信中の iPhone・iPad・Mac へ直接送りやすくなる
+* 非対応 Android でも QR コード経由で iPhone に送れる
+* QR 方式は暗号化 + 24 時間ダウンロード可能、個人 Drive 容量は消費しない
+* iPhone 側にも操作（AirDrop 受信設定 / QR 読み取り）が必要
+* ネット接続・容量制限・通信量・有効期間に注意
+* 仕事で使う場合は組織のセキュリティルールが最優先
+
+</div>
+
+## あわせて読みたい
+
+<div class="article-cta">
+  <p>スマホ選びと AI の話題は、合わせて読むと全体像が見えやすくなります。</p>
+  <a href="/articles/iphone-vs-android/">iPhone と Android の違いを読む</a>
+  <a href="/articles/202605-google-gemini-spark-personal-ai-agent-gmail/">Gemini Spark の解説を読む</a>
+  <a href="/articles/what-is-ai-smartphone/">AI スマホとは何かを読む</a>
+  <a href="/categories/news/">ニュースをかみくだくカテゴリを見る</a>
+</div>
+
+## 参考情報
+
+* Google Help「[Use Quick Share on your Android device](https://support.google.com/android/answer/9286773)」 — Quick Share の基本、Apple 端末への共有手順、QR コード経由共有、24 時間ダウンロード制限、容量制限など
+* Google Help「[Google System Services Release Notes](https://support.google.com/product-documentation/answer/14343500)」 — 2026 年 5 月の Google Play services 更新で Quick Share が iOS への QR コード/クラウド転送に対応
+
+※この記事は 2026 年 5 月時点の Google 公式情報をもとに整理しています。対応端末・対応国・利用条件は今後変わる可能性があるため、最新情報は公式ヘルプを確認してください。
