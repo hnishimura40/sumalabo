@@ -1,0 +1,518 @@
+---
+title: "AIエージェント型ツール徹底比較。Antigravity・Claude Code・Codex・Cursor・Copilotは何が違う？"
+slug: "202605-ai-agent-tools-comparison-2026"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Google Antigravity / Claude Code / OpenAI Codex / Cursor / GitHub Copilot を、動く場所・得意な作業・向いている人で整理。エージェント型AIの違いと選び方、初心者でも小さく試せる使い方までやさしくまとめます。"
+thumbnail: "/images/thumbnails/202605-ai-agent-tools-comparison-2026.webp"
+thumbnailAlt: "AIエージェント型ツール比較。Antigravity・Claude Code・Codex・Cursor・Copilot をひまり・らぼまるが整理するサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 1
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_normal_icon.webp"
+tags:
+  - "AI"
+  - "AIエージェント"
+  - "Claude Code"
+  - "OpenAI Codex"
+  - "Google Antigravity"
+  - "Cursor"
+  - "GitHub Copilot"
+  - "すまラボ"
+related:
+  - "202605-100-dollar-ai-monthly-plan-comparison"
+  - "202605-google-antigravity-2-0-ai-agent-developer-tool"
+  - "202605-github-copilot-shifts-to-token-based-pricing-june-1"
+pubDate: "2026-05-23"
+updated: "2026-05-23"
+publishAt: "2026-05-23T12:00:00+09:00"
+---
+
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
+<div class="summary-box">
+<p class="box-label">3行でわかるまとめ</p>
+
+* AIエージェント型ツールは、AIが**作業の流れを考え、ファイルを読み、コードを書き換え、コマンドを実行し、結果を確認するところまで** 進める方向に進化中。
+* 代表的な 5 ツール（Antigravity / Claude Code / Codex / Cursor / Copilot）は、見た目が似ていても **動く場所と得意分野がかなり違う**。
+* 選び方のコツは「どのAIが一番賢いか」ではなく **「自分がどこで作業しているか」**。ChatGPT中心ならCodex、ターミナルやローカル中心ならClaude Code、Google環境ならAntigravity、エディタ中心ならCursor、GitHub中心ならCopilot。
+
+</div>
+
+<div class="check-box">
+<p class="box-label">この記事で整理すること</p>
+
+* AIエージェントとは何か（チャットAIとの違い）
+* 5 ツール（Antigravity / Claude Code / Codex / Cursor / Copilot）の違い
+* 動く場所・得意な作業・向いている人の整理
+* 総合ランキングの読み方
+* 用途別の選び方
+* 初心者が小さく試すための手順
+
+</div>
+
+<div class="summary-box">
+<p class="box-label">先に結論</p>
+
+<p class="lead">エージェント型AIの違いは <strong>「動く場所」</strong>で見ると分かりやすい。ChatGPT中心ならCodex、ローカル開発中心ならClaude Code、Google環境ならAntigravity、エディタ中心ならCursor、GitHub中心ならCopilot。</p>
+
+* どれも「AIで開発する道具」だが、得意分野はかなり違う
+* どれもエージェント方向（作業を任せる方向）に進化している
+* 初心者が「触ってはいけない」ものではない。小さく試す価値がある
+* 最終確認は人間が必要。AI に下準備を任せて、人間が確認する形が現実的
+
+</div>
+
+<div class="info-box">
+<p class="box-label">この記事の前提</p>
+
+この記事は 2026 年 5 月時点の Google / Anthropic / OpenAI / Cursor / GitHub の公式情報をもとに整理しています。各ツールの仕様・対応プラン・対応モデルは変更される可能性があるため、契約や導入前に最新の公式情報を確認してください。
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは「5 ツールの位置関係」を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide01-overview.webp" alt="AIエージェント型ツール5種類の位置関係を整理した図解。Google Antigravity・Claude Code・OpenAI Codex・Cursor・GitHub Copilot がそれぞれ Google 環境 / ターミナル / ChatGPT / エディタ / GitHub に分かれ、ひまり・らぼまるが動く場所で見ると違いが分かりやすいと案内するスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：AIエージェント型ツール5種の全体像</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Google Antigravity</strong>：Google 系環境のエージェント開発環境</li>
+      <li><strong>Claude Code</strong>：ターミナル・ローカル開発を AI に任せる</li>
+      <li><strong>OpenAI Codex</strong>：ChatGPT からコード作業へつなぐ</li>
+      <li><strong>Cursor</strong>：AI 前提のコードエディタ</li>
+      <li><strong>GitHub Copilot</strong>：GitHub / VS Code の開発支援</li>
+      <li><strong>判断軸</strong>：自分がどこで作業しているか</li>
+    </ul>
+  </div>
+</section>
+
+## AIエージェントとは何か
+
+普通のチャットAIは「この文章を要約して」「このコードの意味を教えて」と頼むと答えが返ってくる、**質問に答える** のが中心の道具です。
+
+一方、エージェント型AIは少し作業寄りです。「このエラーを直して」「関係するファイルを探して」「必要なコードを修正して」「テストして」「結果を教えて」というように、**複数の手順がある作業を進める方向** に近づいています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">チャットAIとエージェントAIの違いを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide02-agent-vs-chat.webp" alt="チャットAIとエージェントAIの違いを整理した図解。チャットAIは要約や説明など質問に答える中心、エージェントAIはファイルを読み・修正・実行・確認まで進める中心と比較し、最終確認は人間が必要であることを補足したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：チャットAI と エージェントAI</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>チャットAI</strong>：要約・説明・修正案などの回答が中心</li>
+      <li><strong>エージェントAI</strong>：ファイルを読み・修正・実行・確認まで進める</li>
+      <li><strong>強み</strong>：複数手順の作業を任せやすい</li>
+      <li><strong>注意</strong>：最終確認は人間が必要</li>
+      <li><strong>使い方</strong>：下準備を任せて、人間がレビューする</li>
+    </ul>
+  </div>
+</section>
+
+最終確認は人間が必要ですが、調査・修正・確認・整理といった作業のかなりの部分を AI に手伝わせやすくなります。
+
+## AIエージェント型ツールの全体比較
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">5 ツールの違いを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide03-overall-comparison.webp" alt="5つのAIエージェント型ツールを動く場所・得意な作業・向いている人の3軸で並べた比較図解。Antigravity / Claude Code / OpenAI Codex / Cursor / GitHub Copilot それぞれの差を整理し、どれが賢いかではなく作業場所で選ぶ判断軸を強調したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：5 ツールの全体比較</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Antigravity</strong>：Google 系環境・複数エージェントの並行作業</li>
+      <li><strong>Claude Code</strong>：ターミナル・既存コード修正・コマンド実行</li>
+      <li><strong>OpenAI Codex</strong>：ChatGPT・クラウドタスク・複数プロジェクト</li>
+      <li><strong>Cursor</strong>：エディタ内 AI 修正・ファイル編集・コード補完</li>
+      <li><strong>GitHub Copilot</strong>：GitHub / VS Code・PR / Issue / レビュー</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>ツール</th>
+<th>動く場所</th>
+<th>得意なこと</th>
+<th>向いている人</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Google Antigravity</td>
+<td>専用環境 / CLI / Google 系</td>
+<td>複数エージェントの並行作業・Google 連携</td>
+<td>Google サービスや Gemini を中心に使う人</td>
+</tr>
+<tr>
+<td>Claude Code</td>
+<td>ターミナル / ローカル開発環境</td>
+<td>既存コードの理解・ファイル編集・コマンド実行</td>
+<td>既存サイトやアプリを AI に直してほしい人</td>
+</tr>
+<tr>
+<td>OpenAI Codex</td>
+<td>ChatGPT / Codex アプリ / CLI / クラウド</td>
+<td>コード修正・クラウドタスク・複数エージェント作業</td>
+<td>ChatGPT 中心で開発や作業を進めたい人</td>
+</tr>
+<tr>
+<td>Cursor</td>
+<td>コードエディタ</td>
+<td>エディタ内 AI 修正・ファイル編集・コード補完</td>
+<td>エディタ上で AI と一緒に開発したい人</td>
+</tr>
+<tr>
+<td>GitHub Copilot</td>
+<td>GitHub / VS Code / IDE</td>
+<td>コード補完・PR / Issue / レビュー支援</td>
+<td>GitHub 中心で開発する人</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+ポイントは、**どの AI が一番賢いか** ではなく **自分がどこで作業しているか** です。
+
+## Google Antigravity：Google 系の司令塔
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Antigravity の位置づけを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide04-antigravity.webp" alt="Google Antigravity を整理した図解。AI と会話する画面というより、複数のサブエージェントに作業を割り振る司令塔的な役割を持ち、Gemini 3.5 Flash と連携し大規模ワークフローやコーディングタスクを進めることを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Google Antigravity</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>位置づけ</strong>：Google のエージェント型開発環境（司令塔型）</li>
+      <li><strong>基盤</strong>：Gemini 3.5 Flash と Antigravity harness</li>
+      <li><strong>強み</strong>：複数サブエージェントの並行作業</li>
+      <li><strong>連携</strong>：Google AI Studio / Google Cloud / Gemini 系</li>
+      <li><strong>向き</strong>：Google サービス中心で AI を使う人</li>
+    </ul>
+  </div>
+</section>
+
+Google は Gemini 3.5 Flash について、更新された Antigravity harness と組み合わせることで、協調するサブエージェントを使い、大規模な複数ステップのワークフローやコーディングタスクを実行できると説明しています。Gemini API の Managed Agents では、1 回の API 呼び出しでツール利用やコード実行を行うエージェントを立ち上げられ、Antigravity agent harness と Gemini 3.5 Flash を基盤にすると案内されています。
+
+向いているのは、Google AI Studio / Firebase / Android / Google Cloud / Gemini 系を使う人です。逆に、Claude Code や Cursor 中心で作業している人が、すぐ全面移行する必要があるかは別の話です。
+
+## Claude Code：ターミナル作業もAIにかなり任せられる
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Claude Code の使いどころを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide05-claude-code.webp" alt="Claude Code を整理した図解。ターミナルから Claude モデルを使えるコマンドラインツールであり、AI が必要なコマンドを提案・実行し、ファイル確認や修正も進めること、Pro と Max のサブスクで同じく使えることを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Claude Code</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>位置づけ</strong>：ターミナルから Claude を使うコマンドラインツール</li>
+      <li><strong>強み</strong>：既存コードの理解・ファイル編集・コマンド実行</li>
+      <li><strong>透明性</strong>：何を実行しているかを確認しながら委任できる</li>
+      <li><strong>プラン</strong>：Pro / Max の同じサブスクで利用可</li>
+      <li><strong>向き</strong>：既存サイトやアプリを直したい人・長文や仕様書を扱う人</li>
+    </ul>
+  </div>
+</section>
+
+Claude 公式ヘルプでは、Claude Code は **ターミナルから Claude モデルを使えるコマンドラインツール** で、複雑なコーディング作業を委任しつつ、透明性とコントロールを保てるものと説明されています。Pro / Max プランでは、Web / デスクトップ / モバイルアプリに加えて、Claude Code も同じサブスクリプションで使えます。
+
+ここで誤解しないでほしいのは、**利用者が毎回コマンドを自分で打つ必要はない** という点です。AI が必要なコマンドを提案・実行し、ファイル確認や修正も進めます。「AIがターミナル作業を肩代わりしてくれるが、何を実行しているかは人間が確認する」と考えるのが安全です。
+
+## OpenAI Codex：ChatGPTから開発作業へつなぐ
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">OpenAI Codex の位置づけを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide06-openai-codex.webp" alt="OpenAI Codex を整理した図解。ChatGPT・Codex アプリ・CLI・クラウドで動き、コードの修正・バグ調査・複数ファイル変更・クラウドタスク・複数プロジェクトの並行作業に向くこと、文章作業と開発作業を同じAIでつなぎやすいことを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：OpenAI Codex</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>位置づけ</strong>：ChatGPT の近くで動くコード作業エージェント</li>
+      <li><strong>動く場所</strong>：ChatGPT / Codex アプリ / CLI / クラウド</li>
+      <li><strong>強み</strong>：コード修正・クラウドタスク・複数プロジェクト並行</li>
+      <li><strong>つなぎ</strong>：文章 / 調査 / 画像 / コードを同じ AI でつなげる</li>
+      <li><strong>向き</strong>：ChatGPT 中心で開発・作業を進めたい人</li>
+    </ul>
+  </div>
+</section>
+
+OpenAI の Codex ページでは、Codex アプリは **agentic coding のためのコマンドセンター** として説明されています。内蔵された worktree やクラウド環境を使い、エージェントが複数プロジェクトで並行して作業できることも案内されています。OpenAI ヘルプでも、Codex は **コードを書き、レビューし、出荷するのを助けるAIエージェント** で、対象の ChatGPT プランから利用できると整理されています。
+
+文章作成・調査・画像生成・ファイル整理を ChatGPT で進めつつ、コード修正や開発作業を Codex に任せる流れを作りやすいのが特徴です。
+
+## Cursor：エディタそのものをAI化する道具
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Cursor の使い心地を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide07-cursor.webp" alt="Cursor を整理した図解。AI 前提のコードエディタとして、エディタ画面の中にAIが深く入り込み、ファイル編集や関数説明やUI修正をエディタ上で進められること、Pro+ は日常的なエージェント利用者向け、Ultra はエージェントを重く使う人向けと整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Cursor</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>位置づけ</strong>：AI 前提のコードエディタ</li>
+      <li><strong>強み</strong>：エディタ画面内で AI と一緒に作業</li>
+      <li><strong>機能</strong>：Cloud agents / MCP / skills / hooks など</li>
+      <li><strong>料金</strong>：Pro 20ドル / Pro+ / Ultra</li>
+      <li><strong>向き</strong>：エディタで作業したい個人開発者・サイト修正中心の人</li>
+    </ul>
+  </div>
+</section>
+
+Cursor の料金ページでは、Pro+ は日常的なエージェント利用者向け、Ultra はエージェントをかなり重く使う人向けと案内されています。Cloud agents、frontier models、MCP、skills、hooks などの機能も示されています。
+
+Claude Code がターミナル寄り、Codex が ChatGPT / クラウド寄り、Cursor はエディタ寄りと考えると整理しやすいです。基本的には開発者向けの道具なので、文章作成や画像生成まで幅広く使いたいなら ChatGPT / Claude のアプリが使いやすい場面もあります。
+
+## GitHub Copilot：GitHub中心の開発支援AI
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">GitHub Copilot の位置づけを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide08-copilot.webp" alt="GitHub Copilot を整理した図解。GitHub / VS Code / IDE で使う開発支援 AI として、Issue や PR やレビューと相性が良く、Pro+ ではすべてのモデルへのアクセス・月1500のプレミアムリクエスト・追加リクエストは1件0.04ドルと整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：GitHub Copilot</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>位置づけ</strong>：GitHub / VS Code 中心の開発支援 AI</li>
+      <li><strong>強み</strong>：Issue / PR / レビューとの連携</li>
+      <li><strong>Pro+</strong>：月39ドル・全モデルアクセス・月1,500のプレミアム</li>
+      <li><strong>追加</strong>：プレミアム超過分は1件0.04ドル</li>
+      <li><strong>向き</strong>：GitHub でコード管理しているチーム開発・個人開発者</li>
+    </ul>
+  </div>
+</section>
+
+GitHub の公式ドキュメントでは、GitHub Copilot Pro+ は **すべてのモデルへのアクセス、月 1,500 のプレミアムリクエスト、先進AI機能への優先アクセス** を含む個人向け上位プランとして説明されています。追加リクエストは1件0.04ドルです。
+
+文章・画像・資料整理まで何でもこなす総合AIとは違い、**GitHub とコード作業の中で自然にAIを使うための道具** と考えると分かりやすいです。
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "コードが分からないと、AIエージェントって使えないのかな？" },
+    { speaker: "らぼまる", text: "そんなことはないよ。最初は『作る』より『手順を聞く』『設定を見てもらう』『小さな作業を任せる』くらいで十分。いきなり大きな開発をしなくていいんだ。" },
+  ]}
+/>
+
+## 総合ランキングも参考になる。ただし「ツールのランキング」ではない
+
+AIエージェント型ツールを比べるとき、モデル性能の総合ランキングも参考になります。代表的なのは Artificial Analysis の LLM Leaderboard。Intelligence Index で GPT-5.5・Claude Opus 4.7・Gemini 3.1 Pro Preview・Gemini 3.5 Flash が近い水準で並んでいます。
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>モデル</th>
+<th>総合指標</th>
+<th>スコア</th>
+<th>ざっくりした見方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-5.5 xhigh</td>
+<td>Intelligence Index</td>
+<td>60</td>
+<td>推論・仕事系・エージェント作業で強い</td>
+</tr>
+<tr>
+<td>GPT-5.5 high</td>
+<td>Intelligence Index</td>
+<td>59</td>
+<td>xhigh より少し軽めだが高水準</td>
+</tr>
+<tr>
+<td>Claude Opus 4.7 max</td>
+<td>Intelligence Index</td>
+<td>57</td>
+<td>文章・コード・実務寄り作業で強い</td>
+</tr>
+<tr>
+<td>Gemini 3.1 Pro Preview</td>
+<td>Intelligence Index</td>
+<td>57</td>
+<td>Google 系の上位モデル・マルチモーダル</td>
+</tr>
+<tr>
+<td>Gemini 3.5 Flash</td>
+<td>Intelligence Index</td>
+<td>55</td>
+<td>速度・コスト面も含めて注目</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="info-box">
+<p class="box-label">ランキングを使うときの注意</p>
+
+* これらは **AIモデルのランキング**。Antigravity / Claude Code / Codex / Cursor / Copilot というツールそのものの使いやすさランキングではない
+* LMArena 系は「人間が好む回答」に寄りやすい。コード修正・長文整理・エージェント作業の強さとはズレることがある
+* スコアは近接しており、1位だから選ぶより **自分の作業との相性で選ぶ** 方が失敗しにくい
+
+</div>
+
+## 用途別：どれを選ぶべき？
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">用途別の選び方を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide09-purpose-map.webp" alt="エージェント型AI ツールの選び方を用途別に整理した図解。ChatGPT中心はCodex、既存コードを直したいならClaude Code、Google環境はAntigravity、エディタ中心はCursor、GitHub中心はGitHub Copilotと整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：用途別の選び方マップ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>ChatGPT 中心</strong>：OpenAI Codex</li>
+      <li><strong>既存コードを直したい</strong>：Claude Code</li>
+      <li><strong>Google 環境</strong>：Google Antigravity</li>
+      <li><strong>エディタ中心</strong>：Cursor</li>
+      <li><strong>GitHub 中心</strong>：GitHub Copilot</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>目的</th>
+<th>選びやすいツール</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChatGPT から調査・文章・コードまでまとめて進めたい</td>
+<td>OpenAI Codex</td>
+</tr>
+<tr>
+<td>既存コードをしっかり直したい</td>
+<td>Claude Code</td>
+</tr>
+<tr>
+<td>Google 環境で複数エージェントを動かしたい</td>
+<td>Google Antigravity</td>
+</tr>
+<tr>
+<td>エディタ上で AI と一緒に開発したい</td>
+<td>Cursor</td>
+</tr>
+<tr>
+<td>GitHub の Issue / PR / レビューを中心に使いたい</td>
+<td>GitHub Copilot</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## 初心者でも、まずは小さく任せてみる
+
+AIエージェント型ツールは「開発者向け」「プログラミングができる人向け」に見えがちです。でも、これからのAIエージェントは **初心者ほど小さく試す価値がある** 道具になっていきます。
+
+理由は、AIがターミナル作業・ファイル操作・コードの読み取り・設定作業の一部を代わりに進めてくれるから。最初から全部を理解していなくても、次のような使い方なら始めやすいです。
+
+* 何をすればいいか聞く
+* 手順を出してもらう
+* 設定ファイルを確認してもらう
+* エラー文を読ませる
+* 小さなWebアプリを作ってもらう
+* ブログ記事の下書きを整えてもらう
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">初心者の小さなはじめ方 4 ステップを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-ai-agent-tools-comparison-2026/slide10-beginner-steps.webp" alt="初心者向けのAIエージェント活用 4 ステップを整理した図解。Step1 文章や手順の整理／Step2 小さなファイル整理／Step3 小さなWebページやリスト作成／Step4 慣れてからコード修正や自動化、と順を追って小さく始めることをすすめるスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：初心者の小さなはじめ方 4 ステップ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Step1</strong>：文章や手順の整理から（壊れても影響が小さい）</li>
+      <li><strong>Step2</strong>：見出しや表など小さなファイル整理</li>
+      <li><strong>Step3</strong>：持ち物リスト・家計表など小さなページ</li>
+      <li><strong>Step4</strong>：慣れてからコード修正や自動化</li>
+      <li><strong>共通</strong>：AI に下準備を任せて、人間が最後に確認</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p class="box-label">初心者が気をつけたいこと</p>
+
+* 本番環境をいきなり触らせない（壊れる可能性がある）
+* 個人情報や秘密情報を入れすぎない（AI / 外部サービスに渡す情報は慎重に）
+* コマンド実行やファイル削除は確認する（思わぬ変更が起こる可能性）
+* 練習用フォルダや、コピーしたファイルで試すのが安全
+* 「AIに全部任せる」ではなく「下準備を任せて、人間が確認する」形が現実的
+
+</div>
+
+## まとめ：エージェント型AIは初心者でも小さく試せる
+
+エージェント型AIツールは、どれも似て見えます。でも実際には、向いている作業がかなり違います。
+
+* ChatGPT 中心 → **OpenAI Codex**
+* 既存コードを直したい → **Claude Code**
+* Google 環境 → **Google Antigravity**
+* エディタ中心 → **Cursor**
+* GitHub 中心 → **GitHub Copilot**
+
+総合ランキングでは GPT-5.5・Claude Opus 4.7・Gemini 上位モデルが近い水準。だからこそ「どのモデルが1位か」だけで決めるより、**自分がどこで作業しているか** で選ぶ方が分かりやすいです。
+
+初心者でも試して大丈夫。手順を整理してもらう / エラー文を読んでもらう / 持ち物リストを作ってもらう / 支出管理表を作ってもらう──くらいから始めれば十分。最初は小さく、壊れても困らないところから、AIがやったことを人間が確認する。この使い方なら、初心者でも始められます。
+
+エージェント型AIは「詳しい人だけの道具」ではなくなりつつあります。これからは、AIに作業を少しずつ任せながら、自分の時間を取り戻すための道具として、もっと身近になっていくはずです。
+
+<div class="check-box">
+<p class="box-label">この記事のポイント</p>
+
+* エージェント型AIは「動く場所」で見ると違いが分かりやすい
+* 5 ツール（Antigravity / Claude Code / Codex / Cursor / Copilot）は得意分野がかなり違う
+* どのモデルが賢いかより、自分の作業との相性で選ぶ
+* Claude Code は Pro でも使える（Max 必須ではない）
+* 初心者は「文章整理 → 小ファイル整理 → 小さなページ → コード修正」の順で小さく始める
+* 本番環境をいきなり任せない／秘密情報を入れない／実行・削除は確認する
+
+</div>
+
+## あわせて読みたい
+
+<div class="article-cta">
+  <p>AI課金やエージェント環境の話と合わせて読むと、全体像がつかみやすくなります。</p>
+  <a href="/articles/202605-100-dollar-ai-monthly-plan-comparison/">月100ドル級のAIプラン比較を読む</a>
+  <a href="/articles/202605-google-antigravity-2-0-ai-agent-developer-tool/">Google Antigravity 2.0 の解説を読む</a>
+  <a href="/articles/202605-github-copilot-shifts-to-token-based-pricing-june-1/">GitHub Copilot のトークン課金移行を読む</a>
+  <a href="/categories/news/">ニュースをかみくだくカテゴリを見る</a>
+</div>
+
+## 参考情報
+
+* Google「[Gemini 3.5 Flash の発表](https://blog.google/products/gemini/)」 — Antigravity harness とサブエージェントの説明
+* Anthropic「[Claude Code 公式ページ](https://www.anthropic.com/claude-code)」 — コードベース理解とファイル編集
+* Claude Help「[Use Claude Code with your Pro or Max plan](https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan)」 — Pro / Max での Claude Code 利用
+* OpenAI「[Codex ページ](https://openai.com/codex/)」 — agentic coding のコマンドセンター
+* OpenAI Help「[Codex の基本](https://help.openai.com/en/articles/11369540-openai-codex)」 — コードを書きレビューし出荷するエージェント
+* Cursor「[Pricing](https://cursor.com/pricing)」 — Pro / Pro+ / Ultra の整理
+* GitHub Docs「[About individual GitHub Copilot plans and benefits](https://docs.github.com/en/copilot/concepts/billing/individual-plans)」 — Pro+ の月1,500プレミアム
+* Artificial Analysis「[LLM Leaderboard](https://artificialanalysis.ai/leaderboards/models)」 — Intelligence Index 等の総合指標
+
+※この記事は 2026 年 5 月時点の各社公式情報・ヘルプをもとに整理しています。各ツールの仕様・対応プラン・対応モデル・対応地域は変更される可能性があるため、契約や導入前に最新の公式情報を確認してください。

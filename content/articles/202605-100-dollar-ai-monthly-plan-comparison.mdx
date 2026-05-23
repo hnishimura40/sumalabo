@@ -1,0 +1,677 @@
+---
+title: "月100ドル級のAI課金、どれが正解？ChatGPT Pro・Claude Max・Google AI Ultraをやさしく比較"
+slug: "202605-100-dollar-ai-monthly-plan-comparison"
+type: "news"
+category: "ニュースをかみくだく"
+description: "ChatGPT Pro / Claude Max / Google AI Ultra など月100ドル級のAIプランを、利用量・エージェント機能・付帯サービスの視点でやさしく比較。20ドル級から100ドル級に上げる意味、Cursor / GitHub Copilot の位置づけ、課金前に確認したい3つの質問まで整理します。"
+thumbnail: "/images/thumbnails/202605-100-dollar-ai-monthly-plan-comparison.webp"
+thumbnailAlt: "月100ドル級のAIプラン比較。ChatGPT Pro・Claude Max・Google AI Ultra をひまり・らぼまるが整理するサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 1
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_normal_icon.webp"
+tags:
+  - "AI"
+  - "ChatGPT Pro"
+  - "Claude Max"
+  - "Google AI Ultra"
+  - "Cursor"
+  - "GitHub Copilot"
+  - "AIサブスク"
+  - "すまラボ"
+related:
+  - "202605-google-ai-ultra-100-dollar-plan-launch"
+  - "202605-google-ai-pro-youtube-premium-lite-benefits-overview"
+  - "202605-github-copilot-shifts-to-token-based-pricing-june-1"
+pubDate: "2026-05-23"
+updated: "2026-05-23"
+publishAt: "2026-05-23T11:00:00+09:00"
+---
+
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
+<div class="summary-box">
+<p class="box-label">3行でわかるまとめ</p>
+
+* 月100ドル級のAIプランは、**できることが急に増える**というより **「使える量」が大きく増える** 上位プラン。20ドル級プランの約5倍が目安。
+* ChatGPT Pro は総合型、Claude Max は Claude Code・長文寄り、Google AI Ultra は **Google サービス込みの総合パック**。性格が違うので「一番賢い」だけで選ばない。
+* まずは20ドル級で使い方を見極めて、**上限に何度も当たる／毎週かなりの作業時間が浮く** なら100ドル級を検討するのが安全。
+
+</div>
+
+<div class="check-box">
+<p class="box-label">この記事で整理すること</p>
+
+* 月100ドル級のAIプランで「増えるもの」は何か
+* ChatGPT Plus と Pro、Claude Pro と Max、Google AI Pro と Ultra の違い
+* Cursor / GitHub Copilot との位置関係
+* 総合ランキング（Artificial Analysis / LMArena）の使いどころ
+* 用途別にどれを選びやすいか
+* 課金前に確認したい3つの質問
+
+</div>
+
+<div class="summary-box">
+<p class="box-label">先に結論</p>
+
+<p class="lead">100ドル級は「<strong>20ドル級の約5倍プラン</strong>」と考えると分かりやすい。能力が別物になるというより、強い機能をより多く・より長く・より安定して使うためのプランです。</p>
+
+* 文章・調査・画像・コードをまとめて重く使う → **ChatGPT Pro**
+* Claude Code や長文処理を毎日かなり使う → **Claude Max**
+* Google Drive / YouTube Premium / NotebookLM / Antigravity まで含めて使う → **Google AI Ultra**
+* エディタ上で AI 開発を進めたい → **Cursor 上位プラン**
+* GitHub の Issue / PR / レビュー中心 → **GitHub Copilot Pro+**
+
+</div>
+
+<div class="info-box">
+<p class="box-label">この記事の前提</p>
+
+この記事は 2026 年 5 月時点の OpenAI / Anthropic / Google / Cursor / GitHub の公式情報をもとに整理しています。プラン内容・利用上限・対応地域・対応言語は変更される可能性があるため、課金前に必ず最新の公式情報を確認してください。ドル価格の円換算は読みやすさを優先して **1ドル＝約160円** で概算しています（実際の請求額は為替・税金・各社の日本向け価格で変動します）。
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは「100ドル級って何の話？」を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-100-dollar-ai-monthly-plan-comparison/slide01-overview.webp" alt="月100ドル級のAI課金を整理した図解。ChatGPT Pro・Claude Max・Google AI Ultra が並び、それぞれ「総合型 / コード・長文寄り / Google サービス込み」と性格が違うことを示し、ひまり・らぼまるが見るべき視点を案内するスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：月100ドル級のAI課金は何が違う？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>ChatGPT Pro</strong>：文章・調査・画像・コードを総合的に重く使う人向け</li>
+      <li><strong>Claude Max</strong>：Claude Code や長文処理を中心に使う人向け</li>
+      <li><strong>Google AI Ultra</strong>：Google サービス込みで AI を使い倒す人向け</li>
+      <li><strong>共通の発想</strong>：性能が別物になるより「使える量」が増える</li>
+      <li><strong>判断軸</strong>：自分が一番よく使う作業との相性で選ぶ</li>
+    </ul>
+  </div>
+</section>
+
+## 先に結論：100ドル級は「できること」より「使える量」が増える
+
+<p class="lead">月100ドル級のAIプランは、入った瞬間にまったく別の魔法のAIになるわけではありません。<strong>強い機能を、より長く・より多く・より安定して使うためのプラン</strong>と考えると分かりやすいです。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「能力」より「容量」が増える、を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-100-dollar-ai-monthly-plan-comparison/slide02-volume-not-feature.webp" alt="100ドル級プランは何が増えるかを整理した図解。料金は20ドル級の5倍、利用量・利用上限・優先アクセスも約5倍、新機能の追加というよりは強い機能を多く使えることを示し、5倍払うなら5倍近く使うかという判断軸を提示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：100ドル級は「能力」より「使える量」が増える</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>料金</strong>：20ドル級の約5倍</li>
+      <li><strong>利用量・上限</strong>：20ドル級の約5倍を目安に増える</li>
+      <li><strong>新機能の追加</strong>：あるが、性能が別物になるわけではない</li>
+      <li><strong>優先アクセス</strong>：混雑時の安定度が上がる</li>
+      <li><strong>判断軸</strong>：5倍払うなら、5倍近く使うか？</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>サービス</th>
+<th>中位プラン</th>
+<th>100ドル級プラン</th>
+<th>数字で見る違い</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ChatGPT</td>
+<td>Plus 20ドル / 約3,200円</td>
+<td>Pro 100ドル / 約16,000円</td>
+<td>料金5倍・利用量も基本5倍</td>
+</tr>
+<tr>
+<td>Claude</td>
+<td>Pro 20ドル / 約3,200円</td>
+<td>Max 5x 100ドル / 約16,000円</td>
+<td>料金5倍・容量も5倍</td>
+</tr>
+<tr>
+<td>Google AI</td>
+<td>AI Pro 2,900円</td>
+<td>AI Ultra 5x 14,500円</td>
+<td>料金5倍・AI Pro比5倍級</td>
+</tr>
+<tr>
+<td>Cursor</td>
+<td>Pro 20ドル / 約3,200円</td>
+<td>Pro+ / Ultra</td>
+<td>AI開発を重く使う人向け</td>
+</tr>
+<tr>
+<td>GitHub Copilot</td>
+<td>Pro 10ドル / 約1,600円</td>
+<td>Pro+ 39ドル / 約6,200円</td>
+<td>プレミアムリクエストがProの5倍</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+OpenAI のヘルプでは ChatGPT Pro 100ドルは Plus 比5倍の利用量、Codex は期間限定で Plus 比10倍と説明されています。Claude 公式ヘルプでも Max 5x は Pro 容量の5倍、Max 20x は Pro 容量の20倍と整理されています。Google も日本向けページで AI Pro 2,900円 / AI Ultra 14,500円〜と案内しています。
+
+## 100ドル級で見るべき5つのポイント
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">課金前に見るチェックポイントを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-100-dollar-ai-monthly-plan-comparison/slide03-checkpoints.webp" alt="100ドル級プランを選ぶ前に見たい5つのチェックポイントを整理した図解。1 利用上限／2 エージェント機能／3 コーディング機能／4 付帯サービス／5 自分の使い方を並べ、性能ランキングだけで決めない判断軸を示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：100ドル級で見るべき5つのポイント</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1. 利用上限</strong>：20ドル級よりどれくらい多く使えるか</li>
+      <li><strong>2. エージェント機能</strong>：複数手順の作業を任せられるか</li>
+      <li><strong>3. コーディング機能</strong>：コード作成・修正・レビューに使えるか</li>
+      <li><strong>4. 付帯サービス</strong>：画像・動画・ストレージ・YouTube Premium など</li>
+      <li><strong>5. 自分の使い方</strong>：その機能を本当に毎日使うか</li>
+    </ul>
+  </div>
+</section>
+
+ここで言う「エージェント機能」とは、AIに一問一答で答えてもらうだけでなく、**複数の手順がある作業を AIに進めてもらう機能** です。記事の構成を作って、比較表を整えて、必要な部分を修正して、最終案までまとめる──といった一連の作業を任せやすくします。最終確認は人間が必要ですが、**作業の下準備や修正案づくりをかなり速くしてくれる道具** と考えると安全です。
+
+## ChatGPT：Plus 20ドルと Pro 100ドルの違い
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">ChatGPT Plus と Pro の違いを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-100-dollar-ai-monthly-plan-comparison/slide04-chatgpt-pro.webp" alt="ChatGPT Plus と ChatGPT Pro の違いを整理した図解。料金は20ドル対100ドル、利用量はPlus比5倍、Codex は期間限定でPlus比10倍、GPT-5.5 Pro / 最大 Deep Research / 最大 Agent mode などの差を示し、Codex や Agent mode を重く使う人向けと整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：ChatGPT Plus と Pro の違い</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>料金</strong>：Plus 20ドル → Pro 100ドル（5倍）</li>
+      <li><strong>利用量</strong>：Plus 比5倍</li>
+      <li><strong>Codex（コード修正AI）</strong>：標準5倍／期間限定で10倍</li>
+      <li><strong>GPT-5.5 Pro</strong>：Pro 向け高性能モデルあり</li>
+      <li><strong>Deep Research / Agent mode</strong>：最大枠で使える</li>
+      <li><strong>向き</strong>：Codex・Deep Research・Agent を重く使う人</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>比較項目</th>
+<th>ChatGPT Plus</th>
+<th>ChatGPT Pro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>月額</td>
+<td>20ドル / 約3,200円</td>
+<td>100ドル / 約16,000円</td>
+</tr>
+<tr>
+<td>利用量</td>
+<td>Plus 基準</td>
+<td>Plus の5倍</td>
+</tr>
+<tr>
+<td>Codex 利用量</td>
+<td>Plus 基準</td>
+<td>標準5倍／期間限定で10倍</td>
+</tr>
+<tr>
+<td>GPT-5.5 Thinking</td>
+<td>拡張利用</td>
+<td>無制限扱いの記載あり</td>
+</tr>
+<tr>
+<td>GPT-5.5 Pro</td>
+<td>なし</td>
+<td>あり</td>
+</tr>
+<tr>
+<td>Deep Research</td>
+<td>利用可能</td>
+<td>最大 Deep Research</td>
+</tr>
+<tr>
+<td>Agent mode</td>
+<td>利用可能</td>
+<td>最大 Agent mode</td>
+</tr>
+<tr>
+<td>画像生成</td>
+<td>利用可能</td>
+<td>より高速・高上限</td>
+</tr>
+<tr>
+<td>向いている人</td>
+<td>日常利用・軽いコード作業</td>
+<td>Codex・Deep Research・Agent を重く使う人</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+ChatGPT Pro は、文章・調査・画像・ファイル分析・コード修正・エージェント作業を **ひとつの入り口でまとめて行いやすい総合型** です。逆に、軽い質問・文章下書き・たまの画像生成くらいなら Plus で十分な人も多いのが正直なところです。
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "100ドルプランって、入ったら急に全部が別物になるの？" },
+    { speaker: "らぼまる", text: "別物というより、強い機能をたくさん使えるようになるイメージだね。まずは自分がどれくらい使うかを見るのが大事だよ。" },
+  ]}
+/>
+
+## Claude：Pro 20ドルと Max 100ドルの違い
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Claude Pro と Max の違いを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-100-dollar-ai-monthly-plan-comparison/slide05-claude-max.webp" alt="Claude Pro と Max 5x / 20x の違いを整理した図解。料金は20ドル / 100ドル / 200ドル、容量はPro / Pro比5倍 / Pro比20倍、Claude Code や Cowork や Research や Projects は Pro でも使え、Max では出力上限と優先アクセスが強化されることを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Claude Pro と Max の違い</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>料金</strong>：Pro 20ドル / Max 5x 100ドル / Max 20x 200ドル</li>
+      <li><strong>容量</strong>：Pro / Pro 比5倍 / Pro 比20倍</li>
+      <li><strong>Claude Code</strong>：Pro でも使える（重要）</li>
+      <li><strong>Cowork / Research / Projects</strong>：Pro でも使える</li>
+      <li><strong>Max の強み</strong>：高い出力上限・混雑時の優先アクセス</li>
+      <li><strong>向き</strong>：Claude Code や長文処理を毎日かなり使う人</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>比較項目</th>
+<th>Claude Pro</th>
+<th>Claude Max 5x</th>
+<th>Claude Max 20x</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>月額</td>
+<td>20ドル / 約3,200円</td>
+<td>100ドル / 約16,000円</td>
+<td>200ドル / 約32,000円</td>
+</tr>
+<tr>
+<td>使用容量</td>
+<td>標準</td>
+<td>Pro 容量の5倍</td>
+<td>Pro 容量の20倍</td>
+</tr>
+<tr>
+<td>Claude Code</td>
+<td>使える</td>
+<td>使える</td>
+<td>使える</td>
+</tr>
+<tr>
+<td>Cowork / Research / Projects</td>
+<td>使える</td>
+<td>使える</td>
+<td>使える</td>
+</tr>
+<tr>
+<td>出力上限</td>
+<td>標準</td>
+<td>より高い</td>
+<td>より高い</td>
+</tr>
+<tr>
+<td>混雑時優先</td>
+<td>通常</td>
+<td>優先あり</td>
+<td>優先あり</td>
+</tr>
+<tr>
+<td>向いている人</td>
+<td>Claude を日常利用する人</td>
+<td>Claude Code や長文処理を頻繁に使う人</td>
+<td>Claude をほとんどの作業で使う人</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+Claude で大事なのは、**Claude Code は Pro でも使える** という点です。「Claude Code を使いたいから即 Max」ではなく、まず Pro で Claude Code を試し、上限に何度も当たる・大きなコードベースを頻繁に扱う・長い仕様書を何度も読ませる、となってから Max 5x を検討する流れが自然です。
+
+## Google：AI Pro 2,900円と AI Ultra 14,500円の違い
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Google AI Pro と AI Ultra の違いを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-100-dollar-ai-monthly-plan-comparison/slide06-google-ai-ultra.webp" alt="Google AI Pro と AI Ultra 5x / 20x の違いを整理した図解。料金は2900円 / 14500円〜 / 32000円、ストレージは5TB / 20TB / 30TB、YouTube 特典は Premium Lite / Premium 個人プラン、NotebookLM の上限や Antigravity のレート制限も Ultra で強化されることを示したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Google AI Pro と AI Ultra の違い</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>料金</strong>：AI Pro 2,900円 / AI Ultra 5x 14,500円〜 / Ultra 20x 32,000円</li>
+      <li><strong>ストレージ</strong>：5TB / 20TB / 30TB</li>
+      <li><strong>YouTube 特典</strong>：Premium Lite / Premium 個人プラン</li>
+      <li><strong>NotebookLM</strong>：上限拡張 → 最大級の上限</li>
+      <li><strong>Antigravity</strong>：レート制限が引き上げ</li>
+      <li><strong>向き</strong>：Google サービス込みで AI を使いたい人</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>比較項目</th>
+<th>Google AI Pro</th>
+<th>Google AI Ultra 5x</th>
+<th>Google AI Ultra 20x</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>月額</td>
+<td>2,900円</td>
+<td>14,500円〜</td>
+<td>32,000円</td>
+</tr>
+<tr>
+<td>Gemini 利用上限</td>
+<td>無料版より高い</td>
+<td>AI Pro 比5倍級</td>
+<td>AI Pro 比20倍級</td>
+</tr>
+<tr>
+<td>ストレージ</td>
+<td>5TB</td>
+<td>20TB</td>
+<td>30TB</td>
+</tr>
+<tr>
+<td>YouTube 特典</td>
+<td>YouTube Premium Lite</td>
+<td>YouTube Premium 個人プラン</td>
+<td>YouTube Premium 個人プラン</td>
+</tr>
+<tr>
+<td>NotebookLM</td>
+<td>上限拡張</td>
+<td>最大級の上限</td>
+<td>最大級の上限</td>
+</tr>
+<tr>
+<td>Antigravity</td>
+<td>レート制限引き上げ</td>
+<td>より高いレート制限</td>
+<td>さらに高いレート制限</td>
+</tr>
+<tr>
+<td>向いている人</td>
+<td>Gemini と Google 連携をしっかり使いたい人</td>
+<td>Google サービス込みで AI を使いたい人</td>
+<td>Google AI をかなり重く使う人</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+Google AI Ultra は **AI チャットだけの課金ではなく、Google サービス全体を強化する課金** として見るのが自然です。Google Drive / Google Photos の容量に困っている人、YouTube Premium を使っている人、NotebookLM や Antigravity を本格的に使いたい人なら候補になります。一方、Google サービスをあまり使わない人にはやや過剰です。
+
+## 総合ランキングも参考になる。ただし「プランの点数」ではない
+
+AI モデルの性能を比べるとき、Artificial Analysis（アーティフィシャル・アナリシス）の LLM Leaderboard のような **総合ランキング** が参考になります。複数のテストをまとめた Intelligence Index で、GPT-5.5・Claude Opus 4.7・Gemini 3.1 Pro Preview・Gemini 3.5 Flash などの上位モデルが近い水準で並んでいます。
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>モデル</th>
+<th>総合指標</th>
+<th>スコア</th>
+<th>ざっくりした見方</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-5.5 xhigh</td>
+<td>Intelligence Index</td>
+<td>60</td>
+<td>推論・仕事系・エージェント作業で強い</td>
+</tr>
+<tr>
+<td>GPT-5.5 high</td>
+<td>Intelligence Index</td>
+<td>59</td>
+<td>xhigh より軽めだがかなり高水準</td>
+</tr>
+<tr>
+<td>Claude Opus 4.7 max</td>
+<td>Intelligence Index</td>
+<td>57</td>
+<td>文章・コード・実務寄り作業で強い</td>
+</tr>
+<tr>
+<td>Gemini 3.1 Pro Preview</td>
+<td>Intelligence Index</td>
+<td>57</td>
+<td>Google 系の上位モデル</td>
+</tr>
+<tr>
+<td>Gemini 3.5 Flash</td>
+<td>Intelligence Index</td>
+<td>55</td>
+<td>速度・コストも含めて注目</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="info-box">
+<p class="box-label">ランキングの注意点</p>
+
+* これは **モデル性能のランキング** であって、ChatGPT Pro / Claude Max / Google AI Ultra といった料金プランの満足度を直接比べたものではない
+* LMArena 系は「人間が好む回答」に寄りやすい指標。会話の自然さと、仕事のコード修正・長文整理の強さはズレることもある
+* スコア差は近接しており、1位を選ぶより自分の作業との相性で選ぶ方が失敗しにくい
+
+</div>
+
+## Cursor と GitHub Copilot はどう見る？
+
+今回の主役は ChatGPT Pro / Claude Max / Google AI Ultra ですが、エージェント型 AI やコーディング AI を考えるなら **Cursor と GitHub Copilot** にも触れておきます。
+
+* **Cursor（カーソル）** — AI 前提のコードエディタ。Pro 20ドル、Pro+ は日常的なエージェント利用者向け、Ultra はエージェントをかなり重く使う人向け。
+* **GitHub Copilot（ギットハブ・コパイロット）** — GitHub / VS Code 中心の開発支援 AI。Pro+ は月39ドル、すべてのモデルへのアクセス・月1,500のプレミアムリクエスト・追加リクエストは1件0.04ドル。
+
+文章作成・画像生成・調査まで含めた総合 AI ではありませんが、開発作業に寄せるならかなり強い選択肢になります。
+
+## 目的別：どの100ドル級を選ぶべき？
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">用途別の選び方を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-100-dollar-ai-monthly-plan-comparison/slide07-purpose-map.webp" alt="月100ドル級プランの選び方を用途別に整理した図解。文章・調査・画像・コードをまとめて使いたい人は ChatGPT Pro、Claude Code や長文処理中心は Claude Max、Google サービス込みなら Google AI Ultra、エディタ中心は Cursor 上位プラン、GitHub 中心は GitHub Copilot Pro+ と整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：用途別の選び方マップ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>総合型で迷ったら</strong>：ChatGPT Pro</li>
+      <li><strong>Claude Code 中心</strong>：Claude Max</li>
+      <li><strong>Google サービス込み</strong>：Google AI Ultra</li>
+      <li><strong>エディタで AI 開発</strong>：Cursor Pro+ / Ultra</li>
+      <li><strong>GitHub 中心</strong>：GitHub Copilot Pro+</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>使い方</th>
+<th>選びやすいプラン</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文章・調査・画像・コードをまとめて使いたい</td>
+<td>ChatGPT Pro</td>
+</tr>
+<tr>
+<td>Codex や Agent mode を重く使いたい</td>
+<td>ChatGPT Pro</td>
+</tr>
+<tr>
+<td>Claude Code でサイトやアプリを直したい</td>
+<td>Claude Max</td>
+</tr>
+<tr>
+<td>長文資料・仕様書を大量に扱う</td>
+<td>Claude Max</td>
+</tr>
+<tr>
+<td>Google Drive や YouTube Premium も使いたい</td>
+<td>Google AI Ultra</td>
+</tr>
+<tr>
+<td>NotebookLM や Antigravity を重く使いたい</td>
+<td>Google AI Ultra</td>
+</tr>
+<tr>
+<td>エディタで AI 開発を進めたい</td>
+<td>Cursor 上位プラン</td>
+</tr>
+<tr>
+<td>GitHub の PR や Issue 中心</td>
+<td>GitHub Copilot Pro+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+## 20ドル級で十分な人・100ドル級に上げるべき人
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>20ドル級で十分な人</th>
+<th>100ドル級を検討する価値がある人</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI を毎日使うが上限にあまり当たらない</td>
+<td>AI を仕事や発信の中心にしている</td>
+</tr>
+<tr>
+<td>文章作成・調査が中心</td>
+<td>20ドル級で上限に何度も当たる</td>
+</tr>
+<tr>
+<td>コーディングは軽め</td>
+<td>Codex や Claude Code を長時間使う</td>
+</tr>
+<tr>
+<td>Claude Code や Codex を試している段階</td>
+<td>Deep Research / Agent mode を頻繁に使う</td>
+</tr>
+<tr>
+<td>Google 連携もほどほどでよい</td>
+<td>NotebookLM や Antigravity をかなり使う</td>
+</tr>
+<tr>
+<td>画像・動画生成はたまに使う程度</td>
+<td>Google Drive / YouTube Premium まで使い倒す</td>
+</tr>
+<tr>
+<td>無料の範囲＋20ドル級で満足</td>
+<td>毎週数時間以上の作業時間を AI で減らせている</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+月100ドルは安くありません。ただ、AI で毎週何時間も作業が短縮できるなら、単なるチャット代ではなく **作業時間を買うサブスク** として考えられます。
+
+## 100ドルにする前に確認したい3つの質問
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">課金前のセルフチェック 3 問を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-100-dollar-ai-monthly-plan-comparison/slide08-three-questions.webp" alt="月100ドル課金前に確認したい3つの質問を整理した図解。Q1 20ドル級で上限に何度も当たっている？／Q2 Codex・Claude Code・Antigravity を毎日使う？／Q3 ストレージや YouTube Premium や NotebookLM などの付帯サービスまで使い倒す？を並べ、2つ以上 YES なら100ドル級を検討してよいと整理したスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：100ドル課金前のセルフチェック3問</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Q1</strong>：20ドル級で上限に何度も当たっている？</li>
+      <li><strong>Q2</strong>：Codex / Claude Code / Antigravity を毎日使う？</li>
+      <li><strong>Q3</strong>：ストレージ / YouTube Premium / NotebookLM まで使い倒す？</li>
+      <li><strong>0個</strong>：まず20ドル級で十分かも</li>
+      <li><strong>2個以上</strong>：100ドル級を検討する意味は大きい</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p class="box-label">この記事のポイント</p>
+
+* 月100ドル級プランは **「20ドル級の約5倍プラン」** として見るのが分かりやすい
+* ChatGPT Pro は総合型、Claude Max は Claude Code・長文型、Google AI Ultra は Google サービス込み型
+* Claude Code は **Pro でも使える**。まず20ドル級で試してから Max を検討する流れが安全
+* Google AI Ultra は **AI チャット課金ではなく Google サービス全体の課金** として見る
+* ランキング1位より、自分の作業との相性で選ぶ
+* 月100ドルは「作業時間を買うサブスク」と考えるのが現実的
+
+</div>
+
+## まとめ：100ドル課金は「中心にするAI」を決めてから
+
+月100ドル級のAI課金は、なんとなく入るプランではありません。大事なのは **20ドル級から何が増えるのか** を見ることです。
+
+* ChatGPT なら Plus から Pro に上げると、Codex / Deep Research / Agent mode / 画像 / ファイル作業をより重く使える
+* Claude なら Pro でも Claude Code は使える。Max に上げる意味は Claude Code や長文処理を毎日たくさん使うかどうか
+* Google なら AI Pro から AI Ultra に上げると、Antigravity / NotebookLM / 20TB ストレージ / YouTube Premium まで含めて強化される
+
+100ドル課金は「一番すごいAI」を選ぶというより、**自分が一番よく使うAIを強化する選択** です。まずは20ドル級で使い方を見極めて、上限に当たる・作業時間が大きく減る・もっと任せたいと感じたら100ドル級へ。この順番で考えると、かなり失敗しにくくなります。
+
+## あわせて読みたい
+
+<div class="article-cta">
+  <p>AIサブスクの全体像をつかむには、関連プランの解説も合わせて読むと整理しやすいです。</p>
+  <a href="/articles/202605-google-ai-ultra-100-dollar-plan-launch/">Google AI Ultra 100ドル新プランの解説を読む</a>
+  <a href="/articles/202605-google-ai-pro-youtube-premium-lite-benefits-overview/">Google AI Pro の特典まとめを読む</a>
+  <a href="/articles/202605-github-copilot-shifts-to-token-based-pricing-june-1/">GitHub Copilot のトークン課金移行を読む</a>
+  <a href="/categories/news/">ニュースをかみくだくカテゴリを見る</a>
+</div>
+
+## 参考情報
+
+* OpenAI Help「[About ChatGPT Pro tiers](https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers)」 — Pro 100ドルは Plus 比5倍の利用量
+* Claude Help「[Choose a Claude plan](https://support.claude.com/en/articles/11049762-choose-a-claude-plan)」 — Pro / Max 5x / Max 20x の整理
+* Claude Help「[What is the Max plan?](https://support.claude.com/en/articles/11049741-what-is-the-max-plan)」 — Max 5x は Pro 容量の5倍
+* Google「[Google AI Pro と Ultra で Gemini 3.1 Pro などにアクセス](https://gemini.google/jp/subscriptions/?hl=ja)」 — AI Pro 2,900円 / AI Ultra 14,500円〜
+* Google「[Google AI Plans with Cloud Storage](https://one.google.com/intl/ja_jp/about/google-ai-plans/)」 — AI Ultra の特典
+* ChatGPT「[Plans page](https://chatgpt.com/pricing/)」 — Plus / Pro の機能比較
+* Artificial Analysis「[LLM Leaderboard](https://artificialanalysis.ai/leaderboards/models)」 — Intelligence Index 等の総合指標
+* Cursor「[Pricing](https://cursor.com/pricing)」 — Pro / Pro+ / Ultra
+* GitHub Docs「[About individual GitHub Copilot plans and benefits](https://docs.github.com/en/copilot/concepts/billing/individual-plans)」 — Pro+ の利用枠
+
+※この記事は 2026 年 5 月時点の各社公式情報・ヘルプをもとに整理しています。プラン内容・利用上限・対応地域・対応言語・為替レートは変動するため、課金前に必ず最新の公式情報を確認してください。
