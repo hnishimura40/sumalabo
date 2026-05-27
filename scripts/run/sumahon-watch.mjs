@@ -1,4 +1,9 @@
 #!/usr/bin/env node
+// ⚠️ DEPRECATED (2026-05-23 〜): user-directed mode 移行により自動巡回は停止しました。
+//   - このスクリプトはタスクスケジューラーから呼ばれていません（Disabled 化済み）。
+//   - 手動起動用として残してありますが、原則使わないでください。
+//   - 詳細: docs/user_directed_mode.md
+//
 // すまほん watch CLI
 //
 // 役割:

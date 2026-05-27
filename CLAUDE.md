@@ -2,9 +2,51 @@
 
 このドキュメントは、すまラボ記事作成・公開ワークフローにおける **Claude Code / Claude in Chrome がやること** と **人間（運営者）がやること** の境界を固定するためのものです。今後のセッションでもこのポリシーを **既定** として動きます。
 
+## 運用モード（2026-05-23 以降）
+
+**現在のモード： `user-directed mode`（手動トリガー方式）**
+
+> 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md)
+
+- **完全全自動運用は中止しました。** すまほん新着の自動巡回・Google ニュース等の自動収集・未指定記事の自動キュー投入・タスクスケジューラーによる無人起動は **すべて停止** しています。
+- **処理対象は「ユーザーが明示的に指定したもの」だけ。** URL / フォルダ / テーマ / サイト記事をユーザーが指定したときにだけ、記事化パイプラインを起動します。
+- **記事化以降の作業は引き続き自動化** します（MDX 化 / WebP 化 / build / PR 作成 / merge / fallback deploy / strict verify / queue 状態更新 / X 投稿案作成）。
+- **既存の自動収集スクリプトは削除していません。** 後で手動起動できるように残してあります。再有効化したい場合は `docs/user_directed_mode.md` 参照。
+
+### 入口（user-directed mode）
+
+| トリガー | 標準コマンド | 備考 |
+|---|---|---|
+| URL 指定 | `npm run sumalabo:from-url -- <url>` | `article:from-sumahon` のエイリアス |
+| フォルダ指定（素材一式） | `npm run sumalabo:from-folder -- "<absolute folder path>"` | Claude が会話起点で処理。スクリプトはガイド表示 |
+| queue 内の指定 slug を処理 | `npm run sumalabo:process -- --slug=<slug>` | `sumahon:regenerate-next` のエイリアス（slug 必須） |
+| テーマ指定 | Claude との会話で指示 | 例：「Google AI Ultra のテーマで記事を書いて」 |
+
+### user-directed mode で **やめたこと**
+
+- すまほん新着の自動巡回（`sumahon-watch.mjs` の cron / スケジュールタスク起動）
+- Google ニュースなどの自動収集
+- 未指定記事の自動キュー投入
+- タスクスケジューラーで無人起動 → 勝手に処理開始
+- ユーザー未確認のまま新しいテーマを処理すること
+
+### user-directed mode で **残したこと**
+
+- 素材ありフォルダの量産モード（複数本まとめてOK）
+- WebP 画像最適化
+- lead-first / slide-main 記事構造
+- 禁則チェック（普通の人 / すまほん / smhn / ここから本文 / 最終稿 / 初稿 / 元記事）
+- `npm run build`
+- PR 作成（`gh pr create`）
+- PR merge（**ユーザーの明示承認後**）
+- wrangler fallback deploy
+- strict verify（`/api/verify-publication`）
+- queue 状態更新（**手動指定対象に限る**）
+- X 投稿案の作成（**投稿はしない**）
+
 ## 結論
 
-**人間に求めるのは「最後の承認判断」だけ。** それ以外の自動化作業はすべて Claude Code 側で完結させます。
+**人間に求めるのは「処理対象の指定」と「最後の承認判断」。** ユーザーが「これを記事化する」と指定したものだけを処理し、それ以降の自動化作業（MDX 化〜deploy〜verify）は Claude Code 側で完結させます。
 
 ## 人間（運営者）の役割
 
@@ -22,9 +64,11 @@
 
 ## Claude Code / Claude in Chrome の役割
 
-以下を **すべて自律的に** 実行する。途中で人間に対話を求めない（修正方針の選択肢を提示するなど、判断が必要なときだけ最小限聞く）:
+以下を **すべて自律的に** 実行する。途中で人間に対話を求めない（修正方針の選択肢を提示するなど、判断が必要なときだけ最小限聞く）。
 
-1. **元記事の発見・要点メモ生成**（`scripts/run/sumahon-watch.mjs` などの自動ループから）
+> **重要（user-directed mode）：以下のステップ 1（自動巡回からの記事発見）は停止しています。** 起点はユーザーの明示指定（URL / フォルダ / テーマ）です。`sumahon-watch.mjs` を含む自動収集系スクリプトは削除せず残してありますが、ユーザーが明示的にコマンドを叩いた場合だけ起動します。
+
+1. **元記事の発見・要点メモ生成**（**user-directed mode で停止**。従来は `scripts/run/sumahon-watch.mjs` などの自動ループから取得していたが、現在はユーザーが URL / フォルダ / テーマを指定したときだけ発火）
 2. **記事本文生成プロンプト作成 → ChatGPT で本文生成 → 精錬 → 最終稿を `drafts/generated/{slug}.md` に保存**
 3. **ブログ化用資料一式生成 → `drafts/materials/{slug}.materials.md` に保存**
 4. **最終版サムネイル画像生成プロンプト作成 → `drafts/materials/{slug}.thumbnail-prompt.md` に保存**
@@ -61,6 +105,10 @@
 - ❌ `logs/visual-review/` を main に入れる（内部品質ログとして preview ブランチでも追跡せず、ローカル disk のみ）
 - ❌ Edge を操作する（Chrome のみ）
 - ❌ hidden file input の直接クリック / `file_upload` API の使用
+- ❌ **ユーザー未指定の記事を自動巡回・自動収集・自動キュー投入する**（user-directed mode）
+- ❌ **`sumahon-watch.mjs` / `run-sumahon-queue.ps1` をユーザー指示なしで起動する**
+- ❌ **Windows タスクスケジューラーでの無人定期起動を有効化する**（再有効化したいときは必ず事前にユーザー確認）
+- ❌ **X への投稿実行**（投稿案の `drafts/social/` 保存だけ。POST は人間が行う）
 
 ## 例外: 判断を仰ぐ最小ケース
 
