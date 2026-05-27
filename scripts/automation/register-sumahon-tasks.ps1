@@ -1,3 +1,6 @@
+# ⚠️ DEPRECATED (2026-05-23 〜): user-directed mode 移行により、このスクリプトの新規実行は禁止です。
+#   - 既存タスクは disable-sumahon-tasks.ps1 で Disabled 化済み。
+#   - 復活させたい場合は CLAUDE.md と docs/user_directed_mode.md を更新したうえで判断してください。
 param(
   [switch]$Production
 )
