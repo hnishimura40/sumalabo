@@ -29,7 +29,11 @@
 | `x_posted` | X 投稿成功 | Chrome で投稿 → 投稿URL 取得 |
 | `failed` | どこかで失敗 | 任意のフェーズで失敗 → `errorReason` を記録 |
 | `blocked_image_generation_unavailable` | 必須のスライド/サムネ生成経路が使えず Phase A 未完了で停止 | Chrome MCP 未ロード / Chrome 拡張未接続 / 拡張が Edge にペアリング等で画像生成が通らない |
+| `preview_unavailable` | Cloudflare Pages preview が作れず確認URLを提示できないため停止 | Phase A 出口（finalize）で CF preview deploy 失敗 / preview URL 検証失敗。ローカルURLでの通知は禁止 |
+| `failed_preview_url_invalid` | previewUrl がローカル/非https でメイン確認URLとして失格 | `127.0.0.1` / `localhost` / `file://` / 非https を渡した（`scripts/sumahon/preview-url-policy.mjs` が弾く） |
 | `paused_auto_collected` | 自動収集由来で今後処理しない（保留） | 自動収集モード時代の queued / needs_regeneration を塩漬け |
+
+> **previewUrl ポリシー（必須）**: review item の **メイン `previewUrl` は https の Cloudflare Pages Preview（`*.pages.dev`）または本番ドメインのみ**。`127.0.0.1` / `localhost` / `0.0.0.0` / `file://` / `chrome://` / 非https は不可。Phase A 出口（`phase-a-finalize.mjs`）と通知ヘルパー（`notify-review-ready.mjs`）の二層で弾き、該当時は通知せず `preview_unavailable` / `failed_preview_url_invalid` で停止する。ローカルURLは queue の補助フィールド（`localPreviewUrl`）にのみ保持してよい。
 
 ## 状態遷移図
 

@@ -122,7 +122,12 @@
    - `preview/<slug>` ブランチ
    - commit は明示パスで add（`git add .` 禁止）
    - `gh pr create` で PR 作成
-   - Cloudflare Preview URL を `gh pr view --json comments` から取得（取れない場合はローカル確認 URL で代替）
+
+7. **Phase A 出口（共通化・必須）= `npm run sumalabo:finalize`**
+   - どの作り方でも Phase A 完了時はこの 1 本を通る（`scripts/run/phase-a-finalize.mjs`）
+   - 内部処理（順番固定）: build → **Cloudflare Pages preview deploy（main 拒否）** → preview URL 解決 → **preview URL 検証（200 / 実記事 / fallback でない / ローカルURLでない）** → review item 登録 + プレビュー確認待ち通知 → queue 更新（`review_waiting`）
+   - **ローカルURL（127.0.0.1 / localhost / file:// / 非https）は通知しない。** `local_preview_url_rejected` / `failed_preview_url_invalid` で停止（`scripts/sumahon/preview-url-policy.mjs` が verify と notify の二層でガード）
+   - Cloudflare Preview が作れない場合は **`preview_unavailable` で停止**。ローカルURLを「メイン確認URL」にしてはいけない（PWA/スマホから開けないため）
 
 ## 5. Human Review Checkpoint（必ず停止）
 
@@ -130,16 +135,20 @@ Phase A 完了時点で **必ず停止する**。
 
 ### Claude がやること
 
+- **https の Cloudflare Pages Preview URL の提示**（スマホ/PWA から開ける確認URL）
 - PR URL の提示
-- ローカル確認URL の提示（Cloudflare Preview が取れない場合）
+- **プレビュー確認待ち通知を送信済みにする**（review item 登録 + Web Push）
 - 記事タイトル / slug / カテゴリ / 役割の報告
-- サムネ・スライドの圧縮結果報告
+- サムネ・スライドの圧縮結果・200確認の報告
 - build 結果（pages 数 / エラーなし）の報告
 - 禁則チェック結果の報告
 - **X 投稿案の下書き作成のみ可**（`drafts/social/{slug}.x.md` に保存。投稿はしない）
 
+> チャットで PR URL を報告するだけは Checkpoint ではない。**通知 + Preview/PWA 確認導線 + 承認導線まで到達**して初めて Checkpoint 成立。
+
 ### Claude がやらないこと（NG）
 
+- ❌ ローカルURL（127.0.0.1 等）を review item のメイン previewUrl にする / それで通知する
 - ❌ PR merge
 - ❌ production / fallback deploy
 - ❌ strict verify による queue published 化

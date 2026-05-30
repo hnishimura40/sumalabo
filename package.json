@@ -13,6 +13,7 @@
     "sumalabo:from-url": "node scripts/run/create-from-sumahon.mjs --url",
     "sumalabo:from-folder": "node scripts/run/from-folder-guide.mjs",
     "sumalabo:process": "node scripts/run/regenerate-from-queue.mjs",
+    "sumalabo:finalize": "node scripts/run/phase-a-finalize.mjs",
     "sumahon:watch": "node scripts/run/sumahon-watch.mjs",
     "sumahon:regenerate-next": "node scripts/run/regenerate-from-queue.mjs",
     "sumahon:notify-review-ready": "node scripts/run/notify-review-ready.mjs",

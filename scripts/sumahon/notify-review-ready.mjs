@@ -13,6 +13,8 @@
 //   - REVIEW_NOTIFY_SECRET（必須）
 //   - REVIEW_NOTIFY_API_URL（任意、既定 https://sumalabo.com/api/push/notify-review-ready）
 
+import { validateMainPreviewUrl } from "./preview-url-policy.mjs";
+
 const DEFAULT_API_URL = "https://sumalabo.com/api/push/notify-review-ready";
 const DEFAULT_TIMEOUT_MS = 15000;
 
@@ -60,6 +62,21 @@ export async function notifyReviewReady({ item, apiUrl, secret, timeoutMs } = {}
       reason: "missing_item",
       message: "通知に必要な item.slug が見当たらないため通知送信をスキップしました。",
       meta,
+    };
+  }
+
+  // ローカル/非https の previewUrl では通知しない（PWA/スマホから開けないため）。
+  // 2026-05-30 の事故（127.0.0.1 の previewUrl で通知）を仕組みで防ぐ。
+  const urlPolicy = validateMainPreviewUrl(cleanItem.previewUrl || "");
+  if (!urlPolicy.ok) {
+    return {
+      ok: false,
+      skipped: true,
+      reason: urlPolicy.isLocal ? "local_preview_url_rejected" : (urlPolicy.reason || "failed_preview_url_invalid"),
+      message:
+        `previewUrl が「PWA/スマホから開けるメイン確認URL」として不適格のため通知を中止しました（reason=${urlPolicy.reason}）。` +
+        `Cloudflare Pages Preview の https URL を渡してください。`,
+      meta: { ...meta, previewUrlPolicy: urlPolicy },
     };
   }
 

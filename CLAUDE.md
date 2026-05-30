@@ -76,20 +76,34 @@
 3. **禁則チェック**：以下が **0 件**であること — `普通の人` / `普通の人向け` / `すまほん` / `smhn` / `元記事` / `ここから本文` / `初稿` / `最終稿`
 4. **画像処理**：サムネ・スライドを WebP 化（1 枚 200KB 前後、上限 500KB）。元 PNG / JPG は素材フォルダに残す。MDX 参照は WebP。旧 PNG 参照を残さない。
 5. **build**：`npm run build`。記事ページが `dist/` に出力、`/articles/` とカテゴリ一覧に掲載、サムネ・スライドが 200 で読める、PC 横スクロールなし、H1 重複なし。
-6. **PR 作成**：`preview/` 系ブランチで `gh pr create`。PR URL とローカル確認URL を提示。
+6. **PR 作成**：`preview/` 系ブランチで `gh pr create`。
+7. **Phase A 出口（共通化・必須）**：`npm run sumalabo:finalize -- --slug <slug> --branch preview/<slug> --title "..." --prUrl <pr> --thumbnail /images/thumbnails/<slug>.webp` を **必ず通す**。どの作り方（import-generated / 手書き MDX / ChatGPT 制作）でも Phase A 完了時はこの 1 本を通る。内部で **build → Cloudflare Pages preview deploy（main 拒否）→ preview URL 200/実記事 検証 → ローカルURL拒否ガード → review item 登録 + プレビュー確認待ち通知 → queue 更新（review_waiting）** を行う。
+
+> **Phase A 出口の鉄則（共通化）**
+> - 記事URL / サムネ / スライド画像が **https の Cloudflare Pages Preview で 200** であることを確認してから通知する。
+> - **`127.0.0.1` / `localhost` / `0.0.0.0` / `file://` / `chrome://` / 非https を review item のメイン `previewUrl` にしない。** 渡された場合は通知せず `local_preview_url_rejected`（または `failed_preview_url_invalid`）で停止。`scripts/sumahon/preview-url-policy.mjs` のガードが verify と notify の二層で弾く。
+> - **チャットで PR URL を報告するだけ」を Human Review Checkpoint としない。** プレビュー確認待ち通知 + Preview/PWA 確認導線 + 承認導線まで到達して初めて Checkpoint。
 
 ### Human Review Checkpoint（Phase A → Phase B の間）
 
-PR 作成後、**必ず停止する**。
+Phase A 出口（finalize）通過後、**必ず停止する**。停止時には以下が揃っていること：プレビュー確認待ち通知送信済み / review item 登録済み（`review_waiting`、https Preview URL）/ PWA review 一覧で開ける状態 / 承認導線（承認ボタン or 「記事OK、公開へ」）が有効。
 
 **この時点で OK：**
-- PR URL の提示
-- ローカル確認URL の提示
+- **https の Cloudflare Pages Preview URL** の提示（スマホ/PWA から開ける）
+- プレビュー確認待ち通知の送信
 - 記事タイトル / slug / カテゴリ / 役割の報告
-- サムネ・スライドの圧縮結果報告
+- サムネ・スライドの圧縮結果・200確認の報告
 - build 結果報告
 - 禁則チェック結果報告
 - **X 投稿案の下書き作成のみ可（`drafts/social/{slug}.x.md` への保存）。投稿はしない。**
+
+**この時点で NG：**
+- ❌ ローカル URL（127.0.0.1 等）を review item のメイン previewUrl にする / それで通知する
+- ❌ PR merge
+- ❌ production / fallback deploy
+- ❌ strict verify による published 化
+- ❌ X 投稿
+- ❌ queue の published 化
 
 **この時点で NG：**
 - ❌ PR merge
@@ -397,11 +411,27 @@ Phase B 完了後だけ実行：
 - CSS: `src/layouts/ArticleLayout.astro` の `<style>` ブロック末尾
 - 参考実装: `content/articles/202605-apple-airtag-size-ai-pendant-iphone-siri.mdx` の fig01〜fig05
 
+## 記事の主軸（すまラボ記事方針・2026-05-31 補正）
+
+すまラボの記事の中心は、**デジタルニュース（スマホ・AI・ガジェット）をやさしく噛み砕いて説明すること**。
+「あなたに関係ある？」「課金すべき？」のような **読者判断は補助**であって、記事の主軸に寄せすぎない。
+
+記事の中心に置くのは次の 5 点：
+
+1. **何が起きたのか**（事実の核）
+2. **なぜ話題なのか**（意味・背景）
+3. **どう誤解されやすいか**（読み違いの整理）
+4. **確定情報と未確定情報の整理**（事実 / 報道ベース / 未確定を分ける）
+5. **ニュースの意味づけ**（読者の生活・選択にとって何を意味するか）
+
+読者判断（向いている人 / 様子見でよい人 / 判断ガイド）は **記事の最後寄りに補助として** 入れてよいが、
+記事全体を「課金すべきか診断」に寄せない。判断ガイドは 1〜2 ブロックに留め、本文の主役は上記 5 点。
+
 ## 深掘り記事の構成標準（スライド主役 / lead-first / 図解中心）
 
 すまラボの深掘り記事（ニュース解説・比較・基礎解説）では、**長文だけで押し切らない**。
 重要論点は **図解スライド・比較表・判断ガイド・チェックポイント一覧** に分解し、本文は
-**「図解の補足」と「判断の言語化」** に集中させる。
+**「ニュースの噛み砕き」と、補助としての判断の言語化** に集中させる。
 
 ### 基本ルール
 
