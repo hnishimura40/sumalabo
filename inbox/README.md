@@ -8,15 +8,20 @@
 
 未処理の素材フォルダのみ（処理済みは `_published_articles/` へ）。
 
-## ワークフロー
+## ワークフロー（3 フェーズ + Checkpoint）
 
 1. **素材を置く**: 下書き `ブログ記事.txt` + 画像（PNG / JPG）をこのフォルダ直下に
 2. **Claude に依頼**: フォルダ名を伝えて記事化を依頼
    - 例：「`inbox/<テーマ>/` で記事化して」
    - 補助コマンド：`npm run sumalabo:from-folder -- "<absolute path>"`（ガイド表示のみ）
-3. **Claude が自律処理**: WebP 化 → MDX → build → PR 作成
-4. **ユーザーが承認**: Preview を確認して「本番反映して」と返答
-5. **完了後**: Claude が wrangler fallback deploy → strict verify → 対象フォルダを `_published_articles/<元のフォルダ名>` に移動
+3. **Phase A**: Claude が自律処理（WebP 化 → MDX → build → PR 作成）
+4. **🛑 Human Review Checkpoint**: Claude が **PR URL / Preview URL / 検証結果を提示して停止**。ユーザーが Preview を確認
+5. **了承**: 「**記事OK、公開へ**」「承認」「本番反映して」など明示返答
+6. **Phase B**: Claude が PR merge → wrangler fallback deploy → strict verify → queue を `published` に
+7. **Phase C**: Claude が Chrome で X 投稿（OGPカード / サムネ / @suma_labo 確認後）→ 投稿URL取得 → queue を `x_posted` に
+8. **完了**: Claude が対象フォルダを `_published_articles/<元のフォルダ名>` に移動、本番URL・投稿URLを報告
+
+> **Checkpoint で必ず停止します。** ユーザー記事確認・明示了承前の merge / deploy / X 投稿は禁止です。詳細: [`docs/user_directed_mode.md`](../docs/user_directed_mode.md)
 
 ## 命名の例
 
