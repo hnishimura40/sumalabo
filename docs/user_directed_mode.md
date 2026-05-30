@@ -9,6 +9,7 @@
 関連:
 
 - Phase A 入力フロー: [`docs/phase_a_input_flow.md`](phase_a_input_flow.md)
+- **Article Refinement Loop（画像生成前の必須ループ）: [`docs/article_refinement_loop.md`](article_refinement_loop.md)**
 - X 投稿フロー詳細: [`docs/x_post_workflow.md`](x_post_workflow.md)
 - queue 状態設計: [`docs/queue_states.md`](queue_states.md)
 
@@ -81,7 +82,9 @@
 > - **停止条件に該当しなければ、「進めて」を待たずに自動で本処理へ進む**
 > - 記事内容確認のための停止は、Phase A 完了後の Human Review Checkpoint（PR 作成後）で行う
 >
-> **画像生成必須時の事前チェック（5-bis）**: ユーザー指示でスライド・サムネ生成が必須の場合、画像生成経路（Chrome MCP / ChatGPT）が通るかを本処理冒頭で確認。経路不通なら本文 MDX だけで PR を作成せず、queue を `blocked_image_generation_unavailable` にして停止し、原因 / 復旧手順 / 再開方法を報告する。詳細: [`docs/phase_a_input_flow.md`](phase_a_input_flow.md) section 5-bis
+> **画像生成前の必須ループ（5-ter）— Article Refinement Loop**: 本文ドラフト → 自己レビュー × 2〜3 → `article-ready-for-images` 6 条件クリアを通過するまで、画像生成・MDX への slide-section 追加・PR 作成へ進まない。**本文・スライド構成案がない状態で画像だけ先に作るのは禁止**。詳細: [`docs/article_refinement_loop.md`](article_refinement_loop.md)
+>
+> **画像生成必須時の事前チェック（5-bis）**: Refinement Loop 通過後、画像生成経路（Chrome MCP / ChatGPT）が通るかを確認。経路不通なら本文 MDX だけで PR を作成せず、queue を `blocked_image_generation_unavailable` にして停止し、原因 / 復旧手順 / 再開方法を報告する。詳細: [`docs/phase_a_input_flow.md`](phase_a_input_flow.md) section 5-bis
 
 1. **対象確認**
    - 指定 URL / フォルダの中身確認
@@ -316,6 +319,7 @@ Enable-ScheduledTask -TaskName 'Sumalabo Claude Pipeline Runner Test'
 
 - `CLAUDE.md` — 全体ポリシー
 - `docs/phase_a_input_flow.md` — Phase A 入力フロー（入口の安全停止条件）
+- `docs/article_refinement_loop.md` — Article Refinement Loop（画像生成前の必須ループ）
 - `docs/x_post_workflow.md` — X 投稿の安全条件と手順
 - `docs/queue_states.md` — queue 状態の遷移
 - `docs/pwa_review_notification.md` — PWA 通知の仕組み

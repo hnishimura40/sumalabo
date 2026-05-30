@@ -19,8 +19,9 @@
 | status | 意味 | 進む条件 |
 |---|---|---|
 | `user_directed_queued` | ユーザー指定で queue に投入された（処理待ち） | ユーザーが URL / フォルダ / テーマ / queue slug を指定 |
-| `article_generated` | MDX 化済み・preview commit 前 | `drafts/generated/{slug}.md` 等の生成完了 |
-| `review_waiting` | PR 作成完了。ユーザー記事確認待ち（Checkpoint） | `gh pr create` 成功 |
+| `article_generated` | 本文ドラフト作成済み（自己レビュー前） | `drafts/generated/{slug}.md` 等の本文初版完了 |
+| `article_ready_for_images` | Article Refinement Loop 通過。画像生成に進める | 自己レビュー 2 回（必要なら 3 回）通過 + 6 条件クリア（[`article_refinement_loop.md`](article_refinement_loop.md)） |
+| `review_waiting` | スライド・サムネ含めて PR 作成完了。ユーザー記事確認待ち（Checkpoint） | `gh pr create` 成功 |
 | `user_approved_for_publish` | ユーザー了承済み。Phase B 開始可 | ユーザーが「記事OK」「公開へ」等を明示 |
 | `merged` | PR merge 済み | `gh pr merge` 成功 |
 | `deployed` | wrangler fallback deploy 成功 | `deploy-production-from-main.mjs` の `wrangler.status: ok` |
@@ -35,9 +36,11 @@
 ```
 [user_directed_queued]
         ↓
-[article_generated]
-        ↓
-[review_waiting]  ← Checkpoint（必ず停止）
+[article_generated]              ← 本文ドラフト初版
+        ↓  （Article Refinement Loop: 自己レビュー × 2〜3 / 6 条件クリア）
+[article_ready_for_images]       ← 画像生成 OK サイン
+        ↓  （スライド構成案 → 画像生成 → ファクトチェック → 再生成）
+[review_waiting]                 ← Checkpoint（必ず停止）
         ↓  （ユーザー明示了承）
 [user_approved_for_publish]
         ↓
@@ -54,10 +57,12 @@
 任意フェーズ → [failed]  （errorReason 記録）
 自動収集旧データ → [paused_auto_collected]
 
-Phase A 開始後、画像生成経路（Chrome MCP / ChatGPT）が使えず必須スライド/サムネ未生成
+article_generated 段階で画像生成必須経路（Chrome MCP / ChatGPT）が使えず先へ進めない
    → [blocked_image_generation_unavailable]
    （ユーザーが「画像なしで進めて」と明示するまで先に進まない）
 ```
+
+> **`article_generated` から `article_ready_for_images` を飛ばして直接画像生成・MDX 化・PR 作成に進むのは禁止。** Refinement Loop の通過が必須。
 
 ## エントリスキーマ（推奨）
 
