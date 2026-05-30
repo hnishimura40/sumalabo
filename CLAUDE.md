@@ -6,7 +6,7 @@
 
 **現在のモード： `user-directed mode` + `human review checkpoint` + `auto publish / X post flow`**
 
-> 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
+> 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと
 
@@ -58,13 +58,18 @@
 
 入力チェック通過後、対象確定レポートを表示してそのまま Claude は次を自動実行する。
 
-> **画像生成必須時の事前チェック**：ユーザー指示で **スライド・サムネの新規生成が必須** の場合（指示文に「ChatGPT を使い画像生成」「スライド」「サムネ」等の記述あり、または素材フォルダに既存画像がない場合）、本処理の最初に **画像生成経路の事前チェック** を行う：
+> **画像生成前の必須工程：Article Refinement Loop**
+> 画像生成（スライド・サムネ）に進む前に、本文ドラフト → 自己レビュー × 2〜3 → `article-ready-for-images` 6 条件クリアの順で必ず Refinement Loop を通過する。**本文・スライド構成案がない状態で画像だけ先に作るのは禁止。** 詳細: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)
+>
+> queue 状態は `article_generated` → `article_ready_for_images` の間で必ずこのループを回す。Loop を飛ばして直接画像生成に進んだら方針違反として停止。
+
+> **画像生成必須時の事前チェック**（Refinement Loop 通過後）：ユーザー指示で **スライド・サムネの新規生成が必須** の場合（指示文に「ChatGPT を使い画像生成」「スライド」「サムネ」等の記述あり、または素材フォルダに既存画像がない場合）、画像生成に入る前に **画像生成経路の事前チェック** を行う：
 >
 > - `mcp__claude-in-chrome__*` がロードされているか
 > - Chrome 拡張がペアリングされているか（**Edge ペアリングは経路なし扱い**）
 > - ChatGPT セッションが開ける状態か
 >
-> 経路が通らないと判定したら、**本文 MDX だけで PR を作成しない**。queue を `blocked_image_generation_unavailable` にして、原因 / 復旧手順 / 再開方法を報告して停止する。**ユーザーが明示的に「画像なしで進めて」と返答したときだけ画像なし PR を許可**。詳細: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) section 5-bis
+> 経路が通らないと判定したら、**本文 MDX だけで PR を作成しない**。queue を `blocked_image_generation_unavailable` にして、原因 / 復旧手順 / 再開方法を報告して停止する。**ユーザーが明示的に「画像なしで進めて」と返答したときだけ画像なし PR を許可**。詳細: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) section 5-bis / 5-ter
 
 1. **対象確認**：指定 URL / フォルダの内容確認、対象記事数の確定、既存記事・queue・PR との重複確認。判断に迷う場合は停止して報告。
 2. **記事化**：MDX 化（lead-first / slide-main / summary-box / check-box / info-box / table-card / article-slide-section / slide-reading-note / decision-guide-panel / visual-flow / 必要なら CharacterDialogue 1 回）。体験談風・断定表現はしない。
@@ -251,6 +256,10 @@ Phase B 完了後だけ実行：
 - ❌ **PR-C / PR-D に勝手に進む**（明示指示があったときだけ）
 - ❌ **画像生成が必須な指示で、画像生成経路（Chrome MCP）が使えないのに本文だけで PR を作成する**（`blocked_image_generation_unavailable` で停止する）
 - ❌ **`frontmatter.thumbnail` 空・スライド 0 枚のまま通常 PR（Ready）を作成する**（ユーザーが「画像なしで進めて」と明示したときだけ許可）
+- ❌ **Article Refinement Loop（自己レビュー × 2〜3 / `article-ready-for-images` 6 条件）を通過せずに画像生成へ進む**
+- ❌ **本文ドラフトなしでスライド・サムネを先に作る**
+- ❌ **記事の議論と画像生成を別の ChatGPT チャットに分ける**（同一チャットで論点 → スライド → サムネをつなげる）
+- ❌ **「すまラボっぽい絵」を汎用的にだけ作る**（記事固有の論点と切り離した画像は禁止）
 
 ### ユーザー記事確認・了承前は特に禁止
 
