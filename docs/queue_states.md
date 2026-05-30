@@ -27,6 +27,7 @@
 | `published` | strict verify 8/8 pass | `/api/verify-publication` で `failedChecks: []` |
 | `x_posted` | X 投稿成功 | Chrome で投稿 → 投稿URL 取得 |
 | `failed` | どこかで失敗 | 任意のフェーズで失敗 → `errorReason` を記録 |
+| `blocked_image_generation_unavailable` | 必須のスライド/サムネ生成経路が使えず Phase A 未完了で停止 | Chrome MCP 未ロード / Chrome 拡張未接続 / 拡張が Edge にペアリング等で画像生成が通らない |
 | `paused_auto_collected` | 自動収集由来で今後処理しない（保留） | 自動収集モード時代の queued / needs_regeneration を塩漬け |
 
 ## 状態遷移図
@@ -52,6 +53,10 @@
 
 任意フェーズ → [failed]  （errorReason 記録）
 自動収集旧データ → [paused_auto_collected]
+
+Phase A 開始後、画像生成経路（Chrome MCP / ChatGPT）が使えず必須スライド/サムネ未生成
+   → [blocked_image_generation_unavailable]
+   （ユーザーが「画像なしで進めて」と明示するまで先に進まない）
 ```
 
 ## エントリスキーマ（推奨）

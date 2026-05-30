@@ -80,6 +80,8 @@
 > - 対象確定レポートを表示（進行ログ）
 > - **停止条件に該当しなければ、「進めて」を待たずに自動で本処理へ進む**
 > - 記事内容確認のための停止は、Phase A 完了後の Human Review Checkpoint（PR 作成後）で行う
+>
+> **画像生成必須時の事前チェック（5-bis）**: ユーザー指示でスライド・サムネ生成が必須の場合、画像生成経路（Chrome MCP / ChatGPT）が通るかを本処理冒頭で確認。経路不通なら本文 MDX だけで PR を作成せず、queue を `blocked_image_generation_unavailable` にして停止し、原因 / 復旧手順 / 再開方法を報告する。詳細: [`docs/phase_a_input_flow.md`](phase_a_input_flow.md) section 5-bis
 
 1. **対象確認**
    - 指定 URL / フォルダの中身確認
