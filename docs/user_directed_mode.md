@@ -9,6 +9,7 @@
 関連:
 
 - Phase A 入力フロー: [`docs/phase_a_input_flow.md`](phase_a_input_flow.md)
+- **Article Refinement Loop（画像生成前の必須ループ）: [`docs/article_refinement_loop.md`](article_refinement_loop.md)**
 - X 投稿フロー詳細: [`docs/x_post_workflow.md`](x_post_workflow.md)
 - queue 状態設計: [`docs/queue_states.md`](queue_states.md)
 
@@ -80,6 +81,10 @@
 > - 対象確定レポートを表示（進行ログ）
 > - **停止条件に該当しなければ、「進めて」を待たずに自動で本処理へ進む**
 > - 記事内容確認のための停止は、Phase A 完了後の Human Review Checkpoint（PR 作成後）で行う
+>
+> **画像生成前の必須ループ（5-ter）— Article Refinement Loop**: 本文ドラフト → 自己レビュー × 2〜3 → `article-ready-for-images` 6 条件クリアを通過するまで、画像生成・MDX への slide-section 追加・PR 作成へ進まない。**本文・スライド構成案がない状態で画像だけ先に作るのは禁止**。詳細: [`docs/article_refinement_loop.md`](article_refinement_loop.md)
+>
+> **画像生成必須時の事前チェック（5-bis）**: Refinement Loop 通過後、画像生成経路（Chrome MCP / ChatGPT）が通るかを確認。経路不通なら本文 MDX だけで PR を作成せず、queue を `blocked_image_generation_unavailable` にして停止し、原因 / 復旧手順 / 再開方法を報告する。詳細: [`docs/phase_a_input_flow.md`](phase_a_input_flow.md) section 5-bis
 
 1. **対象確認**
    - 指定 URL / フォルダの中身確認
@@ -117,7 +122,12 @@
    - `preview/<slug>` ブランチ
    - commit は明示パスで add（`git add .` 禁止）
    - `gh pr create` で PR 作成
-   - Cloudflare Preview URL を `gh pr view --json comments` から取得（取れない場合はローカル確認 URL で代替）
+
+7. **Phase A 出口（共通化・必須）= `npm run sumalabo:finalize`**
+   - どの作り方でも Phase A 完了時はこの 1 本を通る（`scripts/run/phase-a-finalize.mjs`）
+   - 内部処理（順番固定）: build → **Cloudflare Pages preview deploy（main 拒否）** → preview URL 解決 → **preview URL 検証（200 / 実記事 / fallback でない / ローカルURLでない）** → review item 登録 + プレビュー確認待ち通知 → queue 更新（`review_waiting`）
+   - **ローカルURL（127.0.0.1 / localhost / file:// / 非https）は通知しない。** `local_preview_url_rejected` / `failed_preview_url_invalid` で停止（`scripts/sumahon/preview-url-policy.mjs` が verify と notify の二層でガード）
+   - Cloudflare Preview が作れない場合は **`preview_unavailable` で停止**。ローカルURLを「メイン確認URL」にしてはいけない（PWA/スマホから開けないため）
 
 ## 5. Human Review Checkpoint（必ず停止）
 
@@ -125,16 +135,20 @@ Phase A 完了時点で **必ず停止する**。
 
 ### Claude がやること
 
+- **https の Cloudflare Pages Preview URL の提示**（スマホ/PWA から開ける確認URL）
 - PR URL の提示
-- ローカル確認URL の提示（Cloudflare Preview が取れない場合）
+- **プレビュー確認待ち通知を送信済みにする**（review item 登録 + Web Push）
 - 記事タイトル / slug / カテゴリ / 役割の報告
-- サムネ・スライドの圧縮結果報告
+- サムネ・スライドの圧縮結果・200確認の報告
 - build 結果（pages 数 / エラーなし）の報告
 - 禁則チェック結果の報告
 - **X 投稿案の下書き作成のみ可**（`drafts/social/{slug}.x.md` に保存。投稿はしない）
 
+> チャットで PR URL を報告するだけは Checkpoint ではない。**通知 + Preview/PWA 確認導線 + 承認導線まで到達**して初めて Checkpoint 成立。
+
 ### Claude がやらないこと（NG）
 
+- ❌ ローカルURL（127.0.0.1 等）を review item のメイン previewUrl にする / それで通知する
 - ❌ PR merge
 - ❌ production / fallback deploy
 - ❌ strict verify による queue published 化
@@ -314,6 +328,7 @@ Enable-ScheduledTask -TaskName 'Sumalabo Claude Pipeline Runner Test'
 
 - `CLAUDE.md` — 全体ポリシー
 - `docs/phase_a_input_flow.md` — Phase A 入力フロー（入口の安全停止条件）
+- `docs/article_refinement_loop.md` — Article Refinement Loop（画像生成前の必須ループ）
 - `docs/x_post_workflow.md` — X 投稿の安全条件と手順
 - `docs/queue_states.md` — queue 状態の遷移
 - `docs/pwa_review_notification.md` — PWA 通知の仕組み

@@ -196,6 +196,106 @@ Claude 側の処理は 3-B と同じ。ただし「指定サイト由来の記�
 
 ---
 
+## 5-ter. Article Refinement Loop（画像生成前の必須ループ）
+
+**ユーザー指示でスライド・サムネの新規生成が必須の場合、画像生成に入る前に必ず Article Refinement Loop を通過する。** 詳細は [`docs/article_refinement_loop.md`](article_refinement_loop.md) を参照。
+
+### 4 段階のループ
+
+1. **調査・ファクトチェック** — 公式情報・主要報道・ユーザー指定 URL を確認。**facts / claims / uncertain_points** に分類。
+2. **すまラボ向け論点整理** — 何が変わる / 誰に関係 / 今すぐ動くべきか / 誤解されやすい点 / 読者が判断できること を言語化。
+3. **本文ドラフト作成** — lead-first・先に結論・文字だらけにしない・禁則表現 0 件。スライド化候補論点をメモ。
+4. **自己レビュー最低 2 回（必要なら 3 回）**
+   - Pass 1: メタ表現・煽り・誤解・断定の点検
+   - Pass 2: すまラボらしさ・判断材料・スライド化論点の点検
+   - Pass 3（必要時）: 事実・数値・出典の再チェック
+
+### `article-ready-for-images` 判定（6 条件・すべて満たすこと）
+
+| ① 記事の結論が明確 | ② 読者の判断材料が明確 | ③ 誤解されやすい点が整理済み |
+| ④ 事実・未確定・予想が分かれている | ⑤ 禁則表現 0 件 | ⑥ スライド化する論点が決まっている |
+
+> **6 条件のうち 1 つでも欠けていれば、画像生成へ進まずにループに戻る。**
+> 通過したら queue status を `article_generated` → **`article_ready_for_images`** に進める。
+
+### Refinement Loop 通過後の流れ
+
+1. **スライド構成案を確定**（同一 ChatGPT チャット内で議論）
+2. himari-base.png / labomaru-base.png を添付
+3. Slide 1 → Slide N → サムネ の順で **1 枚ずつ** 画像生成
+4. 各画像生成後にファクトチェック → 必要なら再生成（最低 1 ラウンドは見直す）
+5. WebP 化 → MDX 組み込み → build → PR Ready → Human Review Checkpoint
+
+### Loop 未通過で画像生成に進むことを禁止
+
+- 本文ドラフトなしで画像生成リクエストする
+- サムネを先に作る
+- 別チャットで本文だけ書いて、画像は別チャットで頼む
+- 「すまラボっぽい絵」を汎用的にだけ作る
+
+これらはすべて Article Refinement Loop の方針違反。発生したら停止して報告する。
+
+---
+
+## 5-bis. 画像生成経路の必須条件（Phase A 本処理 *中*の停止条件）
+
+ユーザー指示で **スライド・サムネの新規生成が必須** の場合、画像生成経路は **Phase A の必須条件** として扱う。本文 MDX だけで PR を作成しない。
+
+> `article_ready_for_images` を通過した *後* に画像生成経路（Chrome MCP / ChatGPT）が使えるかを事前チェックする。本文未確定のまま経路チェックだけ通しても意味がない。
+
+### 画像生成必須かどうかの判定
+
+| 状況 | 画像生成必須？ |
+|---|---|
+| オーケストレーター指示文に「スライド」「サムネ」「ChatGPT を使い画像生成」等の記述あり | 必須 |
+| 素材フォルダ指定で **既存スライド/サムネが置かれている** | 不要（既存画像を WebP 化して使う） |
+| 素材フォルダ指定で **画像が置かれていない** | 必須 |
+| ユーザーが明示的に「画像なしで進めて」と返答済み | 不要 |
+| 上記いずれにも該当しない（既存記事補修など） | 不要 |
+
+### 画像生成経路が使えるかの事前チェック
+
+Phase A 本処理に入った直後、以下を確認する：
+
+1. **`mcp__claude-in-chrome__*` ツール群がロードされているか**
+   - 未ロード → `ToolSearch` で `claude-in-chrome` 検索 → ロード可なら続行
+   - 検索しても出ない → 経路なし
+2. **Chrome 拡張がペアリングされているか**
+   - `~/.claude.json` の `chromeExtension.pairedDeviceName` を確認（実体は読み取り不可でも、画像生成試行時にエラーになれば検知可能）
+   - ペアリングが **Edge / その他のブラウザ** になっている場合は経路なし扱い（CLAUDE.md ポリシーで Edge 禁止）
+3. **ChatGPT セッションが開ける状態にあるか**（Chrome MCP でナビゲーション可能か）
+
+### 画像生成不可と判定した場合の挙動
+
+**本文 MDX だけで PR を作成しない。** 次の挙動を取る：
+
+1. queue のエントリ status を `blocked_image_generation_unavailable` にする
+2. 報告に下記を含める：
+   - 何が必須なのに未実行か（スライド N 枚 / サムネ 1 枚）
+   - 経路不通の原因（Chrome MCP 未ロード / 拡張未接続 / Edge ペアリング 等）
+   - 復旧手順（後述）
+   - 再開時にすべきこと
+3. **下書きの本文だけは作って `drafts/generated/{slug}.md` に保存してよい**（後で活かすため）
+4. **PR は作らない**。すでに作ってしまっていた場合は Draft 化し、コメントで blocked と明示する
+5. ユーザーが **明示的に「画像なしで進めて」と返答** したときだけ、画像なし PR を許可（その場合も Checkpoint 報告で画像未生成を明示）
+
+### 復旧手順（Chrome MCP / ChatGPT 画像生成経路）
+
+| 症状 | 復旧手順 |
+|---|---|
+| `mcp__claude-in-chrome__*` が ToolSearch でも出ない | Claude Code 側で MCP サーバー登録が必要。`claude mcp add` 等で `claude-in-chrome` を追加するか、Claude Code を再起動して再ロード |
+| `~/.claude.json` の `chromeExtension.pairedDeviceName` が **Edge / 他ブラウザ** | Chrome を起動し、Claude in Chrome 拡張で再ペアリング（Edge ではない Chrome プロファイルから） |
+| Chrome 拡張は入っているが Claude Code から見えない | Claude Code を再起動し、Chrome 拡張のデバイスコードで再認証 |
+| ペアリング済みだが ChatGPT が開けない | Chrome プロファイルを ChatGPT ログイン済みのものに切り替え |
+
+復旧後、新しい Claude Code セッションで `mcp__claude-in-chrome__*` がロードされていることを確認してから Phase A を再開する。
+
+### 既存ブランチがある場合の再開
+
+すでに `preview/<slug>` ブランチで blocked 状態の PR が立っている場合は、**同じブランチに追加コミット** でスライド/サムネ・WebP・MDX 修正を載せ、Draft → Ready に戻して Human Review Checkpoint で停止する。新しい PR は作らない（無駄な分岐を避ける）。
+
+---
+
 ## 6. Phase A 本処理での記録
 
 対象確定レポート表示後（停止条件に該当しない場合）、Phase A 本処理開始時に queue に下記エントリを追加（status: `user_directed_queued` → `article_generated` → `review_waiting`）。
@@ -258,3 +358,5 @@ Phase A 本処理が完了したら、`CLAUDE.md` の **Phase A 完了報告テ�
 |---|---|
 | 2026-05-30 | 初版。オーケストレーター指示文の入力フロー・5 入力項目・AskUserQuestion テンプレ・対象確定レポート・安全停止 12 条件を定義。 |
 | 2026-05-30 (rev2) | Phase A 前の「進めて」二重確認を廃止。入力が明確なら対象確定レポート表示後そのまま自動で本処理へ進む方針に変更。停止ポイントは PR 作成後の Human Review Checkpoint に一本化。 |
+| 2026-05-30 (rev3) | section 5-bis を追加。画像生成必須時は本処理冒頭で Chrome MCP / ChatGPT 経路の事前チェックを義務化し、経路不通なら `blocked_image_generation_unavailable` で停止。本文 MDX だけで PR を作成しない（ユーザーが「画像なしで進めて」と明示した場合のみ例外）。Meta One 記事 PR #81 で本ルール未整備が顕在化したのを受けた追加。 |
+| 2026-05-30 (rev4) | section 5-ter「Article Refinement Loop」を追加。本文ドラフト → 自己レビュー × 2〜3 → `article-ready-for-images` 6 条件クリアを経て初めて画像生成へ進める順序を固定。本文・スライド構成案がない状態で画像だけ先に作る運用を禁止。`docs/article_refinement_loop.md` を新規追加し詳細を分離。Meta One 記事の再開時に「画像だけ先に生成しようとしていた」運用ミスを受けて追加。 |
