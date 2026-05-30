@@ -2,6 +2,8 @@
 
 すまラボの記事ページに表示される「この記事を承認して公開」ボタンの仕組みと運用メモ。
 
+> **2026-05-27 update — user-directed mode + Human Review Checkpoint：** 現在の標準フローでは、**Phase A 完了時点で Claude が必ず停止し、ユーザーの明示了承（チャット返答）後に Claude 側から `gh pr merge` → `wrangler fallback deploy` → strict verify → X 投稿まで自動実行する** 流れになっています。承認ボタン経由のフローは **既存記事の補助手段** として残しますが、新規記事の標準フローではありません。詳細: [`docs/user_directed_mode.md`](user_directed_mode.md) / [`docs/x_post_workflow.md`](x_post_workflow.md) / [`docs/queue_states.md`](queue_states.md)
+
 ## 仕組み（一行で）
 
 Cloudflare Pages Preview の記事ページに置いたボタンを押すと、Cloudflare Pages Functions（`/api/approve-preview`）がサーバー側で **GitHub API で PR merge → Cloudflare Pages Deploy Hook 発火** を順に実行し、その後フロントが **`/api/verify-publication?slug=...` を polling して本番反映を厳格に確認** する。verify が pass した時点で KV review item の status が `published` に更新され、ボタンが「公開完了」に確定する。

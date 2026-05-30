@@ -4,14 +4,118 @@
 
 ## 運用モード（2026-05-23 以降）
 
-**現在のモード： `user-directed mode`（手動トリガー方式）**
+**現在のモード： `user-directed mode` + `human review checkpoint` + `auto publish / X post flow`**
 
-> 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md)
+> 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
-- **完全全自動運用は中止しました。** すまほん新着の自動巡回・Google ニュース等の自動収集・未指定記事の自動キュー投入・タスクスケジューラーによる無人起動は **すべて停止** しています。
-- **処理対象は「ユーザーが明示的に指定したもの」だけ。** URL / フォルダ / テーマ / サイト記事をユーザーが指定したときにだけ、記事化パイプラインを起動します。
-- **記事化以降の作業は引き続き自動化** します（MDX 化 / WebP 化 / build / PR 作成 / merge / fallback deploy / strict verify / queue 状態更新 / X 投稿案作成）。
-- **既存の自動収集スクリプトは削除していません。** 後で手動起動できるように残してあります。再有効化したい場合は `docs/user_directed_mode.md` 参照。
+### 3 行で言うと
+
+1. **ネタ収集は自動化しない。** ユーザーが URL / フォルダ / テーマ / 記事を指定したときだけ起動。
+2. **記事化 → PR 作成までは自動。その時点で必ず停止し、ユーザーの記事確認 + 明示了承を待つ。**
+3. **了承後だけ、PR merge → fallback deploy → strict verify → queue 更新 → X 投稿まで一気に自動化。**
+
+### 全体フロー（3 フェーズ + チェックポイント）
+
+```
+[Phase A: 記事化]
+  ユーザー指定 → 対象確認 → MDX 化 → WebP 化 → 禁則チェック →
+  build → preview ブランチ commit → push → PR 作成
+                            ↓
+       [Human Review Checkpoint — 必ず停止]
+   Claude は PR URL / ローカル確認URL / 記事タイトル / slug /
+   サムネ・画像圧縮結果 / build 結果 / 禁則チェック結果を提示。
+   ユーザーが記事内容を確認し、「記事OK / 公開へ / 承認」など明示的に了承するまで待つ。
+                            ↓
+[Phase B: 公開]
+  PR merge → main 同期 → wrangler fallback deploy →
+  strict verify（全記事 8/8 pass）→ queue を published に更新
+                            ↓
+[Phase C: X 投稿]
+  本番URL確認 → Chrome で X 投稿画面 → OGPカード / サムネ表示確認 →
+  投稿アカウント @suma_labo 確認 → 投稿 → 投稿URL取得 → queue を x_posted に更新
+                            ↓
+                          完了報告
+```
+
+> **Phase A 完了時点で必ず停止します。** ユーザー明示了承前の merge / deploy / X 投稿 / queue published 化はすべて禁止です。
+
+### Phase A: 記事化フェーズ
+
+ユーザーが対象を指定したら Claude は次を自動実行する：
+
+1. **対象確認**：指定 URL / フォルダの内容確認、対象記事数の確定、既存記事・queue・PR との重複確認。判断に迷う場合は停止して報告。
+2. **記事化**：MDX 化（lead-first / slide-main / summary-box / check-box / info-box / table-card / article-slide-section / slide-reading-note / decision-guide-panel / visual-flow / 必要なら CharacterDialogue 1 回）。体験談風・断定表現はしない。
+3. **禁則チェック**：以下が **0 件**であること — `普通の人` / `普通の人向け` / `すまほん` / `smhn` / `元記事` / `ここから本文` / `初稿` / `最終稿`
+4. **画像処理**：サムネ・スライドを WebP 化（1 枚 200KB 前後、上限 500KB）。元 PNG / JPG は素材フォルダに残す。MDX 参照は WebP。旧 PNG 参照を残さない。
+5. **build**：`npm run build`。記事ページが `dist/` に出力、`/articles/` とカテゴリ一覧に掲載、サムネ・スライドが 200 で読める、PC 横スクロールなし、H1 重複なし。
+6. **PR 作成**：`preview/` 系ブランチで `gh pr create`。PR URL とローカル確認URL を提示。
+
+### Human Review Checkpoint（Phase A → Phase B の間）
+
+PR 作成後、**必ず停止する**。
+
+**この時点で OK：**
+- PR URL の提示
+- ローカル確認URL の提示
+- 記事タイトル / slug / カテゴリ / 役割の報告
+- サムネ・スライドの圧縮結果報告
+- build 結果報告
+- 禁則チェック結果報告
+- **X 投稿案の下書き作成のみ可（`drafts/social/{slug}.x.md` への保存）。投稿はしない。**
+
+**この時点で NG：**
+- ❌ PR merge
+- ❌ production / fallback deploy
+- ❌ strict verify による published 化
+- ❌ X 投稿
+- ❌ queue の published 化
+- ❌ 承認ボタンを押す（`/api/approve-preview`）
+
+**停止メッセージ例：**
+
+> 記事化と PR 作成まで完了しました。以下の URL で記事内容を確認してください。公開へ進める場合は「**記事OK、公開へ**」と指示してください。
+
+**ユーザー了承トリガー例：** 「記事OK」「公開へ」「承認」「merge して公開」「この内容で進めて」
+
+> 曖昧な返答（「あとで見る」「ちょっと待って」など）の場合は **勝手に公開しない**。判断に迷う場合は確認する。
+
+### Phase B: 公開フェーズ
+
+ユーザー明示了承後だけ実行：
+
+1. **PR merge**：`mergeable: MERGEABLE` / `mergeStateStatus: CLEAN` / `isDraft: false` を確認 → `gh pr merge <N> --merge --delete-branch=false`。main への直接 push 禁止。merge commit を記録。
+2. **main 最新化**：`git fetch origin main && git pull origin main`。merge commit が含まれていることを確認。
+3. **wrangler fallback deploy**：`npm run deploy:production:fallback -- --slug=<代表slug>`。複数記事の場合も 1 回でよい（main 全体が反映されるため代表 slug を渡す）。
+4. **strict verify**：対象記事すべてで `/api/verify-publication` 実行。`status: published` / `failedChecks: []` / 8 項目（`httpStatus` / `titleNotGeneric` / `slugInHtml` / `notHomepageFallback` / `hasArticleBody` / `hasThumbnailRef` / `noProhibitedCopy` / `indexListsArticle`）全 pass を確認。
+5. **queue 更新**：strict verify 成功後だけ `published` に更新。`productionUrl` / `publishedAt` / `prUrl` / `mergeCommit` / `deployResult` / `verifyResult` / `source: user_directed` / `triggeredBy: user` / 指定対象（URL or フォルダ）を記録。
+
+**失敗時：** published 扱いにしない。X 投稿しない。失敗 check と原因を報告して停止。
+
+### Phase C: X 投稿フェーズ
+
+Phase B 完了後だけ実行：
+
+**前提条件（**すべて満たすこと**）：**
+- ユーザーが記事内容を了承済み
+- PR merge 済み
+- production fallback deploy 成功
+- strict verify 8/8 pass
+- 本番URLが開ける
+- 投稿アカウントが **@suma_labo** であることを確認
+- **Chrome を使う**（Edge 禁止）
+
+**投稿前に必ず確認：**
+- URL を投稿画面に貼る → OGP カード表示 / サムネ表示 / タイトルが記事内容と合っている / サムネが古くない / 投稿文に URL 含む / 投稿文に禁則表現や誤字がない
+
+**投稿してはいけない条件：**
+- X カードが出ない / サムネが出ない / サムネが古い / タイトルが違う / strict verify 失敗 / 本番URLが開けない / 投稿アカウントが @suma_labo ではない / ユーザー了承前 / 記事確認前
+
+**投稿後：**
+- 投稿URL を取得
+- queue に `xPostUrl` / `xPostedAt` / `xPostText` を記録、status を `x_posted` に更新
+- 完了報告に投稿URL を含める
+
+**投稿文ルール：** 短め / URL を含める / ハッシュタグ 2〜3 個 / 「普通の人」表現禁止 / 煽らない / 記事内容に沿う
 
 ### 入口（user-directed mode）
 
@@ -29,24 +133,27 @@
 - 未指定記事の自動キュー投入
 - タスクスケジューラーで無人起動 → 勝手に処理開始
 - ユーザー未確認のまま新しいテーマを処理すること
+- **ユーザー記事確認前の merge / deploy / X 投稿**
 
 ### user-directed mode で **残したこと**
 
 - 素材ありフォルダの量産モード（複数本まとめてOK）
-- WebP 画像最適化
+- WebP 画像最適化（1 枚 200KB 前後 / 上限 500KB）
 - lead-first / slide-main 記事構造
-- 禁則チェック（普通の人 / すまほん / smhn / ここから本文 / 最終稿 / 初稿 / 元記事）
+- 禁則チェック
 - `npm run build`
 - PR 作成（`gh pr create`）
-- PR merge（**ユーザーの明示承認後**）
-- wrangler fallback deploy
-- strict verify（`/api/verify-publication`）
-- queue 状態更新（**手動指定対象に限る**）
-- X 投稿案の作成（**投稿はしない**）
+- **ユーザー明示了承後の** PR merge / wrangler fallback deploy / strict verify / queue 更新 / X 投稿
+- X 投稿案の下書き作成（`drafts/social/{slug}.x.md`）
 
 ## 結論
 
-**人間に求めるのは「処理対象の指定」と「最後の承認判断」。** ユーザーが「これを記事化する」と指定したものだけを処理し、それ以降の自動化作業（MDX 化〜deploy〜verify）は Claude Code 側で完結させます。
+**人間に求めるのは「対象の指定」と「記事確認後の明示了承」の 2 点だけ。**
+
+- 対象指定までは人間が行う（自動収集なし）
+- 記事化〜 PR 作成までは Claude が自動で進める
+- **記事化が終わったら必ず止まり、ユーザー確認を待つ**
+- 了承後だけ、merge → deploy → verify → queue 更新 → X 投稿までを一気に自動化する
 
 ## 人間（運営者）の役割
 
@@ -90,9 +197,15 @@
     - secret ミスマッチ → `/api/push/check-secret` で照合、ミスマッチなら通知をスキップして警告ログ
     - スクショ添付失敗 → クリップボード経路 → UWSC フォールバック → ヘッドレスレンダリング、の順で自動切替
     - ChatGPT 応答エラー → 同プロンプトで再送 2 回、3 回目は簡略化版で再送、それでもダメなら最終報告に「未生成」として記録
-15. **最終報告**: 完了サマリ（生成ファイル一覧、検証結果、PR URL、Preview URL、人間が承認時に見る観点）を 1 メッセージで提示
+15. **Phase A 最終報告**: 完了サマリ（生成ファイル一覧、検証結果、PR URL、Preview URL、人間が承認時に見る観点）を 1 メッセージで提示 → **ここで必ず停止する**（Human Review Checkpoint）
+16. **ユーザー明示了承を待つ**: 「記事OK / 公開へ / 承認」等のトリガーが来るまで Phase B / C に進まない
+17. **Phase B（公開）**: PR merge → main 同期 → wrangler fallback deploy → strict verify 8/8 → queue を `published` に更新
+18. **Phase C（X 投稿）**: 本番URL確認 → Chrome で X 投稿画面 → OGPカード/サムネ/アカウント (@suma_labo) を確認 → 投稿 → 投稿URL取得 → queue を `x_posted` に更新
+19. **Phase B / C 完了報告**: 本番URL / 投稿URL / queue 更新内容を 1 メッセージで提示
 
 ## 禁止事項（Claude Code 側）
+
+### 常時禁止
 
 - ❌ 人間に PR を作らせる（必ず `gh pr create` で自動作成）
 - ❌ 人間に Preview URL を探させる（必ず `gh pr view --json comments` でパース）
@@ -108,7 +221,20 @@
 - ❌ **ユーザー未指定の記事を自動巡回・自動収集・自動キュー投入する**（user-directed mode）
 - ❌ **`sumahon-watch.mjs` / `run-sumahon-queue.ps1` をユーザー指示なしで起動する**
 - ❌ **Windows タスクスケジューラーでの無人定期起動を有効化する**（再有効化したいときは必ず事前にユーザー確認）
-- ❌ **X への投稿実行**（投稿案の `drafts/social/` 保存だけ。POST は人間が行う）
+- ❌ **Cloudflare Deploy Hook を叩く**（`wrangler` fallback だけ使う）
+- ❌ **secret / token / Deploy Hook URL を表示する**（チャット・ログ・コミットメッセージ全部 NG）
+- ❌ **画像元ファイルを削除する**（素材は `_published_articles/` 配下に保管）
+- ❌ **`SUMALABO_ENABLE_SLIDE_PIPELINE` を勝手に ON にする**
+- ❌ **PR-C / PR-D に勝手に進む**（明示指示があったときだけ）
+
+### ユーザー記事確認・了承前は特に禁止
+
+- ❌ **PR merge**（`gh pr merge`）
+- ❌ **production deploy / fallback deploy**（`npm run deploy:production:fallback`）
+- ❌ **strict verify による queue published 化**
+- ❌ **X への投稿実行**（Chrome で X を開いて POST する操作）
+- ❌ **承認ボタンを押す**（`/api/approve-preview` / `/api/push/notify-review-ready` 自動発火）
+- ❌ **queue を `published` / `x_posted` に書き換える**
 
 ## 例外: 判断を仰ぐ最小ケース
 
@@ -123,33 +249,67 @@
 
 ## 最終報告の固定テンプレ
 
+### Phase A 完了報告（記事化 → PR 作成。**ここで必ず停止**）
+
 ```
-## 完了サマリ
+## Phase A 完了サマリ — 記事化と PR 作成まで
 
 ### 記事
 - slug:
 - タイトル:
-- 公開予定: status="review" → 承認後 published
+- カテゴリ / 役割:
+- queue status: review_waiting
 
 ### 検証
 - sourceCheck: ok / urlCount / sumahon非露出 / reportingNotice
 - articleQualityCheck: titleDuplicate / markdownResidue / character_visual_missing 等
-- npm run build: 30 pages OK
+- 禁則チェック: 0 hits（普通の人 / すまほん / smhn / ここから本文 / 最終稿 / 初稿 / 元記事）
+- npm run build: N pages OK
+- 画像: 元 XX.X MB → WebP X.X MB（22 枚など）
 
 ### 自動化結果
 - preview ブランチ: preview/{slug} (commit: xxxx)
 - PR: #NN (URL)
-- Preview URL: https://xxxx.sumalabo.pages.dev/articles/{slug}/
-- PWA 通知: 送信済み / skipped (理由)
-- visual-review: blocking N / warning N / deferred N (logs/visual-review/{slug}/ に保存、main 非追跡)
+- Cloudflare Preview URL: https://xxxx.sumalabo.pages.dev/articles/{slug}/（取れない場合はローカル確認URL）
+- visual-review: blocking N / warning N / deferred N
 
-### 人間に確認してほしい点（承認判断用）
+### ユーザーに確認してほしい点
 - [ ] 記事の核となる主張に違和感がないか
 - [ ] サムネに実在ロゴ・原画コピーが混入していないか
 - [ ] 参考URLが正しく到達するか（任意 1 件クリック）
 - [ ] スマホ表示で読みにくい箇所がないか
 
-問題なければ Preview の「この記事を承認して公開」ボタンを押してください。
+公開へ進める場合は「**記事OK、公開へ**」と指示してください。
+（merge / deploy / X投稿は了承後にだけ実行します。）
+```
+
+### Phase B / C 完了報告（公開 + X 投稿。ユーザー了承後）
+
+```
+## Phase B / C 完了サマリ — 本番反映と X 投稿
+
+### 記事
+- slug:
+- 本番URL: https://sumalabo.com/articles/{slug}/
+- queue status: x_posted
+
+### Phase B（公開）
+- PR #NN merge 済み（merge commit: xxxx）
+- main 同期 OK
+- wrangler fallback deploy: ok
+- strict verify: 8/8 pass（httpStatus / titleNotGeneric / slugInHtml / notHomepageFallback / hasArticleBody / hasThumbnailRef / noProhibitedCopy / indexListsArticle）
+
+### Phase C（X 投稿）
+- 投稿アカウント: @suma_labo
+- OGPカード: 表示 OK / サムネ: 表示 OK / タイトル一致 OK
+- 投稿URL: https://x.com/suma_labo/status/xxxxxxxx
+- 投稿時刻: yyyy-mm-ddTHH:MM:SS+09:00
+- 投稿文（先頭抜粋）: ...
+
+### queue 更新内容
+- status: x_posted
+- productionUrl / publishedAt / prUrl / mergeCommit / xPostUrl / xPostedAt / xPostText を記録
+- source: user_directed / triggeredBy: user / triggerInput: {URL or folder}
 ```
 
 ## 図解スライドを記事に入れる場合のルール（必須）
