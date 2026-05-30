@@ -56,7 +56,15 @@
 
 ### Phase A: 記事化フェーズ（本処理）
 
-入力チェック通過後、対象確定レポートを表示してそのまま Claude は次を自動実行する：
+入力チェック通過後、対象確定レポートを表示してそのまま Claude は次を自動実行する。
+
+> **画像生成必須時の事前チェック**：ユーザー指示で **スライド・サムネの新規生成が必須** の場合（指示文に「ChatGPT を使い画像生成」「スライド」「サムネ」等の記述あり、または素材フォルダに既存画像がない場合）、本処理の最初に **画像生成経路の事前チェック** を行う：
+>
+> - `mcp__claude-in-chrome__*` がロードされているか
+> - Chrome 拡張がペアリングされているか（**Edge ペアリングは経路なし扱い**）
+> - ChatGPT セッションが開ける状態か
+>
+> 経路が通らないと判定したら、**本文 MDX だけで PR を作成しない**。queue を `blocked_image_generation_unavailable` にして、原因 / 復旧手順 / 再開方法を報告して停止する。**ユーザーが明示的に「画像なしで進めて」と返答したときだけ画像なし PR を許可**。詳細: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) section 5-bis
 
 1. **対象確認**：指定 URL / フォルダの内容確認、対象記事数の確定、既存記事・queue・PR との重複確認。判断に迷う場合は停止して報告。
 2. **記事化**：MDX 化（lead-first / slide-main / summary-box / check-box / info-box / table-card / article-slide-section / slide-reading-note / decision-guide-panel / visual-flow / 必要なら CharacterDialogue 1 回）。体験談風・断定表現はしない。
@@ -241,6 +249,8 @@ Phase B 完了後だけ実行：
 - ❌ **画像元ファイルを削除する**（素材は `_published_articles/` 配下に保管）
 - ❌ **`SUMALABO_ENABLE_SLIDE_PIPELINE` を勝手に ON にする**
 - ❌ **PR-C / PR-D に勝手に進む**（明示指示があったときだけ）
+- ❌ **画像生成が必須な指示で、画像生成経路（Chrome MCP）が使えないのに本文だけで PR を作成する**（`blocked_image_generation_unavailable` で停止する）
+- ❌ **`frontmatter.thumbnail` 空・スライド 0 枚のまま通常 PR（Ready）を作成する**（ユーザーが「画像なしで進めて」と明示したときだけ許可）
 
 ### ユーザー記事確認・了承前は特に禁止
 

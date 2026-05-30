@@ -196,6 +196,63 @@ Claude 側の処理は 3-B と同じ。ただし「指定サイト由来の記�
 
 ---
 
+## 5-bis. 画像生成経路の必須条件（Phase A 本処理 *中*の停止条件）
+
+ユーザー指示で **スライド・サムネの新規生成が必須** の場合、画像生成経路は **Phase A の必須条件** として扱う。本文 MDX だけで PR を作成しない。
+
+### 画像生成必須かどうかの判定
+
+| 状況 | 画像生成必須？ |
+|---|---|
+| オーケストレーター指示文に「スライド」「サムネ」「ChatGPT を使い画像生成」等の記述あり | 必須 |
+| 素材フォルダ指定で **既存スライド/サムネが置かれている** | 不要（既存画像を WebP 化して使う） |
+| 素材フォルダ指定で **画像が置かれていない** | 必須 |
+| ユーザーが明示的に「画像なしで進めて」と返答済み | 不要 |
+| 上記いずれにも該当しない（既存記事補修など） | 不要 |
+
+### 画像生成経路が使えるかの事前チェック
+
+Phase A 本処理に入った直後、以下を確認する：
+
+1. **`mcp__claude-in-chrome__*` ツール群がロードされているか**
+   - 未ロード → `ToolSearch` で `claude-in-chrome` 検索 → ロード可なら続行
+   - 検索しても出ない → 経路なし
+2. **Chrome 拡張がペアリングされているか**
+   - `~/.claude.json` の `chromeExtension.pairedDeviceName` を確認（実体は読み取り不可でも、画像生成試行時にエラーになれば検知可能）
+   - ペアリングが **Edge / その他のブラウザ** になっている場合は経路なし扱い（CLAUDE.md ポリシーで Edge 禁止）
+3. **ChatGPT セッションが開ける状態にあるか**（Chrome MCP でナビゲーション可能か）
+
+### 画像生成不可と判定した場合の挙動
+
+**本文 MDX だけで PR を作成しない。** 次の挙動を取る：
+
+1. queue のエントリ status を `blocked_image_generation_unavailable` にする
+2. 報告に下記を含める：
+   - 何が必須なのに未実行か（スライド N 枚 / サムネ 1 枚）
+   - 経路不通の原因（Chrome MCP 未ロード / 拡張未接続 / Edge ペアリング 等）
+   - 復旧手順（後述）
+   - 再開時にすべきこと
+3. **下書きの本文だけは作って `drafts/generated/{slug}.md` に保存してよい**（後で活かすため）
+4. **PR は作らない**。すでに作ってしまっていた場合は Draft 化し、コメントで blocked と明示する
+5. ユーザーが **明示的に「画像なしで進めて」と返答** したときだけ、画像なし PR を許可（その場合も Checkpoint 報告で画像未生成を明示）
+
+### 復旧手順（Chrome MCP / ChatGPT 画像生成経路）
+
+| 症状 | 復旧手順 |
+|---|---|
+| `mcp__claude-in-chrome__*` が ToolSearch でも出ない | Claude Code 側で MCP サーバー登録が必要。`claude mcp add` 等で `claude-in-chrome` を追加するか、Claude Code を再起動して再ロード |
+| `~/.claude.json` の `chromeExtension.pairedDeviceName` が **Edge / 他ブラウザ** | Chrome を起動し、Claude in Chrome 拡張で再ペアリング（Edge ではない Chrome プロファイルから） |
+| Chrome 拡張は入っているが Claude Code から見えない | Claude Code を再起動し、Chrome 拡張のデバイスコードで再認証 |
+| ペアリング済みだが ChatGPT が開けない | Chrome プロファイルを ChatGPT ログイン済みのものに切り替え |
+
+復旧後、新しい Claude Code セッションで `mcp__claude-in-chrome__*` がロードされていることを確認してから Phase A を再開する。
+
+### 既存ブランチがある場合の再開
+
+すでに `preview/<slug>` ブランチで blocked 状態の PR が立っている場合は、**同じブランチに追加コミット** でスライド/サムネ・WebP・MDX 修正を載せ、Draft → Ready に戻して Human Review Checkpoint で停止する。新しい PR は作らない（無駄な分岐を避ける）。
+
+---
+
 ## 6. Phase A 本処理での記録
 
 対象確定レポート表示後（停止条件に該当しない場合）、Phase A 本処理開始時に queue に下記エントリを追加（status: `user_directed_queued` → `article_generated` → `review_waiting`）。
@@ -258,3 +315,4 @@ Phase A 本処理が完了したら、`CLAUDE.md` の **Phase A 完了報告テ�
 |---|---|
 | 2026-05-30 | 初版。オーケストレーター指示文の入力フロー・5 入力項目・AskUserQuestion テンプレ・対象確定レポート・安全停止 12 条件を定義。 |
 | 2026-05-30 (rev2) | Phase A 前の「進めて」二重確認を廃止。入力が明確なら対象確定レポート表示後そのまま自動で本処理へ進む方針に変更。停止ポイントは PR 作成後の Human Review Checkpoint に一本化。 |
+| 2026-05-30 (rev3) | section 5-bis を追加。画像生成必須時は本処理冒頭で Chrome MCP / ChatGPT 経路の事前チェックを義務化し、経路不通なら `blocked_image_generation_unavailable` で停止。本文 MDX だけで PR を作成しない（ユーザーが「画像なしで進めて」と明示した場合のみ例外）。Meta One 記事 PR #81 で本ルール未整備が顕在化したのを受けた追加。 |
