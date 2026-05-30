@@ -35,6 +35,8 @@
 //   - タイムアウト既定 10 秒
 //   - 本ヘルパーは副作用なし。例外を投げず、すべて戻り値で表現する。
 
+import { validateMainPreviewUrl } from "./preview-url-policy.mjs";
+
 const DEFAULT_TIMEOUT_MS = 10000;
 const FALLBACK_TITLE_PATTERNS = [
   /^すまラボ\s*$/,
@@ -67,6 +69,19 @@ export async function verifyPreviewUrl({ url, slug, titlePrefix = "", timeoutMs 
   }
   if (!slug || typeof slug !== "string") {
     return { ok: false, status: 0, reason: "missing_slug", evidence: {}, url };
+  }
+
+  // ローカル/非https URL は「メイン previewUrl」として失格。
+  // fetch する前に弾く（127.0.0.1 は到達できても PWA/スマホから開けないため）。
+  const policy = validateMainPreviewUrl(url);
+  if (!policy.ok) {
+    return {
+      ok: false,
+      status: 0,
+      reason: policy.isLocal ? "local_preview_url_rejected" : policy.reason,
+      evidence: { policyReason: policy.reason, isLocal: !!policy.isLocal },
+      url,
+    };
   }
 
   const controller = new AbortController();
