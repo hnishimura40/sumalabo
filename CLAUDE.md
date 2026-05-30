@@ -6,7 +6,7 @@
 
 **現在のモード： `user-directed mode` + `human review checkpoint` + `auto publish / X post flow`**
 
-> 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
+> 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと
 
@@ -39,9 +39,22 @@
 
 > **Phase A 完了時点で必ず停止します。** ユーザー明示了承前の merge / deploy / X 投稿 / queue published 化はすべて禁止です。
 
-### Phase A: 記事化フェーズ
+### Phase A 入口: 入力フロー（**本処理開始前**）
 
-ユーザーが対象を指定したら Claude は次を自動実行する：
+オーケストレーター指示文を受け取ったら、**Phase A 本処理に入る前に必ず入力チェック**を行う。詳細: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md)
+
+1. **必須入力確認**：対象種別（url / folder / theme / site+article）と対象内容が揃っているか確認
+   - 揃っていない / プレースホルダ（`{...}` のまま） → `AskUserQuestion` で不足を聞く
+2. **対象の実在・重複チェック**：URL の到達可否 / フォルダの実在 / 既存記事・PR・queue との重複
+   - 不一致あり → `AskUserQuestion` で判断を聞く（上書き / 別 slug / 中止）
+3. **対象確定レポート提示**：想定 slug / 想定スコープ / ChatGPT 呼び出し見積 / preview ブランチ予定名を出し、「進めて」「OK」の明示返答を待つ
+   - 曖昧返答（「あとで」「ちょっと待って」） → 確認を取り直す
+
+> **判断に迷ったら必ず停止して確認する。** 不明確な状態で ChatGPT 呼び出し・画像生成（コスト発生）を走らせない。
+
+### Phase A: 記事化フェーズ（本処理）
+
+対象確定レポートでユーザーが「進めて」と明示返答したら Claude は次を自動実行する：
 
 1. **対象確認**：指定 URL / フォルダの内容確認、対象記事数の確定、既存記事・queue・PR との重複確認。判断に迷う場合は停止して報告。
 2. **記事化**：MDX 化（lead-first / slide-main / summary-box / check-box / info-box / table-card / article-slide-section / slide-reading-note / decision-guide-panel / visual-flow / 必要なら CharacterDialogue 1 回）。体験談風・断定表現はしない。

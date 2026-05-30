@@ -8,6 +8,7 @@
 
 関連:
 
+- Phase A 入力フロー: [`docs/phase_a_input_flow.md`](phase_a_input_flow.md)
 - X 投稿フロー詳細: [`docs/x_post_workflow.md`](x_post_workflow.md)
 - queue 状態設計: [`docs/queue_states.md`](queue_states.md)
 
@@ -71,6 +72,13 @@
 > **複数本まとめて処理してよい場合**：ユーザーが「inbox を一気に処理」など明示したときだけ。URL 指定記事は原則 1 本ずつ。複数記事の Phase B は wrangler deploy 1 回でよい（main 全体が反映されるため）。
 
 ## 4. Phase A: 記事化フェーズの内訳
+
+> **本処理開始前の入力チェックが必須**。詳細: [`docs/phase_a_input_flow.md`](phase_a_input_flow.md)
+>
+> - 必須入力（対象種別 + 対象内容）が揃っていない → `AskUserQuestion` で不足を聞く
+> - 対象の実在・重複チェック → 不一致あれば確認
+> - 対象確定レポートをユーザーに提示し「進めて」「OK」を待つ
+> - 判断に迷ったら必ず停止。曖昧な状態で ChatGPT 呼び出し / 画像生成は走らせない
 
 1. **対象確認**
    - 指定 URL / フォルダの中身確認
@@ -304,6 +312,7 @@ Enable-ScheduledTask -TaskName 'Sumalabo Claude Pipeline Runner Test'
 ## 13. 関連ドキュメント
 
 - `CLAUDE.md` — 全体ポリシー
+- `docs/phase_a_input_flow.md` — Phase A 入力フロー（入口の安全停止条件）
 - `docs/x_post_workflow.md` — X 投稿の安全条件と手順
 - `docs/queue_states.md` — queue 状態の遷移
 - `docs/pwa_review_notification.md` — PWA 通知の仕組み
