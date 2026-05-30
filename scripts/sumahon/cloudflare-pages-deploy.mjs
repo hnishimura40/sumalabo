@@ -110,9 +110,24 @@ function pickPreviewUrlsFromWranglerOutput(raw) {
 function runWrangler(args, { timeoutMs, env } = {}) {
   return new Promise((resolve) => {
     const started = Date.now();
-    const child = spawn("npx.cmd", ["--yes", "wrangler", ...args], {
+    // Windows (Node 20.12+) は .cmd/.bat を shell:false で spawn すると EINVAL を投げる。
+    // そのため win32 では shell:true + 引数をクオートしたコマンド文字列で起動する。
+    const isWin = process.platform === "win32";
+    const fullArgs = ["--yes", "wrangler", ...args];
+    let cmd, spawnArgs, useShell;
+    if (isWin) {
+      const quote = (a) => (/[\s"]/.test(String(a)) ? `"${String(a).replace(/"/g, '\\"')}"` : String(a));
+      cmd = ["npx", ...fullArgs].map(quote).join(" ");
+      spawnArgs = [];
+      useShell = true;
+    } else {
+      cmd = "npx";
+      spawnArgs = fullArgs;
+      useShell = false;
+    }
+    const child = spawn(cmd, spawnArgs, {
       env: { ...process.env, ...env },
-      shell: false,
+      shell: useShell,
       windowsHide: true,
     });
     let stdout = "";
