@@ -142,6 +142,8 @@ Phase A 出口（finalize）通過後、**必ず停止する**。停止時には
 
 **失敗時：** published 扱いにしない。X 投稿しない。失敗 check と原因を報告して停止。
 
+**承認ボタン経由のとき（運用標準・改善メモ 2026-06）：** PWA の承認ボタンは `/api/approve-preview` で PR を自動 merge する。その際 Cloudflare Deploy Hook が不発になり、review item が `deployTriggered: false` / `needsWranglerFallback: true` / `publicationVerifyError: "deploy_hook_not_triggered"` になることがある（Meta One・Claude Opus 4.8 の 2 件で連続発生）。この場合は **停止してユーザーに聞き直さず、main HEAD から wrangler fallback deploy（`node scripts/automation/deploy-production-from-main.mjs --slug=<slug> --skip-git-sync`）へ自動で進む** のを標準運用とする。これは新規の本番デプロイではなく、ユーザーが承認済みの記事の公開を完了させる自動リカバリ。完了後に `/api/verify-publication` で `status: published` を確認する。Deploy Hook URL は表示しない。
+
 ### Phase C: X 投稿フェーズ
 
 Phase B 完了後だけ実行：
