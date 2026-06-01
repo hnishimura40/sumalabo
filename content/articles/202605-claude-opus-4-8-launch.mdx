@@ -1,0 +1,368 @@
+---
+title: "Claude Opus 4.8登場。Anthropicの新AIモデルで何が変わるのか"
+slug: "202605-claude-opus-4-8-launch"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Anthropic が新AIモデル Claude Opus 4.8 を発表。ただ賢くなった話ではなく、Dynamic workflows・Effort制御・adaptive thinking・途中system・honesty 強化など、AIにまとまった作業を任せやすくする方向の進化を、computer-use や価格据え置き（米ドル・日本は断定しない）、公式と報道の線引きとあわせて、ひまり・らぼまるがやさしく噛み砕いて解説します。"
+thumbnail: "/images/thumbnails/202605-claude-opus-4-8-launch.webp"
+thumbnailAlt: "「Claude Opus 4.8登場」をテーマに、“答えるAI”から“作業を進めるAI”への変化を、ひまり・らぼまるが整理するすまラボのサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude"
+  - "Claude Opus 4.8"
+  - "Anthropic"
+  - "AIエージェント"
+  - "Dynamic workflows"
+  - "GitHub Copilot"
+  - "すまラボ"
+related:
+  - "202605-ai-agent-tools-comparison-2026"
+  - "202605-github-copilot-shifts-to-token-based-pricing-june-1"
+  - "202605-google-antigravity-2-0-ai-agent-developer-tool"
+pubDate: "2026-06-01"
+updated: "2026-06-01"
+publishAt: "2026-06-01T11:00:00+09:00"
+---
+
+import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
+
+Anthropicが、新しいAIモデル「Claude Opus 4.8」を発表しました。今回のポイントは、ただ回答が賢くなったことではなく、AIにまとまった作業を任せやすくする方向へ進んだことです。
+
+## Claude Opus 4.8とは何か。Anthropicが発表した新しい上位モデル
+
+Claude Opus 4.8は、Anthropicの上位モデル「Opus」シリーズの新モデルです。
+
+Anthropicは2026年5月28日、Claude Opus 4.8を発表しました。位置づけとしては、前モデルであるClaude Opus 4.7の後継です。
+
+Claudeには、用途に応じて複数のモデルがあります。その中でOpusは、難しい推論、長い文章の処理、コーディング、業務支援などを担う高性能モデルとして扱われています。
+
+今回のOpus 4.8では、主に次のような分野が強化されています。
+
+- エージェント的なコーディング
+- 複数分野にまたがる推論
+- コンピュータ操作やブラウザ操作
+- 資料を読み、比べ、整理して判断材料にするような知的作業
+- 金融分析などの実務寄りタスク
+
+ここで大事なのは、単に「答えの文章がうまくなった」という話ではないことです。AIが画面を操作したり、長い作業を分解したり、複数の手順を進めたりする方向の強化が目立ちます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">何の発表なのかを 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-claude-opus-4-8-launch/slide01-what-is.webp" alt="「Claude Opus 4.8登場」を整理した図解。中央にOpus 4.7→Opus 4.8のモデルカード、発表日2026年5月28日、強化分野カード（コーディング・推論・コンピュータ操作・資料整理・実務）を並べ、ひまり・らぼまるが『また賢くなったAIって話？／今回は作業を進める力がポイント』と示すスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Claude Opus 4.8は何の発表なのか</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>発表</strong>：Anthropicが2026年5月28日に発表（Opus 4.7の後継）</li>
+      <li><strong>位置づけ</strong>：上位モデル「Opus」シリーズの新モデル</li>
+      <li><strong>強化分野</strong>：コーディング・推論・コンピュータ操作・資料整理・実務</li>
+      <li><strong>本質</strong>：文章だけでなく「作業を進める力」の強化</li>
+    </ul>
+  </div>
+</section>
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "新しいAIって聞くと、また“前より賢いです”って話かなと思っちゃう" },
+    { speaker: "らぼまる", text: "そこもあるけど、今回は“調べる・分ける・進める・確認する”まで扱いやすくなった点が大きいね。" },
+  ]}
+/>
+
+## 「賢くなった」だけでなく、AIに仕事を任せやすくする進化
+
+Opus 4.8の見どころは、AIを質問回答だけでなく、まとまった作業の補助役に近づけている点です。
+
+これまでのAIは、質問に答える、文章を作る、コードを書くといった使い方が中心でした。もちろんそれだけでも便利ですが、仕事や制作の現場では、単発の答えだけでは足りない場面があります。
+
+たとえば、次のような作業です。
+
+- 大きなコードベースの問題点を調べる
+- 複数の資料を読み比べて整理する
+- ブラウザ上で情報を確認しながら手順を進める
+- 作業途中で条件が変わったときに対応する
+- 最後に出力内容を見直して、間違いがないか確認する
+
+Opus 4.8は、こうした「まとまった作業」をAIが支援しやすくする方向で改良されています。
+
+言い換えると、今回の進化は「AIが1問1答で答える」だけではなく、「AIが作業の流れを扱いやすくする」方向です。AIがスマホやPC上の作業に入り込んでいく動きとして見ると、今回の発表の意味がつかみやすくなります。
+
+ただし、線引きも必要です。Anthropicが公式に発表しているのは、Opus 4.8の機能や評価結果です。一方で、「AIが実際の仕事をどこまで代替するか」「各サービスでどれほど便利になるか」は、実際の提供環境や使い方によって変わります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">進化の方向を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-claude-opus-4-8-launch/slide02-task-shift.webp" alt="“答えるAI”から“作業を進めるAI”への変化を左右で対比した図解。左=これまで（質問に答える・文章を作る・コードを書く）、右=Opus 4.8の方向（調べる・分ける・進める・確認する）を矢印でつなぎ、ひまり・らぼまるが『答えを返すだけじゃないの？／長い作業を段取りごと扱いやすくする進化だね』と示すスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：「答えるAI」から「作業を進めるAI」へ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>これまで</strong>：質問に答える／文章を作る／コードを書く</li>
+      <li><strong>Opus 4.8の方向</strong>：調べる／分ける／進める／確認する</li>
+      <li><strong>本質</strong>：単発の回答でなく、まとまった作業の支援へ</li>
+    </ul>
+  </div>
+</section>
+
+## Dynamic workflowsは、作業を小分けして数百の担当AIに並行させる仕組み
+
+Dynamic workflowsは、Opus 4.8を象徴する新機能のひとつです。
+
+Dynamic workflowsは、Claude Codeのresearch previewとして提供される機能です。Claudeが大きな作業を計画し、その作業を小さく分け、1つの作業セッションの中で「数百」の並列サブエージェントを協調させる仕組みと説明されています。
+
+ここでいうサブエージェントは、ざっくり言えば「担当を分けられた小さなAI作業員」のようなものです。たとえば、大きなコード修正を行うときに、1つのAIが最初から最後まで順番に調べるのではなく、次のように役割を分けるイメージです。
+
+- ある担当は、関連ファイルを探す
+- ある担当は、エラーの原因を調べる
+- ある担当は、過去の実装パターンを見る
+- ある担当は、修正後に問題がないか確認する
+- 最後に全体をまとめて検証する
+
+公式発表で確認できる表現は「数百」です。一部報道ではより大きな数が語られることがありますが、公式に確認できる範囲では「数百」と整理するのが安全です。
+
+Dynamic workflowsは、Claude Codeで使えるresearch previewとして、Enterprise、Team、Maxの対象ユーザー向けに提供されます。つまり、Claudeを使っている人が同じ条件ですぐ使える機能というより、まずは対象プランや開発環境に近い場所で試される機能です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">中核機能を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-claude-opus-4-8-launch/slide03-dynamic-workflows.webp" alt="Dynamic workflowsを整理した図解。大きなタスクを調べる・探す・比べる・修正する・確認するに小分けして数百の担当AIが並行し、最後に検証してまとめる流れを示し、Claude Codeのresearch preview・公式表現は『数百』（1,000とは書かない）と注記して、ひまり・らぼまるが示すスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Dynamic workflowsは作業を小分けして並行させる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>仕組み</strong>：大きな作業を小分け→数百の担当AIが並行→最後に検証</li>
+      <li><strong>提供</strong>：Claude Codeのresearch preview（Enterprise/Team/Max向け）</li>
+      <li><strong>注意</strong>：公式表現は「数百」。1,000とは断定しない</li>
+    </ul>
+  </div>
+</section>
+
+## Effort制御、adaptive thinking、途中systemで、AIの作業中の動きが細かくなった
+
+Opus 4.8では、AIがどれくらい深く考えるか、いつ考えるか、作業中に条件をどう足すかが扱いやすくなっています。
+
+まずEffort制御は、Claudeがどれくらい深く考えるかを選べる機能です。軽い確認なら低めのeffortで速く返す。難しい分析や複雑な作業なら高めのeffortでじっくり考える。そうした切り替えがしやすくなります。これは、人間で言えば「ざっと見て答える」のか、「時間をかけてしっかり検討する」のかを選ぶ感覚に近いです。
+
+次にadaptive thinkingです。これは、必要なときだけ推論を行う仕組みです。AIが毎回長く考えるのではなく、簡単な場面ではすばやく返し、複雑な場面では考えてから答える方向です。Opus 4.7と比べて、不要な思考トークンを減らすと説明されています。thinking tokenは、画面に出る回答文とは別に、AIが考えるために使う内部の処理量のようなものです。要するに「必要が薄い場面では、無駄に長く考えすぎないようにする」改良です。
+
+さらに、Messages APIでは会話の途中にsystem指示を追加できるようになりました。system指示とは、AIに対する基本ルールや前提条件のようなものです。これまでは、最初に大きな指示をまとめて渡す設計が中心でした。途中systemが使えると、作業の途中で「条件が変わった」「ここからは予算を変える」「この権限で進める」といった追加指示を差し込みやすくなります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">3つの調整機能を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-claude-opus-4-8-launch/slide04-effort-thinking-system.webp" alt="考える深さ・タイミング・条件を調整する3機能を整理した図解。Effort制御=軽い確認は速く/重い作業は深く、adaptive thinking=必要な時だけ考える、途中system=作業中に条件を足せる、を3カードで示し『長い作業のズレを減らしやすくする仕組み』と添えて、ひまり・らぼまるが示すスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：考える深さ・タイミング・条件を調整する</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Effort制御</strong>：軽い確認は速く／重い作業は深く</li>
+      <li><strong>adaptive thinking</strong>：必要な時だけ考える（無駄な思考を減らす）</li>
+      <li><strong>途中system</strong>：作業の途中で条件・ルールを足せる</li>
+      <li><strong>ねらい</strong>：長い作業のズレを減らしやすくする</li>
+    </ul>
+  </div>
+</section>
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "途中で条件を足せるって、チャットの返事が少し変わるだけじゃないの？" },
+    { speaker: "らぼまる", text: "短いやり取りならそう見えるね。でも長い作業では、途中でルールや条件を足せることが、作業のズレを減らす助けになるんだ。" },
+  ]}
+/>
+
+このあたりは開発者向けの話にも見えますが、AIが長い作業を担うようになるほど重要になります。短いチャットなら最初の指示で足りますが、長い作業では途中で条件が変わることがあるからです。
+
+## computer-use、coding、資料整理の強化は、AIエージェント化の流れを示している
+
+Opus 4.8の改善点は、ブラウザ操作、コーディング、資料整理のような実務的な作業に寄っています。
+
+Anthropicは、Opus 4.8について、エージェント的なコーディング、複数分野にまたがる推論、エージェント的なコンピュータ操作、資料整理や分析、金融分析などでの改善を挙げています。
+
+特に注目しやすいのが、computer-useやbrowser-agent系の強化です。これは、AIがただ文章で答えるのではなく、画面を見たり、Webページを操作したり、手順を進めたりする方向の能力です。たとえば、Webページを開いて、必要な項目を探し、次の画面に進むような作業です。人間がブラウザを見ながら行っている手順に、AIが近づいていくイメージです。
+
+Anthropic公式発表内では、テスターコメントとしてOnline-Mind2Webで84%という数字が紹介されています。これは、Web上の操作や判断を含むベンチマークのひとつで、Opus 4.7やGPT-5.5より前進したと説明されています。ただし、この数字だけでモデルの良し悪しを決められるわけではありません。ここで大事なのは、AIがブラウザやPC画面を操作しながら作業する方向で、精度を上げていると示されている点です。
+
+コーディング面でも、GitHub CopilotでClaude Opus 4.8が一般提供になったことは重要です。GitHub Copilotは、開発者がコードを書くときに使うAI支援機能です。GitHub側も、コード理解・生成、複雑な問題解決、大規模コードベースのナビゲーションに改善があると説明しています。
+
+この流れは、開発者だけの話に閉じません。AIがブラウザ操作、資料整理、アプリ上の手順支援に入り込む流れを見るうえでも、押さえておきたい変化です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">強化された領域を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-claude-opus-4-8-launch/slide05-computer-use-coding.webp" alt="ブラウザ操作・コード・資料整理の強化を整理した図解。computer-use=Web画面を見て手順を進める、coding=コード理解・生成・修正を支援、資料整理=読む・比べる・まとめるの3カードと、補助数字『Online-Mind2Web 84%（Anthropic公式発表内のテスターコメント）』を添え、ひまり・らぼまるが示すスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：ブラウザ操作・コード・資料整理が強化</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>computer-use</strong>：Web画面を見て手順を進める力が向上</li>
+      <li><strong>coding</strong>：GitHub CopilotでOpus 4.8が一般提供</li>
+      <li><strong>資料整理</strong>：読む・比べる・まとめる作業の支援</li>
+      <li><strong>補助数字</strong>：Online-Mind2Web 84%（公式発表内のテスターコメント。数字だけで優劣は決めない）</li>
+    </ul>
+  </div>
+</section>
+
+## 正直さと不確実性の申告も強化。ただし間違いがなくなるわけではない
+
+Opus 4.8では、AIが根拠の薄いことを強く言い切りにくくする方向の改善も説明されています。
+
+Anthropicは、Opus 4.8の大きな改善点として「honesty」を挙げています。これは、AIが自分の作業の不確実性を示したり、根拠が弱い主張をしにくくしたりする方向の改善です。
+
+AIを使っていて怖いのは、間違っているのに自信があるように見える答えです。いわゆるハルシネーションと呼ばれる問題です。ただし、ここで注意したいのは、Opus 4.8でハルシネーションがなくなったわけではないことです。公式発表で言われているのは、前より慎重になりやすい、根拠が弱いときに不確実性を示しやすい、という方向の改善です。
+
+また、公式発表では、自分が書いたコードの欠陥を見逃す確率が前モデルの約4分の1になったとも説明されています。これはコーディング用途では注目しやすい改善です。AIがコードを書くだけでなく、自分の出力を点検する力も上がっていると見られるためです。
+
+ただし、ここでも「AIの出力を確認しなくていい」とは言えません。コードでも文章でも、最終確認は必要です。Opus 4.8の改善は、確認作業が不要になる話ではなく、AIが自分の不確実さを示しやすくなる話として受け止めるのが安全です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">honesty の改善を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-claude-opus-4-8-launch/slide06-honesty.webp" alt="“自信満々の間違い”を減らす方向を整理した図解。左=根拠が薄いのに言い切る、右=不確実性を示しやすい・根拠の弱い主張を抑える、を対比し、『コード欠陥の見逃し：前モデルの約1/4』を強調しつつ『ハルシネーションがなくなったわけではない』と注記して、ひまり・らぼまるが示すスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：「自信満々の間違い」を減らす方向へ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>改善方向</strong>：不確実性を示しやすい／根拠の弱い主張を抑える</li>
+      <li><strong>数字</strong>：自分のコード欠陥の見逃しが前モデルの約1/4</li>
+      <li><strong>注意</strong>：ハルシネーションがなくなったわけではない。最終確認は必要</li>
+    </ul>
+  </div>
+</section>
+
+## 価格は据え置き。提供範囲は複数あり、Dynamic workflowsは対象プランに注意
+
+Opus 4.8は、Opus 4.7から価格据え置きで提供されます。
+
+公式発表では、通常の価格は次の通りです。
+
+<div class="table-card">
+<table>
+<thead>
+<tr>
+<th>区分</th>
+<th>入力</th>
+<th>出力</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>通常</td>
+<td>100万トークンあたり5ドル</td>
+<td>100万トークンあたり25ドル</td>
+</tr>
+<tr>
+<td>fast mode</td>
+<td>100万トークンあたり10ドル</td>
+<td>100万トークンあたり50ドル</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+価格は米ドル表記です。日本円換算は記載していません。fast modeは、従来Opusのfast modeと比べて3分の1の価格と説明されています。ただし、利用時の体感速度やコスト感は、使う環境や作業内容によって変わります。
+
+APIで使う場合のモデルID、つまり開発者が指定するモデル名は claude-opus-4-8 です。
+
+APIやクラウド基盤での提供条件として、Claude API、Amazon Bedrock、Vertex AIでは1Mトークンのコンテキストが既定とされ、Microsoft Foundryでは200kと説明されています。1Mトークンのコンテキストは、長い資料や長い会話を扱うための枠が大きいという意味です。最大出力は128kトークンです。ツールやプラットフォーム機能はOpus 4.7と同等とされています。
+
+提供範囲は、モデル本体と一部機能を分けて見る必要があります。モデル本体は、claude.ai、API、Claude Code、GitHub Copilotなど複数の場所で関係します。一方で、Dynamic workflowsのような一部機能は、対象プランや環境が限られます。
+
+- **claude.ai**：Effort制御が関係します。ただし、各機能の表示や利用条件はプランによって変わる可能性があります。
+- **API**：claude-opus-4-8 として利用できます。長い文脈や途中systemなど、開発者向けの機能が関係します。
+- **Claude Code**：Dynamic workflowsのresearch previewが関係します。対象はEnterprise、Team、Maxのユーザー向けです。
+- **GitHub Copilot**：Claude Opus 4.8が一般提供されています。
+
+ここで注意したいのは、Opus 4.8のモデル本体が提供されることと、Dynamic workflowsのような新機能が同じ条件で使えることは別だという点です。Claudeを使っていれば、すべての機能が同じ条件で使えるという話ではありません。
+
+日本での提供可否や日本語対応の細かな条件についても、今回確認できる公式情報だけで断定するのは避けます。モデルが提供されるとしても、各サービス画面、契約プラン、地域ごとの表示や利用条件は変わることがあります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">価格と提供範囲を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-claude-opus-4-8-launch/slide07-price-availability.webp" alt="価格は据え置きだが機能ごとに対象が違うことを整理した図解。価格表（通常 入力5ドル/出力25ドル、fast mode 入力10ドル/出力50ドル・いずれも100万トークンあたり・米ドルのみ）、提供範囲（claude.ai/API/Claude Code/GitHub Copilot）、注意（Dynamic workflowsはEnterprise/Team/Max向けresearch preview・モデルID claude-opus-4-8・日本の細かな条件は断定しない）を、ひまり・らぼまるが示すスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：価格は据え置き。ただし機能ごとに対象は違う</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>通常</strong>：入力5ドル／出力25ドル（100万トークンあたり・米ドル）</li>
+      <li><strong>fast mode</strong>：入力10ドル／出力50ドル（100万トークンあたり・米ドル）</li>
+      <li><strong>提供範囲</strong>：claude.ai／API／Claude Code／GitHub Copilot</li>
+      <li><strong>注意</strong>：Dynamic workflowsは対象プラン限定。日本の細かな条件は断定しない</li>
+    </ul>
+  </div>
+</section>
+
+## この先にはClaude Mythos Previewも控えている
+
+Anthropicは、Opus 4.8の先に、さらに高い知能を持つモデル群の提供も予告しています。
+
+公式発表では、Project Glasswingの一部として「Claude Mythos Preview」に触れています。これは、さらに高い知能を持つモデルとして説明されており、サイバーセキュリティの安全対策が完了すれば、数週間内の提供を目指すという位置づけです。
+
+気になる発表ではありますが、現時点では予告段階です。具体的な提供日や対象範囲が固まっているわけではないため、Opus 4.8の機能とは分けて整理する必要があります。Opus 4.8の発表は、Anthropicが次の段階として、より強いAIモデルと安全対策を並行して進めている流れの中にある、と見るのが自然です。
+
+## まとめ。Opus 4.8は、AIを「答える道具」から「作業を進める補助役」に近づける発表
+
+Claude Opus 4.8は、単なる性能アップの発表ではありません。
+
+もちろん、コーディングや推論、コンピュータ操作、資料整理の改善はあります。ただ、それ以上に大きいのは、AIが長い作業を分解し、並行して進め、途中で条件を受け取り、必要なときだけ考え、最後に検証する方向へ進んでいることです。
+
+Dynamic workflowsは、作業を小分けして数百のサブエージェントに並行させる仕組みです。Effort制御やadaptive thinkingは、考える深さやタイミングを調整する仕組みです。途中systemは、作業の途中で条件を足せる仕組みです。これらは別々の機能に見えますが、向いている方向は近いです。AIを、短い質問に答える存在から、まとまった作業を支援する存在に近づける。これが、Claude Opus 4.8のニュースを読むうえでの大きなポイントです。
+
+一方で、線引きも必要です。公式に確認できるのは、価格、提供範囲、機能、評価結果です。報道によるベンチマークや競争環境の見方は、公式発表とは分けて読む必要があります。日本での細かな提供条件も、断定せず確認が必要です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">この記事の要点を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202605-claude-opus-4-8-launch/slide08-summary.webp" alt="「答えるAIから作業を進める補助役へ」とまとめた図解。分ける（Dynamic workflows）・考える深さを変える（Effort制御/adaptive thinking）・途中で条件を足す（途中system）・確認する（正直さ/不確実性の申告）の4カードと、公式（価格・機能・評価）/報道（競争環境・一部ベンチ）/未確定（日本の細部・Mythos詳細）の線引きカードを、ひまり・らぼまるが示すスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：答えるAIから、作業を進める補助役へ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>分ける</strong>：Dynamic workflows</li>
+      <li><strong>考える深さを変える</strong>：Effort制御／adaptive thinking</li>
+      <li><strong>途中で条件を足す</strong>：途中system</li>
+      <li><strong>確認する</strong>：正直さ・不確実性の申告</li>
+      <li><strong>線引き</strong>：公式＝価格・機能・評価／報道＝競争環境・一部ベンチ／未確定＝日本の細部・Mythos詳細</li>
+    </ul>
+  </div>
+</section>
+
+<div class="info-box">
+<p class="box-label">この記事の注意点</p>
+
+価格は公式の米ドル表記をもとに整理しており、日本円換算はしていません。Dynamic workflowsのサブエージェント数は、公式表現に合わせて「数百」とし、1,000とは断定していません。Online-Mind2Webの84%は、Anthropic公式発表内で紹介されているテスターコメントとして扱っています。「ハルシネーションがなくなった」とは扱わず、不確実性の申告や根拠の薄い主張を抑える方向の改善として整理しています。なお、競争環境や一部ベンチマーク、リリース背景などの報道由来の情報は公式発表ではないため、今後変わる可能性があります。日本での提供条件、日本語対応の細部、各プランでの表示や利用可否は、公式の追加案内や実際の画面確認が必要です。
+
+</div>
+
+## あわせて読みたい
+
+<div class="article-cta">
+  <p>AIエージェント型ツールや開発者向けAIの流れとあわせて読むと、Opus 4.8の位置づけがつかみやすくなります。</p>
+  <a href="/articles/202605-ai-agent-tools-comparison-2026/">AIエージェント型ツール比較を読む</a>
+  <a href="/articles/202605-github-copilot-shifts-to-token-based-pricing-june-1/">GitHub Copilotのトークン課金の話を読む</a>
+  <a href="/articles/202605-google-antigravity-2-0-ai-agent-developer-tool/">Google Antigravity 2.0（AIエージェント開発ツール）を読む</a>
+  <a href="/categories/news/">ニュースをかみくだくカテゴリを見る</a>
+</div>
+
+## 参考情報
+
+* Anthropic「[Introducing Claude Opus 4.8](https://www.anthropic.com/news/claude-opus-4-8)」 — リリース日・価格・新機能（Dynamic workflows / Effort制御 / honesty）・アライメント評価・Claude Mythos Previewの予告
+* Claude API Docs「[What's new in Claude Opus 4.8](https://platform.claude.com/docs/en/about-claude/models/whats-new-claude-4-8)」 — モデルID claude-opus-4-8・1Mコンテキスト・128k出力・途中system・adaptive thinking・API上の改善点
+* TechCrunch「Anthropic releases Opus 4.8 with new dynamic workflow tool」 — Dynamic workflowsや競争環境に関する報道（公式見解ではない論評を含む）
+* GitHub Changelog「Claude Opus 4.8 is generally available for GitHub Copilot」 — GitHub CopilotでのOpus 4.8一般提供
