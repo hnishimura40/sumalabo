@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "note": "すまラボ禁則語リスト。severity: violation=exit 1 / warning=報告のみ。kind: literal|regex。appliesTo: mdx（公開MDX本文）/ draft（drafts/refinement の final_article.md・slide_plan.md）。検査を弱める変更（削除・warning化）は理由の報告が必要。",
+  "patterns": [
+    { "pattern": "普通の人", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "読者ラベリング禁止（普通の人向け を含む）" },
+    { "pattern": "万人向け", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "読者ラベリング禁止" },
+    { "pattern": "みんな", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "主語の過度な一般化" },
+    { "pattern": "全員", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "主語の過度な一般化" },
+    { "pattern": "誰でも", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "「誰でも使える」系の断定禁止" },
+    { "pattern": "すまほん", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "内部参考元の公開露出禁止" },
+    { "pattern": "smhn", "severity": "violation", "kind": "regex", "flags": "i", "appliesTo": ["mdx", "draft"], "note": "内部参考元の公開露出禁止（smhn.info 等）" },
+    { "pattern": "元記事", "severity": "violation", "kind": "literal", "appliesTo": ["mdx"], "note": "内部参照のメタ表現（draftsの調査メモでは許容）" },
+    { "pattern": "ここから本文", "severity": "violation", "kind": "literal", "appliesTo": ["mdx"], "note": "メタ表現の残骸" },
+    { "pattern": "初稿", "severity": "violation", "kind": "literal", "appliesTo": ["mdx"], "note": "制作工程のメタ表現（draftsでは工程用語として許容）" },
+    { "pattern": "最終稿", "severity": "violation", "kind": "literal", "appliesTo": ["mdx"], "note": "制作工程のメタ表現（draftsでは工程用語として許容）" },
+    { "pattern": "最強", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "煽り見出し禁止（公式引用が必要な場合はリスト側を調整）" },
+    { "pattern": "圧倒的", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "煽り表現" },
+    { "pattern": "完全に別物", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "煽り表現" },
+    { "pattern": "仕事が奪われる", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "恐怖訴求禁止" },
+    { "pattern": "人間はいらない", "severity": "violation", "kind": "literal", "appliesTo": ["mdx", "draft"], "note": "恐怖訴求禁止" },
+    { "pattern": "絶対に?(買い|使うべき|お得)", "severity": "warning", "kind": "regex", "flags": "", "appliesTo": ["mdx", "draft"], "note": "断定的な推奨（文脈確認）" }
+  ]
+}
