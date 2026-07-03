@@ -308,6 +308,12 @@ Phase B 完了後だけ実行：
 - 禁則語リストは `data/qa/forbidden-words.json`。誤検知はリスト側を直す（記事を歪めない）。パターン削除・warning 化など検査を弱める変更は理由を報告してから行う
 - **目視で確認するのは機械判定できない項目に限る**: facts / claims / uncertain の線引きの妥当性、記事の主軸（やさしく噛み砕く）の確認、サムネの実在ロゴ・煽り絵柄の有無
 
+## 成果物保全（P7・2026-07 事故対応）
+
+- **worktree は OS Temp 配下（`C:\Users\...\AppData\Local\Temp` 等）に作らない。** 恒久パス（例: `D:\work\sumalabo-worktree`）を使う。OS の Temp 自動クリーンアップで working tree が破壊される
+- **`drafts/refinement/{slug}/` は記事の PR に含めてコミットする（Phase A 完了の条件）。** 初稿→レビュー→修正版→最終稿の流れを後から追えるようにする。`sumalabo:gate --stage full` と `sumalabo:finalize` が未追跡/未コミットの drafts を検出して停止する
+- **教訓（2026-07）**: Temp 配下の worktree が OS クリーンアップで破損し、未コミットだった drafts/refinement 3記事分（Meta One / Opus 4.8 / Fable 5）が消失した。文書が要求する保存を仕組みで強制していなかったことが原因
+
 ## 例外: 判断を仰ぐ最小ケース
 
 以下のいずれかに該当する場合のみ、人間に **1 度だけ** 短く相談する（実行前に必ず提示）:
