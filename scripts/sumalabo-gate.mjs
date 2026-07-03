@@ -149,6 +149,9 @@ function loadForbiddenWords() {
     kind: p.kind === "regex" ? "regex" : "literal",
     flags: p.flags || "",
     appliesTo: Array.isArray(p.appliesTo) ? p.appliesTo : ["mdx", "draft"],
+    // 誤検知対策: この正規表現に一致する行は検査対象外にする
+    //（例: slide_plan の「『最強』などの煽り文句は使わない」という禁止指示文）
+    excludeLineRegex: typeof p.excludeLineRegex === "string" ? p.excludeLineRegex : null,
     note: p.note || "",
   }));
 }
@@ -166,7 +169,12 @@ function checkForbiddenWords(text, fileLabel, scope, patterns) {
       report("violation", "config", CONFIG.forbiddenWordsPath, `パターン不正 "${p.pattern}": ${e.message}`);
       continue;
     }
+    let excludeRe = null;
+    if (p.excludeLineRegex) {
+      try { excludeRe = new RegExp(p.excludeLineRegex); } catch { excludeRe = null; }
+    }
     lines.forEach((line, idx) => {
+      if (excludeRe && excludeRe.test(line)) return;
       if (re.test(line)) {
         report(p.severity, "forbidden-word", fileLabel,
           `L${idx + 1}: 「${p.pattern}」${p.note ? `（${p.note}）` : ""} → ${line.trim().slice(0, 60)}`);
