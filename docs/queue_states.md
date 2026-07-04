@@ -24,7 +24,7 @@
 | `review_waiting` | スライド・サムネ含めて PR 作成完了。ユーザー記事確認待ち（Checkpoint） | `gh pr create` 成功 |
 | `user_approved_for_publish` | ユーザー了承済み。Phase B 開始可 | ユーザーが「記事OK」「公開へ」等を明示 |
 | `merged` | PR merge 済み | `gh pr merge` 成功 |
-| `deployed` | wrangler fallback deploy 成功 | `deploy-production-from-main.mjs` の `wrangler.status: ok` |
+| `deployed` | wrangler 本番 deploy（正規手順）成功 | `deploy-production-from-main.mjs` の `wrangler.status: ok` |
 | `published` | strict verify 8/8 pass | `/api/verify-publication` で `failedChecks: []` |
 | `x_posted` | X 投稿成功 | Chrome で投稿 → 投稿URL 取得 |
 | `failed` | どこかで失敗 | 任意のフェーズで失敗 → `errorReason` を記録 |

@@ -40,7 +40,7 @@
    ユーザーが記事内容を確認し「記事OK / 公開へ / 承認」と明示するまで待つ。
                             ↓
 [Phase B — 公開]
-  PR merge → main 同期 → wrangler fallback deploy →
+  PR merge → main 同期 → wrangler 本番 deploy（正規手順）→
   strict verify 8/8 pass → queue を published に更新
                             ↓
 [Phase C — X 投稿]
@@ -66,7 +66,7 @@
 3. **Phase A**: Claude が自律実行（素材 inspect → WebP 化 → MDX 作成 → build → PR 作成）
 4. **Checkpoint**: Claude が PR URL / Preview URL / 検証結果を提示して停止
 5. ユーザーが Preview を確認し、「**記事OK、公開へ**」など明示返答
-6. **Phase B**: Claude が PR merge → wrangler fallback deploy → strict verify → queue 更新
+6. **Phase B**: Claude が PR merge → wrangler 本番 deploy（正規手順）→ strict verify → queue 更新
 7. **Phase C**: Claude が Chrome で X 投稿画面を開き、OGPカード確認 → 投稿 → 投稿URL取得
 8. **完了報告**: 本番URL / 投稿URL / queue 状態を 1 メッセージで提示
 
@@ -125,7 +125,7 @@
 
 7. **Phase A 出口（共通化・必須）= `npm run sumalabo:finalize`**
    - どの作り方でも Phase A 完了時はこの 1 本を通る（`scripts/run/phase-a-finalize.mjs`）
-   - 内部処理（順番固定）: build → **Cloudflare Pages preview deploy（main 拒否）** → preview URL 解決 → **preview URL 検証（200 / 実記事 / fallback でない / ローカルURLでない）** → review item 登録 + プレビュー確認待ち通知 → queue 更新（`review_waiting`）
+   - 内部処理（順番固定）: build → **Cloudflare Pages preview deploy（main 拒否）** → preview URL 解決 → **preview URL 検証（200 / 実記事 / homepage 誤配信でない / ローカルURLでない）** → review item 登録 + プレビュー確認待ち通知 → queue 更新（`review_waiting`）
    - **ローカルURL（127.0.0.1 / localhost / file:// / 非https）は通知しない。** `local_preview_url_rejected` / `failed_preview_url_invalid` で停止（`scripts/sumahon/preview-url-policy.mjs` が verify と notify の二層でガード）
    - Cloudflare Preview が作れない場合は **`preview_unavailable` で停止**。ローカルURLを「メイン確認URL」にしてはいけない（PWA/スマホから開けないため）
 
@@ -150,7 +150,7 @@ Phase A 完了時点で **必ず停止する**。
 
 - ❌ ローカルURL（127.0.0.1 等）を review item のメイン previewUrl にする / それで通知する
 - ❌ PR merge
-- ❌ production / fallback deploy
+- ❌ production deploy（wrangler 本番 deploy を含む）
 - ❌ strict verify による queue published 化
 - ❌ X 投稿
 - ❌ queue を `published` / `x_posted` に書き換え
@@ -180,11 +180,10 @@ Phase A 完了時点で **必ず停止する**。
    - `git fetch origin main && git pull origin main`
    - merge commit が含まれていることを確認
 
-3. **wrangler fallback deploy**
-   - `npm run deploy:production:fallback -- --slug=<代表slug>`
-   - Cloudflare Git 連携は不安定なので原則 wrangler を使う
+3. **wrangler 本番 deploy（正規手順）**
+   - `npm run deploy:production -- --slug=<代表slug>`
+   - 本番反映はこの wrangler Direct Upload が唯一の経路（P1 で正規化。Git 連携 auto-deploy / Deploy Hook は clone 失敗が常態化していたため廃止）
    - 複数記事の場合も 1 回でよい（main 全体が反映されるため代表 slug を渡す）
-   - **Cloudflare Deploy Hook は叩かない**
 
 4. **strict verify**（対象記事すべて）
    - `/api/verify-publication` で 8 項目チェック
@@ -225,7 +224,7 @@ Phase A 完了時点で **必ず停止する**。
 | `review_waiting` | PR 作成完了。ユーザー記事確認待ち（Checkpoint） |
 | `user_approved_for_publish` | ユーザー了承済み。Phase B 開始可 |
 | `merged` | PR merge 済み |
-| `deployed` | wrangler fallback deploy 成功 |
+| `deployed` | wrangler 本番 deploy 成功 |
 | `published` | strict verify 8/8 pass |
 | `x_posted` | X 投稿成功 |
 | `failed` | どこかで失敗（`errorReason` を記録） |
@@ -302,8 +301,8 @@ Enable-ScheduledTask -TaskName 'Sumalabo Claude Pipeline Runner Test'
 | production deploy | ユーザー明示了承後にだけ実行 |
 | X 投稿 | ユーザー明示了承 + Phase B 成功後にだけ実行 |
 | 承認ボタン | Claude は押さない（`/api/approve-preview` は人間が叩く） |
-| Cloudflare Deploy Hook | Claude は叩かない（wrangler fallback だけ使う） |
-| secret / token / Deploy Hook URL | 表示しない（チャットにもログにもコミットメッセージにも書かない） |
+| Cloudflare Deploy Hook / Git 連携 auto-deploy | 廃止済み（P1）。本番反映は wrangler 正規手順だけ使う |
+| secret / token 類 | 表示しない（チャットにもログにもコミットメッセージにも書かない） |
 | main ブランチ | 直接 push 禁止。必ず PR 経由 |
 | PR merge | ユーザー明示承認後にだけ `gh pr merge` を実行 |
 | 自動巡回 | `sumahon-watch.mjs` 等は **ユーザーが手動でコマンドを叩いた場合だけ** 起動 |

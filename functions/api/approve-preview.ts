@@ -34,10 +34,6 @@ interface Env {
   APPROVE_ALLOWED_BRANCH_PREFIXES?: string;
   APPROVE_ALLOWED_BRANCH_PREFIX?: string;
   SUMALABO_REVIEW_KV?: KVNamespace;
-  // 承認 → 本番 deploy を Cloudflare Pages Deploy Hook で発火するための URL。
-  // 値は dashboard 側で secret として設定する。コード・ログには絶対に出さない。
-  // 未設定の場合はフロントに deployTriggered=false を返し、手動 deploy が必要だと示す。
-  CF_PAGES_DEPLOY_HOOK_URL?: string;
 }
 
 interface ReviewItemRecord {
@@ -54,25 +50,25 @@ interface ReviewItemRecord {
   // 任意の追記項目
   approvedAt?: string;
   approvedByMergeCommit?: string;
-  deployTriggeredAt?: string;
-  // deploy hook を実際に発火できたかの真偽値。
-  // false の場合は wrangler fallback が必要。
-  deployTriggered?: boolean;
   publishedAt?: string;
   productionUrl?: string;
   productionDeployId?: string;
   productionCommit?: string;
   publicationVerifyError?: string;
-  // verify endpoint が timeout / deploy hook 失敗を判定したときに true 化する。
-  // 値そのものに secret は含まない (CLI コマンド hint のみ別フィールドに保持)。
+  // 本番反映コマンドの案内 (secret を含まないテンプレ文字列)。
+  productionDeployCommandHint?: string;
+  // --- 旧 Deploy Hook 時代のレガシーフィールド (P1 で廃止。読み捨て用に型のみ残す) ---
+  deployTriggeredAt?: string;
+  deployTriggered?: boolean;
   needsWranglerFallback?: boolean;
   fallbackCommandHint?: string;
 }
 
-// 承認後、wrangler fallback を案内する CLI hint。
-// secret や Deploy Hook URL を含まないことを保証。
-const FALLBACK_COMMAND_HINT =
-  "node scripts/automation/deploy-production-from-main.mjs --slug=<slug>";
+// 承認後の本番反映は wrangler(Direct Upload) が正規手順 (P1 で一本化)。
+// Git 連携 auto-deploy と Deploy Hook は使わない (GitHub App の clone 失敗が常態化していたため廃止)。
+// secret や URL を含まないことを保証。
+const PRODUCTION_DEPLOY_COMMAND_HINT =
+  "npm run deploy:production -- --slug=<slug>";
 
 type ReviewItemUpdate =
   | { updated: true; slug: string; previousStatus?: string }
@@ -85,7 +81,6 @@ async function markReviewItemApprovedByBranch(
   branch: string,
   prUrl: string,
   mergeCommitSha: string | undefined,
-  deployTriggered: boolean,
 ): Promise<ReviewItemUpdate & { slug?: string }> {
   try {
     const indexRaw = await kv.get("review:index", "text");
@@ -110,23 +105,21 @@ async function markReviewItemApprovedByBranch(
       if (item && item.branch === branch) {
         const previousStatus = item.status;
         const now = new Date().toISOString();
-        // deploy hook が発火できなかった場合は status を即座に
-        // approved_deploy_pending にする (wrangler fallback 必須シグナル)。
-        const nextStatus = deployTriggered ? "approved" : "approved_deploy_pending";
+        // 承認 = merge 完了。本番反映は wrangler 正規手順 (Phase B) で行うため、
+        // status は "approved" に統一 (approved_deploy_pending は P1 で廃止)。
         const updated: ReviewItemRecord = {
           ...item,
-          status: nextStatus,
+          status: "approved",
           prUrl: item.prUrl && item.prUrl.length > 0 ? item.prUrl : prUrl,
           approvedAt: now,
           approvedByMergeCommit: mergeCommitSha,
-          // deploy hook を発火したら時刻を記録。後段の verify-publication が
-          // この値を参照して deploy 完了タイムアウトを判定できる。
-          deployTriggeredAt: deployTriggered ? now : item.deployTriggeredAt,
-          deployTriggered: !!deployTriggered,
-          needsWranglerFallback: deployTriggered ? item.needsWranglerFallback : true,
-          fallbackCommandHint: deployTriggered ? item.fallbackCommandHint : FALLBACK_COMMAND_HINT,
-          publicationVerifyError: deployTriggered ? item.publicationVerifyError : "deploy_hook_not_triggered",
+          productionDeployCommandHint: PRODUCTION_DEPLOY_COMMAND_HINT,
           updatedAt: now,
+          // 旧 Deploy Hook 時代のレガシーフィールドは書き込み時に除去する
+          deployTriggeredAt: undefined,
+          deployTriggered: undefined,
+          needsWranglerFallback: undefined,
+          fallbackCommandHint: undefined,
         };
         await kv.put(`review:item:${s}`, JSON.stringify(updated));
         return { updated: true, slug: s, previousStatus };
@@ -154,30 +147,6 @@ function inferSlugFromBranch(branch: string): string | null {
   // 末尾の "-YYYYMMDDhhmmss" / "-YYYYMMDDhhmm" を取り除く
   const withoutStamp = stripped.replace(/-\d{12,14}$/, "");
   return withoutStamp || null;
-}
-
-// Cloudflare Pages Deploy Hook を発火する。
-// hook URL は env から読み、レスポンス・ログに絶対に出さない。
-// 失敗しても承認自体は成功扱いを維持する (best-effort)。
-async function fireDeployHook(
-  hookUrl: string | undefined,
-): Promise<{ triggered: boolean; reason?: string; status?: number }> {
-  if (!hookUrl) {
-    return { triggered: false, reason: "deploy_hook_not_configured" };
-  }
-  try {
-    const res = await fetch(hookUrl, { method: "POST" });
-    if (!res.ok) {
-      return { triggered: false, reason: "deploy_hook_non_2xx", status: res.status };
-    }
-    return { triggered: true, status: res.status };
-  } catch (err) {
-    return {
-      triggered: false,
-      reason: "deploy_hook_threw",
-      // err.message の内容は記録するが、hookUrl 自体は含まないことを保証
-    };
-  }
 }
 
 type PullSummary = {
@@ -336,13 +305,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (mergeRes.ok) {
     const mergeJson = (await mergeRes.json()) as { merged?: boolean; sha?: string; message?: string };
 
-    // 承認 → 本番 deploy までを 1 つのフローにまとめる。
-    // 1. Cloudflare Pages Deploy Hook を発火 (GitHub Actions に依存しない)
-    // 2. KV review item を status: "approved" + deployTriggeredAt に更新
+    // 承認 = merge まで。本番反映は wrangler(Direct Upload) が正規手順 (P1 で一本化)。
+    // Git 連携 auto-deploy / Deploy Hook は使わない。
     // フロント側は /api/verify-publication?slug=... を polling して
     // 本番反映を厳格に検証する。
-    const deployResult = await fireDeployHook(env.CF_PAGES_DEPLOY_HOOK_URL);
-
     const prUrlForKv = `https://github.com/${owner}/${repo}/pull/${pr.number}`;
     let reviewItemUpdate: (ReviewItemUpdate & { slug?: string }) = { updated: false, reason: "kv_not_bound" };
     if (env.SUMALABO_REVIEW_KV) {
@@ -351,7 +317,6 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         branch,
         prUrlForKv,
         mergeJson.sha,
-        deployResult.triggered,
       );
     }
 
@@ -363,21 +328,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     return jsonResponse({
       ok: true,
-      message: deployResult.triggered
-        ? "Previewを承認し、mainへマージ→本番デプロイを開始しました。"
-        : "Previewを承認し、mainへマージしました。本番デプロイ起動に失敗したため wrangler fallback が必要です。",
+      message: "Previewを承認し、mainへマージしました。本番反映は wrangler 正規手順（Phase B）で実行されます。",
       pullNumber: pr.number,
       merged: mergeJson.merged === true,
       sha: mergeJson.sha,
       reviewItemUpdate,
       slug,
-      deployTriggered: deployResult.triggered,
-      deployTriggerReason: deployResult.reason,
-      // wrangler fallback を案内する。deploy hook 発火失敗時は即座に true。
-      // 成功時は false (verify-publication 側で timeout 後に true 化される可能性あり)。
-      needsWranglerFallback: !deployResult.triggered,
-      // CLI hint は secret を含まないテンプレ文字列。
-      fallbackCommandHint: !deployResult.triggered ? FALLBACK_COMMAND_HINT : undefined,
+      // 本番反映コマンドの案内 (secret を含まないテンプレ文字列)。
+      productionDeployCommandHint: PRODUCTION_DEPLOY_COMMAND_HINT,
       // フロントは publication verify を /api/verify-publication?slug=... で
       // polling する。本番反映前にボタンを「公開完了」にしない。
       verifyEndpoint: slug ? `/api/verify-publication?slug=${encodeURIComponent(slug)}` : null,

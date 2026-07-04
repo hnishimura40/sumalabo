@@ -60,31 +60,19 @@ Remove-Item Env:SUMALAB_NOW
 - Cloudflare Pages側で定期デプロイの仕組みを用意すると、予約投稿に近い運用ができます。
 - `publishAt` の形式が壊れている記事は、安全側に倒して公開対象から外れます。
 
-## GitHub Actionsで定期デプロイする
+## 定期デプロイの現状（P1・2026-07 で Deploy Hook 廃止）
 
-予約投稿を自動反映するために、GitHub ActionsからCloudflare PagesのDeploy Hookへ定期的にPOSTします。
+以前は GitHub Actions（`.github/workflows/scheduled-deploy.yml`）から Cloudflare Pages の
+Deploy Hook へ 30 分ごとに POST して再ビルドしていましたが、**この仕組みは廃止しました**。
 
-必要な設定:
+理由: Cloudflare Pages の GitHub App 連携が clone 失敗（「Cloning git repository — FAILED」）
+の常態化により、Hook が発火しても Git ビルドは必ず失敗し、失敗デプロイを量産するだけに
+なっていたためです（本番の成功デプロイはすべて wrangler の Direct Upload 実績）。
 
-- Cloudflare PagesでDeploy Hookを作成する
-- GitHubリポジトリのActions SecretにDeploy Hook URLを保存する
-- Secret名は `CF_PAGES_DEPLOY_HOOK_URL`
-- Deploy Hook URLはコードやdocsへ直接書かない
+現在の運用:
 
-Cloudflare PagesのDeploy Hookは、Cloudflare Pagesの対象プロジェクト内で作成します。
-通常は、対象プロジェクトの設定画面からDeploy Hooksを追加し、発行されたURLをGitHub Secretsに登録します。
-
-このリポジトリでは、`.github/workflows/scheduled-deploy.yml` で30分ごとにDeploy Hookを呼び出します。
-GitHub ActionsのcronはUTC基準です。
-
-```yaml
-schedule:
-  # GitHub Actions cron is UTC. This runs every 30 minutes.
-  - cron: "7,37 * * * *"
-```
-
-この運用では、`publishAt` の時刻ぴったりに公開されるとは限りません。
-最大で30分程度のズレが出る前提で運用します。
-
-急いで公開したい場合は、GitHub Actionsの `Scheduled Cloudflare Pages Deploy` workflowを手動実行できます。
-手動実行は `workflow_dispatch` に対応しています。
+- 本番反映は wrangler 正規手順 `npm run deploy:production -- --slug=<slug>` だけを使う
+- `publishAt` による予約公開は「次に wrangler deploy が走ったとき」に反映される
+  （時刻ぴったりの自動公開は現在は行われない）
+- 時刻厳守の予約公開が必要になったら、wrangler ベースの定期デプロイ
+  （GitHub Actions で `npm run build` + `wrangler pages deploy`）を別途設計する
