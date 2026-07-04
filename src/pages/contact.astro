@@ -22,25 +22,32 @@ const hasContactEmail = siteConfig.contactEmail.length > 0;
     <div class="static-content">
       <section class="static-card">
         <h2>お問い合わせ先について</h2>
+        <p>
+          記事の誤りのご指摘、その他のご連絡は、X（旧Twitter）の公式アカウントへのDMまたはリプライからお願いします。
+        </p>
+        <div class="static-note">
+          <a href="https://x.com/suma_labo" target="_blank" rel="noopener">X: @suma_labo</a>
+        </div>
         {
           hasContactEmail ? (
             <>
-              <p>
-                お問い合わせは、以下のメールアドレスまでご連絡ください。
-              </p>
+              <p>メールでのご連絡は、以下のアドレスまでお願いします。</p>
               <div class="static-note">
                 <a href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
               </div>
             </>
           ) : (
             <>
-              {/* TODO: 本番URL・問い合わせメール確定後に src/config/site.ts の contactEmail を設定する。 */}
+              {/* TODO: 問い合わせメール確定後に src/config/site.ts の contactEmail を設定する。 */}
               <p>
-                お問い合わせ先は本番公開前に設定予定です。メールアドレスまたはお問い合わせフォームの設置後、このページでご案内します。
+                メールフォーム・メールアドレスでの受付は準備中です。設置後、このページでご案内します。
               </p>
             </>
           )
         }
+        <p>
+          なお、いただいたご指摘への個別のお返事をお約束するものではありませんが、内容はすべて確認します。
+        </p>
       </section>
 
       <section class="static-card">
