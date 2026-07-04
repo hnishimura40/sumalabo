@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-04T21:34:52.526Z",
+  "updatedAt": "2026-07-04T23:38:00.062Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -469,6 +469,20 @@
       "productionUrl": "https://sumalabo.com/articles/_template/",
       "autonomyLevel": 0,
       "trigger": "manual"
+    },
+    {
+      "slug": "202607-claude-fable-5-usage-credits-switch",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "theme",
+      "articleUrl": "https://sumalabo.com/articles/202607-claude-fable-5-usage-credits-switch/",
+      "productionUrl": "https://sumalabo.com/articles/202607-claude-fable-5-usage-credits-switch/",
+      "previewUrl": "https://c47bdffe.sumalabo.pages.dev/articles/202607-claude-fable-5-usage-credits-switch/",
+      "publishedAt": "2026-07-04T23:33:34.608Z",
+      "autonomyLevel": 0,
+      "trigger": "user_approved_via_pwa_button",
+      "xPostUrl": "https://x.com/suma_labo/status/2073551770933178667",
+      "xPostedAt": "2026-07-04T23:38:00.061Z"
     }
   ]
 }

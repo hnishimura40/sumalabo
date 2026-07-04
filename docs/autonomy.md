@@ -116,6 +116,9 @@ Phase A完了後に停止 → Preview承認 → Phase B → 停止 → X投稿�
 
 ## 5. 現在の状態
 
-- 現行レベル: L0(autonomy.json: level 0 / paused false)
-- L1実装状況: 基盤+仕上げ完了(PR #92 / #93)。残前提はパージトークン設定+パージ実測1回のみ
-- L1昇格カウント: 0/3(次の記事=Fable 5から計測開始)
+- 現行レベル: **L1**(autonomy.json: level 1 / paused false / vetoWindowMinutes 30)— 2026-07-05 ユーザー宣言により昇格
+- L1昇格の根拠: 前提条件全達成(P1/P2/P7/rollback実測2回/post-publish verify/パージトークン+パージ実測)+ usage credits記事(202607)の Phase B/C クリーン完了(rollback 0 / incident 0 / 修正 0)を確認してユーザーが宣言
+- Actions secrets: CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_ZONE_PURGE_TOKEN / CLOUDFLARE_ZONE_ID / REVIEW_NOTIFY_SECRET すべて登録済み(2026-07-05)
+- クリーンカウント: **1/3**(クリーン1本目 = 202607-claude-fable-5-usage-credits-switch。Fable 5復活記事(202606)は公開前に修正指示があったため対象外)
+- veto窓短縮の規定: L1でクリーン3本 → veto窓 30分→10分。さらにクリーン3本 → 0分(即時公開)。短縮の適用はユーザーが宣言する
+- L1の動作: Phase A完了通知のveto窓(30分)内に停止操作(PWAのvetoボタン or autonomy.json paused: true)が無ければ、GitHub Actions(auto-phase-b.yml)がPhase Bを自動実行。公開直後にpost-publish verifyが走り、hard failなら自動rollback+incident記録

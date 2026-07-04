@@ -1,7 +1,9 @@
 {
-  "level": 0,
+  "level": 1,
   "paused": false,
   "vetoWindowMinutes": 30,
-  "promotionCount": { "toL1": 0 },
+  "xPostMethod": "browser",
+  "promotionCount": { "toL1": 1 },
+  "cleanCount": 1,
   "incidents": []
 }
