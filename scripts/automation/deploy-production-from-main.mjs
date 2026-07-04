@@ -46,17 +46,42 @@
 //   - Deploy Hook は使わない (P1 で廃止。wrangler が正規経路)。
 
 import { spawnSync, spawn } from "node:child_process";
-import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import process from "node:process";
 import { gate, loadAutonomy } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
-import { purgeForSlug } from "./cache-purge.mjs";
+// 2026-07-04 の「verify 直後の無言終了 (0xC0000409)」の根本原因は fs.cpSync の
+// 再帰コピー（日本語を含むパス配下の dist で Node v24.14.1 がクラッシュ）だった。
+// 対策1: dist のコピーは robocopy / cp に置換（copyDirReliable）。
+// 対策2: 防御として本スクリプトの HTTP も undici(fetch) を避け node:http/https に統一。
+import http from "node:http";
+import https from "node:https";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const ROOT = resolve(__dirname, "..", "..");
+
+// undici(fetch) を使わない HTTP GET (JSON)。keep-alive を持たず、リクエスト完了で
+// ソケットを閉じるためプロセスの自然終了を妨げない。
+function httpGetJson(url, { headers = {}, timeoutMs = 15000 } = {}) {
+  return new Promise((resolvePromise) => {
+    const lib = url.startsWith("https:") ? https : http;
+    const req = lib.get(url, { headers: { ...headers, Connection: "close" }, timeout: timeoutMs }, (res) => {
+      let data = "";
+      res.setEncoding("utf-8");
+      res.on("data", (d) => (data += d));
+      res.on("end", () => {
+        let json = null;
+        try { json = JSON.parse(data); } catch {}
+        resolvePromise({ status: res.statusCode, json });
+      });
+    });
+    req.on("timeout", () => { req.destroy(); resolvePromise({ status: 0, json: null, error: "timeout" }); });
+    req.on("error", (e) => resolvePromise({ status: 0, json: null, error: e && e.message }));
+  });
+}
 
 // ----- arg parsing -----
 function parseArgs(argv) {
@@ -71,6 +96,7 @@ function parseArgs(argv) {
     output: null,
     trigger: "manual",
     skipPostVerify: false,
+    skipWrangler: false,
   };
   for (const a of argv) {
     if (a === "--dry-run") out.dryRun = true;
@@ -78,6 +104,7 @@ function parseArgs(argv) {
     else if (a === "--skip-git-sync") out.skipGitSync = true;
     else if (a === "--no-verify") out.noVerify = true;
     else if (a === "--skip-post-verify") out.skipPostVerify = true;
+    else if (a === "--skip-wrangler") out.skipWrangler = true; // テスト専用: deploy を行わず後続工程の完走を検証する
     else if (a.startsWith("--trigger=")) out.trigger = a.slice("--trigger=".length).trim() || "manual";
     else if (a.startsWith("--slug=")) out.slug = a.slice("--slug=".length).trim();
     else if (a.startsWith("--verify-url=")) out.verifyUrl = a.slice("--verify-url=".length).trim();
@@ -144,6 +171,18 @@ function runSync(cmd, args, opts = {}) {
     shell: useShell || Boolean(opts.spawnOpts && opts.spawnOpts.shell),
     ...opts.spawnOpts,
   });
+}
+
+// fs.cpSync(recursive) は Windows + 日本語パスで 0xC0000409 の無言クラッシュを
+// 起こすことを実測（2026-07-04）。OS のコピーコマンドで確実にコピーする。
+function copyDirReliable(src, dst) {
+  if (process.platform === "win32") {
+    // robocopy: exit 0-7 = 成功系（1 = コピー実行）
+    const r = spawnSync("robocopy", [src, dst, "/E", "/NFL", "/NDL", "/NJH", "/NJS", "/NP"], { stdio: "ignore" });
+    return r.status !== null && r.status < 8;
+  }
+  const r = spawnSync("cp", ["-r", `${src}/.`, dst], { stdio: "ignore" });
+  return r.status === 0;
 }
 
 function stepGitSync(result, skipGitSync) {
@@ -263,9 +302,14 @@ function stepDistCheck(result, slug) {
   return true;
 }
 
-function stepWranglerDeploy(result, dryRun) {
+function stepWranglerDeploy(result, dryRun, skipWrangler = false) {
   const hasToken = Boolean(process.env.CLOUDFLARE_API_TOKEN);
   const hasAccount = Boolean(process.env.CLOUDFLARE_ACCOUNT_ID);
+  if (skipWrangler) {
+    result.steps.wrangler = { status: "skipped_test", note: "--skip-wrangler（テスト専用。deploy せず後続工程を検証）" };
+    console.log("[4/5] wrangler pages deploy: skipped (--skip-wrangler, test only)");
+    return true;
+  }
   if (dryRun) {
     result.steps.wrangler = {
       status: "dry_run",
@@ -324,20 +368,13 @@ async function stepVerify(result, slug, verifyUrl, timeoutMs, noVerify) {
   console.log(`[5/5] verify-publication polling: ${url} (timeout ${timeoutMs}ms)`);
   while (Date.now() < deadline) {
     attempts++;
-    let res;
-    try {
-      res = await fetch(url, { method: "GET", cache: "no-store" });
-    } catch (e) {
+    const res = await httpGetJson(url);
+    if (res.status === 0) {
       // network error — retry
       await new Promise((r) => setTimeout(r, intervalMs));
       continue;
     }
-    let body = null;
-    try {
-      body = await res.json();
-    } catch {
-      body = null;
-    }
+    const body = res.json;
     lastBody = body;
     if (body && body.status === "published") {
       result.steps.verify = {
@@ -417,20 +454,22 @@ async function main() {
     finalize(result, args, 1);
     return;
   }
-  if (!stepWranglerDeploy(result, args.dryRun)) {
+  if (!stepWranglerDeploy(result, args.dryRun, args.skipWrangler)) {
     finalize(result, args, 1);
     return;
   }
   // deploy 直後の個別キャッシュパージ（記事 / トップ / 一覧 / sitemap / サムネ）。
   // 公開直後の反映遅延と「旧ビルド配信」誤検知を減らす（L1 仕上げで追加）。
   // パージ権限が無ければ skip 記録のみで deploy は成功扱い（非致命）。
-  if (!args.dryRun) {
-    const purge = await purgeForSlug({ slug: args.slug });
-    result.steps.cachePurge = purge.ok
-      ? { status: "ok", method: purge.method, urlCount: purge.urls?.length }
-      : { status: "skipped", reason: purge.reason };
-    if (purge.ok) console.log(`[post] cache purge ok (method=${purge.method})`);
-    else console.warn(`[post] cache purge 不可 (${purge.reason})。Zone → Cache Purge 権限が必要です。`);
+  if (!args.dryRun && !args.skipWrangler) {
+    // cache-purge は fetch(undici) を使うため子プロセスで実行する（本体プロセスに
+    // undici ハンドルを残さない = 無言クラッシュ対策）
+    const purgeScript = join(ROOT, "scripts", "automation", "cache-purge.mjs");
+    const pr = spawnSync(process.execPath, [purgeScript, `--slug=${args.slug}`], { cwd: ROOT, stdio: "pipe", env: process.env, encoding: "utf-8" });
+    const purgeOk = pr.status === 0;
+    result.steps.cachePurge = { status: purgeOk ? "ok" : "skipped", exitCode: pr.status };
+    if (purgeOk) console.log("[post] cache purge ok");
+    else console.warn("[post] cache purge 不可（権限未設定なら想定内。Zone → Cache Purge 権限で有効化）");
   }
 
   // verify は dry-run のときも --no-verify でない限り polling を試みる場合があるが、
@@ -465,8 +504,10 @@ async function stepLastGoodSnapshot(result, slug) {
   const distDir = join(ROOT, "dist");
   try {
     rmSync(join(lastGoodDir, "dist"), { recursive: true, force: true });
-    mkdirSync(lastGoodDir, { recursive: true });
-    cpSync(distDir, join(lastGoodDir, "dist"), { recursive: true });
+    mkdirSync(join(lastGoodDir, "dist"), { recursive: true });
+    if (!copyDirReliable(distDir, join(lastGoodDir, "dist"))) {
+      throw new Error("copyDirReliable failed");
+    }
     writeFileSync(
       join(lastGoodDir, "last-good.json"),
       JSON.stringify({ slug, at: new Date().toISOString(), deploymentId: null }, null, 2) + "\n",
@@ -490,11 +531,10 @@ async function recordCanonicalDeploymentId(lastGoodDir) {
   const account = process.env.CLOUDFLARE_ACCOUNT_ID;
   if (!token || !account) return null;
   try {
-    const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/sumalabo`, {
+    const res = await httpGetJson(`https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/sumalabo`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    const j = await res.json();
-    const id = j?.result?.canonical_deployment?.id || null;
+    const id = res.json?.result?.canonical_deployment?.id || null;
     if (id) {
       const metaPath = join(lastGoodDir, "last-good.json");
       const meta = JSON.parse(readFileSync(metaPath, "utf-8"));
@@ -510,9 +550,10 @@ async function recordCanonicalDeploymentId(lastGoodDir) {
 async function stepPostPublishVerify(result, args) {
   const script = join(ROOT, "scripts", "automation", "post-publish-verify.mjs");
   console.log("[post] post-publish verify (hard fail なら自動 rollback)...");
+  const extraArgs = (process.env.DEPLOY_POST_VERIFY_EXTRA_ARGS || "").split(/\s+/).filter(Boolean);
   const r = spawnSync(
     process.execPath,
-    [script, `--slug=${args.slug}`, `--trigger=${args.trigger}`],
+    [script, `--slug=${args.slug}`, `--trigger=${args.trigger}`, ...extraArgs],
     { cwd: ROOT, stdio: "inherit", env: process.env },
   );
   result.steps.postPublishVerify = {
