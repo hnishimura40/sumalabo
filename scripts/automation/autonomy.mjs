@@ -29,6 +29,9 @@ export const DEFAULT_STATE = Object.freeze({
   level: 0,
   paused: false,
   vetoWindowMinutes: 30,
+  // Phase C の投稿手段 (L2): "browser" = 従来の Chrome 手順 / "api" = X API v2。
+  // 切り替えはユーザーが行う（実投稿テスト 1 回の成功確認後）。
+  xPostMethod: "browser",
   promotionCount: { toL1: 0 },
   incidents: [],
 });
@@ -65,6 +68,7 @@ export function loadAutonomy(filePath = autonomyPath()) {
       Number.isFinite(raw.vetoWindowMinutes) && raw.vetoWindowMinutes > 0
         ? raw.vetoWindowMinutes
         : DEFAULT_STATE.vetoWindowMinutes,
+    xPostMethod: raw.xPostMethod === "api" ? "api" : "browser",
     promotionCount:
       raw.promotionCount && typeof raw.promotionCount === "object"
         ? { toL1: Number.isInteger(raw.promotionCount.toL1) ? raw.promotionCount.toL1 : 0 }
@@ -79,6 +83,7 @@ export function saveAutonomy(state, filePath = autonomyPath()) {
     level: state.level,
     paused: state.paused === true,
     vetoWindowMinutes: state.vetoWindowMinutes,
+    xPostMethod: state.xPostMethod === "api" ? "api" : "browser",
     promotionCount: state.promotionCount || { toL1: 0 },
     incidents: Array.isArray(state.incidents) ? state.incidents : [],
   };

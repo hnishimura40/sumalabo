@@ -1,4 +1,15 @@
 {
   "version": 1,
-  "posts": []
+  "posts": [
+    {
+      "slug": "202606-claude-fable-5-launch",
+      "articleUrl": "https://sumalabo.com/articles/202606-claude-fable-5-launch/",
+      "postedAt": "2026-07-04T13:31:34.602Z",
+      "postText": "Claude Fable 5が復活しました。6/12の提供停止から7/1のグローバル再開まで何があったのか、7/7までのサブスク同梱と7/8以降のusage creditsという条件の変化まで、公式情報をもとにやさしく整理しました。\nhttps://sumalabo.com/articles/202606-claude-fable-5-launch/\n#AI #ITニュース #すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2073399096472412292",
+      "method": "chrome",
+      "thumbnailAttached": true,
+      "charCount": 194
+    }
+  ]
 }
