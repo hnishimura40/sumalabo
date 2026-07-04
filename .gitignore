@@ -51,6 +51,9 @@ logs/automation/*.log
 logs/automation/*-sumahon-watch.json
 logs/automation/scheduler-empty-gitconfig
 
+# L2: X API credentials — NEVER commit
+.secrets/
+
 # L1: last-good build snapshot (rollback fallback material) — local only
 builds/
 

@@ -41,7 +41,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { hasPosted, getPostRecord, recordPost } from "../sumahon/x-posted-ledger.mjs";
-import { gate } from "../automation/autonomy.mjs";
+import { gate, loadAutonomy } from "../automation/autonomy.mjs";
 import { notifyAutonomyEvent } from "../automation/autonomy-notify.mjs";
 
 function parseArgs(argv) {
@@ -247,6 +247,18 @@ async function main() {
   if (args.check) return modeCheck(args.slug);
   if (args.record) return modeRecord(args);
   if (args.error) return modeError(args);
+
+  // xPostMethod=api なら X API v2 スクリプトへ委譲 (L2)。browser なら従来手順。
+  const method = loadAutonomy().xPostMethod;
+  if (method === "api") {
+    const { spawnSync } = await import("node:child_process");
+    const path = await import("node:path");
+    const { fileURLToPath } = await import("node:url");
+    const apiScript = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "automation", "post-to-x-api.mjs");
+    const r = spawnSync(process.execPath, [apiScript, `--slug=${args.slug}`, ...(args.dryRun ? ["--dry-run"] : [])], { stdio: "inherit" });
+    process.exitCode = r.status ?? 1;
+    return;
+  }
 
   // デフォルト: Chrome 投稿準備
   return modeChrome(args);

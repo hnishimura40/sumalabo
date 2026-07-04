@@ -2,6 +2,7 @@
   "level": 0,
   "paused": false,
   "vetoWindowMinutes": 30,
+  "xPostMethod": "browser",
   "promotionCount": { "toL1": 0 },
   "incidents": []
 }
