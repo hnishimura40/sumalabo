@@ -173,10 +173,13 @@ test("4. post-publish verify: hard fail で rollback stub が呼ばれ、verify.
   await new Promise((r) => server.listen(0, "127.0.0.1", r));
   const port = server.address().port;
 
-  // rollback stub: マーカーファイルを書くだけ（本番に触れない）
+  // rollback / purge stub: マーカーファイルを書くだけ（本番に触れない）
   const marker = join(TMP, "rollback-invoked.txt");
   const stub = join(TMP, "rollback-stub.mjs");
   writeFileSync(stub, `import { writeFileSync } from "node:fs";\nwriteFileSync(${JSON.stringify(marker)}, process.argv.slice(2).join(" "), "utf-8");\nprocess.exit(0);\n`, "utf-8");
+  const purgeMarker = join(TMP, "purge-invoked.txt");
+  const purgeStub = join(TMP, "purge-stub.mjs");
+  writeFileSync(purgeStub, `import { writeFileSync } from "node:fs";\nwriteFileSync(${JSON.stringify(purgeMarker)}, process.argv.slice(2).join(" "), "utf-8");\nprocess.exit(0);\n`, "utf-8");
 
   const stateFile = writeState("l1-postverify.json", L1);
   const outFile = join(TMP, "hardfail.verify.json");
@@ -186,6 +189,7 @@ test("4. post-publish verify: hard fail で rollback stub が呼ばれ、verify.
       "--slug=autonomy-test-not-real",
       `--base-url=http://127.0.0.1:${port}`,
       `--rollback-script=${stub}`,
+      `--purge-script=${purgeStub}`,
       "--trigger=auto_after_veto",
       "--no-notify",
       `--output=${outFile}`,
@@ -197,9 +201,15 @@ test("4. post-publish verify: hard fail で rollback stub が呼ばれ、verify.
   assert.equal(r.status, 1, `hard fail は exit 1。stdout=${r.stdout}`);
   assert.ok(existsSync(marker), "rollback stub が呼ばれていない");
   assert.match(readFileSync(marker, "utf-8"), /--slug=autonomy-test-not-real/);
+  // 引っ込め時は rollback 側で「記事が消えた」実フェッチ確認を行う指示が付くこと
+  assert.match(readFileSync(marker, "utf-8"), /--expect-gone/);
+  // hard fail 経路でキャッシュパージも発動すること（L1 仕上げ: CDN 残留対策）
+  assert.ok(existsSync(purgeMarker), "purge stub が呼ばれていない");
+  assert.match(readFileSync(purgeMarker, "utf-8"), /--slug=autonomy-test-not-real/);
   const report = JSON.parse(readFileSync(outFile, "utf-8"));
   assert.equal(report.hardFail, true);
   assert.equal(report.rollback.invoked, true);
+  assert.equal(report.purge.invoked, true);
   assert.equal(report.trigger, "auto_after_veto");
   assert.equal(report.autonomyLevel, 1);
   assert.ok(report.rounds[0].hardFailed.includes("articleHttp200"));
