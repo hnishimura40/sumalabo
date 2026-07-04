@@ -38,6 +38,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { spawn } from "node:child_process";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { deployPreviewToCloudflarePages } from "../sumahon/cloudflare-pages-deploy.mjs";
 import { verifyPreviewUrl } from "../sumahon/verify-preview-url.mjs";
 import { notifyReviewReady } from "../sumahon/notify-review-ready.mjs";
@@ -79,6 +80,25 @@ async function main() {
   }
 
   const report = { slug, branch, steps: {}, finishedAt: null };
+
+  // 0. 品質ゲート（sumalabo-gate --stage full）。不合格なら以降
+  //    （build / Preview URL 作成 / review item 登録 / 通知）へ一切進まない。
+  console.log("[finalize] quality gate (sumalabo-gate --stage full)...");
+  const gatePath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "sumalabo-gate.mjs");
+  // runCommand は win32 で shell:true のためスペース入り node パスが壊れる。
+  // gate は引数がすべて内部生成値なので shell なしの spawn で直接実行する。
+  const gateOk = await new Promise((resolve) => {
+    const child = spawn(process.execPath, [gatePath, "--slug", slug, "--stage", "full"], { stdio: "inherit" });
+    child.on("close", (code) => resolve(code === 0));
+    child.on("error", () => resolve(false));
+  });
+  report.steps.gate = { ok: gateOk };
+  if (!gateOk) {
+    report.finishedAt = new Date().toISOString();
+    await save(report);
+    console.error("[finalize] BLOCK: sumalabo-gate failed（violation あり）。Preview 作成・通知へ進みません。");
+    process.exit(2);
+  }
 
   // 1. build
   if (!args["skip-build"] || !existsSync("dist")) {

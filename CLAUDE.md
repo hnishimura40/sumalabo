@@ -301,6 +301,13 @@ Phase B 完了後だけ実行：
 
 停止してよいのは、ゲートNG / 画像生成不可 / 画像取得失敗 / ファクトチェックNG / build失敗 / Preview URL生成・検証失敗 / 通知失敗 などの重大ブロック時だけ。ゲートOKなのに「続行してよろしければ」等の確認で止まらない。
 
+**機械判定は `sumalabo:gate` が行う（目視・自己申告に頼らない）：**
+
+- 画像生成前: `npm run sumalabo:gate -- --slug <slug> --stage draft`（final_article / review_report / slide_plan 等の存在＋禁則語のみ検査）
+- Phase A 出口: `npm run sumalabo:finalize` の先頭で自動的に `--stage full` が走る（frontmatter 必須キー / 禁則語 / 画像参照整合（WebP限定・実在）/ dist の OGP 実測）。**exit 1（violation あり）なら build・Preview URL 作成・review item 登録・通知へ一切進まない**
+- 禁則語リストは `data/qa/forbidden-words.json`。誤検知はリスト側を直す（記事を歪めない）。パターン削除・warning 化など検査を弱める変更は理由を報告してから行う
+- **目視で確認するのは機械判定できない項目に限る**: facts / claims / uncertain の線引きの妥当性、記事の主軸（やさしく噛み砕く）の確認、サムネの実在ロゴ・煽り絵柄の有無
+
 ## 例外: 判断を仰ぐ最小ケース
 
 以下のいずれかに該当する場合のみ、人間に **1 度だけ** 短く相談する（実行前に必ず提示）:
