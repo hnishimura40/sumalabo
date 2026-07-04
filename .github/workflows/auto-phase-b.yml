@@ -1,0 +1,70 @@
+# Auto Phase B (L1: Autonomy Ladder)
+#
+# veto 期限（既定 30 分）を過ぎても停止されなかった review_waiting 記事を
+# 自動で本番公開する（PR merge → wrangler deploy → strict verify → 事後検査）。
+#
+# 安全装置:
+#   - data/automation/autonomy.json の level < 1 または paused: true なら
+#     decide ステップが "none" を返し、何もせず終了する（L0 の現行動作を保護）。
+#   - 1 回の実行で処理するのは最大 1 記事。
+#   - concurrency で多重起動を防止。
+#   - hard fail 時は post-publish verify が自動 rollback する。
+#
+# 必要な Actions secrets（値はログに出さない）:
+#   CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID / REVIEW_NOTIFY_SECRET
+
+name: Auto Phase B (L1)
+
+on:
+  schedule:
+    # 5 分間隔（Actions の cron は遅延しうるが veto 窓 30 分に対し許容）
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-phase-b
+  cancel-in-progress: false
+
+jobs:
+  auto-phase-b:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # 軽量判定（依存インストール前）: L0/paused/対象なしならここで終わる
+      - name: Decide (autonomy gate + eligible check)
+        id: decide
+        run: node scripts/automation/auto-phase-b.mjs --decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Install dependencies
+        if: steps.decide.outputs.eligible != 'none'
+        run: npm ci
+
+      - name: Run auto Phase B (merge -> deploy -> verify)
+        if: steps.decide.outputs.eligible != 'none'
+        run: node scripts/automation/auto-phase-b.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          REVIEW_NOTIFY_SECRET: ${{ secrets.REVIEW_NOTIFY_SECRET }}
+
+      - name: Upload publish logs
+        if: always() && steps.decide.outputs.eligible != 'none'
+        uses: actions/upload-artifact@v4
+        with:
+          name: publish-logs-${{ github.run_id }}
+          path: logs/publish/
+          if-no-files-found: ignore

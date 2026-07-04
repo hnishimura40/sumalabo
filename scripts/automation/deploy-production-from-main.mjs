@@ -46,10 +46,12 @@
 //   - Deploy Hook は使わない (P1 で廃止。wrangler が正規経路)。
 
 import { spawnSync, spawn } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import process from "node:process";
+import { gate, loadAutonomy } from "./autonomy.mjs";
+import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -66,12 +68,16 @@ function parseArgs(argv) {
     noVerify: false,
     verifyTimeoutMs: 6 * 60 * 1000,
     output: null,
+    trigger: "manual",
+    skipPostVerify: false,
   };
   for (const a of argv) {
     if (a === "--dry-run") out.dryRun = true;
     else if (a === "--skip-build") out.skipBuild = true;
     else if (a === "--skip-git-sync") out.skipGitSync = true;
     else if (a === "--no-verify") out.noVerify = true;
+    else if (a === "--skip-post-verify") out.skipPostVerify = true;
+    else if (a.startsWith("--trigger=")) out.trigger = a.slice("--trigger=".length).trim() || "manual";
     else if (a.startsWith("--slug=")) out.slug = a.slice("--slug=".length).trim();
     else if (a.startsWith("--verify-url=")) out.verifyUrl = a.slice("--verify-url=".length).trim();
     else if (a.startsWith("--verify-timeout-ms=")) {
@@ -92,14 +98,19 @@ function makeResult() {
     ok: false,
     slug: null,
     dryRun: false,
+    trigger: "manual",
+    autonomyLevel: null,
     startedAt: new Date().toISOString(),
     finishedAt: null,
     steps: {
+      autonomyGate: { status: "skipped" },
       gitSync: { status: "skipped" },
       build: { status: "skipped" },
       distCheck: { status: "skipped" },
       wrangler: { status: "skipped" },
       verify: { status: "skipped" },
+      lastGoodSnapshot: { status: "skipped" },
+      postPublishVerify: { status: "skipped" },
     },
     productionUrl: null,
     errorReason: null,
@@ -365,15 +376,33 @@ async function main() {
   const result = makeResult();
   result.dryRun = args.dryRun;
   result.slug = args.slug;
+  result.trigger = args.trigger;
 
   if (!isValidSlug(args.slug)) {
     result.errorReason = "missing_or_invalid_slug";
-    console.error("usage: node scripts/automation/deploy-production-from-main.mjs --slug=<slug> [--dry-run] [--skip-build] [--no-verify]");
+    console.error("usage: node scripts/automation/deploy-production-from-main.mjs --slug=<slug> [--dry-run] [--skip-build] [--no-verify] [--trigger=manual|auto_after_veto]");
     finalize(result, args, /*exitCode*/ 2);
     return;
   }
 
-  console.log(`Wrangler production deploy for slug=${args.slug}${args.dryRun ? " (DRY RUN)" : ""}`);
+  // Phase B 入口の autonomy ゲート（L1 基盤）:
+  //   - paused: true → kill switch。手動/自動を問わず停止
+  //   - trigger=auto_after_veto は level>=1 が必要（L0 では自動 Phase B は走らない）
+  //   - trigger=manual（ユーザー明示了承済み）は level に関係なく通す
+  const g = gate({ phase: "phase_b", trigger: args.trigger });
+  result.autonomyLevel = g.level;
+  result.steps.autonomyGate = { status: g.allowed ? "ok" : "blocked", level: g.level, trigger: args.trigger, reason: g.reason };
+  if (!g.allowed) {
+    result.errorReason = g.reason;
+    console.error(`[autonomy] BLOCK: ${g.reason} (level=${g.level}, trigger=${args.trigger}, paused=${g.paused})`);
+    if (g.paused) {
+      await notifyAutonomyEvent({ slug: args.slug, status: "autonomy_blocked", title: `[autonomy] Phase B停止: ${g.reason} (${args.slug})` }).catch(() => {});
+    }
+    finalize(result, args, 1);
+    return;
+  }
+
+  console.log(`Wrangler production deploy for slug=${args.slug}${args.dryRun ? " (DRY RUN)" : ""} (trigger=${args.trigger}, autonomyLevel=${g.level})`);
 
   if (!stepGitSync(result, args.skipGitSync)) {
     finalize(result, args, 1);
@@ -401,8 +430,86 @@ async function main() {
     }
   }
 
-  result.ok = true;
-  finalize(result, args, 0);
+  // verify 成功後: 正常ビルド成果物を builds/last-good/ へ退避（rollback の第2候補用）
+  if (!args.dryRun) {
+    await stepLastGoodSnapshot(result, args.slug);
+  }
+
+  // 公開直後の事後検査（L1 基盤）: hard fail なら post-publish-verify 側が
+  // rollback + incident 記録 + 通知まで行う。
+  if (!args.dryRun && !args.skipPostVerify) {
+    await stepPostPublishVerify(result, args);
+  }
+
+  result.ok = result.errorReason === null;
+  finalize(result, args, result.ok ? 0 : 1);
+}
+
+// dist を builds/last-good/ にコピーし、canonical deployment id を記録する。
+// 失敗しても deploy 自体は成功扱い（rollback 第1候補の API 方式が別にあるため warning のみ）。
+async function stepLastGoodSnapshot(result, slug) {
+  const lastGoodDir = join(ROOT, "builds", "last-good");
+  const distDir = join(ROOT, "dist");
+  try {
+    rmSync(join(lastGoodDir, "dist"), { recursive: true, force: true });
+    mkdirSync(lastGoodDir, { recursive: true });
+    cpSync(distDir, join(lastGoodDir, "dist"), { recursive: true });
+    writeFileSync(
+      join(lastGoodDir, "last-good.json"),
+      JSON.stringify({ slug, at: new Date().toISOString(), deploymentId: null }, null, 2) + "\n",
+      "utf-8",
+    );
+    result.steps.lastGoodSnapshot = { status: "ok" };
+  } catch (e) {
+    result.steps.lastGoodSnapshot = { status: "failed", reason: e && e.message };
+    console.warn("  [warn] last-good snapshot 失敗（rollback は API 方式が第1候補なので続行）");
+    return;
+  }
+  // canonical deployment id を best effort で記録（API rollback の対象特定に使う）
+  try {
+    const id = await recordCanonicalDeploymentId(lastGoodDir);
+    if (id) result.steps.lastGoodSnapshot.deploymentId = id.slice(0, 8);
+  } catch {}
+}
+
+async function recordCanonicalDeploymentId(lastGoodDir) {
+  const token = process.env.CLOUDFLARE_API_TOKEN;
+  const account = process.env.CLOUDFLARE_ACCOUNT_ID;
+  if (!token || !account) return null;
+  try {
+    const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${account}/pages/projects/sumalabo`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const j = await res.json();
+    const id = j?.result?.canonical_deployment?.id || null;
+    if (id) {
+      const metaPath = join(lastGoodDir, "last-good.json");
+      const meta = JSON.parse(readFileSync(metaPath, "utf-8"));
+      meta.deploymentId = id;
+      writeFileSync(metaPath, JSON.stringify(meta, null, 2) + "\n", "utf-8");
+    }
+    return id;
+  } catch {
+    return null;
+  }
+}
+
+async function stepPostPublishVerify(result, args) {
+  const script = join(ROOT, "scripts", "automation", "post-publish-verify.mjs");
+  console.log("[post] post-publish verify (hard fail なら自動 rollback)...");
+  const r = spawnSync(
+    process.execPath,
+    [script, `--slug=${args.slug}`, `--trigger=${args.trigger}`],
+    { cwd: ROOT, stdio: "inherit", env: process.env },
+  );
+  result.steps.postPublishVerify = {
+    status: r.status === 0 ? "ok" : "hard_fail",
+    exitCode: r.status,
+    log: `logs/publish/${args.slug}.verify.json`,
+  };
+  if (r.status !== 0) {
+    result.errorReason = "post_publish_verify_hard_fail";
+  }
 }
 
 function finalize(result, args, exitCode) {
@@ -420,10 +527,11 @@ function finalize(result, args, exitCode) {
   }
   console.log("---RESULT JSON---");
   console.log(json);
-  process.exit(exitCode);
+  // fetch ハンドル残存時の process.exit() は Windows Node でクラッシュするため自然終了
+  process.exitCode = exitCode;
 }
 
 main().catch((err) => {
   console.error("[fatal]", err && err.message ? err.message : err);
-  process.exit(1);
+  process.exitCode = 1;
 });

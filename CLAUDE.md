@@ -6,6 +6,8 @@
 
 **現在のモード： `user-directed mode` + `human review checkpoint` + `auto publish / X post flow`**
 
+**Autonomy Level: 0 (L0)** — 状態は `data/automation/autonomy.json`、定義は [`docs/autonomy.md`](docs/autonomy.md)。この表記は autonomy.json の `level` と連動させる（変更時は両方更新）。**Claude が level を勝手に変更するのは禁止**（昇格は L0 で 3 本連続クリーンの実績後、ユーザーが宣言する）。`paused: true`（kill switch）のときは finalize / Phase B / Phase C とも即停止する。
+
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと
@@ -132,7 +134,12 @@ Phase A 出口（finalize）通過後、**必ず停止する**。停止時には
 
 ### Phase B: 公開フェーズ
 
-ユーザー明示了承後だけ実行：
+**実行条件は Autonomy Level で変わる（[`docs/autonomy.md`](docs/autonomy.md)）：**
+
+- **L0（現在）**: 従来どおり **ユーザー明示了承後だけ** 実行する。veto 期限が通知に出ていても、期限経過で自動公開はされない。
+- **L1 以降**: Phase A 完了通知の veto 窓（初期 30 分）内に停止（PWA の veto ボタン or `autonomy.json` の `paused: true`）が無ければ、GitHub Actions（`auto-phase-b.yml`）が Phase B を自動実行する。公開直後に post-publish verify が走り、hard fail なら自動 rollback（`npm run rollback:production`）+ incident 記録で是正する。
+
+以下の手順は L0 の手動実行・L1 の自動実行で共通：
 
 1. **PR merge**：`mergeable: MERGEABLE` / `mergeStateStatus: CLEAN` / `isDraft: false` を確認 → `gh pr merge <N> --merge --delete-branch=false`。main への直接 push 禁止。merge commit を記録。
 2. **main 最新化**：`git fetch origin main && git pull origin main`。merge commit が含まれていることを確認。

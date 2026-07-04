@@ -25,6 +25,12 @@ interface ReviewItem {
   sourceCheckPassed?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  // L1 (Autonomy Ladder): veto 窓と監査情報
+  previewReadyAt?: string;
+  vetoDeadline?: string;
+  vetoedAt?: string;
+  autonomyLevel?: number;
+  trigger?: string;
 }
 
 interface Env {
@@ -126,6 +132,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     sourceCheckPassed: typeof item.sourceCheckPassed === "boolean" ? item.sourceCheckPassed : undefined,
     createdAt: typeof item.createdAt === "string" ? item.createdAt : now,
     updatedAt: now,
+    previewReadyAt: typeof item.previewReadyAt === "string" ? item.previewReadyAt : undefined,
+    vetoDeadline: typeof item.vetoDeadline === "string" ? item.vetoDeadline : undefined,
+    vetoedAt: typeof item.vetoedAt === "string" ? item.vetoedAt : undefined,
+    autonomyLevel: typeof item.autonomyLevel === "number" ? item.autonomyLevel : undefined,
+    trigger: typeof item.trigger === "string" ? item.trigger : undefined,
   };
 
   await env.SUMALABO_REVIEW_KV.put(`review:item:${slug}`, JSON.stringify(record));

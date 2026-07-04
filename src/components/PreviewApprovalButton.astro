@@ -63,6 +63,9 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
     <button type="button" class="preview-approval__button" data-approval-button disabled>
       この記事を承認して公開
     </button>
+    <button type="button" class="preview-approval__button preview-approval__button--veto" data-veto-button disabled>
+      ⛔ 自動公開を停止（veto）
+    </button>
     <p class="preview-approval__status" role="status" aria-live="polite" data-approval-status></p>
     <p class="preview-approval__meta" data-approval-meta></p>
   </aside>
@@ -85,6 +88,7 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
   const wrapper = document.querySelector<HTMLElement>("[data-preview-approval]");
   if (wrapper) {
     const button = wrapper.querySelector<HTMLButtonElement>("[data-approval-button]");
+    const vetoButton = wrapper.querySelector<HTMLButtonElement>("[data-veto-button]");
     const statusEl = wrapper.querySelector<HTMLParagraphElement>("[data-approval-status]");
     const metaEl = wrapper.querySelector<HTMLParagraphElement>("[data-approval-meta]");
 
@@ -152,6 +156,34 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
         // OK — wrapper を表示してボタンを使える状態にする
         wrapper.hidden = false;
         if (button) button.disabled = false;
+        if (vetoButton) vetoButton.disabled = false;
+
+        // veto ボタン (L1): 自動公開（veto 期限経過後の auto Phase B）を止める。
+        // merge も deploy もしない安全側アクション。
+        if (vetoButton && statusEl && slug) {
+          vetoButton.addEventListener("click", async () => {
+            vetoButton.disabled = true;
+            statusEl.textContent = "自動公開を停止しています...";
+            try {
+              const res = await fetch("/api/veto-preview", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ slug }),
+              });
+              const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string };
+              if (res.ok && data.ok) {
+                statusEl.textContent = "自動公開を停止しました（veto）。公開する場合は従来どおり承認してください。";
+                vetoButton.textContent = "停止済み（veto）";
+              } else {
+                statusEl.textContent = data.message || `vetoに失敗しました（HTTP ${res.status}）`;
+                vetoButton.disabled = false;
+              }
+            } catch {
+              statusEl.textContent = "通信エラーでvetoできませんでした。";
+              vetoButton.disabled = false;
+            }
+          });
+        }
         if (metaEl) {
           const prChip = prUrl ? ` / PR: ${prUrl}` : "";
           metaEl.innerHTML = `対象ブランチ: <code>${branch.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string))}</code>${prChip}`;
@@ -376,6 +408,14 @@ const isMainBuild = buildtimeBranch === "main" || buildtimeBranch === "master";
   .preview-approval__button:disabled {
     opacity: 0.55;
     cursor: not-allowed;
+  }
+
+  .preview-approval__button--veto {
+    margin-left: 10px;
+    background: transparent;
+    color: var(--fg-mid);
+    border-color: var(--line);
+    font-weight: 600;
   }
 
   .preview-approval__status {

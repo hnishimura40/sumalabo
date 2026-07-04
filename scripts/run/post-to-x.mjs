@@ -41,6 +41,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { hasPosted, getPostRecord, recordPost } from "../sumahon/x-posted-ledger.mjs";
+import { gate } from "../automation/autonomy.mjs";
+import { notifyAutonomyEvent } from "../automation/autonomy-notify.mjs";
 
 function parseArgs(argv) {
   const args = { _: [] };
@@ -229,6 +231,18 @@ async function modeChrome(args) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+
+  // Phase C 入口の autonomy ゲート（L1 基盤・kill switch）。
+  // --check（台帳照合のみ・読み取り）は paused でも許可する。
+  // 投稿準備 / 記録 / 失敗記録は paused: true なら停止。
+  if (!args.check) {
+    const g = gate({ phase: "phase_c", trigger: "manual" });
+    if (!g.allowed) {
+      console.error(`[autonomy] BLOCK: ${g.reason}（data/automation/autonomy.json の paused を確認してください）`);
+      await notifyAutonomyEvent({ slug: args.slug || "phase-c", status: "autonomy_blocked", title: `[autonomy] Phase C停止: ${g.reason}` }).catch(() => {});
+      process.exit(1);
+    }
+  }
 
   if (args.check) return modeCheck(args.slug);
   if (args.record) return modeRecord(args);

@@ -216,7 +216,16 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   // Optionally register in the review list if slug is provided
   if (slug) {
     const now = new Date().toISOString();
+    // 既存レコードとマージする（vetoedAt 等、他経路で書かれたフィールドを消さない）
+    let existing: Record<string, unknown> = {};
+    try {
+      const raw = await env.SUMALABO_REVIEW_KV.get(`review:item:${slug}`, "text");
+      if (raw) existing = JSON.parse(raw) as Record<string, unknown>;
+    } catch {
+      existing = {};
+    }
     const record = {
+      ...existing,
       slug,
       title,
       branch: typeof item.branch === "string" ? item.branch : undefined,
@@ -227,6 +236,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       sourceCheckPassed: typeof item.sourceCheckPassed === "boolean" ? item.sourceCheckPassed : undefined,
       createdAt: now,
       updatedAt: now,
+      // L1 (Autonomy Ladder): veto 窓と監査情報
+      previewReadyAt: typeof item.previewReadyAt === "string" ? item.previewReadyAt : undefined,
+      vetoDeadline: typeof item.vetoDeadline === "string" ? item.vetoDeadline : undefined,
+      autonomyLevel: typeof item.autonomyLevel === "number" ? item.autonomyLevel : undefined,
+      trigger: typeof item.trigger === "string" ? item.trigger : undefined,
     };
     await env.SUMALABO_REVIEW_KV.put(`review:item:${slug}`, JSON.stringify(record));
     const idxRaw = await env.SUMALABO_REVIEW_KV.get("review:index", "text");

@@ -23,7 +23,10 @@
     "automation:run-queue": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/run-sumahon-queue.ps1",
     "automation:register-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/register-sumahon-tasks.ps1",
     "automation:disable-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/disable-sumahon-tasks.ps1",
-    "deploy:production": "node scripts/automation/deploy-production-from-main.mjs"
+    "deploy:production": "node scripts/automation/deploy-production-from-main.mjs",
+    "rollback:production": "node scripts/automation/rollback-production.mjs",
+    "verify:post-publish": "node scripts/automation/post-publish-verify.mjs",
+    "phaseb:auto": "node scripts/automation/auto-phase-b.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",

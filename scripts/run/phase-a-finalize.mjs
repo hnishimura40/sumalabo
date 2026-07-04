@@ -43,6 +43,8 @@ import { deployPreviewToCloudflarePages } from "../sumahon/cloudflare-pages-depl
 import { verifyPreviewUrl } from "../sumahon/verify-preview-url.mjs";
 import { notifyReviewReady } from "../sumahon/notify-review-ready.mjs";
 import { validateMainPreviewUrl } from "../sumahon/preview-url-policy.mjs";
+import { gate, loadAutonomy, computeVetoDeadline } from "../automation/autonomy.mjs";
+import { notifyAutonomyEvent } from "../automation/autonomy-notify.mjs";
 
 function parseArgs(argv) {
   const out = {};
@@ -80,6 +82,20 @@ async function main() {
   }
 
   const report = { slug, branch, steps: {}, finishedAt: null };
+
+  // -1. autonomy ゲート（L1 基盤・kill switch）: paused: true なら即停止。
+  const autonomyState = loadAutonomy();
+  const autonomyGate = gate({ phase: "finalize", trigger: "manual", state: autonomyState });
+  report.autonomyLevel = autonomyGate.level;
+  report.trigger = "manual";
+  report.steps.autonomyGate = { ok: autonomyGate.allowed, level: autonomyGate.level, reason: autonomyGate.reason };
+  if (!autonomyGate.allowed) {
+    report.finishedAt = new Date().toISOString();
+    await save(report);
+    console.error(`[finalize] BLOCK: autonomy ${autonomyGate.reason}（data/automation/autonomy.json の paused を確認してください）`);
+    await notifyAutonomyEvent({ slug, status: "autonomy_blocked", title: `[autonomy] finalize停止: ${autonomyGate.reason} (${slug})` }).catch(() => {});
+    process.exit(2);
+  }
 
   // 0. 品質ゲート（sumalabo-gate --stage full）。不合格なら以降
   //    （build / Preview URL 作成 / review item 登録 / 通知）へ一切進まない。
@@ -165,10 +181,22 @@ async function main() {
   report.steps.verify = { ok: !!verify?.ok, reason: verify?.reason, status: verify?.status };
   if (!verify?.ok) { report.finishedAt = new Date().toISOString(); await save(report); console.error(`[finalize] BLOCK: preview verify failed reason=${verify?.reason}`); process.exit(2); }
 
+  // 4.5 veto 窓の計算（L1 基盤）: 期限を review item と通知に記録する。
+  //     L0 では情報記録のみ（自動 Phase B は走らない）。L1 以降は期限経過で
+  //     GitHub Actions の auto-phase-b が公開に進む。
+  const veto = computeVetoDeadline(new Date(), autonomyState);
+  report.previewReadyAt = veto.previewReadyAt;
+  report.vetoDeadline = veto.vetoDeadline;
+
   // 5. review item 登録 + 通知（notify 側でもローカル URL を二重ガード）
   console.log("[finalize] notify + register review item...");
   const notify = await notifyReviewReady({
-    item: { slug, title: title || undefined, branch, previewUrl, prUrl: prUrl || undefined, thumbnail: thumbnail || undefined, status, sourceCheckPassed: true },
+    item: {
+      slug, title: title || undefined, branch, previewUrl, prUrl: prUrl || undefined,
+      thumbnail: thumbnail || undefined, status, sourceCheckPassed: true,
+      previewReadyAt: veto.previewReadyAt, vetoDeadline: veto.vetoDeadline,
+      autonomyLevel: autonomyGate.level, trigger: "manual",
+    },
   });
   report.steps.notify = { ok: !!notify?.ok, reason: notify?.reason, sent: notify?.response?.sent, subscribers: notify?.response?.subscribers };
   report.finishedAt = new Date().toISOString();
@@ -181,6 +209,12 @@ async function main() {
 
   console.log("\n=== PHASE A FINALIZE OK ===");
   console.log(JSON.stringify({ slug, previewUrl, status, prUrl, sent: notify?.response?.sent, subscribers: notify?.response?.subscribers }, null, 2));
+  console.log(`\n⏱ veto期限: ${veto.vetoDeadlineJst}（veto窓 ${veto.vetoWindowMinutes} 分）`);
+  if (autonomyGate.level >= 1) {
+    console.log("   L1: この期限までに停止（PWAのvetoボタン or autonomy.json paused=true）が無ければ Phase B（本番公開）へ自動で進みます。");
+  } else {
+    console.log("   L0: 自動公開はされません。従来どおりユーザーの明示了承（「記事OK、公開へ」）を待ちます。");
+  }
   process.exit(0);
 }
 
