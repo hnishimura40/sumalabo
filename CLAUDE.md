@@ -75,6 +75,8 @@
 
 > ステップ 1〜8 は ChatGPT「すまラボ台本」プロジェクト内で本文を練り上げる工程（Research Pass → Editorial Selection → Sumarabo Translation → Draft → Review×2〜3 → Final Draft）。詳細: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)。**この手動フローを省略して、いきなり画像生成や本文の機械生成に進まない。**
 
+> **鮮度チェック（2026-07-04 追加）**: 中断していた記事を再開するとき、final_article 作成から **7 日を超えていたら、スライド生成前に公式情報の再取得（鮮度チェック）を必須** とする。提供条件・価格・日付が動いていたら本文をリフレームしてから画像工程へ進む。
+
 > **画像生成前の必須工程：Article Refinement Loop**
 > 画像生成（スライド・サムネ）に進む前に、本文ドラフト → 自己レビュー × 2〜3 → `article-ready-for-images` 6 条件クリアの順で必ず Refinement Loop を通過する。**本文・スライド構成案がない状態で画像だけ先に作るのは禁止。** 詳細: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)
 >
