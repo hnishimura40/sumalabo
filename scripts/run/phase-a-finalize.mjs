@@ -100,6 +100,29 @@ async function main() {
     process.exit(2);
   }
 
+  // 0.5 成果物保全チェック（P7）: drafts/refinement/{slug} がコミット済みであること。
+  //     gate --stage full 内でも検査するが、gate 側の将来変更に依存しないよう
+  //     finalize でも独立に未追跡/未ステージ/未コミットを検出して停止する。
+  //     背景: 2026-07 OS Temp クリーンアップで未コミット drafts が消失した事故。
+  console.log("[finalize] drafts preservation check (git status drafts/refinement/{slug})...");
+  const draftsDirty = await new Promise((resolve) => {
+    const child = spawn("git", ["status", "--porcelain", "--", `drafts/refinement/${slug}`], { windowsHide: true });
+    let out = "";
+    child.stdout.on("data", (d) => { out += d; });
+    child.on("close", (code) => resolve(code === 0 ? out.split(/\r?\n/).filter(Boolean) : null));
+    child.on("error", () => resolve(null));
+  });
+  report.steps.draftsPreservation = { ok: Array.isArray(draftsDirty) && draftsDirty.length === 0, entries: draftsDirty ?? "git_unavailable" };
+  if (draftsDirty === null) {
+    console.warn("[finalize] warn: git 状態を確認できませんでした（drafts 保全チェックをスキップ）");
+  } else if (draftsDirty.length > 0) {
+    report.finishedAt = new Date().toISOString();
+    await save(report);
+    console.error(`[finalize] BLOCK: drafts/refinement/${slug} に未コミットの成果物があります（${draftsDirty.length} 件）。記事の PR に含めてコミットしてから finalize してください。`);
+    for (const line of draftsDirty) console.error(`  ${line}`);
+    process.exit(2);
+  }
+
   // 1. build
   if (!args["skip-build"] || !existsSync("dist")) {
     console.log("[finalize] build...");

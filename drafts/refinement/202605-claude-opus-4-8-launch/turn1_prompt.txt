@@ -1,0 +1,40 @@
+【役割】
+あなたは、すまラボの編集担当です。スマホ・AI・ガジェット系のデジタルニュースを、専門用語に寄せすぎず、でも薄くしすぎず、読者がニュースの構造を理解できるようにやさしく噛み砕いてください。
+
+これからこの記事を複数ターンに分けて実際にブラッシュアップします。一発で最終稿まで書かないでください。今回のターンでは Research Pass と Editorial Selection の2つだけを出力し、初稿・レビュー・最終稿はまだ書かないでください。
+
+【記事テーマ】
+Claude Opus 4.8 登場 — Anthropic の新AIモデルで何が変わるのか
+
+【参考URL】
+- Anthropic公式「Introducing Claude Opus 4.8」: https://www.anthropic.com/news/claude-opus-4-8
+- Claude API Docs「What's new in Claude Opus 4.8」: https://platform.claude.com/docs/en/about-claude/models/whats-new-claude-4-8
+- TechCrunch（2026-05-28、dynamic workflow ツール報道）
+- GitHub Changelog（Opus 4.8 が GitHub Copilot で GA）
+
+【確定事実（公式。これだけを使う。数字・名称を勝手に足さない）】
+- 2026年5月28日リリース。Opus 4.7 の後継。価格は4.7と据え置き＝通常 入力$5/出力$25（100万トークンあたり）、fast mode 入力$10/出力$50（fast modeは従来Opusの3分の1の価格）。
+- 新機能: Dynamic workflows（Claude Codeのresearch preview、1セッションで「数百」の並列サブエージェントを協調、Enterprise/Team/Max向け）／Effort制御（claude.ai・Cowork で計算の深さを選べる）／Messages APIの途中system（会話の途中で指示を追記でき、プロンプトキャッシュを保って入力コストを抑える）／adaptive thinking（必要なときだけ推論、4.7比で無駄な思考トークンを削減）。
+- 1Mトークンのコンテキストが既定（Microsoft Foundryは200k）、最大出力128kトークン、ツールは4.7と同等。APIモデルID `claude-opus-4-8`。即時に全提供。GitHub CopilotでもGA。
+- 向上点(対4.7): エージェント的コーディング/多分野推論/エージェント的コンピュータ操作/ナレッジワーク/金融分析。自分の書いたコードの欠陥を見逃す確率が前モデルの約4分の1。不確実性を自分から申告し、根拠の薄い主張をしにくい。アライメント評価で向社会的特性が新たな高水準、不整合な振る舞いの率は4.7より大幅低下。
+- コンピュータ操作ベンチ: Online-Mind2Web で 84%（公式記載、4.7・GPT-5.5 双方より前進）。
+- 将来: Project Glasswing の「Claude Mythos Preview」（さらに高い知能）を、サイバーセキュリティの安全対策完了後、数週間内に提供予定。
+
+【未確定・断定しない（claim / uncertain）】
+- 「最大1,000の並列サブエージェント」は一部報道。公式は「数百（hundreds）」→「数百」を使い、1,000とは断定しない。
+- 「SWE-Bench Pro 69.2%」「OSWorld 83.4%」「fast mode 2.5×速」等は報道由来で公式未確認 → 使うなら「報道では」と明示、基本は使わない。
+- 「41日でのリリースは4.7の不評・競合圧力への反応」はTechCrunchの論評（公式見解ではない）。
+- 日本での提供可否・日本語対応の細部は公式に特記なし → 断定しない。
+
+【記事の主軸】
+主役は「自分に関係ある?」「使うべき?」ではありません。主役は、デジタルニュースをやさしく噛み砕くこと。具体的には: Claude Opus 4.8とは何か / Anthropicが何を発表したのか / Opus 4.7や既存Claudeから何が変わったのか / 何が強化されたのか（computer-use・browser/agent・coding・knowledge work を一般読者にも伝わる形で）/「AIが賢くなった」で終わらせず“AIに仕事を任せる方向の進化”として何が意味を持つのか / どこまでが公式でどこからが報道・評価・推測か / 価格・提供範囲・日本での利用可否など変動情報は確認して扱う。
+
+【禁止事項】
+- 「自分に関係ある?」「使うべき?」を主役にしない／開発者向けベンチだけの記事にしない／投資・企業分析に寄せない
+- 「最強AI」「完全に別物」など煽り見出しにしない／未確定の断定をしない
+- 禁止語: 普通の人/みんな/全員/誰でも/万人向け/すまほん/smhn/元記事／メタ表現を入れない
+
+【このターンの出力】
+1. Research Pass: facts / claims / uncertain、参考URLの確認状況、上記「確定事実」との照合（一致/食い違い/補足）
+2. Editorial Selection: 採用する論点 / 採用しない論点、主役にする論点 / しない論点
+初稿はまだ書かないでください。この2つを出したら止めてください。次のターンで初稿を依頼します。

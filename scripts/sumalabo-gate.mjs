@@ -23,6 +23,7 @@
 // 検査を弱める変更（パターン削除・チェックのスキップ追加）は理由の報告が必要。
 
 import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { execSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -148,6 +149,9 @@ function loadForbiddenWords() {
     kind: p.kind === "regex" ? "regex" : "literal",
     flags: p.flags || "",
     appliesTo: Array.isArray(p.appliesTo) ? p.appliesTo : ["mdx", "draft"],
+    // 誤検知対策: この正規表現に一致する行は検査対象外にする
+    //（例: slide_plan の「『最強』などの煽り文句は使わない」という禁止指示文）
+    excludeLineRegex: typeof p.excludeLineRegex === "string" ? p.excludeLineRegex : null,
     note: p.note || "",
   }));
 }
@@ -165,7 +169,12 @@ function checkForbiddenWords(text, fileLabel, scope, patterns) {
       report("violation", "config", CONFIG.forbiddenWordsPath, `パターン不正 "${p.pattern}": ${e.message}`);
       continue;
     }
+    let excludeRe = null;
+    if (p.excludeLineRegex) {
+      try { excludeRe = new RegExp(p.excludeLineRegex); } catch { excludeRe = null; }
+    }
     lines.forEach((line, idx) => {
+      if (excludeRe && excludeRe.test(line)) return;
       if (re.test(line)) {
         report(p.severity, "forbidden-word", fileLabel,
           `L${idx + 1}: 「${p.pattern}」${p.note ? `（${p.note}）` : ""} → ${line.trim().slice(0, 60)}`);
@@ -204,6 +213,37 @@ function checkDraftStage(slug, patterns, stage) {
   for (const f of ["final_article.md", "slide_plan.md"]) {
     const t = readTextOrNull(path.join(dir, f));
     if (t !== null) checkForbiddenWords(stripProvenanceHeader(t), `drafts/refinement/${slug}/${f}`, "draft", patterns);
+  }
+
+  // full ステージ: 成果物保全チェック（P7）。
+  // 「ファイルがある」だけでなく「git 追跡下にあり、未コミット変更が無い」ことを要求する。
+  // 背景: 2026-07 に OS Temp クリーンアップで未コミットの drafts が3記事分消失した事故。
+  if (stage === "full") {
+    checkDraftsCommitted(slug);
+  }
+}
+
+// drafts/refinement/{slug} 配下が git 追跡下かつクリーン（未追跡/未ステージ/未コミット無し）かを検査
+function checkDraftsCommitted(slug) {
+  const rel = `drafts/refinement/${slug}`;
+  let tracked, dirty;
+  try {
+    const opts = { cwd: REPO_ROOT, encoding: "utf8", windowsHide: true };
+    tracked = execSync(`git ls-files -- "${rel}"`, opts).split(/\r?\n/).filter(Boolean).map((s) => s.replace(/\\/g, "/"));
+    dirty = execSync(`git status --porcelain -- "${rel}"`, opts).split(/\r?\n/).filter(Boolean);
+  } catch (e) {
+    report("warning", "draft-preservation", rel, `git 状態を確認できませんでした（git 不在?）: ${e.message.split("\n")[0]}`);
+    return;
+  }
+  const trackedSet = new Set(tracked);
+  for (const f of REQUIRED_DRAFT_ARTIFACTS) {
+    const relFile = `${rel}/${f}`;
+    if (existsSync(path.join(REPO_ROOT, relFile)) && !trackedSet.has(relFile)) {
+      report("violation", "draft-preservation", relFile, "git 追跡外です。成果物は記事の PR に含めてコミットしてください（消失事故防止）");
+    }
+  }
+  for (const line of dirty) {
+    report("violation", "draft-preservation", rel, `未コミットの変更/未追跡ファイルがあります: ${line.trim()}`);
   }
 }
 

@@ -1,0 +1,41 @@
+【役割】
+あなたは、すまラボの編集担当です。スマホ・AI・ガジェット系のデジタルニュースを、専門用語に寄せすぎず、でも薄くしすぎず、読者がニュースの構造を理解できるようにやさしく噛み砕いてください。
+
+これからこの記事を、複数ターンに分けて実際にブラッシュアップします。一発で最終稿まで書かないでください。私がターンごとに指示します。今回のターンでは、Research Pass と Editorial Selection の2つだけを出力してください。初稿・レビュー・最終稿はまだ書かないでください。
+
+【記事テーマ】
+Meta Oneとは？Instagram・WhatsAppの有料プランとMeta AI課金で何が変わるのか
+
+【参考URL】
+- TechCrunch: https://techcrunch.com/2026/05/27/meta-officially-launches-instagram-facebook-and-whatsapp-subscriptions-with-more-to-come-including-ai-plans/
+- The Verge: https://www.theverge.com/tech/938500/facebook-whatsapp-instagram-meta-ai-subscriptions
+- Meta IR Q1 2026: https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-First-Quarter-2026-Results/default.aspx
+- Meta Japan: https://about.fb.com/ja/news/2025/11/meta-ai-gradual-rollout-begins-in-japan/
+
+【確定事実】
+- Plus(世界展開): Instagram Plus $3.99/月、Facebook Plus $3.99/月、WhatsApp Plus $2.99/月（米国基準）。機能=プロフィール/アプリのカスタマイズ、スーパーリアクション、ストーリー分析 等。基本利用(投稿/閲覧/メッセージ)は無料のまま。Meta Verified(認証・なりすまし対策)を置き換えない。
+- Meta One(AI向け・テスト): Meta One Plus $7.99/月、Premium $19.99/月。来月テスト・シンガポール/グアテマラ/ボリビア。Premiumは重い処理の容量増＋動画/画像生成強化。
+- Meta One(事業者向け・テスト): Essential $14.99/月(認証バッジ/なりすまし対策)、Advanced $49.99/月(フィード優先表示/検索強化/分析)。今週テスト・サウジ/モロッコ/タイ/バングラデシュ。
+- Meta AI: カジュアル利用は無料継続。重い処理(画像/動画生成/複雑推論)は有料に寄る。基本利用の有料化発表はない。
+- Meta業績(Q1 2026): 2026通年CapEx見通し $125-145B（$115-135Bから上方修正）、Q1設備投資 $19.84B、Q1売上 $56.31B(前年比+33%)、家族DAP 35.6億人。
+- 日本: Meta AI日本提供は2025-11-25から段階開始(IG/FB/Messenger/WhatsApp/meta.ai)。日本公式に「無料」明記なし・有料プラン開始の記載もない。
+
+【未確定情報】
+- Meta One系の日本提供時期・日本円価格・対応機能 → 未確定
+- Plus系の日本円価格・日本での機能差 → 未確定
+- 「投資回収のためだけに課金」という因果 → 断定しない(claim扱い)
+
+【記事の主軸】
+主役は「課金すべきか」ではありません。主役は、デジタルニュースをやさしく噛み砕くことです。具体的には、Metaが何を始めたのか / SNS追加機能課金とAI課金の違い / 「全部有料化」ではない理由 / 無料＋広告の土台に有料レイヤーが増える構造 / 日本で確定・未確定なこと / AI時代のデジタルサービス課金の流れ、を説明します。
+
+【禁止事項】
+- 「自分に関係ある？」「課金すべき？」を主役にしない
+- Instagram全部有料化と読める表現をしない / 日本ですぐ開始と断定しない
+- 普通の人/みんな/全員/誰でも/万人向け/すまほん/smhn/元記事 を使わない
+- メタ表現・煽り・未確定の断定をしない
+
+【このターンの出力】
+1. Research Pass: facts / claims / uncertain、参考URL4本の確認状況、上記「確定事実」との照合（一致/食い違い/補足）
+2. Editorial Selection: 採用する論点 / 採用しない論点、主役にする論点 / しない論点
+
+初稿はまだ書かないでください。この2つを出したら止めてください。次のターンで初稿を依頼します。
