@@ -1,0 +1,28 @@
+# 週次ダイジェスト (L1 運用の監査点)
+# ledger + logs から直近 7 日のサマリを生成し、Web Push で通知する。
+
+name: Weekly Digest
+
+on:
+  schedule:
+    # 毎週月曜 09:00 JST (= 日曜 24:00 UTC)
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build and send digest
+        run: node scripts/automation/weekly-digest.mjs
+        env:
+          REVIEW_NOTIFY_SECRET: ${{ secrets.REVIEW_NOTIFY_SECRET }}

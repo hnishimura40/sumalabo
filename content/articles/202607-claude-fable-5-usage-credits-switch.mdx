@@ -1,0 +1,395 @@
+---
+title: "Claude Fable 5、7月8日からusage credits制へ。サブスクで使える残り枠と、切り替え後どうなるか"
+slug: "202607-claude-fable-5-usage-credits-switch"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Claude Fable 5は7月7日まで対象サブスクの週次上限50%以内で利用でき、7月8日以降は公式説明上usage credits経由に切り替わる予定です。50%の意味、Settings > Usageの見方、usage creditsの仕組みと注意点、日本での未確認事項まで、公式情報と報道を分けてやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-claude-fable-5-usage-credits-switch.webp"
+thumbnailAlt: "「7/8から何が変わる？」のサムネイル。ひまりがAIチャット画面の前で切り替えに気づいて少し戸惑い、らぼまるが7/7から7/8への日付カードを指し示す変化実感型のイラスト"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude"
+  - "Claude Fable 5"
+  - "Anthropic"
+  - "usage credits"
+  - "AIモデル"
+  - "サブスクリプション"
+  - "すまラボ"
+related:
+  - "202606-claude-fable-5-launch"
+  - "202605-claude-opus-4-8-launch"
+  - "202605-100-dollar-ai-monthly-plan-comparison"
+pubDate: "2026-07-05"
+updated: "2026-07-05"
+publishAt: "2026-07-05T07:00:00+09:00"
+---
+
+Claude Fable 5の「サブスク内で使える期間」が、7月7日でいったん区切りを迎えます。この記事では、7月8日以降に何がどう変わるのかを、公式情報と報道を分けて整理します。
+
+## 先に結論：対象プランでは7月7日までサブスク内、7月8日以降はusage creditsへ
+
+<p class="lead">Claude Fable 5は、対象プランでは<strong>7月7日まで</strong>サブスク内で使えますが、<strong>週次上限の最大50%まで</strong>で、7月8日以降は公式説明上<strong>usage credits経由</strong>になる予定です。</p>
+
+- 7月7日までは、Pro / Max / Team / 一部EnterpriseでFable 5をサブスク枠内でも利用可能
+- ただし、使えるのは週次上限の最大50%までで、無制限ではない
+- 7月8日以降は、公式説明ではusage creditsを使う形に切り替わる予定
+
+ここで注意したいのは、「7月7日までは使える」といっても、Fable 5を好きなだけ使えるわけではないことです。Claudeの利用枠には、5時間セッションの上限や週次上限があり、モデルや会話の長さによって減り方も変わります。
+
+また、7月8日以降の実際の画面表示や、日本のユーザー向けの支払い表示は、切り替え後に確認が必要です。この記事では、公式情報で確認できることと、現時点では未確認のことを分けて整理します。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">7月7日までと7月8日以降で何が変わるのか、左右比較で 1 枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-usage-credits-switch/fig01-77-vs-78.webp"
+         alt="「7/7までと7/8以降、何が変わる？」の左右比較図解。左は7月7日まで（Pro / Max / Team / 一部Enterprise、サブスク枠内でも利用可能、ただし週次上限の最大50%まで）、右は7月8日以降（公式説明上usage credits経由へ、credits設定が関係する可能性、実画面は切り替え後に確認）。ひまり『今はサブスクで使えるの？』らぼまる『7/8以降はcredits確認だよ』の対話つき"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：7月7日までと7月8日以降の違い</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>7月7日まで</strong>：Pro / Max / Team / 一部Enterpriseでサブスク内利用が可能</li>
+      <li><strong>上限</strong>：週次上限の最大50%までで、無制限ではない</li>
+      <li><strong>7月8日以降</strong>：公式説明上、usage credits経由へ</li>
+      <li><strong>結論</strong>：7/8以降の表示・支払い画面は実際の切り替え後に確認</li>
+    </ul>
+  </div>
+</section>
+
+## そもそも何が変わるのか
+
+<p class="lead">今回の変更点は、Fable 5が使えるかどうかよりも、<strong>「サブスク内で使えるのか、追加credits扱いになるのか」</strong>です。</p>
+
+Claude Fable 5は、一時的に利用できない時期がありましたが、その後、Anthropicの公式発表で利用再開が案内されました。詳しい経緯は、前回の記事「[Claude Fable 5が復活。7月7日からの変更点と“止まっていた3週間”をやさしく整理](https://sumalabo.com/articles/202606-claude-fable-5-launch/)」で整理しています。
+
+今回の記事で見るべきポイントは、その続きです。
+
+Fable 5は復活しましたが、サブスク内でそのまま長く使える形ではありません。公式説明では、7月7日までは一部の有料プランでサブスク枠内に含まれ、7月8日以降はusage credits経由になる予定とされています。
+
+つまり、読者が確認すべきなのは次の3つです。
+
+| 確認したいこと | 見るポイント |
+|---|---|
+| 7月7日まで使えるか | 自分のプランが対象か |
+| どれくらい使えるか | 週次上限の最大50%まで |
+| 7月8日以降どうなるか | usage credits設定が必要になる可能性 |
+
+## 7月7日まで：Fable 5はどのプランで使える？
+
+<p class="lead">公式説明では、7月7日まで<strong>Pro / Max / Team / 一部Enterprise</strong>で、Fable 5がサブスク内に含まれます。</p>
+
+対象として案内されているのは、Pro、Max、Team、一部Enterpriseプランです。個人利用では、ProやMaxを使っている人が主な対象になります。
+
+ただし、Enterpriseについては少し複雑です。標準のEnterprise seatではFable 5の同梱枠がなく、usage creditsでの利用が案内されています。一方で、premium Enterprise seatでは7月7日までサブスク内での利用が含まれると説明されています。
+
+個人ユーザーや小規模チームの場合は、細かいEnterpriseの違いよりも、次のように理解しておくと十分です。
+
+- Pro / Max：個人向け有料プランとして関係あり
+- Team：チーム利用者に関係あり
+- Enterprise：契約内容によって扱いが違う
+- Free：少なくとも公式説明上、今回のサブスク内同梱対象には含まれていない
+
+会社やチームのアカウントでClaudeを使っている場合は、自分だけで設定を変更できない可能性があります。usage creditsの有効化は、管理者側の設定が必要になる場合があります。
+
+## 「週次上限50%」は、残り時間50%という意味ではない
+
+<p class="lead">Fable 5の「最大50%」は、時計の残り時間ではなく、<strong>Claudeの週次利用枠のうち最大半分まで</strong>という意味です。</p>
+
+ここは誤解しやすいところです。
+
+「週次上限の最大50%まで」と聞くと、「残り時間の半分まで使える」と感じるかもしれません。しかし、Claudeの利用枠は単純なタイマーではありません。
+
+実際には、次のような要素で消費量が変わります。
+
+- 使うモデル
+- 会話の長さ
+- 添付ファイルの有無
+- Claude Codeなどのツール利用
+- 生成する文章やコードの量
+- 1回のやり取りで扱う情報量
+
+たとえば、短い質問を数回するのと、長い資料を読み込ませて何度も修正するのとでは、同じ「1時間」でも消費量が変わります。
+
+そのため、タイトルや画面上で「残り時間」と表現されていても、実際には「利用枠の残り」と考える方が近いです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「50%まで」の意味を、ゲージのイメージで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-usage-credits-switch/fig02-weekly-50-percent.webp"
+         alt="「“50%まで”は“時間の半分”ではない」の図解。週次上限の最大50%まで＝週次利用枠の最大半分であることを円ゲージで示し、消費量はモデル・会話の長さ・ファイル添付・Claude Code・生成量で変わることをチェックリストで補足。時計を持って『あと何時間使えるの？』と戸惑うひまりに、らぼまるが『時間じゃなく利用枠だよ』と説明する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：週次上限50%のイメージ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>50%の意味</strong>：残り時間ではなく、週次利用枠の最大半分</li>
+      <li><strong>消費量は変動</strong>：モデル・会話の長さ・ファイル添付・ツール利用・生成量で変わる</li>
+      <li><strong>結論</strong>：残り枠は Settings &gt; Usage で確認する</li>
+    </ul>
+  </div>
+</section>
+
+## Settings > Usageで確認すべきこと
+
+<p class="lead">Fable 5を使う前に、自分の利用枠とリセット時刻は<strong>Settings &gt; Usage</strong>で確認しておくのが安全です。</p>
+
+Claudeでは、利用状況を「Settings &gt; Usage」から確認できます。ここでは、5時間セッションの残りや、週次上限の状況、次回リセットの目安を確認できます。
+
+特にFable 5を使う前に見ておきたいのは、次の項目です。
+
+| 確認項目 | 見る理由 |
+|---|---|
+| 現在の利用状況 | どれくらい枠を使っているか分かる |
+| 5時間セッションの残り | 直近でどれくらい使えるか分かる |
+| 週次上限の残り | 今週の利用余力を確認できる |
+| 次回リセット時刻 | いつ枠が戻るか分かる |
+| usage credits設定 | 7月8日以降の利用に関係する |
+
+特に、Fable 5で重い作業をする場合は注意が必要です。長い文章の作成、ファイルを使った分析、Claude Codeでのコーディングなどは、利用枠を大きく消費する可能性があります。
+
+「まだ時間がある」と思っていても、作業内容によっては想定より早く上限に近づくことがあります。まずはSettings &gt; Usageを確認し、必要な作業から優先して使うのがよさそうです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">使う前にどこを見ればいいか、5 項目に絞って。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-usage-credits-switch/fig03-settings-usage.webp"
+         alt="「使う前に見るのはここ。Settings > Usageで確認」の図解。抽象化したUsage画面のイメージと、見るべき5項目（現在の利用状況・5時間セッションの残り・週次上限の残り・次回リセット時刻・usage credits設定）のチェックリスト。ひまり『どこを見ればいいの？』らぼまる『この5つを見ればOK』の対話つき"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Settings &gt; Usageで見るべき項目</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>確認場所</strong>：Settings &gt; Usage</li>
+      <li><strong>見る5項目</strong>：利用状況 / 5時間セッション残り / 週次上限残り / 次回リセット時刻 / usage credits設定</li>
+      <li><strong>結論</strong>：「残り時間」だけでなく、利用枠の消費状況を見る</li>
+    </ul>
+  </div>
+</section>
+
+## 7月8日以降：usage creditsとは何か
+
+<p class="lead">usage creditsは、サブスク枠とは別に<strong>追加利用するための残高・従量課金枠</strong>です。</p>
+
+usage creditsは、ざっくり言えば「追加チャージ」に近い仕組みです。サブスクの基本枠とは別に、残高を使ってClaudeを利用するイメージです。
+
+あくまでイメージですが、スマホ料金でいえば、基本プランとは別に追加データを買う感覚に近いです。ただし、Claudeの場合は通信量ではなく、モデルの処理量に応じて消費されます。
+
+公式ヘルプでは、個人向け有料プランの場合、Settings &gt; Usageからusage creditsを有効化し、支払い方法や上限設定、Add funds、自動リロードなどを設定できると案内されています。
+
+7月8日以降、Fable 5はこのusage credits経由になる予定です。つまり、サブスクに入っているだけでそのまま使える状態から、追加creditsの設定が関係する状態に変わる可能性があります。
+
+なお、usage creditsは自分で有効化・購入して使う仕組みです。少なくとも公式ヘルプ上は、設定していないのに自動で追加課金される、という説明ではありません。
+
+Fable 5のAPI価格は、調査時点の公式価格表では入力100万トークンあたり10ドル、出力100万トークンあたり50ドルです。ただし、チャット利用で実際にいくら消費するかは使い方で変わるため、Usage画面で確認しながら使うのが安全です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">usage creditsの仕組みを、追加チャージのイメージで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-usage-credits-switch/fig04-what-is-usage-credits.webp"
+         alt="「usage creditsって何？ usage credits＝追加利用の残高」の図解。左にサブスク枠（月額プランの基本枠・通常の利用上限あり）、右にusage credits（追加で使うための残高・Settings > Usageから有効化・Add fundsで購入・自動課金ではなく自分で有効化・購入して使う仕組み）。価格メモとして入力$10 / MTok・出力$50 / MTok。ひまり『勝手に課金されるの？』らぼまる『自分で有効化・購入して使う仕組みだよ』の対話つき"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：usage creditsは追加チャージのイメージ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>usage credits</strong>：サブスク枠とは別の、追加利用の残高</li>
+      <li><strong>設定場所</strong>：Settings &gt; Usageから有効化、Add fundsで購入</li>
+      <li><strong>安心ポイント</strong>：自分で有効化・購入して使う仕組み</li>
+      <li><strong>価格メモ</strong>：API価格は入力$10 / 出力$50（100万トークンあたり）</li>
+    </ul>
+  </div>
+</section>
+
+## usage creditsを使う前に注意したいこと
+
+<p class="lead">usage creditsは便利ですが、<strong>使いすぎ防止の設定と有効期限</strong>を確認してから使うべきです。</p>
+
+usage creditsを有効にすると、上限後も追加で使えるようになる一方、課金管理が必要になります。特に、Fable 5のような上位モデルを、長い会話やファイル分析、コード生成で使う場合は、思ったよりcreditsを消費する可能性があります。
+
+確認しておきたいのは次の点です。
+
+- 月ごとの上限設定
+- 自動リロードの有無
+- どの支払い方法が使われるか
+- creditsの有効期限
+- 返金や譲渡の扱い
+- 実際の消費状況をどこで確認できるか
+
+公式規約では、usage creditsは原則として1年で失効するとされています。また、返金不可・譲渡不可の扱いも示されています。
+
+そのため、最初から大きな金額を入れるより、まずは少額で試し、Usage画面で消費の感覚を見ながら使う方が安心です。
+
+公式ヘルプでは、usage bundlesとして50ドル、250ドル、1000ドルのバンドルも案内されています。ただし、日本のユーザーに実際どのように表示されるかは、切り替え後の画面確認が必要です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">creditsを買う前のチェックポイントを 1 枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-usage-credits-switch/fig05-before-buying-credits.webp"
+         alt="「credits購入前に確認すること」のチェックリスト図解。月ごとの上限設定・自動リロードの有無・支払い方法・有効期限・返金・譲渡の扱い・消費状況の確認場所の6項目。usage creditsは原則1年で失効という注意と、公式ヘルプ上のusage bundles（$50=10% / $250=20% / $1000=30%割引）の小さな表つき。『多めに買っておけば安心？』と迷うひまりに、らぼまるが『まずは1年失効と自動リロードを確認』と止める構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：credits購入前のチェックリスト</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>買う前の6確認</strong>：月上限 / 自動リロード / 支払い方法 / 有効期限 / 返金・譲渡 / 消費確認場所</li>
+      <li><strong>有効期限</strong>：usage creditsは原則1年で失効</li>
+      <li><strong>bundles</strong>：$50・$250・$1000（割引はそれぞれ10% / 20% / 30%）</li>
+      <li><strong>結論</strong>：日本での表示・税・カード明細は実画面確認が必要</li>
+    </ul>
+  </div>
+</section>
+
+## Claude Codeで使っている人はどうなる？
+
+<p class="lead">Claude CodeでFable 5を使う人も、7月8日以降は<strong>usage creditsの設定</strong>に注意が必要です。</p>
+
+Fable 5は、通常のチャットだけでなくClaude Codeでも関心が高いモデルです。コード生成や修正、長いプロジェクトの整理に使う場合、利用枠の消費も大きくなりやすいと考えられます。
+
+ProやMaxでClaude Codeを使っている場合、Claude本体とClaude Codeの利用枠は関係しています。つまり、チャット側で使った分と、Claude Code側で使った分が別々に完全分離されているわけではありません。
+
+7月8日以降、Fable 5がusage credits経由になる場合、Claude CodeでFable 5を使う人も、creditsの設定や残高を確認する必要が出てくる可能性があります。
+
+ただし、実際にどの画面でどのような案内が出るかは、切り替え後の確認が必要です。ここは現時点では未確認として扱うのが安全です。
+
+## 標準サブスクに戻る可能性はある？
+
+<p class="lead">Anthropicは、十分なキャパシティが確保できればFable 5を標準サブスクに戻すことを<strong>目指す</strong>と説明していますが、<strong>時期は未定</strong>です。</p>
+
+ここも大事なポイントです。
+
+7月8日以降にusage credits経由になるからといって、Fable 5が今後ずっとサブスク外になると決まったわけではありません。Anthropicは、キャパシティが整えば標準サブスクに戻すことを目指す、と説明しています。
+
+一方で、具体的な復帰時期は発表されていません。
+
+報道では、関係者発言として「恒久的にサブスクから外れるわけではない」という趣旨も伝えられています。ただし、これは公式の復帰日発表ではありません。
+
+したがって、現時点で言えるのは次の範囲です。
+
+| 項目 | 状況 |
+|---|---|
+| 標準サブスク復帰の方針 | 目指すと説明あり |
+| 復帰時期 | 未発表 |
+| 7月8日以降の扱い | 公式説明上、usage credits経由になる予定 |
+| 実画面の挙動 | 切り替え後に確認が必要 |
+
+## 日本の利用者にとって、まだ未確認のこと
+
+<p class="lead">日本のユーザーにとっては、<strong>切り替え時刻、支払い表示、画面文言</strong>など、7月8日以降に確認すべき点が残っています。</p>
+
+公式説明では「7月7日まで」「7月7日後」と案内されています。一方、報道では米国太平洋時間の7月7日23時59分59秒までと伝えられており、日本時間では7月8日15時59分59秒に相当します。
+
+ただし、この秒単位の時刻は報道ベースであり、公式本文で日本時間の切り替え時刻まで明記されているわけではありません。そのため、記事では「公式では7月7日まで」「報道では米国太平洋時間ベース」と分けて考えるのが安全です。
+
+日本の利用者が特に確認したいのは、次の点です。
+
+- 日本時間で実際にいつ切り替わるか
+- Fable 5を選んだときにどのような表示が出るか
+- usage creditsなしで選択できるのか
+- 支払い画面が円表示なのか、ドル表示なのか
+- 税やカード明細がどう表示されるか
+- Web版とモバイルアプリで設定画面に違いがあるか
+
+特に、モバイルアプリ経由でClaudeに加入している人は注意が必要です。usage creditsの設定は、Web版Claudeで確認する必要がある可能性があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">公式の表現と報道ベースの時刻を分けて、確認リストと一緒に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-usage-credits-switch/fig06-japan-unconfirmed.webp"
+         alt="「日本ではここが未確認。7/8以降、実画面で確認」の図解。公式説明（through July 7 / after July 7）と報道ベース（PT 7/7 23:59:59、JST 7/8 15:59:59相当）を色分けカードで区別し、確認チェックリスト6項目（実際にいつ切り替わるか・Fable 5を選んだ時の表示・usage creditsなしで選べるか・円表示かドル表示か・税・カード明細の表示・Web版とアプリ版の違い）を掲載。ひまり『7/8って日本時間だといつ？』らぼまる『公式の表現と報道ベースの時刻を分けて見るよ』の対話つき"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：日本ユーザーが7月8日以降に確認すべきこと</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>公式説明</strong>：through July 7 / after July 7（日本時間の明記はなし）</li>
+      <li><strong>報道ベース</strong>：PT 7/7 23:59:59（JST 7/8 15:59:59 相当）</li>
+      <li><strong>7/8以降に確認</strong>：切り替え時刻 / 選択時の表示 / 通貨・税表示 / Web版とアプリ版の違い</li>
+      <li><strong>結論</strong>：秒単位の時刻は報道ベースとして扱う</li>
+    </ul>
+  </div>
+</section>
+
+## 使い続ける？様子見する？判断の目安
+
+<p class="lead">Fable 5をすぐ使い続けるべきかは、<strong>用途と課金への納得感</strong>で分けて考えるのがよさそうです。</p>
+
+Fable 5を仕事や制作で強く使っている人は、7月8日以降もusage creditsを設定して使う価値があるかもしれません。特に、Claude Codeで大きな作業をしている人や、長文作成・分析でFable 5の性能差を感じている人は、選択肢に入ります。
+
+一方で、試しに触っている程度なら、すぐにcreditsを購入しなくてもよいでしょう。まずは7月8日以降の実画面を確認し、消費量や支払い表示を見てから判断する方が安全です。
+
+目安としては、次のように分けられます。
+
+| タイプ | 判断の目安 |
+|---|---|
+| Fable 5を毎日使う | credits設定を確認しておく |
+| Claude Codeで重い作業に使う | 上限と課金管理を要確認 |
+| たまに試す程度 | 7月8日以降の実画面を見てからでよい |
+| 課金が不安 | 自動リロードを切り、少額から試す |
+| サブスク内だけで使いたい | 標準サブスク復帰を待つ選択肢もある |
+
+ここで大切なのは、「Fable 5が高性能だから即課金」という話にしないことです。便利なモデルでも、使い方によってはcredits消費が大きくなる可能性があります。
+
+自分の用途で本当に必要か、まずはSettings &gt; Usageで確認しながら判断するのが現実的です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">自分はどれに当てはまるか、用途別の分岐で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-usage-credits-switch/fig07-keep-or-wait.webp"
+         alt="「使い続ける？様子見？ 用途で分けて考えよう」の判断ガイド図解。毎日使う/制作や仕事で必要→credits設定を確認、Claude Codeで重い作業→上限と消費量を要確認、たまに試す程度→7/8以降の実画面を見てから、課金が不安→自動リロードOFF・少額から、サブスク内だけで使いたい→標準サブスク復帰を待つ選択肢、の5分岐。共通ゴールは『まずはUsage画面で確認』。標準サブスク復帰は目指すとされるが時期未定の注意書きつき"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：使い続けるか様子見するかの判断ガイド</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>毎日使う / 仕事で必要</strong>：credits設定を確認</li>
+      <li><strong>Claude Codeで重い作業</strong>：上限と消費量を要確認</li>
+      <li><strong>たまに試す / 課金が不安</strong>：実画面を見てから・自動リロードOFFで少額から</li>
+      <li><strong>共通ゴール</strong>：まずはUsage画面で確認</li>
+    </ul>
+  </div>
+</section>
+
+## まとめ：7月8日以降は「使えるか」より「どう課金されるか」を確認
+
+<p class="lead">公式説明では、対象プランのFable 5は7月7日までサブスク内で使えますが、7月8日以降は<strong>usage credits経由になる予定</strong>です。そのため、利用枠と課金設定の確認が重要です。</p>
+
+今回のポイントをまとめると、次のとおりです。
+
+- 7月7日までは、Pro / Max / Team / 一部EnterpriseでFable 5をサブスク内利用できる
+- ただし、週次上限の最大50%までで、無制限ではない
+- 利用枠は単純な時計の残り時間ではなく、使い方によって消費量が変わる
+- 自分の残り枠やリセット時刻はSettings &gt; Usageで確認できる
+- 7月8日以降は、公式説明ではusage credits経由になる予定
+- usage creditsは追加チャージに近い仕組みで、有効期限や自動リロードに注意が必要
+- usage creditsは自分で有効化・購入して使う仕組みで、自動課金とは説明されていない
+- 標準サブスク復帰は目指されているが、具体的な時期は未発表
+- 日本での支払い表示や実画面の挙動は、切り替え後に確認が必要
+
+Fable 5を使いたい人は、まず7月7日までにSettings &gt; Usageを確認して、残り枠とリセット時刻を見ておきましょう。
+
+そして7月8日以降は、Fable 5が選べるか、usage creditsの設定を求められるか、支払い表示がどうなるかを確認するのが次のポイントです。
+
+すぐに大きな金額を入れるより、まずは実画面と消費量を見ながら判断する。これが、現時点ではいちばん安全な向き合い方です。
+
+## 参考リンク
+
+- [Anthropic公式ブログ：Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fable-5)
+- [Anthropic公式ブログ：Claude Fable 5 and Claude Mythos 5](https://www.anthropic.com/news/claude-fable-5-mythos-5)
+- [Claude Help Center：Manage usage credits for paid Claude plans](https://support.claude.com/en/articles/12429409-manage-usage-credits-for-paid-claude-plans)
+- [Claude Help Center：Usage limit best practices](https://support.claude.com/en/articles/9797557-usage-limit-best-practices)
+- [Claude Help Center：Buy usage bundles](https://support.claude.com/en/articles/14246112-buy-usage-bundles)
+- [Claude Platform Docs：Pricing](https://platform.claude.com/docs/en/about-claude/pricing)
+- [Anthropic：Supplemental Credit Terms](https://www.anthropic.com/legal/credit-terms)

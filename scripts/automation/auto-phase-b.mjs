@@ -214,7 +214,18 @@ async function main() {
     return;
   }
 
-  // 7. Phase B 完了通知（既存の完了報告テンプレ相当の要点）
+  // 7. Phase C 自動起動の配線 (L2): level>=2 かつ post-publish verify 合格のときだけ
+  //    phase-c-auto が進む（現 level では gate が skip する）
+  const phaseC = run(process.execPath, [
+    join(ROOT, "scripts", "automation", "phase-c-auto.mjs"),
+    `--slug=${target.slug}`,
+    "--trigger=auto_after_veto",
+  ]);
+  if (phaseC.code !== 0 && phaseC.code !== 10) {
+    console.warn(`[auto-phase-b] phase-c-auto exit=${phaseC.code}（非致命。Phase B自体は成功）`);
+  }
+
+  // 8. Phase B 完了通知（既存の完了報告テンプレ相当の要点）
   const productionUrl = `https://sumalabo.com/articles/${target.slug}/`;
   await notifyAutonomyEvent({
     slug: target.slug,
