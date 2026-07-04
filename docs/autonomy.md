@@ -1,163 +1,121 @@
-# Autonomy Ladder — 自動化レベルの段階定義と現在の状態
+# すまラボ自動化レベル設計書（Autonomy Ladder）
 
-すまラボの記事公開パイプラインを「人間の事前承認」から「機械の事後検査 + 自動是正」へ
-段階的に移行するためのラダー。**人間の承認を外す代わりに、是正速度（検知 → rollback →
-キャッシュパージ）を人間以上にする** のが基本思想。
+最終更新: 2026-07-04
+位置づけ: 「すまラボ記事制作・公開半自動化 引継ぎ文」のPhase A/B/C境界を段階的に緩和し、完全自動運用へ移行するための基幹文書。本文書が引継ぎ文と矛盾する場合、現在有効なレベルの定義が優先する。
 
-> 注記（2026-07-04）: 指示で参照された「同梱の autonomy-ladder.md（ユーザー保有の完全版）」
-> はリポジトリ・ローカルディスクのいずれにも見つからなかったため、本書の L0〜L4 定義・
-> 昇格条件・error budget・週次ダイジェスト・実装順序は **指示文の骨子から作成** した。
-> ユーザー保有の完全版と差異があれば、完全版を正としてこのファイルを上書き修正すること。
+## 0. 設計思想
 
-## 現在の状態
+- 停止点は「外す」のではなく「機械の検査+事後是正で置き換える」
+- 各レベルへの昇格は、実績(連続クリーン本数)で機械的に判定する
+- どのレベルでも、事故ったら自動で1つ下のレベルに戻る(error budget)
+- どのレベルでも、ユーザーは即座に全停止できる(kill switch)
+- 人間の役割を「事前承認」から「事後監査+例外対応」へ移す
 
-| 項目 | 値 |
-|---|---|
-| **Autonomy Level** | **0 (L0)** |
-| L1 実装状況 | **実装済み**（veto 窓 / 自動 Phase B / 事後検査 / 自動 rollback + キャッシュパージ）。レベル 0 のまま待機 |
-| paused (kill switch) | false |
-| veto 窓 | 30 分 |
-| 昇格カウント (toL1) | 0 / 3（L0 クリーン公開の連続数） |
-| 状態ファイル | `data/automation/autonomy.json` |
+> ゴール状態(L4): ユーザーは何もしなくても記事が出続け、週次ダイジェストを眺めて、気になる時だけ介入する。
 
-> レベルの昇格はユーザーの明示宣言でのみ行う。Claude が勝手に level を上げることは禁止。
+## 1. レベル定義
 
-## レベル定義（L0〜L4）
+### L0: 現行(停止点3つ)
 
-| Level | Phase A（記事化） | Phase B（本番公開） | Phase C（X 投稿） | ネタ選定 |
-|---|---|---|---|---|
-| **L0**（現行） | 自動（finalize まで） | **人間の明示承認後** | 人間の明示承認後 | 人間 |
-| **L1** | 自動 | **veto 窓（30 分）経過で自動**。事後検査 + hard fail 時自動 rollback | 人間の明示承認後 | 人間 |
-| **L2** | 自動 | 自動（L1 同等） | **veto 窓経過で自動**（OGP/アカウント確認は機械化） | 人間 |
-| **L3** | 自動 | 自動 | 自動 | 人間（指定後は A→B→C を無停止で連結。veto 窓のみ） |
-| **L4** | 自動 | 自動 | 自動 | **自動**（テーマ選定含む完全自動。人間は監査と kill switch のみ） |
+Phase A完了後に停止 → Preview承認 → Phase B → 停止 → X投稿承認 → Phase C。
 
-- どのレベルでも `paused: true`（kill switch）で全自動実行が止まる。
-- どのレベルでも手動実行（ユーザー明示指示）は従来どおり可能。
-- L2 以降は本書時点で未実装（L1 の運用実績を見てから設計する）。
+### L1: Phase B自動化(停止点2つ→1つ)
 
-## 昇格条件と降格（error budget）
+**動作:** Phase A完了(gate合格+Preview検証済み)後、Preview URLを通知し、veto窓(初期値30分)内に停止指示がなければ自動でPhase Bへ進む。本番反映後、post-publish verifyを自動実行し、hard failなら自動rollback(キャッシュパージ込み)+通知する。
 
-- **昇格**: 現レベルで **3 本連続クリーン公開**（post-publish verify で hard/soft fail なし、
-  veto 発動なし、incident なし）の実績後、**ユーザーが宣言** して 1 段昇格する。
-  昇格カウントは `promotionCount` に記録する。
-- **error budget**: 直近 10 記事あたり incident **1 件まで**。
-- **自動降格**: 直近 10 記事で incident **2 件以上** → level を自動で 1 下げて通知する
-  （`maybeAutoDemote`）。降格自体も incidents に `auto_demotion` として記録する。
-- **即時停止**: rollback 自体の失敗は budget と無関係に `paused: true`（壊れた状態で
-  自動運転を続けない）。
-- incident の定義: post-publish verify の hard fail / rollback 失敗 / 公開後に人間が
-  発見した事実誤り（手動で `incidents` に追記）。
+**前提条件:** P1完了(deploy経路1本道) / P2完了(gate full組み込み) / P7完了(成果物保全) / rollback実測済み / post-publish verify実装済み / パージトークン設定済み+パージ実測1回完了 — 最後の1項目以外は達成済み(2026-07-04時点)。
 
-## 週次ダイジェスト（L1 運用開始後に実装）
+**昇格条件:** L0運用で直近3本連続、人間のPreviewレビューで修正指示ゼロ(誤字・数値・画像差し替え含めゼロ)。加えてユーザーの明示宣言(autonomy.jsonのlevelを1に変更しmainへpush、REVIEW_NOTIFY_SECRETのActions secrets登録)。
 
-L1 で公開が「静かに」進むようになるため、週 1 回の総括通知で人間の監査点を維持する:
+**veto窓の短縮:** L1で3本連続クリーンなら窓を10分に、さらに3本で0分(即時公開+事後通知)にする。
 
-- 公開本数 / veto 発動数 / 自動 Phase B 実行数
-- incident 数と error budget 残
-- rollback 実行数と平均復旧時間
-- 昇格カウントの進捗
+### L2: Phase C自動化(停止点1つ→0、記事だしのみ人間)
 
-実装は本書の対象外（L1 の運用が始まってから別途）。
+**動作:** 本番公開の事後検査合格後、自動でX投稿する。投稿後にカード確認・投稿URL取得・台帳記録まで自動。
 
-## 実装順序
+**前提条件:**
 
-1. ✅ L1 基盤（autonomy.json / ゲート / rollback / post-publish verify / veto 窓 / GitHub Actions）— PR #92
-2. ✅ rollback へのキャッシュパージ組み込み（本節の下「キャッシュパージ」参照）
-3. ⬜ L0 で 3 本連続クリーン → ユーザー宣言で L1 昇格（Actions secrets 登録が前提）
-4. ⬜ 週次ダイジェスト
-5. ⬜ L2（Phase C 自動化）の設計・実装 — L1 の実績を見てから
+- X投稿をブラウザ操作からX APIに移行する。理由: ①無人のブラウザ自動投稿は不安定(UI変更・セッション切れ)かつXの自動化規約上のリスクがあり、APIが正規の自動投稿手段。②API投稿ならOGPカードはX側の非同期生成になり「貼り直し」問題そのものが消える。サイト側OGPの正しさはgateのOGP検査で事前保証する
+- API利用枠の確認: 週1〜2本の低頻度なら無料枠で足りる可能性があるが、提供条件・料金は変わりやすいため契約前に必ず最新を確認する
+- 投稿本文テンプレートの確定(final_articleのdescription+URLから機械生成。煽り表現はgateで検査済み)
+- @suma_labo のAPIキーはsecret管理(表示・コミット禁止)
 
----
+**昇格条件:** L1運用で3本連続、事後検査・rollbackの発動ゼロ。
 
-## 実装ノート（L1 実装の実態・PR #92 + 仕上げ）
+### L3: Phase A完全無人化(人間はテーマ1行のみ)
 
-### L1 の仕組み
+**動作:** ユーザーがテーマまたはURLを1行投げると、L2までの全工程が無人で完走する。
 
-```
-[Phase A finalize 完了]
-  ├─ review item に previewReadyAt / vetoDeadline を記録
-  ├─ 通知に「⏱ veto期限 (JST)」を明記
-  ↓
-[veto 窓 30 分]
-  veto 手段①: Preview ページの「⛔ 自動公開を停止（veto）」ボタン（/api/veto-preview）
-  veto 手段②: data/automation/autonomy.json の paused を true にする（全体停止）
-  ↓ 期限経過・未veto
-[GitHub Actions auto-phase-b.yml（5 分間隔）]
-  ├─ autonomy ゲート（level>=1 かつ paused=false のときだけ進む）
-  ├─ PR merge（MERGEABLE 確認）→ git pull main
-  ├─ npm run deploy:production -- --slug=<slug> --trigger=auto_after_veto
-  │    ├─ build → dist 検査 → wrangler deploy → キャッシュ個別パージ → strict verify 8 項目
-  │    ├─ 成功時: dist を builds/last-good/ へ退避（rollback 第 2 候補の材料）
-  │    └─ post-publish verify（事後検査）
-  │         ├─ hard fail → 即 rollback（--expect-gone）+ キャッシュパージ + incident 記録 + 通知
-  │         └─ soft fail → 通知のみ。15 分後に 1 回だけ再検査
-  └─ Phase B 完了通知
-```
+**前提条件(技術的な最難関):**
 
-### post-publish verify の判定
+- P5第2段階: Article Refinement LoopをChatGPT UIからAPI実行へ移す。Turn1〜6の役割分担・成果物ファイル構成は不変、実行主体のみ移す。移行判定は「同一テーマで両方式1本ずつ制作→品質比較で遜色なし」を確認してから
+- 画像生成のAPI化: スライド8枚+サムネの生成〜保存が無人で回ること。キャラ正本リファレンス(P4)の添付を生成呼び出しに組み込む
+- 画像ファクトチェックの機械化: 生成画像をVision系モデルでslide_planと突き合わせ、数値・誤字を検査。不合格スライドのみ自動再生成(最大2回、なお不合格なら停止して通知)
+- 引継ぎ文の「停止してよい条件」は全て維持。無人化とは「順調なら止まらない」ことであり「異常でも止まらない」ことではない
 
-| 分類 | 項目 | 対応 |
-|---|---|---|
-| hard fail | 記事 URL 非 200 / 旧ビルド配信（slug 不在）/ homepage 誤配信 / トップ・一覧の破損 | **即 rollback + キャッシュパージ** + 通知 + incident 記録 |
-| soft fail | OGP 画像の応答不良 / 一覧掲載の反映待ち | 通知のみ。15 分後に 1 回だけ再検査 |
+**昇格条件:** L2運用で5本連続、人間の事後監査で重大指摘ゼロ。
 
-結果は `logs/publish/{slug}.verify.json` に記録（`autonomyLevel` / `trigger` / `purge` 含む）。
+### L4: 記事だし自動化(完全自動)
 
-### rollback（`npm run rollback:production`）
+**動作:** ニュースソース監視が候補を検出→選定基準で自動採否→採用ならL3パイプラインへ投入。ユーザーは週次ダイジェスト(公開記事・PV・X反応・却下候補一覧)を受け取るのみ。
 
-1. **第 1 候補: Cloudflare Pages API の deployment rollback**（前回正常 deployment の
-   再有効化。ビルド不要。訓練実測: 往路 3.8 秒 / 復路 15.1 秒 = strict verify 込み）。
-   対象は `builds/last-good/last-good.json` の deploymentId を優先し、無ければ本番
-   deployment 一覧の canonical 以外の最新 success。
-2. **第 2 候補: `builds/last-good/dist` を wrangler で再デプロイ**。
-3. **rollback 成功後（どちらの経路でも）CDN キャッシュを自動パージ**（下記）。
-4. rollback 後に strict verify（restore 時）または liveness + 記事消滅の実フェッチ確認
-   （`--expect-gone`、誤記事の引っ込め時）で「戻った」ことまで機械確認する。
-5. **rollback 自体が失敗したら `paused: true` に自動設定して通知**。
+**前提条件:**
 
-### キャッシュパージ（2026-07-04 仕上げで追加）
+- ソース監視: 公式ブログ・リリースノートのRSS/更新検知。監視リストは data/automation/watch-sources.json で管理
+- 選定基準の明文化: すまラボの主軸(難しいニュースをやさしく整理)への適合・確定情報の充足・既報とのdedupe を点数化し、閾値以上のみ採用
+- 量の上限: 週N本(初期値2)の公開上限。超過分は候補プールに留めて週次ダイジェストで提示
+- 炎上・誤報セーフティ: 訴訟・事故・人事・買収など事実関係が動きやすいカテゴリは自動対象から除外し、必ず人間判断に回す(除外カテゴリをwatch-sourcesに定義)
 
-rollback 訓練で、deployment を戻しても **CDN エッジキャッシュが旧ページを TTL まで
-配信し続ける** ことを実測した。誤記事の引っ込めを完成させるため:
+**昇格条件:** L3運用で5本連続クリーン+ユーザーの明示的なL4移行宣言(最後の一線は実績だけでなく意思決定で越える)。
 
-- `scripts/automation/cache-purge.mjs` — **対象 URL の個別パージ**（記事 URL / トップ /
-  /articles/ 一覧 / sitemap / サムネ）を第 1 候補、失敗時は **purge_everything に自動
-  フォールバック**（rollback は低頻度の非常時操作なので全体パージのコスト許容）
-- rollback 成功後と deploy:production の wrangler 成功直後に自動実行
-- パージ後、`--expect-gone` 時は記事 URL を実フェッチして「旧内容が返らないこと」を
-  機械確認し、まだ配信されていれば `stale_cache_still_serving` で通知 + exit 1
-- **必要権限**: Zone → **Cache Purge → Purge**（zone: sumalabo.com のみの最小スコープ）。
-  現行の `CLOUDFLARE_API_TOKEN` には Zone 権限が無い（zones 一覧が空であることを実測）。
-  `CLOUDFLARE_ZONE_PURGE_TOKEN`（+ `CLOUDFLARE_ZONE_ID`。無ければ Zone Read も必要）を
-  設定する。**未設定の間は purge は skip 記録 + 警告となり、rollback 自体は成立する**
+## 2. 全レベル共通の安全装置
 
-### kill switch の効き方
+### kill switch
 
-`data/automation/autonomy.json` の `paused: true` は次の入口すべてで検査され、即停止する:
+- data/automation/autonomy.json の paused: true で全フェーズが起動しない(実行中のものは現フェーズ完了で停止)
+- finalize / Phase B / Phase C の各入口で必ず検査する(実装済み)
 
-- `phase-a-finalize.mjs`（Phase A 出口）
-- `deploy-production-from-main.mjs`（Phase B。手動/自動を問わず）
-- `post-to-x.mjs`（Phase C。`--check` の読み取りだけは許可）
-- `auto-phase-b.mjs`（自動起動）
+### error budget(自動降格)
 
-> 注意: GitHub Actions は **main ブランチの autonomy.json** を読む。ローカルで paused に
-> しただけでは Actions は止まらないので、**paused の変更は main に push する**こと。
-> （article PR とは独立の 1 行変更なので直コミットでよい）
+- 「事故」の定義: 自動rollback発動 / 公開後の重大誤り発見(数値・価格・誤報) / X投稿の削除が必要になった事象
+- 直近10本で事故2件以上 → levelを自動で1下げて通知(実装済み)。復帰は昇格カウントをゼロから
 
 ### 監査ログ
 
-- `logs/preview/{slug}.finalize.json` — `autonomyLevel` / `trigger` / `previewReadyAt` / `vetoDeadline`
-- `logs/publish/{slug}.verify.json` — 事後検査の判定・rollback / purge 実行記録
-- `logs/publish/{slug}.deploy.json` — 自動 Phase B の deploy result
+- finalize.json / verify.json に autonomyLevel と trigger(manual / auto_after_veto)を記録(実装済み)
+- ledger(P3)完成後、各記事の公開レベルをledgerにも記録する
 
-### 関連ファイル
+### 週次ダイジェスト
 
-- `data/automation/autonomy.json` — 状態（level / paused / vetoWindowMinutes / promotionCount / incidents）
-- `scripts/automation/autonomy.mjs` — ゲート / incident / 自動降格ライブラリ
-- `scripts/automation/rollback-production.mjs` — rollback コマンド（パージ組み込み済み）
-- `scripts/automation/cache-purge.mjs` — キャッシュパージ（`npm run purge:cache`）
-- `scripts/automation/post-publish-verify.mjs` — 事後検査
-- `scripts/automation/auto-phase-b.mjs` — 自動 Phase B オーケストレータ
-- `.github/workflows/auto-phase-b.yml` — 実行主体（GitHub Actions）
-- `functions/api/veto-preview.ts` — veto ボタンの API
+- L1運用開始後に実装: 公開記事一覧 / gate警告 / rollback有無 / X投稿結果 /(L4では)採用・却下候補の週1自動レポート
+
+## 3. 実装順序(ロードマップとの接続)
+
+- ✅ P1(deploy 1本道) / P2(gate) / P7(保全) / L1基盤(PR #92) / L1仕上げ(PR #93)
+- ⬜ パージトークン設定+パージ実測(rollback訓練2回目と同時、要タイミング承認)
+- ⬜ L0で3本クリーン → L1昇格(この間にP3台帳一本化・M1固定ページを並行)
+- ⬜ L2実装: X API移行(提供条件確認→アプリ登録→投稿スクリプト→台帳記録)
+- ⬜ L1で3本クリーン → L2昇格
+- ⬜ L3実装: P5第2段階+画像生成API化+画像ファクトチェック機械化(最大工数。L2運用と並行)
+- ⬜ L2で5本クリーン → L3昇格
+- ⬜ L4実装: watch-sources+選定スコアラー+週次ダイジェスト
+- ⬜ L3で5本クリーン+ユーザー宣言 → L4
+
+> Track 2(M1固定ページ・M2回遊・M3 SEO)はL1〜L2運用期間に並行して進める。完全自動で出し続けるサイトこそAI利用ポリシーの明示(M1)が先に要る。
+
+## 4. 実装ノート(PR #92 / #93 の実態)
+
+- veto窓: finalizeがKV/review itemに previewReadyAt / vetoDeadline を記録し、通知にJST期限を明記。veto手段は承認UIのvetoボタンと functions/api/veto-preview.ts
+- 自動起動: .github/workflows/auto-phase-b.yml が5分間隔cronで稼働。npm ciより前の軽量decideステップがautonomyゲートを検査するため、L0/paused中は毎回そこで終了(コスト最小・現行動作の保護)。Actionsはmainのautonomy.jsonを読むため、L1運用中のpaused化はmainへのpushが必要
+- rollback: npm run rollback:production。CF Pages APIのdeployment rollbackを第1候補、builds/last-good/dist のwrangler再デプロイを第2候補とする2段構成。本番往復訓練実測: 往路3.8秒 / 復路15.1秒(strict verify込み)。rollback失敗時は paused: true を自動設定
+- キャッシュパージ: 個別8URL(記事・トップ・一覧・sitemap2種・サムネ2種)→失敗時purge_everythingフォールバック。rollback成功後・hard fail経路・deploy:production成功直後の3箇所で発火。hard fail経路は --expect-gone で「旧内容が返らないこと」まで実フェッチ確認し、残留時は stale_cache_still_serving で通知+exit 1
+- パージ用トークン: 現行 CLOUDFLARE_API_TOKEN はzone不可視のためパージ不可。環境変数 CLOUDFLARE_ZONE_PURGE_TOKEN(必要権限: Zone→Cache Purge→Purge、対象zone限定。CLOUDFLARE_ZONE_ID を直接設定すればZone Read不要)。未設定時は zone_not_visible でgraceful skip(rollback自体は成立)
+- Actions secrets(L1昇格時): CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID は登録済み。残りは REVIEW_NOTIFY_SECRET と CLOUDFLARE_ZONE_PURGE_TOKEN
+- Windows注意: Nodeはfetchハンドル残存時のprocess.exit()でexit codeが壊れる(0xC0000409)ため、自動化スクリプト群は自然終了方式で統一
+- Deploy Hook: コード・運用文書・GitHub secret・Cloudflare設定の全層から撤去済み(2026-07-04)
+
+## 5. 現在の状態
+
+- 現行レベル: L0(autonomy.json: level 0 / paused false)
+- L1実装状況: 基盤+仕上げ完了(PR #92 / #93)。残前提はパージトークン設定+パージ実測1回のみ
+- L1昇格カウント: 0/3(次の記事=Fable 5から計測開始)
