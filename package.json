@@ -27,7 +27,8 @@
     "rollback:production": "node scripts/automation/rollback-production.mjs",
     "purge:cache": "node scripts/automation/cache-purge.mjs",
     "verify:post-publish": "node scripts/automation/post-publish-verify.mjs",
-    "phaseb:auto": "node scripts/automation/auto-phase-b.mjs"
+    "phaseb:auto": "node scripts/automation/auto-phase-b.mjs",
+    "article": "node scripts/automation/phase-a-orchestrator.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",
