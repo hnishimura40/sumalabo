@@ -66,6 +66,10 @@ const typeLabels = {
       <slot />
     </div>
 
+    <p class="article-ai-note">
+      本サイトの記事・図解はAIの支援を受けて制作し、公開前に人間が確認しています。詳しくは<a href="/ai-policy/">本サイトのAI利用について</a>をご覧ください。
+    </p>
+
     <PreviewApprovalButton slug={article.slug} />
 
     <ArticleNavigation previousArticle={previousArticle} nextArticle={nextArticle} />
@@ -1354,5 +1358,20 @@ const typeLabels = {
     .article-shell--news .article-content :global(ol) {
       max-width: 100%;
     }
+  }
+
+  .article-ai-note {
+    margin: 28px 0 0;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--bg-elev);
+    color: var(--fg-soft);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .article-ai-note a {
+    color: var(--teal-deep);
   }
 </style>
