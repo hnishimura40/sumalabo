@@ -12,7 +12,7 @@
 
 1. **ネタ収集は自動化しない。** ユーザーが URL / フォルダ / テーマ / 記事を指定したときだけ起動。
 2. **記事化 → PR 作成までは自動。その時点で必ず停止し、ユーザーの記事確認 + 明示了承を待つ。**
-3. **了承後だけ、PR merge → fallback deploy → strict verify → queue 更新 → X 投稿まで一気に自動化。**
+3. **了承後だけ、PR merge → wrangler 本番 deploy → strict verify → queue 更新 → X 投稿まで一気に自動化。**
 
 ### 全体フロー（3 フェーズ + チェックポイント）
 
@@ -27,7 +27,7 @@
    ユーザーが記事内容を確認し、「記事OK / 公開へ / 承認」など明示的に了承するまで待つ。
                             ↓
 [Phase B: 公開]
-  PR merge → main 同期 → wrangler fallback deploy →
+  PR merge → main 同期 → wrangler 本番 deploy（正規手順）→
   strict verify（全記事 8/8 pass）→ queue を published に更新
                             ↓
 [Phase C: X 投稿]
@@ -109,14 +109,14 @@ Phase A 出口（finalize）通過後、**必ず停止する**。停止時には
 **この時点で NG：**
 - ❌ ローカル URL（127.0.0.1 等）を review item のメイン previewUrl にする / それで通知する
 - ❌ PR merge
-- ❌ production / fallback deploy
+- ❌ production deploy
 - ❌ strict verify による published 化
 - ❌ X 投稿
 - ❌ queue の published 化
 
 **この時点で NG：**
 - ❌ PR merge
-- ❌ production / fallback deploy
+- ❌ production deploy
 - ❌ strict verify による published 化
 - ❌ X 投稿
 - ❌ queue の published 化
@@ -136,13 +136,14 @@ Phase A 出口（finalize）通過後、**必ず停止する**。停止時には
 
 1. **PR merge**：`mergeable: MERGEABLE` / `mergeStateStatus: CLEAN` / `isDraft: false` を確認 → `gh pr merge <N> --merge --delete-branch=false`。main への直接 push 禁止。merge commit を記録。
 2. **main 最新化**：`git fetch origin main && git pull origin main`。merge commit が含まれていることを確認。
-3. **wrangler fallback deploy**：`npm run deploy:production:fallback -- --slug=<代表slug>`。複数記事の場合も 1 回でよい（main 全体が反映されるため代表 slug を渡す）。
+3. **wrangler 本番 deploy（正規手順）**：`npm run deploy:production -- --slug=<代表slug>`。複数記事の場合も 1 回でよい（main 全体が反映されるため代表 slug を渡す）。
 4. **strict verify**：対象記事すべてで `/api/verify-publication` 実行。`status: published` / `failedChecks: []` / 8 項目（`httpStatus` / `titleNotGeneric` / `slugInHtml` / `notHomepageFallback` / `hasArticleBody` / `hasThumbnailRef` / `noProhibitedCopy` / `indexListsArticle`）全 pass を確認。
 5. **queue 更新**：strict verify 成功後だけ `published` に更新。`productionUrl` / `publishedAt` / `prUrl` / `mergeCommit` / `deployResult` / `verifyResult` / `source: user_directed` / `triggeredBy: user` / 指定対象（URL or フォルダ）を記録。
 
 **失敗時：** published 扱いにしない。X 投稿しない。失敗 check と原因を報告して停止。
 
-**承認ボタン経由のとき（運用標準・改善メモ 2026-06）：** PWA の承認ボタンは `/api/approve-preview` で PR を自動 merge する。その際 Cloudflare Deploy Hook が不発になり、review item が `deployTriggered: false` / `needsWranglerFallback: true` / `publicationVerifyError: "deploy_hook_not_triggered"` になることがある（Meta One・Claude Opus 4.8 の 2 件で連続発生）。この場合は **停止してユーザーに聞き直さず、main HEAD から wrangler fallback deploy（`node scripts/automation/deploy-production-from-main.mjs --slug=<slug> --skip-git-sync`）へ自動で進む** のを標準運用とする。これは新規の本番デプロイではなく、ユーザーが承認済みの記事の公開を完了させる自動リカバリ。完了後に `/api/verify-publication` で `status: published` を確認する。Deploy Hook URL は表示しない。
+**承認ボタン経由のとき（P1 で正規化・2026-07）：** PWA の承認ボタンは `/api/approve-preview` で PR を自動 merge する（担当はそこまで）。**本番反映は Deploy Hook や Git 連携 auto-deploy に依存せず、承認確認後に wrangler 本番 deploy（`npm run deploy:production -- --slug=<slug>`。main 未同期環境では `--skip-git-sync` を付けて main HEAD checkout から実行）へそのまま進む**のが正規手順。完了後に `/api/verify-publication` で `status: published` を確認する。
+背景（P1 調査 2026-07）: Cloudflare Pages の Git 連携 auto-deploy は GitHub App の clone 失敗（Repository not found）が常態化し、Deploy Hook も同じ Git ビルドを起動するため機能しなかった（Meta One・Opus 4.8 の 2 件連続不発の根本原因）。実績 100% の wrangler(Direct Upload) に一本化し、Git 連携の自動ビルドは無効化した。
 
 ### Phase C: X 投稿フェーズ
 
@@ -151,7 +152,7 @@ Phase B 完了後だけ実行：
 **前提条件（**すべて満たすこと**）：**
 - ユーザーが記事内容を了承済み
 - PR merge 済み
-- production fallback deploy 成功
+- production deploy（wrangler 正規手順）成功
 - strict verify 8/8 pass
 - 本番URLが開ける
 - 投稿アカウントが **@suma_labo** であることを確認
@@ -196,7 +197,7 @@ Phase B 完了後だけ実行：
 - 禁則チェック
 - `npm run build`
 - PR 作成（`gh pr create`）
-- **ユーザー明示了承後の** PR merge / wrangler fallback deploy / strict verify / queue 更新 / X 投稿
+- **ユーザー明示了承後の** PR merge / wrangler 本番 deploy / strict verify / queue 更新 / X 投稿
 - X 投稿案の下書き作成（`drafts/social/{slug}.x.md`）
 
 ## 結論
@@ -252,7 +253,7 @@ Phase B 完了後だけ実行：
     - ChatGPT 応答エラー → 同プロンプトで再送 2 回、3 回目は簡略化版で再送、それでもダメなら最終報告に「未生成」として記録
 15. **Phase A 最終報告**: 完了サマリ（生成ファイル一覧、検証結果、PR URL、Preview URL、人間が承認時に見る観点）を 1 メッセージで提示 → **ここで必ず停止する**（Human Review Checkpoint）
 16. **ユーザー明示了承を待つ**: 「記事OK / 公開へ / 承認」等のトリガーが来るまで Phase B / C に進まない
-17. **Phase B（公開）**: PR merge → main 同期 → wrangler fallback deploy → strict verify 8/8 → queue を `published` に更新
+17. **Phase B（公開）**: PR merge → main 同期 → wrangler 本番 deploy（正規手順）→ strict verify 8/8 → queue を `published` に更新
 18. **Phase C（X 投稿）**: 本番URL確認 → Chrome で X 投稿画面 → OGPカード/サムネ/アカウント (@suma_labo) を確認 → 投稿 → 投稿URL取得 → queue を `x_posted` に更新
 19. **Phase B / C 完了報告**: 本番URL / 投稿URL / queue 更新内容を 1 メッセージで提示
 
@@ -274,7 +275,7 @@ Phase B 完了後だけ実行：
 - ❌ **ユーザー未指定の記事を自動巡回・自動収集・自動キュー投入する**（user-directed mode）
 - ❌ **`sumahon-watch.mjs` / `run-sumahon-queue.ps1` をユーザー指示なしで起動する**
 - ❌ **Windows タスクスケジューラーでの無人定期起動を有効化する**（再有効化したいときは必ず事前にユーザー確認）
-- ❌ **Cloudflare Deploy Hook を叩く**（`wrangler` fallback だけ使う）
+- ❌ **Cloudflare Deploy Hook / Git 連携 auto-deploy に依存する**（P1 で廃止。本番反映は wrangler 正規手順のみ）
 - ❌ **secret / token / Deploy Hook URL を表示する**（チャット・ログ・コミットメッセージ全部 NG）
 - ❌ **画像元ファイルを削除する**（素材は `_published_articles/` 配下に保管）
 - ❌ **`SUMALABO_ENABLE_SLIDE_PIPELINE` を勝手に ON にする**
@@ -289,7 +290,7 @@ Phase B 完了後だけ実行：
 ### ユーザー記事確認・了承前は特に禁止
 
 - ❌ **PR merge**（`gh pr merge`）
-- ❌ **production deploy / fallback deploy**（`npm run deploy:production:fallback`）
+- ❌ **production deploy**（`npm run deploy:production`）
 - ❌ **strict verify による queue published 化**
 - ❌ **X への投稿実行**（Chrome で X を開いて POST する操作）
 - ❌ **承認ボタンを押す**（`/api/approve-preview` / `/api/push/notify-review-ready` 自動発火）
@@ -374,7 +375,7 @@ Phase B 完了後だけ実行：
 ### Phase B（公開）
 - PR #NN merge 済み（merge commit: xxxx）
 - main 同期 OK
-- wrangler fallback deploy: ok
+- wrangler 本番 deploy: ok
 - strict verify: 8/8 pass（httpStatus / titleNotGeneric / slugInHtml / notHomepageFallback / hasArticleBody / hasThumbnailRef / noProhibitedCopy / indexListsArticle）
 
 ### Phase C（X 投稿）

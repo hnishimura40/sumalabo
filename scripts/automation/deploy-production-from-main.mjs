@@ -2,12 +2,14 @@
 // scripts/automation/deploy-production-from-main.mjs
 //
 // 役割:
-//   承認ボタン → /api/approve-preview 経由の Deploy Hook 発火が失敗 / verify timeout
-//   した場合の **wrangler fallback** スクリプト。
+//   Phase B（ユーザー承認後）の **本番反映の正規手順**（P1 で一本化）。
+//   承認ボタン → /api/approve-preview で PR merge 後、本スクリプトで
+//   ローカルの main HEAD から `npm run build` → `wrangler pages deploy` を実行して
+//   本番反映する。呼び出しは `npm run deploy:production -- --slug=<slug>`。
 //
-//   Cloudflare Pages の Git 連携が「Cloning git repository — FAILED」で詰まっている
-//   暫定運用として、ローカルの main HEAD で `npm run build` → `wrangler pages deploy`
-//   を実行して本番反映する。
+//   経緯: Cloudflare Pages の Git 連携 auto-deploy は GitHub App の clone 失敗
+//   （Repository not found）が常態化しており、Deploy Hook も同じ Git ビルドを起動する
+//   ため機能しない。実績のある wrangler(Direct Upload) を正規ルートに昇格した（P1）。
 //
 //   - main への直接 push はしない (main は既に approve-preview で merge 済み)
 //   - 記事生成は行わない
@@ -41,7 +43,7 @@
 //   - 環境変数 CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID は wrangler が読む。
 //     値そのものを stdout / result JSON / ログに **絶対に出さない**。
 //   - 設定 hint だけは表示する (存在チェック true/false のみ)。
-//   - Deploy Hook URL は使わない (このスクリプトは wrangler 経路の代替)。
+//   - Deploy Hook は使わない (P1 で廃止。wrangler が正規経路)。
 
 import { spawnSync, spawn } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from "node:fs";
@@ -344,7 +346,7 @@ async function stepVerify(result, slug, verifyUrl, timeoutMs, noVerify) {
       result.errorReason = "verify_failed";
       return false;
     }
-    // deploying or approved_deploy_pending → retry
+    // awaiting_production_deploy (CDN反映待ち) → retry
     await new Promise((r) => setTimeout(r, intervalMs));
   }
   result.steps.verify = {
@@ -371,7 +373,7 @@ async function main() {
     return;
   }
 
-  console.log(`Wrangler fallback deploy for slug=${args.slug}${args.dryRun ? " (DRY RUN)" : ""}`);
+  console.log(`Wrangler production deploy for slug=${args.slug}${args.dryRun ? " (DRY RUN)" : ""}`);
 
   if (!stepGitSync(result, args.skipGitSync)) {
     finalize(result, args, 1);

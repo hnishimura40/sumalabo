@@ -15,7 +15,7 @@
 | ユーザーが記事内容を了承済み | チャットで「記事OK」「公開へ」「承認」等の明示返答を受け取った |
 | PR merge 済み | `gh pr view <N> --json state` で `MERGED` |
 | main 同期済み | `git log --oneline -1` で merge commit が含まれる |
-| wrangler fallback deploy 成功 | `deploy-production-from-main.mjs` の `wrangler.status: ok` |
+| wrangler 本番 deploy（正規手順）成功 | `deploy-production-from-main.mjs` の `wrangler.status: ok` |
 | strict verify 8/8 pass | `/api/verify-publication` で `failedChecks: []` |
 | 本番URLが開ける | `https://sumalabo.com/articles/<slug>/` が 200 で記事内容が出る |
 | 投稿アカウント = @suma_labo | Chrome の X 画面で右上アカウントを目視確認 |

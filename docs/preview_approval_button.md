@@ -2,43 +2,42 @@
 
 すまラボの記事ページに表示される「この記事を承認して公開」ボタンの仕組みと運用メモ。
 
-> **2026-05-27 update — user-directed mode + Human Review Checkpoint：** 現在の標準フローでは、**Phase A 完了時点で Claude が必ず停止し、ユーザーの明示了承（チャット返答）後に Claude 側から `gh pr merge` → `wrangler fallback deploy` → strict verify → X 投稿まで自動実行する** 流れになっています。承認ボタン経由のフローは **既存記事の補助手段** として残しますが、新規記事の標準フローではありません。詳細: [`docs/user_directed_mode.md`](user_directed_mode.md) / [`docs/x_post_workflow.md`](x_post_workflow.md) / [`docs/queue_states.md`](queue_states.md)
+> **2026-05-27 update — user-directed mode + Human Review Checkpoint：** 現在の標準フローでは、**Phase A 完了時点で Claude が必ず停止し、ユーザーの明示了承（チャット返答）後に Claude 側から `gh pr merge` → `wrangler 本番 deploy（正規手順）` → strict verify → X 投稿まで自動実行する** 流れになっています。承認ボタン経由のフローは **既存記事の補助手段** として残しますが、新規記事の標準フローではありません。詳細: [`docs/user_directed_mode.md`](user_directed_mode.md) / [`docs/x_post_workflow.md`](x_post_workflow.md) / [`docs/queue_states.md`](queue_states.md)
+
+> **2026-07 update — P1: wrangler 正規化：** Deploy Hook / Git 連携 auto-deploy は **廃止** しました。Cloudflare Pages の GitHub App 連携は clone 失敗が常態化しており（本番の成功 deploy はすべて wrangler の Direct Upload 実績）、Hook を発火しても本番反映は成立しません。承認ボタンは **PR merge まで** を担当し、本番反映は wrangler 正規手順（`npm run deploy:production -- --slug=<slug>`）で行います。`deployTriggered` / `needsWranglerFallback` / `approved_deploy_pending` / `DEPLOY_PENDING_TIMEOUT_MS` は削除済みです。
 
 ## 仕組み（一行で）
 
-Cloudflare Pages Preview の記事ページに置いたボタンを押すと、Cloudflare Pages Functions（`/api/approve-preview`）がサーバー側で **GitHub API で PR merge → Cloudflare Pages Deploy Hook 発火** を順に実行し、その後フロントが **`/api/verify-publication?slug=...` を polling して本番反映を厳格に確認** する。verify が pass した時点で KV review item の status が `published` に更新され、ボタンが「公開完了」に確定する。
+Cloudflare Pages Preview の記事ページに置いたボタンを押すと、Cloudflare Pages Functions（`/api/approve-preview`）がサーバー側で **GitHub API で PR merge** を実行し、KV review item を `approved` に更新する。本番反映は **wrangler 正規手順（Phase B）** で行い、`/api/verify-publication?slug=...` の 8 項目 strict verify が全 pass した時点で KV が `published` に更新される。
 
 ```
 [承認ボタン押下]
      ↓
 [POST /api/approve-preview]
      ├─ GitHub API で PR を merge
-     ├─ Cloudflare Pages Deploy Hook を fetch (GitHub Actions 非依存)
-     │   ├─ 成功 → KV: status="approved" + deployTriggered=true + deployTriggeredAt
-     │   └─ 失敗 → KV: status="approved_deploy_pending" + needsWranglerFallback=true
-     └─ レスポンスに needsWranglerFallback / fallbackCommandHint を載せる
+     ├─ KV: status="approved" + approvedAt + prMerged
+     └─ レスポンスに productionDeployCommandHint / verifyEndpoint を載せる
+     ↓
+[本番反映 = wrangler 正規手順（Phase B、Claude が実行）]
+     npm run deploy:production -- --slug=<slug>
      ↓
 [フロントが /api/verify-publication?slug=… を 10s ごと polling (最大 6 分)]
-     ├─ HTTP 200 / title / slug / body / thumbnail / fallback判定 / index掲載 をチェック
-     ├─ 全 pass → KV を status: "published" + publishedAt + productionUrl に更新
-     ├─ deployTriggered=false → 即座に status="approved_deploy_pending" + wrangler fallback 案内
-     ├─ deployTriggeredAt から DEPLOY_PENDING_TIMEOUT_MS (default 6分) 経過 & verify 未成功
-     │     → status="approved_deploy_pending" + wrangler fallback 案内
-     ├─ HTTP 200 だが fallback (deploying) → 続行
-     └─ HTTP 5xx / 4xx → failed (KV に publicationVerifyError を記録)
+     ├─ HTTP 200 / title / slug / body / thumbnail / homepage誤配信判定 / index掲載 をチェック
+     ├─ 全 pass → status: "published" (KV を publishedAt + productionUrl に更新)
+     ├─ HTTP 200 だが記事未反映 → status: "awaiting_production_deploy" (本番反映待ち表示、KV は触らない)
+     └─ HTTP 5xx / 4xx → status: "failed" (KV に publicationVerifyError を記録)
 ```
 
-**重要 (1)**: HTTP 200 だけでは公開成功扱いにしない。homepage fallback (`<title>すまラボ</title>` で記事 body / thumbnail が無い状態) は `deploying` として再 polling する。
+**重要 (1)**: HTTP 200 だけでは公開成功扱いにしない。homepage 誤配信（`<title>すまラボ</title>` で記事 body / thumbnail が無い状態、check 名 `notHomepageFallback`）は `awaiting_production_deploy` として本番反映待ち扱いにする。
 
-**重要 (2)**: Cloudflare Pages の **Git 連携が壊れている** ケース (「The repository cannot be accessed」「Cloning git repository — FAILED」) では、Deploy Hook 経由の production deploy が成立しない。このため:
+**重要 (2)**: 承認ボタンだけでは本番に反映されない（Git 連携 auto-deploy は廃止済み）。
 
-- approve-preview が deploy hook 発火失敗を検出した場合、または verify-publication が deployTriggeredAt 経過後も未成功と判断した場合、レスポンスに `needsWranglerFallback: true` / `fallbackCommandHint: "node scripts/automation/deploy-production-from-main.mjs --slug=<slug>"` を含める
-- フロント側はその時点で polling を停止し、「**承認とPR mergeは完了しましたが、本番反映が未確認です。wrangler fallback が必要です**」を表示する。X 投稿フローには進めない
-- 運用者は手元で `npm run deploy:production:fallback -- --slug=<slug>` を実行し、wrangler 経由で再 deploy → strict verify 完了後にのみ KV を published 化
+- 承認ボタン成功後、フロントは「**承認とPR mergeは完了しました。本番反映（wrangler 正規デプロイ）待ちです**」を表示する。X 投稿フローには進めない
+- 本番反映は `npm run deploy:production -- --slug=<slug>` を実行し、wrangler 経由で deploy → strict verify 8/8 pass 後にのみ KV が published 化される
 
-## Wrangler fallback の使い方
+## Wrangler 本番 deploy（正規手順）の使い方
 
-Cloudflare Pages Git 連携が「Cloning git repository — FAILED」状態の暫定運用として、`scripts/automation/deploy-production-from-main.mjs` を提供する。
+本番反映の正規手順として、`scripts/automation/deploy-production-from-main.mjs` を提供する（P1 で正規化。Git 連携ビルドは clone 失敗が常態化していたため廃止）。
 
 ### 前提
 
@@ -54,7 +53,7 @@ node scripts/automation/deploy-production-from-main.mjs --slug=<slug> --dry-run
 
 # 本番反映
 node scripts/automation/deploy-production-from-main.mjs --slug=<slug>
-# = npm run deploy:production:fallback -- --slug=<slug>
+# = npm run deploy:production -- --slug=<slug>
 ```
 
 ### 処理ステップ
@@ -116,9 +115,9 @@ Cloudflare Pages の **Settings → Environment variables** で以下を設定�
 | `GITHUB_OWNER` | 任意 | `hnishimura40` | リポジトリオーナー名 |
 | `GITHUB_REPO` | 任意 | `sumalabo` | リポジトリ名 |
 | `APPROVE_ALLOWED_BRANCH_PREFIX` | 任意 | `preview/` | 承認対象として許可するブランチ名のプレフィックス。これ以外で始まるブランチはAPI側で拒否する |
-| `CF_PAGES_DEPLOY_HOOK_URL` | **強く推奨** | なし | Cloudflare Pages の Deploy Hook URL。承認 API が PR merge 後に fetch(POST) で本番 deploy を発火する。**コード・ログ・レスポンスに値を含めない**。未設定なら `deployTriggered: false` を返し、手動 deploy が必要な旨フロントに表示される |
 | `PRODUCTION_HOST` | 任意 | `sumalabo.com` | `/api/verify-publication` が verify 対象とする本番ホスト名 |
-| `DEPLOY_PENDING_TIMEOUT_MS` | 任意 | `360000` (6 分) | `/api/verify-publication` が「wrangler fallback 必要」と判定するまでの deploy 経過時間 (ms)。60s〜30min にクランプ |
+
+> **廃止済み（P1・2026-07）：** `CF_PAGES_DEPLOY_HOOK_URL` / `DEPLOY_PENDING_TIMEOUT_MS` はコードから削除された。Deploy Hook 経由の本番 deploy と timeout 判定は存在しない。環境変数が残っていても参照されない（設定側からも削除する）。
 
 ボタン側の表示制御に使う変数:
 
@@ -146,7 +145,7 @@ Cloudflare Pages の **Settings → Environment variables** で以下を設定�
 7. 結果が下のステータス欄に表示される。
    - 成功:「承認しました。本番反映を待っています。（PR #N）」
    - 失敗:理由メッセージ（PRが見つからない／コンフリクト／権限不足／他）
-8. 成功したら GitHub 側で main に merge され、Cloudflare Pages の本番ビルドが走る。本番反映を待つ。
+8. 成功したら GitHub 側で main に merge される。本番反映は wrangler 正規手順（`npm run deploy:production -- --slug=<slug>`）で実行する（Git 連携の自動ビルドは廃止済み）。
 
 ## サーバー側の検証ロジック
 

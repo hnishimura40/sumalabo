@@ -23,10 +23,10 @@ PR #40 は `preview_unavailable` 扱いに降格し、merge せず保留して�
 
 - Production project: `sumalabo.pages.dev` / `sumalabo.com`
 - Production branch: `main`
-- Deploy 起点: `.github/workflows/scheduled-deploy.yml` の cron (`7,37 * * * *`)
-  が `CF_PAGES_DEPLOY_HOOK_URL` を curl で叩く方式
-- GitHub Apps 連携 (Source = GitHub) **未使用**
-- そのため Pull Request preview / branch preview は自動生成されない
+- Deploy 起点: **wrangler 正規手順**（`npm run deploy:production -- --slug=<slug>`、Direct Upload）。
+  Deploy Hook を叩く cron（旧 `.github/workflows/scheduled-deploy.yml`）は P1（2026-07）で撤去済み
+- GitHub Apps 連携 (Source = GitHub) は接続されているが **自動ビルドは使わない**（clone 失敗が常態化）
+- Pull Request preview / branch preview は wrangler の preview deploy（finalize 経由）で生成する
 
 ## 対応案
 
@@ -48,9 +48,9 @@ preview deploy が自動生成され、`gh pr view ... --json statusCheckRollup`
    - Build output directory: `dist`
    - Node version: 22.12.0 以上 (env var `NODE_VERSION=22.12.0`)
 4. **Settings → General → Source** (Git repo) を GitHub に接続
-   - 既に deploy hook 方式で動いている場合、GitHub 連携を追加すると
-     dual-source になる可能性がある。dashboard 上で hook と GitHub の
-     どちらが優先かを確認し、必要なら deploy hook をオフにする。
+   - **P1（2026-07）で Git 連携の自動ビルド（auto-deploy）と Deploy Hook は廃止。**
+     GitHub 連携は Preview 用途に限定し、本番反映は wrangler 正規手順
+     （`npm run deploy:production -- --slug=<slug>`）だけを使う。
 5. 接続後、PR を新規 push → 1〜3 分で
    `https://<branch-slug>.sumalabo.pages.dev/` が生成され、
    `gh pr view {N} --json statusCheckRollup` に `cloudflare-pages` の
