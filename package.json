@@ -30,7 +30,8 @@
     "phaseb:auto": "node scripts/automation/auto-phase-b.mjs",
     "article": "node scripts/automation/phase-a-orchestrator.mjs",
     "ledger:sync": "node scripts/automation/ledger.mjs --sync",
-    "ledger:check": "node scripts/automation/ledger.mjs --check"
+    "ledger:check": "node scripts/automation/ledger.mjs --check",
+    "digest": "node scripts/automation/weekly-digest.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",
