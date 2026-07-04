@@ -52,6 +52,7 @@ import { fileURLToPath } from "node:url";
 import process from "node:process";
 import { gate, loadAutonomy } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
+import { purgeForSlug } from "./cache-purge.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -420,6 +421,18 @@ async function main() {
     finalize(result, args, 1);
     return;
   }
+  // deploy 直後の個別キャッシュパージ（記事 / トップ / 一覧 / sitemap / サムネ）。
+  // 公開直後の反映遅延と「旧ビルド配信」誤検知を減らす（L1 仕上げで追加）。
+  // パージ権限が無ければ skip 記録のみで deploy は成功扱い（非致命）。
+  if (!args.dryRun) {
+    const purge = await purgeForSlug({ slug: args.slug });
+    result.steps.cachePurge = purge.ok
+      ? { status: "ok", method: purge.method, urlCount: purge.urls?.length }
+      : { status: "skipped", reason: purge.reason };
+    if (purge.ok) console.log(`[post] cache purge ok (method=${purge.method})`);
+    else console.warn(`[post] cache purge 不可 (${purge.reason})。Zone → Cache Purge 権限が必要です。`);
+  }
+
   // verify は dry-run のときも --no-verify でない限り polling を試みる場合があるが、
   // dry-run なら deploy していないので verify はスキップする (デフォルト動作)。
   const effectiveNoVerify = args.noVerify || args.dryRun;

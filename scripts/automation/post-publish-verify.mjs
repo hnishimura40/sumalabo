@@ -36,6 +36,7 @@ import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 const __filename = fileURLToPath(import.meta.url);
 const ROOT = resolve(dirname(__filename), "..", "..");
 const DEFAULT_ROLLBACK_SCRIPT = join(ROOT, "scripts", "automation", "rollback-production.mjs");
+const DEFAULT_PURGE_SCRIPT = join(ROOT, "scripts", "automation", "cache-purge.mjs");
 
 function parseArgs(argv) {
   const out = {
@@ -46,6 +47,7 @@ function parseArgs(argv) {
     noRollback: false,
     noNotify: false,
     rollbackScript: DEFAULT_ROLLBACK_SCRIPT,
+    purgeScript: DEFAULT_PURGE_SCRIPT,
     output: null,
   };
   for (const a of argv) {
@@ -55,6 +57,7 @@ function parseArgs(argv) {
     else if (a.startsWith("--base-url=")) out.baseUrl = a.slice("--base-url=".length).trim().replace(/\/+$/, "");
     else if (a.startsWith("--trigger=")) out.trigger = a.slice("--trigger=".length).trim();
     else if (a.startsWith("--rollback-script=")) out.rollbackScript = a.slice("--rollback-script=".length).trim();
+    else if (a.startsWith("--purge-script=")) out.purgeScript = a.slice("--purge-script=".length).trim();
     else if (a.startsWith("--recheck-delay-ms=")) {
       const n = Number(a.slice("--recheck-delay-ms=".length));
       if (Number.isFinite(n) && n >= 0) out.recheckDelayMs = n;
@@ -123,12 +126,27 @@ async function runChecks({ slug, baseUrl }) {
 
 function runRollback(args, reason) {
   console.error(`[post-publish] hard fail → rollback 起動 (${reason})`);
+  // --expect-gone: 引っ込め対象の記事は rollback 先の deployment に存在しない
+  // はずなので、rollback 側は「記事が消えた」ことを実フェッチで確認する。
   const r = spawnSync(
     process.execPath,
-    [args.rollbackScript, `--slug=${args.slug}`, `--reason=${reason}`, ...(args.noNotify ? ["--no-notify"] : [])],
+    [args.rollbackScript, `--slug=${args.slug}`, `--reason=${reason}`, "--expect-gone", ...(args.noNotify ? ["--no-notify"] : [])],
     { cwd: ROOT, stdio: "inherit", env: process.env },
   );
   return { invoked: true, script: args.rollbackScript, exitCode: r.status };
+}
+
+// hard fail 経路のキャッシュパージ。rollback スクリプト内でもパージするが、
+// stub 差し替え（--rollback-script）時でも「hard fail → パージが走る」経路を
+// 保証するため、post-publish 側からも同じパージを冪等に実行する。
+function runPurge(args) {
+  console.error("[post-publish] cache purge 起動（旧内容のキャッシュ残留対策）");
+  const r = spawnSync(
+    process.execPath,
+    [args.purgeScript, `--slug=${args.slug}`],
+    { cwd: ROOT, stdio: "inherit", env: process.env },
+  );
+  return { invoked: true, script: args.purgeScript, exitCode: r.status };
 }
 
 async function main() {
@@ -149,6 +167,7 @@ async function main() {
     hardFail: false,
     softFailRemaining: [],
     rollback: { invoked: false },
+    purge: { invoked: false },
     incidentRecorded: false,
     demotion: null,
     notify: null,
@@ -174,8 +193,10 @@ async function main() {
     }
     if (!args.noRollback) {
       report.rollback = runRollback(args, `post_publish_hard_fail:${round1.hardFailed.join("+")}`);
+      report.purge = runPurge(args);
     } else {
       report.rollback = { invoked: false, skipped: "--no-rollback" };
+      report.purge = { invoked: false, skipped: "--no-rollback" };
     }
     if (!args.noNotify) {
       const n = await notifyAutonomyEvent({

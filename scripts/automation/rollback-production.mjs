@@ -27,6 +27,7 @@ import { fileURLToPath } from "node:url";
 import process from "node:process";
 import { loadAutonomy, saveAutonomy, recordIncident } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
+import { purgeForSlug, checkArticleGone } from "./cache-purge.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const ROOT = resolve(dirname(__filename), "..", "..");
@@ -35,10 +36,12 @@ const LAST_GOOD_META = join(LAST_GOOD_DIR, "last-good.json");
 const PROJECT = "sumalabo";
 
 function parseArgs(argv) {
-  const out = { slug: null, reason: null, dryRun: false, verifyTimeoutMs: 6 * 60 * 1000, output: null, noNotify: false };
+  const out = { slug: null, reason: null, dryRun: false, verifyTimeoutMs: 6 * 60 * 1000, output: null, noNotify: false, expectGone: false, noPurge: false };
   for (const a of argv) {
     if (a === "--dry-run") out.dryRun = true;
     else if (a === "--no-notify") out.noNotify = true;
+    else if (a === "--expect-gone") out.expectGone = true;
+    else if (a === "--no-purge") out.noPurge = true;
     else if (a.startsWith("--slug=")) out.slug = a.slice("--slug=".length).trim();
     else if (a.startsWith("--reason=")) out.reason = a.slice("--reason=".length).trim();
     else if (a.startsWith("--verify-timeout-ms=")) {
@@ -201,6 +204,26 @@ async function verifyRestored(result, slug, timeoutMs, dryRun) {
   return false;
 }
 
+async function stepCachePurge(result, args) {
+  if (args.noPurge) {
+    result.steps.cachePurge = { status: "skipped", reason: "--no-purge" };
+    return;
+  }
+  if (args.dryRun) {
+    result.steps.cachePurge = { status: "dry_run" };
+    return;
+  }
+  const purge = await purgeForSlug({ slug: result.slug || undefined, everything: !result.slug });
+  if (purge.ok) {
+    result.steps.cachePurge = { status: "ok", method: purge.method, urlCount: purge.urls?.length, fallbackFrom: purge.fallbackFrom };
+    console.log(`[rollback] cache purge ok (method=${purge.method})`);
+  } else {
+    result.steps.cachePurge = { status: "skipped", reason: purge.reason, errors: purge.errors };
+    console.warn(`[rollback] cache purge 不可 (${purge.reason})。旧ページが TTL までキャッシュ配信され続ける可能性があります。`);
+    console.warn("           必要権限: Zone → Cache Purge → Purge（CLOUDFLARE_ZONE_PURGE_TOKEN で設定可）");
+  }
+}
+
 async function pauseAndNotify(result, reasonText) {
   const state = loadAutonomy();
   state.paused = true;
@@ -253,7 +276,35 @@ async function main() {
     return;
   }
 
-  const verified = await verifyRestored(result, result.slug, args.verifyTimeoutMs, args.dryRun);
+  // rollback 成功後（API / last-good どちらの経路でも）: CDN キャッシュを能動パージ。
+  // 訓練 (2026-07-04) でエッジキャッシュが旧ページを TTL まで配信し続けることを
+  // 実測したため。パージ権限が無い場合は skip 記録 + 警告（rollback 自体は成立）。
+  await stepCachePurge(result, args);
+
+  // 「消えるべき記事が消えたか」の実フェッチ確認（expect-gone = 誤記事の引っ込め時）。
+  // 通常の restore（記事が残るのが正）では strict verify 側で確認する。
+  if (args.expectGone && result.slug && !args.dryRun) {
+    const goneCheck = await checkArticleGone({ slug: result.slug });
+    result.steps.purgeCheck = goneCheck;
+    if (!goneCheck.gone) {
+      result.errorReason = "stale_cache_still_serving";
+      console.error(`[rollback] 記事 ${result.slug} がまだ配信されています（cache=${goneCheck.cfCacheStatus}）。パージ権限とキャッシュ状態を確認してください。`);
+      if (!args.noNotify) {
+        await notifyAutonomyEvent({
+          slug: result.slug,
+          status: "rollback_stale_cache",
+          title: `[autonomy] rollback後もキャッシュが旧記事を配信中: ${result.slug}（要確認）`,
+        });
+      }
+      finish(result, args, 1);
+      return;
+    }
+  }
+
+  // verify: expect-gone（引っ込め）は liveness、restore は strict published
+  const verified = args.expectGone
+    ? await verifyRestored(result, null, args.verifyTimeoutMs, args.dryRun)
+    : await verifyRestored(result, result.slug, args.verifyTimeoutMs, args.dryRun);
   if (!verified) {
     result.errorReason = "rollback_verify_failed";
     await pauseAndNotify(result, "rollback 後の verify が通らない（本番状態が不明）");

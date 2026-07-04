@@ -60,6 +60,9 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           REVIEW_NOTIFY_SECRET: ${{ secrets.REVIEW_NOTIFY_SECRET }}
+          # キャッシュパージ用（Zone → Cache Purge 権限の最小トークン。未登録なら purge は skip される）
+          CLOUDFLARE_ZONE_PURGE_TOKEN: ${{ secrets.CLOUDFLARE_ZONE_PURGE_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
 
       - name: Upload publish logs
         if: always() && steps.decide.outputs.eligible != 'none'
