@@ -50,3 +50,10 @@ data/automation/locks/
 logs/automation/*.log
 logs/automation/*-sumahon-watch.json
 logs/automation/scheduler-empty-gitconfig
+
+# L1: last-good build snapshot (rollback fallback material) — local only
+builds/
+
+# L1: post-publish verify logs (Actions uploads them as artifacts)
+logs/publish/
+

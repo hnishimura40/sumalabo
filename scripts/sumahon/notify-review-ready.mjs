@@ -21,12 +21,17 @@ const DEFAULT_TIMEOUT_MS = 15000;
 function sanitizeItem(item) {
   if (!item || typeof item !== "object") return null;
   const out = {};
-  const passthrough = ["slug", "title", "branch", "previewUrl", "prUrl", "thumbnail"];
+  const passthrough = [
+    "slug", "title", "branch", "previewUrl", "prUrl", "thumbnail",
+    // L1 (Autonomy Ladder): veto 窓と監査情報
+    "previewReadyAt", "vetoDeadline", "trigger",
+  ];
   for (const key of passthrough) {
     if (typeof item[key] === "string" && item[key].length > 0) out[key] = item[key];
   }
   out.status = typeof item.status === "string" && item.status.length > 0 ? item.status : "review";
   if (typeof item.sourceCheckPassed === "boolean") out.sourceCheckPassed = item.sourceCheckPassed;
+  if (Number.isInteger(item.autonomyLevel)) out.autonomyLevel = item.autonomyLevel;
   if (typeof item.createdAt === "string" && item.createdAt) out.createdAt = item.createdAt;
   if (!out.slug) return null;
   return out;
