@@ -1,11 +1,11 @@
 ---
-title: "Claude Fable 5登場。Opusの上に来た新AIモデルは何がすごいのか"
+title: "Claude Fable 5が復活。7月7日からの変更点と“止まっていた3週間”をやさしく整理"
 slug: "202606-claude-fable-5-launch"
 type: "news"
 category: "ニュースをかみくだく"
-description: "Anthropicが2026年6月9日に発表した新AIモデル「Claude Fable 5」をやさしく整理。Opusの上に来たMythos-classの一般公開モデルという位置づけ、Mythos 5との違い（安全装置の有無）、ベンチマークの読み方、Stripeなど長期作業の実例、価格と6/23以降のusage credits、安全分類器とOpus 4.8フォールバックまで、ひまり・らぼまるが噛み砕いて解説します。"
+description: "Anthropicの高性能AIモデル「Claude Fable 5」が7月1日にグローバル再開。6月12日に停止された理由、Amazon研究者の報告、輸出規制、安全装置の改善、7月7日までのサブスク同梱、7月8日以降のusage creditsまで、公式情報をもとにやさしく整理します。"
 thumbnail: "/images/thumbnails/202606-claude-fable-5-launch.webp"
-thumbnailAlt: "「Claude Fable 5登場。Opusの上に来た新AIモデル」を、6/9発表・一般公開で最も高性能・Mythos-classの安全化版の3要点とともに、ひまり・らぼまるが紹介するすまラボのサムネイル"
+thumbnailAlt: "「Claude Fable 5が復活」のサムネイル。使えなくて困っていたひまりに、らぼまるが『復活しました！』と伝えて安心の表情に変わる瞬間を描いた変化実感型のイラスト"
 status: "review"
 priority: 1
 characterUse:
@@ -19,7 +19,7 @@ tags:
   - "Claude Mythos 5"
   - "Anthropic"
   - "AIモデル"
-  - "AIエージェント"
+  - "usage credits"
   - "すまラボ"
 related:
   - "202605-claude-opus-4-8-launch"
@@ -32,48 +32,154 @@ publishAt: "2026-07-04T19:00:00+09:00"
 
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
 
-Claudeに、Opusのさらに上に位置づけられる新モデルが登場しました。ただの性能アップではなく、「強いAIをどう安全に開放するか」が今回のポイントです。
+Claude Fable 5は、発表直後に一度止まり、7月1日に再開された少し珍しいAIモデルです。今回は「新モデル登場」だけでなく、「なぜ止まり、どう戻り、7月7日以降に何が変わるのか」までセットで見る必要があります。
 
-## Claude Fable 5とは何か。Anthropicが6月9日に発表した新モデル
+## Claude Fable 5が復活。まず何が起きたのか
 
-<p class="lead">Claude Fable 5は、Anthropicが一般公開するClaudeの中で<strong>最も高性能なモデル</strong>として発表された新モデルです。</p>
+<p class="lead">Claude Fable 5は、6月9日に発表されたあと、6月12日に提供停止され、<strong>7月1日にグローバル再開</strong>されました。</p>
 
-Anthropicは2026年6月9日、新しいAIモデルとして「Claude Fable 5」と「Claude Mythos 5」を発表しました。
+Anthropicは2026年6月9日、Claude Fable 5とClaude Mythos 5を発表しました。
 
-広く提供される対象は、Claude Fable 5です。モデルIDは `claude-fable-5`。Anthropicはこのモデルを、同社が一般公開する中で最も高性能なClaudeとして説明しています。
+Fable 5は、Anthropicが一般公開する中で最も高性能なClaudeとして発表されたモデルです。位置づけとしては、従来のOpusの上にある「Mythos-class」の能力を、一般利用向けに安全化したものです。
+
+ところが、発表から数日後の6月12日、Fable 5とMythos 5は提供停止になりました。その後、6月30日に米政府による規制が解除され、7月1日からFable 5の提供が再開されています。
 
 <section class="article-slide-section article-wide-block">
-  <p class="slide-intro">何の発表なのかを 1 枚で。</p>
+  <p class="slide-intro">何が起きたのか、流れを 1 枚で。</p>
   <figure class="article-slide-figure">
-    <img src="/images/articles/202606-claude-fable-5-launch/slide01-what-news.webp" alt="「Claude Fable 5登場」を整理した図解。6/9発表・一般公開で最も高性能・Mythos-classの安全化版の3カードと、1M context・最大128k出力・adaptive thinking常時オンの補足を並べ、ひまり・らぼまるが『新しいClaudeって、Opusの次ってこと？／今回は“その上”の能力を、安全装置つきで広く出したニュースだよ』と示すスライド" loading="lazy" decoding="async" />
-    <figcaption>図解：Claude Fable 5は何のニュースか</figcaption>
+    <img src="/images/articles/202606-claude-fable-5-launch/slide01-what-news.webp" alt="「Claude Fable 5が復活。7月1日にグローバル再開」のタイムライン図解。①6/9発表 ②6/12提供停止（米政府の輸出規制指示）③6/30規制解除 ④7/1再開 ⑤7/7まで同梱・7/8以降usage credits の5ステップを示し、ひまり『出たばかりの新モデルじゃなかったの？』らぼまる『一度止まって、7月1日に戻ってきたんだ』の対話つき" loading="lazy" decoding="async" />
+    <figcaption>図解：Claude Fable 5が復活。何が起きたのか</figcaption>
   </figure>
   <div class="slide-reading-note">
     <p><strong>図のポイント（コピー可能）</strong></p>
     <ul>
-      <li><strong>発表</strong>：Anthropicが2026年6月9日に発表</li>
-      <li><strong>位置づけ</strong>：一般公開されるClaudeで最も高性能</li>
-      <li><strong>本質</strong>：Mythos-classの能力を安全装置つきで広く提供</li>
-      <li><strong>スペック</strong>：1Mコンテキスト／最大128k出力／adaptive thinking常時オン</li>
+      <li><strong>6月9日</strong>：Claude Fable 5 / Mythos 5 発表</li>
+      <li><strong>6月12日</strong>：米政府の指示を受け、提供停止</li>
+      <li><strong>6月30日→7月1日</strong>：規制解除、グローバル再開</li>
+      <li><strong>7月7日まで</strong>：一部サブスクで同梱。<strong>7月8日以降</strong>はusage credits</li>
     </ul>
   </div>
 </section>
 
-ここで大事なのは、Fable 5が単なるOpusの小改良ではないことです。
+つまり、このニュースは単なる「新AIモデルが出た」ではなく、次の流れで見る必要があります。
 
-これまでClaudeの上位モデルといえば、Opusが中心でした。今回のFable 5は、そのOpusの上に置かれた「Mythos-class」の一般公開版という位置づけです。つまり、Claudeの中でさらに上の能力帯が用意され、その力を広く提供できる形に調整したものがFable 5、という整理になります。
+- 6月9日：Claude Fable 5 / Mythos 5 発表
+- 6月12日：米政府の指示を受け、提供停止
+- 6月30日：規制解除
+- 7月1日：Fable 5がグローバル再開
+- 7月7日まで：一部サブスクで追加費用なしの同梱枠あり
+- 7月8日以降：利用にはusage creditsが必要
 
-スペック面では、Fable 5は1Mトークンのコンテキストを標準で扱えます。最大出力は128kトークンです。長い文章、資料、コード、やり取りをまとめて扱いやすい設計になっています。
+そのため、いま見るべきポイントは「Fable 5が戻ったこと」と「7月8日以降に利用条件が変わること」です。
 
-また、Fable 5では「adaptive thinking」が常時オンになっています。これは、必要に応じてモデル側が考える深さを調整する仕組みです。利用者がextended thinkingを手動でオン・オフする形ではなく、基本的に常にこの仕組みが動きます。ただし、生の思考過程がそのまま返ってくるわけではありません。必要に応じて要約として見せる形です。
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "Fable 5って、出たばかりの新モデルって話じゃなかったの？" },
+    { speaker: "らぼまる", text: "そうなんだけど、一度止まって、7月1日に戻ってきたんだ。だから今は“復活後の条件”で見直す必要があるよ。" },
+  ]}
+/>
 
-## Opusの上に置かれた「Mythos-class」と、FableとMythosが分かれる理由
+## なぜFable 5 / Mythos 5は止まっていたのか
 
-<p class="lead">Fable 5とMythos 5の分かれ目は、能力の土台ではなく<strong>安全装置の扱い</strong>です。</p>
+<p class="lead">提供停止の理由は、米政府の輸出規制指示と、Fable 5の<strong>安全装置を迂回する報告</strong>が重なったためです。</p>
 
-今回の発表で少しややこしいのは、「Fable 5」と「Mythos 5」が同時に出てきたことです。
+Anthropicの説明では、6月12日に米政府が国家安全保障上の権限にもとづき、Fable 5とMythos 5へのアクセス制限を求めました。
 
-名前が違うので、別々のモデルに見えます。ですが公式の説明では、Fable 5とMythos 5の違いは基本的に「safeguards」、つまり安全装置の有無です。
+求められたのは、外国籍への提供停止です。ただし、Anthropicはユーザーの国籍をリアルタイムに確認する仕組みを持っていなかったため、結果としてFable 5 / Mythos 5の提供を利用者全体に対して停止しました。
+
+停止のきっかけになったのは、Amazonの研究者による報告です。
+
+報告では、Fable 5のsafeguards、つまり安全装置を迂回する方法が見つかり、ソフトウェアの脆弱性を特定させることができたとされています。さらに一部では、その脆弱性を悪用するためのコード例まで生成されたと説明されています。
+
+ここで大事なのは、これを「危ないAIが暴走した」と読むことではありません。
+
+報告を受けて、Anthropicは安全装置を見直し、分類器の改善を行ったうえで再開に進んだ、という流れです。
+
+つまり今回の停止は、モデル能力そのものの問題というより、強いAIをどこまで安全に提供できるか、その境界をめぐる出来事でした。
+
+## 7月1日に何が戻ったのか
+
+<p class="lead">7月1日から、Fable 5はClaude Platform、Claude.ai、Claude Code、Claude Coworkで<strong>グローバル再開</strong>されました。</p>
+
+Anthropicは6月30日に、米政府による輸出規制が解除されたと発表しました。これを受けて、7月1日からFable 5が再開されています。
+
+再開対象として示されているのは、次のサービスです。
+
+| 再開対象 | 状況 |
+|---|---|
+| Claude Platform | 7月1日から再開 |
+| Claude.ai | 7月1日から再開 |
+| Claude Code | 7月1日から再開 |
+| Claude Cowork | 7月1日から再開 |
+| AWS | 順次再有効化 |
+| Google Cloud | 順次再有効化 |
+| Microsoft Foundry | 順次再有効化 |
+
+AWS、Google Cloud、Microsoft Foundryについては、再開作業を進めるとされています。ただし、クラウド3社での再有効化がいつ完了するかは、この記事では断定しません。
+
+また、日本での画面表示、日本語での実力、日本のユーザーに見える提供状況も、公式情報だけでは細かく断定できません。実際に使う場合は、Claudeの画面や公式案内を確認する必要があります。
+
+## 7月7日までと7月8日以降で、利用条件はどう変わるのか
+
+<p class="lead">再開後のFable 5は、7月7日まで一部サブスクに追加費用なしで含まれ、<strong>7月8日以降はusage creditsが必要</strong>になります。</p>
+
+ここは、今回の再開後に特に確認しておきたい部分です。
+
+Fable 5は、再開後、Pro、Max、Team、一部Enterpriseプランで、7月7日まで週次利用上限の最大50%の範囲で追加費用なしに含まれます。ただし、7月8日以降はusage creditsが必要になります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">再開後の利用条件と価格を 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202606-claude-fable-5-launch/slide06-price-availability.webp" alt="7月7日までと7月8日以降の利用条件を整理した図解。期間と扱い（7/1〜7/7はPro/Max/Team/一部Enterpriseで週次利用上限の最大50%まで追加費用なし、7/8以降はusage creditsが必要、将来の復帰時期は未定）、API価格（Fable 5入力$10/出力$50、Mythos 5 $10/$50で一般提供なし、Opus 4.8 $5/$25、100万トークンあたり米ドル・日本円換算なし）、再開チャネル（Claude Platform・Claude.ai・Claude Code・Claude Coworkは7/1〜、AWS・Google Cloud・Microsoft Foundryは順次）、日本での表示やusage credits具体量は未確定の注意つき" loading="lazy" decoding="async" />
+    <figcaption>図解：7月7日までと7月8日以降の利用条件</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>7/1〜7/7</strong>：Pro / Max / Team / 一部Enterpriseで週次上限の最大50%まで追加費用なし</li>
+      <li><strong>7/8以降</strong>：usage creditsが必要</li>
+      <li><strong>API価格</strong>：Fable 5は入力$10／出力$50（Opus 4.8の2倍）</li>
+      <li><strong>未確定</strong>：日本での表示・usage creditsの具体量・復帰時期</li>
+    </ul>
+  </div>
+</section>
+
+整理すると、こうです。
+
+| 期間 | 対象 | 扱い |
+|---|---|---|
+| 7月1日〜7月7日 | Pro / Max / Team / 一部Enterprise | 週次利用上限の最大50%まで追加費用なし |
+| 7月8日以降 | 同上 | usage creditsが必要 |
+| 将来 | 未定 | キャパシティが許せば標準サブスク復帰を目指す、という見方あり |
+
+価格そのものは、発表時から変わっていません。
+
+| モデル | 入力価格 | 出力価格 | 備考 |
+|---|---:|---:|---|
+| Claude Fable 5 | $10 / 100万トークン | $50 / 100万トークン | Opus 4.8の2倍 |
+| Claude Mythos 5 | $10 / 100万トークン | $50 / 100万トークン | 一般提供なし |
+| Claude Opus 4.8 | $5 / 100万トークン | $25 / 100万トークン | Fable 5のフォールバック先にもなる |
+
+価格は米ドル表記です。日本円換算はしません。usage creditsの具体的な必要量や、日本円での負担感も、公式情報だけでは断定しません。
+
+なお、サブスクからの除外は一時的で、キャパシティが許せば早期復帰を目指すという説明も報じられています。ただし、これは公式ブログ本文そのものではなく、報道ベースの情報として分けて扱う必要があります。復帰時期は未定です。
+
+<CharacterDialogue
+  image="/images/characters/duo_talk_half.webp"
+  lines={[
+    { speaker: "ひまり", text: "7月8日からは自動では使えなくなるの？" },
+    { speaker: "らぼまる", text: "usage creditsが必要になるよ。具体的な必要量はまだ公式に出ていないから、公式の最新案内を確認しよう。" },
+  ]}
+/>
+
+## 復活したFable 5は何がすごいモデルなのか
+
+<p class="lead">Fable 5の強みは、短い回答よりも、<strong>長い作業や複雑な資料理解を進める力</strong>にあります。</p>
+
+ここからは、復活したFable 5がそもそもどんなモデルなのかを整理します。
+
+Fable 5は、Opusの上に置かれたMythos-classの一般公開モデルです。Anthropicは、一般公開するClaudeの中で最も高性能なモデルとして説明しています。
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">Fable 5の位置づけを階層図で。</p>
@@ -92,68 +198,15 @@ Anthropicは2026年6月9日、新しいAIモデルとして「Claude Fable 5」�
   </div>
 </section>
 
-Fable 5は、Mythos-classの能力を一般利用向けに安全化したモデルです。Mythos 5は、同じ土台を使いながら、一部領域の安全装置を外した限定提供モデルです。
+特徴は、単に「賢く答える」だけではありません。
 
-ここを間違えると、ニュースの読み方がズレます。
+- 長いコード修正を進める
+- 複雑な資料やPDFを読む
+- 表やグラフをもとに判断する
+- 画像や画面を理解する
+- 長い作業を段取りごと進める
 
-Fable 5は「弱い版」というより、Mythos-classの力を一般利用に出せるように、安全装置を組み込んだモデルです。Mythos 5は「さらに上のモデル」と表現したくなりますが、通常のClaude利用で自由に選べるモデルではありません。
-
-整理すると、関係は次のようになります。
-
-| モデル | 位置づけ | 使える範囲 |
-|---|---|---|
-| Claude Fable 5 | Mythos-classの一般提供モデル | 広く提供。ただし安全装置あり |
-| Claude Mythos 5 | 同じ土台の限定モデル | Project Glasswingの承認顧客向け |
-| Claude Opus 4.8 | 従来の上位モデル | Fable 5のフォールバック先にもなる |
-
-名前の由来も公式で説明されています。Fableはラテン語の *fabula*、Mythosはギリシャ語の *mythos* に対応する言葉です。名前の違いはありますが、公式脚注の要点は明確です。両者を分けている理由は、安全装置です。
-
-<CharacterDialogue
-  image="/images/characters/duo_talk_half.webp"
-  lines={[
-    { speaker: "ひまり", text: "名前が2つあると、どっちを見ればいいのか迷うね" },
-    { speaker: "らぼまる", text: "普段の利用で見るのはFable 5。Mythos 5は限定提供、と分けると迷いにくいよ。" },
-  ]}
-/>
-
-## Fable 5とMythos 5の違い。一般利用で見るべき対象はFable 5
-
-<p class="lead">Mythos 5は一般提供されず、米政府協働のProject Glasswingにおける<strong>承認顧客向けモデル</strong>です。</p>
-
-Claude Mythos 5は、Fable 5と同じMythos-classの土台を持つモデルですが、一般利用向けには提供されません。
-
-公式の説明では、Mythos 5はProject Glasswingに関わる承認顧客向けの限定提供です。Project Glasswingは米政府協働の枠組みで、Mythos 5はその承認顧客向けモデルとして扱われます。そのため、Mythos 5は通常のClaude画面や一般的なAPI利用で自由に選べるモデルではありません。
-
-<section class="article-slide-section article-wide-block">
-  <p class="slide-intro">2つのモデルの違いを比較表で。</p>
-  <figure class="article-slide-figure">
-    <img src="/images/articles/202606-claude-fable-5-launch/slide03-fable-vs-mythos.webp" alt="Claude Fable 5（安全装置つき・一般公開モデル・安全分類器を搭載しOpus 4.8へフォールバック・Claude API/AWS/Amazon Bedrock/Vertex AI/Microsoft Foundryなどで提供）とClaude Mythos 5（安全装置の一部を外した版・一般提供なし・Project Glasswingの承認顧客向け・一般ユーザーは利用できない）の2列比較スライド" loading="lazy" decoding="async" />
-    <figcaption>図解：Fable 5とMythos 5、何が違う？</figcaption>
-  </figure>
-  <div class="slide-reading-note">
-    <p><strong>図のポイント（コピー可能）</strong></p>
-    <ul>
-      <li><strong>Fable 5</strong>：安全装置つきの一般公開モデル。一般ユーザーが使えるのはこちら</li>
-      <li><strong>Mythos 5</strong>：安全装置の一部を外した限定モデル。一般提供なし</li>
-      <li><strong>提供先</strong>：Fable 5はClaude API / AWS / Bedrock / Vertex AI / Foundry など</li>
-      <li><strong>結論</strong>：同じ土台。分けている理由は安全装置だけ</li>
-    </ul>
-  </div>
-</section>
-
-Mythos 5は、サイバーセキュリティ分野の高度な評価にも使われる限定モデルです。公式はMythos Previewの後継として、サイバーセキュリティ領域での能力を強く打ち出しています。
-
-ただし、ここは能力の強さを煽って読むところではありません。むしろ重要なのは、そうした高度な能力をそのまま広く出すのではなく、一般利用向けには安全装置つきのFable 5として提供している点です。
-
-通常のClaude利用で見るべき対象は、Claude Fable 5です。Mythos 5は「Fable 5のさらに強い版が自由に使える」という話ではありません。
-
-## ベンチマークで見える強み。数字は「何ができるか」を読む材料
-
-<p class="lead">Fable 5 / Mythos 5の強みは、<strong>長い作業、資料理解、画面理解、研究支援</strong>のような複雑なタスクに出ています。</p>
-
-公式のベンチマーク表では、Fable 5 / Mythos 5は多くの項目で高いスコアを出しています。
-
-ただし、表の読み方には注意が必要です。公式表は、基本的に「Mythos 5 / Fable 5のうち高い方」を左側に置いています。Fable 5単独の値が示されている項目もあります。
+こうした方向に強みがあるモデルです。
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">主要ベンチを「何を測る数字か」つきで。</p>
@@ -172,43 +225,32 @@ Mythos 5は、サイバーセキュリティ分野の高度な評価にも使わ
   </div>
 </section>
 
-さらに、サイバー・バイオ系の一部ベンチには「*」が付いています。公式注記では、こうした領域では安全装置の影響でMythos 5とFable 5の差が大きく、一般利用できるFable 5はフォールバックによりOpus 4.8寄りの挙動になると説明されています。
-
-つまり、表の一番高い数字をそのまま「Fable 5で使える能力」と読むのは避ける必要があります。
+公式ベンチマークでは、次のような数字が示されています。
 
 <div class="is-scrollable">
 
-| ベンチマーク | 公式表の数値 | ざっくり何を見る数字か | 注意点 |
-|---|---:|---|---|
-| SWE-Bench Pro | 80.3% | 実務に近いコード修正を進める力 | Fable 5単独は77.8% |
-| FrontierCode Diamond | 29.3% | 難しい開発タスクを粘って進める力 | Fable 5単独値は表に明示なし |
-| GDPval-AA | 1932 | 知識作業を筋道立てて進める力 | 資料・判断系の評価 |
-| GDPpdf | 29.8% | PDFや資料を読み取る力 | 資料ビジョン系 |
-| Blueprint-Bench 2 | 38.6% | 空間や構造を理解する力 | 画像・設計理解に近い |
-| OSWorld-Verified | 85.0% | PC画面を見て作業を進める力 | Opus 4.8は83.4% |
-| Humanity’s Last Exam no tools | 59.0%* | 幅広い難問への推論力 | *付き。安全装置の影響に注意 |
-| Humanity’s Last Exam with tools | 64.5%* | ツール利用込みの難問対応力 | *付き。安全装置の影響に注意 |
-| BioMysteryBench hard | 46.1%* | バイオ系の複雑な推論力 | *付き。一般利用ではそのまま読まない |
-| BioMysteryBench human solved | 83.9%* | 人が解けたバイオ系問題への対応力 | *付き。一般利用ではそのまま読まない |
-| Terminal-Bench 2.1 | 88.0%* | ターミナル操作を含む作業力 | *付き。安全装置の影響に注意 |
-| ExploitBench | 78.0%* | サイバー領域の評価 | *付き。一般利用の能力として読まない |
-| HealthBench Professional | 66.0% | 専門的な医療・健康関連の評価 | 医療判断を任せる意味ではない |
+| ベンチマーク | 公式表の数値 | 何を見る数字か |
+|---|---:|---|
+| SWE-Bench Pro | 80.3% | 実務に近いコード修正を進める力 |
+| FrontierCode Diamond | 29.3% | 難しい開発タスクを粘って進める力 |
+| GDPval-AA | 1932 | 資料や表を読み、筋道立てて判断する力 |
+| GDPpdf | 29.8% | PDFや資料を読み取る力 |
+| Blueprint-Bench 2 | 38.6% | 構造や空間を理解する力 |
+| OSWorld-Verified | 85.0% | PC画面を見て作業を進める力 |
+| Humanity’s Last Exam no tools | 59.0%* | 幅広い難問への推論力 |
+| Humanity’s Last Exam with tools | 64.5%* | ツール利用込みの難問対応力 |
+| BioMysteryBench hard | 46.1%* | バイオ系の複雑な推論力 |
+| Terminal-Bench 2.1 | 88.0%* | ターミナル操作を含む作業力 |
+| ExploitBench | 78.0%* | サイバー領域の評価 |
+| HealthBench Professional | 66.0% | 専門的な医療・健康関連の評価 |
 
 </div>
 
-コーディングでは、短いコードを書く力だけでなく、原因を探し、直し、確認するような長い作業を進められるかが見られます。知識作業では、資料、表、グラフ、PDFのような情報を読み取り、筋道を立てて判断する力が問われます。
+「*」付きの数字には注意が必要です。
 
-ビジョンでは、画像を説明するだけではなく、画面の構造を理解したり、図から数値を読み取ったり、スクリーンショットからWebアプリを再構築したりする力が評価されます。科学研究の領域では、難しい条件を整理し、仮説を立てる支援能力が見られています。
+サイバーやバイオに近い領域では、安全装置の影響で、一般利用のFable 5はOpus 4.8へフォールバックする場合があります。そのため、表の高い数字をそのまま「通常利用のFable 5で自由に使える能力」と読むのは避けるべきです。
 
-一方で、*付きの項目は特に慎重に読む必要があります。ExploitBenchやBioMysteryBenchのような領域は、Fable 5の安全装置が強く関わるため、表の高い数字を一般利用でそのまま引き出せると見るべきではありません。
-
-## コーディング・長期作業の実例。Fable 5は途中で止まりにくいAIを目指している
-
-<p class="lead">Fable 5の強みは、短い回答よりも<strong>長い作業を進める力</strong>として打ち出されています。</p>
-
-Anthropicは、Fable 5について「どのClaudeより長く自律作動する」と説明しています。
-
-これは、AIが一問一答で答えるだけではなく、調べる、分ける、直す、確認する、といった作業の流れを長く扱う方向に進んでいることを意味します。
+Fable 5のすごさは、数字そのものよりも、「長い作業を任せる方向に進んでいる」点にあります。
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">公式が紹介した長期作業の実例を 1 枚で。</p>
@@ -227,85 +269,66 @@ Anthropicは、Fable 5について「どのClaudeより長く自律作動する�
   </div>
 </section>
 
-公式が紹介している例のひとつがStripeです。
+公式が紹介している例では、Stripeが数か月分のエンジニアリング作業を数日に圧縮し、5,000万行のRubyコードベース移行を1日で進めたとされています。手作業ならチームで2か月超かかる作業だった、という説明です。
 
-Stripeは、Fable 5によって数か月分のエンジニアリング作業を数日に圧縮できたとコメントしています。また、5,000万行のRubyコードベース全体の移行を1日で進めた事例も紹介されています。手作業ならチームで2か月超かかる作業だったとされています。
-
-これは公式が紹介した早期利用事例です。すべての開発作業で同じ結果になると読むべきではありません。それでも、Fable 5の方向性はかなりはっきりしています。短いコード片を作るだけでなく、大きなコードベースを理解し、複数の工程をまたいで作業する力を狙っています。
-
-もうひとつの例が、Slay the Spireです。
-
-公式は、永続メモリの効果がOpus 4.8の3倍、最終章到達も3倍と説明しています。これはゲームそのものが重要というより、長い文脈を保ち、前の判断を活かしながら次の行動を選ぶ力を示す例です。
-
-少なくともFable 5の打ち出し方を見る限り、AIは質問に答えるだけでなく、長い作業を段取りごと支える方向へ進んでいます。
-
-## 価格と提供範囲。Fable 5は高性能だが、常に定額で使えるとは限らない
-
-<p class="lead">Fable 5のAPI価格はOpus 4.8の2倍で、サブスクでの扱いも<strong>期間限定の注意</strong>があります。</p>
-
-Fable 5とMythos 5の価格は、100万トークンあたり入力$10、出力$50です。公式は米ドルで価格を示しています。
-
-Opus 4.8は100万トークンあたり入力$5、出力$25なので、Fable 5はAPI単価で見るとOpus 4.8の2倍です。一方で、Mythos Previewと比べると半額未満と説明されています。
-
-<section class="article-slide-section article-wide-block">
-  <p class="slide-intro">価格と提供スケジュールを 1 枚で。</p>
-  <figure class="article-slide-figure">
-    <img src="/images/articles/202606-claude-fable-5-launch/slide06-price-availability.webp" alt="価格・提供範囲・使える人を整理した図解。API価格表（Fable 5入力$10/出力$50、Mythos 5入力$10/出力$50・一般提供なし、Opus 4.8入力$5/出力$25、いずれも100万トークンあたり米ドル・日本円換算は扱わない）と、サブスクでの扱い（6/9〜6/22は追加費用なしで含まれる→6/23以降はusage creditsが必要→将来は標準サブスクへ復帰予定だが時期未定）、提供チャネル（Claude API・Claude Platform on AWS・Amazon Bedrock・Vertex AI・Microsoft Foundry、APIは初日から提供）を示すスライド" loading="lazy" decoding="async" />
-    <figcaption>図解：価格・提供範囲・使える人</figcaption>
-  </figure>
-  <div class="slide-reading-note">
-    <p><strong>図のポイント（コピー可能）</strong></p>
-    <ul>
-      <li><strong>API価格</strong>：Fable 5は入力$10／出力$50（Opus 4.8の2倍）</li>
-      <li><strong>〜6/22</strong>：Pro / Max / Team / シート型Enterpriseに追加費用なし</li>
-      <li><strong>6/23以降</strong>：標準サブスクの通常枠外。usage creditsが必要</li>
-      <li><strong>将来</strong>：標準サブスク復帰予定だが時期未定</li>
-    </ul>
-  </div>
-</section>
-
-| モデル | 入力価格 | 出力価格 | 備考 |
-|---|---:|---:|---|
-| Claude Fable 5 | $10 / 100万トークン | $50 / 100万トークン | Opus 4.8の2倍 |
-| Claude Mythos 5 | $10 / 100万トークン | $50 / 100万トークン | 一般提供なし |
-| Claude Opus 4.8 | $5 / 100万トークン | $25 / 100万トークン | Fable 5のフォールバック先にもなる |
-
-公式では米ドル表記のため、日本円換算は扱いません。日本円価格も公式に特記されていません。
-
-提供範囲も少し複雑です。
-
-Fable 5は、2026年6月9日からClaude API、Claude Platform on AWS、Amazon Bedrock、Vertex AI、Microsoft Foundryで一般提供されています。API利用については初日から提供されています。
-
-一方、Claudeのサブスクでは扱いに注意が必要です。
-
-6月9日から6月22日までは、Pro、Max、Team、シート型Enterpriseに追加費用なしで含まれます。しかし6月23日以降は、標準サブスクの通常枠には含まれず、使う場合はusage creditsが必要になります。
-
-Anthropicは、容量が許せば標準サブスクへできる限り早く復帰させる方針を示しています。ただし、復帰時期は未確定です。
-
-日本での表示、日本語での提供状況、日本円価格、6月23日以降のusage creditsの具体的な必要量や金額は、公式に特記がありません。国内の利用者向けには、実際の画面表示や公式案内を確認する必要があります。
+また、Slay the Spireでの検証では、永続メモリ効果がOpus 4.8の3倍、最終章到達も3倍とされています。これはゲームの話というより、前の判断を覚えながら長い流れを進める力の例として見ると分かりやすいです。
 
 <CharacterDialogue
   image="/images/characters/duo_talk_half.webp"
   lines={[
-    { speaker: "ひまり", text: "高性能なら、今までのプランでずっと使えるってこと？" },
-    { speaker: "らぼまる", text: "そこは注意だね。6月22日までは含まれるけど、6月23日以降はusage creditsが必要。標準サブスクに戻る時期はまだ決まっていないよ。" },
+    { speaker: "ひまり", text: "復活したってことは、ただ戻っただけじゃなくて、元々かなり大きなモデルなんだね" },
+    { speaker: "らぼまる", text: "そう。Fable 5は“短く答えるAI”というより、“長い作業を進めるAI”として見た方が分かりやすいよ。" },
   ]}
 />
 
-## 安全分類器とOpus 4.8フォールバック。強いAIを一般公開するための仕組み
+## Fable 5とMythos 5の違い
 
-<p class="lead">Fable 5は、危険だから怖いモデルというより、<strong>安全装置を組み込むことで一般公開されたモデル</strong>です。</p>
+<p class="lead">通常利用で見るべき対象はFable 5で、Mythos 5は<strong>Project Glasswingの承認顧客向けの限定モデル</strong>です。</p>
+
+Fable 5とMythos 5は、同じMythos-classの土台を持つモデルです。違いは、基本的に安全装置の扱いです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">2つのモデルの違いを比較表で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202606-claude-fable-5-launch/slide03-fable-vs-mythos.webp" alt="Claude Fable 5（安全装置つき・一般公開モデル・安全分類器を搭載しOpus 4.8へフォールバック・Claude API/AWS/Amazon Bedrock/Vertex AI/Microsoft Foundryなどで提供）とClaude Mythos 5（安全装置の一部を外した版・一般提供なし・Project Glasswingの承認顧客向け・一般ユーザーは利用できない）の2列比較スライド" loading="lazy" decoding="async" />
+    <figcaption>図解：Fable 5とMythos 5、何が違う？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Fable 5</strong>：安全装置つきの一般公開モデル。一般ユーザーが使えるのはこちら</li>
+      <li><strong>Mythos 5</strong>：安全装置の一部を外した限定モデル。一般提供なし</li>
+      <li><strong>結論</strong>：同じ土台。分けている理由は安全装置だけ</li>
+    </ul>
+  </div>
+</section>
+
+| モデル | 位置づけ | 提供範囲 |
+|---|---|---|
+| Claude Fable 5 | Mythos-classを一般利用向けに安全化したモデル | 広く提供 |
+| Claude Mythos 5 | 一部領域の安全装置を外した限定モデル | Project Glasswingの承認顧客向け |
+| Claude Opus 4.8 | 従来の上位モデル | Fable 5のフォールバック先にもなる |
+
+Mythos 5は、通常のClaude画面で自由に選べるモデルではありません。また、Fable 5のさらに強い版が一般向けに開放された、という話でもありません。
+
+今回の再開で主に見るべきなのは、Fable 5です。
+
+## 安全装置はどう強化されたのか
+
+<p class="lead">再開後のFable 5では、報告された迂回手法への対策が入り、<strong>分類器の考え方もより詳しく説明</strong>されました。</p>
 
 Fable 5には、安全分類器が組み込まれています。
 
-この分類器は、リクエスト時と応答生成中に動きます。対象は主に3つです。
+対象は主に次の領域です。
 
-1つ目はサイバーセキュリティです。特に攻撃的サイバーに関わる内容が対象になります。2つ目は生物・化学です。研究や安全保障に関わるデュアルユース、つまり役立つ使い方も危険な使い方もあり得る領域が対象です。3つ目はdistillationです。日本語では「能力抽出」と言い換えるとわかりやすいです。ざっくり言えば、Fable 5の答え方や能力を大量に引き出し、別のモデルの学習に転用するような使い方です。
+- サイバーセキュリティ
+- 生物・化学
+- distillation、つまり能力抽出
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">安全の仕組みを流れ図で。</p>
   <figure class="article-slide-figure">
-    <img src="/images/articles/202606-claude-fable-5-launch/slide07-safety-fallback.webp" alt="安全分類器とOpus 4.8フォールバックの図解。分類器が注目する3領域（サイバーセキュリティ・生物/化学・distillation=能力抽出）、フォールバックの流れ（ユーザーのリクエスト→安全分類器がチェック→問題なしはそのままFable 5、該当領域はOpus 4.8が代わりに応答）、発動頻度（フォールバックはセッションの5%未満、95%超はそのままFable 5）、安全評価のポイント（1,000時間超のバグバウンティでユニバーサル脱獄は未発見、UK AISIの注記あり）、APIでの挙動（stop_reason: refusal、出力前拒否は課金なし）を示すスライド" loading="lazy" decoding="async" />
+    <img src="/images/articles/202606-claude-fable-5-launch/slide07-safety-fallback.webp" alt="安全分類器とOpus 4.8フォールバックの図解。分類器が注目する3領域（サイバーセキュリティ・生物/化学・distillation=能力抽出）、フォールバックの流れ（ユーザーのリクエスト→安全分類器がチェック→問題なしはそのままFable 5、該当領域はOpus 4.8が代わりに応答）、発動頻度（フォールバックはセッションの5%未満、95%超はそのままFable 5）、安全評価のポイント（1,000時間超のバグバウンティでユニバーサル脱獄は未発見）、APIでの挙動（stop_reason: refusal、出力前拒否は課金なし）を示すスライド" loading="lazy" decoding="async" />
     <figcaption>図解：安全分類器とOpus 4.8フォールバック</figcaption>
   </figure>
   <div class="slide-reading-note">
@@ -314,93 +337,99 @@ Fable 5には、安全分類器が組み込まれています。
       <li><strong>3領域</strong>：サイバーセキュリティ／生物・化学／distillation（能力抽出）</li>
       <li><strong>仕組み</strong>：該当領域ではOpus 4.8が代わりに応答（フォールバック）</li>
       <li><strong>頻度</strong>：発動はセッションの5%未満。95%超はそのままFable 5</li>
-      <li><strong>評価</strong>：1,000時間超のバグバウンティでユニバーサル脱獄は未発見</li>
+      <li><strong>強化</strong>：報告された迂回手法を99%超ブロックする改善済み分類器を導入</li>
     </ul>
   </div>
 </section>
 
-分類器が対象領域だと判断した場合、Fable 5がそのまま答えるのではなく、Claude Opus 4.8が代わりに応答します。これがフォールバックです。利用者から見ると、危険領域に近い依頼ではFable 5ではなく、より制限されたOpus 4.8側の応答になる、というイメージです。
+分類器が対象領域だと判断した場合、Fable 5がそのまま答えるのではなく、Claude Opus 4.8が代わりに応答します。これがフォールバックです。
 
-重要なのは、これを単に「制限が多い」と見るだけでは足りないことです。
+元々の公式説明では、フォールバックが発動するのはセッションの5%未満とされていました。つまり、多くのセッションではFable 5のまま動きます。
 
-Fable 5はMythos-classの高度な能力を持つモデルです。その力を一般利用に出すために、危険になりやすい領域ではOpus 4.8へ切り替える仕組みを入れている。ここが今回の発表の本質です。
+再開にあたって、Anthropicは分類器を改善し、Amazon研究者が報告した迂回手法を99%超ブロックできるようになったと説明しています。また、安全余裕、いわゆるsafety marginは過去最大だとしています。
 
-公式は、フォールバックが発生するのはセッションの5%未満と説明しています。つまり、95%超のセッションではFable 5のまま動くということです。一方で、無害な依頼でも分類器が拾ってしまう可能性はあります。公式も、false positiveを減らしていく方針を示しています。
+7月2日の公式解説では、サイバー関連のリクエストを次のようなカテゴリで整理する考え方も示されました。
 
-APIでは、拒否が発生した場合、`stop_reason: "refusal"` としてHTTP 200で返る扱いです。出力前に拒否されたリクエストは課金されません。これは主にAPI利用者向けの仕様ですが、拒否や安全制御の扱いが明確化されている点は押さえておきたいところです。
+| 区分 | 意味 |
+|---|---|
+| 禁止 | 危険性が高く、応答しない領域 |
+| 高リスク二重用途 | 防御にも攻撃にも使えるが、危険性が高い領域 |
+| 低リスク二重用途 | 防御目的などで扱える範囲 |
+| 良性 | 通常の学習・説明・安全な開発支援など |
 
-安全評価についても、公式は外部レッドチームとバグバウンティを行っています。1,000時間超のテストで、ユニバーサル脱獄は未発見だったとされています。また、30種類の脱獄手法による単発の有害リクエストに対して、Fable 5は応答しなかったと説明されています。
+さらに、CJS 0〜4というフレームワークも公開されています。これは、脱獄や安全装置の迂回がどれくらい深刻かを段階的に評価するための枠組みです。
 
-ただし、UK AISIは短い初期テストで「進展」があったと注記しています。これはユニバーサル脱獄が成立したという意味ではありません。安全性については、強い対策が示されている一方で、継続的に検証される領域として読むのが自然です。
+ここで重要なのは、危険性を煽ることではありません。
 
-## この記事の見方まとめ。AIは「答える」から「任せる」へ近づいている
+むしろ、Fable 5のような高性能モデルを広く提供するには、どこまで答えてよく、どこから制限するかを細かく決める必要がある、という話です。
 
-<p class="lead">Fable 5のニュースは、高性能化だけでなく、<strong>AIにどこまで作業を任せられるか</strong>という変化を示しています。</p>
+## まだ断定できないこと
 
-Fable 5で見えてくる流れは、かなりはっきりしています。
+<p class="lead">Fable 5は再開されましたが、日本での見え方や今後の<strong>サブスク復帰時期はまだ断定できません</strong>。</p>
 
-AIは、質問に答えるだけの道具から、長い作業を段取りごと支える道具へ近づいています。
+現時点で未確定として扱うべき点は、次のとおりです。
 
-コーディングなら、短い関数を書くのではなく、大きなコードベースを読み、変更し、確認する。知識作業なら、資料や表を読み、根拠を整理し、判断の筋道を作る。ビジョンなら、画像や画面を見て、そこから次の作業につなげる。科学研究の領域でも、複雑な条件整理や仮説づくりを支援する方向が示されています。
+- 標準サブスクへの復帰時期
+- usage creditsの具体的な必要量
+- 日本円での価格
+- 日本での画面表示
+- 日本語での実力や体感差
+- AWS、Google Cloud、Microsoft Foundryでの再有効化完了時期
 
-これらは、単なるチャットの延長ではありません。
+また、公式情報、報道、ユーザー検証は分けて読む必要があります。
+
+今回の記事では、Anthropicの公式発表と公式解説を主な根拠にします。サブスク復帰の見通しのように、公式ブログ本文ではなく報道や関係者発言に基づくものは、あくまで「claims扱い」として扱います。
+
+## まとめ。Fable 5のニュースは「高性能AIをどう安全に出すか」の話
+
+<p class="lead">Claude Fable 5は、単に新しい高性能AIが出たというニュースではありません。</p>
+
+6月9日に発表され、6月12日に止まり、7月1日に戻ってきた。その背景には、米政府の輸出規制、Amazon研究者による迂回手法の報告、安全装置の改善があります。
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">記事全体の結論と情報の線引きを 1 枚で。</p>
   <figure class="article-slide-figure">
-    <img src="/images/articles/202606-claude-fable-5-launch/slide08-summary.webp" alt="まとめの図解。『AIは「答えるAI」から「任せるAI」へ近づく』の結論と、3つのまとめカード（Fable 5はMythos-classの一般公開モデル／強みは長い作業を進める力／使える条件は必ず確認が必要）、情報の線引きカード（公式情報＝この記事の主根拠、外部評価・報道＝参考として扱う、未確定＝日本での見え方・日本円価格・標準サブスク復帰時期）を、ひまり・らぼまるがやさしく締めるスライド" loading="lazy" decoding="async" />
-    <figcaption>図解：まとめ — 「答えるAI」から「任せるAI」へ</figcaption>
+    <img src="/images/articles/202606-claude-fable-5-launch/slide08-summary.webp" alt="まとめの図解。『高性能AIをどう安全に出すかのニュース』の結論と、3つのまとめカード（①一度止まり7月1日に復活したMythos-classの一般公開モデル ②強みは長い作業を進める力 ③7月8日以降は条件確認が必要）、情報の線引きカード（公式＝発表日・再開・価格・安全装置、報道＝サブスク早期復帰の見通し、未確定＝復帰時期・日本での見え方・クラウド3社の完了時期）を、ひまり・らぼまるがやさしく締めるスライド" loading="lazy" decoding="async" />
+    <figcaption>図解：まとめ — 高性能AIをどう安全に出すかのニュース</figcaption>
   </figure>
   <div class="slide-reading-note">
     <p><strong>図のポイント（コピー可能）</strong></p>
     <ul>
-      <li><strong>結論1</strong>：Fable 5はOpusの上に来たMythos-classの一般公開モデル</li>
-      <li><strong>結論2</strong>：強みは「答えのうまさ」より「長い作業を進める力」</li>
-      <li><strong>結論3</strong>：使える条件（Mythos 5非提供・6/23以降のusage credits・日本未確定）は要確認</li>
-      <li><strong>読み方</strong>：公式情報／外部評価・報道／未確定を分けて見る</li>
+      <li><strong>結論1</strong>：一度止まり、7月1日に復活したMythos-classの一般公開モデル</li>
+      <li><strong>結論2</strong>：強みは「長い作業を進める力」</li>
+      <li><strong>結論3</strong>：7月8日以降はusage credits。条件確認が必要</li>
+      <li><strong>読み方</strong>：公式／報道／未確定を分けて見る</li>
     </ul>
   </div>
 </section>
 
-一方で、使える条件には注意が必要です。
+再開後は、7月7日まで一部サブスクに追加費用なしで含まれます。ただし、7月8日以降はusage creditsが必要です。価格は100万トークンあたり入力$10、出力$50で、Opus 4.8の2倍です。
 
-Fable 5は一般公開モデルですが、Mythos 5は一般提供されません。Fable 5でも、サイバー・バイオ・化学・distillationに関わる領域では、安全分類器とOpus 4.8フォールバックが入ります。
+Fable 5の魅力は、Opusの上に来たMythos-classの力を、一般利用向けに安全化している点です。長い作業、複雑な資料理解、画面理解、コーディング支援などで強みがあります。
 
-また、サブスクでの扱いも固定ではありません。6月22日までは対象プランに含まれますが、6月23日以降はusage creditsが必要になります。将来の標準サブスク復帰は予定されていますが、時期は未確定です。
+一方で、Mythos 5は一般提供されません。サイバーやバイオ・化学などの領域では、安全分類器とOpus 4.8フォールバックが入ります。
 
-日本での見え方、日本語での実力、日本円価格も、公式情報だけではまだ断定できません。
+つまり、Fable 5は「何でも自由にできるAI」ではありません。高度な能力を、一般利用できる範囲に調整して再開されたモデルです。
 
-公式情報、外部評価、報道、ユーザー検証は分けて読む必要があります。ここでは、Anthropic公式発表とClaude API Docs、Release Notesで確認できる情報を中心に整理しています。公式表にない外部ベンチ数値は採用していません。
+今回のポイントは、AIの性能そのものだけではありません。高性能AIを、どこまで、どの条件で、どんな安全装置つきで使えるようにするのか。
 
-## まとめ。Fable 5は「強いAIをどう開放するか」のニュース
-
-<p class="lead">Claude Fable 5は、Opusの上に置かれた<strong>Mythos-classの一般公開モデル</strong>です。</p>
-
-すごさは、単にベンチマークの数字が高いことだけではありません。長い作業を続ける力、資料や画面を理解する力、複雑な条件を整理する力が伸びている点にあります。
-
-同時に、今回のニュースの中心には安全装置があります。
-
-Fable 5は、Mythos-classの能力を一般利用に出すために、サイバー、バイオ・化学、能力抽出のような領域で安全分類器を使います。必要な場面ではOpus 4.8に切り替わります。
-
-つまりFable 5は、「何でも自由にできる最上位AI」ではありません。より正確には、高度な能力を持つAIを、一般利用できる範囲に調整して出したモデルです。
-
-AIは「答える」から「作業を進める」方向へ進んでいます。Fable 5は、その変化をわかりやすく示す発表です。
-
-ただし、国内での提供状況、料金、サブスクでの扱い、実際の日本語利用は、今後の公式案内や実利用で確認する必要があります。過剰に期待しすぎず、能力と制限をセットで見るのがよさそうです。
+Fable 5の復活は、その問いがいよいよ現実のサービス運用に入ってきたことを示すニュースです。
 
 ## この記事の注意点
 
-- 価格は公式の米ドル表記をもとにしています。日本円換算はしていません。
-- 日本での提供可否、日本語対応、国内サブスク画面での表示は断定していません。
+- 価格は米ドル表記です。日本円換算はしていません。
+- 現在は「7月7日まで一部サブスクに同梱、7月8日以降usage credits」と整理します。
 - Mythos 5は一般提供されるモデルではありません。
-- 公式表にない外部ベンチ数値は採用していません。
-- サイバー・バイオ系の「*」付きベンチは、Mythos 5寄りの数字であり、一般利用のFable 5ではフォールバックによりOpus 4.8寄りになる可能性があります。
-- UK AISIの注記は「進展」であり、ユニバーサル脱獄成立とは扱っていません。
-- Redditや個人検証は主根拠にしていません。
+- 日本での表示、日本円価格、usage creditsの具体量は断定していません。
+- AWS、Google Cloud、Microsoft Foundryでの再有効化完了時期は断定していません。
+- サブスク復帰時期は未定です。
+- サブスク復帰の見通しは、公式ブログ本文と報道・関係者発言を分けて扱います。
+- サイバーやバイオ・化学の話は、危険性を煽るためではなく、安全装置の説明として扱っています。
 
 ## 参考情報
 
+- [Anthropic公式：Redeploying Claude Fable 5](https://www.anthropic.com/news/redeploying-fable-5)
 - [Anthropic公式：Claude Fable 5 and Claude Mythos 5](https://www.anthropic.com/news/claude-fable-5-mythos-5)
+- [Anthropic公式：More details on Fable 5’s cyber safeguards and our jailbreak framework](https://www.anthropic.com/news/fable-safeguards-jailbreak-framework)
 - [Claude API Docs：Models overview](https://docs.anthropic.com/en/docs/about-claude/models/overview)
 - [Claude API Docs：Pricing](https://docs.anthropic.com/en/docs/about-claude/pricing)
-- [Claude API Release Notes](https://docs.anthropic.com/en/release-notes/api)
