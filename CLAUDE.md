@@ -310,7 +310,7 @@ Phase B 完了後だけ実行：
 
 ## 成果物保全（P7・2026-07 事故対応）
 
-- **worktree は OS Temp 配下（`C:\Users\...\AppData\Local\Temp` 等）に作らない。** 恒久パス（例: `D:\work\sumalabo-worktree`）を使う。OS の Temp 自動クリーンアップで working tree が破壊される
+- **worktree は OS Temp 配下（`C:\Users\...\AppData\Local\Temp` 等）に作らない。作成先は `D:\work\` 配下とする**（例: `D:\work\sumalabo-worktree`、追加が必要なら `D:\work\sumalabo-<用途>`）。OS の Temp 自動クリーンアップで working tree が破壊される（2026-07 に Temp 配下の worktree 18 個を棚卸しし全撤去済み）
 - **`drafts/refinement/{slug}/` は記事の PR に含めてコミットする（Phase A 完了の条件）。** 初稿→レビュー→修正版→最終稿の流れを後から追えるようにする。`sumalabo:gate --stage full` と `sumalabo:finalize` が未追跡/未コミットの drafts を検出して停止する
 - **教訓（2026-07）**: Temp 配下の worktree が OS クリーンアップで破損し、未コミットだった drafts/refinement 3記事分（Meta One / Opus 4.8 / Fable 5）が消失した。文書が要求する保存を仕組みで強制していなかったことが原因
 
