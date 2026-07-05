@@ -74,7 +74,120 @@ const typeLabels = {
 
     <ArticleNavigation previousArticle={previousArticle} nextArticle={nextArticle} />
   </article>
+
+  <!-- 画像ライトボックス（記事本文のスライド画像のみ対象。JSで動的に配線） -->
+  <div class="lightbox" id="article-lightbox" role="dialog" aria-modal="true" aria-label="画像の拡大表示" hidden>
+    <button class="lightbox-close" type="button" aria-label="閉じる">✕</button>
+    <button class="lightbox-nav lightbox-prev" type="button" aria-label="前のスライド">‹</button>
+    <img id="article-lightbox-img" alt="" decoding="async" />
+    <button class="lightbox-nav lightbox-next" type="button" aria-label="次のスライド">›</button>
+    <div class="lightbox-cap" id="article-lightbox-cap"></div>
+    <div class="lightbox-hint">タップでズーム / 背景タップか ✕ で閉じる</div>
+  </div>
 </BaseLayout>
+
+<script>
+  // 画像ライトボックス: 記事本文内のスライド画像(.article-slide-figure img)をタップで拡大。
+  // 依存ライブラリなし。オーバーレイはページ内の同じWebP srcを再利用（追加リクエストなし）。
+  (() => {
+    const lb = document.getElementById("article-lightbox");
+    const lbImg = document.getElementById("article-lightbox-img") as HTMLImageElement | null;
+    const lbCap = document.getElementById("article-lightbox-cap");
+    if (!lb || !lbImg || !lbCap) return;
+    const slides = Array.from(
+      document.querySelectorAll<HTMLImageElement>(".article-content .article-slide-figure img"),
+    );
+    if (slides.length === 0) return;
+
+    const closeBtn = lb.querySelector<HTMLButtonElement>(".lightbox-close");
+    const prevBtn = lb.querySelector<HTMLButtonElement>(".lightbox-prev");
+    const nextBtn = lb.querySelector<HTMLButtonElement>(".lightbox-next");
+    let cur = 0;
+    let lastFocus: HTMLElement | null = null;
+
+    const captionFor = (img: HTMLImageElement) => {
+      const fig = img.closest("figure");
+      const cap = fig ? fig.querySelector("figcaption") : null;
+      return (cap && cap.textContent) || img.alt || "";
+    };
+
+    const show = (i: number) => {
+      cur = (i + slides.length) % slides.length;
+      const img = slides[cur];
+      lbImg.src = img.currentSrc || img.src;
+      lbImg.alt = img.alt || "";
+      lbImg.classList.remove("zoomed");
+      lbCap.textContent = captionFor(img);
+      const solo = slides.length < 2;
+      if (prevBtn) prevBtn.hidden = solo;
+      if (nextBtn) nextBtn.hidden = solo;
+    };
+
+    const open = (i: number) => {
+      lastFocus = document.activeElement as HTMLElement | null;
+      show(i);
+      lb.hidden = false;
+      lb.classList.add("open");
+      document.body.style.overflow = "hidden";
+      closeBtn && closeBtn.focus();
+    };
+
+    const close = () => {
+      lb.classList.remove("open");
+      lb.hidden = true;
+      document.body.style.overflow = "";
+      lastFocus && lastFocus.focus();
+    };
+
+    slides.forEach((img, i) => {
+      img.classList.add("lightbox-target");
+      img.setAttribute("role", "button");
+      img.setAttribute("tabindex", "0");
+      img.addEventListener("click", () => open(i));
+      img.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          open(i);
+        }
+      });
+    });
+
+    lb.addEventListener("click", (e) => {
+      if (e.target === lb) close();
+    });
+    closeBtn && closeBtn.addEventListener("click", close);
+    prevBtn && prevBtn.addEventListener("click", () => show(cur - 1));
+    nextBtn && nextBtn.addEventListener("click", () => show(cur + 1));
+    lbImg.addEventListener("click", () => lbImg.classList.toggle("zoomed"));
+
+    document.addEventListener("keydown", (e) => {
+      if (lb.hidden) return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowLeft") show(cur - 1);
+      if (e.key === "ArrowRight") show(cur + 1);
+    });
+
+    // スワイプで前後移動
+    let touchX: number | null = null;
+    lb.addEventListener(
+      "touchstart",
+      (e) => {
+        touchX = e.touches[0].clientX;
+      },
+      { passive: true },
+    );
+    lb.addEventListener(
+      "touchend",
+      (e) => {
+        if (touchX === null) return;
+        const dx = e.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) > 60) show(dx < 0 ? cur + 1 : cur - 1);
+        touchX = null;
+      },
+      { passive: true },
+    );
+  })();
+</script>
 
 <style>
   .article-header {
@@ -1373,5 +1486,97 @@ const typeLabels = {
 
   .article-ai-note a {
     color: var(--teal-deep);
+  }
+
+  /* --- 画像ライトボックス（承認済み見本 sumalabo-design-preview-v2.html の挙動を正とする） --- */
+  .article-content :global(img.lightbox-target) {
+    cursor: zoom-in;
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(10, 14, 22, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .lightbox.open {
+    display: flex;
+  }
+
+  .lightbox img {
+    max-width: min(92vw, 560px);
+    max-height: 78vh;
+    border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    cursor: zoom-in;
+    transition: transform 0.2s;
+    touch-action: pinch-zoom;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox img {
+      transition: none;
+    }
+  }
+
+  .lightbox img.zoomed {
+    transform: scale(1.8);
+    cursor: zoom-out;
+  }
+
+  .lightbox-cap {
+    color: #cbd3e0;
+    font-size: 13px;
+    margin-top: 14px;
+    text-align: center;
+    max-width: 92vw;
+  }
+
+  .lightbox-hint {
+    color: #8b96a8;
+    font-size: 11.5px;
+    margin-top: 6px;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .lightbox-prev {
+    left: 10px;
+  }
+
+  .lightbox-next {
+    right: 10px;
   }
 </style>
