@@ -14,6 +14,10 @@ node scripts/automation/test-mode.mjs --status
   ```
 - アクティブなら続行。
 
+## 0-bis. ブラウザ選択（最初のブラウザ操作より前に必ず実行）
+
+ToolSearch で `mcp__claude-in-chrome__select_browser` をロードし、`data/automation/night-browser.json` の deviceId を **select_browser で明示選択**する（複数ブラウザ接続時、既定ルーティングが Edge を掴む実測事故が 2026-07-05 に 2 回発生）。選択後、任意のタブで `navigator.userAgent` に `Edg/` が含まれないことを確認。含まれる・ファイルが無い・選択に失敗する場合は、ブラウザを一切操作せず中止・通知する。list_connected_browsers が複数を返しても AskUserQuestion はしない（ユーザーは設定ファイルで Chrome を指定済み）。
+
 ## 1. ネタ選定（scout）
 
 ```
