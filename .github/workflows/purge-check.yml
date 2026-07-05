@@ -1,0 +1,30 @@
+# キャッシュパージ経路チェック（手動実行のみ）
+#
+# 目的: L1 無人 Phase B で使うパージ経路（CLOUDFLARE_ZONE_PURGE_TOKEN /
+# CLOUDFLARE_ZONE_ID の secrets → env 継承 → zone 解決 → 実パージ）が
+# Actions 環境で生きていることを、無害な 1 URL（sitemap-index.xml）の
+# 実パージで確認する。auto-phase-b.yml と同じ env 配線を使う。
+
+name: Purge Path Check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  purge-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check purge path (resolve zone + purge sitemap-index.xml)
+        run: node scripts/automation/cache-purge.mjs --check
+        env:
+          CLOUDFLARE_ZONE_PURGE_TOKEN: ${{ secrets.CLOUDFLARE_ZONE_PURGE_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}

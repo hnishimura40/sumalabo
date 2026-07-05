@@ -23,8 +23,40 @@
 //   - alt2: 「問いかけ型」（読者への問いから始める）
 
 const URL_PLACEHOLDER_LEN = 23; // t.co の固定長扱い
-const MAX_TWEET_LEN = 280;
-const SAFE_MARGIN = 10; // 末尾の改行や絵文字分の余白
+const MAX_TWEET_LEN = 280; // 非Premium上限（X加重カウント。CJKは1文字=2）
+const SAFE_MARGIN = 4; // 端数余白（加重換算後）
+
+// ---- X 加重文字数（2026-07-05 追加・非Premium 280 ガード） ----
+// 背景: 従来は String.length（コードユニット数）で判定していたため、日本語主体の
+// 投稿文（例: 317 文字）が「280 以内」と誤判定され、投稿画面で超過→手動短縮になった。
+// X の実カウントは twitter-text v3 の加重方式: 以下の範囲は weight 1、それ以外
+// （CJK・かな・絵文字など）は weight 2。URL は長さによらず 23。
+const WEIGHT1_RANGES = [
+  [0, 4351], // Latin, ギリシャ, キリル等
+  [8192, 8205], // 一般句読点の一部
+  [8208, 8223], // ハイフン・引用符類
+  [8242, 8247], // プライム記号類
+];
+
+function charWeight(cp) {
+  for (const [lo, hi] of WEIGHT1_RANGES) {
+    if (cp >= lo && cp <= hi) return 1;
+  }
+  return 2;
+}
+
+/** X の加重文字数を返す（URL は 23 固定換算） */
+export function weightedTweetLength(text) {
+  let total = 0;
+  const withoutUrls = String(text).replace(/https?:\/\/\S+/g, () => {
+    total += URL_PLACEHOLDER_LEN;
+    return "";
+  });
+  for (const ch of withoutUrls) {
+    total += charWeight(ch.codePointAt(0));
+  }
+  return total;
+}
 
 const BAN_WORDS = [
   "悲報",
@@ -117,25 +149,58 @@ function ensureHedge(text, isReporting) {
   return text.replace(/[。．]?$/, "（報道ベース・公式発表ではありません）");
 }
 
-function clampLength(text, urlLen = URL_PLACEHOLDER_LEN, hashtagsLen = 0) {
-  const budget = MAX_TWEET_LEN - urlLen - hashtagsLen - SAFE_MARGIN;
-  if (text.length <= budget) return { text, truncated: false };
-  return { text: text.slice(0, Math.max(20, budget - 1)) + "…", truncated: true };
-}
-
 function buildArticleUrl({ slug, productionUrl }) {
   const base = String(productionUrl || "https://sumalabo.com").replace(/\/+$/, "");
   return `${base}/articles/${slug}/`;
 }
 
-function compose({ lead, body, hashtags, articleUrl }) {
+/** description の先頭 1〜2 文だけを取り出す（文単位・途中で切らない） */
+function leadingSentences(text, count = 1) {
+  const sentences = String(text)
+    .split(/(?<=[。．！!？?])/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return sentences.slice(0, count).join("");
+}
+
+// 280 加重ガード: 途中カット（slice + …）はしない。長い本文候補から順に
+// 「そのまま入るか」を加重換算で試し、最初に収まった候補を採用する
+// （= 超過時は自動短縮ではなく、より短い構成での生成し直し）。
+function compose({ lead, body, hashtags, articleUrl, isReporting }) {
   const hashtagStr = hashtags.join(" ");
-  const hashtagsLen = hashtagStr.length + 1; // 直前の改行/スペース
-  const urlLen = URL_PLACEHOLDER_LEN + 1;
-  const combinedText = `${lead}\n\n${body}`.trim();
-  const { text: clamped, truncated } = clampLength(combinedText, urlLen, hashtagsLen);
-  const post = `${clamped}\n${articleUrl}\n${hashtagStr}`;
-  return { post, truncated, charCount: post.length };
+  const bodyCandidates = [
+    body, // 1. フル
+    leadingSentences(body, 2), // 2. 先頭2文
+    leadingSentences(body, 1), // 3. 先頭1文
+    ensureHedge("要点と注意点をやさしく整理しました。", isReporting), // 4. 定型フック
+    "", // 5. lead のみ
+  ];
+  let picked = null;
+  let downshifted = false;
+  for (const candidate of bodyCandidates) {
+    const text = candidate ? `${lead}\n\n${candidate}`.trim() : lead.trim();
+    const post = `${text}\n${articleUrl}\n${hashtagStr}`;
+    if (weightedTweetLength(post) <= MAX_TWEET_LEN - SAFE_MARGIN) {
+      picked = post;
+      break;
+    }
+    downshifted = true;
+  }
+  if (!picked) {
+    // lead 単体でも収まらない（タイトルが極端に長い）: 読点区切りの先頭句で組み直す
+    const shortLead = lead.split(/[、,]/)[0].trim();
+    picked = `${shortLead}\n${articleUrl}\n${hashtagStr}`;
+    downshifted = true;
+  }
+  const weighted = weightedTweetLength(picked);
+  return {
+    post: picked,
+    truncated: false, // 途中カットはしない設計（downshifted が構成変更の有無を示す）
+    downshifted,
+    charCount: picked.length,
+    weightedLength: weighted,
+    fitsLimit: weighted <= MAX_TWEET_LEN,
+  };
 }
 
 export function generateXPost({
@@ -171,24 +236,24 @@ export function generateXPost({
 
   // === Primary（標準）: 短い導入 + description + URL + ハッシュタグ ===
   const primaryLead = `${cleanTitle}`;
-  const primaryBodyRaw = cleanDescription || `${cleanTitle}を、普通の人向けに整理しました。`;
+  const primaryBodyRaw = cleanDescription || `${cleanTitle}を、やさしく整理しました。`;
   const primaryBody = ensureHedge(primaryBodyRaw, isReporting);
-  const primaryRes = compose({ lead: primaryLead, body: primaryBody, hashtags, articleUrl });
+  const primaryRes = compose({ lead: primaryLead, body: primaryBody, hashtags, articleUrl, isReporting });
 
   // === Alt1: 結論先出し型 ===
   const altConclusion = articleBrief?.coreAngle
     ? sanitizeText(articleBrief.coreAngle)
     : `結論: ${cleanTitle.replace(/。$/, "")}`;
   const alt1Lead = altConclusion.slice(0, 60);
-  const alt1Body = ensureHedge(cleanDescription || `要点を普通の人向けに整理しました。`, isReporting);
-  const alt1Res = compose({ lead: alt1Lead, body: alt1Body, hashtags, articleUrl });
+  const alt1Body = ensureHedge(cleanDescription || `要点をやさしく整理しました。`, isReporting);
+  const alt1Res = compose({ lead: alt1Lead, body: alt1Body, hashtags, articleUrl, isReporting });
 
   // === Alt2: 問いかけ型 ===
   const alt2Lead = isReporting
     ? `${cleanTitle.split(/[、,]/)[0]}という噂、本当のところは？`
     : `${cleanTitle.split(/[、,]/)[0]}、どう変わる？`;
-  const alt2Body = ensureHedge(cleanDescription || `普通の人向けに、要点と注意点を整理しました。`, isReporting);
-  const alt2Res = compose({ lead: alt2Lead, body: alt2Body, hashtags, articleUrl });
+  const alt2Body = ensureHedge(cleanDescription || `要点と注意点をやさしく整理しました。`, isReporting);
+  const alt2Res = compose({ lead: alt2Lead, body: alt2Body, hashtags, articleUrl, isReporting });
 
   // === ガード: BAN ワードや すまほん表記が万が一残っていないか最終確認 ===
   const finalBanCheck = (text) => BAN_WORDS.some((w) => text.includes(w));
@@ -196,6 +261,8 @@ export function generateXPost({
 
   if (finalBanCheck(primaryRes.post)) warnings.push("primary に煽り NG ワードが残存しました（要確認）");
   if (finalSumahonCheck(primaryRes.post)) warnings.push("primary にすまほん表記が混入しました（要修正）");
+  if (!primaryRes.fitsLimit) warnings.push(`primary が加重280字を超過しています（weighted=${primaryRes.weightedLength}。要修正）`);
+  if (primaryRes.downshifted) warnings.push("primary は280字ガードにより短い構成で生成し直しました（description全文は不使用）");
 
   return {
     slug,
@@ -207,11 +274,14 @@ export function generateXPost({
     primary: {
       text: primaryRes.post,
       charCount: primaryRes.charCount,
+      weightedLength: primaryRes.weightedLength,
+      fitsLimit: primaryRes.fitsLimit,
+      downshifted: primaryRes.downshifted,
       truncated: primaryRes.truncated,
     },
     alternates: [
-      { label: "結論先出し", text: alt1Res.post, charCount: alt1Res.charCount, truncated: alt1Res.truncated },
-      { label: "問いかけ", text: alt2Res.post, charCount: alt2Res.charCount, truncated: alt2Res.truncated },
+      { label: "結論先出し", text: alt1Res.post, charCount: alt1Res.charCount, weightedLength: alt1Res.weightedLength, fitsLimit: alt1Res.fitsLimit, downshifted: alt1Res.downshifted, truncated: alt1Res.truncated },
+      { label: "問いかけ", text: alt2Res.post, charCount: alt2Res.charCount, weightedLength: alt2Res.weightedLength, fitsLimit: alt2Res.fitsLimit, downshifted: alt2Res.downshifted, truncated: alt2Res.truncated },
     ],
     warnings,
     generatedAt: new Date().toISOString(),
