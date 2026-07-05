@@ -1,0 +1,338 @@
+---
+title: "Claude Scienceとは？Anthropicの研究向けAIワークベンチを、スマホ視点でやさしく整理"
+slug: "202607-anthropic-claude-science-research-workbench"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Anthropicが2026年6月30日に発表した「Claude Science」は、新しいAIモデルではなく、研究者向けのAI作業場（ワークベンチ）です。チャットAIとの違い、macOS / Linux向けベータという提供形態、医療診断AIではない点、確定情報と未確定情報の分け方まで、スマホでAIを使う人の視点でやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-anthropic-claude-science-research-workbench.webp"
+thumbnailAlt: "「Claude Scienceとは？」のサムネイル。ひまりがスマホで『新しいClaude？』と考え、らぼまるが研究ワークベンチ画面を見せて『スマホ向け新機能ではない』と整理する納得の場面"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude"
+  - "Claude Science"
+  - "Anthropic"
+  - "AIワークベンチ"
+  - "研究支援AI"
+  - "AIニュース"
+  - "すまラボ"
+related:
+  - "202607-claude-fable-5-usage-credits-switch"
+  - "202606-claude-fable-5-launch"
+  - "202605-claude-opus-4-8-launch"
+pubDate: "2026-07-05"
+updated: "2026-07-05"
+publishAt: "2026-07-05T07:00:00+09:00"
+---
+
+Anthropicが「Claude Science」を発表しました。名前だけ見ると新しいAIモデルのようですが、実は研究者向けの「AI作業場」です。何が違うのかを、スマホでAIを使う視点からやさしく整理します。
+
+## 先に結論
+
+<p class="lead">Claude Science は、研究者向けの「AI作業場」であり、<strong>スマホで使う新しいClaudeアプリではありません</strong>。</p>
+
+要点は3つです。
+
+- Anthropic が、科学研究向けAIワークベンチ「Claude Science」を公式発表した
+- 新しいAIモデルではなく、論文分析・データ解析・図表作成などを助ける研究用アプリ
+- 日常利用向けの新機能ではないが、AIが「質問に答える道具」から「作業を進める環境」へ広がっている流れとして注目できる
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Claude Science が何なのか、まず 1 枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-science-research-workbench/fig01-what-is-claude-science.webp"
+         alt="「Claude Scienceとは？」の整理図。Claude Science＝研究用AI作業場であることを、左のClaude・右の研究作業・中央のワークベンチ風の机で示す。ひまり『スマホの新機能？』らぼまる『研究用の作業場だよ』の対話つき"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Claude Scienceは何かを一枚で整理</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>発表元</strong>：Anthropicが発表した科学研究向けAIワークベンチ</li>
+      <li><strong>正体</strong>：新しいClaudeモデルではなく、研究作業を進めるためのアプリ</li>
+      <li><strong>イメージ</strong>：Claude と研究作業をつなぐ「作業場」</li>
+    </ul>
+  </div>
+</section>
+
+## Claude Scienceとは何か
+
+<p class="lead">Claude Science は、科学者や研究チームが研究作業を進めるための<strong>AIワークベンチ</strong>です。</p>
+
+Anthropic は2026年6月30日、科学研究向けのAI作業環境として「Claude Science」を発表しました。
+
+ここでいうワークベンチとは、ざっくり言えば「作業台」のことです。ただ会話するだけではなく、論文を調べる、データを分析する、コードを動かす、図表を作る、といった研究作業をまとめて扱うための場所です。
+
+スマホで質問して答えをもらうAIチャットとは、役割がかなり違います。
+
+## 何ができるのか
+
+<p class="lead">Claude Science は、研究に必要な作業をClaudeに手伝わせるための<strong>専門ツール</strong>です。</p>
+
+公式情報で確認できる主な機能は、次のようなものです。
+
+| できること | やさしく言うと |
+|---|---|
+| 論文や文献の分析 | 研究に関係する資料を読み解く |
+| データ解析 | PythonやRなどでデータを処理する |
+| 図表・原稿の作成 | 研究結果を見せるための図や文章を作る |
+| 研究履歴の管理 | どのデータ・コードで結果を作ったか、あとから確認できるように残す |
+| 専門データの表示 | タンパク質構造や化学構造などを表示する |
+| レビュー支援 | 引用や計算のミスを見つける補助をする |
+
+ポイントは、Claudeに「調べて」と聞くだけではないことです。研究者が普段使う分析環境やデータとつなげて、実際の作業を進めやすくする方向のサービスです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">チャットAIとワークベンチAI、どこが違うのか。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-science-research-workbench/fig02-chat-vs-workbench.webp"
+         alt="「チャットAIとは違う」の左右対比図。左はスマホのチャット画面（質問して答えをもらう）、右はPC上の研究作業台（論文・データ・図表をまとめて進める）。ひまりが左でチャットを見て、らぼまるが右で研究作業を説明する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：チャットAIとワークベンチAIの違い</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>チャットAI</strong>：質問して答えをもらう</li>
+      <li><strong>ワークベンチAI</strong>：作業をまとめて進める（論文・データ・図表を扱う）</li>
+      <li><strong>結論</strong>：Claude Science は研究向けの専門ツール</li>
+    </ul>
+  </div>
+</section>
+
+## なぜ話題になっているのか
+
+<p class="lead">Claude Science が注目される理由は、AIの使い方が「会話」から<strong>「仕事場の中で動く道具」</strong>へ広がっているからです。</p>
+
+これまでAIサービスは、チャット画面で質問して答えをもらう形が中心でした。もちろん、文章作成や要約、調べものには便利です。
+
+一方で Claude Science は、研究者が使うデータ、コード、計算環境、図表作成までをまとめて扱おうとしています。
+
+これは、AIが単なる相談相手ではなく、専門作業の流れに入り込む動きです。研究者向けの話ではありますが、AIサービスの広がりを見るうえで注目しやすいニュースです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">AIの使われ方が、チャットから作業環境へ広がる流れ。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-science-research-workbench/fig03-ai-into-workflow.webp"
+         alt="「AIは作業環境へ」のフロー図。チャット→資料整理→データ解析→図表作成→作業環境へと進むステップに、らぼまるが各段階でチェックを付け、ひまりが左から右へ視線を移す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：AIの使われ方がチャットから作業環境へ広がる流れ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>これまで</strong>：会話・要約・文章作成が中心</li>
+      <li><strong>これから</strong>：作業の流れに入っていく</li>
+      <li><strong>位置づけ</strong>：Claude Science は研究向けの一例。AI利用の広がりが見える</li>
+    </ul>
+  </div>
+</section>
+
+## 新しいClaudeモデルではない
+
+<p class="lead">Claude Science は、新しい高性能AIモデルではなく、<strong>既存のClaudeを研究向けに使いやすくしたアプリ</strong>です。</p>
+
+ここは誤解しやすいところです。
+
+「Claude Science」と聞くと、科学専用の新モデルが出たように感じるかもしれません。しかし公式情報では、Claude Science はモデルではなく、Claudeを研究作業に組み込むためのアプリと説明されています。
+
+つまり、ニュースの見方としてはこうです。
+
+| 誤解 | 実際に近い理解 |
+|---|---|
+| 科学専用の新AIモデルが出た | 研究向けの作業環境が出た |
+| スマホのClaudeに新機能が来た | macOS / Linux向けのベータアプリ |
+| 日常利用向けのAIアプリ | 主に科学者・研究室向け |
+| AIが薬をすぐ作る | 研究作業を助ける段階 |
+
+「新モデル発表」ではなく、「専門分野向けのAI作業場が出た」と見るのが近いです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">誤解と、実際に近い理解を並べて。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-science-research-workbench/fig04-misconceptions.webp"
+         alt="「誤解しやすい点」の誤解／実際の2列比較図。誤解（新しいClaudeモデル・スマホの新機能・一般向けの万能AI・医療を診断するAI）に対し、実際（新モデルではない・スマホ向け新機能ではない・主に研究者や研究室向け・医療診断AIではない）をチェック表示。ひまりが驚き、らぼまるが実際側にチェックを置く"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Claude Scienceに関する誤解と正しい理解</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>新モデルではない</strong>：既存Claudeを研究向けに使うアプリ</li>
+      <li><strong>スマホ向け新機能ではない</strong>：主に研究者・研究室向け</li>
+      <li><strong>医療診断AIではない</strong>：研究作業を助ける段階</li>
+    </ul>
+  </div>
+</section>
+
+## スマホ向けの新機能ではない
+
+<p class="lead">Claude Science は、<strong>スマホで日常的に使う新機能として見るものではありません</strong>。</p>
+
+公式情報では、Claude Science は macOS と Linux 向けのベータアプリです。Windowsについては、WSL 2というLinux環境を通して使う方法が案内されています。
+
+対応環境を整理すると、現時点では次のようになります。
+
+| 項目 | 確認できる内容 |
+|---|---|
+| 提供形態 | ベータアプリ |
+| 対応OS | macOS / Linux |
+| Windows | WSL 2経由の案内あり |
+| スマホアプリ | iPhone / Android向け機能としての案内は確認できない |
+| 対象プラン | Pro / Max / Team / Enterprise向け |
+| Team / Enterprise | 管理者による有効化が必要 |
+
+そのため、スマホでClaudeを使っている人が「今日からアプリで使える便利機能」と考えるとズレます。
+
+主に研究者がPCや研究用の計算環境で使う専門的な作業環境です。
+
+## 価格や提供条件はどこまで分かっているか
+
+<p class="lead">Claude Science は有料プラン向けに案内されている一方、<strong>地域やアカウント条件の細部は公式ページで確認</strong>する必要があります。</p>
+
+公式の料金ページでは、Claude Pro に Claude Science が含まれると案内されています。また、Max、Team、Enterprise でも対象とされています。
+
+少なくとも、Claude Science は対象プランの利用者向けに案内されているサービスです。一方で、Claude Science単体で別料金が必要かどうか、地域やアカウント条件で細かな違いがあるかは、公式ページで最新条件を確認する必要があります。
+
+特に日本での細かな提供条件は、公式ページで確認するのが安全です。
+
+| 項目 | 整理 |
+|---|---|
+| Claude Scienceの存在 | 公式発表あり |
+| 対象プラン | Pro / Max / Team / Enterprise向けと確認できる |
+| 日本での細かな条件 | 公式ページで確認が必要 |
+| 日本語UIや国内サポート | 確認できた範囲では断定しない |
+| スマホで使えるか | スマホ向け機能としては確認できない |
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">確定していることと、まだ言い切れないことを分けて。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-science-research-workbench/fig05-confirmed-vs-unconfirmed.webp"
+         alt="「確定と未確定」の上下2ブロック図。確定（2026年6月30日に発表・macOS / Linux向けベータ）と未確定（日本での細かな条件・スマホ向け展開）を分け、未確定側は『公式ページで確認』の注記。ひまりが未確定を指さし、らぼまるが虫眼鏡で『ここは断定しない』と確認する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：確定していること・未確定のことを分けた図</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>確定</strong>：2026年6月30日に発表 / macOS・Linux向けベータ</li>
+      <li><strong>未確定</strong>：日本での細かな条件</li>
+      <li><strong>未確認</strong>：スマホ向け展開。最新情報は公式ページで確認</li>
+    </ul>
+  </div>
+</section>
+
+## 医療診断AIではない点にも注意
+
+<p class="lead">Claude Science は研究支援ツールであり、<strong>病気を診断するためのAIではありません</strong>。</p>
+
+科学研究向けと聞くと、医療や薬の開発にすぐつながるイメージを持つかもしれません。実際、報道では創薬への活用可能性も話題になっています。
+
+ただし、ここは公式情報と報道ベースの話を分けて見る必要があります。公式ドキュメントでは、Claude Science は臨床・診断用途を意図したものではないとされています。
+
+つまり、次のような見方は避けた方がよいです。
+
+- AIが病気を診断してくれる
+- AIだけで薬がすぐ完成する
+- 医師や研究者の確認なしに結果を信じてよい
+- 一般利用者が健康相談に使うための機能である
+
+Claude Science は、研究作業を効率化するための道具です。医療判断や診断を置き換えるものではありません。
+
+## 何が確定で、何が未確定か
+
+<p class="lead">Claude Science については、<strong>公式情報で分かることと、まだ言い切れないこと</strong>を分けて見る必要があります。</p>
+
+現時点で確定していることは、次の通りです。
+
+| 確定していること | 内容 |
+|---|---|
+| 公式発表 | Anthropicが2026年6月30日に発表 |
+| サービス名 | Claude Science |
+| 位置づけ | 科学研究向けAIワークベンチ |
+| 対象 | 科学者、研究室、研究チーム |
+| 対応環境 | macOS / Linux向けベータアプリ |
+| 性格 | 新モデルではなく、研究作業用アプリ |
+| 用途 | 論文分析、データ解析、図表作成、研究履歴管理など |
+
+一方で、まだ断定しない方がよい点もあります。
+
+| 未確定・注意が必要な点 | 理由 |
+|---|---|
+| 日本での細かな提供条件 | 公式ページ上で個別条件を確認する必要がある |
+| スマホ向け展開 | iPhone / Android向け機能としては確認できない |
+| 一般利用者への直接的なメリット | 研究者向けのため、日常利用とは距離がある |
+| 創薬への実際の成果 | 研究・実験・臨床試験などのプロセスが必要 |
+| 医療現場での利用 | 診断用途ではないとされている |
+
+このニュースは、便利そうな名前だけで判断すると誤解しやすいです。「何ができるか」だけでなく、「誰向けか」をセットで見るのが大事です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">分かっていることと、確認が必要なことの比較。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-science-research-workbench/fig06-how-much-known.webp"
+         alt="「どこまで分かる？」の比較表。分かっていること（公式発表あり・研究向けAIワークベンチ・Pro / Max / Team / Enterprise向け・ここまでが確認済み）と、確認が必要なこと（日本条件は公式確認が必要・細かな提供条件・対象プランの最新状況・最新情報は公式で確認）を左右に配置。ひまりが判断材料を確認し、らぼまるが確定と要確認を分ける構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：確定情報と未確定情報の比較表</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>分かっていること</strong>：公式発表あり / 研究向けAIワークベンチ / Pro・Max・Team・Enterprise向け</li>
+      <li><strong>確認が必要なこと</strong>：日本条件・細かな提供条件・対象プランの最新状況</li>
+      <li><strong>結論</strong>：最新情報は公式で確認する</li>
+    </ul>
+  </div>
+</section>
+
+## 読者にとっての意味
+
+<p class="lead">Claude Science は今すぐ使う新機能ではないものの、<strong>AIサービスの進む方向を知るヒント</strong>になります。</p>
+
+この記事で一番大事なのは、Claude Scienceそのものを使うかどうかではありません。
+
+注目したいのは、AIが「チャット画面の中だけで完結するもの」ではなくなってきていることです。
+
+これからのAIは、文章を書く、画像を作る、調べものをするだけではなく、特定の仕事や作業環境に深く入り込んでいく可能性があります。
+
+研究者向けなら Claude Science。企業向けなら業務ツールに入ったAI。個人向けなら、スマホやアプリの中で作業を助けるAI。
+
+そう考えると、Claude Science は日常利用からは距離があるニュースです。ただ、今後AIがアプリや仕事道具の中に深く入っていく流れを知る材料になります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">研究者向けから、日常アプリへ広がる可能性。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-science-research-workbench/fig07-meaning-for-readers.webp"
+         alt="「私たちへの意味」の図。左に研究者向け（研究用の専門プラットフォーム）、右に日常アプリへ広がる可能性を置き、中央にゆるやかな橋のような矢印。未来断定ではなく『流れを知る』表現。ひまりが『今すぐ使うものではないんだ』と理解し、らぼまるが『流れとして見る』と整理する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：研究者向けAIから日常アプリAIへの広がりイメージ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>今すぐ使う新機能ではない</strong>：研究者向けの専門ツール</li>
+      <li><strong>でもAIの広がりを知る材料</strong>：作業を助けるAIが増えていく流れ</li>
+      <li><strong>見方</strong>：未来を断定せず、流れとして知っておく</li>
+    </ul>
+  </div>
+</section>
+
+## 誰に関係ある？
+
+<p class="lead">Claude Science は、<strong>直接関係する人と、流れとして知っておくとよい人</strong>が分かれます。</p>
+
+| 関係度 | こんな人 |
+|---|---|
+| かなり関係ある | 大学・研究機関・製薬・バイオ系で研究や解析をする人 |
+| 少し関係ある | 仕事でAIを使い、専門作業の自動化に関心がある人 |
+| 流れとして知っておくとよい | スマホやアプリでAIを使っていて、今後のAIの変化を知りたい人 |
+| 今すぐは関係が薄い | Claudeを日常の文章作成や調べものだけに使っている人 |
+
+結論として、Claude Science は「今すぐスマホで使う新機能」ではありません。ただ、AIが専門作業の中に入り込み、作業環境そのものを変え始めている流れとしては、知っておく価値があります。
+
+関連して、Claudeの料金まわりの動きは「[Claude Fable 5、7月8日からusage credits制へ](https://sumalabo.com/articles/202607-claude-fable-5-usage-credits-switch/)」でも整理しています。
