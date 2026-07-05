@@ -1,0 +1,10 @@
+{
+  "name": "すまラボ画像工房",
+  "purpose": "画像生成専用の常設ChatGPTチャット。会話冒頭に公式キャラ正本2枚（ひまり/らぼまる）を添付済み。以後の記事スライド・サムネ生成はこの会話の続きで行い、フォーカス/クリップボード非依存で無人運転を可能にする。",
+  "project": "すまラボ台本",
+  "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a4a0b45-ef80-83ee-86dd-514f51ee2d64",
+  "canonicalRefs": ["assets/characters/himari-canonical.png", "assets/characters/labomaru-canonical.png"],
+  "createdAt": "2026-07-05",
+  "reseedPolicy": "数記事ごとにキャラ一貫性をfactcheckで監視。顔立ち・配色が劣化したら人間が正本2枚を貼り直して再シードし、通知する。",
+  "note": "夜間ドライバーはこのURLに navigate して会話の続きで生成する。新規チャットを作らない。"
+}
