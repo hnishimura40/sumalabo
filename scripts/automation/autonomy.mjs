@@ -58,7 +58,11 @@ export function loadAutonomy(filePath = autonomyPath()) {
     // 壊れたファイルは安全側: paused 扱い（自動実行を全停止し、人間に直させる）
     return { ...DEFAULT_STATE, paused: true, incidents: [], _corrupt: true };
   }
+  // 未知キー（xPostMethod / cleanCount / testMode 等）は素通しで保持する。
+  // 従来は既知キーのみに正規化していたため、recordIncident 等の read-modify-write で
+  // 追加フィールドが消える潜在バグがあった（2026-07-05 修正）。
   const state = {
+    ...raw,
     level: Number.isInteger(raw.level) && raw.level >= 0 ? raw.level : 0,
     paused: raw.paused === true,
     vetoWindowMinutes:
@@ -76,12 +80,15 @@ export function loadAutonomy(filePath = autonomyPath()) {
 
 export function saveAutonomy(state, filePath = autonomyPath()) {
   const clean = {
+    ...state,
     level: state.level,
     paused: state.paused === true,
     vetoWindowMinutes: state.vetoWindowMinutes,
     promotionCount: state.promotionCount || { toL1: 0 },
     incidents: Array.isArray(state.incidents) ? state.incidents : [],
   };
+  delete clean._missing;
+  delete clean._corrupt;
   const dir = path.dirname(filePath);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   writeFileSync(filePath, JSON.stringify(clean, null, 2) + "\n", "utf-8");

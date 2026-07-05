@@ -1,0 +1,72 @@
+{
+  "minScore": 50,
+  "maxAgeHours": 48,
+  "sources": [
+    {
+      "id": "gnews-ai-ja",
+      "name": "Google News (AI・生成AI)",
+      "type": "rss",
+      "url": "https://news.google.com/rss/search?q=%28ChatGPT%20OR%20Claude%20OR%20Gemini%20OR%20%E7%94%9F%E6%88%90AI%29&hl=ja&gl=JP&ceid=JP:ja",
+      "weight": 8,
+      "official": false
+    },
+    {
+      "id": "gnews-smartphone-ja",
+      "name": "Google News (スマホ・iPhone・Android)",
+      "type": "rss",
+      "url": "https://news.google.com/rss/search?q=%28iPhone%20OR%20Android%20OR%20%E3%82%B9%E3%83%9E%E3%83%9B%29%20%28%E7%99%BA%E8%A1%A8%20OR%20%E6%96%99%E9%87%91%20OR%20%E9%96%8B%E5%A7%8B%29&hl=ja&gl=JP&ceid=JP:ja",
+      "weight": 6,
+      "official": false
+    },
+    {
+      "id": "itmedia-aiplus",
+      "name": "ITmedia AI+",
+      "type": "rss",
+      "url": "https://rss.itmedia.co.jp/rss/2.0/aiplus.xml",
+      "weight": 10,
+      "official": false
+    },
+    {
+      "id": "itmedia-mobile",
+      "name": "ITmedia Mobile",
+      "type": "rss",
+      "url": "https://rss.itmedia.co.jp/rss/2.0/mobile.xml",
+      "weight": 10,
+      "official": false
+    },
+    {
+      "id": "ktai-watch",
+      "name": "ケータイ Watch",
+      "type": "rss",
+      "url": "https://k-tai.watch.impress.co.jp/data/rss/1.0/ktw/feed.rdf",
+      "weight": 10,
+      "official": false
+    },
+    {
+      "id": "gigazine",
+      "name": "GIGAZINE",
+      "type": "rss",
+      "url": "https://gigazine.net/news/rss_2.0/",
+      "weight": 6,
+      "official": false
+    },
+    {
+      "id": "openai-news",
+      "name": "OpenAI News",
+      "type": "rss",
+      "url": "https://openai.com/news/rss.xml",
+      "weight": 12,
+      "official": true
+    }
+  ],
+  "excludeCategories": {
+    "incident_crime": ["逮捕", "容疑", "殺人", "死亡", "死去", "事故で", "遺体", "自殺"],
+    "politics_war": ["選挙", "政権", "国会", "首相", "大統領選", "戦争", "空爆", "ミサイル"],
+    "legal_scandal": ["訴訟", "提訴", "裁判", "有罪", "賠償", "不祥事", "炎上", "捏造"],
+    "finance_market": ["株価", "暴落", "急騰", "決算", "上場", "為替"],
+    "adult_gambling": ["アダルト", "ギャンブル", "カジノ", "パチンコ"]
+  },
+  "tier1Keywords": ["ChatGPT", "Claude", "Gemini", "OpenAI", "Anthropic", "iPhone", "Android", "Pixel", "Galaxy", "AI"],
+  "tier2Keywords": ["発表", "開始", "終了", "提供", "値上げ", "値下げ", "料金", "無料", "有料", "課金", "アップデート", "新機能", "日本", "リリース", "サブスク"],
+  "impactKeywords": ["値上げ", "無料", "有料化", "提供終了", "日本で", "誰でも", "標準搭載"]
+}
