@@ -10,13 +10,19 @@
   "incidents": [],
   "testMode": {
     "enabled": true,
-    "articlesRemaining": 3,
+    "articlesRemaining": 2,
     "autoPick": true,
     "autoPhaseB": true,
     "autoPhaseC": true,
     "maxPerNight": 1,
     "expiresAt": "2026-07-12T00:00:00+09:00",
     "enabledAt": "2026-07-05T02:54:56.792Z",
-    "approvedBy": "user_instruction_2026-07-05"
+    "approvedBy": "user_instruction_2026-07-05",
+    "consumed": [
+      {
+        "slug": "202607-anthropic-claude-science-research-workbench",
+        "at": "2026-07-05T08:52:18.181Z"
+      }
+    ]
   }
 }
