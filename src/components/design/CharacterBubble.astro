@@ -1,0 +1,140 @@
+---
+// CharacterBubble — 記事デザイン刷新（v3）用のキャラ吹き出し。
+//
+// speaker × mood で実在の顔アイコン（public/images/characters/faces/{speaker}-{mood}.webp）を
+// 表示する。mood 未指定 or 未知の場合はキャラ色の円＋頭文字にフォールバックする。
+//
+//   <CharacterBubble speaker="himari" mood="curious">セリフ…</CharacterBubble>
+//   <CharacterBubble speaker="labo" mood="worried">注意点…</CharacterBubble>
+//
+// mood 一覧:
+//   himari: curious | aha | explain
+//   labo:   smile | point | worried   （worried は注意・未確定ボックス併設用）
+//
+// フォールバック: mood 省略 or 一覧外 → 色付きの円に頭文字（ひ / ら）。
+
+type Speaker = "himari" | "labo";
+
+interface Props {
+  speaker: Speaker;
+  mood?: string;
+  /** 表示名。省略時は speaker から既定（ひまり / らぼまる） */
+  name?: string;
+}
+
+const MOODS: Record<Speaker, readonly string[]> = {
+  himari: ["curious", "aha", "explain"],
+  labo: ["smile", "point", "worried"],
+};
+
+const DEFAULT_NAME: Record<Speaker, string> = {
+  himari: "ひまり",
+  labo: "らぼまる",
+};
+
+const { speaker, mood, name } = Astro.props;
+const displayName = name ?? DEFAULT_NAME[speaker];
+const initial = speaker === "himari" ? "ひ" : "ら";
+const hasFace = typeof mood === "string" && MOODS[speaker]?.includes(mood);
+const faceSrc = hasFace ? `/images/characters/faces/${speaker}-${mood}.webp` : null;
+---
+
+<div class:list={["talk", speaker]}>
+  {
+    faceSrc ? (
+      <img class="face" src={faceSrc} alt={displayName} width="46" height="46" loading="lazy" decoding="async" />
+    ) : (
+      <span class="face face--fallback" aria-hidden="true">{initial}</span>
+    )
+  }
+  <div class="bubble">
+    <div class="name">{displayName}</div>
+    <slot />
+  </div>
+</div>
+
+<style>
+  .talk {
+    display: flex;
+    gap: 12px;
+    margin: 22px 0;
+    align-items: flex-start;
+  }
+
+  .talk .face {
+    flex: 0 0 46px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Zen Maru Gothic", "Noto Sans JP", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+  }
+
+  /* フォールバック: キャラ色の円＋頭文字 */
+  .talk.himari .face--fallback {
+    background: var(--himari, #c8503f);
+    border: 2.5px solid var(--himari, #c8503f);
+  }
+  .talk.labo .face--fallback {
+    background: var(--labo, #1f7a6e);
+    border: 2.5px solid var(--labo, #1f7a6e);
+  }
+
+  /* 実顔アイコン: キャラ色の縁取り */
+  .talk.himari img.face {
+    border: 2.5px solid var(--himari, #c8503f);
+  }
+  .talk.labo img.face {
+    border: 2.5px solid var(--labo, #1f7a6e);
+  }
+
+  .talk .bubble {
+    position: relative;
+    border-radius: 14px;
+    padding: 12px 16px;
+    font-size: 15.5px;
+    line-height: 1.7;
+    max-width: 34em;
+  }
+  .talk.himari .bubble {
+    background: var(--himari-bg, #fbedea);
+    color: var(--ink, #1b2331);
+  }
+  .talk.labo .bubble {
+    background: var(--labo-bg, #e6f3f1);
+    color: var(--ink, #1b2331);
+  }
+  .talk .bubble::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: 16px;
+    border: 7px solid transparent;
+    border-left: none;
+  }
+  .talk.himari .bubble::before {
+    border-right-color: var(--himari-bg, #fbedea);
+  }
+  .talk.labo .bubble::before {
+    border-right-color: var(--labo-bg, #e6f3f1);
+  }
+
+  .talk .name {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .talk.himari .name {
+    color: var(--himari, #c8503f);
+  }
+  .talk.labo .name {
+    color: var(--labo, #1f7a6e);
+  }
+</style>

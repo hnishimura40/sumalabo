@@ -1,0 +1,231 @@
+---
+// /design-preview/ — 記事デザイン刷新のショーケース（社内確認用・noindex）。
+// 吹き出しの顔アイコン（mood → 実顔 / フォールバック）を実データで確認する。
+// 本番記事テンプレには未適用。merge・本番反映は testMode 終了後の判断。
+import CharacterBubble from "../components/design/CharacterBubble.astro";
+
+const himariMoods = [
+  { mood: "curious", label: "curious（疑問・気づき前）" },
+  { mood: "aha", label: "aha（なるほど・腹落ち）" },
+  { mood: "explain", label: "explain（説明・指さし）" },
+];
+const laboMoods = [
+  { mood: "smile", label: "smile（安心・整理役）" },
+  { mood: "point", label: "point（指し示す・強調）" },
+  { mood: "worried", label: "worried（注意・未確定）" },
+];
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>すまラボ デザイン見本 — 吹き出し顔アイコン</title>
+    <style is:global>
+      :root {
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --surface2: #eef1f5;
+        --ink: #1b2331;
+        --ink-soft: #4a5568;
+        --ink-faint: #7a8494;
+        --line: #dde2e9;
+        --brand: #34549c;
+        --brand-soft: #e8edf8;
+        --himari: #c8503f;
+        --himari-bg: #fbedea;
+        --labo: #1f7a6e;
+        --labo-bg: #e6f3f1;
+        --unc: #9a5b00;
+        --unc-bg: #fbf2e0;
+        --shadow: 0 1px 3px rgba(20, 30, 50, 0.08), 0 4px 16px rgba(20, 30, 50, 0.06);
+      }
+      html.dark {
+        --bg: #12161e;
+        --surface: #1a202b;
+        --surface2: #222a37;
+        --ink: #e7eaf0;
+        --ink-soft: #aeb6c4;
+        --ink-faint: #7c8698;
+        --line: #303947;
+        --brand: #9ab2ec;
+        --brand-soft: #232d42;
+        --himari: #f0907f;
+        --himari-bg: #33231f;
+        --labo: #63c7b8;
+        --labo-bg: #16302c;
+        --unc: #e2a64e;
+        --unc-bg: #332813;
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Noto Sans JP", sans-serif;
+        font-size: 16px;
+        line-height: 1.8;
+        transition:
+          background 0.25s,
+          color 0.25s;
+      }
+      .wrap {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 28px 16px 80px;
+      }
+    </style>
+    <style>
+      .bar {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+        box-shadow: var(--shadow);
+      }
+      .bar .label {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: var(--ink-faint);
+      }
+      .mode-btn {
+        margin-left: auto;
+        border: 1px solid var(--line);
+        background: var(--surface2);
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 7px 14px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      h1 {
+        font-size: 22px;
+        margin-bottom: 8px;
+      }
+      h2 {
+        font-size: 18px;
+        margin: 34px 0 8px;
+        padding-left: 12px;
+        border-left: 4px solid var(--brand);
+      }
+      .lead {
+        color: var(--ink-soft);
+        font-size: 14.5px;
+        margin-bottom: 6px;
+      }
+      .moodtag {
+        font-size: 12px;
+        color: var(--ink-faint);
+        margin: 14px 0 -8px;
+        font-weight: 700;
+      }
+      .co {
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin: 8px 0 0;
+        background: var(--unc-bg);
+        border: 1px solid color-mix(in srgb, var(--unc) 35%, transparent);
+      }
+      .co .co-head {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--unc);
+        margin-bottom: 6px;
+      }
+      .co ul {
+        padding-left: 1.2em;
+        font-size: 14.5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <span class="label">デザイン見本 · 吹き出し顔アイコン</span>
+      <button class="mode-btn" id="modeBtn" type="button" aria-pressed="false">🌙 ダークにする</button>
+    </div>
+
+    <div class="wrap">
+      <h1>吹き出しの顔アイコン</h1>
+      <p class="lead">
+        <code>speaker</code> × <code>mood</code> で実在の顔アイコンを表示します。mood 未指定・未知のときはキャラ色の円にフォールバックします。
+      </p>
+
+      <h2>ひまり（curious / aha / explain）</h2>
+      {
+        himariMoods.map((m) => (
+          <>
+            <p class="moodtag">mood="{m.mood}" — {m.label}</p>
+            <CharacterBubble speaker="himari" mood={m.mood}>
+              つまり今週は「半分まで」使えて、来週からは別料金ってこと？サブスク解約したほうがいいのかな…
+            </CharacterBubble>
+          </>
+        ))
+      }
+
+      <h2>らぼまる（smile / point / worried）</h2>
+      {
+        laboMoods.map((m) => (
+          <>
+            <p class="moodtag">mood="{m.mood}" — {m.label}</p>
+            <CharacterBubble speaker="labo" mood={m.mood}>
+              変わるのは Fable 5 のぶんだけ。Opus や Sonnet は今までどおりサブスクで使えるよ。
+            </CharacterBubble>
+          </>
+        ))
+      }
+
+      <h2>worried は「注意・未確定ボックス」と併設</h2>
+      <p class="lead">未確定情報や注意喚起の直前に、らぼまるの worried 顔を置く使い方を想定しています。</p>
+      <CharacterBubble speaker="labo" mood="worried">
+        ここから先はまだ確定していない話。公式発表を待つ必要があるよ。
+      </CharacterBubble>
+      <div class="co">
+        <div class="co-head">❓ 未確定・不明</div>
+        <ul>
+          <li>サブスク復帰の時期</li>
+          <li>usage credits の具体的な必要量・料金感</li>
+          <li>日本のユーザー画面での表示のされ方</li>
+        </ul>
+      </div>
+
+      <h2>フォールバック（mood 未指定 / 未知）</h2>
+      <p class="lead">顔アイコンが割り当てられない場合は、キャラ色の円＋頭文字で必ず表示されます（画像欠けで空白にならない）。</p>
+      <p class="moodtag">mood 省略</p>
+      <CharacterBubble speaker="himari">mood を指定しない場合は「ひ」の円になります。</CharacterBubble>
+      <p class="moodtag">mood="unknown"（一覧外）</p>
+      <CharacterBubble speaker="labo" mood="unknown">一覧にない mood も安全にフォールバックします。</CharacterBubble>
+    </div>
+
+    <script>
+      const btn = document.getElementById("modeBtn");
+      const apply = (dark: boolean) => {
+        document.documentElement.classList.toggle("dark", dark);
+        if (btn) {
+          btn.textContent = dark ? "☀️ ライトにする" : "🌙 ダークにする";
+          btn.setAttribute("aria-pressed", String(dark));
+        }
+      };
+      apply(window.matchMedia("(prefers-color-scheme: dark)").matches);
+      btn?.addEventListener("click", () =>
+        apply(!document.documentElement.classList.contains("dark")),
+      );
+    </script>
+  </body>
+</html>
