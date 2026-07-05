@@ -24,5 +24,11 @@
         "at": "2026-07-05T08:52:18.181Z"
       }
     ]
+  },
+  "xPostOptions": {
+    "attachSlides": false,
+    "attachSlidesCount": 3,
+    "threadAllSlides": false,
+    "postWindow": null
   }
 }
