@@ -3,7 +3,20 @@
   "paused": false,
   "vetoWindowMinutes": 30,
   "xPostMethod": "browser",
-  "promotionCount": { "toL1": 1 },
+  "promotionCount": {
+    "toL1": 1
+  },
   "cleanCount": 1,
-  "incidents": []
+  "incidents": [],
+  "testMode": {
+    "enabled": true,
+    "articlesRemaining": 3,
+    "autoPick": true,
+    "autoPhaseB": true,
+    "autoPhaseC": true,
+    "maxPerNight": 1,
+    "expiresAt": "2026-07-12T00:00:00+09:00",
+    "enabledAt": "2026-07-05T02:54:56.792Z",
+    "approvedBy": "user_instruction_2026-07-05"
+  }
 }

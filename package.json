@@ -31,7 +31,12 @@
     "article": "node scripts/automation/phase-a-orchestrator.mjs",
     "ledger:sync": "node scripts/automation/ledger.mjs --sync",
     "ledger:check": "node scripts/automation/ledger.mjs --check",
-    "digest": "node scripts/automation/weekly-digest.mjs"
+    "digest": "node scripts/automation/weekly-digest.mjs",
+    "scout": "node scripts/automation/scout.mjs",
+    "retract": "node scripts/automation/retract.mjs",
+    "schedule:auto-run": "node scripts/automation/register-night-task.mjs",
+    "night:report": "node scripts/automation/night-report.mjs",
+    "test-mode": "node scripts/automation/test-mode.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",
