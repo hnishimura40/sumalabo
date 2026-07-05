@@ -1,0 +1,6 @@
+﻿{
+  "deviceId": "554db901-cf10-4042-988d-ea97d5eb1539",
+  "name": "西村メディアラボ (Chrome)",
+  "note": "夜間運転はこのdeviceIdをselect_browserで明示選択する。Edge(07138475...)は禁止",
+  "verifiedAt": "2026-07-05"
+}
