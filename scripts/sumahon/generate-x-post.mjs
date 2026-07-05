@@ -110,15 +110,11 @@ function pickCategoryHashtags({ title, description, topicCategory, category }) {
   if (/ガジェット|スマホ|スマートフォン|タブレット/.test(text)) {
     picked.add("#ガジェット");
   }
-  // 必ず付ける
-  picked.add("#すまラボ");
-  // 2〜4 個に丸める
-  const arr = Array.from(picked);
-  if (arr.length > 4) return arr.slice(0, 4);
-  if (arr.length < 2) {
-    if (!arr.includes("#ガジェット")) arr.push("#ガジェット");
-  }
-  return arr;
+  // 上限2個（2026-07-05 変更・現行3〜4個から削減）。#すまラボ は必ず含める。
+  // 話題タグは最も関連の強い1個だけ残す（タグ過多はリーチを下げるため）。
+  const topical = Array.from(picked).filter((t) => t !== "#すまラボ");
+  const first = topical[0] || "#ガジェット";
+  return [first, "#すまラボ"];
 }
 
 function sanitizeText(text) {

@@ -29,6 +29,7 @@ import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 import { hasPosted, recordPost } from "../sumahon/x-posted-ledger.mjs";
 import { checkCardWithWait } from "./x-card-check.mjs";
 import { upsertEntry } from "./ledger.mjs";
+import { loadXPostOptions, resolvePostWindow, buildAttachmentPlan } from "./x-post-options.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -42,14 +43,16 @@ const HARDENING = `
 
 async function main() {
   const argv = process.argv.slice(2);
-  const args = { slug: null, trigger: "auto_after_veto", posted: null };
+  const args = { slug: null, trigger: "auto_after_veto", posted: null, variant: null };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--slug") args.slug = argv[++i];
     else if (argv[i] === "--trigger") args.trigger = argv[++i];
     else if (argv[i] === "--posted") args.posted = argv[++i];
+    else if (argv[i] === "--variant") args.variant = argv[++i];
     else if (argv[i].startsWith("--slug=")) args.slug = argv[i].slice(7);
     else if (argv[i].startsWith("--trigger=")) args.trigger = argv[i].slice(10);
     else if (argv[i].startsWith("--posted=")) args.posted = argv[i].slice(9);
+    else if (argv[i].startsWith("--variant=")) args.variant = argv[i].slice(10);
   }
   if (!args.slug) {
     console.error("usage: --slug <slug> [--trigger auto_after_veto|manual] [--posted <tweetUrl>]");
@@ -62,7 +65,9 @@ async function main() {
     const idMatch = args.posted.match(/status\/(\d+)/);
     if (!idMatch) { console.error("posted URL から tweetId を特定できません"); process.exitCode = 2; return; }
     if (!(await hasPosted(args.slug))) {
-      await recordPost({ slug: args.slug, postUrl: args.posted, postText: "(recorded via phase-c-auto)", method: loadAutonomy().xPostMethod });
+      // variant: --variant 指定 > xPostOptions からの導出（全OFFなら text_only = 現状どおり）
+      const plan = buildAttachmentPlan(args.slug, loadXPostOptions());
+      await recordPost({ slug: args.slug, postUrl: args.posted, postText: "(recorded via phase-c-auto)", method: loadAutonomy().xPostMethod || "chrome", variant: args.variant || plan.variant });
     }
     upsertEntry(args.slug, { xPostUrl: args.posted, xPostedAt: new Date().toISOString() });
     console.log("[phase-c] カード確認（syndication照会、画像は非同期生成のため最大5分待ち）...");
@@ -121,10 +126,29 @@ async function main() {
   }
 
   // ローカル: Claude Code への NEXT ACTION（頑丈化チェックリスト付き）
+  // xPostOptions（全OFF時は従来と完全に同一の出力・挙動になる）
+  const xOpts = loadXPostOptions();
+  const windowCheck = resolvePostWindow(new Date(), xOpts);
+  const plan = buildAttachmentPlan(args.slug, xOpts);
+
   console.log(`\n=== PHASE C NEXT ACTION [browser post] ${args.slug} ===`);
+  if (!windowCheck.postNow) {
+    console.log(`0. 投稿時間帯(postWindow ${xOpts.postWindow.start}-${xOpts.postWindow.end})より前のため、` +
+      `${windowCheck.waitUntil.toISOString()} まで投稿を保留してから以下を実行（約${windowCheck.waitMinutes}分待機）`);
+  }
   console.log(`1. npm run social:generate-x-post -- --slug ${args.slug} で投稿文を生成・確認`);
-  console.log("2. Chrome で x.com/compose/post を開き、投稿文を入力（下記チェックリスト厳守）");
-  console.log(`3. 投稿後: node scripts/automation/phase-c-auto.mjs --slug ${args.slug} --posted <tweetUrl>`);
+  if (plan.attach.length > 0) {
+    console.log(`2. Chrome で x.com/compose/post を開き、投稿文を入力後、以下のスライド ${plan.attach.length} 枚を添付`);
+    console.log("   （サムネではなくスライドを優先。既存のクリップボード/ファイル選択実績方式を流用し、添付枚数の一致をDOMで検証してから投稿）");
+    for (const f of plan.attach) console.log(`   - ${f}`);
+    if (plan.threadBatches.length > 0) {
+      console.log(`2b. 投稿後、返信ツリーで残りスライドをぶら下げる（1返信4枚まで・${plan.threadBatches.length}返信）:`);
+      plan.threadBatches.forEach((batch, i) => console.log(`   返信${i + 1}: ${batch.map((f) => f.split(/[\\/]/).pop()).join(", ")}`));
+    }
+  } else {
+    console.log("2. Chrome で x.com/compose/post を開き、投稿文を入力（下記チェックリスト厳守）");
+  }
+  console.log(`3. 投稿後: node scripts/automation/phase-c-auto.mjs --slug ${args.slug} --posted <tweetUrl> --variant ${plan.variant}`);
   console.log(HARDENING);
   process.exitCode = 10;
 }

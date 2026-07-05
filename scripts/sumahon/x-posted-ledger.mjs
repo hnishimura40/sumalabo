@@ -67,6 +67,7 @@ export async function recordPost({
   method = "chrome",
   thumbnailAttached = false,
   charCount = 0,
+  variant = "text_only",
   ledgerPath = LEDGER_PATH,
 }) {
   if (!slug) throw new Error("recordPost: slug is required");
@@ -84,6 +85,9 @@ export async function recordPost({
     method,
     thumbnailAttached: Boolean(thumbnailAttached),
     charCount,
+    // 投稿の型（計測用）: text_only / slides{N} / slides{N}+thread など。
+    // どの型が伸びたかを後から比較するために必ず記録する（M3 Phase C強化）。
+    variant,
   });
   await writeLedger(ledger, ledgerPath);
   return ledger.posts[ledger.posts.length - 1];
