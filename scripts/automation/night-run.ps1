@@ -71,7 +71,7 @@ try {
       --model claude-opus-4-8 `
       --chrome `
       --allowedTools $AllowedTools `
-      --max-turns 400 `
+      --max-turns 1200 `
       2>&1 | Out-File -FilePath $ClaudeLog -Encoding utf8 -Append
   $claudeExit = $LASTEXITCODE
   $sw.Stop()
