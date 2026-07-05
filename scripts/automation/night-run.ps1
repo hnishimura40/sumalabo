@@ -60,15 +60,19 @@ try {
   $Prompt = Get-Content $PromptFile -Raw -Encoding utf8
   # 最小 allowlist: 開発ツール一式 + Chrome MCP（ChatGPT 画像生成 / X 投稿に必須）。
   # 破壊的操作（git push -f 等）は allowlist に含めない。
-  $AllowedTools = "Bash Read Write Edit Glob Grep TaskCreate TaskUpdate mcp__claude-in-chrome__*"
+  $AllowedTools = "Bash Read Write Edit Glob Grep ToolSearch TaskCreate TaskUpdate mcp__claude-in-chrome__*"
 
-  Log "launch: claude -p (model=claude-opus-4-8)"
+  # claude の出力は専用ファイルへ（runner 本体ログや tail との Add-Content ロック競合を避ける。
+  # 2026-07-05 の初回実走で Add-Content が sharing violation で全損した対策）
+  $ClaudeLog = Join-Path $NightDir "$DateStr.claude.log"
+  Log "launch: claude -p (model=claude-opus-4-8, --chrome) -> $ClaudeLog"
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
   & claude -p $Prompt `
       --model claude-opus-4-8 `
+      --chrome `
       --allowedTools $AllowedTools `
       --max-turns 400 `
-      2>&1 | ForEach-Object { Add-Content -Path $LogFile -Value $_ -Encoding utf8 }
+      2>&1 | Out-File -FilePath $ClaudeLog -Encoding utf8 -Append
   $claudeExit = $LASTEXITCODE
   $sw.Stop()
   Log "claude exited: code=$claudeExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"
