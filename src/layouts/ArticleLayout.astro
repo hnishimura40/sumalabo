@@ -3,6 +3,8 @@ import BaseLayout from "./BaseLayout.astro";
 import ArticleNavigation from "../components/ArticleNavigation.astro";
 import PreviewApprovalButton from "../components/PreviewApprovalButton.astro";
 
+import { siteConfig } from "../config/site";
+
 type ArticleData = {
   title: string;
   slug: string;
@@ -12,6 +14,7 @@ type ArticleData = {
   thumbnail?: string;
   thumbnailAlt?: string;
   updated: string;
+  pubDate?: string;
 };
 
 interface Props {
@@ -27,6 +30,28 @@ const typeLabels = {
   revenue: "収益記事",
   news: "流入記事",
 };
+
+// JSON-LD Article schema（M3 SEO基盤）。datePublished は pubDate、無ければ updated。
+const articleUrl = new URL(`/articles/${article.slug}/`, siteConfig.siteUrl).toString();
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: article.title,
+  description: article.description,
+  datePublished: article.pubDate || article.updated,
+  dateModified: article.updated,
+  ...(article.thumbnail
+    ? { image: [new URL(article.thumbnail, siteConfig.siteUrl).toString()] }
+    : {}),
+  author: { "@type": "Organization", name: siteConfig.authorName, url: siteConfig.siteUrl },
+  publisher: {
+    "@type": "Organization",
+    name: siteConfig.siteName,
+    url: siteConfig.siteUrl,
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
+  inLanguage: "ja",
+};
 ---
 
 <BaseLayout
@@ -36,6 +61,7 @@ const typeLabels = {
   ogType="article"
   canonicalPath={`/articles/${article.slug}/`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
   <article class={`article-shell article-shell--${article.type}`}>
     <header class="article-header">
       <div class="meta-row">

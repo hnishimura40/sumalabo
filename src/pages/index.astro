@@ -4,11 +4,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
 import { categories } from "../lib/categories";
 import { getSortedVisibleArticles } from "../lib/articles";
+import { siteConfig } from "../config/site";
 
 const articles = getSortedVisibleArticles(await getCollection("articles")).slice(0, 6);
+
+// JSON-LD WebSite schema（M3 SEO基盤）
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: siteConfig.siteName,
+  url: siteConfig.siteUrl,
+  description: siteConfig.siteDescription,
+  publisher: { "@type": "Organization", name: siteConfig.siteName, url: siteConfig.siteUrl },
+  inLanguage: "ja",
+};
 ---
 
 <BaseLayout canonicalPath="/">
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
   <section class="page-shell">
     <h1 class="sr-only">すまラボ — スマホ・AI・ガジェットをやさしく整理</h1>
 
