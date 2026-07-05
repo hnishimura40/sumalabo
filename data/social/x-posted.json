@@ -1,4 +1,14 @@
 {
   "version": 1,
-  "posts": []
+  "posts": [
+    {
+      "slug": "202607-claude-fable-5-usage-credits-switch",
+      "postedAt": "2026-07-04T23:38:00.059Z",
+      "postText": "(recorded via phase-c-auto)",
+      "postUrl": "https://x.com/suma_labo/status/2073551770933178667",
+      "method": "chrome",
+      "thumbnailAttached": false,
+      "charCount": 0
+    }
+  ]
 }

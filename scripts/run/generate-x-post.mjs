@@ -123,7 +123,7 @@ async function main() {
     "```",
     result.primary.text,
     "```",
-    `(${result.primary.charCount} 文字 / truncated=${result.primary.truncated})`,
+    `(${result.primary.charCount} 文字 / X加重=${result.primary.weightedLength}/280 / downshifted=${result.primary.downshifted})`,
     "",
     "## 代替案",
     "",
@@ -133,7 +133,7 @@ async function main() {
       "```",
       alt.text,
       "```",
-      `(${alt.charCount} 文字 / truncated=${alt.truncated})`,
+      `(${alt.charCount} 文字 / X加重=${alt.weightedLength}/280 / downshifted=${alt.downshifted})`,
       "",
     ]),
   ];
@@ -158,7 +158,7 @@ async function main() {
 
   console.log(`generated: drafts/social/${slug}.x-post.md`);
   console.log(`generated: logs/social/${slug}.x-post.json`);
-  console.log(`primary charCount=${result.primary.charCount} truncated=${result.primary.truncated}`);
+  console.log(`primary charCount=${result.primary.charCount} weighted=${result.primary.weightedLength}/280 downshifted=${result.primary.downshifted}`);
   if (result.warnings.length) {
     console.log("warnings:");
     for (const w of result.warnings) console.log("  -", w);

@@ -27,10 +27,72 @@
 // セキュリティ: トークン値・zone ID 全体は出力しない（先頭 6 文字まで）。
 
 import process from "node:process";
+import { existsSync, readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const DEFAULT_HOST = "sumalabo.com";
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+
+// ---- env フォールバックローダー（2026-07-05 追加） ----
+// 背景: L1初回公開で、シェル起動後に登録された User 環境変数
+// (CLOUDFLARE_ZONE_PURGE_TOKEN / CLOUDFLARE_ZONE_ID) を deploy 実行シェルが
+// 継承しておらず、purge が skip → 手動再実行になった。無人の L1 自動 Phase B
+// で再発しないよう、process.env に無いキーは (1) リポジトリ直下の .env、
+// (2) Windows の HKCU\Environment（ユーザー環境変数レジストリ）の順で補完する。
+// 値はログに出さない。CI (GitHub Actions) では secrets が env で渡るため
+// このローダーは何もしない。
+const ENV_FALLBACK_KEYS = ["CLOUDFLARE_ZONE_PURGE_TOKEN", "CLOUDFLARE_ZONE_ID", "CLOUDFLARE_API_TOKEN"];
+let envLoaded = false;
+
+function readDotEnv() {
+  const p = path.join(ROOT, ".env");
+  if (!existsSync(p)) return {};
+  const out = {};
+  try {
+    for (const line of readFileSync(p, "utf-8").replace(/^\uFEFF/, "").split(/\r?\n/)) {
+      const m = line.match(/^([A-Z0-9_]+)\s*=\s*(.*)$/);
+      if (m) out[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
+    }
+  } catch {}
+  return out;
+}
+
+function readWindowsUserEnv(key) {
+  if (process.platform !== "win32") return "";
+  try {
+    const r = spawnSync("reg", ["query", "HKCU\\Environment", "/v", key], { encoding: "utf-8" });
+    if (r.status !== 0 || !r.stdout) return "";
+    const m = r.stdout.match(new RegExp(`${key}\\s+REG_(?:EXPAND_)?SZ\\s+(.+)`));
+    return m ? m[1].trim() : "";
+  } catch {
+    return "";
+  }
+}
+
+export function ensureEnvLoaded() {
+  if (envLoaded) return;
+  envLoaded = true;
+  const dotEnv = readDotEnv();
+  for (const key of ENV_FALLBACK_KEYS) {
+    if ((process.env[key] || "").trim()) continue;
+    const fromDotEnv = (dotEnv[key] || "").trim();
+    if (fromDotEnv) {
+      process.env[key] = fromDotEnv;
+      console.error(`[cache-purge] ${key}: .env から補完`);
+      continue;
+    }
+    const fromReg = readWindowsUserEnv(key);
+    if (fromReg) {
+      process.env[key] = fromReg;
+      console.error(`[cache-purge] ${key}: HKCU\\Environment から補完`);
+    }
+  }
+}
 
 function purgeToken() {
+  ensureEnvLoaded();
   return (process.env.CLOUDFLARE_ZONE_PURGE_TOKEN || process.env.CLOUDFLARE_API_TOKEN || "").trim();
 }
 
@@ -63,6 +125,7 @@ async function cfFetch(path, { method = "GET", body = null } = {}) {
 }
 
 export async function resolveZoneId(host = DEFAULT_HOST) {
+  ensureEnvLoaded();
   const fromEnv = (process.env.CLOUDFLARE_ZONE_ID || "").trim();
   if (fromEnv) return { ok: true, zoneId: fromEnv, source: "env" };
   const r = await cfFetch(`/zones?name=${encodeURIComponent(host)}`);
@@ -134,16 +197,35 @@ export async function checkArticleGone({ slug, baseUrl = `https://${DEFAULT_HOST
   }
 }
 
+/**
+ * 経路チェック（--check）: env 解決 → zone 解決 → 無害な 1 URL（sitemap-index.xml）の
+ * 実パージまでを通し、パージ経路が生きていることを確認する。L1 無人運用前の実測用。
+ */
+export async function checkPurgePath({ host = DEFAULT_HOST, baseUrl = `https://${DEFAULT_HOST}` } = {}) {
+  const zone = await resolveZoneId(host);
+  if (!zone.ok) return { ok: false, stage: "resolve_zone", reason: zone.reason, errors: zone.errors };
+  const url = `${baseUrl.replace(/\/+$/, "")}/sitemap-index.xml`;
+  const r = await cfFetch(`/zones/${zone.zoneId}/purge_cache`, { method: "POST", body: { files: [url] } });
+  if (!r.ok) return { ok: false, stage: "purge", reason: r.reason, errors: r.errors };
+  return { ok: true, method: "check", zoneSource: zone.source, purgedUrl: url };
+}
+
 // ---- CLI ----
 const isDirectRun = process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, "/").split("/").pop());
 if (isDirectRun) {
+  const argv = process.argv.slice(2);
   const args = {};
-  for (const a of process.argv.slice(2)) {
+  let check = false;
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
     if (a === "--everything") args.everything = true;
+    else if (a === "--check") check = true;
     else if (a.startsWith("--slug=")) args.slug = a.slice(7).trim();
+    else if (a === "--slug" && argv[i + 1]) args.slug = argv[++i].trim();
     else if (a.startsWith("--base-url=")) args.baseUrl = a.slice(11).trim();
+    else if (a === "--base-url" && argv[i + 1]) args.baseUrl = argv[++i].trim();
   }
-  const result = await purgeForSlug(args);
+  const result = check ? await checkPurgePath({ baseUrl: args.baseUrl }) : await purgeForSlug(args);
   console.log("---CACHE PURGE RESULT---");
   console.log(JSON.stringify(result, null, 2));
   process.exitCode = result.ok ? 0 : 1;
