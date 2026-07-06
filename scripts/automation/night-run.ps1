@@ -55,6 +55,64 @@ try {
     exit 0
   }
 
+  # ---- 2-bis. Chrome 起動 + ブラウザ経路プリフライト ----
+  # 夜間は Chrome が閉じており拡張も未接続で空振りする（2026-07-07 実測: tabs_context_mcp
+  # が "browser extension is not connected" で中止）。claude を起動する前に、ログイン済み
+  # プロファイルで Chrome を起動（--restore-last-session で ChatGPT/X タブ・ログイン復元）し、
+  # DevTools ポートで ChatGPT/X ログイン生存を検査する。不合格なら testMode を消費せず停止。
+  $ChromeExe = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+  if (-not (Test-Path $ChromeExe)) { $ChromeExe = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" }
+  $DebugPort = 9222
+  $env:CHROME_DEBUG_PORT = "$DebugPort"
+
+  function Test-DebugPort {
+    try { Invoke-WebRequest -UseBasicParsing "http://127.0.0.1:$DebugPort/json/version" -TimeoutSec 3 | Out-Null; return $true }
+    catch { return $false }
+  }
+
+  if (-not (Test-Path $ChromeExe)) {
+    Log "SKIP: Chrome 実行ファイルが見つからない。ブラウザ経路なしのため停止（testMode 未消費）。"
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: Chrome実行ファイル不明'}))" 2>&1 | Out-Null
+    exit 0
+  }
+
+  $portUp = Test-DebugPort
+  if (-not $portUp) {
+    $devId = if (Test-Path 'data\automation\night-browser.json') { (Get-Content 'data\automation\night-browser.json' -Raw | ConvertFrom-Json).deviceId } else { 'n/a' }
+    Log "launch Chrome: --restore-last-session --remote-debugging-port=$DebugPort (deviceId=$devId)"
+    Start-Process -FilePath $ChromeExe -ArgumentList @(
+      "--restore-last-session",
+      "--remote-debugging-port=$DebugPort",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--start-maximized"
+    ) | Out-Null
+    for ($i = 0; $i -lt 20; $i++) {
+      Start-Sleep -Seconds 2
+      if (Test-DebugPort) { $portUp = $true; break }
+    }
+  } else {
+    Log "Chrome DevTools ポートは既に応答（起動済みを利用）。"
+  }
+
+  if (-not $portUp) {
+    Log "SKIP: Chrome DevTools ポートが応答しない（起動失敗/多重起動でポート未割当）。停止（testMode 未消費）。"
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: Chrome起動/DevTools不応答'}))" 2>&1 | Out-Null
+    exit 0
+  }
+
+  # restore-last-session のタブ復元・ログインリダイレクトが落ち着くまで待つ
+  Start-Sleep -Seconds 8
+  Log "preflight: chrome-preflight（ChatGPT/X ログイン生存・工房到達）"
+  $chromePre = node scripts/automation/chrome-preflight.mjs 2>&1
+  $chromePreExit = $LASTEXITCODE
+  Log ($chromePre | Out-String).Trim()
+  if ($chromePreExit -ne 0) {
+    Log "SKIP: ブラウザ経路プリフライト不合格（exit $chromePreExit）。testMode 未消費で安全停止。"
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: ブラウザ経路プリフライト不合格（Chrome起動済みだがChatGPT/Xログイン切れ等）'}))" 2>&1 | Out-Null
+    exit 0
+  }
+
   # ---- 3. ヘッドレス Claude Code 起動 ----
   $PromptFile = Join-Path $RepoRoot "docs\night_driver_prompt.md"
   $Prompt = Get-Content $PromptFile -Raw -Encoding utf8
