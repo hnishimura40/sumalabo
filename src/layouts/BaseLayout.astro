@@ -56,16 +56,15 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
       })();
     </script>
     <script is:inline>
-      // 見出し用Webフォント(Zen Maru Gothic/Inter)は load 後にCSSを注入する。
-      // <link rel=stylesheet> だと media=print でも Lighthouse のシミュレーションが
-      // クリティカル扱いして FCP/LCP を悪化させるため（本番実測 92→69 の原因）。
-      // display=optional なので初回訪問はシステムフォント表示（シフトなし）、
+      // 見出し用Webフォント(Zen Maru Gothic/Inter)は自ホスト(/fonts/)+load後注入。
+      // Google Fonts のクロスオリジン読込は Lighthouse シミュレーションが
+      // クリティカル扱いして FCP/LCP を大きく悪化させた（本番実測 92→65-77）。
+      // font-display: optional なので初回訪問はシステムフォント表示（シフトなし）、
       // 2回目以降はキャッシュから Zen Maru が即適用される。
       window.addEventListener("load", function () {
         var l = document.createElement("link");
         l.rel = "stylesheet";
-        l.href =
-          "https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&family=Inter:wght@700&display=optional";
+        l.href = "/fonts/fonts.css";
         document.head.appendChild(l);
       });
     </script>
