@@ -109,6 +109,37 @@ async function fetchImageMeta(url) {
   }
 }
 
+// トップページの全 <img> が 200 かつ image/* で返るかを検査する。
+// deploy 直後は zone キャッシュが旧 / HTML を配信する競合があるため、
+// クエリでキャッシュバスト（＝新デプロイ＝live deployment を強制取得）し、
+// 失敗時は数秒おきに数回リトライしてから確定する（本物の欠落は解消しない）。
+async function verifyHomepageImages(baseUrl, { attempts = 4, delayMs = 5000 } = {}) {
+  let last = { ok: false, homeStatus: 0, checked: 0, failed: [], attemptsUsed: 0 };
+  for (let i = 0; i < attempts; i++) {
+    const bust = `__ppv=${Date.now()}${i}`;
+    const home = await fetchSafe(`${baseUrl}/?${bust}`);
+    const srcs = extractLocalImgSrcs(home.text || "");
+    const results = [];
+    for (const ref of srcs.slice(0, 40)) {
+      const sep = ref.includes("?") ? "&" : "?";
+      const meta = await fetchImageMeta(`${baseUrl}${ref}${sep}${bust}`);
+      const ok = meta.status === 200 && /^image\//i.test(meta.contentType);
+      results.push({ ref, status: meta.status, contentType: meta.contentType, ok });
+    }
+    const bad = results.filter((r) => !r.ok);
+    last = {
+      ok: home.status === 200 && bad.length === 0,
+      homeStatus: home.status,
+      checked: results.length,
+      failed: bad,
+      attemptsUsed: i + 1,
+    };
+    if (last.ok) return last;
+    if (i < attempts - 1) await new Promise((r) => setTimeout(r, delayMs));
+  }
+  return last;
+}
+
 async function runChecks({ slug, baseUrl }) {
   const articleUrl = `${baseUrl}/articles/${slug}/`;
   const [article, home, list] = await Promise.all([
@@ -124,15 +155,9 @@ async function runChecks({ slug, baseUrl }) {
   // homepage 誤配信: タイトルがサイト名だけ + slug 不在
   const homepageFallback = /^すまラボ\s*$/.test(title) && !slugInHtml;
 
-  // トップページの全 <img> が image/* で返るか（HTMLフォールバック=画像欠落を hard fail）
-  const homeImgSrcs = extractLocalImgSrcs(home.text || "");
-  const homeImgResults = [];
-  for (const ref of homeImgSrcs.slice(0, 40)) {
-    const meta = await fetchImageMeta(`${baseUrl}${ref}`);
-    const ok = meta.status === 200 && /^image\//i.test(meta.contentType);
-    homeImgResults.push({ ref, status: meta.status, contentType: meta.contentType, ok });
-  }
-  const homeImgBad = homeImgResults.filter((r) => !r.ok);
+  // トップページの全 <img> が image/* で返るか（HTMLフォールバック=画像欠落を hard fail）。
+  // キャッシュバスト + リトライで zone キャッシュの伝播競合を吸収する。
+  const homeImg = await verifyHomepageImages(baseUrl);
 
   const hard = {
     articleHttp200: { ok: article.status === 200, actual: article.status },
@@ -141,10 +166,11 @@ async function runChecks({ slug, baseUrl }) {
     homeHttp200: { ok: home.status === 200, actual: home.status },
     articlesIndexHttp200: { ok: list.status === 200, actual: list.status },
     homepageImagesServed: {
-      ok: home.status === 200 && homeImgBad.length === 0,
-      checked: homeImgResults.length,
-      failed: homeImgBad,
-      note: homeImgBad.length ? "トップの<img>がimage/*で返らない（HTMLフォールバック=画像欠落）" : undefined,
+      ok: homeImg.ok,
+      checked: homeImg.checked,
+      attemptsUsed: homeImg.attemptsUsed,
+      failed: homeImg.failed,
+      note: homeImg.ok ? undefined : "トップの<img>がimage/*で返らない（HTMLフォールバック=画像欠落）",
     },
   };
 
