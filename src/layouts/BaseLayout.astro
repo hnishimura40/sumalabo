@@ -61,11 +61,15 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
       // クリティカル扱いして FCP/LCP を大きく悪化させた（本番実測 92→65-77）。
       // font-display: optional なので初回訪問はシステムフォント表示（シフトなし）、
       // 2回目以降はキャッシュから Zen Maru が即適用される。
+      // load後さらに2秒遅らせ、LCP計測ウィンドウ・初回描画と完全に切り離す
+      // （optionalのため初回表示には元々使われない。取得はキャッシュ充填目的）
       window.addEventListener("load", function () {
-        var l = document.createElement("link");
-        l.rel = "stylesheet";
-        l.href = "/fonts/fonts.css";
-        document.head.appendChild(l);
+        setTimeout(function () {
+          var l = document.createElement("link");
+          l.rel = "stylesheet";
+          l.href = "/fonts/fonts.css";
+          document.head.appendChild(l);
+        }, 2000);
       });
     </script>
     <link rel="canonical" href={canonicalUrl} />
