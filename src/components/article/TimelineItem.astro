@@ -1,0 +1,14 @@
+---
+// TimelineItem — Timeline の1項目。hot を付けると点が未確定色になる
+// （今後動く予定・締切など注視ポイント用）。
+interface Props {
+  date: string;
+  hot?: boolean;
+}
+const { date, hot = false } = Astro.props;
+---
+
+<div class:list={["tl-item", { hot }]}>
+  <div class="tl-date">{date}</div>
+  <div class="tl-body"><slot /></div>
+</div>

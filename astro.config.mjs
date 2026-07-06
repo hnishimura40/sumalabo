@@ -35,6 +35,8 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
+      // noindex の社内確認ページは sitemap に載せない
+      filter: (page) => !page.includes("/design-preview/") && !page.includes("/review/"),
       serialize(item) {
         const m = item.url.match(/\/articles\/([^/]+)\/?$/);
         if (m && articleLastmod.has(m[1])) {

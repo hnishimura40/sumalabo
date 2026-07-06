@@ -1,8 +1,18 @@
 ---
-// /design-preview/ — 記事デザイン刷新のショーケース（社内確認用・noindex）。
-// 吹き出しの顔アイコン（mood → 実顔 / フォールバック）を実データで確認する。
-// 本番記事テンプレには未適用。merge・本番反映は testMode 終了後の判断。
-import CharacterBubble from "../components/design/CharacterBubble.astro";
+// /design-preview/ — 記事デザイン刷新（v3）のショーケース（社内確認用・noindex）。
+// 実装済みの記事コンポーネントを本番と同じ BaseLayout / グローバルCSS で表示する。
+// ヘッダー右上のボタンでライト/ダークを切り替えて確認できる。
+// 正とする設計図: docs/design/sumalabo-design-preview-v3.html
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CharacterBubble from "../components/article/CharacterBubble.astro";
+import Summary30 from "../components/article/Summary30.astro";
+import Callout from "../components/article/Callout.astro";
+import Chip from "../components/article/Chip.astro";
+import NumCards from "../components/article/NumCards.astro";
+import Timeline from "../components/article/Timeline.astro";
+import TimelineItem from "../components/article/TimelineItem.astro";
+import ComparisonTable from "../components/article/ComparisonTable.astro";
+import Note from "../components/article/Note.astro";
 
 const himariMoods = [
   { mood: "curious", label: "curious（疑問・気づき前）" },
@@ -16,216 +26,138 @@ const laboMoods = [
 ];
 ---
 
-<!doctype html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex" />
-    <title>すまラボ デザイン見本 — 吹き出し顔アイコン</title>
-    <style is:global>
-      :root {
-        --bg: #f6f7f9;
-        --surface: #ffffff;
-        --surface2: #eef1f5;
-        --ink: #1b2331;
-        --ink-soft: #4a5568;
-        --ink-faint: #7a8494;
-        --line: #dde2e9;
-        --brand: #34549c;
-        --brand-soft: #e8edf8;
-        --himari: #c8503f;
-        --himari-bg: #fbedea;
-        --labo: #1f7a6e;
-        --labo-bg: #e6f3f1;
-        --unc: #9a5b00;
-        --unc-bg: #fbf2e0;
-        --shadow: 0 1px 3px rgba(20, 30, 50, 0.08), 0 4px 16px rgba(20, 30, 50, 0.06);
-      }
-      html.dark {
-        --bg: #12161e;
-        --surface: #1a202b;
-        --surface2: #222a37;
-        --ink: #e7eaf0;
-        --ink-soft: #aeb6c4;
-        --ink-faint: #7c8698;
-        --line: #303947;
-        --brand: #9ab2ec;
-        --brand-soft: #232d42;
-        --himari: #f0907f;
-        --himari-bg: #33231f;
-        --labo: #63c7b8;
-        --labo-bg: #16302c;
-        --unc: #e2a64e;
-        --unc-bg: #332813;
-        --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 20px rgba(0, 0, 0, 0.3);
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        background: var(--bg);
-        color: var(--ink);
-        font-family: "Noto Sans JP", sans-serif;
-        font-size: 16px;
-        line-height: 1.8;
-        transition:
-          background 0.25s,
-          color 0.25s;
-      }
-      .wrap {
-        max-width: 760px;
-        margin: 0 auto;
-        padding: 28px 16px 80px;
-      }
-    </style>
-    <style>
-      .bar {
-        position: sticky;
-        top: 0;
-        z-index: 5;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 16px;
-        background: var(--surface);
-        border-bottom: 1px solid var(--line);
-        box-shadow: var(--shadow);
-      }
-      .bar .label {
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        color: var(--ink-faint);
-      }
-      .mode-btn {
-        margin-left: auto;
-        border: 1px solid var(--line);
-        background: var(--surface2);
-        color: var(--ink);
-        border-radius: 999px;
-        padding: 7px 14px;
-        font: inherit;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-      }
-      h1 {
-        font-size: 22px;
-        margin-bottom: 8px;
-      }
-      h2 {
-        font-size: 18px;
-        margin: 34px 0 8px;
-        padding-left: 12px;
-        border-left: 4px solid var(--brand);
-      }
-      .lead {
-        color: var(--ink-soft);
-        font-size: 14.5px;
-        margin-bottom: 6px;
-      }
-      .moodtag {
-        font-size: 12px;
-        color: var(--ink-faint);
-        margin: 14px 0 -8px;
-        font-weight: 700;
-      }
-      .co {
-        border-radius: 12px;
-        padding: 14px 16px;
-        margin: 8px 0 0;
-        background: var(--unc-bg);
-        border: 1px solid color-mix(in srgb, var(--unc) 35%, transparent);
-      }
-      .co .co-head {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        font-weight: 700;
-        font-size: 14px;
-        color: var(--unc);
-        margin-bottom: 6px;
-      }
-      .co ul {
-        padding-left: 1.2em;
-        font-size: 14.5px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="bar">
-      <span class="label">デザイン見本 · 吹き出し顔アイコン</span>
-      <button class="mode-btn" id="modeBtn" type="button" aria-pressed="false">🌙 ダークにする</button>
-    </div>
+<BaseLayout
+  title="デザイン見本（記事リニューアル v3）"
+  description="記事コンポーネントのショーケース（社内確認用）"
+  noindex
+>
+  <div class="dp-shell">
+    <h1>記事デザイン見本（v3）</h1>
+    <p class="dp-note">
+      社内確認用ページ（noindex）。実装済みコンポーネントを本番と同じCSSで表示しています。
+      ヘッダー右上のボタンでライト/ダークを切り替えできます。Before（旧デザイン）は
+      リニューアル前の本番記事、設計図は <code>docs/design/sumalabo-design-preview-v3.html</code>。
+    </p>
 
-    <div class="wrap">
-      <h1>吹き出しの顔アイコン</h1>
-      <p class="lead">
-        <code>speaker</code> × <code>mood</code> で実在の顔アイコンを表示します。mood 未指定・未知のときはキャラ色の円にフォールバックします。
-      </p>
+    <h2>30秒サマリー</h2>
+    <Summary30>
+      <ol>
+        <li>記事の要点を3〜5個、冒頭で先出しする</li>
+        <li>番号丸はCSSカウンターで自動付与される</li>
+        <li>忙しい読者はここだけ読めば概要がわかる</li>
+      </ol>
+    </Summary30>
 
-      <h2>ひまり（curious / aha / explain）</h2>
-      {
-        himariMoods.map((m) => (
-          <>
-            <p class="moodtag">mood="{m.mood}" — {m.label}</p>
-            <CharacterBubble speaker="himari" mood={m.mood}>
-              つまり今週は「半分まで」使えて、来週からは別料金ってこと？サブスク解約したほうがいいのかな…
-            </CharacterBubble>
-          </>
-        ))
-      }
+    <h2>確度コールアウト（3色）+ チップ</h2>
+    <Callout kind="facts">
+      <ul>
+        <li>公式発表で確定した事実をここに書く</li>
+        <li>一次情報のリンクとセットで使う</li>
+      </ul>
+    </Callout>
+    <Callout kind="claims">
+      <ul>
+        <li>報道ベースの情報（未確認を含む）をここに書く</li>
+      </ul>
+    </Callout>
+    <Callout kind="unc">
+      <ul>
+        <li>未確定・今後変わる可能性がある情報をここに書く</li>
+      </ul>
+    </Callout>
+    <p>
+      文中では、価格は月額20ドル<Chip kind="facts">確定</Chip>、日本提供は
+      <Chip kind="unc">未確定</Chip>、性能向上は<Chip kind="claims">報道</Chip>のように使う。
+    </p>
 
-      <h2>らぼまる（smile / point / worried）</h2>
-      {
-        laboMoods.map((m) => (
-          <>
-            <p class="moodtag">mood="{m.mood}" — {m.label}</p>
-            <CharacterBubble speaker="labo" mood={m.mood}>
-              変わるのは Fable 5 のぶんだけ。Opus や Sonnet は今までどおりサブスクで使えるよ。
-            </CharacterBubble>
-          </>
-        ))
-      }
+    <h2>吹き出し（顔アイコン 6 mood + フォールバック）</h2>
+    {
+      himariMoods.map(({ mood, label }) => (
+        <CharacterBubble speaker="himari" mood={mood}>
+          {label} — ひまりの吹き出しです。
+        </CharacterBubble>
+      ))
+    }
+    {
+      laboMoods.map(({ mood, label }) => (
+        <CharacterBubble speaker="labo" mood={mood}>
+          {label} — らぼまるの吹き出しです。
+        </CharacterBubble>
+      ))
+    }
+    <CharacterBubble speaker="himari">mood未指定 → キャラ色の円＋頭文字にフォールバック。</CharacterBubble>
+    <CharacterBubble speaker="labo" mood="unknown-mood">未知mood → 同じくフォールバック。</CharacterBubble>
 
-      <h2>worried は「注意・未確定ボックス」と併設</h2>
-      <p class="lead">未確定情報や注意喚起の直前に、らぼまるの worried 顔を置く使い方を想定しています。</p>
-      <CharacterBubble speaker="labo" mood="worried">
-        ここから先はまだ確定していない話。公式発表を待つ必要があるよ。
-      </CharacterBubble>
-      <div class="co">
-        <div class="co-head">❓ 未確定・不明</div>
-        <ul>
-          <li>サブスク復帰の時期</li>
-          <li>usage credits の具体的な必要量・料金感</li>
-          <li>日本のユーザー画面での表示のされ方</li>
-        </ul>
-      </div>
+    <h3>labo-worried × 未確定ボックス併設（想定ペア）</h3>
+    <CharacterBubble speaker="labo" mood="worried">
+      ここは注意して見てほしいポイント。下の未確定ボックスとセットで使う想定です。
+    </CharacterBubble>
+    <Callout kind="unc">
+      <ul>
+        <li>日本での提供時期は未発表（2026年7月時点）</li>
+      </ul>
+    </Callout>
 
-      <h2>フォールバック（mood 未指定 / 未知）</h2>
-      <p class="lead">顔アイコンが割り当てられない場合は、キャラ色の円＋頭文字で必ず表示されます（画像欠けで空白にならない）。</p>
-      <p class="moodtag">mood 省略</p>
-      <CharacterBubble speaker="himari">mood を指定しない場合は「ひ」の円になります。</CharacterBubble>
-      <p class="moodtag">mood="unknown"（一覧外）</p>
-      <CharacterBubble speaker="labo" mood="unknown">一覧にない mood も安全にフォールバックします。</CharacterBubble>
-    </div>
+    <h2>数字カード</h2>
+    <NumCards
+      items={[
+        { num: "20ドル", cap: "月額（Proプラン）" },
+        { num: "8/8", cap: "strict verify パス数" },
+        { num: "54本", cap: "公開済み記事数" },
+      ]}
+    />
 
-    <script>
-      const btn = document.getElementById("modeBtn");
-      const apply = (dark: boolean) => {
-        document.documentElement.classList.toggle("dark", dark);
-        if (btn) {
-          btn.textContent = dark ? "☀️ ライトにする" : "🌙 ダークにする";
-          btn.setAttribute("aria-pressed", String(dark));
-        }
-      };
-      apply(window.matchMedia("(prefers-color-scheme: dark)").matches);
-      btn?.addEventListener("click", () =>
-        apply(!document.documentElement.classList.contains("dark")),
-      );
-    </script>
-  </body>
-</html>
+    <h2>タイムライン</h2>
+    <Timeline>
+      <TimelineItem date="2026-06-30">公式発表（確定）</TimelineItem>
+      <TimelineItem date="2026-07-04">日本語圏でも報道が広がる</TimelineItem>
+      <TimelineItem date="2026-07-15" hot>申し込み締切（変更の可能性あり）</TimelineItem>
+    </Timeline>
+
+    <h2>比較表（表⇄カード切替）</h2>
+    <ComparisonTable
+      headers={["プラン", "月額", "上限の考え方", "日本提供"]}
+      rows={[
+        ["Pro", "20ドル", "5時間ごとにリセット", "ok:提供中"],
+        ["Max", "100ドル〜", "Proの5〜20倍", "ok:提供中"],
+        ["Enterprise", "問い合わせ", "組織ごとに設定", "ng:要確認"],
+      ]}
+      caption="※ 見本データです。実記事では調査時点を明記します。"
+    />
+
+    <h2>注意ボックス（Note）</h2>
+    <Note>
+      調査時点（2026年7月）の情報です。価格・提供条件は変わることがあるため、最新は公式ページで確認してください。
+    </Note>
+  </div>
+</BaseLayout>
+
+<style>
+  .dp-shell {
+    width: min(760px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 40px 0 80px;
+  }
+
+  .dp-shell h1 {
+    font-size: 26px;
+  }
+
+  .dp-shell h2 {
+    margin: 48px 0 16px;
+    padding-left: 14px;
+    border-left: 5px solid var(--brand);
+    font-size: 21px;
+  }
+
+  .dp-shell h3 {
+    margin: 28px 0 12px;
+    font-size: 17px;
+  }
+
+  .dp-note {
+    color: var(--fg-mid);
+    font-size: 14.5px;
+    line-height: 1.8;
+  }
+</style>

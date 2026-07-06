@@ -1,0 +1,13 @@
+---
+// NumCard — 単体の数字カード（NumCards の slot 用）。
+interface Props {
+  num: string;
+  cap: string;
+}
+const { num, cap } = Astro.props;
+---
+
+<div class="numcard">
+  <div class="num">{num}</div>
+  <div class="cap">{cap}</div>
+</div>

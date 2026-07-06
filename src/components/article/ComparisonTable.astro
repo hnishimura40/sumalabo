@@ -1,0 +1,107 @@
+---
+// ComparisonTable — 比較表（v3・表⇄カード切替つき）。
+// headers / rows でデータを渡すと、横スクロール表とカード積みの
+// 2 ビューを生成し、トグルボタンで切り替えられる（JSなしでは表を表示）。
+// rows の1列目がカードのタイトルになる。
+//
+//   <ComparisonTable
+//     headers={["プラン", "月額", "上限"]}
+//     rows={[
+//       ["Pro", "20ドル", "5時間ごとにリセット"],
+//       ["Max", "100ドル〜", "Proの5〜20倍"],
+//     ]}
+//   />
+//
+// セル内で「◯」「×」を強調したいときは ok:/ng: プレフィックスを付ける
+// （例: "ok:対応" → 緑太字、"ng:非対応" → 赤太字）。
+interface Props {
+  headers: string[];
+  rows: string[][];
+  /** 表の下に出す注記（任意） */
+  caption?: string;
+}
+
+const { headers, rows, caption } = Astro.props;
+const uid = `cmp-${Math.random().toString(36).slice(2, 8)}`;
+
+function cellParts(cell: string): { cls: "ok" | "ng" | null; text: string } {
+  if (cell.startsWith("ok:")) return { cls: "ok", text: cell.slice(3) };
+  if (cell.startsWith("ng:")) return { cls: "ng", text: cell.slice(3) };
+  return { cls: null, text: cell };
+}
+---
+
+<div class="cmp-wrap" id={uid}>
+  <div class="tbl-toggle" role="group" aria-label="表示切り替え">
+    <button type="button" data-view="table" aria-pressed="true">表で見る</button>
+    <button type="button" data-view="cards" aria-pressed="false">カードで見る</button>
+  </div>
+  <div class="tbl-scroll" data-cmp-view="table">
+    <table>
+      <thead>
+        <tr>{headers.map((h) => <th>{h}</th>)}</tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row) => (
+            <tr>
+              {row.map((cell) => {
+                const { cls, text } = cellParts(cell);
+                return <td>{cls ? <span class={cls}>{text}</span> : text}</td>;
+              })}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="cardstack cmp-hidden" data-cmp-view="cards">
+    {
+      rows.map((row) => (
+        <div class="cmp-card">
+          <div class="cc-title">{cellParts(row[0]).text}</div>
+          <dl>
+            {row.slice(1).map((cell, i) => {
+              const { cls, text } = cellParts(cell);
+              return (
+                <>
+                  <dt>{headers[i + 1]}</dt>
+                  <dd>{cls ? <span class={cls}>{text}</span> : text}</dd>
+                </>
+              );
+            })}
+          </dl>
+        </div>
+      ))
+    }
+  </div>
+  {caption && <p class="cmp-caption">{caption}</p>}
+</div>
+
+<style>
+  .cmp-wrap {
+    margin: 20px 0;
+  }
+
+  .cmp-caption {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: var(--ink-faint);
+  }
+</style>
+
+<script>
+  // 表⇄カードのトグル（各インスタンスに配線）
+  document.querySelectorAll<HTMLElement>(".cmp-wrap").forEach((wrap) => {
+    const buttons = wrap.querySelectorAll<HTMLButtonElement>(".tbl-toggle button");
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const view = btn.dataset.view;
+        buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+        wrap.querySelectorAll<HTMLElement>("[data-cmp-view]").forEach((panel) => {
+          panel.classList.toggle("cmp-hidden", panel.dataset.cmpView !== view);
+        });
+      });
+    });
+  });
+</script>
