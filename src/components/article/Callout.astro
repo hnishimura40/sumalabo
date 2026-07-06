@@ -1,0 +1,38 @@
+---
+// Callout — 確度つきコールアウト（v3・確度カラー3色）。
+// kind で 確定情報(facts) / 報道ベース(claims) / 未確定(unc) を選ぶ。
+// slot に <ul> / <p> などの本文を渡す。
+//
+//   <Callout kind="facts">
+//     <ul><li>公式発表で確定した事実</li></ul>
+//   </Callout>
+type Kind = "facts" | "claims" | "unc";
+
+interface Props {
+  kind: Kind;
+  /** 見出し。省略時は kind に応じた既定ラベル */
+  title?: string;
+}
+
+const DEFAULT_TITLE: Record<Kind, string> = {
+  facts: "確定情報（公式発表）",
+  claims: "報道ベース（未確認含む）",
+  unc: "未確定・今後変わる可能性",
+};
+
+const ICON: Record<Kind, string> = {
+  facts: "✅",
+  claims: "📰",
+  unc: "⏳",
+};
+
+const { kind, title = DEFAULT_TITLE[kind] } = Astro.props;
+---
+
+<aside class:list={["co", kind]}>
+  <div class="co-head">
+    <span aria-hidden="true">{ICON[kind]}</span>
+    {title}
+  </div>
+  <slot />
+</aside>

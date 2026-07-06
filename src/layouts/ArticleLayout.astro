@@ -17,13 +17,25 @@ type ArticleData = {
   pubDate?: string;
 };
 
+type Heading = {
+  depth: number;
+  slug: string;
+  text: string;
+};
+
 interface Props {
   article: ArticleData;
   previousArticle?: ArticleData;
   nextArticle?: ArticleData;
+  /** MDX render() の headings。渡されると h2 から目次を自動生成する */
+  headings?: Heading[];
 }
 
-const { article, previousArticle, nextArticle } = Astro.props;
+const { article, previousArticle, nextArticle, headings = [] } = Astro.props;
+
+// 目次は h2 のみ・2 個以上あるときだけ出す（v3: モバイルは折りたたみ、PCは開いた状態）
+const tocHeadings = headings.filter((h) => h.depth === 2);
+const showToc = tocHeadings.length >= 2;
 
 const typeLabels = {
   foundation: "土台記事",
@@ -78,6 +90,9 @@ const articleSchema = {
             src={article.thumbnail}
             alt={article.thumbnailAlt || ""}
             loading="eager"
+            fetchpriority="high"
+            width="1280"
+            height="720"
           />
         ) : (
           <div class="thumbnail-placeholder" aria-label="サムネイル未設定">
@@ -87,6 +102,21 @@ const articleSchema = {
         )
       }
     </header>
+
+    {
+      showToc && (
+        <details class="article-toc" id="article-toc">
+          <summary>目次</summary>
+          <ol>
+            {tocHeadings.map((h) => (
+              <li>
+                <a href={`#${h.slug}`}>{h.text}</a>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )
+    }
 
     <div class="article-content">
       <slot />
@@ -111,6 +141,16 @@ const articleSchema = {
     <div class="lightbox-hint">タップでズーム / 背景タップか ✕ で閉じる</div>
   </div>
 </BaseLayout>
+
+<script>
+  // 目次: PC幅では開いた状態にする（モバイルは折りたたみのまま）
+  {
+    const toc = document.getElementById("article-toc") as HTMLDetailsElement | null;
+    if (toc && window.matchMedia("(min-width: 1080px)").matches) {
+      toc.open = true;
+    }
+  }
+</script>
 
 <script>
   // 画像ライトボックス: 記事本文内のスライド画像(.article-slide-figure img)をタップで拡大。
@@ -333,17 +373,67 @@ const articleSchema = {
     box-shadow: var(--shadow-md);
     color: var(--fg);
     font-size: 17px;
+    line-height: 1.85;
+  }
+
+  @media (min-width: 768px) {
+    .article-content {
+      font-size: 18px;
+    }
+  }
+
+  /* v3: h2 はブランド色の左ボーダー */
+  .article-content :global(h2) {
+    margin: 56px 0 18px;
+    padding-left: 14px;
+    border-left: 5px solid var(--brand);
+    color: var(--fg);
+    font-size: clamp(21px, 3.4vw, 25px);
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+
+  /* 固定ヘッダー分だけアンカー位置を下げる（目次ジャンプ用） */
+  .article-content :global(h2),
+  .article-content :global(h3) {
+    scroll-margin-top: 84px;
+  }
+
+  /* v3: 目次（モバイルは折りたたみ、PCはJSで開く） */
+  .article-toc {
+    margin: 0 0 20px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .article-toc summary {
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--brand);
+    list-style-position: inside;
+  }
+
+  .article-toc ol {
+    margin: 10px 0 0;
+    padding-left: 1.5em;
+    font-size: 14.5px;
     line-height: 1.9;
   }
 
-  .article-content :global(h2) {
-    margin: 62px 0 22px;
-    padding-top: 16px;
-    border-top: 1px solid var(--line-soft);
-    color: var(--fg);
-    font-size: clamp(22px, 4vw, 30px);
-    line-height: 1.35;
-    letter-spacing: 0;
+  .article-toc a {
+    color: var(--fg-mid);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .article-toc a:hover {
+    color: var(--brand);
+    text-decoration: underline;
   }
 
   .article-content :global(.scan-heading) {

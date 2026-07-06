@@ -1,0 +1,163 @@
+---
+// /design-preview/ — 記事デザイン刷新（v3）のショーケース（社内確認用・noindex）。
+// 実装済みの記事コンポーネントを本番と同じ BaseLayout / グローバルCSS で表示する。
+// ヘッダー右上のボタンでライト/ダークを切り替えて確認できる。
+// 正とする設計図: docs/design/sumalabo-design-preview-v3.html
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CharacterBubble from "../components/article/CharacterBubble.astro";
+import Summary30 from "../components/article/Summary30.astro";
+import Callout from "../components/article/Callout.astro";
+import Chip from "../components/article/Chip.astro";
+import NumCards from "../components/article/NumCards.astro";
+import Timeline from "../components/article/Timeline.astro";
+import TimelineItem from "../components/article/TimelineItem.astro";
+import ComparisonTable from "../components/article/ComparisonTable.astro";
+import Note from "../components/article/Note.astro";
+
+const himariMoods = [
+  { mood: "curious", label: "curious（疑問・気づき前）" },
+  { mood: "aha", label: "aha（なるほど・腹落ち）" },
+  { mood: "explain", label: "explain（説明・指さし）" },
+];
+const laboMoods = [
+  { mood: "smile", label: "smile（安心・整理役）" },
+  { mood: "point", label: "point（指し示す・強調）" },
+  { mood: "worried", label: "worried（注意・未確定）" },
+];
+---
+
+<BaseLayout
+  title="デザイン見本（記事リニューアル v3）"
+  description="記事コンポーネントのショーケース（社内確認用）"
+  noindex
+>
+  <div class="dp-shell">
+    <h1>記事デザイン見本（v3）</h1>
+    <p class="dp-note">
+      社内確認用ページ（noindex）。実装済みコンポーネントを本番と同じCSSで表示しています。
+      ヘッダー右上のボタンでライト/ダークを切り替えできます。Before（旧デザイン）は
+      リニューアル前の本番記事、設計図は <code>docs/design/sumalabo-design-preview-v3.html</code>。
+    </p>
+
+    <h2>30秒サマリー</h2>
+    <Summary30>
+      <ol>
+        <li>記事の要点を3〜5個、冒頭で先出しする</li>
+        <li>番号丸はCSSカウンターで自動付与される</li>
+        <li>忙しい読者はここだけ読めば概要がわかる</li>
+      </ol>
+    </Summary30>
+
+    <h2>確度コールアウト（3色）+ チップ</h2>
+    <Callout kind="facts">
+      <ul>
+        <li>公式発表で確定した事実をここに書く</li>
+        <li>一次情報のリンクとセットで使う</li>
+      </ul>
+    </Callout>
+    <Callout kind="claims">
+      <ul>
+        <li>報道ベースの情報（未確認を含む）をここに書く</li>
+      </ul>
+    </Callout>
+    <Callout kind="unc">
+      <ul>
+        <li>未確定・今後変わる可能性がある情報をここに書く</li>
+      </ul>
+    </Callout>
+    <p>
+      文中では、価格は月額20ドル<Chip kind="facts">確定</Chip>、日本提供は
+      <Chip kind="unc">未確定</Chip>、性能向上は<Chip kind="claims">報道</Chip>のように使う。
+    </p>
+
+    <h2>吹き出し（顔アイコン 6 mood + フォールバック）</h2>
+    {
+      himariMoods.map(({ mood, label }) => (
+        <CharacterBubble speaker="himari" mood={mood}>
+          {label} — ひまりの吹き出しです。
+        </CharacterBubble>
+      ))
+    }
+    {
+      laboMoods.map(({ mood, label }) => (
+        <CharacterBubble speaker="labo" mood={mood}>
+          {label} — らぼまるの吹き出しです。
+        </CharacterBubble>
+      ))
+    }
+    <CharacterBubble speaker="himari">mood未指定 → キャラ色の円＋頭文字にフォールバック。</CharacterBubble>
+    <CharacterBubble speaker="labo" mood="unknown-mood">未知mood → 同じくフォールバック。</CharacterBubble>
+
+    <h3>labo-worried × 未確定ボックス併設（想定ペア）</h3>
+    <CharacterBubble speaker="labo" mood="worried">
+      ここは注意して見てほしいポイント。下の未確定ボックスとセットで使う想定です。
+    </CharacterBubble>
+    <Callout kind="unc">
+      <ul>
+        <li>日本での提供時期は未発表（2026年7月時点）</li>
+      </ul>
+    </Callout>
+
+    <h2>数字カード</h2>
+    <NumCards
+      items={[
+        { num: "20ドル", cap: "月額（Proプラン）" },
+        { num: "8/8", cap: "strict verify パス数" },
+        { num: "54本", cap: "公開済み記事数" },
+      ]}
+    />
+
+    <h2>タイムライン</h2>
+    <Timeline>
+      <TimelineItem date="2026-06-30">公式発表（確定）</TimelineItem>
+      <TimelineItem date="2026-07-04">日本語圏でも報道が広がる</TimelineItem>
+      <TimelineItem date="2026-07-15" hot>申し込み締切（変更の可能性あり）</TimelineItem>
+    </Timeline>
+
+    <h2>比較表（表⇄カード切替）</h2>
+    <ComparisonTable
+      headers={["プラン", "月額", "上限の考え方", "日本提供"]}
+      rows={[
+        ["Pro", "20ドル", "5時間ごとにリセット", "ok:提供中"],
+        ["Max", "100ドル〜", "Proの5〜20倍", "ok:提供中"],
+        ["Enterprise", "問い合わせ", "組織ごとに設定", "ng:要確認"],
+      ]}
+      caption="※ 見本データです。実記事では調査時点を明記します。"
+    />
+
+    <h2>注意ボックス（Note）</h2>
+    <Note>
+      調査時点（2026年7月）の情報です。価格・提供条件は変わることがあるため、最新は公式ページで確認してください。
+    </Note>
+  </div>
+</BaseLayout>
+
+<style>
+  .dp-shell {
+    width: min(760px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 40px 0 80px;
+  }
+
+  .dp-shell h1 {
+    font-size: 26px;
+  }
+
+  .dp-shell h2 {
+    margin: 48px 0 16px;
+    padding-left: 14px;
+    border-left: 5px solid var(--brand);
+    font-size: 21px;
+  }
+
+  .dp-shell h3 {
+    margin: 28px 0 12px;
+    font-size: 17px;
+  }
+
+  .dp-note {
+    color: var(--fg-mid);
+    font-size: 14.5px;
+    line-height: 1.8;
+  }
+</style>

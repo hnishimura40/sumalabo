@@ -1,40 +1,66 @@
+/* ============================================================
+   デザイントークン（記事リニューアル v3 準拠）
+   正とする設計図: docs/design/sumalabo-design-preview-v3.html
+   ダークモードは html.dark クラスで制御（BaseLayout のインライン
+   スクリプトが localStorage → prefers-color-scheme の順で決めて
+   ペイント前に付与する。トグルはヘッダーのボタン）。
+   既存トークン名（--bg / --fg / --teal / --cat-* …）は 54 記事と
+   サイト全体から参照されているため名前は維持し、値を v3 に更新。
+   ============================================================ */
 :root {
   color-scheme: light;
 
-  --bg: #fafaf7;
+  /* v3 基本パレット */
+  --bg: #f6f7f9;
   --bg-elev: #ffffff;
-  --bg-sunk: #f4f3ef;
-  --bg-tint: #eef4f3;
-  --bg-grid: rgba(20, 30, 35, 0.045);
+  --bg-sunk: #eef1f5;
+  --bg-tint: #e8edf8;
+  --bg-grid: rgba(20, 30, 50, 0.04);
 
-  --fg: #1a2127;
-  --fg-mid: #44525c;
-  --fg-soft: #6b7882;
-  --fg-faint: #98a2ab;
+  --fg: #1b2331;
+  --fg-mid: #4a5568;
+  --fg-soft: #4a5568;
+  --fg-faint: #7a8494;
 
-  --line: #e6e4dd;
-  --line-strong: #d6d4cc;
-  --line-soft: #efede7;
+  --line: #dde2e9;
+  --line-strong: #c9d0da;
+  --line-soft: #e9edf2;
 
-  --teal: #2f7d72;
-  --teal-deep: #1f5f57;
-  --teal-soft: #5fa499;
-  --teal-tint: #e3efec;
-  --teal-tint-2: #d4e7e2;
+  /* v3 ブランド（青）とキャラ・確度カラー */
+  --brand: #34549c;
+  --brand-soft: #e8edf8;
+  --himari: #c8503f;
+  --himari-bg: #fbedea;
+  --labo: #1f7a6e;
+  --labo-bg: #e6f3f1;
+  --facts: #177a4c;
+  --facts-bg: #e7f5ec;
+  --claims: #2b62c9;
+  --claims-bg: #e9f0fc;
+  --unc: #9a5b00;
+  --unc-bg: #fbf2e0;
+  --img-filter: none;
 
-  --slate: #506b7a;
-  --slate-tint: #e6ecef;
-  --amber: #b88a3a;
-  --amber-tint: #f5ecd9;
-  --rose: #b85a5a;
-  --rose-tint: #f5e3e0;
+  /* 既存名の互換（値は v3 系へ寄せる。teal はらぼまる色に統一） */
+  --teal: #1f7a6e;
+  --teal-deep: #155d54;
+  --teal-soft: #4fa093;
+  --teal-tint: #e6f3f1;
+  --teal-tint-2: #d4ebe7;
 
-  --cat-news: #5b6b9a;
-  --cat-news-tint: #e4e8f1;
+  --slate: #4a5c78;
+  --slate-tint: #e9f0fc;
+  --amber: #9a5b00;
+  --amber-tint: #fbf2e0;
+  --rose: #c8503f;
+  --rose-tint: #fbedea;
+
+  --cat-news: #34549c;
+  --cat-news-tint: #e8edf8;
   --cat-smartphone: #3a7d8a;
   --cat-smartphone-tint: #dfecef;
-  --cat-mobile-plan: #4a8a6a;
-  --cat-mobile-plan-tint: #e1eee7;
+  --cat-mobile-plan: #1f7a6e;
+  --cat-mobile-plan-tint: #e6f3f1;
   --cat-gadgets: #7a6a4a;
   --cat-gadgets-tint: #efeae0;
 
@@ -43,13 +69,21 @@
   --radius-md: 8px;
   --radius-lg: 12px;
 
-  --shadow-sm: 0 1px 2px rgba(20, 30, 35, 0.04);
-  --shadow-md: 0 1px 3px rgba(20, 30, 35, 0.05), 0 4px 12px rgba(20, 30, 35, 0.04);
-  --shadow-lg: 0 2px 6px rgba(20, 30, 35, 0.06), 0 12px 32px rgba(20, 30, 35, 0.06);
+  --shadow-sm: 0 1px 3px rgba(20, 30, 50, 0.08), 0 4px 16px rgba(20, 30, 50, 0.06);
+  --shadow-md: 0 1px 3px rgba(20, 30, 50, 0.08), 0 4px 16px rgba(20, 30, 50, 0.06);
+  --shadow-lg: 0 2px 6px rgba(20, 30, 50, 0.08), 0 12px 32px rgba(20, 30, 50, 0.08);
 
   --font-sans: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-heading: "Zen Maru Gothic", "Noto Sans JP", sans-serif;
+  --font-num: "Inter", "Noto Sans JP", sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 
+  --ink: var(--fg);
+  --ink-soft: var(--fg-mid);
+  --ink-faint: var(--fg-faint);
+  --surface: var(--bg-elev);
+  --surface2: var(--bg-sunk);
+  --shadow: var(--shadow-sm);
   --color-text: var(--fg);
   --color-muted: var(--fg-soft);
   --color-border: var(--line);
@@ -62,51 +96,70 @@
   --shadow-soft: var(--shadow-md);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
+/* ダーク（v3）: html.dark で適用。OS設定は BaseLayout の
+   インラインスクリプトが初期値として反映する */
+html.dark {
+  color-scheme: dark;
 
-    --bg: #15191c;
-    --bg-elev: #1c2125;
-    --bg-sunk: #12161a;
-    --bg-tint: #1a2326;
-    --bg-grid: rgba(255, 255, 255, 0.035);
+  --bg: #12161e;
+  --bg-elev: #1a202b;
+  --bg-sunk: #10141b;
+  --bg-tint: #232d42;
+  --bg-grid: rgba(255, 255, 255, 0.03);
 
-    --fg: #e8eaec;
-    --fg-mid: #b4bbc1;
-    --fg-soft: #8a939b;
-    --fg-faint: #5e676e;
+  --fg: #e7eaf0;
+  --fg-mid: #aeb6c4;
+  --fg-soft: #aeb6c4;
+  --fg-faint: #7c8698;
 
-    --line: #2a3035;
-    --line-strong: #363d43;
-    --line-soft: #21262a;
+  --line: #303947;
+  --line-strong: #3c4656;
+  --line-soft: #262e3a;
 
-    --teal: #5fb3a5;
-    --teal-deep: #7ec3b6;
-    --teal-soft: #4a9286;
-    --teal-tint: #1f2f2c;
-    --teal-tint-2: #263b37;
+  --brand: #9ab2ec;
+  --brand-soft: #232d42;
+  --himari: #f0907f;
+  --himari-bg: #33231f;
+  --labo: #63c7b8;
+  --labo-bg: #16302c;
+  --facts: #4cc38a;
+  --facts-bg: #152b20;
+  --claims: #8fb0f5;
+  --claims-bg: #1b2740;
+  --unc: #e2a64e;
+  --unc-bg: #332813;
+  --img-filter: brightness(0.92);
 
-    --slate: #8aa0ac;
-    --slate-tint: #232a2e;
-    --amber: #d4ab66;
-    --amber-tint: #2e2818;
-    --rose: #d48383;
-    --rose-tint: #2e1f1f;
+  --teal: #63c7b8;
+  --teal-deep: #7ed3c6;
+  --teal-soft: #4a9e91;
+  --teal-tint: #16302c;
+  --teal-tint-2: #1d3d38;
 
-    --cat-news: #8a99c8;
-    --cat-news-tint: #1f242e;
-    --cat-smartphone: #6cb0bd;
-    --cat-smartphone-tint: #1d2c30;
-    --cat-mobile-plan: #7fbb98;
-    --cat-mobile-plan-tint: #1c2823;
-    --cat-gadgets: #b8a37a;
-    --cat-gadgets-tint: #2a261d;
+  --slate: #8fa4c4;
+  --slate-tint: #1b2740;
+  --amber: #e2a64e;
+  --amber-tint: #332813;
+  --rose: #f0907f;
+  --rose-tint: #33231f;
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.25);
-    --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.3);
-  }
+  --cat-news: #9ab2ec;
+  --cat-news-tint: #232d42;
+  --cat-smartphone: #6cb0bd;
+  --cat-smartphone-tint: #1d2c30;
+  --cat-mobile-plan: #63c7b8;
+  --cat-mobile-plan-tint: #16302c;
+  --cat-gadgets: #b8a37a;
+  --cat-gadgets-tint: #2a261d;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.4), 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* ダークで記事内画像（白背景スライド）の眩しさを抑える */
+html.dark .article-content img {
+  filter: var(--img-filter);
 }
 
 * {
@@ -240,6 +293,57 @@ button {
   color: var(--fg);
 }
 
+/* v3: 見出しは Zen Maru Gothic */
+h1,
+h2,
+h3,
+h4,
+.brand strong {
+  font-family: var(--font-heading);
+}
+
+/* ライト/ダーク切替（v3） */
+.theme-toggle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--bg-elev);
+  color: var(--fg-mid);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--brand);
+}
+
+.theme-toggle-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  /* 月（ライト時: ダークへ誘導） */
+  background: transparent;
+  box-shadow: inset -4px -3px 0 0 var(--fg-mid);
+}
+
+html.dark .theme-toggle-icon {
+  /* 太陽（ダーク時: ライトへ誘導） */
+  width: 12px;
+  height: 12px;
+  background: var(--amber);
+  box-shadow:
+    0 0 0 2.5px var(--bg-elev),
+    0 0 0 4px var(--amber);
+}
+
 @media (max-width: 720px) {
   .header-inner {
     align-items: flex-start;
@@ -285,6 +389,26 @@ button {
     padding: 6px 9px;
     font-size: 13px;
     white-space: nowrap;
+  }
+
+  .theme-toggle {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .site-header {
+    position: sticky;
+  }
+
+  .header-inner {
+    position: relative;
+  }
+
+  .brand {
+    padding-right: 44px;
   }
 }
 
@@ -538,4 +662,384 @@ button {
   .static-card {
     padding: 20px;
   }
+}
+
+/* ============================================================
+   v3 記事コンポーネント（docs/design/sumalabo-design-preview-v3.html 準拠）
+   MDX から使うコンポーネントの実体スタイル。slot 内のマークアップにも
+   効かせるため component scoped ではなくここに置く。
+   使用コンポーネント: src/components/article/
+   ============================================================ */
+
+/* ---- 30秒サマリー ---- */
+.summary {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 0 0 28px;
+  box-shadow: var(--shadow);
+}
+
+.summary .summary-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--brand);
+  margin-bottom: 10px;
+}
+
+.summary ol,
+.summary ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: s;
+}
+
+.summary li {
+  counter-increment: s;
+  position: relative;
+  padding-left: 34px;
+  font-size: 15.5px;
+  line-height: 1.7;
+}
+
+.summary li + li {
+  margin-top: 8px;
+}
+
+.summary li::before {
+  content: counter(s);
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--brand);
+  color: #fff;
+  font-family: var(--font-num);
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+html.dark .summary li::before {
+  color: #10141b;
+}
+
+/* ---- 確度コールアウト（確定 / 報道 / 未確定） ---- */
+.co {
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 20px 0;
+  border: 1px solid transparent;
+}
+
+.co .co-head {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.co ul,
+.co ol {
+  margin: 0;
+  padding-left: 1.2em;
+  font-size: 15.5px;
+}
+
+.co li + li {
+  margin-top: 6px;
+}
+
+.co > p {
+  margin: 0;
+  font-size: 15.5px;
+}
+
+.co.facts {
+  background: var(--facts-bg);
+  border-color: color-mix(in srgb, var(--facts) 30%, transparent);
+}
+.co.facts .co-head {
+  color: var(--facts);
+}
+.co.claims {
+  background: var(--claims-bg);
+  border-color: color-mix(in srgb, var(--claims) 30%, transparent);
+}
+.co.claims .co-head {
+  color: var(--claims);
+}
+.co.unc {
+  background: var(--unc-bg);
+  border-color: color-mix(in srgb, var(--unc) 35%, transparent);
+}
+.co.unc .co-head {
+  color: var(--unc);
+}
+
+/* ---- 確度チップ（インライン） ---- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: 0.1em;
+  white-space: nowrap;
+}
+.chip.f {
+  color: var(--facts);
+  background: var(--facts-bg);
+}
+.chip.c {
+  color: var(--claims);
+  background: var(--claims-bg);
+}
+.chip.u {
+  color: var(--unc);
+  background: var(--unc-bg);
+}
+
+/* ---- 数字カード ---- */
+.numcards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+  margin: 24px 0;
+}
+
+@media (min-width: 560px) {
+  .numcards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.numcard {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.numcard .num {
+  font-family: var(--font-num);
+  font-weight: 700;
+  font-size: 30px;
+  color: var(--brand);
+  line-height: 1.2;
+  font-feature-settings: "tnum";
+}
+
+.numcard .cap {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+/* ---- タイムライン ---- */
+.timeline {
+  margin: 24px 0;
+  padding-left: 6px;
+}
+
+.tl-item {
+  position: relative;
+  padding: 0 0 22px 28px;
+}
+
+.tl-item:last-child {
+  padding-bottom: 0;
+}
+
+.tl-item::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.tl-item::after {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 22px;
+  bottom: -2px;
+  width: 2px;
+  background: var(--line);
+}
+
+.tl-item:last-child::after {
+  display: none;
+}
+
+.tl-item .tl-date {
+  font-family: var(--font-num);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--brand);
+}
+
+.tl-item .tl-body {
+  font-size: 15.5px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+
+.tl-item.hot::before {
+  background: var(--unc);
+}
+
+/* ---- 比較表（表⇄カード切替） ---- */
+.tbl-toggle {
+  display: flex;
+  gap: 6px;
+  margin: 20px 0 10px;
+}
+
+.tbl-toggle button {
+  border: 1px solid var(--line);
+  background: var(--surface2);
+  color: var(--ink-soft);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tbl-toggle button[aria-pressed="true"] {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+
+html.dark .tbl-toggle button[aria-pressed="true"] {
+  color: #10141b;
+}
+
+.tbl-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tbl-scroll table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 520px;
+  font-size: 14.5px;
+  background: var(--surface);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.tbl-scroll th,
+.tbl-scroll td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tbl-scroll thead th {
+  background: var(--surface2);
+  font-size: 13px;
+  letter-spacing: 0.03em;
+}
+
+.tbl-scroll tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tbl-scroll td .ok,
+.cmp-card .ok {
+  color: var(--facts);
+  font-weight: 700;
+}
+
+.tbl-scroll td .ng,
+.cmp-card .ng {
+  color: var(--himari);
+  font-weight: 700;
+}
+
+.cardstack {
+  display: grid;
+  gap: 12px;
+  margin: 6px 0 0;
+}
+
+.cmp-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+}
+
+.cmp-card .cc-title {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 8px;
+  font-family: var(--font-heading);
+}
+
+.cmp-card dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 7.5em 1fr;
+  gap: 4px 10px;
+  font-size: 14px;
+}
+
+.cmp-card dt {
+  color: var(--ink-faint);
+}
+
+.cmp-card dd {
+  margin: 0;
+}
+
+.cmp-hidden {
+  display: none;
+}
+
+/* ---- 注意ボックス ---- */
+.note {
+  background: var(--surface2);
+  border-left: 4px solid var(--ink-faint);
+  border-radius: 0 10px 10px 0;
+  padding: 12px 16px;
+  margin: 20px 0;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+}
+
+.note > p {
+  margin: 0;
+}
+
+.note > p + p {
+  margin-top: 6px;
 }

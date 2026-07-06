@@ -1,0 +1,16 @@
+---
+// Chip — 文中に置く確度チップ（v3）。kind: facts / claims / unc。
+//
+//   価格は月額20ドル<Chip kind="facts">確定</Chip>ですが、
+//   日本提供は<Chip kind="unc">未確定</Chip>です。
+type Kind = "facts" | "claims" | "unc";
+
+interface Props {
+  kind: Kind;
+}
+
+const CLASS: Record<Kind, string> = { facts: "f", claims: "c", unc: "u" };
+const { kind } = Astro.props;
+---
+
+<span class:list={["chip", CLASS[kind]]}><slot /></span>

@@ -1,0 +1,33 @@
+---
+// NumCards — 数字カードのグリッド（v3）。items で渡すとカード生成、
+// または slot に <NumCard> を並べてもよい。560px 以上で 3 カラム。
+//
+//   <NumCards
+//     items={[
+//       { num: "20ドル", cap: "月額（Proプラン）" },
+//       { num: "8/8", cap: "検証パス数" },
+//     ]}
+//   />
+interface Item {
+  num: string;
+  cap: string;
+}
+
+interface Props {
+  items?: Item[];
+}
+
+const { items = [] } = Astro.props;
+---
+
+<div class="numcards">
+  {
+    items.map((item) => (
+      <div class="numcard">
+        <div class="num">{item.num}</div>
+        <div class="cap">{item.cap}</div>
+      </div>
+    ))
+  }
+  <slot />
+</div>

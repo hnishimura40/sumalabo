@@ -1,0 +1,16 @@
+---
+// CharacterBubble — 記事用の再エクスポート。実体は components/design/。
+// MDX からは `import CharacterBubble from "@/components/article/CharacterBubble.astro"`
+// 相当のパスで、他の記事コンポーネントと同じ場所から使えるようにする。
+import Bubble from "../design/CharacterBubble.astro";
+
+interface Props {
+  speaker: "himari" | "labo";
+  mood?: string;
+  name?: string;
+}
+
+const props = Astro.props;
+---
+
+<Bubble {...props}><slot /></Bubble>

@@ -1,0 +1,25 @@
+---
+// Summary30 — 記事冒頭の「30秒サマリー」ボックス（v3）。
+// slot に <ol><li>…</li></ol>（または <ul>）で要点 3〜5 個を渡す。
+// 番号丸はCSSカウンターで自動付与される。
+//
+//   <Summary30>
+//     <ol>
+//       <li>要点1</li>
+//       <li>要点2</li>
+//     </ol>
+//   </Summary30>
+interface Props {
+  /** 見出し。省略時は「30秒サマリー」 */
+  title?: string;
+}
+const { title = "30秒サマリー" } = Astro.props;
+---
+
+<section class="summary">
+  <div class="summary-head">
+    <span aria-hidden="true">⏱</span>
+    {title}
+  </div>
+  <slot />
+</section>

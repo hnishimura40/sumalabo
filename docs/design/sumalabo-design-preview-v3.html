@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>すまラボ 記事デザイン見本 — テンプレA/B/C × ライト/ダーク</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== デザイントークン ===== */
+:root{
+  --bg:#F6F7F9; --surface:#FFFFFF; --surface2:#EEF1F5;
+  --ink:#1B2331; --ink-soft:#4A5568; --ink-faint:#7A8494;
+  --line:#DDE2E9;
+  --brand:#34549C; --brand-soft:#E8EDF8;
+  --himari:#C8503F; --himari-bg:#FBEDEA;
+  --labo:#1F7A6E; --labo-bg:#E6F3F1;
+  --facts:#177A4C; --facts-bg:#E7F5EC;
+  --claims:#2B62C9; --claims-bg:#E9F0FC;
+  --unc:#9A5B00; --unc-bg:#FBF2E0;
+  --shadow:0 1px 3px rgba(20,30,50,.08),0 4px 16px rgba(20,30,50,.06);
+  --img-filter:none;
+}
+html.dark{
+  --bg:#12161E; --surface:#1A202B; --surface2:#222A37;
+  --ink:#E7EAF0; --ink-soft:#AEB6C4; --ink-faint:#7C8698;
+  --line:#303947;
+  --brand:#9AB2EC; --brand-soft:#232D42;
+  --himari:#F0907F; --himari-bg:#33231F;
+  --labo:#63C7B8; --labo-bg:#16302C;
+  --facts:#4CC38A; --facts-bg:#152B20;
+  --claims:#8FB0F5; --claims-bg:#1B2740;
+  --unc:#E2A64E; --unc-bg:#332813;
+  --shadow:0 1px 3px rgba(0,0,0,.4),0 4px 20px rgba(0,0,0,.3);
+  --img-filter:brightness(.92);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Noto Sans JP",sans-serif;
+  font-size:17px; line-height:1.85; letter-spacing:.02em;
+  transition:background .25s,color .25s;
+}
+@media(min-width:768px){body{font-size:18px}}
+h1,h2,h3{font-family:"Zen Maru Gothic","Noto Sans JP",sans-serif;line-height:1.5;letter-spacing:.01em}
+a{color:var(--brand)}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px;border-radius:4px}
+
+/* ===== 見本用ヘッダー(本番には無い) ===== */
+.demo-bar{
+  position:sticky;top:0;z-index:50;
+  background:var(--surface);border-bottom:1px solid var(--line);
+  padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  box-shadow:var(--shadow);
+}
+.demo-bar .label{font-size:12px;color:var(--ink-faint);font-weight:700;letter-spacing:.08em}
+.tabs{display:flex;gap:6px}
+.tab{
+  border:1px solid var(--line);background:var(--surface2);color:var(--ink-soft);
+  border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;
+}
+.tab[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+html.dark .tab[aria-pressed="true"]{color:#10141B}
+.mode-btn{
+  margin-left:auto;border:1px solid var(--line);background:var(--surface2);
+  color:var(--ink);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;
+}
+
+/* ===== レイアウト ===== */
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+.layout{display:grid;grid-template-columns:1fr;gap:32px;padding:28px 0 80px}
+@media(min-width:1080px){.layout{grid-template-columns:minmax(0,42em) 240px;justify-content:center}}
+article{max-width:42em;min-width:0}
+
+/* ===== 記事ヘッダー ===== */
+.eyebrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.cat{
+  font-size:12px;font-weight:700;color:var(--brand);
+  background:var(--brand-soft);border-radius:6px;padding:3px 10px;letter-spacing:.04em;
+}
+.date{font-size:13px;color:var(--ink-faint)}
+h1.title{font-size:26px;margin-bottom:20px}
+@media(min-width:768px){h1.title{font-size:32px}}
+
+/* ===== 30秒サマリー ===== */
+.summary{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px;margin:0 0 28px;box-shadow:var(--shadow);
+}
+.summary .head{
+  display:flex;gap:8px;align-items:center;
+  font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:15px;
+  color:var(--brand);margin-bottom:10px;
+}
+.summary ol{list-style:none;counter-reset:s}
+.summary li{
+  counter-increment:s;position:relative;padding-left:34px;
+  font-size:15.5px;line-height:1.7;
+}
+.summary li+li{margin-top:8px}
+.summary li::before{
+  content:counter(s);position:absolute;left:0;top:2px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--brand);color:#fff;
+  font-family:Inter,sans-serif;font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+html.dark .summary li::before{color:#10141B}
+
+/* ===== 見出し ===== */
+h2{
+  font-size:21px;margin:44px 0 16px;padding-left:14px;
+  border-left:5px solid var(--brand);
+}
+@media(min-width:768px){h2{font-size:23px}}
+h3{font-size:17.5px;margin:30px 0 12px;color:var(--ink)}
+p{margin:0 0 1.1em}
+p:last-child{margin-bottom:0}
+
+/* ===== 確定・報道・未確定コールアウト ===== */
+.co{border-radius:12px;padding:16px 18px;margin:20px 0;border:1px solid transparent}
+.co .co-head{
+  display:flex;gap:8px;align-items:center;font-weight:700;font-size:14px;
+  margin-bottom:8px;letter-spacing:.03em;
+}
+.co ul{padding-left:1.2em;font-size:15.5px}
+.co li+li{margin-top:6px}
+.co.facts{background:var(--facts-bg);border-color:color-mix(in srgb,var(--facts) 30%,transparent)}
+.co.facts .co-head{color:var(--facts)}
+.co.claims{background:var(--claims-bg);border-color:color-mix(in srgb,var(--claims) 30%,transparent)}
+.co.claims .co-head{color:var(--claims)}
+.co.unc{background:var(--unc-bg);border-color:color-mix(in srgb,var(--unc) 35%,transparent)}
+.co.unc .co-head{color:var(--unc)}
+.chip{
+  display:inline-block;font-size:11.5px;font-weight:700;border-radius:5px;
+  padding:1px 7px;vertical-align:.12em;margin-left:4px;letter-spacing:.03em;
+}
+.chip.f{color:var(--facts);background:var(--facts-bg)}
+.chip.c{color:var(--claims);background:var(--claims-bg)}
+.chip.u{color:var(--unc);background:var(--unc-bg)}
+
+/* ===== キャラ吹き出し ===== */
+.talk{display:flex;gap:12px;margin:22px 0;align-items:flex-start}
+.talk .face{
+  flex:0 0 46px;width:46px;height:46px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:"Zen Maru Gothic",sans-serif;font-weight:700;font-size:11px;color:#fff;
+  object-fit:cover;background:#fff;
+}
+.talk.himari .face{border:2.5px solid var(--himari)}
+.talk.labo .face{border:2.5px solid var(--labo)}
+html.dark .talk .face{color:#10141B}
+.talk .bubble{
+  position:relative;border-radius:14px;padding:12px 16px;
+  font-size:15.5px;line-height:1.7;max-width:34em;
+}
+.talk.himari .bubble{background:var(--himari-bg);color:var(--ink)}
+.talk.labo .bubble{background:var(--labo-bg);color:var(--ink)}
+.talk .bubble::before{
+  content:"";position:absolute;left:-7px;top:16px;
+  border:7px solid transparent;border-left:none;
+}
+.talk.himari .bubble::before{border-right-color:var(--himari-bg)}
+.talk.labo .bubble::before{border-right-color:var(--labo-bg)}
+.talk .name{font-size:11px;font-weight:700;margin-bottom:2px}
+.talk.himari .name{color:var(--himari)}
+.talk.labo .name{color:var(--labo)}
+
+/* ===== 数字カード ===== */
+.numcards{display:grid;gap:12px;grid-template-columns:1fr;margin:24px 0}
+@media(min-width:560px){.numcards{grid-template-columns:repeat(3,1fr)}}
+.numcard{
+  background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:16px;text-align:center;box-shadow:var(--shadow);
+}
+.numcard .num{
+  font-family:Inter,"Noto Sans JP",sans-serif;font-weight:700;font-size:30px;
+  color:var(--brand);line-height:1.2;font-feature-settings:"tnum";
+}
+.numcard .cap{font-size:13px;color:var(--ink-soft);margin-top:4px;line-height:1.5}
+
+/* ===== タイムライン ===== */
+.timeline{margin:24px 0;padding-left:6px}
+.tl-item{position:relative;padding:0 0 22px 28px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{
+  content:"";position:absolute;left:6px;top:8px;width:11px;height:11px;
+  border-radius:50%;background:var(--brand);
+}
+.tl-item::after{
+  content:"";position:absolute;left:11px;top:22px;bottom:-2px;width:2px;
+  background:var(--line);
+}
+.tl-item:last-child::after{display:none}
+.tl-item .tl-date{
+  font-family:Inter,"Noto Sans JP",sans-serif;font-weight:700;font-size:14px;
+  color:var(--brand);
+}
+.tl-item .tl-body{font-size:15.5px;color:var(--ink-soft);line-height:1.7}
+.tl-item.hot::before{background:var(--unc)}
+.tl-item.hot .tl-date{color:var(--unc)}
+
+/* ===== 比較表(2案) ===== */
+.tbl-toggle{display:flex;gap:6px;margin:20px 0 10px}
+.tbl-toggle button{
+  border:1px solid var(--line);background:var(--surface2);color:var(--ink-soft);
+  border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:700;
+}
+.tbl-toggle button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+html.dark .tbl-toggle button[aria-pressed="true"]{color:#10141B}
+.tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px;background:var(--surface);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{background:var(--surface2);font-size:13px;letter-spacing:.03em}
+tbody tr:last-child td{border-bottom:none}
+td .ok{color:var(--facts);font-weight:700}
+td .ng{color:var(--himari);font-weight:700}
+.cardstack{display:grid;gap:12px;margin:6px 0 0}
+.cmp-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.cmp-card .cc-title{font-weight:700;font-size:15px;margin-bottom:8px;font-family:"Zen Maru Gothic",sans-serif}
+.cmp-card dl{display:grid;grid-template-columns:7.5em 1fr;gap:4px 10px;font-size:14px}
+.cmp-card dt{color:var(--ink-faint)}
+.hidden{display:none}
+
+/* ===== 補足・図解・関連 ===== */
+.note{
+  background:var(--surface2);border-left:4px solid var(--ink-faint);
+  border-radius:0 10px 10px 0;padding:12px 16px;margin:20px 0;
+  font-size:14.5px;color:var(--ink-soft);
+}
+.slides{display:grid;gap:14px;grid-template-columns:repeat(2,1fr);margin:20px 0}
+@media(min-width:640px){.slides{grid-template-columns:repeat(4,1fr)}}
+.slide-img{
+  aspect-ratio:4/5;width:100%;border-radius:10px;object-fit:cover;
+  border:1px solid var(--line);box-shadow:var(--shadow);filter:var(--img-filter);
+  cursor:zoom-in;display:block;
+}
+/* ===== ライトボックス ===== */
+.lb{
+  position:fixed;inset:0;z-index:100;background:rgba(10,14,22,.92);
+  display:none;align-items:center;justify-content:center;flex-direction:column;
+  padding:16px;
+}
+.lb.open{display:flex}
+.lb img{
+  max-width:min(92vw,560px);max-height:78vh;border-radius:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);cursor:zoom-in;
+  transition:transform .2s;touch-action:pinch-zoom;
+}
+@media (prefers-reduced-motion:reduce){.lb img{transition:none}}
+.lb img.zoomed{transform:scale(1.8);cursor:zoom-out}
+.lb .lb-cap{color:#CBD3E0;font-size:13px;margin-top:14px;text-align:center}
+.lb .lb-close{
+  position:absolute;top:14px;right:14px;width:44px;height:44px;border-radius:50%;
+  border:none;background:rgba(255,255,255,.14);color:#fff;font-size:20px;
+}
+.lb .lb-nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:44px;height:44px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.14);color:#fff;font-size:20px;
+}
+.lb .lb-prev{left:10px}.lb .lb-next{right:10px}
+.lb .lb-hint{color:#8B96A8;font-size:11.5px;margin-top:6px}
+.rel{
+  display:flex;gap:14px;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:14px;margin:20px 0;text-decoration:none;
+  box-shadow:var(--shadow);align-items:center;
+}
+.rel .thumb{
+  flex:0 0 84px;height:56px;border-radius:8px;background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--ink-faint);
+  filter:var(--img-filter);
+}
+.rel .rl{font-size:11px;font-weight:700;color:var(--brand);letter-spacing:.05em}
+.rel .rt{font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.5}
+
+/* ===== 目次 ===== */
+aside.toc{display:none}
+@media(min-width:1080px){
+  aside.toc{display:block}
+  .toc-inner{position:sticky;top:76px;font-size:13.5px}
+  .toc-inner .toc-title{font-weight:700;color:var(--ink-faint);font-size:12px;letter-spacing:.08em;margin-bottom:10px}
+  .toc-inner a{display:block;color:var(--ink-soft);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line);line-height:1.5}
+  .toc-inner a:hover{color:var(--brand);border-left-color:var(--brand)}
+}
+details.toc-m{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:12px 16px;margin:0 0 26px;font-size:14.5px;
+}
+details.toc-m summary{font-weight:700;cursor:pointer;color:var(--ink-soft)}
+details.toc-m a{display:block;padding:7px 0 0 8px;color:var(--ink-soft);text-decoration:none}
+@media(min-width:1080px){details.toc-m{display:none}}
+
+/* ===== テンプレ切替 ===== */
+.tpl{display:none}
+body.tpl-a .only-a,body.tpl-b .only-b,body.tpl-c .only-c{display:block}
+.tpl-note{
+  background:var(--brand-soft);color:var(--brand);border-radius:10px;
+  padding:10px 14px;font-size:13px;font-weight:700;margin:0 0 20px;
+}
+</style>
+</head>
+<body class="tpl-b">
+
+<div class="demo-bar">
+  <span class="label">見本切替:</span>
+  <div class="tabs" role="group" aria-label="テンプレート切替">
+    <button class="tab" data-tpl="a" aria-pressed="false">A ニュース解説</button>
+    <button class="tab" data-tpl="b" aria-pressed="true">B 続報・経緯型</button>
+    <button class="tab" data-tpl="c" aria-pressed="false">C 比較・選び方</button>
+  </div>
+  <button class="mode-btn" id="modeBtn" aria-pressed="false">🌙 ダークにする</button>
+</div>
+
+<div class="wrap"><div class="layout">
+<article>
+
+  <div class="tpl only-a tpl-note">テンプレA: ニュース解説型 — サマリー→本文→確度ボックス→図解の順。速報〜解説の主力。</div>
+  <div class="tpl only-b tpl-note">テンプレB: 続報・経緯型 — 冒頭に「これまでの経緯」タイムラインと前記事リンク。シリーズ物用。</div>
+  <div class="tpl only-c tpl-note">テンプレC: 比較・選び方型 — 結論の表とカードを先に。ガイド・資産記事用。</div>
+
+  <div class="eyebrow">
+    <span class="cat">ニュースをかみくだく</span>
+    <span class="date">2026年7月4日</span>
+  </div>
+  <h1 class="title">Claude Fable 5、7月8日からusage credits制へ。サブスクで使える残り枠と、切り替え後どうなるか</h1>
+
+  <div class="summary">
+    <div class="head">⏱ 30秒でわかる</div>
+    <ol>
+      <li><strong>7月7日まで</strong>は、Pro/Maxなどのサブスクで週次上限の<strong>50%まで</strong>Fable 5が使えます</li>
+      <li><strong>7月8日から</strong>は、前払いの<strong>usage credits</strong>経由での提供に切り替わります</li>
+      <li>サブスクへの復帰は<strong>時期未定</strong>。Anthropicは「一時的な措置」と説明しています</li>
+    </ol>
+  </div>
+
+  <details class="toc-m"><summary>目次</summary>
+    <a href="#s1">これまでの経緯</a><a href="#s2">何がどう変わるのか</a><a href="#s3">どこまでが確定情報か</a><a href="#s4">図解でおさらい</a>
+  </details>
+
+  <!-- ===== テンプレC: 結論先出しブロック ===== -->
+  <div class="tpl only-c">
+    <h2 id="c1">結論: あなたのプランではこうなる</h2>
+    <div class="tbl-toggle" role="group" aria-label="表の表示形式">
+      <button data-tv="scroll" aria-pressed="true">表で見る</button>
+      <button data-tv="cards" aria-pressed="false">カードで見る</button>
+    </div>
+    <div class="tbl-scroll" id="tvScroll">
+      <table>
+        <thead><tr><th>利用形態</th><th>7/7まで</th><th>7/8以降</th><th>やること</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Pro / Max / Team</strong></td><td><span class="ok">週次上限の50%まで利用可</span></td><td><span class="ng">サブスク枠からは外れる</span><br>usage credits経由</td><td>継続利用ならcredits購入を検討</td></tr>
+          <tr><td><strong>API(従量課金)</strong></td><td>利用可($10/$50 per Mトークン)</td><td>変更なし</td><td>特になし</td></tr>
+          <tr><td><strong>Enterprise(プレミアムシート)</strong></td><td>同梱で利用可</td><td>usage credits経由</td><td>管理者に確認</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cardstack hidden" id="tvCards">
+      <div class="cmp-card"><div class="cc-title">Pro / Max / Team</div>
+        <dl><dt>7/7まで</dt><dd>週次上限の50%まで利用可</dd><dt>7/8以降</dt><dd>usage credits経由に</dd><dt>やること</dt><dd>継続利用ならcredits購入を検討</dd></dl></div>
+      <div class="cmp-card"><div class="cc-title">API(従量課金)</div>
+        <dl><dt>7/7まで</dt><dd>利用可($10/$50 per Mトークン)</dd><dt>7/8以降</dt><dd>変更なし</dd><dt>やること</dt><dd>特になし</dd></dl></div>
+      <div class="cmp-card"><div class="cc-title">Enterprise</div>
+        <dl><dt>7/7まで</dt><dd>プレミアムシートに同梱</dd><dt>7/8以降</dt><dd>usage credits経由に</dd><dt>やること</dt><dd>管理者に確認</dd></dl></div>
+    </div>
+  </div>
+
+  <!-- ===== テンプレB: 経緯タイムライン ===== -->
+  <div class="tpl only-b">
+    <h2 id="s1">これまでの経緯(1分で追いつく)</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-date">6月9日</div><div class="tl-body">Claude Fable 5が登場。Opusの上位に位置づけられる新モデル</div></div>
+      <div class="tl-item"><div class="tl-date">6月12日</div><div class="tl-body">米政府の輸出規制指示を受け、全ユーザー向け提供を停止</div></div>
+      <div class="tl-item"><div class="tl-date">6月30日</div><div class="tl-body">規制解除が発表される</div></div>
+      <div class="tl-item"><div class="tl-date">7月1日</div><div class="tl-body">グローバルで提供再開。ただし一時的な利用制限つき</div></div>
+      <div class="tl-item hot"><div class="tl-date">7月8日</div><div class="tl-body"><strong>usage credits制へ切り替え(今回の話)</strong></div></div>
+    </div>
+    <a class="rel" href="#"><span class="thumb">サムネ</span><span><span class="rl">前回の記事</span><br><span class="rt">Claude Fable 5が復活。7月7日からの変更点と"止まっていた3週間"をやさしく整理</span></span></a>
+  </div>
+
+  <h2 id="s2">何がどう変わるのか</h2>
+  <p>Anthropicの発表によると、Fable 5は7月7日までサブスクリプションプランの<strong>週次利用上限の50%</strong>まで使えます<span class="chip f">確定</span>。7月8日以降は、前払いで購入する<strong>usage credits</strong>経由の提供に切り替わります<span class="chip f">確定</span>。</p>
+
+  <div class="numcards">
+    <div class="numcard"><div class="num">50%</div><div class="cap">7/7までの週次上限<br>(サブスク同梱ぶん)</div></div>
+    <div class="numcard"><div class="num">7/8</div><div class="cap">usage credits制への<br>切り替え日</div></div>
+    <div class="numcard"><div class="num">未定</div><div class="cap">サブスク標準提供への<br>復帰時期</div></div>
+  </div>
+
+  <div class="talk himari">
+    <img class="face" alt="ひまり" src="data:image/webp;base64,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">
+    <div class="bubble"><div class="name">ひまり</div>つまり今週は「半分まで」使えて、来週からは別料金ってこと? サブスク解約したほうがいいのかな…</div>
+  </div>
+  <div class="talk labo">
+    <img class="face" alt="らぼまる" src="data:image/webp;base64,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">
+    <div class="bubble"><div class="name">らぼまる</div>解約は早いよ。<strong>変わるのはFable 5のぶんだけ</strong>で、OpusやSonnetは今までどおりサブスクで使える。Fable 5を使い続けたい人だけcreditsを検討すればOK。</div>
+  </div>
+
+  <p>なお、リードエンジニアの発言として「早期のサブスク復帰を目指している」と報じられています<span class="chip c">報道</span>。ただし具体的な時期は示されていません<span class="chip u">未確定</span>。</p>
+
+  <h2 id="s3">どこまでが確定情報か</h2>
+
+  <div class="co facts"><div class="co-head">✅ 確定(公式発表で確認)</div>
+    <ul>
+      <li>7/7までサブスクで週次上限の50%までFable 5を利用可能</li>
+      <li>7/8以降はusage credits経由の提供に切り替え</li>
+      <li>Anthropicはこれを「一時的な措置」と説明</li>
+    </ul>
+  </div>
+  <div class="co claims"><div class="co-head">📰 報道・外部評価</div>
+    <ul><li>「容量が確保でき次第、サブスク標準提供に戻したい」との関係者発言</li></ul>
+  </div>
+  <div class="co unc"><div class="co-head">❓ 未確定・不明</div>
+    <ul>
+      <li>サブスク復帰の時期</li>
+      <li>usage creditsの具体的な必要量・料金感</li>
+      <li>日本のユーザー画面での表示のされ方</li>
+    </ul>
+  </div>
+
+  <div class="note">⚠️ 本記事は公開時点の情報です。価格・提供条件は変わる可能性があるため、最新情報は必ず公式サイトでご確認ください。</div>
+
+  <div class="tpl only-a only-b">
+    <h2 id="s4">図解でおさらい</h2>
+    <p>ここまでの内容をスライドに整理しました。<strong>タップで拡大表示</strong>、拡大中はもう一度タップでさらにズーム、左右で前後のスライドに移動できます。</p>
+    <div class="slides" id="slideGroup">
+      <img class="slide-img" alt="スライド1: 7/7までの利用条件" data-cap="スライド1 — 7/7までの利用条件">
+      <img class="slide-img" alt="スライド2: usage creditsとは" data-cap="スライド2 — usage creditsとは">
+      <img class="slide-img" alt="スライド3: プラン別の影響" data-cap="スライド3 — プラン別の影響">
+      <img class="slide-img" alt="スライド4: まとめ" data-cap="スライド4 — まとめ">
+    </div>
+    <p style="font-size:13px;color:var(--ink-faint)">※見本用のダミースライド(本番はWebP)。ダークモードでは画像をわずかに減光して眩しさを抑えます。</p>
+  </div>
+
+  <h2>まとめ</h2>
+  <p>Fable 5ユーザーがやることは2つだけ。<strong>①7/7までに使う予定があるなら週次上限の50%枠の中で</strong>、<strong>②7/8以降も使い続けたい場合だけusage creditsを検討</strong>。それ以外の人は、何もしなくて大丈夫です。</p>
+
+</article>
+
+<aside class="toc"><div class="toc-inner">
+  <div class="toc-title">目次</div>
+  <a href="#s1">これまでの経緯</a>
+  <a href="#s2">何がどう変わるのか</a>
+  <a href="#s3">どこまでが確定情報か</a>
+  <a href="#s4">図解でおさらい</a>
+</div></aside>
+
+</div></div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="画像の拡大表示">
+  <button class="lb-close" aria-label="閉じる">✕</button>
+  <button class="lb-nav lb-prev" aria-label="前のスライド">‹</button>
+  <img id="lbImg" alt="">
+  <button class="lb-nav lb-next" aria-label="次のスライド">›</button>
+  <div class="lb-cap" id="lbCap"></div>
+  <div class="lb-hint">タップでズーム / 背景タップか ✕ で閉じる</div>
+</div>
+
+<script>
+// ダミースライド生成(本番ではWebPのsrcが入る)
+const palettes=[["#34549C","50%","7/7までは週次上限の半分"],["#1F7A6E","credits","前払い制のしくみ"],["#B26A00","3プラン","あなたへの影響早見"],["#C8503F","まとめ","やることは2つだけ"]];
+function slideSVG(i){
+  const [c,big,small]=palettes[i];
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000"><rect width="800" height="1000" fill="#FFFFFF"/><rect width="800" height="180" fill="${c}"/><text x="60" y="115" font-family="sans-serif" font-size="44" font-weight="bold" fill="#fff">すまラボ図解 ${i+1}/4</text><text x="400" y="560" font-family="sans-serif" font-size="150" font-weight="bold" fill="${c}" text-anchor="middle">${big}</text><text x="400" y="680" font-family="sans-serif" font-size="42" fill="#333" text-anchor="middle">${small}</text><rect x="60" y="830" width="680" height="4" fill="${c}"/><text x="60" y="920" font-family="sans-serif" font-size="30" fill="#888">タップで拡大の動作見本です</text></svg>`;
+  return "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+}
+const slides=[...document.querySelectorAll('#slideGroup .slide-img')];
+slides.forEach((img,i)=>img.src=slideSVG(i));
+
+// ライトボックス
+const lb=document.getElementById('lb'),lbImg=document.getElementById('lbImg'),lbCap=document.getElementById('lbCap');
+let cur=0;
+function openLb(i){cur=i;lbImg.src=slides[i].src;lbImg.alt=slides[i].alt;lbImg.classList.remove('zoomed');lbCap.textContent=slides[i].dataset.cap||slides[i].alt;lb.classList.add('open');document.body.style.overflow='hidden';document.querySelector('.lb-close').focus();}
+function closeLb(){lb.classList.remove('open');document.body.style.overflow='';}
+function nav(d){openLb((cur+d+slides.length)%slides.length);}
+slides.forEach((img,i)=>img.addEventListener('click',()=>openLb(i)));
+lb.addEventListener('click',e=>{if(e.target===lb)closeLb();});
+document.querySelector('.lb-close').addEventListener('click',closeLb);
+document.querySelector('.lb-prev').addEventListener('click',()=>nav(-1));
+document.querySelector('.lb-next').addEventListener('click',()=>nav(1));
+lbImg.addEventListener('click',()=>lbImg.classList.toggle('zoomed'));
+document.addEventListener('keydown',e=>{
+  if(!lb.classList.contains('open'))return;
+  if(e.key==='Escape')closeLb();
+  if(e.key==='ArrowLeft')nav(-1);
+  if(e.key==='ArrowRight')nav(1);
+});
+// スワイプで前後移動
+let tx=null;
+lb.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+lb.addEventListener('touchend',e=>{
+  if(tx===null)return;
+  const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>60)nav(dx<0?1:-1);
+  tx=null;
+},{passive:true});
+
+const modeBtn=document.getElementById('modeBtn');
+function setMode(dark){
+  document.documentElement.classList.toggle('dark',dark);
+  modeBtn.textContent=dark?'☀️ ライトにする':'🌙 ダークにする';
+  modeBtn.setAttribute('aria-pressed',String(dark));
+}
+setMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+modeBtn.addEventListener('click',()=>setMode(!document.documentElement.classList.contains('dark')));
+
+document.querySelectorAll('.tab').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.body.className='tpl-'+b.dataset.tpl;
+    document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  });
+});
+
+document.querySelectorAll('.tbl-toggle button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const cards=b.dataset.tv==='cards';
+    document.getElementById('tvScroll').classList.toggle('hidden',cards);
+    document.getElementById('tvCards').classList.toggle('hidden',!cards);
+    document.querySelectorAll('.tbl-toggle button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  });
+});
+</script>
+</body>
+</html>
