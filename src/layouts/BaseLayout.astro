@@ -55,26 +55,20 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
         } catch (e) {}
       })();
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Webフォントは非同期読込（レンダーブロッキング回避）。読込完了までシステムフォントで表示 -->
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&family=Inter:wght@700&display=optional"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&family=Inter:wght@700&display=optional"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&family=Inter:wght@700&display=optional"
-      />
-    </noscript>
+    <script is:inline>
+      // 見出し用Webフォント(Zen Maru Gothic/Inter)は load 後にCSSを注入する。
+      // <link rel=stylesheet> だと media=print でも Lighthouse のシミュレーションが
+      // クリティカル扱いして FCP/LCP を悪化させるため（本番実測 92→69 の原因）。
+      // display=optional なので初回訪問はシステムフォント表示（シフトなし）、
+      // 2回目以降はキャッシュから Zen Maru が即適用される。
+      window.addEventListener("load", function () {
+        var l = document.createElement("link");
+        l.rel = "stylesheet";
+        l.href =
+          "https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&family=Inter:wght@700&display=optional";
+        document.head.appendChild(l);
+      });
+    </script>
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" type="application/rss+xml" title={siteConfig.siteName} href="/rss.xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
