@@ -43,6 +43,7 @@ npm run article -- --theme "<pickedのタイトルを元にした記事テーマ
   - 旧方式（`chatgpt-attach-files-clipboard.ps1` での添付）は**対話セッション限定のフォールバック**。ヘッドレスでは使わない。
 - **画像ファクトチェックは自分の目で行う**: 8 枚すべて Read で読み、slide_plan の数値・固有名詞・曜日・鉤括弧まで突き合わせる。不合格は該当のみ再生成（最大 2 回）。結果は factcheck.json に正直に記録する。
 - MDX の frontmatter `publishAt` は**現在時刻より前**（例: 実行時刻の 1 時間前）にすること（未来時刻だと build から除外され finalize が落ちる。2026-07-05 の実障害）。
+- MDX 本文では `docs/article_components_v3.md` に従い、冒頭の `Summary30`（30秒サマリー）と確度 `Callout`（facts / claims / unc）を使用する。図解スライドの書式は従来どおり（CLAUDE.md 準拠）。
 - orchestrator が 2 回失敗で halted になったら: 原因が自明な環境要因（publishAt 等）なら state の halted を解除して 1 回だけ再開してよい。それ以外は中止 → 通知 → 終了。
 
 ## 3. Phase B（公開）— veto 窓なしで即実行
