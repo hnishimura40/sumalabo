@@ -74,6 +74,7 @@ const PAIRS = [
   ["fg-faint", "bg-elev", 3.0, "補足キャプション（小・非本質情報）"],
   ["brand", "bg-elev", 4.5, "ブランド色ラベル・目次見出し"],
   ["brand", "bg", 4.5, "ブランド色 on ページ背景"],
+  ["brand", "brand-soft", 4.5, "最新記事バッジ・CTA（brand on brand-soft）"],
   ["teal-deep", "bg-elev", 4.5, "リンク on カード"],
   ["facts", "facts-bg", 4.5, "確定情報の見出し"],
   ["claims", "claims-bg", 4.5, "報道ベースの見出し"],
