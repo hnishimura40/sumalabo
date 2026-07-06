@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-04T23:38:00.062Z",
+  "updatedAt": "2026-07-06T23:25:01.246Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -269,7 +269,7 @@
       "source": "user_directed",
       "triggerKind": "user",
       "articleUrl": "https://sumalabo.com/articles/202606-claude-fable-5-launch/",
-      "previewUrl": "https://dd4b158c.sumalabo.pages.dev/articles/202606-claude-fable-5-launch/",
+      "previewUrl": "https://sumalabo.com/review/",
       "productionUrl": "https://sumalabo.com/articles/202606-claude-fable-5-launch/",
       "xPostUrl": "https://x.com/suma_labo/status/2073399096472412292",
       "publishedAt": "2026-07-04T22:14:30+09:00",
@@ -474,15 +474,41 @@
       "slug": "202607-claude-fable-5-usage-credits-switch",
       "incidents": [],
       "source": "user_directed",
-      "triggerKind": "theme",
+      "triggerKind": "user",
       "articleUrl": "https://sumalabo.com/articles/202607-claude-fable-5-usage-credits-switch/",
       "productionUrl": "https://sumalabo.com/articles/202607-claude-fable-5-usage-credits-switch/",
-      "previewUrl": "https://c47bdffe.sumalabo.pages.dev/articles/202607-claude-fable-5-usage-credits-switch/",
-      "publishedAt": "2026-07-04T23:33:34.608Z",
+      "previewUrl": "https://sumalabo.com/articles/202607-claude-fable-5-usage-credits-switch/",
+      "publishedAt": "2026-07-04T23:33:23.526Z",
       "autonomyLevel": 0,
-      "trigger": "user_approved_via_pwa_button",
+      "trigger": "manual",
       "xPostUrl": "https://x.com/suma_labo/status/2073551770933178667",
-      "xPostedAt": "2026-07-04T23:38:00.061Z"
+      "xPostedAt": "2026-07-04T23:38:00.059Z"
+    },
+    {
+      "slug": "202607-ai-assistant-use-cases-gemini-chatgpt-claude",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-ai-assistant-use-cases-gemini-chatgpt-claude/",
+      "previewUrl": "https://sumalabo.com/articles/202607-ai-assistant-use-cases-gemini-chatgpt-claude/",
+      "productionUrl": "https://sumalabo.com/articles/202607-ai-assistant-use-cases-gemini-chatgpt-claude/",
+      "publishedAt": "2026-07-06T04:40:04+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual"
+    },
+    {
+      "slug": "202607-anthropic-claude-science-research-workbench",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-anthropic-claude-science-research-workbench/",
+      "previewUrl": "https://sumalabo.com/articles/202607-anthropic-claude-science-research-workbench/",
+      "productionUrl": "https://sumalabo.com/articles/202607-anthropic-claude-science-research-workbench/",
+      "xPostUrl": "https://x.com/suma_labo/status/2073691164574933172",
+      "publishedAt": "2026-07-05T07:00:00+09:00",
+      "xPostedAt": "2026-07-05T08:51:54.949Z",
+      "autonomyLevel": 0,
+      "trigger": "manual"
     }
   ]
 }
