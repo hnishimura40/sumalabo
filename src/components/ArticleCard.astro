@@ -1,5 +1,5 @@
 ---
-import { articleTypeLabels } from "../lib/articles";
+import type { articleTypeLabels } from "../lib/articles";
 import { getCategoryByName } from "../lib/categories";
 
 interface ArticleData {
@@ -36,14 +36,8 @@ const category = getCategoryByName(article.category);
   </div>
   <div class="article-body">
     <div class="meta-row">
-      <span>{articleTypeLabels[article.type]}</span>
-      {
-        category ? (
-          <span>{category.name}</span>
-        ) : (
-          <span>{article.category}</span>
-        )
-      }
+      {/* 内部レーン名（流入/土台/収益）はUI非表示。カテゴリのみ出す */}
+      {category ? <span>{category.name}</span> : <span>{article.category}</span>}
     </div>
     <h3>{article.title}</h3>
     <p>{article.description}</p>

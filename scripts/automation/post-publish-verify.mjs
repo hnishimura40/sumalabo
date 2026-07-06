@@ -83,6 +83,32 @@ function extractOgImage(html) {
   return m ? m[1] : null;
 }
 
+// トップページ HTML から同一オリジンの <img src>（/images/... 等の画像パス）を抽出
+function extractLocalImgSrcs(html) {
+  const set = new Set();
+  const re = /<img[^>]+src=["']([^"']+)["']/gi;
+  let m;
+  while ((m = re.exec(html))) {
+    const ref = m[1];
+    if (ref.startsWith("/") && /\.(png|jpe?g|webp|svg|gif|avif)$/i.test(ref)) set.add(ref);
+  }
+  return [...set];
+}
+
+// 画像 URL の実応答を確認（本体は読まず content-type だけ見る）。
+// CF Pages の 404 は 200 + text/html のフォールバックを返すため、
+// 「200 かつ content-type が image/*」でないものは画像欠落として不合格にする。
+async function fetchImageMeta(url) {
+  try {
+    const res = await fetch(url, { cache: "no-store", redirect: "follow" });
+    const contentType = res.headers.get("content-type") || "";
+    try { await res.body?.cancel(); } catch { /* noop */ }
+    return { status: res.status, contentType };
+  } catch (e) {
+    return { status: 0, contentType: "", error: e && e.message };
+  }
+}
+
 async function runChecks({ slug, baseUrl }) {
   const articleUrl = `${baseUrl}/articles/${slug}/`;
   const [article, home, list] = await Promise.all([
@@ -98,12 +124,28 @@ async function runChecks({ slug, baseUrl }) {
   // homepage 誤配信: タイトルがサイト名だけ + slug 不在
   const homepageFallback = /^すまラボ\s*$/.test(title) && !slugInHtml;
 
+  // トップページの全 <img> が image/* で返るか（HTMLフォールバック=画像欠落を hard fail）
+  const homeImgSrcs = extractLocalImgSrcs(home.text || "");
+  const homeImgResults = [];
+  for (const ref of homeImgSrcs.slice(0, 40)) {
+    const meta = await fetchImageMeta(`${baseUrl}${ref}`);
+    const ok = meta.status === 200 && /^image\//i.test(meta.contentType);
+    homeImgResults.push({ ref, status: meta.status, contentType: meta.contentType, ok });
+  }
+  const homeImgBad = homeImgResults.filter((r) => !r.ok);
+
   const hard = {
     articleHttp200: { ok: article.status === 200, actual: article.status },
     slugInHtml: { ok: slugInHtml, note: slugInHtml ? undefined : "旧ビルド配信の疑い（記事HTMLにslugが無い）" },
     notHomepageFallback: { ok: !homepageFallback, title },
     homeHttp200: { ok: home.status === 200, actual: home.status },
     articlesIndexHttp200: { ok: list.status === 200, actual: list.status },
+    homepageImagesServed: {
+      ok: home.status === 200 && homeImgBad.length === 0,
+      checked: homeImgResults.length,
+      failed: homeImgBad,
+      note: homeImgBad.length ? "トップの<img>がimage/*で返らない（HTMLフォールバック=画像欠落）" : undefined,
+    },
   };
 
   // soft: OGP 画像応答 / 一覧掲載
