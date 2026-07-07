@@ -43,7 +43,8 @@ npm run article -- --theme "<pickedのタイトルを元にした記事テーマ
 - **画像生成は「常設キャラ工房チャット」の続きで行う（正本の添付は不要）**：`data/automation/image-workshop.json` の `conversationUrl` に navigate し、その会話の**続き**として slide_plan 順に生成する。この会話の冒頭には公式キャラ正本2枚（ひまり・らぼまる）が添付済みなので、毎回「この会話冒頭の正本2枚のキャラクター参照を厳守」と指示すれば足りる。**新規チャットを作らない／添付し直さない**（ヘッドレスからの画像添付は不可＝2026-07-05 に3方式とも実測失敗。この常設チャット方式が唯一のフォーカス/クリップボード非依存の経路）。
   - workshop チャットが開けない・会話冒頭に画像2枚が無い場合は、画像生成へ進まず `blocked_image_generation_unavailable` で中止・通知（人間が正本を貼り直す＝再シードが必要）。
   - 旧方式（`chatgpt-attach-files-clipboard.ps1` での添付）は**対話セッション限定のフォールバック**。ヘッドレスでは使わない。
-- **画像ファクトチェックは自分の目で行う**: 8 枚すべて Read で読み、slide_plan の数値・固有名詞・曜日・鉤括弧まで突き合わせる。不合格は該当のみ再生成（最大 2 回）。結果は factcheck.json に正直に記録する。
+  - **再シードの前倒し（2026-07-07 追加・キャラ参照劣化対策）**: `data/automation/image-workshop.json` の `generatedSinceSeed` が `reseedThreshold`(=10) を超える前、かつ **前記事ぶん(7〜8枚)を生成し終えていたら**、続きに詰め込まず**再シードを優先**する（新チャット+正本2枚添付+`conversationUrl`更新+`generatedSinceSeed`を0にリセット）。参照劣化は8枚1バッチの後半から出るため（2026-07-06 の ai-assistant 記事は slide06 からキャラ崩壊）。無人runで再シード（=画像添付）が経路上できない場合は `blocked_image_generation_unavailable` で安全停止し人間に依頼・通知する。生成のたびに `generatedSinceSeed` を +1 する。
+- **画像ファクトチェックは自分の目で行う**: 8 枚すべて Read で読み、slide_plan の数値・固有名詞・曜日・鉤括弧まで突き合わせる。**さらにキャラの視覚的破綻（ひまり=金髪ツインテール+白衣／らぼまる=丸い白マスコット。別人化・人型メカ化・途中からの変化は blocking）とレイアウト破綻・文字化けも必ず確認する**（`generate-slide-factcheck-prompt` の項目10/11）。不合格は該当のみ再生成（最大 2 回）。「全体の見た目が良ければ pass」で崩れを見逃さない。結果は factcheck.json に正直に記録する。
 - MDX の frontmatter `publishAt` は**現在時刻より前**（例: 実行時刻の 1 時間前）にすること（未来時刻だと build から除外され finalize が落ちる。2026-07-05 の実障害）。
 - orchestrator が 2 回失敗で halted になったら: 原因が自明な環境要因（publishAt 等）なら state の halted を解除して 1 回だけ再開してよい。それ以外は中止 → 通知 → 終了。
 
