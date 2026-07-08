@@ -45,6 +45,7 @@ npm run article -- --theme "<pickedのタイトルを元にした記事テーマ
   - 旧方式（`chatgpt-attach-files-clipboard.ps1` での添付）は**対話セッション限定のフォールバック**。ヘッドレスでは使わない。
   - **再シードの前倒し（2026-07-07 追加・キャラ参照劣化対策）**: `data/automation/image-workshop.json` の `generatedSinceSeed` が `reseedThreshold`(=10) を超える前、かつ **前記事ぶん(7〜8枚)を生成し終えていたら**、続きに詰め込まず**再シードを優先**する（新チャット+正本2枚添付+`conversationUrl`更新+`generatedSinceSeed`を0にリセット）。参照劣化は8枚1バッチの後半から出るため（2026-07-06 の ai-assistant 記事は slide06 からキャラ崩壊）。無人runで再シード（=画像添付）が経路上できない場合は `blocked_image_generation_unavailable` で安全停止し人間に依頼・通知する。生成のたびに `generatedSinceSeed` を +1 する。
 - **画像ファクトチェックは自分の目で行う**: 8 枚すべて Read で読み、slide_plan の数値・固有名詞・曜日・鉤括弧まで突き合わせる。**さらにキャラの視覚的破綻（ひまり=金髪ツインテール+白衣／らぼまる=丸い白マスコット。別人化・人型メカ化・途中からの変化は blocking）とレイアウト破綻・文字化けも必ず確認する**（`generate-slide-factcheck-prompt` の項目10/11）。不合格は該当のみ再生成（最大 2 回）。「全体の見た目が良ければ pass」で崩れを見逃さない。結果は factcheck.json に正直に記録する。
+- MDX 本文では `docs/article_components_v3.md` に従い、v3 コンポーネント（`Summary30`＝30秒サマリー、確度 `Callout`＝facts/claims/unc、`CharacterBubble`＝吹き出し、`NumCards`＝数字カード、`Timeline`＝経緯）を使用する（2026-07-08 有効化）。図解スライドの書式・`## 参考情報`は従来どおり併用。facts/claims/uncertain は Callout kind と 1:1 対応させる。
 - MDX の frontmatter `publishAt` は**現在時刻より前**（例: 実行時刻の 1 時間前）にすること（未来時刻だと build から除外され finalize が落ちる。2026-07-05 の実障害）。
 - orchestrator が 2 回失敗で halted になったら: 原因が自明な環境要因（publishAt 等）なら state の halted を解除して 1 回だけ再開してよい。それ以外は中止 → 通知 → 終了。
 

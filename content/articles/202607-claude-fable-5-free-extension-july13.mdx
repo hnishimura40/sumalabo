@@ -30,17 +30,52 @@ updated: "2026-07-08"
 publishAt: "2026-07-08T08:00:00+09:00"
 ---
 
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
 Claude Fable 5を「追加料金なしでサブスク内から使える期間」が、当初の7月7日から延長されました。前回の記事では「7月8日からusage credits制へ」と整理しましたが、その後の発表で、無料で使える期間が数日のびています。この記事では、何がどう変わって、いつまでに何をすればいいのかを、公式情報と報道を分けてやさしく整理します。
 
-## 先に結論：無料枠は7月13日昼まで延長。対象なら「その前に試す」でOK
+<Summary30>
+  <ol>
+    <li>Fable 5を追加料金なしで使える期間が、<strong>日本時間7月13日（日）15:59:59まで</strong>延長された</li>
+    <li>対象は<strong>Pro / Max / Team ＋ Enterpriseのプレミアムシート</strong>、<strong>週間上限の最大50%</strong>まで、<strong>申請不要</strong></li>
+    <li>期限後（50%到達後・7/13経過後）は<strong>利用クレジット（別課金）またはAPI</strong>に移る</li>
+    <li>対象プランなら、やることは<strong>期限内にFable 5を試しておく</strong>だけ</li>
+  </ol>
+</Summary30>
 
-<p class="lead">Claude Fable 5を追加料金なしで使える期間が、<strong>日本時間7月13日（日）15:59:59まで</strong>延長されました。対象プランなら<strong>申請不要</strong>で、<strong>週間上限の最大50%まで</strong>は追加料金なしで使えます。</p>
+<NumCards
+  items={[
+    { num: "7/13", cap: "無料枠の期限（日本時間15:59:59）" },
+    { num: "50%", cap: "週間上限のうち追加料金なしで使える割合" },
+    { num: "0円", cap: "対象プランなら追加料金・申請なし" },
+  ]}
+/>
 
-- 期限：当初7月7日 → **米太平洋時間7月12日23:59:59（日本時間7月13日15:59:59）** まで
-- 対象：**Pro / Max / Team ＋ Enterpriseのプレミアムシート**、週間上限の**最大50%**まで、**申請不要**
-- 期限後：50%到達後・7月13日経過後は **利用クレジット（別課金）またはAPI経由**
+<CharacterBubble speaker="himari" mood="curious">7月8日から切り替わるって聞いてたけど、変わったの？</CharacterBubble>
 
-やることはシンプルです。対象プランで「Fable 5を試したい」なら、**期限内（7月13日の昼まで）に触っておく**。それだけで追加料金はかかりません。
+<CharacterBubble speaker="labo" mood="point">うん。無料で使える期間が7/13の昼まで延びたよ。仕組みは同じで、日付が動いただけ。</CharacterBubble>
+
+## 何が変わった？無料で使える期間が約6日のびた
+
+<p class="lead">変わったのは<strong>期限だけ</strong>です。仕組み（対象・50%・申請不要）はそのままで、締切が後ろに動きました。</p>
+
+前回の記事「[Claude Fable 5、7月8日からusage credits制へ](https://sumalabo.com/articles/202607-claude-fable-5-usage-credits-switch/)」の時点では、7月7日までが無料枠で、7月8日からusage creditsに切り替わる予定でした。今回（7月7日）の発表で、その無料枠が**7月12日（米太平洋時間）＝日本時間7月13日の昼まで**延長されています。
+
+<Callout kind="facts">
+  <ul>
+    <li>追加料金なしで使える期間が、7月7日 → 日本時間7月13日15:59:59まで延長</li>
+    <li>対象：Pro / Max / Team ＋ Enterpriseプレミアムシート</li>
+    <li>週間上限の最大50%まで・申請不要（自動適用）</li>
+    <li>Fable 5はサブスクから恒久的に外れるわけではなく、容量が許せば戻る（Anthropicの説明）</li>
+  </ul>
+</Callout>
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">まず結論を、日付とセットで1枚に。</p>
@@ -60,14 +95,6 @@ Claude Fable 5を「追加料金なしでサブスク内から使える期間」
     </ul>
   </div>
 </section>
-
-## 何が変わった？無料で使える期間が約6日のびた
-
-<p class="lead">変わったのは<strong>期限だけ</strong>です。仕組み（対象・50%・申請不要）はそのままで、締切が後ろに動きました。</p>
-
-前回の記事「[Claude Fable 5、7月8日からusage credits制へ](https://sumalabo.com/articles/202607-claude-fable-5-usage-credits-switch/)」の時点では、7月7日までが無料枠で、7月8日からusage creditsに切り替わる予定でした。今回（7月7日）の発表で、その無料枠が**7月12日（米太平洋時間）＝日本時間7月13日の昼まで**延長されています。
-
-追加料金なしで使える条件（Pro / Max / Team ＋ Enterpriseプレミアム、週間上限の最大50%、申請不要）は据え置きです。
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">前と今を、矢印1本で見比べます。</p>
@@ -125,7 +152,15 @@ Claude Fable 5を「追加料金なしでサブスク内から使える期間」
 
 <p class="lead">難しい手続きはありません。<strong>期限内に試す</strong>のが基本で、課金が不安な人だけ追加の一手を。</p>
 
-締切は日本時間7月13日（日）15:59:59です。締切後は、サブスク内の無料枠ではなく、利用クレジットまたはAPIに移ります。
+締切は<Chip kind="facts">確定</Chip>日本時間7月13日（日）15:59:59です。締切後は、サブスク内の無料枠ではなく、利用クレジットまたはAPIに移ります。
+
+<Timeline>
+  <TimelineItem date="7/7">延長を発表</TimelineItem>
+  <TimelineItem date="7/13 15:59:59（日本時間）" hot>ここまで無料枠</TimelineItem>
+  <TimelineItem date="7/13 以降">利用クレジットまたはAPI経由に</TimelineItem>
+</Timeline>
+
+<CharacterBubble speaker="labo" mood="smile">難しい手続きはないよ。対象プランかを見て、期限内に触っておけばOK。</CharacterBubble>
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">やることをチェックリストで。</p>
@@ -171,7 +206,14 @@ Claude Fable 5を「追加料金なしでサブスク内から使える期間」
 
 50%に到達した後や、7月13日を過ぎた後は、Fable 5は利用クレジット（usage credits）またはAPI経由での利用になります。クレジットの仕組みや Settings &gt; Usage の見方、注意点は、前記事「[Claude Fable 5、7月8日からusage credits制へ](https://sumalabo.com/articles/202607-claude-fable-5-usage-credits-switch/)」で解説しています。
 
-報道では、クレジットの単価は入力が約10ドル・出力が約50ドル（いずれも100万トークンあたり）と伝えられています。ただしこれは報道ベースの数字で、公式ページは価格を明記していないため、最終的な条件は公式の最新表示で確認してください。日本円での請求額は「約」でしか示せないため、この記事では円換算を主役にしていません。
+<Callout kind="claims">
+  <ul>
+    <li>報道では、クレジットの単価は入力が約10ドル・出力が約50ドル（いずれも100万トークンあたり）と伝えられています</li>
+    <li>ただしこれは報道ベースの数字で、公式ページは価格を明記していません</li>
+  </ul>
+</Callout>
+
+<Note>クレジットの単価は<Chip kind="claims">報道</Chip>ベースです。日本円での請求額は「約」でしか示せないため、最終的な条件・価格は必ず公式の最新表示で確認してください。</Note>
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">締切後の2つの道を、カードで。</p>
@@ -196,9 +238,28 @@ Claude Fable 5を「追加料金なしでサブスク内から使える期間」
 
 <p class="lead">ここは<strong>確定・報道・未確定を分けて</strong>見るところです。延長理由や復帰時期は、まだ断定できません。</p>
 
-確定していること（公式）は、無料枠を日本時間7月13日の昼まで延長したこと、そしてAnthropicが「Fable 5はサブスクから恒久的に外れるわけではなく、容量（キャパシティ）が許せば戻る」と説明していることです。
+<Callout kind="facts" title="確定（公式）">
+  <ul>
+    <li>無料枠を日本時間7月13日の昼まで延長したこと</li>
+    <li>Anthropicが「Fable 5はサブスクから恒久的に外れるわけではなく、容量が許せば戻る」と説明していること</li>
+  </ul>
+</Callout>
 
-一方で、延長の理由をAnthropicは明言していません。報道では、競合（GPT-5.6の発表など）との兼ね合いを指摘する見方がありますが、これは報道ベースの解釈です。標準サブスクへ戻る具体的な時期や、日本の各プランでの表示・請求の細部は、まだ未確定です。
+<Callout kind="claims" title="報道ベース（断定しない）">
+  <ul>
+    <li>延長の理由をAnthropicは明言していない。報道では競合（GPT-5.6の発表など）との兼ね合いを指摘する見方がある</li>
+    <li>クレジットの単価（入力 約10ドル／出力 約50ドル）</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年7月時点）">
+  <ul>
+    <li>標準サブスクへ戻る具体的な時期・条件</li>
+    <li>日本の各プランでの表示・請求の細部</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">「確定」と「報道／未確定」は分けて読むのがコツ。理由や復帰時期はまだ断定できないよ。</CharacterBubble>
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">確定・報道・未確定を、3つに仕分け。</p>
@@ -226,7 +287,9 @@ Claude Fable 5を「追加料金なしでサブスク内から使える期間」
 - 期限後も使い続けたい人 → 利用クレジットやAPIを検討（課金が不安なら少額・OFF発想）
 - 様子見でよい人 → 「恒久的に外れるわけではない」ので、戻ってくるのを待つ選択肢も
 
-価格・提供条件・復帰時期は変わりやすい情報です。最終的な条件は、必ず公式の最新表示で確認してください。
+<CharacterBubble speaker="himari" mood="aha">これなら迷わないね。まず対象かを見て、期限内に試すかどうか決めればいいんだ。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">目的で選べば十分だよ。価格や条件は変わりやすいから、最後は公式の最新表示で確認してね。</CharacterBubble>
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">最後に、3つの判断ガイドで。</p>
