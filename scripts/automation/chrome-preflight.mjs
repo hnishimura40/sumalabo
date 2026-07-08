@@ -41,6 +41,12 @@ function isLoginUrl(url) {
   return /\/auth\/login|\/auth\/logout|\baccounts\.google\.com\/(signin|ServiceLogin)|\/login\b|\/i\/flow\/login/i.test(url);
 }
 
+// リトライ設定（環境変数で上書き可）。起動直後は DevTools が応答しない/タブ復元が
+// 遅れて ChatGPT・X タブがまだ現れないことがあるため、合格するまで数回ポーリングする。
+const MAX_ATTEMPTS = Number(process.env.CHROME_PREFLIGHT_ATTEMPTS || 8);
+const RETRY_MS = Number(process.env.CHROME_PREFLIGHT_RETRY_MS || 5000);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 async function listTabs() {
   const res = await fetch(`http://127.0.0.1:${PORT}/json/list`, { cache: "no-store" });
   if (!res.ok) throw new Error(`devtools /json/list HTTP ${res.status}`);
@@ -52,13 +58,14 @@ function out(o) {
   process.exitCode = o.ok ? 0 : 20;
 }
 
-(async () => {
+// 1 回分の検査。合格なら {ok:true,...}、不合格なら {ok:false,...}、
+// DevTools 自体に届かないときは {ok:false, reason:"chrome_devtools_unreachable"}。
+async function evaluateOnce() {
   let tabs;
   try {
     tabs = await listTabs();
   } catch (e) {
-    out({ ok: false, reason: "chrome_devtools_unreachable", detail: e && e.message });
-    return;
+    return { ok: false, unreachable: true, reason: "chrome_devtools_unreachable", detail: e && e.message };
   }
 
   const pages = (tabs || []).filter((t) => t.type === "page");
@@ -74,7 +81,7 @@ function out(o) {
   if (!x) problems.push("no_x_tab");
   else if (isLoginUrl(x)) problems.push("x_logged_out");
 
-  out({
+  return {
     ok: problems.length === 0,
     problems,
     warnings: workshopOpen ? [] : ["workshop_tab_not_open（ドライバーがnavigateで開く想定・warn）"],
@@ -83,7 +90,21 @@ function out(o) {
     x: x || null,
     workshopOpen,
     sampleUrls: urls.slice(0, 12),
-  });
+  };
+}
+
+(async () => {
+  let last = null;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    last = await evaluateOnce();
+    last.attempt = attempt;
+    if (last.ok) break;
+    if (attempt < MAX_ATTEMPTS) {
+      console.error(`[chrome-preflight] attempt ${attempt}/${MAX_ATTEMPTS} 未合格（${last.reason || (last.problems || []).join(",")}）→ ${RETRY_MS}ms 後に再試行`);
+      await sleep(RETRY_MS);
+    }
+  }
+  out(last);
 })().catch((e) => {
   console.error("[chrome-preflight fatal]", e && e.message ? e.message : e);
   process.exitCode = 2;
