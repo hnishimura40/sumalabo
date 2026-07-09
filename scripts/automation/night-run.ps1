@@ -67,35 +67,47 @@ try {
     }
   }
 
-  # ---- 2-bis. Chrome 起動 + ブラウザ経路プリフライト ----
-  # 夜間は Chrome が閉じており拡張も未接続で空振りする（2026-07-07 実測: tabs_context_mcp
-  # が "browser extension is not connected" で中止）。claude を起動する前に、ログイン済み
-  # プロファイルで Chrome を起動（--restore-last-session で ChatGPT/X タブ・ログイン復元）し、
-  # DevTools ポートで ChatGPT/X ログイン生存を検査する。不合格なら testMode を消費せず停止。
+  # ---- 2-bis. Chrome 起動（専用プロファイル + DevTools）+ ブラウザ経路プリフライト ----
+  # 【Chrome 136+ 対応】Chrome は 136 以降、既定（デフォルト）プロファイルでの
+  # --remote-debugging-port を無効化する（Cookie 窃取対策）。実測（2026-07-09, Chrome 150）：
+  #   デフォルトプロファイル + --remote-debugging-port → ポート bind せず（7/8・7/9の不応答原因）
+  #   専用 --user-data-dir + --remote-debugging-port → 即 bind
+  # よって専用の自動運転プロファイル（$AutoProfile）でポート付き起動する。
+  # このプロファイルには一度だけ ChatGPT/X ログイン + claude-in-chrome 拡張ペアリングが必要
+  # （docs/night_chrome_profile_setup.md 参照）。ユーザーの通常 Chrome とは独立に共存する。
   $ChromeExe = "C:\Program Files\Google\Chrome\Application\chrome.exe"
   if (-not (Test-Path $ChromeExe)) { $ChromeExe = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" }
   $DebugPort = 9222
   $env:CHROME_DEBUG_PORT = "$DebugPort"
+  $AutoProfile = if ($env:SUMALABO_CHROME_PROFILE) { $env:SUMALABO_CHROME_PROFILE } else { "D:\work\chrome-automation-profile" }
 
   function Test-DebugPort {
     try { Invoke-WebRequest -UseBasicParsing "http://127.0.0.1:$DebugPort/json/version" -TimeoutSec 3 | Out-Null; return $true }
     catch { return $false }
   }
 
-  # 既存 Chrome を確実に終了する（デバッグポート無しで起動された既存インスタンスが
-  # あると、--remote-debugging-port を付けて起動しても既存にルーティングされ、ポートが
-  # listen しない ＝ 2026-07-08/09 の「Chrome起動/DevTools不応答」の根本原因）。
-  function Stop-ExistingChrome {
-    $procs = @(Get-Process chrome -ErrorAction SilentlyContinue)
+  # 自動運転プロファイルで起動中の Chrome だけを終了する（ユーザーの通常 Chrome は残す）。
+  # ポート未応答なのに自動運転プロファイルの Chrome が生きている＝異常状態なので作り直す。
+  function Stop-AutomationChrome {
+    $procs = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
+      Where-Object { $_.CommandLine -and $_.CommandLine.Contains($AutoProfile) })
     if ($procs.Count -eq 0) { return $false }
-    Log "既存 Chrome プロセス $($procs.Count) 個を終了（ポート奪取のため。--restore-last-session でタブは復元）。"
-    $procs | Stop-Process -Force -ErrorAction SilentlyContinue
-    for ($i = 0; $i -lt 20; $i++) {
-      Start-Sleep -Milliseconds 700
-      if (@(Get-Process chrome -ErrorAction SilentlyContinue).Count -eq 0) { break }
-    }
-    Start-Sleep -Seconds 2   # プロファイルロック（SingletonLock）解放待ち
+    Log "自動運転プロファイルの Chrome プロセス $($procs.Count) 個を終了（作り直しのため。通常Chromeは対象外）。"
+    $procs | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+    Start-Sleep -Seconds 2   # SingletonLock 解放待ち
     return $true
+  }
+
+  function Start-AutomationChrome {
+    Start-Process -FilePath $ChromeExe -ArgumentList @(
+      "--user-data-dir=$AutoProfile",
+      "--restore-last-session",
+      "--remote-debugging-port=$DebugPort",
+      "--remote-allow-origins=*",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--start-maximized"
+    ) | Out-Null
   }
 
   if (-not (Test-Path $ChromeExe)) {
@@ -104,40 +116,29 @@ try {
     exit 0
   }
 
+  if (-not (Test-Path $AutoProfile)) {
+    Log "SKIP: 自動運転プロファイル ($AutoProfile) が未作成。初回セットアップ（一度だけChatGPT/Xログイン+拡張ペアリング）が必要。docs/night_chrome_profile_setup.md 参照。停止（testMode 未消費）。"
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: 自動運転Chromeプロファイル未セットアップ（初回ログイン+拡張ペアリングが必要）'}))" 2>&1 | Out-Null
+    exit 0
+  }
+
   $portUp = Test-DebugPort
   if ($portUp) {
-    Log "Chrome DevTools ポートは既に応答（デバッグポート付きで起動済み）。そのまま利用。"
+    Log "Chrome DevTools ポートは既に応答（自動運転プロファイル起動済み）。そのまま利用。"
   } else {
-    # ポートが応答しない = デバッグポート無しの既存 Chrome が動いている可能性。
-    # まず既存 Chrome を終了してから、デバッグポート付きで起動し直す。
-    Stop-ExistingChrome | Out-Null
     $devId = if (Test-Path 'data\automation\night-browser.json') { (Get-Content 'data\automation\night-browser.json' -Raw | ConvertFrom-Json).deviceId } else { 'n/a' }
-    Log "launch Chrome: --restore-last-session --remote-debugging-port=$DebugPort (deviceId=$devId)"
-    Start-Process -FilePath $ChromeExe -ArgumentList @(
-      "--restore-last-session",
-      "--remote-debugging-port=$DebugPort",
-      "--remote-allow-origins=*",
-      "--no-first-run",
-      "--no-default-browser-check",
-      "--start-maximized"
-    ) | Out-Null
+    Log "launch Chrome: --user-data-dir=$AutoProfile --remote-debugging-port=$DebugPort (deviceId=$devId)"
+    Stop-AutomationChrome | Out-Null   # 自動運転プロファイルの残骸があれば掃除
+    Start-AutomationChrome
     # 起動直後は DevTools が数秒〜十数秒応答しない。最大 ~60s 待つ（30回 × 2s）。
     for ($i = 0; $i -lt 30; $i++) {
       Start-Sleep -Seconds 2
       if (Test-DebugPort) { $portUp = $true; break }
     }
-    # まだ応答しないときは、既存インスタンスを掴んだ疑い。もう一度全終了して単独起動を試す。
     if (-not $portUp) {
-      Log "DevTools 未応答。既存 Chrome を再度全終了して単独起動を再試行します。"
-      Stop-ExistingChrome | Out-Null
-      Start-Process -FilePath $ChromeExe -ArgumentList @(
-        "--restore-last-session",
-        "--remote-debugging-port=$DebugPort",
-        "--remote-allow-origins=*",
-        "--no-first-run",
-        "--no-default-browser-check",
-        "--start-maximized"
-      ) | Out-Null
+      Log "DevTools 未応答。自動運転プロファイルの Chrome を全終了して単独起動を再試行します。"
+      Stop-AutomationChrome | Out-Null
+      Start-AutomationChrome
       for ($i = 0; $i -lt 30; $i++) {
         Start-Sleep -Seconds 2
         if (Test-DebugPort) { $portUp = $true; break }
@@ -146,11 +147,11 @@ try {
   }
 
   if (-not $portUp) {
-    Log "SKIP: Chrome DevTools ポートが応答しない（起動失敗/多重起動でポート未割当）。停止（testMode 未消費）。"
+    Log "SKIP: Chrome DevTools ポートが応答しない（起動失敗）。停止（testMode 未消費）。"
     node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: Chrome起動/DevTools不応答'}))" 2>&1 | Out-Null
     exit 0
   }
-  Log "Chrome DevTools ポート応答 OK (http://127.0.0.1:$DebugPort)"
+  Log "Chrome DevTools ポート応答 OK (http://127.0.0.1:$DebugPort, profile=$AutoProfile)"
 
   # restore-last-session のタブ復元・ログインリダイレクトが落ち着くまで待つ
   Start-Sleep -Seconds 8

@@ -16,7 +16,9 @@ node scripts/automation/test-mode.mjs --status
 
 ## 0-bis. ブラウザ選択（最初のブラウザ操作より前に必ず実行）
 
-> **前提（2026-07-07 追加）**: この指示書が起動する時点で、runner（`night-run.ps1`）が既に **Chrome を起動済み**（`--restore-last-session` で ChatGPT/X タブ・ログイン復元、`--remote-debugging-port=9222`）で、`chrome-preflight.mjs`（ChatGPT/X ログイン生存）を通過している。つまり **Chrome は起動しログイン済みの状態で渡ってくる**。あなたが Chrome を起動する必要はない。もし claude-in-chrome 拡張が未接続で `select_browser` / `tabs_context_mcp` が失敗する場合は、環境要因（拡張の Connect 未実行）なので、ブラウザ操作を一切せず `blocked` で中止・通知する（testMode は消費しない）。
+> **前提（2026-07-07 / 2026-07-09 更新）**: この指示書が起動する時点で、runner（`night-run.ps1`）が既に **専用の自動運転プロファイル**（`--user-data-dir=D:\work\chrome-automation-profile`）で **Chrome を起動済み**（`--restore-last-session` で ChatGPT/X タブ・ログイン復元、`--remote-debugging-port=9222`）で、`chrome-preflight.mjs`（ChatGPT/X ログイン生存）を通過している。つまり **Chrome は起動しログイン済みの状態で渡ってくる**。あなたが Chrome を起動する必要はない。
+>
+> **Chrome 136+ 対応（2026-07-09）**: Chrome はデフォルトプロファイルでの `--remote-debugging-port` を無効化するため、専用プロファイルを使う。専用プロファイルには一度だけ ChatGPT/X ログイン + 拡張ペアリングが必要（`docs/night_chrome_profile_setup.md`）。もし claude-in-chrome 拡張が未接続で `select_browser` / `tabs_context_mcp` が失敗する場合は、環境要因（専用プロファイルでの拡張ペアリング未完 / Connect 未実行）なので、ブラウザ操作を一切せず `blocked` で中止・通知する（testMode は消費しない）。
 
 ToolSearch で `mcp__claude-in-chrome__select_browser` をロードし、`data/automation/night-browser.json` の deviceId を **select_browser で明示選択**する（複数ブラウザ接続時、既定ルーティングが Edge を掴む実測事故が 2026-07-05 に 2 回発生）。選択後、任意のタブで `navigator.userAgent` に `Edg/` が含まれないことを確認。含まれる・ファイルが無い・選択に失敗する場合は、ブラウザを一切操作せず中止・通知する。list_connected_browsers が複数を返しても AskUserQuestion はしない（ユーザーは設定ファイルで Chrome を指定済み）。
 
