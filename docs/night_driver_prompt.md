@@ -16,9 +16,16 @@ node scripts/automation/test-mode.mjs --status
 
 ## 0-bis. ブラウザ選択（最初のブラウザ操作より前に必ず実行）
 
-> **前提（2026-07-07 追加）**: この指示書が起動する時点で、runner（`night-run.ps1`）が既に **Chrome を起動済み**（`--restore-last-session` で ChatGPT/X タブ・ログイン復元、`--remote-debugging-port=9222`）で、`chrome-preflight.mjs`（ChatGPT/X ログイン生存）を通過している。つまり **Chrome は起動しログイン済みの状態で渡ってくる**。あなたが Chrome を起動する必要はない。もし claude-in-chrome 拡張が未接続で `select_browser` / `tabs_context_mcp` が失敗する場合は、環境要因（拡張の Connect 未実行）なので、ブラウザ操作を一切せず `blocked` で中止・通知する（testMode は消費しない）。
+> **前提（2026-07-07 / 2026-07-09 更新）**: runner（`night-run.ps1`）は **デフォルトプロファイルの Chrome** が起動していることだけを保証して渡してくる（起動していなければ `--restore-last-session` で起動する）。ここが ChatGPT/X ログイン済み・claude-in-chrome 拡張ペアリング済みの本番環境。あなたは拡張でこのデフォルトプロファイルの Chrome を操作する。
+>
+> **Chrome 136+ 対応（2026-07-09）**: Chrome 136 以降はデフォルトプロファイルでの `--remote-debugging-port` を無効化する（実測 Chrome 150）。そのため runner 側の debug-port プリフライトは廃止し、**ログイン生存の検査は下記のとおりあなた（拡張）が最初に行う**。もし claude-in-chrome 拡張が未接続で `select_browser` / `tabs_context_mcp` が失敗する場合は、環境要因（Chrome 未起動 / 拡張 Connect 未実行）なので、ブラウザ操作を一切せず `blocked` で中止・通知する（testMode は消費しない）。
 
 ToolSearch で `mcp__claude-in-chrome__select_browser` をロードし、`data/automation/night-browser.json` の deviceId を **select_browser で明示選択**する（複数ブラウザ接続時、既定ルーティングが Edge を掴む実測事故が 2026-07-05 に 2 回発生）。選択後、任意のタブで `navigator.userAgent` に `Edg/` が含まれないことを確認。含まれる・ファイルが無い・選択に失敗する場合は、ブラウザを一切操作せず中止・通知する。list_connected_browsers が複数を返しても AskUserQuestion はしない（ユーザーは設定ファイルで Chrome を指定済み）。
+
+**ログイン生存チェック（最初のブラウザ操作・必須。debug-port プリフライト廃止の代替）**: 専用タブを1つ作り、
+1. `https://chatgpt.com/` へ navigate → `fetch('/api/auth/session',{credentials:'include'})` の JSON に `user.email` があればログイン中。無ければ `blocked` で中止・通知（testMode 未消費）。
+2. `https://x.com/home` へ navigate → `[data-testid="SideNav_AccountSwitcher_Button"]` に **@suma_labo** が出ればログイン中。ログインフローへ飛ぶ/アカウントが違うなら `blocked` で中止・通知（testMode 未消費）。
+どちらも生存していれば本処理へ進む。工房チャットは Phase A の画像生成時に navigate すればよい（ここでは開かなくてよい）。
 
 ## 1. ネタ選定（scout）
 
@@ -43,7 +50,10 @@ npm run article -- --theme "<pickedのタイトルを元にした記事テーマ
 - **画像生成は「常設キャラ工房チャット」の続きで行う（正本の添付は不要）**：`data/automation/image-workshop.json` の `conversationUrl` に navigate し、その会話の**続き**として slide_plan 順に生成する。この会話の冒頭には公式キャラ正本2枚（ひまり・らぼまる）が添付済みなので、毎回「この会話冒頭の正本2枚のキャラクター参照を厳守」と指示すれば足りる。**新規チャットを作らない／添付し直さない**（ヘッドレスからの画像添付は不可＝2026-07-05 に3方式とも実測失敗。この常設チャット方式が唯一のフォーカス/クリップボード非依存の経路）。
   - workshop チャットが開けない・会話冒頭に画像2枚が無い場合は、画像生成へ進まず `blocked_image_generation_unavailable` で中止・通知（人間が正本を貼り直す＝再シードが必要）。
   - 旧方式（`chatgpt-attach-files-clipboard.ps1` での添付）は**対話セッション限定のフォールバック**。ヘッドレスでは使わない。
-- **画像ファクトチェックは自分の目で行う**: 8 枚すべて Read で読み、slide_plan の数値・固有名詞・曜日・鉤括弧まで突き合わせる。不合格は該当のみ再生成（最大 2 回）。結果は factcheck.json に正直に記録する。
+  - **再シードの前倒し（2026-07-07 追加・キャラ参照劣化対策）**: `data/automation/image-workshop.json` の `generatedSinceSeed` が `reseedThreshold`(=10) を超える前、かつ **前記事ぶん(7〜8枚)を生成し終えていたら**、続きに詰め込まず**再シードを優先**する（新チャット+正本2枚添付+`conversationUrl`更新+`generatedSinceSeed`を0にリセット）。参照劣化は8枚1バッチの後半から出るため（2026-07-06 の ai-assistant 記事は slide06 からキャラ崩壊）。無人runで再シード（=画像添付）が経路上できない場合は `blocked_image_generation_unavailable` で安全停止し人間に依頼・通知する。生成のたびに `generatedSinceSeed` を +1 する。
+- **画像ファクトチェックは自分の目で行う**: 8 枚すべて Read で読み、slide_plan の数値・固有名詞・曜日・鉤括弧まで突き合わせる。**さらにキャラの視覚的破綻を「認識アンカー」で確認する（ひまり=金髪サイドテール・青い瞳・顔立ち・頭身／らぼまる=白い卵型ボディ・黄緑アンテナ・胸のオレンジのハートボタン。アンカー逸脱＝別人化・人型メカ化・途中からの変化は blocking）とレイアウト破綻・文字化けも必ず確認する**（`generate-slide-factcheck-prompt` の項目10/11）。**服・小道具の違いそのものは破綻ではない**（ただしスライド8枚は標準衣装で一貫が原則。バラつきは warning）。不合格は該当のみ再生成（最大 2 回）。「全体の見た目が良ければ pass」で崩れを見逃さない。結果は factcheck.json に正直に記録する。
+- **サムネの衣装チェック（崩れ検査とは別・★2026-07-08）**: サムネは `assets/characters/character-sheet.md` の「サムネの衣装は変えることを基本」に沿って、**記事テーマから連想される衣装・小道具・シチュエーションが標準から変えてあるか**を確認する。**標準衣装のままでも崩れではないので needs_revision にはしない**が、factcheck.json に `thumbnailCostume: "themed"`（テーマに沿って変えてある）/ `"standard_improvable"`（標準のまま＝改善余地あり）を記録する。`standard_improvable` は無人runでは注意ログに留め停止しない（立ち会い時のみ 1 枚差し替え再生成を検討）。認識アンカー不変・露出過多NGは前提。
+- MDX 本文では `docs/article_components_v3.md` に従い、v3 コンポーネント（`Summary30`＝30秒サマリー、確度 `Callout`＝facts/claims/unc、`CharacterBubble`＝吹き出し、`NumCards`＝数字カード、`Timeline`＝経緯）を使用する（2026-07-08 有効化）。図解スライドの書式・`## 参考情報`は従来どおり併用。facts/claims/uncertain は Callout kind と 1:1 対応させる。
 - MDX の frontmatter `publishAt` は**現在時刻より前**（例: 実行時刻の 1 時間前）にすること（未来時刻だと build から除外され finalize が落ちる。2026-07-05 の実障害）。
 - orchestrator が 2 回失敗で halted になったら: 原因が自明な環境要因（publishAt 等）なら state の halted を解除して 1 回だけ再開してよい。それ以外は中止 → 通知 → 終了。
 

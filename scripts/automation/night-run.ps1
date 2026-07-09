@@ -10,6 +10,11 @@
 # 登録: npm run schedule:auto-run（既定 4:30 JST）
 # 手動テスト: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/night-run.ps1
 
+param(
+  # ブラウザ経路だけドライラン実測（Chrome起動→DevTools→chrome-preflight）。
+  # testMode を消費せず、claude 本体も起動しない。修正の実測確認用。
+  [switch]$BrowserCheckOnly
+)
 $ErrorActionPreference = 'Continue'
 $RepoRoot = "D:\documents\動画作成関連\すまラボ"
 Set-Location $RepoRoot
@@ -26,49 +31,52 @@ function Log($msg) {
   Write-Host $line
 }
 
-# ---- 1. 多重起動ガード ----
-if (Test-Path $LockFile) {
-  try {
-    $lock = Get-Content $LockFile -Raw | ConvertFrom-Json
-    $proc = Get-Process -Id $lock.pid -ErrorAction SilentlyContinue
-    if ($proc) {
-      Log "SKIP: 前回の run (pid=$($lock.pid), started=$($lock.startedAt)) がまだ生きています。多重起動しません。"
-      exit 0
+# ---- 1. 多重起動ガード ----（ドライランでは lock を取らない）
+if (-not $BrowserCheckOnly) {
+  if (Test-Path $LockFile) {
+    try {
+      $lock = Get-Content $LockFile -Raw | ConvertFrom-Json
+      $proc = Get-Process -Id $lock.pid -ErrorAction SilentlyContinue
+      if ($proc) {
+        Log "SKIP: 前回の run (pid=$($lock.pid), started=$($lock.startedAt)) がまだ生きています。多重起動しません。"
+        exit 0
+      }
+      Log "古い lock (pid=$($lock.pid) は終了済み) を回収します。"
+    } catch {
+      Log "lock ファイルが壊れています。回収します。"
     }
-    Log "古い lock (pid=$($lock.pid) は終了済み) を回収します。"
-  } catch {
-    Log "lock ファイルが壊れています。回収します。"
+    Remove-Item $LockFile -Force -Confirm:$false
   }
-  Remove-Item $LockFile -Force -Confirm:$false
+  @{ pid = $PID; startedAt = (Get-Date).ToString("o") } | ConvertTo-Json | Set-Content $LockFile -Encoding utf8
 }
-@{ pid = $PID; startedAt = (Get-Date).ToString("o") } | ConvertTo-Json | Set-Content $LockFile -Encoding utf8
 
 try {
+  if ($BrowserCheckOnly) { Log "=== BrowserCheckOnly ドライラン（testMode未消費・claude未起動） ===" }
+
   # ---- 2. 軽量プリフライト（Claude を起動する前に node だけで判定） ----
-  Log "preflight: test-mode --status"
-  $preflight = node scripts/automation/test-mode.mjs --status 2>&1
-  $preflightExit = $LASTEXITCODE
-  Log ($preflight | Out-String).Trim()
-  if ($preflightExit -ne 0) {
-    Log "SKIP: testMode 非アクティブ（exit $preflightExit）。Claude を起動しません。"
-    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'skipped',title:'[testMode] 夜間運転スキップ（testMode非アクティブ/実行済み）'}))" 2>&1 | Out-Null
-    exit 0
+  # ドライランでは testMode ゲートをスキップ（ブラウザ経路だけ確かめたいため）。
+  if (-not $BrowserCheckOnly) {
+    Log "preflight: test-mode --status"
+    $preflight = node scripts/automation/test-mode.mjs --status 2>&1
+    $preflightExit = $LASTEXITCODE
+    Log ($preflight | Out-String).Trim()
+    if ($preflightExit -ne 0) {
+      Log "SKIP: testMode 非アクティブ（exit $preflightExit）。Claude を起動しません。"
+      node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'skipped',title:'[testMode] 夜間運転スキップ（testMode非アクティブ/実行済み）'}))" 2>&1 | Out-Null
+      exit 0
+    }
   }
 
-  # ---- 2-bis. Chrome 起動 + ブラウザ経路プリフライト ----
-  # 夜間は Chrome が閉じており拡張も未接続で空振りする（2026-07-07 実測: tabs_context_mcp
-  # が "browser extension is not connected" で中止）。claude を起動する前に、ログイン済み
-  # プロファイルで Chrome を起動（--restore-last-session で ChatGPT/X タブ・ログイン復元）し、
-  # DevTools ポートで ChatGPT/X ログイン生存を検査する。不合格なら testMode を消費せず停止。
+  # ---- 2-bis. Chrome 起動確認（デフォルトプロファイル・拡張経路） ----
+  # 夜間ドライバー（claude）は claude-in-chrome 拡張で **デフォルトプロファイルの Chrome** を
+  # 操作する（ここが ChatGPT/X ログイン済み・拡張ペアリング済みの本番環境）。
+  # 【Chrome 136+ 対応】Chrome 136 以降、デフォルトプロファイルでの --remote-debugging-port は
+  # 無効化される（実測 2026-07-09 / Chrome 150：デフォルトではポート bind せず、専用 user-data-dir
+  # なら bind）。そのため **debug-port ベースのプリフライトは使わない**。実操作は拡張が担うので、
+  # ここでは「Chrome が起動していて拡張が接続できる状態」だけ保証する。**ChatGPT/X ログイン生存の
+  # 検査は claude 側（拡張）で行う**（docs/night_driver_prompt.md 0-bis）。
   $ChromeExe = "C:\Program Files\Google\Chrome\Application\chrome.exe"
   if (-not (Test-Path $ChromeExe)) { $ChromeExe = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" }
-  $DebugPort = 9222
-  $env:CHROME_DEBUG_PORT = "$DebugPort"
-
-  function Test-DebugPort {
-    try { Invoke-WebRequest -UseBasicParsing "http://127.0.0.1:$DebugPort/json/version" -TimeoutSec 3 | Out-Null; return $true }
-    catch { return $false }
-  }
 
   if (-not (Test-Path $ChromeExe)) {
     Log "SKIP: Chrome 実行ファイルが見つからない。ブラウザ経路なしのため停止（testMode 未消費）。"
@@ -76,40 +84,27 @@ try {
     exit 0
   }
 
-  $portUp = Test-DebugPort
-  if (-not $portUp) {
-    $devId = if (Test-Path 'data\automation\night-browser.json') { (Get-Content 'data\automation\night-browser.json' -Raw | ConvertFrom-Json).deviceId } else { 'n/a' }
-    Log "launch Chrome: --restore-last-session --remote-debugging-port=$DebugPort (deviceId=$devId)"
+  $chromeCount = @(Get-Process chrome -ErrorAction SilentlyContinue).Count
+  if ($chromeCount -gt 0) {
+    Log "Chrome は既に起動中（$chromeCount プロセス）。拡張経路を利用（デフォルトプロファイル）。"
+  } else {
+    Log "Chrome 未起動。デフォルトプロファイルで起動する（--restore-last-session で ChatGPT/X タブ・ログイン復元）。"
     Start-Process -FilePath $ChromeExe -ArgumentList @(
       "--restore-last-session",
-      "--remote-debugging-port=$DebugPort",
       "--no-first-run",
       "--no-default-browser-check",
       "--start-maximized"
     ) | Out-Null
-    for ($i = 0; $i -lt 20; $i++) {
-      Start-Sleep -Seconds 2
-      if (Test-DebugPort) { $portUp = $true; break }
+    Start-Sleep -Seconds 12   # 拡張が MCP リレーへ接続する猶予
+    if (@(Get-Process chrome -ErrorAction SilentlyContinue).Count -eq 0) {
+      Log "SKIP: Chrome 起動に失敗（プロセスが立ち上がらない）。停止（testMode 未消費）。"
+      node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: Chrome起動失敗'}))" 2>&1 | Out-Null
+      exit 0
     }
-  } else {
-    Log "Chrome DevTools ポートは既に応答（起動済みを利用）。"
   }
 
-  if (-not $portUp) {
-    Log "SKIP: Chrome DevTools ポートが応答しない（起動失敗/多重起動でポート未割当）。停止（testMode 未消費）。"
-    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: Chrome起動/DevTools不応答'}))" 2>&1 | Out-Null
-    exit 0
-  }
-
-  # restore-last-session のタブ復元・ログインリダイレクトが落ち着くまで待つ
-  Start-Sleep -Seconds 8
-  Log "preflight: chrome-preflight（ChatGPT/X ログイン生存・工房到達）"
-  $chromePre = node scripts/automation/chrome-preflight.mjs 2>&1
-  $chromePreExit = $LASTEXITCODE
-  Log ($chromePre | Out-String).Trim()
-  if ($chromePreExit -ne 0) {
-    Log "SKIP: ブラウザ経路プリフライト不合格（exit $chromePreExit）。testMode 未消費で安全停止。"
-    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: ブラウザ経路プリフライト不合格（Chrome起動済みだがChatGPT/Xログイン切れ等）'}))" 2>&1 | Out-Null
+  if ($BrowserCheckOnly) {
+    Log "=== BrowserCheckOnly OK: Chrome起動を確認。ChatGPT/Xログイン生存と拡張接続はdriver側（拡張）で検査する設計。claudeは起動せず終了（testMode未消費） ==="
     exit 0
   }
 
