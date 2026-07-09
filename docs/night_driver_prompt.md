@@ -16,11 +16,16 @@ node scripts/automation/test-mode.mjs --status
 
 ## 0-bis. ブラウザ選択（最初のブラウザ操作より前に必ず実行）
 
-> **前提（2026-07-07 / 2026-07-09 更新）**: この指示書が起動する時点で、runner（`night-run.ps1`）が既に **専用の自動運転プロファイル**（`--user-data-dir=D:\work\chrome-automation-profile`）で **Chrome を起動済み**（`--restore-last-session` で ChatGPT/X タブ・ログイン復元、`--remote-debugging-port=9222`）で、`chrome-preflight.mjs`（ChatGPT/X ログイン生存）を通過している。つまり **Chrome は起動しログイン済みの状態で渡ってくる**。あなたが Chrome を起動する必要はない。
+> **前提（2026-07-07 / 2026-07-09 更新）**: runner（`night-run.ps1`）は **デフォルトプロファイルの Chrome** が起動していることだけを保証して渡してくる（起動していなければ `--restore-last-session` で起動する）。ここが ChatGPT/X ログイン済み・claude-in-chrome 拡張ペアリング済みの本番環境。あなたは拡張でこのデフォルトプロファイルの Chrome を操作する。
 >
-> **Chrome 136+ 対応（2026-07-09）**: Chrome はデフォルトプロファイルでの `--remote-debugging-port` を無効化するため、専用プロファイルを使う。専用プロファイルには一度だけ ChatGPT/X ログイン + 拡張ペアリングが必要（`docs/night_chrome_profile_setup.md`）。もし claude-in-chrome 拡張が未接続で `select_browser` / `tabs_context_mcp` が失敗する場合は、環境要因（専用プロファイルでの拡張ペアリング未完 / Connect 未実行）なので、ブラウザ操作を一切せず `blocked` で中止・通知する（testMode は消費しない）。
+> **Chrome 136+ 対応（2026-07-09）**: Chrome 136 以降はデフォルトプロファイルでの `--remote-debugging-port` を無効化する（実測 Chrome 150）。そのため runner 側の debug-port プリフライトは廃止し、**ログイン生存の検査は下記のとおりあなた（拡張）が最初に行う**。もし claude-in-chrome 拡張が未接続で `select_browser` / `tabs_context_mcp` が失敗する場合は、環境要因（Chrome 未起動 / 拡張 Connect 未実行）なので、ブラウザ操作を一切せず `blocked` で中止・通知する（testMode は消費しない）。
 
 ToolSearch で `mcp__claude-in-chrome__select_browser` をロードし、`data/automation/night-browser.json` の deviceId を **select_browser で明示選択**する（複数ブラウザ接続時、既定ルーティングが Edge を掴む実測事故が 2026-07-05 に 2 回発生）。選択後、任意のタブで `navigator.userAgent` に `Edg/` が含まれないことを確認。含まれる・ファイルが無い・選択に失敗する場合は、ブラウザを一切操作せず中止・通知する。list_connected_browsers が複数を返しても AskUserQuestion はしない（ユーザーは設定ファイルで Chrome を指定済み）。
+
+**ログイン生存チェック（最初のブラウザ操作・必須。debug-port プリフライト廃止の代替）**: 専用タブを1つ作り、
+1. `https://chatgpt.com/` へ navigate → `fetch('/api/auth/session',{credentials:'include'})` の JSON に `user.email` があればログイン中。無ければ `blocked` で中止・通知（testMode 未消費）。
+2. `https://x.com/home` へ navigate → `[data-testid="SideNav_AccountSwitcher_Button"]` に **@suma_labo** が出ればログイン中。ログインフローへ飛ぶ/アカウントが違うなら `blocked` で中止・通知（testMode 未消費）。
+どちらも生存していれば本処理へ進む。工房チャットは Phase A の画像生成時に navigate すればよい（ここでは開かなくてよい）。
 
 ## 1. ネタ選定（scout）
 
