@@ -2,15 +2,17 @@
   "name": "すまラボ画像工房",
   "purpose": "画像生成専用の常設ChatGPTチャット。会話冒頭に公式キャラ正本2枚（ひまり/らぼまる）を添付済み。以後の記事スライド・サムネ生成はこの会話の続きで行い、フォーカス/クリップボード非依存で無人運転を可能にする。",
   "project": "すまラボ台本",
-  "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a4cf0e8-636c-83ee-9700-4c08f81c89cc",
+  "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a4f0471-84dc-83e8-9422-43ac0bd2a025",
   "canonicalRefs": ["assets/characters/himari-canonical.png", "assets/characters/labomaru-canonical.png"],
   "createdAt": "2026-07-05",
-  "reseededAt": "2026-07-07",
-  "generatedSinceSeed": 3,
+  "reseededAt": "2026-07-09",
+  "generatedSinceSeed": 9,
   "reseedThreshold": 10,
   "reseedPolicy": "【前倒し・定量トリガー】この工房チャットでの累計生成画像(generatedSinceSeed)が reseedThreshold(=10枚)を超える前に、必ず再シード(新チャット作成+正本2枚 himari/labomaru 添付+conversationUrl更新+generatedSinceSeedを0にリセット)する。加えて、1記事(7〜8枚)を生成し終えるごとに次の記事の画像生成前に再シードするのを既定とする(参照劣化は8枚1バッチの後半から出やすいため)。崩れを検知した場合(factcheck項目10/11)は即座に再シードして崩れたスライドだけ作り直す。無人runで再シード(=画像添付)が経路上できない場合は blocked_image_generation_unavailable で安全停止し、人間に再シードを依頼して通知する。",
   "reseedHistory": [
-    { "at": "2026-07-07", "reason": "ai-assistant記事のslide06-08でキャラ参照劣化(別人化)を検知→再シード。旧chat 6a4a0b45→新chat 6a4cf0e8。崩れた3枚を再生成し差し替え", "prevConversationId": "6a4a0b45-ef80-83ee-86dd-514f51ee2d64" }
+    { "at": "2026-07-07", "reason": "ai-assistant記事のslide06-08でキャラ参照劣化(別人化)を検知→再シード。旧chat 6a4a0b45→新chat 6a4cf0e8。崩れた3枚を再生成し差し替え", "prevConversationId": "6a4a0b45-ef80-83ee-86dd-514f51ee2d64" },
+    { "at": "2026-07-08", "reason": "fable5無料枠延長(7/13)記事の画像生成前に予防再シード(前記事分3枚で閾値接近)。旧chat 6a4cf0e8→新chat 6a4d9073。全8スライド+サムネをキャラ一貫で生成", "prevConversationId": "6a4cf0e8-636c-83ee-9700-4c08f81c89cc" },
+    { "at": "2026-07-09", "reason": "今夜のrun前の予防再シード。前chat 6a4d9073はseed=10で閾値到達(fable5の8スライド+サムネ+衣装テスト1枚)。無人runは画像添付=再シードが経路上できないため立ち会いで先行実施。新chat 6a4f0471に正本2枚(ひまり/らぼまる)添付+認識アンカー/衣装ルールを確立。generatedSinceSeed=0にリセット", "prevConversationId": "6a4d9073-31d0-83ee-b2e2-5f4e6dc669ad" }
   ],
   "note": "夜間ドライバーはこのURLに navigate して会話の続きで生成する。ただし generatedSinceSeed が閾値超過、または前記事ぶんが未リセットなら、続きに詰め込まず再シードを優先する。"
 }
