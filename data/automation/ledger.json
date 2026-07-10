@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-06T23:25:01.246Z",
+  "updatedAt": "2026-07-08T04:31:18.871Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -509,6 +509,25 @@
       "xPostedAt": "2026-07-05T08:51:54.949Z",
       "autonomyLevel": 0,
       "trigger": "manual"
+    },
+    {
+      "slug": "202607-claude-fable-5-free-extension-july13",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-claude-fable-5-free-extension-july13/",
+      "previewUrl": "https://28eabe7d.sumalabo.pages.dev/articles/202607-claude-fable-5-free-extension-july13/",
+      "productionUrl": "https://sumalabo.com/articles/202607-claude-fable-5-free-extension-july13/",
+      "publishedAt": "2026-07-08T08:00:00+09:00",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/126",
+      "mergeCommit": "c903edb89a7382fb12890519ffd717491d2a911f",
+      "status": "x_posted",
+      "triggerInput": "theme: Claude Fable 5 無料枠7/13延長（v3コンポーネント刷新）",
+      "xPostUrl": "https://x.com/suma_labo/status/2074712367150325808",
+      "xPostedAt": "2026-07-08T04:30:19.823Z",
+      "xPostText": "Claude Fable 5、サブスク無料枠が7月13日まで延長。何が変わって、いつまでに何をすればいい / 追加料金なしで使える期間が7/7→日本時間7/13 15:59:59まで延長 + URL + #AI #すまラボ"
     }
   ]
 }
