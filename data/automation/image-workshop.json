@@ -6,7 +6,7 @@
   "canonicalRefs": ["assets/characters/himari-canonical.png", "assets/characters/labomaru-canonical.png"],
   "createdAt": "2026-07-05",
   "reseededAt": "2026-07-09",
-  "generatedSinceSeed": 9,
+  "generatedSinceSeed": 0,
   "reseedThreshold": 10,
   "reseedPolicy": "【前倒し・定量トリガー】この工房チャットでの累計生成画像(generatedSinceSeed)が reseedThreshold(=10枚)を超える前に、必ず再シード(新チャット作成+正本2枚 himari/labomaru 添付+conversationUrl更新+generatedSinceSeedを0にリセット)する。加えて、1記事(7〜8枚)を生成し終えるごとに次の記事の画像生成前に再シードするのを既定とする(参照劣化は8枚1バッチの後半から出やすいため)。崩れを検知した場合(factcheck項目10/11)は即座に再シードして崩れたスライドだけ作り直す。無人runで再シード(=画像添付)が経路上できない場合は blocked_image_generation_unavailable で安全停止し、人間に再シードを依頼して通知する。",
   "reseedHistory": [

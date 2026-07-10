@@ -253,7 +253,16 @@ function assistedInstruction(state, step) {
     chatgpt_turn6_slideplan: `slide_plan（本文スライド8枚 4:5 1280×1600 + サムネ16:9 体験図方針）→ ${dir}/slide_plan.md に保存。サムネは assets/characters/character-sheet.md の「体験図」3型から選ぶこと。**サムネは同 sheet の「衣装は変えることを基本」に従い、記事テーマから連想される衣装・小道具・シチュエーションを必ず1つ選んで slide_plan に明記する（認識アンカーは不変・露出過多NG）。スライド8枚側は標準衣装で一貫。**`,
     generate_images: `同チャットに正本画像（assets/characters/himari-canonical.png → labomaru-canonical.png を1枚ずつ）を添付し、character-sheet.md の仕様を厳守して slide_plan の順に 8+1 枚を生成。**サムネは slide_plan で選んだテーマ連想の衣装・小道具を反映して生成（標準衣装のまま出さない。認識アンカーは不変）。** 全てダウンロードし D:\\downloads に保存。`,
     factcheck_images: `ダウンロードした 9 枚を Claude 自身が Read で読み、slide_plan と突き合わせて数値・固有名詞・誤字・ブランド表記を検査。**キャラ破綻は認識アンカー（ひまり=金髪サイドテール・顔立ち・頭身／らぼまる=白い卵型ボディ・アンテナ・胸のハートボタン）で判定（服・小道具の違いは破綻ではない）。サムネは衣装がテーマに沿って標準から変えてあるかも確認**。結果を logs/article/${slug}.factcheck.json に保存:\n  { "pass": true|false, "regenerate": [{"which":"slide06","reason":"..."}], "slides": [{"src":"D:/downloads/xxx.png","name":"slide01-xxx.webp"}...], "thumbnail": {"src":"D:/downloads/yyy.png"}, "thumbnailCostume": "themed" | "standard_improvable" }\nサムネが標準衣装のまま（standard_improvable）でも崩れではないので needs_revision にはしない（注意記録のみ）。不合格があれば該当のみ再生成（最大2回）してから advance。pass 時は slides/thumbnail のマッピングが logs/article/${slug}.images.json にコピーされる。`,
-    write_mdx: `final_article を MDX 化（frontmatter 12キー / lead-first / スライド8枚を article-slide-section で埋め込み / 禁則語なし）→ content/articles/${slug}.mdx。前記事への内部リンクがテーマ上自然なら本文に入れる。`,
+    write_mdx: `final_article を MDX 化（frontmatter 12キー / lead-first / 禁則語なし）→ content/articles/${slug}.mdx。前記事への内部リンクがテーマ上自然なら本文に入れる。
+  **本文は v3 コンポーネントで組む（docs/article_components_v3.md 準拠・2026-07-08 有効化。お手本: content/articles/202607-claude-fable-5-free-extension-july13.mdx）:**
+  - import 文を frontmatter 直後に置く（Summary30 / Callout / Chip / NumCards / Timeline / TimelineItem / CharacterBubble / Note。使うものだけ。パスは ../../src/components/article/{Name}.astro）
+  - 冒頭に <Summary30>（<ol><li> で要点3〜5個・1記事1回）
+  - editorial_selection の facts / claims / uncertain を確度 Callout に 1:1 マッピング（kind="facts" / "claims" / "unc"。unc は「〜時点」を明記）
+  - 経緯・締切・続報は <Timeline> + <TimelineItem date="...">（今後動く点は hot）
+  - 価格・日付・数量など数字が主役の要点は <NumCards items={[{num,cap},...]}>（3枚組基本・事実確認済みの数字のみ）
+  - ひまり・らぼまるの会話は <CharacterBubble speaker="himari|labo" mood="...">（himari: curious/aha/explain、labo: smile/point/worried。labo worried は unc ボックス併設が定型）
+  - 文中の確度ラベルは <Chip kind="...">（1段落2個まで）、軽い注記は <Note>
+  - **図解スライド8枚（article-slide-section + slide-reading-note + ライトボックス）と「## 参考情報」（URL2件以上）は従来どおり併用**（v3 はこれらを置き換えない）`,
   };
   return `\n=== NEXT ACTION [${step.name}] ${step.label} ===\n${map[step.name] || "(手順未定義)"}\n${common}`;
 }
