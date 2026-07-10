@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-08T04:31:18.871Z",
+  "updatedAt": "2026-07-10T08:40:01.786Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -516,7 +516,7 @@
       "source": "user_directed",
       "triggerKind": "user",
       "articleUrl": "https://sumalabo.com/articles/202607-claude-fable-5-free-extension-july13/",
-      "previewUrl": "https://28eabe7d.sumalabo.pages.dev/articles/202607-claude-fable-5-free-extension-july13/",
+      "previewUrl": "https://sumalabo.com/articles/202607-claude-fable-5-free-extension-july13/",
       "productionUrl": "https://sumalabo.com/articles/202607-claude-fable-5-free-extension-july13/",
       "publishedAt": "2026-07-08T08:00:00+09:00",
       "autonomyLevel": 1,
@@ -526,8 +526,41 @@
       "status": "x_posted",
       "triggerInput": "theme: Claude Fable 5 無料枠7/13延長（v3コンポーネント刷新）",
       "xPostUrl": "https://x.com/suma_labo/status/2074712367150325808",
-      "xPostedAt": "2026-07-08T04:30:19.823Z",
+      "xPostedAt": "2026-07-08T04:30:19.821Z",
       "xPostText": "Claude Fable 5、サブスク無料枠が7月13日まで延長。何が変わって、いつまでに何をすればいい / 追加料金なしで使える期間が7/7→日本時間7/13 15:59:59まで延長 + URL + #AI #すまラボ"
+    },
+    {
+      "slug": "202607-gpt-5-6-sol-terra-luna-release",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-gpt-5-6-sol-terra-luna-release/",
+      "previewUrl": "https://01a04e62.sumalabo.pages.dev/articles/202607-gpt-5-6-sol-terra-luna-release/",
+      "productionUrl": "https://sumalabo.com/articles/202607-gpt-5-6-sol-terra-luna-release/",
+      "publishedAt": "2026-07-10T08:00:00+09:00",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/134",
+      "mergeCommit": "d9043aa5114165ab9da2d2f6649e24e28e902ddb",
+      "status": "x_posted",
+      "triggerInput": "theme: GPT-5.6一般公開・3モデル整理(v3様式)",
+      "xPostPending": "x_card_not_generated_after_2h15m_retries(composer再作成/静置10分x3含む)。OGP/Twitterbot取得はサーバ側全て正常。X側クロール遅延とみられる。再試行待ち",
+      "xPostUrl": "https://x.com/suma_labo/status/2075499434960728204",
+      "xPostedAt": "2026-07-10T17:36:00+09:00",
+      "xPostVariant": "image_attach",
+      "xPostText": "GPT-5.6、ついに一般公開。ChatGPTで今日から何が使える？3モデルの違いをやさしく整理 + 一般提供が7/9(現地)開始 + URL + #AI #すまラボ（サムネ画像添付方式）"
+    },
+    {
+      "slug": "202607-openai-gpt-5-6-chatgpt-work",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-openai-gpt-5-6-chatgpt-work/",
+      "previewUrl": "https://sumalabo.com/articles/202607-openai-gpt-5-6-chatgpt-work/",
+      "productionUrl": "https://sumalabo.com/articles/202607-openai-gpt-5-6-chatgpt-work/",
+      "publishedAt": "2026-07-10T05:40:00+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual"
     }
   ]
 }

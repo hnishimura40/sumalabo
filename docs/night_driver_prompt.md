@@ -74,6 +74,7 @@ finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待た�
 1. `npm run social:generate-x-post -- --slug <slug>` — 出力の `X加重` が 280 以内であることを確認（280 ガードが downshift 済みのはず）。
 2. Chrome で `x.com/compose/post` を**専用の新規タブ**で開く。アカウントが **@suma_labo** であることを DOM で確認。
 3. composer への入力は **computer type アクション**（execCommand は破損実績あり）。入力後に innerText を読み戻して前方一致・URL・タグ・破損なしを検証。
+3-bis. **OGP カードが出ない場合の自動フォールバック（2026-07-10）**: URL を貼っても composer にカードが出なければ、再 unfurl しつつ **15 分間隔で最大 2 回（約 30 分）**確認する。2 回でも出なければ、本番サムネ WebP を composer に画像添付して投稿してよい（カード鉄則の例外）。この場合は台帳へ `xPostVariant: "image_attach"` を記録する（通常は `card`）。**長時間の待ちループはしない。**
 4. tweetButton の DOM click → composer 空読み戻しで送信確認。**投稿は 1 回だけ**（失敗が曖昧なら syndication 照会で実在確認してから判断。二重投稿禁止）。
 5. プロフィール（x.com/suma_labo）から投稿 URL を取得 →
    `node scripts/automation/phase-c-auto.mjs --slug <slug> --posted <tweetUrl>`
