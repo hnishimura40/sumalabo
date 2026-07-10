@@ -1,0 +1,346 @@
+---
+title: "GPT-5.6、ついに一般公開。ChatGPTで今日から何が使える？3モデルの違いをやさしく整理"
+slug: "202607-gpt-5-6-sol-terra-luna-release"
+type: "news"
+category: "ニュースをかみくだく"
+description: "GPT-5.6の一般提供が7月9日（現地時間）に始まりました。最上位のSol、バランス型のTerra、最速・最安のLunaという3モデル構成、ChatGPTの対象プラン、API価格、maxとultraの新モードまで、確定・報道・未確定を分けてやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-gpt-5-6-sol-terra-luna-release.webp"
+thumbnailAlt: "「GPT-5.6、一般公開」のサムネイル。発表会のステージで、司会風のジャケットを着たひまりがマイクを持って進行し、らぼまるがSol・Terra・Lunaの3枚のモデルカード（太陽・大地・月）をお披露目しているお披露目型のイラスト。右下に7/9の日付"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "GPT-5.6"
+  - "OpenAI"
+  - "ChatGPT"
+  - "Sol"
+  - "Terra"
+  - "Luna"
+  - "AIモデル"
+  - "すまラボ"
+related:
+  - "202607-openai-gpt-5-6-chatgpt-work"
+  - "202607-claude-fable-5-free-extension-july13"
+  - "202607-claude-fable-5-usage-credits-switch"
+pubDate: "2026-07-10"
+updated: "2026-07-10"
+publishAt: "2026-07-10T08:00:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+GPT-5.6の一般提供が、7月9日（現地時間）に始まりました。今回の更新は、最上位のSolだけではなく、用途と価格が異なるSol・Terra・Lunaの3モデルを使い分ける形です。ただし提供は約24時間かけた段階的なロールアウトで、日本のユーザー画面への具体的な反映時刻は確認できていません。
+
+<Summary30>
+  <ol>
+    <li><strong>7/9（現地）に一般提供開始</strong>。ChatGPT・Codex・APIでグローバル展開、約24時間かけて順次反映</li>
+    <li>GPT-5.6は<strong>Sol（最上位）・Terra（バランス型）・Luna（最速・最安）の3モデルの総称</strong></li>
+    <li>ChatGPTでは<strong>Plus / Pro / Business / EnterpriseがSolを利用可</strong>（Pro / EnterpriseはSol Proも）。無料プランは未確定</li>
+    <li>API価格（100万トークン・入力/出力）は<strong>Sol $5/$30・Terra $2.5/$15・Luna $1/$6</strong></li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "7/9", cap: "一般提供開始（現地時間）" },
+    { num: "3", cap: "モデル数（Sol / Terra / Luna）" },
+    { num: "24時間", cap: "段階ロールアウトの目安" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">一般公開ってことは、今日からわたしも使えるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">順番に反映されていく方式だよ。まだ画面に出ていなくても不具合とは限らない。</CharacterBubble>
+
+## 何が起きた？
+
+<p class="lead">GPT-5.6が<strong>ChatGPT・Codex・API</strong>でグローバル展開されました。一斉公開ではなく、<strong>約24時間かけて順次反映</strong>されます。</p>
+
+一般提供は7月9日に始まりましたが、モデル選択画面にまだ表示されていなくても、すぐに不具合とは限りません。ただし、日本での反映状況やアカウントごとの時刻は未確定です。
+
+前報の「[ChatGPT WorkとGPT-5.6発表](/articles/202607-openai-gpt-5-6-chatgpt-work/)」では発表時点の全体像を整理しました。今回は、一般提供の開始、対象プラン、3モデルの役割、API価格まで具体化した段階です。
+
+<Callout kind="facts">
+  <ul>
+    <li>7/9（現地）に一般提供開始。ChatGPT / Codex / API でグローバル展開</li>
+    <li>約24時間かけた段階的ロールアウト</li>
+    <li>モデルは Sol / Terra / Luna の3種類（GPT-5.6は3モデルの総称）</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず「何が起きたか」を1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-gpt-5-6-sol-terra-luna-release/slide01-ga-start.webp"
+         alt="「GPT-5.6、一般公開スタート」の図解。中央に大きく7/9一般公開、下に「7/9(現地)に一般提供開始」「ChatGPT・Codex・APIでグローバル展開」「約24時間かけて順次反映（すぐ出なくても不具合とは限らない）」の3点。ひまりが期待の表情、らぼまるがカレンダーの7/9を指して「24時間かけて順番に反映だよ」と案内する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：GPT-5.6、一般公開スタート</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>開始</strong>：7/9（現地時間）に一般提供開始</li>
+      <li><strong>対象</strong>：ChatGPT・Codex・API でグローバル展開</li>
+      <li><strong>反映</strong>：約24時間かけて順次（すぐ出なくても不具合とは限らない）</li>
+    </ul>
+  </div>
+</section>
+
+## 3モデルの違い（Sol / Terra / Luna）
+
+<p class="lead">GPT-5.6は<strong>Solだけを指す名称ではありません</strong>。役割の違う3モデルの総称です。</p>
+
+<div class="table-card article-wide-block">
+
+| モデル | 位置づけ | 特徴 |
+|---|---|---|
+| Sol | 最上位 | コーディング、サイバー、科学分野で最高水準 |
+| Terra | バランス型 | GPT-5.5と同等の性能を約半分のAPI価格で提供 |
+| Luna | 高速・低価格型 | 3モデルの中で最速・最安 |
+
+</div>
+
+Solは高い処理能力が必要な作業向けです。Terminal-Bench 2.1では88.8％を記録し、同ベンチマークでSOTA（最高水準）とされています。Terraは、GPT-5.5と同等の性能を約半分のAPI価格で利用できるバランス型です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">3モデルの役割を、3カラムで見比べます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-gpt-5-6-sol-terra-luna-release/slide02-three-models.webp"
+         alt="「3モデルの違い（Sol/Terra/Luna）」の3カラム図解。Sol＝最上位でコーディング・サイバー・科学で最高水準、Terra＝バランス型でGPT-5.5同等性能を約半額、Luna＝最速・最安。上部に「GPT-5.6はSolだけじゃなく3モデルの総称」の注記。らぼまるが3枚のモデルカードを提示し、ひまりが見比べる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：3モデルの違い</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Sol</strong>：最上位。コーディング・サイバー・科学で最高水準</li>
+      <li><strong>Terra</strong>：バランス型。GPT-5.5同等性能を約半額</li>
+      <li><strong>Luna</strong>：最速・最安</li>
+      <li><strong>前提</strong>：GPT-5.6は3モデルの総称</li>
+    </ul>
+  </div>
+</section>
+
+## ChatGPTで誰がSolを使える？
+
+<p class="lead">ChatGPTでは<strong>契約プランによって使えるモデルが変わります</strong>。APIは用途と価格で選ぶ、と整理軸が異なります。</p>
+
+ChatGPTでSolを利用できるのは、Plus、Pro、Business、Enterpriseです。ProとEnterpriseでは、さらにSol Proも利用できます。
+
+一方、<Chip kind="claims">報道</Chip>無料ユーザーへの詳しい公開範囲は示されていないと報じられています。無料プランで利用できるか、利用できる場合にどのモデルを何回使えるかは、まだ明確になっていません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">プランごとの対応を表で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-gpt-5-6-sol-terra-luna-release/slide03-plans.webp"
+         alt="「ChatGPTで誰がSolを使える？」のプラン対応表図解。Plus＝Sol○、Pro＝Sol○+Sol Pro○、Business＝Sol○、Enterprise＝Sol○+Sol Pro○、無料プラン＝?（未確定）。下部に「詳しい公開範囲は示されていないとの報道」の注記。らぼまるが表を指し、ひまりが「まず自分のプランを確認だね」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：プランごとの対応</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Sol</strong>：Plus / Pro / Business / Enterprise で利用可</li>
+      <li><strong>Sol Pro</strong>：Pro / Enterprise で利用可</li>
+      <li><strong>無料プラン</strong>：？（未確定。詳しい公開範囲は示されていないとの報道）</li>
+    </ul>
+  </div>
+</section>
+
+## API価格（100万トークンあたり）
+
+<p class="lead">APIでは<strong>用途と価格に応じて3モデルを選びます</strong>。価格は入力／出力で異なります。</p>
+
+API価格（100万トークンあたり・入力／出力）は、Solが5ドル／30ドル、Terraが2.5ドル／15ドル、Lunaが1ドル／6ドルです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">3モデルの価格を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-gpt-5-6-sol-terra-luna-release/slide04-api-pricing.webp"
+         alt="「API価格（100万トークンあたり）」の価格表図解。Sol＝入力$5／出力$30、Terra＝入力$2.5／出力$15、Luna＝入力$1／出力$6。らぼまるが価格ボードを指し「APIは用途と価格で選ぶ」、ひまりがメモを取る構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：API価格</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Sol</strong>：入力 $5 ／ 出力 $30</li>
+      <li><strong>Terra</strong>：入力 $2.5 ／ 出力 $15</li>
+      <li><strong>Luna</strong>：入力 $1 ／ 出力 $6</li>
+      <li><strong>単位</strong>：いずれも100万トークンあたり</li>
+    </ul>
+  </div>
+</section>
+
+## 新モード：max と ultra
+
+<p class="lead">GPT-5.6では、新しい推論モードとして<strong>max</strong>と<strong>ultra</strong>が用意されました。</p>
+
+maxは、最も長く考えて回答を組み立てるモードです。複雑な条件を整理しながら処理したい場面を想定しています。
+
+ultraは、サブエージェントを並列に動かす推論モードです。別モデルではなく、Solをより強く動かすためのモードとして整理できます。Terminal-Bench 2.1では、通常のSolが88.8％、Sol Ultraが91.9％を記録しました。ただしこれは特定のベンチマーク結果であり、短い質問でも必ず同じ差を体感できるという意味ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">2つのモードを左右で対比。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-gpt-5-6-sol-terra-luna-release/slide05-max-ultra.webp"
+         alt="「新モード max と ultra」の対比図解。左は max＝最も長く考える推論モード（らぼまる1体がじっくり考える絵）、右は ultra＝サブエージェントを並列に動かすモード・別モデルではない（小さならぼまるが3体並んで作業する絵）。下部にTerminal-Bench 2.1でSol 88.8%→Sol Ultra 91.9%。らぼまるが「ultraはSolをより強く動かすモード」と補足する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：max と ultra</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>max</strong>：最も長く考える推論モード</li>
+      <li><strong>ultra</strong>：サブエージェントを並列に動かすモード（別モデルではない）</li>
+      <li><strong>参考</strong>：Terminal-Bench 2.1 で Sol 88.8% → Sol Ultra 91.9%</li>
+    </ul>
+  </div>
+</section>
+
+## 一般公開までの経緯
+
+<p class="lead">6月26日のプレビューから約2週間で一般公開に進みました。<strong>確認できるのはこの経緯</strong>で、因果関係までは断定できません。</p>
+
+<Timeline>
+  <TimelineItem date="6/26">政府と共有する限定パートナー向けプレビュー開始</TimelineItem>
+  <TimelineItem date="〜7月上旬">政府との協議・商務省による追加テスト</TimelineItem>
+  <TimelineItem date="7/9" hot>一般提供開始（約24時間で順次反映）</TimelineItem>
+</Timeline>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">経緯を3点のタイムラインで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-gpt-5-6-sol-terra-luna-release/slide06-timeline.webp"
+         alt="「一般公開までの経緯」のタイムライン図解。6/26に政府共有の限定パートナーへプレビュー→政府協議・商務省の追加テスト→7/9に一般公開の3段。下部に「確認できるのはこの経緯（因果関係は断定しない）」の注記。らぼまるがタイムラインを指し「確認できているのは“流れ”だよ」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：一般公開までの経緯</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>6/26</strong>：政府共有の限定パートナーへプレビュー</li>
+      <li><strong>その後</strong>：政府協議・商務省の追加テスト</li>
+      <li><strong>7/9</strong>：一般公開（因果関係は断定しない）</li>
+    </ul>
+  </div>
+</section>
+
+## 誤解しやすいポイント
+
+<p class="lead">「一般公開」という言葉から<strong>誤解しやすい点</strong>を先に整理しておきます。</p>
+
+まず、一般公開されたからといって、すべてのプランで同じモデルをすぐ使えるわけではありません。SolはPlus、Pro、Business、Enterpriseが対象で、Sol ProはProとEnterpriseが対象です。
+
+また、GPT-5.6はSolだけではありません。Solが常に最適とも限らず、短い質問や簡単な文章整理では、長い推論より速さが役立つ場合もあります。
+
+<CharacterBubble speaker="labo" mood="smile">「一般公開」と「無料で使える」は別の話。無料プランの扱いはまだ未確定だよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">×→○のチェックリストで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-gpt-5-6-sol-terra-luna-release/slide07-misconceptions.webp"
+         alt="「誤解しやすいポイント」のチェックリスト図解。×全プランで即日使える→○順次反映・プランで違う、×GPT-5.6＝Solだけ→○3モデルの総称、×Solが常に最適→○短い作業は速さが有利なことも、×一般公開＝無料→○無料プランは未確定、の4項目。らぼまるが○×の札で仕分けし「“公開”と“無料”は別の話」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：誤解しやすいポイント</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li>×全プランで即日使える → ○順次反映・プランで違う</li>
+      <li>×GPT-5.6＝Solだけ → ○3モデルの総称</li>
+      <li>×Solが常に最適 → ○短い作業は速さが有利なことも</li>
+      <li>×一般公開＝無料 → ○無料プランは未確定</li>
+    </ul>
+  </div>
+</section>
+
+## 確定・報道・未確定の整理
+
+<p class="lead">ここは<strong>確定・報道・未確定を分けて</strong>見るところです。</p>
+
+<Callout kind="facts" title="確定（公式）">
+  <ul>
+    <li>7/9に一般提供開始。ChatGPT / Codex / API でグローバル展開（約24時間の段階ロールアウト）</li>
+    <li>モデルは Sol / Terra / Luna の3種類</li>
+    <li>ChatGPTでは Plus / Pro / Business / Enterprise が Sol を利用可（Pro / Enterprise は Sol Pro も）</li>
+    <li>API価格（100万トークン・入力/出力）：Sol $5/$30、Terra $2.5/$15、Luna $1/$6</li>
+    <li>Terminal-Bench 2.1：Sol 88.8%、Sol Ultra 91.9%</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="報道ベース（断定しない）">
+  <ul>
+    <li>無料ユーザーへの詳しい公開範囲は示されていないと報じられています</li>
+    <li>Claudeが同じ日に利用制限を全リセットしたとの報道もありますが、GPT-5.6公開との関連性は公式に示されていません</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年7月時点）">
+  <ul>
+    <li>日本の各アカウントにいつ反映されるのか（24時間ロールアウト中で個人差）</li>
+    <li>無料プランで利用できるのか、利用できる場合のモデル・回数</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">反映タイミングと無料プランの細部はまだ動く情報。断定しないで公式の最新表示を見よう。</CharacterBubble>
+
+## どう向き合う？（補助）
+
+<p class="lead">やることはシンプル。<strong>作業の重さと、速さ・価格のどちらを優先するか</strong>で選べば十分です。</p>
+
+- ChatGPTでSolを試したい → Plusが入口。Sol Proも必要ならProが候補
+- APIで使う → 最高性能ならSol、性能と価格のバランスならTerra、速さと安さならLuna
+- まだ画面に出ていない → 順次反映なので焦らなくてOK
+
+<CharacterBubble speaker="himari" mood="aha">目的で選べばいいんだね。最上位を選ぶこと自体が目的じゃないんだ。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">そのとおり。未確定の部分は、最後は公式の最新表示で確認してね。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、3つの判断ガイドで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-gpt-5-6-sol-terra-luna-release/slide08-decision.webp"
+         alt="「まずはこの判断」のまとめ図解。重い作業・最高性能→Sol、性能と価格のバランス→Terra、速さと安さ→Lunaの3段の判断ガイド。最下部に「反映は順次。未確定の部分は公式の最新表示で確認」の帯。ひまりが「目的で選べばいいんだね」と納得し、らぼまるが「焦らなくてOK」とまとめる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：まずはこの判断から</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>判断ガイド（コピー可能）</strong></p>
+    <ul>
+      <li><strong>重い作業・最高性能</strong> → Sol</li>
+      <li><strong>性能と価格のバランス</strong> → Terra</li>
+      <li><strong>速さと安さ</strong> → Luna</li>
+      <li><strong>共通</strong>：反映は順次。未確定は公式の最新表示で確認</li>
+    </ul>
+  </div>
+</section>
+
+<Note>この記事は2026年7月10日時点の情報です。提供条件・価格・無料プランの扱いは変わる可能性があるため、最終的には公式の最新表示で確認してください。</Note>
+
+<div class="related-links article-wide-block">
+  <a href="/articles/202607-openai-gpt-5-6-chatgpt-work/">前報：ChatGPT WorkとGPT-5.6発表の全体像を読む</a>
+  <a href="/articles/202607-claude-fable-5-free-extension-july13/">Claude Fable 5、無料枠が7/13まで延長の解説を読む</a>
+  <a href="/articles/202607-claude-fable-5-usage-credits-switch/">Claude Fable 5、usage credits制への解説を読む</a>
+</div>
+
+## 参考情報
+
+この記事は公式情報と主要報道をもとに整理しています。無料ユーザーへの提供範囲や日本での反映タイミングは報道ベース・未確定の情報を含みます。最終的な提供条件・価格は、必ず公式の最新表示で確認してください。
+
+- [OpenAI公式：Previewing GPT-5.6 Sol](https://openai.com/index/previewing-gpt-5-6-sol/)
+- [OpenAI Help Center：A preview of GPT-5.6 Sol, Terra, and Luna](https://help.openai.com/en/articles/20001325-a-preview-of-gpt-56-sol-terra-and-luna)
+- [Engadget：OpenAI gets permission to roll out GPT-5.6 to the public on July 9](https://www.engadget.com/2210308/openai-rolls-out-gpt5-6-july-9/)
+- [DataCamp：GPT-5.6 Sol, Terra, and Luna: OpenAI's Next-Gen Model Family](https://www.datacamp.com/blog/gpt-5-6-sol-luna-terra)
+- [GitHub Changelog：OpenAI's GPT-5.6 Sol, Terra, and Luna are now available in GitHub Copilot](https://github.blog/changelog/2026-07-09-openais-gpt-5-6-sol-terra-and-luna-are-now-available-in-github-copilot/)
