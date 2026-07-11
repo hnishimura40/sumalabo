@@ -122,3 +122,19 @@ Phase A完了後に停止 → Preview承認 → Phase B → 停止 → X投稿�
 - クリーンカウント: **1/3**(クリーン1本目 = 202607-claude-fable-5-usage-credits-switch。Fable 5復活記事(202606)は公開前に修正指示があったため対象外)
 - veto窓短縮の規定: L1でクリーン3本 → veto窓 30分→10分。さらにクリーン3本 → 0分(即時公開)。短縮の適用はユーザーが宣言する
 - L1の動作: Phase A完了通知のveto窓(30分)内に停止操作(PWAのvetoボタン or autonomy.json paused: true)が無ければ、GitHub Actions(auto-phase-b.yml)がPhase Bを自動実行。公開直後にpost-publish verifyが走り、hard failなら自動rollback+incident記録
+
+## 6. 恒久無人運転モード（nightRun・2026-07-11 ユーザー承認）
+
+testMode（3 本限定の実弾テスト）は 3 本完走（Claude Science / ai-assistant / GPT-5.6 ChatGPT Work）して終了し、`autonomy.json` の `nightRun` キーによる **恒久無人運転** に切り替わった。
+
+- **設定**: `nightRun: { enabled, mode: "permanent", scoutMode: "auto", scheduleTime: "04:30", maxPerNight: 1, weeklyCap: 7 }`（毎日 4:30 / 1 晩 1 本 / 週 7 本まで＝毎日 1 本ペース許容）
+- **判定**: `test-mode.mjs --status` は nightRun キーがあれば恒久モードを優先判定（CLI 互換維持。night-run.ps1 / night_driver_prompt は無変更で動く）
+- **本数制限に代わる恒久ガード**:
+  - incident 2 件（`enabledAt` 以降）→ `enabled: false` に自動停止（再開はユーザーが宣言し enabledAt を更新）
+  - kill switch（`paused: true`）→ 即 inactive
+  - 1 晩 1 本（`logs/night/last-run.json`）
+  - weeklyCap（`logs/night/run-history.jsonl` の直近 7 日 completed 数）
+  - gate full / 画像ファクトチェック / post-publish verify＋自動rollback / 除外カテゴリは従来どおり（緩めない）
+- **scout 品質ガード**: 候補スコアが閾値 50 未満の日は無理に書かず安全スキップ（「候補なし」通知のみ）
+- **昼の立ち会い 2 本目**: 候補が豊富な日は、ユーザーが対話セッションで「もう 1 本」と明示指示すれば立ち会いで 2 本目を作れる（user-directed mode の通常フロー＝Human Review Checkpoint あり。無人runの 1 晩 1 本ガードとは別枠）
+- **retract 時**: `npm run retract` は incident 記録に加えて nightRun も自動停止する

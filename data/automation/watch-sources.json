@@ -57,6 +57,62 @@
       "url": "https://openai.com/news/rss.xml",
       "weight": 12,
       "official": true
+    },
+    {
+      "id": "gnews-docomo",
+      "name": "ドコモ 報道発表（Google News site:docomo.ne.jp）",
+      "type": "rss",
+      "url": "https://news.google.com/rss/search?q=site:docomo.ne.jp&hl=ja&gl=JP&ceid=JP:ja",
+      "weight": 9,
+      "official": true
+    },
+    {
+      "id": "gnews-kddi",
+      "name": "KDDI ニュースルーム（Google News site:newsroom.kddi.com）",
+      "type": "rss",
+      "url": "https://news.google.com/rss/search?q=site:newsroom.kddi.com&hl=ja&gl=JP&ceid=JP:ja",
+      "weight": 9,
+      "official": true
+    },
+    {
+      "id": "gnews-softbank",
+      "name": "ソフトバンク プレスリリース（Google News site:softbank.jp）",
+      "type": "rss",
+      "url": "https://news.google.com/rss/search?q=site:softbank.jp&hl=ja&gl=JP&ceid=JP:ja",
+      "weight": 9,
+      "official": true
+    },
+    {
+      "id": "gnews-rakuten-mobile",
+      "name": "楽天モバイル プレスリリース（Google News site:）",
+      "type": "rss",
+      "url": "https://news.google.com/rss/search?q=site:corp.mobile.rakuten.co.jp%20OR%20site:network.mobile.rakuten.co.jp&hl=ja&gl=JP&ceid=JP:ja",
+      "weight": 9,
+      "official": true
+    },
+    {
+      "id": "apple-newsroom-jp",
+      "name": "Apple Newsroom（日本）",
+      "type": "rss",
+      "url": "https://www.apple.com/jp/newsroom/rss-feed.rss",
+      "weight": 12,
+      "official": true
+    },
+    {
+      "id": "google-japan-blog",
+      "name": "Google Japan Blog (The Keyword)",
+      "type": "rss",
+      "url": "https://blog.google/intl/ja-jp/rss/",
+      "weight": 10,
+      "official": true
+    },
+    {
+      "id": "samsung-newsroom-jp",
+      "name": "Samsung Newsroom 日本",
+      "type": "rss",
+      "url": "https://news.samsung.com/jp/feed",
+      "weight": 9,
+      "official": true
     }
   ],
   "excludeCategories": {

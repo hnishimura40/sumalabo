@@ -2,17 +2,19 @@
 
 あなたは すまラボ の夜間自動運転ドライバーです。この指示書に従い、**1 本だけ**記事を全自動で制作・公開・X 投稿し、監査レポートを出して終了してください。CLAUDE.md の全ルール（禁則語 / 記事方針 / 画像ルール / secret 非表示）に従います。判断に迷う場合は安全側（中止して通知）に倒します。
 
+> **恒久無人運転モード（2026-07-11〜）**: testMode（3本限定）は完走して終了し、`autonomy.json` の `nightRun` による恒久運転に切り替わった。毎日 4:30 / 1 晩 1 本 / weeklyCap 7。恒久ガード＝incident 2 件（enabledAt 以降）で自動停止・kill switch（paused）・gate/factcheck/post-publish verify/自動rollback は従来どおり。scout 候補が閾値 50 未満の日は無理に書かず安全スキップ（質を守る）。以下の手順・コマンドは testMode 時代と互換（`test-mode.mjs` CLI が nightRun を優先判定する）。
+
 ## 0. 前提チェック（必ず最初に実行）
 
 ```
 node scripts/automation/test-mode.mjs --status
 ```
 
-- exit 10（testMode 非アクティブ / paused / 期限切れ / 残数 0 / 今晩実行済み）なら、**何もせず** `notifyAutonomyEvent` 相当の通知（`node scripts/run/notify-review-ready.mjs` は使わず、以下のワンライナー）を送って終了する:
+- exit 10（nightRun 無効 / incident 自動停止 / weeklyCap 到達 / paused / 今晩実行済み）なら、**何もせず** `notifyAutonomyEvent` 相当の通知（`node scripts/run/notify-review-ready.mjs` は使わず、以下のワンライナー）を送って終了する:
   ```
-  node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'skipped',title:'[testMode] 夜間運転スキップ: <理由>'}))"
+  node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'skipped',title:'[nightRun] 夜間運転スキップ: <理由>'}))"
   ```
-- アクティブなら続行。
+- アクティブ（exit 0）なら続行。
 
 ## 0-bis. ブラウザ選択（最初のブラウザ操作より前に必ず実行）
 
@@ -59,7 +61,7 @@ npm run article -- --theme "<pickedのタイトルを元にした記事テーマ
 
 ## 3. Phase B（公開）— veto 窓なしで即実行
 
-finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待たずに進む（testMode の承認済み挙動）:
+finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待たずに進む（恒久無人運転の承認済み挙動）:
 
 1. PR merge: `gh pr view <N> --json mergeable,mergeStateStatus` で MERGEABLE/CLEAN を確認 → `gh pr merge <N> --merge --delete-branch=false`
 2. deploy: `npm run deploy:production -- --slug=<slug> --skip-git-sync`
@@ -90,10 +92,11 @@ node scripts/automation/night-report.mjs --slug <slug>
 
 - night-report の「クリーン判定」が「要確認」の場合、通知タイトルにその旨が入る（そのままでよい。判断はユーザー）。
 - incident が今夜 2 件以上出た場合は `node scripts/automation/test-mode.mjs --stop --reason "incident_threshold"` を実行して終了。
+- `--consume` は恒久モードでは本数減算なし（監査用に nightRun.consumed へ追記のみ）。`recordNightRun` が weeklyCap 判定用の `logs/night/run-history.jsonl` にも追記する。
 
 ## 中止条件（どれかに該当したら、その時点で通知して終了）
 
-- paused: true / testMode 失効 / 今晩実行済み
+- paused: true / nightRun 無効（incident 自動停止・weeklyCap 到達含む）/ 今晩実行済み
 - scout 候補が閾値未満
 - gate（draft / full）不合格が自動修正後も残る
 - 画像生成経路（Chrome MCP / ChatGPT セッション）が使えない
@@ -103,7 +106,7 @@ node scripts/automation/night-report.mjs --slug <slug>
 ## 禁止（CLAUDE.md より再掲・特に夜間）
 
 - 有料 API の使用（記事・画像は ChatGPT サブスクのブラウザ経由のみ）
-- 2 本目の着手（1 晩 1 本）
+- 2 本目の着手（1 晩 1 本。**昼の立ち会い 2 本目はユーザーが対話セッションで明示指示したときだけ**＝無人runの管轄外）
 - 検査の緩和（gate / factcheck / verify をスキップ・弱体化しない）
 - secret / token 値の表示・ログ出力
-- autonomy level / xPostMethod / testMode 設定の変更（--consume と --stop 以外）
+- autonomy level / xPostMethod / nightRun 設定の変更（--consume と --stop 以外。enabled の再有効化はユーザー宣言のみ）

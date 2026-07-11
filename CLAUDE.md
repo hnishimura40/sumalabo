@@ -8,6 +8,8 @@
 
 **Autonomy Level: 1 (L1)** — 状態は `data/automation/autonomy.json`、定義は [`docs/autonomy.md`](docs/autonomy.md)。この表記は autonomy.json の `level` と連動させる（変更時は両方更新）。**Claude が level を勝手に変更するのは禁止**（昇格・veto窓短縮はクリーン実績を根拠にユーザーが宣言する。自動降格だけは error budget 規定＝直近10記事で incident 2件以上→level -1 が適用される）。`paused: true`（kill switch）のときは finalize / Phase B / Phase C とも即停止する。
 
+**恒久無人運転（nightRun・2026-07-11 ユーザー承認）**: testMode（3本限定）完走を受け、夜間の無人 run は `autonomy.json` の `nightRun` による恒久運転（毎日 4:30 / scout 自動選定 / 1 晩 1 本 / weeklyCap 7）。恒久ガード＝incident 2 件で自動停止・kill switch・gate/factcheck/verify/rollback 従来どおり。scout 候補が閾値 50 未満の日は安全スキップ。候補豊富な日はユーザーの明示指示で昼に立ち会い 2 本目可。定義: [`docs/autonomy.md`](docs/autonomy.md) §6。**この無人 run は「ユーザー指定なしの自動収集をしない」原則の承認済み例外**（それ以外の対話セッションは従来どおり user-directed mode）。`nightRun.enabled` の再有効化はユーザー宣言のみ。
+
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと
