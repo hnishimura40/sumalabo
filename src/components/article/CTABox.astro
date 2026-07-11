@@ -1,0 +1,116 @@
+---
+// CTABox — ASP 案件用 CTA ボックス（v3・2026-07-11）
+//
+// SIM 系など高単価 ASP 案件（A8.net）への誘導に使う。href には ASP が
+// 発行する既成のアフィリエイトリンクをそのまま渡す（審査通過後）。
+// href 未設定のあいだは「準備中」表示になり、記事は先に作れる。
+//
+// 使用は資産記事（type: revenue / foundation）限定。ニュース記事（type: news）
+// での使用は sumalabo-gate が不合格にする。使用する記事は frontmatter に
+// hasAffiliate: true を付ける（冒頭の広告表示ラベルが自動表示される）。
+//
+//   <CTABox
+//     title="◯◯ SIM の公式サイトはこちら"
+//     description="申し込みの流れと必要なものは本文の手順どおり。キャンペーンは公式で最新を確認。"
+//     buttonLabel="公式サイトで料金を見る"
+//     href="https://px.a8.net/svt/ejp?a8mat=XXXXXX"
+//     note="※ 価格・キャンペーンは変動します。申し込み前に公式サイトでご確認ください。"
+//   />
+interface Props {
+  /** ボックス見出し */
+  title: string;
+  /** 補足説明（1〜2 文） */
+  description?: string;
+  /** ボタン文言 */
+  buttonLabel: string;
+  /** ASP 発行のアフィリエイトリンク。空なら「準備中」表示 */
+  href?: string;
+  /** 注記（変動情報の断り書きなど） */
+  note?: string;
+  /** アフィリエイトリンクかどうか（既定 true = rel="sponsored" を付ける） */
+  sponsored?: boolean;
+}
+
+const { title, description = "", buttonLabel, href = "", note = "", sponsored = true } = Astro.props;
+---
+
+<aside class="cta-box article-wide-block">
+  <p class="cta-box-title">{title}</p>
+  {description && <p class="cta-box-description">{description}</p>}
+  {
+    href ? (
+      <a class="cta-box-button" href={href} target="_blank" rel={sponsored ? "nofollow sponsored noopener" : "noopener"}>
+        {buttonLabel}
+      </a>
+    ) : (
+      <span class="cta-box-button cta-box-button--pending">{buttonLabel}（リンク準備中）</span>
+    )
+  }
+  {note && <p class="cta-box-note">{note}</p>}
+</aside>
+
+<style>
+  .cta-box {
+    margin: 20px 0;
+    border: 1px solid color-mix(in srgb, var(--teal) 30%, var(--line));
+    border-radius: var(--radius-lg);
+    background: var(--teal-tint);
+    box-shadow: var(--shadow-sm);
+    padding: 18px;
+    text-align: center;
+  }
+
+  .cta-box-title {
+    margin: 0 0 6px;
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.5;
+    color: var(--fg);
+  }
+
+  .cta-box-description {
+    margin: 0 0 12px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--fg-mid);
+  }
+
+  .cta-box-button {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 10px 26px;
+    font-size: 14.5px;
+    font-weight: 800;
+    line-height: 1.35;
+    color: #fff;
+    text-decoration: none;
+    background: var(--teal);
+    border: 1px solid color-mix(in srgb, var(--teal) 38%, var(--line));
+    box-shadow: var(--shadow-sm);
+  }
+
+  .cta-box-button--pending {
+    border-style: dashed;
+    border-color: var(--line-strong);
+    background: var(--bg-elev);
+    color: var(--fg-faint);
+    box-shadow: none;
+  }
+
+  .cta-box-note {
+    margin: 10px 0 0;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--fg-faint);
+  }
+
+  @media (max-width: 560px) {
+    .cta-box-button {
+      width: 100%;
+    }
+  }
+</style>

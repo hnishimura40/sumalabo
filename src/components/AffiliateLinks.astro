@@ -1,5 +1,11 @@
 ---
+// AffiliateLinks — productId 参照型の購入リンク欄。
+// 2026-07-11: リンク生成を src/config/affiliate.ts（ID一元管理）経由に変更。
+// data/affiliateLinks.ts には素のモール URL を入れる。アフィリエイト ID が
+// 未設定のあいだは通常リンク（rel="noopener"）、設定後は自動で
+// もしも経由のアフィリエイトリンク（rel="sponsored"）になる。
 import { affiliateLinks, type AffiliateProductId, type AffiliateStore } from "../data/affiliateLinks";
+import { buildMallLink, type MallStore } from "../config/affiliate";
 
 interface Props {
   productId: AffiliateProductId;
@@ -18,17 +24,21 @@ const stores: Array<{
   { key: "yahoo", label: "Yahooで見る", pendingLabel: "Yahooリンク準備中" },
   { key: "official", label: "公式で見る", pendingLabel: "公式リンク準備中" },
 ];
+
+const MALL_STORES: ReadonlyArray<AffiliateStore> = ["amazon", "rakuten", "yahoo"];
 ---
 
 <div class="affiliate-links" aria-label="購入リンク欄">
   {stores.map((store) => {
-    const href = links[store.key];
-    return href ? (
+    const raw = links[store.key];
+    const isMall = MALL_STORES.includes(store.key);
+    const built = raw && isMall ? buildMallLink(store.key as MallStore, raw) : { href: raw, affiliate: false };
+    return built.href ? (
       <a
         class={`affiliate-button affiliate-button--${store.key}`}
-        href={href}
+        href={built.href}
         target="_blank"
-        rel="nofollow sponsored noopener"
+        rel={built.affiliate ? "nofollow sponsored noopener" : "noopener"}
       >
         {store.label}
       </a>
