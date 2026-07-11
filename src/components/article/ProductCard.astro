@@ -1,0 +1,256 @@
+---
+// ProductCard — 商品紹介カード（v3・物販アフィリエイトの受け皿。2026-07-11）
+//
+// 商品名 / 画像枠 / ポイント3行 / 各モールボタン（Amazon・楽天・Yahoo・公式）。
+// リンクは src/config/affiliate.ts の buildMallLink を通すため、
+// アフィリエイト ID 未設定のあいだは素のモール URL の通常リンクとして動く。
+// ID 設定後は自動でアフィリエイトリンク（rel="sponsored"）に切り替わる。
+//
+// 使用は資産記事（type: revenue / foundation）限定。ニュース記事（type: news）
+// での使用は sumalabo-gate が不合格にする。使用する記事は frontmatter に
+// hasAffiliate: true を付ける（冒頭の広告表示ラベルが自動表示される）。
+//
+//   <ProductCard
+//     name="Anker 511 Charger (Nano 3, 30W)"
+//     image="/images/products/anker-511-nano-3.webp"
+//     points={["約31gの小型30W", "iPhone/Androidの急速充電に対応", "コンセント折りたたみ式"]}
+//     amazonUrl="https://www.amazon.co.jp/dp/XXXXXXXXXX"
+//     rakutenUrl="https://item.rakuten.co.jp/..."
+//     yahooUrl="https://store.shopping.yahoo.co.jp/..."
+//     officialUrl="https://www.ankerjapan.com/..."
+//     note="価格・在庫は販売ページで最新情報を確認してください"
+//   />
+import { buildMallLink, type MallStore } from "../../config/affiliate";
+
+interface Props {
+  /** 商品名（カードの見出し） */
+  name: string;
+  /** 商品画像（/images/products/... の WebP）。省略時はプレースホルダ枠 */
+  image?: string;
+  imageAlt?: string;
+  /** 推しポイント（3 行目安・最大 5） */
+  points?: string[];
+  /** 素のモール URL（ID 設定後は自動でアフィリエイトリンク化される） */
+  amazonUrl?: string;
+  rakutenUrl?: string;
+  yahooUrl?: string;
+  /** 公式サイト（アフィリエイト変換なし・常に通常リンク） */
+  officialUrl?: string;
+  /** 注記（価格変動の断り書きなど） */
+  note?: string;
+}
+
+const {
+  name,
+  image = "",
+  imageAlt = "",
+  points = [],
+  amazonUrl = "",
+  rakutenUrl = "",
+  yahooUrl = "",
+  officialUrl = "",
+  note = "",
+} = Astro.props;
+
+const malls: Array<{ store: MallStore; label: string; raw: string }> = [
+  { store: "amazon", label: "Amazonで見る", raw: amazonUrl },
+  { store: "rakuten", label: "楽天市場で見る", raw: rakutenUrl },
+  { store: "yahoo", label: "Yahoo!で見る", raw: yahooUrl },
+];
+
+const buttons = malls
+  .filter((m) => m.raw)
+  .map((m) => {
+    const built = buildMallLink(m.store, m.raw);
+    return { ...m, href: built.href, affiliate: built.affiliate };
+  });
+---
+
+<aside class="product-card article-wide-block">
+  <div class="product-card-body">
+    <div class="product-card-media">
+      {
+        image ? (
+          <img src={image} alt={imageAlt || name} loading="lazy" decoding="async" width="240" height="240" />
+        ) : (
+          <div class="product-card-placeholder" aria-hidden="true">
+            <span>画像準備中</span>
+          </div>
+        )
+      }
+    </div>
+    <div class="product-card-main">
+      <p class="product-card-name">{name}</p>
+      {
+        points.length > 0 && (
+          <ul class="product-card-points">
+            {points.slice(0, 5).map((p) => (
+              <li>{p}</li>
+            ))}
+          </ul>
+        )
+      }
+      <div class="product-card-buttons">
+        {
+          buttons.map((b) => (
+            <a
+              class={`product-card-button product-card-button--${b.store}`}
+              href={b.href}
+              target="_blank"
+              rel={b.affiliate ? "nofollow sponsored noopener" : "noopener"}
+            >
+              {b.label}
+            </a>
+          ))
+        }
+        {
+          officialUrl && (
+            <a class="product-card-button product-card-button--official" href={officialUrl} target="_blank" rel="noopener">
+              公式サイトで見る
+            </a>
+          )
+        }
+        {buttons.length === 0 && !officialUrl && <span class="product-card-pending">購入リンク準備中</span>}
+      </div>
+      {note && <p class="product-card-note">{note}</p>}
+    </div>
+  </div>
+</aside>
+
+<style>
+  .product-card {
+    margin: 20px 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .product-card-body {
+    display: flex;
+    gap: 18px;
+    padding: 18px;
+  }
+
+  .product-card-media {
+    flex: 0 0 128px;
+  }
+
+  .product-card-media img {
+    width: 128px;
+    height: 128px;
+    object-fit: contain;
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius-md);
+    background: #fff;
+    filter: var(--img-filter);
+  }
+
+  .product-card-placeholder {
+    display: flex;
+    width: 128px;
+    height: 128px;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--bg-sunk);
+    color: var(--fg-faint);
+    font-size: 12px;
+  }
+
+  .product-card-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .product-card-name {
+    margin: 0 0 8px;
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.45;
+    color: var(--fg);
+  }
+
+  .product-card-points {
+    margin: 0 0 12px;
+    padding: 0 0 0 1.2em;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--fg-mid);
+  }
+
+  .product-card-points li + li {
+    margin-top: 2px;
+  }
+
+  .product-card-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .product-card-button {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.35;
+    color: #fff;
+    text-decoration: none;
+    background: var(--teal);
+    border: 1px solid color-mix(in srgb, var(--teal) 38%, var(--line));
+  }
+
+  .product-card-button--rakuten {
+    background: color-mix(in srgb, var(--teal) 84%, var(--mint, var(--teal-soft)));
+  }
+
+  .product-card-button--yahoo {
+    background: color-mix(in srgb, var(--teal) 72%, var(--fg));
+  }
+
+  .product-card-button--official {
+    background: color-mix(in srgb, var(--teal) 62%, var(--slate));
+  }
+
+  .product-card-pending {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    border: 1px dashed var(--line-strong);
+    border-radius: 999px;
+    padding: 8px 14px;
+    color: var(--fg-faint);
+    font-size: 13px;
+  }
+
+  .product-card-note {
+    margin: 10px 0 0;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--fg-faint);
+  }
+
+  @media (max-width: 560px) {
+    .product-card-body {
+      flex-direction: column;
+    }
+
+    .product-card-media {
+      flex-basis: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .product-card-button {
+      width: 100%;
+    }
+  }
+</style>

@@ -312,6 +312,63 @@ function checkImageStage(slug, mdx) {
   }
 }
 
+// ---- アフィリエイト検査（2026-07-11 追加・景表法ステマ規制対応 + 二層構造の強制） ----
+// 検出対象は 2 種類:
+//   (1) 生のアフィリエイトリンク URL（各 ASP / モールのアフィリエイトドメイン）
+//   (2) アフィリエイト系コンポーネントの使用（ProductCard / CTABox / AffiliateLinks。
+//       ID 設定後にリンクが自動有効化されるため「広告枠あり」として扱う）
+// ルール:
+//   - ニュースレーン（frontmatter type: news）に (1)(2) いずれかがあれば violation
+//     （ニュース記事には広告を入れない = 信頼と Discover 適性を守る）
+//   - (1)(2) を含むのに frontmatter hasAffiliate: true が無ければ violation
+//     （広告表示ラベルが出ないままアフィリエイトを含む記事は公開不可）
+//   - type: news で hasAffiliate: true も violation（ニュースにラベルは出さない）
+const AFFILIATE_URL_PATTERNS = [
+  { re: /af\.moshimo\.com/i, label: "もしもアフィリエイト" },
+  { re: /px\.a8\.net|a8ejpredirect/i, label: "A8.net" },
+  { re: /hb\.afl\.rakuten\.co\.jp/i, label: "楽天アフィリエイト" },
+  { re: /ck\.jp\.ap\.valuecommerce\.com/i, label: "バリューコマース" },
+  { re: /amzn\.to\//i, label: "Amazon 短縮リンク" },
+  { re: /amazon\.co\.jp\/[^\s"')>]*[?&]tag=/i, label: "Amazon アソシエイトタグ" },
+];
+const AFFILIATE_COMPONENT_RE = /<(ProductCard|CTABox|AffiliateLinks)\b/;
+
+function checkAffiliate(slug, mdx) {
+  if (!mdx) return;
+  const { body, fm } = mdx;
+  const label = `content/articles/${slug}.mdx`;
+
+  const linkHits = AFFILIATE_URL_PATTERNS.filter((p) => p.re.test(body)).map((p) => p.label);
+  const hasComponent = AFFILIATE_COMPONENT_RE.test(body);
+  const hasAffiliateContent = linkHits.length > 0 || hasComponent;
+
+  const fmType = fm ? frontmatterValue(fm, "type") : null;
+  const fmHasAffiliate = fm ? frontmatterValue(fm, "hasAffiliate") : null;
+
+  if (fmType === "news") {
+    if (hasAffiliateContent) {
+      const what = [...linkHits, ...(hasComponent ? ["アフィリエイト系コンポーネント"] : [])].join(" / ");
+      report("violation", "affiliate-lane", label,
+        `ニュースレーン(type: news)の記事にアフィリエイトは入れられません（検出: ${what}）。収益導線は資産記事(type: revenue/foundation)限定`);
+    }
+    if (fmHasAffiliate === "true") {
+      report("violation", "affiliate-lane", label,
+        "ニュースレーン(type: news)の記事に hasAffiliate: true は設定できません（ニュースには広告を入れない方針）");
+    }
+    return;
+  }
+
+  if (hasAffiliateContent && fmHasAffiliate !== "true") {
+    const what = [...linkHits, ...(hasComponent ? ["アフィリエイト系コンポーネント"] : [])].join(" / ");
+    report("violation", "affiliate-disclosure", label,
+      `アフィリエイト(${what})を含むのに frontmatter に hasAffiliate: true がありません（記事冒頭の広告表示ラベルが出ない = 景表法ステマ規制違反のリスク）`);
+  }
+  if (!hasAffiliateContent && fmHasAffiliate === "true") {
+    report("warning", "affiliate-disclosure", label,
+      "hasAffiliate: true だがアフィリエイトリンク/コンポーネントが見つかりません（ラベルだけ表示される状態。意図的でなければ false に）");
+  }
+}
+
 function checkDistOgp(slug) {
   const htmlPath = path.join(CONFIG.distDir, "articles", slug, "index.html");
   const html = readTextOrNull(htmlPath);
@@ -359,6 +416,7 @@ function main() {
   if (stage === "full") {
     const mdx = checkMdxStage(slug, patterns);
     checkImageStage(slug, mdx);
+    checkAffiliate(slug, mdx);
     checkDistOgp(slug);
   }
 

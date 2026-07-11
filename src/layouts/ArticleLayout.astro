@@ -75,6 +75,13 @@ const articleSchema = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
   <article class={`article-shell article-shell--${article.type}`}>
+    {
+      article.hasAffiliate && (
+        <p class="ad-disclosure" role="note">
+          本記事は広告（アフィリエイトリンク）を含みます。<a href="/disclosure/">広告掲載の方針</a>
+        </p>
+      )
+    }
     <header class="article-header">
       <div class="meta-row">
         <span>{typeLabels[article.type]}</span>
@@ -1601,6 +1608,22 @@ const articleSchema = {
   }
 
   .article-ai-note a {
+    color: var(--teal-deep);
+  }
+
+  /* --- 広告表示ラベル（景表法ステマ規制対応・hasAffiliate: true で記事冒頭に自動表示） --- */
+  .ad-disclosure {
+    margin: 0 0 14px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--bg-sunk);
+    color: var(--fg-soft);
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+
+  .ad-disclosure a {
     color: var(--teal-deep);
   }
 

@@ -13,6 +13,8 @@ import Timeline from "../components/article/Timeline.astro";
 import TimelineItem from "../components/article/TimelineItem.astro";
 import ComparisonTable from "../components/article/ComparisonTable.astro";
 import Note from "../components/article/Note.astro";
+import ProductCard from "../components/article/ProductCard.astro";
+import CTABox from "../components/article/CTABox.astro";
 
 const himariMoods = [
   { mood: "curious", label: "curious（疑問・気づき前）" },
@@ -129,6 +131,24 @@ const laboMoods = [
     <Note>
       調査時点（2026年7月）の情報です。価格・提供条件は変わることがあるため、最新は公式ページで確認してください。
     </Note>
+
+    <h2>商品紹介カード（ProductCard・アフィリエイト受け皿）</h2>
+    <ProductCard
+      name="サンプル充電器 30W（見本データ）"
+      points={["約31gの小型30Wで持ち歩きやすい", "iPhone / Android の急速充電に対応", "コンセント折りたたみ式でカバンの中で安全"]}
+      amazonUrl="https://www.amazon.co.jp/"
+      rakutenUrl="https://www.rakuten.co.jp/"
+      note="※ 見本です。ID未設定のため通常リンクとして動作しています（審査通過後に自動でアフィリエイトリンク化）。"
+    />
+    <ProductCard name="リンク未設定の状態（準備中表示の見本）" points={["購入リンクが1つも無いとこの表示になる"]} />
+
+    <h2>CTAボックス（CTABox・ASP案件用）</h2>
+    <CTABox
+      title="◯◯SIM の料金を公式サイトで見る（見本）"
+      description="申し込みの流れは本文の手順どおり。キャンペーンは公式で最新を確認してください。"
+      buttonLabel="公式サイトで料金を見る"
+      note="※ href 未設定のため「準備中」表示。A8 提携後にリンクを入れると有効になります。"
+    />
   </div>
 </BaseLayout>
 

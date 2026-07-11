@@ -32,6 +32,9 @@ const REVIEW_ITEMS_URL = process.env.REVIEW_ITEMS_URL || "https://sumalabo.com/a
 const FIELDS = [
   "slug", "source", "triggerKind", "articleUrl", "previewUrl", "productionUrl",
   "xPostUrl", "publishedAt", "xPostedAt", "autonomyLevel", "trigger", "incidents",
+  // 収益系（2026-07-11 アフィリエイト導入）: 広告あり記事の流入・成果を後から追う下地。
+  // MDX frontmatter の hasAffiliate から --sync で写像される。
+  "hasAffiliate",
 ];
 
 // ---------- read-modify-write ----------
@@ -94,7 +97,7 @@ function listPublishedArticles() {
     };
     const publishAt = get("publishAt") || get("pubDate");
     const isLive = publishAt ? new Date(publishAt).getTime() <= Date.now() : true;
-    out.push({ slug, publishAt, isLive, pubDate: get("pubDate") });
+    out.push({ slug, publishAt, isLive, pubDate: get("pubDate"), hasAffiliate: get("hasAffiliate") === "true" });
   }
   return out;
 }
@@ -139,6 +142,7 @@ export async function syncLedger({ ledgerPath = LEDGER_PATH } = {}) {
       autonomyLevel: rv.autonomyLevel ?? (before?.autonomyLevel ?? 0),
       trigger: rv.trigger || q.trigger || "manual",
       incidents,
+      hasAffiliate: a.hasAffiliate === true,
     }, ledgerPath);
     if (before) updated++; else added++;
   }
