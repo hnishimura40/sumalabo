@@ -5,8 +5,7 @@ import { formatDateTime } from './lib/format';
 import { SummaryCards } from './components/SummaryCards';
 import { SiteCard } from './components/SiteCard';
 import { ViewsChart } from './components/ViewsChart';
-import { TopPagesTable } from './components/TopPagesTable';
-import { RisingPages } from './components/RisingPages';
+import { ArticleMomentum } from './components/ArticleMomentum';
 import { SearchInsights } from './components/SearchInsights';
 import { ImprovementCards } from './components/ImprovementCards';
 
@@ -80,12 +79,9 @@ export default function App() {
 
         <ViewsChart sites={snapshot.sites} />
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          <RisingPages sites={snapshot.sites} />
-          <ImprovementCards sites={snapshot.sites} />
-        </div>
+        <ArticleMomentum sites={snapshot.sites} />
 
-        <TopPagesTable sites={snapshot.sites} />
+        <ImprovementCards sites={snapshot.sites} />
 
         <SearchInsights sites={snapshot.sites} />
 
