@@ -1,5 +1,10 @@
 ---
-const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+// GA4 計測タグ（BaseLayout の </head> 直前で全ページに出力）。
+// 測定IDは siteConfig.gaMeasurementId で一元管理（CI ビルドでも確実に乗る）。
+// 環境変数 PUBLIC_GA_MEASUREMENT_ID を設定すればそちらが優先される。
+import { siteConfig } from "../config/site";
+
+const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || siteConfig.gaMeasurementId;
 const configScript = measurementId
   ? `
 window.dataLayer = window.dataLayer || [];
