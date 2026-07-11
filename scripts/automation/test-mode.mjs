@@ -32,14 +32,34 @@
 //   node scripts/automation/test-mode.mjs --stop --reason "..."
 //   node scripts/automation/test-mode.mjs --enable --articles 3   (ユーザー承認済みのときだけ)
 // 終了コード: --status は active なら 0 / inactive なら 10
+//
+// 恒久無人運転モード（2026-07-11 承認・testMode 3本完走後の後継）:
+//   autonomy.json に nightRun キーがあれば testMode ではなく恒久モードとして判定する。
+//   本数制限の代わりの恒久ガード:
+//     - incident 2 件（enabledAt 以降）で自動停止（enabled: false。再開はユーザー宣言で enabledAt 更新）
+//     - kill switch（paused: true）で即停止
+//     - 1 晩 1 本（canRunTonight）
+//     - weeklyCap（直近 7 日の completed run 数。既定 7 = 毎日 1 本ペース許容）
+//   gate / factcheck / post-publish verify / 自動rollback は従来どおり（本モジュール管轄外）。
+//   --status / --consume / --stop の CLI 互換は維持（night-run.ps1 / night_driver_prompt から変更なしで呼べる）。
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import process from "node:process";
 import { loadAutonomy, saveAutonomy, autonomyPath } from "./autonomy.mjs";
 
 const LAST_RUN_PATH = path.join("logs", "night", "last-run.json");
+const RUN_HISTORY_PATH = path.join("logs", "night", "run-history.jsonl");
+
+export const NIGHT_RUN_DEFAULT = Object.freeze({
+  enabled: false,
+  mode: "permanent",
+  scoutMode: "auto",
+  scheduleTime: "04:30",
+  maxPerNight: 1,
+  weeklyCap: 7,
+});
 
 export const TEST_MODE_DEFAULT = Object.freeze({
   enabled: false,
@@ -130,6 +150,78 @@ export function checkTestModeIncidentStop({ filePath = autonomyPath() } = {}) {
   return { stopped: false, incidentCount: count };
 }
 
+// ---- 恒久無人運転モード（nightRun）----
+
+export function loadNightRun(filePath = autonomyPath()) {
+  const state = loadAutonomy(filePath);
+  const nr = state.nightRun && typeof state.nightRun === "object" ? state.nightRun : null;
+  if (!nr) return null; // nightRun キーなし = 恒久モード未設定（testMode 判定にフォールバック）
+  return {
+    ...NIGHT_RUN_DEFAULT,
+    ...nr,
+    enabled: nr.enabled === true,
+    _paused: state.paused === true,
+    _incidents: Array.isArray(state.incidents) ? state.incidents : [],
+  };
+}
+
+/** 直近 N 日の completed run 数（logs/night/run-history.jsonl）。ファイル無し・壊れは 0 扱い。 */
+export function countRunsInLastDays({ days = 7, now = new Date(), root = process.cwd() } = {}) {
+  const p = path.join(root, RUN_HISTORY_PATH);
+  if (!existsSync(p)) return 0;
+  const since = now.getTime() - days * 86400_000;
+  try {
+    return readFileSync(p, "utf-8")
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => {
+        try { return JSON.parse(line); } catch { return null; }
+      })
+      .filter((e) => e && e.result === "completed" && Number.isFinite(Date.parse(e.at)) && Date.parse(e.at) >= since)
+      .length;
+  } catch {
+    return 0;
+  }
+}
+
+/** 恒久モード即時停止（incident 累積 / retract / 手動）。 */
+export function stopNightRun({ reason = "manual", filePath = autonomyPath() } = {}) {
+  const state = loadAutonomy(filePath);
+  if (!state.nightRun || typeof state.nightRun !== "object") return null;
+  state.nightRun.enabled = false;
+  state.nightRun.disabledReason = reason;
+  state.nightRun.disabledAt = new Date().toISOString();
+  saveAutonomy(state, filePath);
+  return state.nightRun;
+}
+
+/**
+ * 恒久無人運転が「今、走ってよい状態」かを判定する。
+ * ガード: enabled / paused / incident 2 件（enabledAt 以降・自動停止付き）/ weeklyCap。
+ * 1 晩 1 本は呼び出し側で canRunTonight() を併用（--status CLI は両方見る）。
+ */
+export function isNightRunActive({ now = new Date(), filePath = autonomyPath(), root = process.cwd() } = {}) {
+  const nr = loadNightRun(filePath);
+  if (!nr) return null;
+  const base = { mode: nr.mode, weeklyCap: nr.weeklyCap };
+  if (nr._paused) return { ...base, active: false, reason: "autonomy_paused" };
+  if (!nr.enabled) return { ...base, active: false, reason: nr.disabledReason ? `night_run_disabled(${nr.disabledReason})` : "night_run_disabled" };
+  const since = nr.enabledAt ? Date.parse(nr.enabledAt) : 0;
+  const incidentCount = nr._incidents.filter((i) => {
+    const at = Date.parse(i.at || "");
+    return Number.isFinite(at) && at >= since;
+  }).length;
+  if (incidentCount >= 2) {
+    stopNightRun({ reason: `incident_threshold(${incidentCount})`, filePath });
+    return { ...base, active: false, reason: `incident_threshold(${incidentCount})`, incidentCount };
+  }
+  const runsThisWeek = countRunsInLastDays({ days: 7, now, root });
+  if (runsThisWeek >= nr.weeklyCap) {
+    return { ...base, active: false, reason: "weekly_cap_reached", runsThisWeek };
+  }
+  return { ...base, active: true, reason: null, incidentCount, runsThisWeek };
+}
+
 /** 1 晩 1 本ガード: 同じ「夜」(JST の日付) にすでに 1 本走っていたら false。 */
 export function canRunTonight({ now = new Date(), root = process.cwd() } = {}) {
   const p = path.join(root, LAST_RUN_PATH);
@@ -145,9 +237,12 @@ export function canRunTonight({ now = new Date(), root = process.cwd() } = {}) {
 }
 
 export function recordNightRun({ slug, result, root = process.cwd() } = {}) {
+  const entry = { at: new Date().toISOString(), slug: slug || null, result: result || null };
   const p = path.join(root, LAST_RUN_PATH);
   mkdirSync(path.dirname(p), { recursive: true });
-  writeFileSync(p, JSON.stringify({ at: new Date().toISOString(), slug: slug || null, result: result || null }, null, 2) + "\n", "utf-8");
+  writeFileSync(p, JSON.stringify(entry, null, 2) + "\n", "utf-8");
+  // weeklyCap 判定用の履歴（追記のみ）。last-run.json は従来互換のまま。
+  appendFileSync(path.join(root, RUN_HISTORY_PATH), JSON.stringify(entry) + "\n", "utf-8");
 }
 
 // ---- CLI ----
@@ -159,6 +254,14 @@ async function main() {
     return i >= 0 ? argv[i + 1] : null;
   };
   if (has("--status")) {
+    // 恒久モード（nightRun キーあり）が testMode より優先
+    const nr = isNightRunActive();
+    if (nr) {
+      const tonight = canRunTonight();
+      console.log(JSON.stringify({ ...nr, tonight }, null, 2));
+      process.exitCode = nr.active && tonight.ok ? 0 : 10;
+      return;
+    }
     const st = isTestModeActive();
     const tonight = canRunTonight();
     console.log(JSON.stringify({ ...st, tonight }, null, 2));
@@ -166,13 +269,24 @@ async function main() {
     return;
   }
   if (has("--consume")) {
+    // 恒久モードでは本数減算なし（監査用に consumed へ追記のみ）
+    const nrState = loadNightRun();
+    if (nrState) {
+      const state = loadAutonomy(autonomyPath());
+      state.nightRun.consumed = [...(state.nightRun.consumed || []), { slug: val("--slug"), at: new Date().toISOString() }];
+      saveAutonomy(state, autonomyPath());
+      console.log(JSON.stringify({ mode: "permanent", enabled: state.nightRun.enabled, consumedCount: state.nightRun.consumed.length }, null, 2));
+      return;
+    }
     const tm = consumeTestModeArticle({ slug: val("--slug") });
     console.log(JSON.stringify({ remaining: tm.articlesRemaining, enabled: tm.enabled }, null, 2));
     return;
   }
   if (has("--stop")) {
-    const tm = stopTestMode({ reason: val("--reason") || "manual" });
-    console.log(JSON.stringify({ enabled: tm.enabled, disabledReason: tm.disabledReason }, null, 2));
+    const reason = val("--reason") || "manual";
+    const nrStopped = stopNightRun({ reason });
+    const tm = stopTestMode({ reason });
+    console.log(JSON.stringify({ enabled: tm.enabled, disabledReason: tm.disabledReason, nightRunStopped: nrStopped ? true : false }, null, 2));
     return;
   }
   if (has("--enable")) {

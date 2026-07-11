@@ -22,7 +22,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
 import { recordIncident, loadAutonomy } from "./autonomy.mjs";
-import { stopTestMode } from "./test-mode.mjs";
+import { stopTestMode, stopNightRun } from "./test-mode.mjs";
 import { purgeForSlug, checkArticleGone } from "./cache-purge.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 import { readLedger } from "./ledger.mjs";
@@ -87,10 +87,11 @@ async function main() {
   console.log("[retract 4/6] incident 記録");
   report.steps.incident = recordIncident({ slug, kind: "retracted", detail: "npm run retract による撤回" });
 
-  // 5. testMode 停止
-  console.log("[retract 5/6] testMode 停止");
+  // 5. testMode / 恒久無人運転 停止
+  console.log("[retract 5/6] testMode / nightRun 停止");
   const tm = stopTestMode({ reason: `retract(${slug})` });
-  report.steps.testModeStopped = { enabled: tm.enabled, reason: tm.disabledReason };
+  const nr = stopNightRun({ reason: `retract(${slug})` });
+  report.steps.testModeStopped = { enabled: tm.enabled, reason: tm.disabledReason, nightRunStopped: nr ? true : false };
 
   // 6. 通知
   console.log("[retract 6/6] 通知");
