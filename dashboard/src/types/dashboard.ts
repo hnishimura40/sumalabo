@@ -56,6 +56,23 @@ export interface SiteMetrics {
   averagePosition: number;
 }
 
+/** 記事の動性ステータス。分類しきい値は scripts/fetch-dashboard-data.mjs の MOMENTUM 定数を正とする */
+export type ArticleMomentumStatus = 'rising' | 'falling' | 'new' | 'stable';
+
+export interface ArticleMomentumEntry {
+  path: string;
+  title: string;
+  /** 直近7日の PV */
+  pv7: number;
+  /** その前の7日の PV */
+  pvPrev7: number;
+  /** 前週比 (%)。前週PV=0 のときは null（新着扱い） */
+  deltaPct: number | null;
+  status: ArticleMomentumStatus;
+  /** 直近14日のデイリー PV（日付昇順・欠測日は 0） */
+  trend: number[];
+}
+
 export interface SiteDashboard {
   site: SiteMeta;
   metrics: SiteMetrics;
@@ -64,6 +81,8 @@ export interface SiteDashboard {
   risingPages: PageStat[];
   topQueries: SearchQueryStat[];
   improvements: ImprovementHint[];
+  /** 記事ごとの動性（7日PV上位∪前週比上位∪新着、最大30記事/サイト）。未取得スナップショットでは省略 */
+  articles?: ArticleMomentumEntry[];
   /** データ取得元 (sample / ga4 / search-console) と取得時刻 */
   source: 'sample' | 'ga4' | 'search-console' | 'mixed';
   fetchedAt: string;

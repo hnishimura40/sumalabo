@@ -91,6 +91,163 @@ function getPropertyId(siteId) {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  記事ごとの動性 (Article Momentum) — 分類・選定の定数とロジック            */
+/* -------------------------------------------------------------------------- */
+
+// 分類しきい値（要件で定数化指定）
+export const MOMENTUM = Object.freeze({
+  /** 急上昇: 前週比 +30% 以上 */
+  RISING_MIN_DELTA_PCT: 30,
+  /** 急上昇: かつ 今週PV >= 10 */
+  RISING_MIN_PV7: 10,
+  /** 下降: 前週比 -30% 以下 */
+  FALLING_MAX_DELTA_PCT: -30,
+  /** 下降: かつ 前週PV >= 10 */
+  FALLING_MIN_PV_PREV7: 10,
+  /** 対象記事の選定: 7日PV上位N */
+  SELECT_TOP_PV: 20,
+  /** 対象記事の選定: 前週比の絶対値上位N (前週PV=0 は対象外) */
+  SELECT_TOP_DELTA: 10,
+  /** JSON肥大防止: 1サイトあたりの最大記事数 */
+  MAX_ARTICLES_PER_SITE: 30,
+  /** デイリー推移の日数 */
+  TREND_DAYS: 14,
+});
+
+/** 前週比(%)。前週PV=0 のときは null（新着扱い） */
+export function calcDeltaPct(pv7, pvPrev7) {
+  if (pvPrev7 === 0) return null;
+  return Number((((pv7 - pvPrev7) / pvPrev7) * 100).toFixed(1));
+}
+
+/**
+ * 記事の動性ステータス分類:
+ *   - 新着:   前週PV=0 かつ 今週PV>0
+ *   - 急上昇: 前週比 +30% 以上 かつ 今週PV>=10
+ *   - 下降:   前週比 -30% 以下 かつ 前週PV>=10
+ *   - 安定:   それ以外
+ */
+export function classifyArticle(pv7, pvPrev7) {
+  const deltaPct = calcDeltaPct(pv7, pvPrev7);
+  if (pvPrev7 === 0 && pv7 > 0) return 'new';
+  if (deltaPct !== null && deltaPct >= MOMENTUM.RISING_MIN_DELTA_PCT && pv7 >= MOMENTUM.RISING_MIN_PV7) {
+    return 'rising';
+  }
+  if (deltaPct !== null && deltaPct <= MOMENTUM.FALLING_MAX_DELTA_PCT && pvPrev7 >= MOMENTUM.FALLING_MIN_PV_PREV7) {
+    return 'falling';
+  }
+  return 'stable';
+}
+
+/** JST で直近 N 日の YYYY-MM-DD リスト（昇順・今日を含む） */
+function lastNDatesJst(n) {
+  const out = [];
+  const now = Date.now();
+  for (let i = n - 1; i >= 0; i -= 1) {
+    out.push(jstDate(new Date(now - i * 86400000)));
+  }
+  return out;
+}
+
+/**
+ * 記事ごとの動性データを取得する。
+ *   クエリ1: 直近7日 + その前7日 の 2 dateRanges で記事別PVと前週比
+ *   クエリ2: 選定した記事に絞った直近14日のデイリー推移
+ * 選定は「7日PV上位20」∪「前週比の絶対値上位10」∪「新着」、最大30記事/サイト。
+ *
+ * @returns {Promise<Array<{path:string,title:string,pv7:number,pvPrev7:number,deltaPct:number|null,status:string,trend:number[]}>>}
+ */
+async function fetchArticleMomentum(client, property) {
+  // ---- クエリ1: 記事別 今週/前週 PV ----
+  const [cmpRes] = await client.runReport({
+    property,
+    dateRanges: [
+      { startDate: '6daysAgo', endDate: 'today', name: 'current7' },
+      { startDate: '13daysAgo', endDate: '7daysAgo', name: 'previous7' },
+    ],
+    dimensions: [{ name: 'pagePath' }, { name: 'pageTitle' }],
+    metrics: [{ name: 'screenPageViews' }],
+    limit: 5000,
+  });
+
+  // 2 dateRanges 指定時、GA4 は dateRange ディメンションを行末尾に自動付与する
+  const byPath = new Map();
+  for (const row of cmpRes.rows || []) {
+    const path = row.dimensionValues[0].value || '/';
+    const title = row.dimensionValues[1].value || path;
+    const rangeName = row.dimensionValues[2]?.value || 'current7';
+    const views = intOf(row.metricValues[0].value);
+    const entry = byPath.get(path) || { path, title, pv7: 0, pvPrev7: 0 };
+    if (title) entry.title = title;
+    if (rangeName === 'previous7' || rangeName === 'date_range_1') {
+      entry.pvPrev7 += views;
+    } else {
+      entry.pv7 += views;
+    }
+    byPath.set(path, entry);
+  }
+
+  const all = [...byPath.values()].map((a) => ({
+    ...a,
+    deltaPct: calcDeltaPct(a.pv7, a.pvPrev7),
+  }));
+
+  // ---- 選定: 7日PV上位20 ∪ 前週比絶対値上位10 ∪ 新着、最大30 ----
+  const picked = new Map();
+  const pick = (a) => {
+    if (picked.size >= MOMENTUM.MAX_ARTICLES_PER_SITE) return;
+    if (!picked.has(a.path)) picked.set(a.path, a);
+  };
+  [...all].sort((x, y) => y.pv7 - x.pv7).slice(0, MOMENTUM.SELECT_TOP_PV).forEach(pick);
+  [...all]
+    .filter((a) => a.deltaPct !== null)
+    .sort((x, y) => Math.abs(y.deltaPct) - Math.abs(x.deltaPct))
+    .slice(0, MOMENTUM.SELECT_TOP_DELTA)
+    .forEach(pick);
+  [...all]
+    .filter((a) => a.pvPrev7 === 0 && a.pv7 > 0)
+    .sort((x, y) => y.pv7 - x.pv7)
+    .forEach(pick);
+
+  if (picked.size === 0) return [];
+
+  // ---- クエリ2: 選定記事の直近14日デイリー推移 ----
+  const [trendRes] = await client.runReport({
+    property,
+    dateRanges: [{ startDate: `${MOMENTUM.TREND_DAYS - 1}daysAgo`, endDate: 'today' }],
+    dimensions: [{ name: 'date' }, { name: 'pagePath' }],
+    metrics: [{ name: 'screenPageViews' }],
+    dimensionFilter: {
+      filter: {
+        fieldName: 'pagePath',
+        inListFilter: { values: [...picked.keys()] },
+      },
+    },
+    limit: 10000,
+  });
+
+  const dailyByPathDate = new Map();
+  for (const row of trendRes.rows || []) {
+    const date = ga4DateToIso(row.dimensionValues[0].value);
+    const path = row.dimensionValues[1].value || '/';
+    dailyByPathDate.set(`${path}\n${date}`, intOf(row.metricValues[0].value));
+  }
+  const dates = lastNDatesJst(MOMENTUM.TREND_DAYS);
+
+  return [...picked.values()]
+    .map((a) => ({
+      path: a.path,
+      title: a.title,
+      pv7: a.pv7,
+      pvPrev7: a.pvPrev7,
+      deltaPct: a.deltaPct,
+      status: classifyArticle(a.pv7, a.pvPrev7),
+      trend: dates.map((d) => dailyByPathDate.get(`${a.path}\n${d}`) || 0),
+    }))
+    .sort((x, y) => y.pv7 - x.pv7);
+}
+
+/* -------------------------------------------------------------------------- */
 /*  GA4 取得 — 1 サイト分                                                     */
 /* -------------------------------------------------------------------------- */
 
@@ -271,6 +428,9 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     .sort((a, b) => b.trendScore - a.trendScore)
     .slice(0, 10);
 
+  // ---- 記事ごとの動性 (前週比 + 14日デイリー推移) ----
+  const articles = await fetchArticleMomentum(client, property);
+
   return {
     siteId: siteMeta.id,
     totals,
@@ -279,6 +439,8 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     channelStats,
     deviceStats,
     trendScores,
+    // sites[].articles へ写す一時フィールド（stats には残さない: main 側で削除）
+    articles,
     source: 'ga4',
     fetchedAt: jstIso(),
   };
@@ -324,6 +486,8 @@ function buildSiteDashboardFromStats(statsBlock, sampleSite) {
     // Search Console 由来の項目は sample 維持 (Phase 3B で差し替え)
     topQueries: sampleSite.topQueries ?? [],
     improvements: sampleSite.improvements ?? [],
+    // 記事ごとの動性 (ArticleMomentum UI 用)
+    articles: statsBlock.articles ?? [],
     source: 'mixed', // GA4 + sample(SC)
     fetchedAt: statsBlock.fetchedAt,
   };
@@ -387,10 +551,20 @@ async function main() {
     }
     try {
       const statsBlock = await fetchSiteFromGa4(client, propertyId, sampleSite.site);
+      // 機能A: 取得成功でも直近7日の合計PVが0なら WARN（タグ未設置の検知。
+      // すまラボのGA4タグ未設置がログ上は正常扱いになっていた事故の再発防止）
+      if (statsBlock.totals.views7d === 0) {
+        const zeroMsg = `${siteId}: GA4 returned 0 total pageviews for last 7 days (tag missing?)`;
+        console.warn(`[fetch-dashboard-data] WARN ${zeroMsg}`);
+        warnings.push(zeroMsg);
+      }
+      const dashboardSite = buildSiteDashboardFromStats(statsBlock, sampleSite);
+      // articles は sites[] 側にのみ持たせる（stats 側と二重に持たない = JSON肥大防止）
+      delete statsBlock.articles;
       siteStatsBlocks.push(statsBlock);
-      newSites.push(buildSiteDashboardFromStats(statsBlock, sampleSite));
+      newSites.push(dashboardSite);
       liveCount += 1;
-      console.log(`[fetch-dashboard-data] ${siteId}: GA4 fetch OK (${statsBlock.dailySiteStats.length} days, ${statsBlock.pageStats.length} pages)`);
+      console.log(`[fetch-dashboard-data] ${siteId}: GA4 fetch OK (${statsBlock.dailySiteStats.length} days, ${statsBlock.pageStats.length} pages, ${dashboardSite.articles.length} momentum articles)`);
     } catch (err) {
       const msg = `GA4 fetch failed for ${siteId}: ${err.message}`;
       console.warn(`[fetch-dashboard-data] ${msg}`);
