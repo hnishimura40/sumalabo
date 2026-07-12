@@ -349,13 +349,26 @@
             12
           ]
         }
-      ]
+      ],
+      "searchSource": "sample",
+      "discover": {
+        "listed": true,
+        "impressions28d": 4230,
+        "clicks28d": 186
+      },
+      "searchTrend": {
+        "clicks28d": 3120,
+        "clicksPrev28d": 2714,
+        "impressions28d": 84210,
+        "impressionsPrev28d": 79157
+      },
+      "internalNavShare": 0.18
     },
     {
       "site": {
         "id": "sumalab",
         "name": "すまラボ",
-        "url": "",
+        "url": "https://sumalabo.com/",
         "category": "AI・IT・ガジェット",
         "accent": "#10b981"
       },
@@ -722,13 +735,26 @@
             8
           ]
         }
-      ]
+      ],
+      "searchSource": "sample",
+      "discover": {
+        "listed": false,
+        "impressions28d": 0,
+        "clicks28d": 0
+      },
+      "searchTrend": {
+        "clicks28d": 1520,
+        "clicksPrev28d": 1702,
+        "impressions28d": 52800,
+        "impressionsPrev28d": 55440
+      },
+      "internalNavShare": 0.09
     },
     {
       "site": {
         "id": "miradia",
         "name": "ミラディア",
-        "url": "",
+        "url": "https://miradia.pages.dev/",
         "category": "まとめ・ニュース導線",
         "accent": "#ec4899"
       },
@@ -739,10 +765,10 @@
         "last28DaysViews": 9740,
         "users": 1980,
         "sessions": 2240,
-        "searchClicks": 720,
-        "searchImpressions": 28900,
-        "searchCtr": 0.0249,
-        "averagePosition": 26.1
+        "searchClicks": 0,
+        "searchImpressions": 0,
+        "searchCtr": 0,
+        "averagePosition": 0
       },
       "dailyViews": [
         {
@@ -905,36 +931,7 @@
           "delta": 0.12
         }
       ],
-      "topQueries": [
-        {
-          "query": "AI トレンド 2026",
-          "clicks": 180,
-          "impressions": 6200,
-          "ctr": 0.029,
-          "position": 13.4
-        },
-        {
-          "query": "今週のニュース まとめ",
-          "clicks": 140,
-          "impressions": 4800,
-          "ctr": 0.0292,
-          "position": 15.1
-        },
-        {
-          "query": "ガジェット 話題",
-          "clicks": 110,
-          "impressions": 3900,
-          "ctr": 0.0282,
-          "position": 16.8
-        },
-        {
-          "query": "エンタメ 速報",
-          "clicks": 90,
-          "impressions": 3300,
-          "ctr": 0.0273,
-          "position": 18.2
-        }
-      ],
+      "topQueries": [],
       "improvements": [
         {
           "title": "まとめ記事の更新サイクルを短く",
@@ -1047,7 +1044,14 @@
             10
           ]
         }
-      ]
+      ],
+      "searchSource": "none",
+      "discover": {
+        "listed": null,
+        "impressions28d": 0,
+        "clicks28d": 0
+      },
+      "internalNavShare": 0.04
     }
   ]
 }

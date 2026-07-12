@@ -46,3 +46,15 @@ export function calcDelta(current: number, previous: number): DeltaInfo {
     tone,
   };
 }
+
+/**
+ * サイトの検索メトリクス出所を解決する。
+ * Phase 3B 以前のスナップショットには searchSource が無いので、
+ * その場合は「sample サイトなら sample、live サイトなら未接続」とみなす。
+ */
+export function effectiveSearchSource(site: {
+  searchSource?: 'sc' | 'sample' | 'none';
+  source: string;
+}): 'sc' | 'sample' | 'none' {
+  return site.searchSource ?? (site.source === 'sample' ? 'sample' : 'none');
+}

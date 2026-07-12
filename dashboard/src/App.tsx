@@ -3,6 +3,7 @@ import type { DashboardSnapshot } from './types/dashboard';
 import { loadDashboard } from './lib/dataLoader';
 import { formatDateTime } from './lib/format';
 import { SummaryCards } from './components/SummaryCards';
+import { GrowthStatus } from './components/GrowthStatus';
 import { SiteCard } from './components/SiteCard';
 import { ViewsChart } from './components/ViewsChart';
 import { ArticleMomentum } from './components/ArticleMomentum';
@@ -67,6 +68,8 @@ export default function App() {
 
       <main className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-5 sm:px-6 sm:py-7">
         <SummaryCards sites={snapshot.sites} />
+
+        <GrowthStatus sites={snapshot.sites} />
 
         <section
           aria-label="サイト別カード"

@@ -64,15 +64,12 @@ jobs:
 
       - name: Generate dashboard-latest.json (runner-local only)
         env:
-          # Phase 3 で使う想定。未登録なら fetch-dashboard-data.mjs は sample fallback で動作する。
+          # 未登録なら fetch-dashboard-data.mjs は sample fallback で動作する。
+          # Search Console は GA4 と同じ鍵で sites.list 動的解決するため専用 Secrets は不要 (Phase 3B)。
           GA4_PROPERTY_ID_AINITORYU: ${{ secrets.GA4_PROPERTY_ID_AINITORYU }}
           GA4_PROPERTY_ID_SUMALAB: ${{ secrets.GA4_PROPERTY_ID_SUMALAB }}
           GA4_PROPERTY_ID_MIRADIA: ${{ secrets.GA4_PROPERTY_ID_MIRADIA }}
           GA4_SERVICE_ACCOUNT_JSON: ${{ secrets.GA4_SERVICE_ACCOUNT_JSON }}
-          SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON: ${{ secrets.SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON }}
-          SEARCH_CONSOLE_SITE_AINITORYU: ${{ secrets.SEARCH_CONSOLE_SITE_AINITORYU }}
-          SEARCH_CONSOLE_SITE_SUMALAB: ${{ secrets.SEARCH_CONSOLE_SITE_SUMALAB }}
-          SEARCH_CONSOLE_SITE_MIRADIA: ${{ secrets.SEARCH_CONSOLE_SITE_MIRADIA }}
         run: npm run fetch-data
 
       - name: Verify live JSON is gitignored (safety check)

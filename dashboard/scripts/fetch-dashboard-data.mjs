@@ -4,25 +4,29 @@
  *
  * ダッシュボード用のライブJSON (public/data/dashboard-latest.json) を生成するスクリプト。
  *
- * Phase 3A (現状):
+ * Phase 3A + 3B (現状):
  *   - GA4 Data API から各サイトの日別 / ページ別 / チャネル別 / デバイス別データを取得。
+ *   - Search Console API (webmasters/v3 REST) から検索クリック / 表示 / CTR / 掲載順位 /
+ *     上位クエリ / Discover 掲載状況を取得。認証は GA4 と同じサービスアカウント鍵で
+ *     scope=webmasters.readonly のトークンを取り、googleapis を追加せず REST を直接叩く。
+ *   - SC プロパティ識別子はハードコードせず、起動時に sites.list を 1 回呼び、
+ *     各サイトのホスト名 (site.url 由来、www 無視) でマッチして動的解決する。
+ *     解決できない / SC 取得に失敗したサイトは searchSource: 'none' として続行し、
+ *     GA4 側の取得や全体の実行は落とさない。
  *   - 既存 UI 互換の sites[] と、後段分析用の stats を 1 つの snapshot にまとめて書き出す。
  *   - GA4 credentials / property ID が揃わないサイトは sample にフォールバック (画面側で 🟡)。
- *   - Search Console 連携は Phase 3B で別途実装する (本スクリプトでは sample の topQueries / 検索メトリクスを残置)。
  *
- * 使う Secrets (GitHub Actions / 環境変数):
- *   - GA4_SERVICE_ACCOUNT_JSON         サービスアカウント鍵 JSON 全文 (3 サイト兼用)
+ * 使う Secrets (環境変数):
+ *   - GA4_SERVICE_ACCOUNT_JSON         サービスアカウント鍵 JSON 全文 (GA4 / SC 兼用)
  *   - GA4_PROPERTY_ID_AINITORYU        GA4 プロパティ ID (数値文字列)
  *   - GA4_PROPERTY_ID_SUMALAB          同上
  *   - GA4_PROPERTY_ID_MIRADIA          同上
- *
- * まだ使わない Secrets (Phase 3B):
- *   - SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON
- *   - SEARCH_CONSOLE_SITE_AINITORYU / _SUMALAB / _MIRADIA
+ *   ※ SEARCH_CONSOLE_* 系の env / Secrets は不要 (sites.list 動的解決のため廃止)。
  *
  * 出力:
  *   - dashboard/public/data/dashboard-latest.json (gitignore 対象、commit しない)
- *   - GitHub Actions ランナー内で生成 → Wrangler が dist/ ごと Cloudflare Pages へ Direct Upload。
+ *   - ローカル自動更新 (update-dashboard-local.ps1) から呼ばれ、Wrangler が
+ *     dist/ ごと Cloudflare Pages へ Direct Upload する。
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -88,6 +92,199 @@ function getPropertyId(siteId) {
     miradia: process.env.GA4_PROPERTY_ID_MIRADIA,
   };
   return map[siteId] || null;
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Search Console (Phase 3B)                                                 */
+/*                                                                            */
+/*  googleapis は重量級なので追加せず、google-auth-library でアクセストークン */
+/*  だけ取り webmasters/v3 REST を直接叩く。プロパティは sites.list から      */
+/*  ホスト名マッチで動的解決する (sc-domain: をドメイン一致で優先、次点で    */
+/*  URL プレフィックスのホスト一致)。                                         */
+/* -------------------------------------------------------------------------- */
+
+const SC_API_BASE = 'https://searchconsole.googleapis.com/webmasters/v3';
+const SC_SCOPE = 'https://www.googleapis.com/auth/webmasters.readonly';
+/** 集計ウィンドウ (直近N日) */
+const SC_DAYS = 28;
+/** 前期比のための日別取得幅 (直近28日 + その前28日) */
+const SC_TREND_DAYS = 56;
+
+/** URL からホスト名 (小文字、先頭 www. は無視) を取る。パース不能なら null */
+function hostOf(url) {
+  try {
+    return new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+  } catch {
+    return null;
+  }
+}
+
+/** JST で n 日前の YYYY-MM-DD */
+function jstDateAgo(n) {
+  return jstDate(new Date(Date.now() - n * 86400000));
+}
+
+/**
+ * SC 用の認証済み fetch クライアントを作る。
+ * google-auth-library がトークン取得/更新を面倒見るので、こちらは
+ * リクエストごとに getRequestHeaders() を呼ぶだけでよい。
+ */
+async function createScClient(creds) {
+  const { GoogleAuth } = await import('google-auth-library');
+  const auth = new GoogleAuth({
+    credentials: {
+      client_email: creds.client_email,
+      private_key: creds.private_key,
+    },
+    scopes: [SC_SCOPE],
+  });
+  const authed = await auth.getClient();
+  return {
+    /** @param {string} path  SC_API_BASE 以下のパス  @param {object} [body]  あれば POST */
+    async request(path, body) {
+      const raw = await authed.getRequestHeaders();
+      // google-auth-library v10 は Headers、旧版は plain object を返すので両対応
+      const authHeaders =
+        typeof raw?.entries === 'function' ? Object.fromEntries(raw.entries()) : raw;
+      const res = await fetch(`${SC_API_BASE}${path}`, {
+        method: body ? 'POST' : 'GET',
+        headers: { ...authHeaders, 'Content-Type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`SC API ${res.status} ${path}: ${text.slice(0, 200)}`);
+      }
+      return res.json();
+    },
+  };
+}
+
+/** sites.list — サービスアカウントに見えている SC プロパティ一覧 (未検証は除外) */
+async function listScProperties(sc) {
+  const data = await sc.request('/sites');
+  return (data.siteEntry || []).filter(
+    (e) => e.permissionLevel && e.permissionLevel !== 'siteUnverifiedUser',
+  );
+}
+
+/**
+ * サイト URL のホスト名で SC プロパティを解決する。
+ * sc-domain: プロパティ (ドメイン一致 / サブドメイン包含) を優先し、
+ * なければ URL プレフィックスプロパティのホスト一致を使う。
+ * 見つからなければ null。
+ */
+function resolveScProperty(siteUrl, entries) {
+  const host = hostOf(siteUrl || '');
+  if (!host) return null;
+  let domainMatch = null;
+  let urlPrefixMatch = null;
+  for (const e of entries) {
+    const u = e.siteUrl || '';
+    if (u.startsWith('sc-domain:')) {
+      const domain = u.slice('sc-domain:'.length).toLowerCase();
+      if (host === domain || host.endsWith(`.${domain}`)) domainMatch = u;
+    } else if (!urlPrefixMatch && hostOf(u) === host) {
+      urlPrefixMatch = u;
+    }
+  }
+  return domainMatch || urlPrefixMatch;
+}
+
+/**
+ * 1 サイト分の Search Console データを取得する。
+ *   - type=web 日別 56 日 → 直近28日 / 前28日の clicks・impressions 比較
+ *   - type=web 合計 28 日 → searchClicks / searchImpressions / searchCtr / averagePosition
+ *   - type=web query 別 28 日 top10 → topQueries
+ *   - type=discover 合計 28 日 → discover.listed (impressions>=1)
+ * discover はプロパティによっては使えないことがあるため個別に握りつぶし、
+ * web 側の失敗のみ呼び出し元へ throw する。
+ */
+async function fetchScForSite(sc, property, warnings, siteId) {
+  const enc = encodeURIComponent(property);
+  const q = (body) => sc.request(`/sites/${enc}/searchAnalytics/query`, body);
+
+  const [dailyRes, totalsRes, queriesRes] = await Promise.all([
+    q({
+      startDate: jstDateAgo(SC_TREND_DAYS - 1),
+      endDate: jstDateAgo(0),
+      dimensions: ['date'],
+      type: 'web',
+      rowLimit: SC_TREND_DAYS + 5,
+      dataState: 'all',
+    }),
+    q({
+      startDate: jstDateAgo(SC_DAYS - 1),
+      endDate: jstDateAgo(0),
+      type: 'web',
+      dataState: 'all',
+    }),
+    q({
+      startDate: jstDateAgo(SC_DAYS - 1),
+      endDate: jstDateAgo(0),
+      dimensions: ['query'],
+      type: 'web',
+      rowLimit: 10,
+      dataState: 'all',
+    }),
+  ]);
+
+  // Discover: 掲載実績のないプロパティでは 4xx になり得るので個別 try。
+  // API エラー時は listed:false 扱い + warning (未接続 null とは区別する)。
+  let discover = { listed: false, impressions28d: 0, clicks28d: 0 };
+  try {
+    const dRes = await q({
+      startDate: jstDateAgo(SC_DAYS - 1),
+      endDate: jstDateAgo(0),
+      type: 'discover',
+      dataState: 'all',
+    });
+    const row = (dRes.rows || [])[0];
+    const imp = row ? Math.round(row.impressions || 0) : 0;
+    const clk = row ? Math.round(row.clicks || 0) : 0;
+    discover = { listed: imp >= 1, impressions28d: imp, clicks28d: clk };
+  } catch (err) {
+    warnings.push(`SC discover query failed for ${siteId}: ${err.message}`);
+  }
+
+  const cur28Start = jstDateAgo(SC_DAYS - 1);
+  const searchTrend = {
+    clicks28d: 0,
+    clicksPrev28d: 0,
+    impressions28d: 0,
+    impressionsPrev28d: 0,
+  };
+  for (const row of dailyRes.rows || []) {
+    const date = row.keys?.[0] || '';
+    const clicks = Math.round(row.clicks || 0);
+    const impressions = Math.round(row.impressions || 0);
+    if (date >= cur28Start) {
+      searchTrend.clicks28d += clicks;
+      searchTrend.impressions28d += impressions;
+    } else {
+      searchTrend.clicksPrev28d += clicks;
+      searchTrend.impressionsPrev28d += impressions;
+    }
+  }
+
+  const t = (totalsRes.rows || [])[0] || {};
+  return {
+    totals: {
+      searchClicks: Math.round(t.clicks || 0),
+      searchImpressions: Math.round(t.impressions || 0),
+      searchCtr: Number((t.ctr || 0).toFixed(4)),
+      averagePosition: Number((t.position || 0).toFixed(1)),
+    },
+    topQueries: (queriesRes.rows || []).map((r) => ({
+      query: r.keys?.[0] || '(unknown)',
+      clicks: Math.round(r.clicks || 0),
+      impressions: Math.round(r.impressions || 0),
+      ctr: Number((r.ctr || 0).toFixed(4)),
+      position: Number((r.position || 0).toFixed(1)),
+    })),
+    searchTrend,
+    discover,
+  };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -271,7 +468,7 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     { name: 'sessions' },
   ];
 
-  const [dailyRes, pages90Res, pages28Res, pages7Res, channelRes, deviceRes] = await Promise.all([
+  const [dailyRes, pages90Res, pages28Res, pages7Res, channelRes, deviceRes, referrerRes] = await Promise.all([
     // 1) 日別サイト合計 (90 日)
     client.runReport({
       property,
@@ -322,6 +519,14 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
       dimensions: [{ name: 'deviceCategory' }],
       metrics: pageMetrics,
       orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }],
+    }),
+    // 7) リファラー別 (28 日) — internalNavShare (サイト内回遊の PV 割合) 算出用
+    client.runReport({
+      property,
+      dateRanges: [{ startDate: '27daysAgo', endDate: 'today' }],
+      dimensions: [{ name: 'pageReferrer' }],
+      metrics: [{ name: 'screenPageViews' }],
+      limit: 10000,
     }),
   ]);
 
@@ -428,6 +633,22 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     .sort((a, b) => b.trendScore - a.trendScore)
     .slice(0, 10);
 
+  // ---- internalNavShare: リファラーが自サイトの PV / 全 PV (0〜1) ----
+  // pageReferrer で group した全行の合計は総 PV に一致する ((not set) 含む) ので、
+  // それを分母に、リファラーのホストが自サイトと同一の行だけ分子に積む。
+  const siteHost = hostOf(siteMeta.url || '');
+  let internalViews = 0;
+  let totalReferrerViews = 0;
+  for (const r of referrerRes[0].rows || []) {
+    const views = intOf(r.metricValues[0].value);
+    totalReferrerViews += views;
+    if (siteHost && hostOf(r.dimensionValues[0].value || '') === siteHost) {
+      internalViews += views;
+    }
+  }
+  const internalNavShare =
+    totalReferrerViews > 0 ? Number((internalViews / totalReferrerViews).toFixed(4)) : 0;
+
   // ---- 記事ごとの動性 (前週比 + 14日デイリー推移) ----
   const articles = await fetchArticleMomentum(client, property);
 
@@ -439,8 +660,9 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     channelStats,
     deviceStats,
     trendScores,
-    // sites[].articles へ写す一時フィールド（stats には残さない: main 側で削除）
+    // sites[] へ写す一時フィールド（stats には残さない: main 側で削除）
     articles,
+    internalNavShare,
     source: 'ga4',
     fetchedAt: jstIso(),
   };
@@ -450,7 +672,13 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
 /*  既存 UI 用 SiteDashboard へのマッピング (sites[])                          */
 /* -------------------------------------------------------------------------- */
 
-function buildSiteDashboardFromStats(statsBlock, sampleSite) {
+/**
+ * @param {object} statsBlock  fetchSiteFromGa4 の戻り値
+ * @param {object} sampleSite  sample-dashboard.json の該当サイト (表示メタ / improvements 供給元)
+ * @param {object|null} scData  fetchScForSite の戻り値。SC 未接続 / 失敗時は null
+ * @param {'sc'|'none'} searchSource  scData が入っていれば 'sc'
+ */
+function buildSiteDashboardFromStats(statsBlock, sampleSite, scData, searchSource) {
   const daily = statsBlock.dailySiteStats;
   const last28 = daily.slice(-28);
   const lastDay = daily[daily.length - 1];
@@ -465,11 +693,12 @@ function buildSiteDashboardFromStats(statsBlock, sampleSite) {
       last28DaysViews: statsBlock.totals.views28d,
       users: statsBlock.totals.users28d,
       sessions: statsBlock.totals.sessions28d,
-      // Search Console 系は Phase 3B まで sample 値を残す
-      searchClicks: sampleSite.metrics?.searchClicks ?? 0,
-      searchImpressions: sampleSite.metrics?.searchImpressions ?? 0,
-      searchCtr: sampleSite.metrics?.searchCtr ?? 0,
-      averagePosition: sampleSite.metrics?.averagePosition ?? 0,
+      // Search Console live 値。未接続 (searchSource: 'none') は 0 で埋める
+      // — sample の架空値を live サイトに混ぜると誤読を招くため使わない。
+      searchClicks: scData ? scData.totals.searchClicks : 0,
+      searchImpressions: scData ? scData.totals.searchImpressions : 0,
+      searchCtr: scData ? scData.totals.searchCtr : 0,
+      averagePosition: scData ? scData.totals.averagePosition : 0,
     },
     dailyViews: last28.map((d) => ({ date: d.date, views: d.views })),
     topPages: statsBlock.pageStats.slice(0, 10).map((p) => ({
@@ -483,12 +712,17 @@ function buildSiteDashboardFromStats(statsBlock, sampleSite) {
       views: t.views7d,
       delta: t.trendScore - 1,
     })),
-    // Search Console 由来の項目は sample 維持 (Phase 3B で差し替え)
-    topQueries: sampleSite.topQueries ?? [],
+    topQueries: scData ? scData.topQueries : [],
     improvements: sampleSite.improvements ?? [],
     // 記事ごとの動性 (ArticleMomentum UI 用)
     articles: statsBlock.articles ?? [],
-    source: 'mixed', // GA4 + sample(SC)
+    // ---- Phase 3B ----
+    searchSource,
+    // undefined は JSON.stringify で落ちるので、未接続時も null 込みの形で出す
+    discover: scData ? scData.discover : { listed: null, impressions28d: 0, clicks28d: 0 },
+    searchTrend: scData ? scData.searchTrend : undefined,
+    internalNavShare: statsBlock.internalNavShare,
+    source: 'mixed', // GA4 (+ SC)
     fetchedAt: statsBlock.fetchedAt,
   };
 }
@@ -535,6 +769,24 @@ async function main() {
     projectId: creds.project_id,
   });
 
+  // Search Console — 同じ鍵で webmasters.readonly トークンを取り、
+  // sites.list を 1 回だけ呼んでプロパティ一覧をキャッシュする。
+  // ここで失敗しても warning を積んで続行 (全サイト searchSource: 'none')。
+  let sc = null;
+  let scEntries = [];
+  try {
+    sc = await createScClient(creds);
+    scEntries = await listScProperties(sc);
+    console.log(
+      `[fetch-dashboard-data] Search Console: ${scEntries.length} properties visible to service account`,
+    );
+  } catch (err) {
+    const msg = `Search Console unavailable: ${err.message}`;
+    console.warn(`[fetch-dashboard-data] ${msg}`);
+    warnings.push(msg);
+    sc = null;
+  }
+
   const siteStatsBlocks = [];
   const newSites = [];
   let liveCount = 0;
@@ -558,9 +810,34 @@ async function main() {
         console.warn(`[fetch-dashboard-data] WARN ${zeroMsg}`);
         warnings.push(zeroMsg);
       }
-      const dashboardSite = buildSiteDashboardFromStats(statsBlock, sampleSite);
-      // articles は sites[] 側にのみ持たせる（stats 側と二重に持たない = JSON肥大防止）
+      // ---- Search Console (SC 失敗は per-site warning に留め GA4 は活かす) ----
+      let scData = null;
+      let searchSource = 'none';
+      if (sc) {
+        const scProperty = resolveScProperty(sampleSite.site.url, scEntries);
+        if (!scProperty) {
+          const msg = `SC property not resolved for ${siteId} (no sites.list entry matches host of ${sampleSite.site.url || '(no url)'})`;
+          console.warn(`[fetch-dashboard-data] ${msg}`);
+          warnings.push(msg);
+        } else {
+          try {
+            scData = await fetchScForSite(sc, scProperty, warnings, siteId);
+            searchSource = 'sc';
+            console.log(
+              `[fetch-dashboard-data] ${siteId}: SC fetch OK (property=${scProperty}, ${scData.topQueries.length} queries, discover.listed=${scData.discover.listed})`,
+            );
+          } catch (err) {
+            const msg = `SC fetch failed for ${siteId}: ${err.message}`;
+            console.warn(`[fetch-dashboard-data] ${msg}`);
+            warnings.push(msg);
+          }
+        }
+      }
+
+      const dashboardSite = buildSiteDashboardFromStats(statsBlock, sampleSite, scData, searchSource);
+      // articles / internalNavShare は sites[] 側にのみ持たせる（stats 側と二重に持たない = JSON肥大防止）
       delete statsBlock.articles;
+      delete statsBlock.internalNavShare;
       siteStatsBlocks.push(statsBlock);
       newSites.push(dashboardSite);
       liveCount += 1;
