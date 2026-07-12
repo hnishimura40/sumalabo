@@ -1,0 +1,329 @@
+---
+title: "テスラ車内でGrokが日本でも利用可能に。クルマのAIアシスタントで何ができる？"
+slug: "202607-tesla-grok-in-car-japan"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Tesla Japanが2026年7月10日、会話型AI「Grok」を日本のテスラ車で利用できるようにすると発表しました。自然な会話でナビや検索ができる一方、エアコン操作や自動運転とは別物です。できること・できないこと、使うための条件（2026.20以降・AMD搭載車など）、誤解しやすいポイントをやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-tesla-grok-in-car-japan.webp"
+thumbnailAlt: "「テスラ車内でGrok利用可能に」のサムネイル。ドライブ風ジャケット姿のひまりが車内からダッシュボードのGrokに話しかけ、らぼまるがナビ助手として案内する体験図。日付7/10入り"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Grok"
+  - "テスラ"
+  - "xAI"
+  - "AIアシスタント"
+  - "車載AI"
+  - "すまラボ"
+related:
+  - "202607-ai-assistant-use-cases-gemini-chatgpt-claude"
+  - "what-is-ai-smartphone"
+  - "ai-smartphone-guide"
+pubDate: "2026-07-12"
+updated: "2026-07-12"
+publishAt: "2026-07-12T18:00:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Tesla Japanは2026年7月10日、日本国内の対応するテスラ車で会話型AI「Grok」を利用できるようにすると発表しました。自然な言葉で会話しながら、目的地や周辺施設を探せるようになるのが大きな変化です。ただし、Grokが運転を代わってくれたり、エアコンなどを自由に操作したりするわけではありません。現時点では、**会話や検索に強いナビ助手**と捉えると分かりやすい機能です。
+
+<Summary30>
+  <ol>
+    <li><strong>2026年7月10日</strong>、Tesla Japanが日本のテスラ車で会話型AI「Grok」の提供を発表（ベータ版）</li>
+    <li>できるのは<strong>会話・場所検索・Web検索・ナビ設定・車両情報の確認</strong>など。<strong>エアコンや音楽の操作は非対応</strong></li>
+    <li>条件は<strong>ソフトウェア2026.20以降＋プレミアムコネクティビティまたはWi-Fi＋AMD搭載車</strong>。全テスラ車ではない</li>
+    <li>自動運転とは<strong>別物</strong>。今は「会話や検索ができるナビ助手」として試すのが現実的</li>
+  </ol>
+</Summary30>
+
+## 先に結論：決まった命令ではなく、会話しながら探せる
+
+<p class="lead">テスラの車内に、自然な言葉で相談できるAIが加わりました。<strong>役割は「会話に強いナビ助手」</strong>です。</p>
+
+これまでの音声コマンドは、「温度を下げて」「音楽を再生して」といった決められた操作が中心でした。一方のGrokは、行き先を相談したり、場所や情報を検索したりする役割を担当します。
+
+ただし、Grokが対応する車両機能は、現時点ではナビ関連が中心です。従来の音声コマンドがなくなったのではなく、用途に応じて使い分ける形になります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず結論を1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-tesla-grok-in-car-japan/slide01-tesla-grok.webp"
+         alt="「先に結論」の図解。7/10に日本の対応テスラ車でGrok利用開始、自然な言葉で会話しながら検索できる、ただし自動運転や万能操作AIではない、今の立ち位置は『会話に強いナビ助手』の4点を整理。ひまりが『結局なにが変わるの？』と尋ね、らぼまるが『会話できるナビ助手と考えるとわかりやすいよ』と答える構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：先に結論</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>開始</strong>：7/10、日本の対応テスラ車でGrok利用開始</li>
+      <li><strong>変化</strong>：自然な言葉で会話しながら検索できる</li>
+      <li><strong>注意</strong>：自動運転や万能操作AIではない</li>
+      <li><strong>結論</strong>：今の立ち位置は「会話に強いナビ助手」</li>
+    </ul>
+  </div>
+</section>
+
+<CharacterBubble speaker="himari" mood="curious">
+  クルマの中でAIとおしゃべりできるようになったってこと？ スマホのAIアシスタントと同じ感じ？
+</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">
+  近いよ。スマホで使う会話AIの「クルマ版」が、日本のテスラ車にも来たイメージ。ただし運転はしてくれないよ。
+</CharacterBubble>
+
+## 何が起きた？
+
+<p class="lead">Tesla Japanが<strong>2026年7月10日</strong>、会話型AI「Grok」を日本のテスラ車でも利用できるようにすると発表しました。</p>
+
+Grokは、イーロン・マスク氏のxAI（現在のSpaceXAI）が開発する会話型AIです。今回の対応によって、Grokをテスラの車内から利用できるようになりました。
+
+<Timeline>
+  <TimelineItem date="2025-07">米国で車載Grokの展開が始まる（報道）</TimelineItem>
+  <TimelineItem date="2026-07-10">Tesla Japanが日本での提供を発表（公式）</TimelineItem>
+  <TimelineItem date="2026-07" hot>国内では2026.20.3が段階的に配信中（報道）。全オーナーにはまだ届いていない</TimelineItem>
+</Timeline>
+
+日本国内では、ソフトウェアバージョン2026.20以降が利用条件として案内されています。実際には2026.20.3の配信が始まっていると報じられていますが、アップデートは段階的に提供されており、発表直後の時点では全オーナーに届いていません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">いつ・何が起きたかを時系列で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-tesla-grok-in-car-japan/slide02-tesla-grok.webp"
+         alt="「何が起きた？」の図解。左に2025年7月米国で展開開始（報道）、2026年7月10日Tesla Japanが日本展開を発表、国内では2026.20.3配信開始（報道）のタイムライン。右に『日本展開 2026年7月10日』の大きなカード。ひまりが『海外だけの話じゃなくて、日本にも来たんだね』と反応する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：何が起きた？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>2025年7月</strong>：米国で車載Grokの展開開始（報道）</li>
+      <li><strong>2026年7月10日</strong>：Tesla Japanが日本展開を発表</li>
+      <li><strong>国内配信</strong>：2026.20.3が段階的に配信中（報道）</li>
+    </ul>
+  </div>
+</section>
+
+## Grokでできること・できないこと
+
+<p class="lead">できるのは<strong>「調べる・探す・確認する」</strong>。エアコンや音楽などの<strong>車両操作はできません</strong>。</p>
+
+これまでの音声コマンドとの違いは、決まった命令でなくても通じることです。「おすすめのカフェある？」「駐車場があるところがいいな」のような相談の形で、行き先を探せます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">従来の音声コマンドとの違いを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-tesla-grok-in-car-japan/slide03-tesla-grok.webp"
+         alt="「なにが便利になる？」の図解。左が『これまで：決まった命令だけ（音声コマンド）』、右が『Grok追加後：自然な会話で相談しながら探せる』の比較。会話例として『おすすめのカフェはある？』『駅の近くで静かな場所は？』などの吹き出し。らぼまるが『場所を探す相談役が増えたイメージだね』と整理する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：なにが便利になる？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>これまで</strong>：決まった命令だけ（音声コマンド）</li>
+      <li><strong>Grok追加後</strong>：自然な会話で相談しながら探せる</li>
+      <li><strong>結論</strong>：「場所を探す相談役」が増えたイメージ</li>
+    </ul>
+  </div>
+</section>
+
+車内版Grokで案内されている主な機能は、音声での会話、ナビの目的地設定・ルート確認、場所検索・Web検索、車両の位置・バッテリー確認、リマインダー、オーナーズマニュアル参照などです。声やパーソナリティを選択できるのも特徴で、ナビとの連携を利用する場合はパーソナリティを「アシスタント」に設定する仕組みです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">できることを4つに整理。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-tesla-grok-in-car-japan/slide04-tesla-grok.webp"
+         alt="「できること」の図解。①目的地の設定・ルート確認（地図アイコン）②場所検索・Web検索（検索アイコン）③車両の位置・バッテリー確認（バッテリーアイコン）④リマインダー・マニュアル参照（本アイコン）の4カード。らぼまるが『まずは調べる・探す・確認するが中心だよ』と案内する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：できること</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>ナビ</strong>：目的地の設定・ルート確認</li>
+      <li><strong>検索</strong>：場所検索・Web検索</li>
+      <li><strong>確認</strong>：車両の位置・バッテリー</li>
+      <li><strong>その他</strong>：リマインダー・マニュアル参照</li>
+    </ul>
+  </div>
+</section>
+
+一方、現時点ではエアコンの温度変更、メディアの再生、そのほかの車両機能の直接操作には対応していません。これらの操作には、従来からあるテスラの音声コマンドを使います。<Chip kind="facts">公式</Chip> Grokと従来の音声機能は、どちらか一方に置き換わる関係ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「できない」側も先に知っておきます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-tesla-grok-in-car-japan/slide05-tesla-grok.webp"
+         alt="「できないこと」の図解。左列『Grokでできる：会話・検索・確認』（青○）、右列『まだできない：エアコン操作・メディア再生（音楽）・そのほか車両機能の直接操作』（赤×）。補足として『従来の音声コマンドはそのまま残る（役割が別）』、注意ラベル『自動運転ではない』。らぼまるが○×の札で仕分けする構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：できないこと</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>非対応</strong>：エアコン操作・メディア再生・車両機能の直接操作</li>
+      <li><strong>残る</strong>：従来の音声コマンドはそのまま（役割が別）</li>
+      <li><strong>注意</strong>：自動運転ではない</li>
+    </ul>
+  </div>
+</section>
+
+日本語や英語など複数の言語で会話でき、国内向け2026.20.3では「Hey Grok」と呼びかけて起動できると報じられています。ただし、正式な対応言語の一覧や言語ごとの機能差は明らかになっていません。
+
+## 使うための条件
+
+<p class="lead">Grokは<strong>すべてのテスラ車で使えるわけではありません</strong>。条件は大きく3つです。</p>
+
+<NumCards
+  items={[
+    { num: "2026.20", cap: "必要なソフトウェア（以降）" },
+    { num: "7/10", cap: "日本での提供発表日" },
+    { num: "3つ", cap: "利用条件（ソフト・通信・AMD）" },
+  ]}
+/>
+
+日本向けに案内されている条件は、①ソフトウェアバージョン2026.20以降、②プレミアムコネクティビティ契約またはWi-Fi接続、③AMDプロセッサを搭載した車両、の3つです。Intel製のインフォテインメントプロセッサを搭載する旧世代車は、現時点では対象外です。
+
+また、Grokはベータ版として提供されています。2026年7月10日時点では、Grokアカウントの登録やGrok自体への追加料金は必要ありません。ただし、この条件が今後も続くとは限りません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">自分の車で使えるかは、この3条件で確認。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-tesla-grok-in-car-japan/slide06-tesla-grok.webp"
+         alt="「使うための条件」の図解。チェックリストでソフトウェア『2026.20以降』、プレミアムコネクティビティまたはWi-Fi接続、『AMD』プロセッサ搭載車の3条件。注意カードでIntel搭載の旧世代車は現時点で非対応。補足でベータ版・7/10時点で追加料金不要。ひまりが『テスラなら全部OKではないんだね』と気づく構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：使うための条件</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>ソフト</strong>：2026.20以降</li>
+      <li><strong>通信</strong>：プレミアムコネクティビティ または Wi-Fi</li>
+      <li><strong>ハード</strong>：AMD搭載車（Intel旧世代車は非対応）</li>
+      <li><strong>料金</strong>：ベータ版・7/10時点で追加料金不要</li>
+    </ul>
+  </div>
+</section>
+
+<CharacterBubble speaker="labo" mood="point">
+  アップデートは段階配信だから、条件を満たしていても届く日は車ごとに違うよ。表示されなくても慌てなくて大丈夫。
+</CharacterBubble>
+
+## 誤解しやすいポイント
+
+<p class="lead">いちばん大事なのは<strong>「AIが乗った」と「クルマ全部を任せられる」は別の話</strong>ということです。</p>
+
+**Grokは自動運転機能ではありません。** 車載AIと聞くと運転をAIに任せる機能を想像しやすいですが、今回のGrokは会話・検索・ナビ設定を助けるAIで、ハンドルやアクセルを操作する機能とは別物です。自動運転や運転支援との今後の連携についても、現時点では発表されていません。
+
+**車内のすべてを操作できるわけでもありません。** 空調や音楽の操作は従来の音声コマンドの担当です。
+
+**対応車でもすぐ使えるとは限りません。** 2026.20.3は段階的に配信されているため、発表日に更新が表示されなくても、すぐに非対応と判断する必要はありません。
+
+**テスラ以外の車の話でもありません。** 今回のナビ・バッテリー情報との連携は、対応するテスラ車向けの機能です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">ありがちな勘違いを×→○で整理。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-tesla-grok-in-car-japan/slide07-tesla-grok.webp"
+         alt="「誤解しやすいポイント」の図解。×自動運転もできる→○運転支援とは別物。会話・検索のAI、×全テスラ車ですぐ使える→○AMD搭載車+条件を満たす車だけ、×車内の操作は全部できる→○エアコンや音楽の操作は非対応、×他の車でも同じ話→○今回はテスラ車内の機能の話、の4組。らぼまるが『AIが乗ったとクルマ全部を任せられるは別の話だよ』と解説する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：誤解しやすいポイント</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>×自動運転もできる</strong> → ○運転支援とは別物。会話・検索のAI</li>
+      <li><strong>×全テスラ車ですぐ使える</strong> → ○AMD搭載車＋条件を満たす車だけ</li>
+      <li><strong>×車内の操作は全部できる</strong> → ○エアコンや音楽は非対応</li>
+      <li><strong>×他の車でも同じ話</strong> → ○今回はテスラ車内の機能の話</li>
+    </ul>
+  </div>
+</section>
+
+<CharacterBubble speaker="himari" mood="aha">
+  なるほど、「運転してくれるAI」じゃなくて「助手席にいる物知りな案内係」なんだね。
+</CharacterBubble>
+
+## 確定・報道・未確定の整理
+
+<p class="lead">ベータ版なので、<strong>「今できること」と「これからの話」を分けて</strong>見るのが大切です。</p>
+
+<Callout kind="facts">
+  <ul>
+    <li>2026年7月10日、Tesla Japanが日本での提供を発表</li>
+    <li>条件はソフトウェア2026.20以降・プレミアムコネクティビティまたはWi-Fi・AMD搭載車</li>
+    <li>会話・場所検索・Web検索・目的地設定・車両情報の確認などに対応</li>
+    <li>エアコンやメディア再生などの車両操作には非対応。従来の音声コマンドは残る</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims">
+  <ul>
+    <li>国内では2026.20.3が段階的に配信されている</li>
+    <li>「Hey Grok」での起動や、日本語・英語など複数言語での会話に対応</li>
+    <li>米国では2025年7月から車載Grokの展開が始まっていた</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc">
+  <ul>
+    <li>Intel搭載の旧世代車への対応時期（2026年7月12日時点で未発表）</li>
+    <li>ナビ以外の車両操作への対応拡大</li>
+    <li>将来の料金やGrokアカウント要件（現在は追加料金・登録不要だが、変わる可能性がある）</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">
+  ベータ版だから、機能や条件はこれから変わるかもしれない。使う前に最新の公式案内を確認してね。
+</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、確定・報道・未確定を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-tesla-grok-in-car-japan/slide08-tesla-grok.webp"
+         alt="「確定・未確定と向き合い方」の図解。確定（7/10発表・2026.20以降・AMD・通信条件）、報道ベース（2026.20.3配信・Hey Grok起動・複数言語対応）、未確定（Intel対応時期・機能拡大・今後の料金条件）の3区分表。最下部に『今は会話や検索ができるナビ助手』のまとめ帯。らぼまるが『期待しすぎず、今できることから試すのがコツだよ』とまとめる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：確定・未確定と向き合い方</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>確定</strong>：7/10発表・2026.20以降・AMD・通信条件</li>
+      <li><strong>報道ベース</strong>：2026.20.3配信・Hey Grok・複数言語</li>
+      <li><strong>未確定</strong>：Intel対応時期・機能拡大・今後の料金</li>
+      <li><strong>結論</strong>：今は「会話や検索ができるナビ助手」</li>
+    </ul>
+  </div>
+</section>
+
+## どう向き合う？
+
+<p class="lead">対応車を持っているなら、<strong>場所検索や目的地の相談から</strong>試すのが現実的です。</p>
+
+アップデートが届いた段階で、まずは場所検索や目的地の相談から試してみるとよいでしょう。自然な言葉で検索できることで、車内での情報収集の選択肢が増えます。
+
+ただし、現段階では車内機能を何でも操作できるAIではありません。まずは**会話や検索ができるナビ助手**として、回答内容や動作を確認しながら使うのが現実的です。スマホでのAIアシスタントの使い分けは[生成AIアシスタントの活用例まとめ](/articles/202607-ai-assistant-use-cases-gemini-chatgpt-claude/)でも整理しています。
+
+<Note>
+  この記事は2026年7月12日時点の公式発表・報道をもとにしています。Grokはベータ版のため、機能・対応車種・利用条件は今後変わる可能性があります。最新情報はテスラ公式サポートページでご確認ください。
+</Note>
+
+## 参考情報
+
+- [テスラ車内で「Grok」と会話、日本でも展開へ　ナビ設定やルート確認を音声で（ITmedia NEWS）](https://www.itmedia.co.jp/news/articles/2607/10/news157.html)
+- [【新機能】国内のテスラに対話型AI「Grok」が追加〜無料アップデートで配信（Touch Lab）](https://touchlab.jp/2026/07/tesla_grok_in_japan/)
+- [【アップデート】テスラ「2026.20.3」が国内配信開始〜対話型AI「Grok」を搭載（Touch Lab）](https://touchlab.jp/2026/07/tesla_update_2026-20-3/)
+- [Grok（テスラ公式サポート）](https://www.tesla.com/ja_jp/support/grok)
