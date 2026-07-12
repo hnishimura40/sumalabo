@@ -20,6 +20,12 @@
 //   - 既出 dedupe: 既存記事タイトル・過去採用済み candidates とのトークン重なり
 //     （Jaccard >= 0.5）→ excluded
 //
+// 既報テーマペナルティ（2026-07-12）:
+//   - 公開済み記事 slug / 採用済み候補の suggestedSlug とエンティティ照合し、
+//     重み付き一致 >= 2 でスコア -40（除外ではなく減点。ログで観察可能）
+//   - これにより「1位が既報で全部やめる」ではなく、次点の適格候補へ自動で
+//     繰り下がる（auto-pick は減点後スコアで閾値以上の 1 位を採る）
+//
 // 出力:
 //   logs/scout/{YYYY-MM-DD}.json（全候補・採点・除外理由）+ コンソールに上位表
 //   --auto-pick: 閾値以上の 1 位を {picked} として JSON 出力（testMode 用）。
@@ -158,6 +164,104 @@ export function findDuplicate(item, knownTitles, threshold = 0.3) {
   return null;
 }
 
+// ---- 既報テーマペナルティ（2026-07-12 恒久修正） ----
+//
+// 背景: 同一トピックでも媒体によって語彙が変わる（「usage credits制」vs「従量課金制」）。
+// タイトル同士の Jaccard は実測 0.04〜0.07 で無関係ペア(0.07)と区別できず、
+// 7/12 の夜間 run で「Fable5 従量課金」既報が dedupe をすり抜けて 1 位に浮上した。
+// 対策: 公開済み記事の slug（英語ケバブケース = 編集済みエンティティ列）と
+// 候補タイトル中の ASCII エンティティを重み付きで照合し、一致が閾値以上なら
+// スコアに強いペナルティを掛けて上位に来ないようにする（除外ではなく減点。
+// ログで観察可能にする）。
+//
+// 較正（実タイトルで確認済み）:
+//   WIRED「Fable 5を従量課金制に」 vs slug claude-fable-5-usage-credits-switch
+//     → claude(0.5)+fable(1)+5(0.5) = 2.0 ≥ 2.0 → ペナルティ ✓
+//   「ChatGPT Atlas提供終了」 vs slug openai-gpt-5-6-chatgpt-work
+//     → openai(0.5)+chatgpt(0.5) = 1.0 < 2.0 → ペナルティなし（誤爆しない）✓
+export const COVERED_TOPIC = Object.freeze({
+  /** 減点幅。58点級の既報が確実に閾値50を割る強さ */
+  PENALTY: 40,
+  /** 重み付き一致がこの値以上でペナルティ発動 */
+  MIN_OVERLAP: 2,
+  /** ベンダー名・汎用製品名・数字は単体では弱い証拠なので半分の重み */
+  GENERIC_WEIGHT: 0.5,
+});
+
+const GENERIC_ENTITY_TOKENS = new Set([
+  "ai", "openai", "anthropic", "google", "apple", "microsoft", "meta", "samsung",
+  "chatgpt", "gemini", "claude", "gpt", "iphone", "android", "pixel", "galaxy",
+  "japan", "news", "pro", "plus", "max", "new",
+]);
+
+/** 候補タイトルから ASCII エンティティトークンを抽出（"gpt-5.6" は gpt/5/6 にも分解） */
+export function entityTokens(text) {
+  const tokens = new Set();
+  for (const m of String(text).toLowerCase().match(/[a-z0-9][a-z0-9.\-]*/g) || []) {
+    tokens.add(m);
+    for (const sub of m.split(/[.\-]/)) {
+      if (sub) tokens.add(sub);
+    }
+  }
+  return tokens;
+}
+
+function tokenWeight(t) {
+  if (GENERIC_ENTITY_TOKENS.has(t) || /^\d+$/.test(t)) return COVERED_TOPIC.GENERIC_WEIGHT;
+  return 1;
+}
+
+/** slug（YYYYMM-english-kebab）→ 照合用トークン集合。日付プレフィックスは捨てる */
+export function slugTopicTokens(slug) {
+  return new Set(
+    String(slug)
+      .split("-")
+      .filter((t) => t && !/^\d{6}$/.test(t)),
+  );
+}
+
+/**
+ * 候補タイトルと既報トピック（slugトークン集合の配列）を照合し、
+ * 重み付き一致が最大のものを返す。MIN_OVERLAP 未満なら null。
+ */
+export function findCoveredTopic(title, topics) {
+  const cand = entityTokens(title);
+  let best = null;
+  for (const topic of topics) {
+    let overlap = 0;
+    const hits = [];
+    for (const t of topic.tokens) {
+      if (cand.has(t)) {
+        overlap += tokenWeight(t);
+        hits.push(t);
+      }
+    }
+    if (overlap >= COVERED_TOPIC.MIN_OVERLAP && (!best || overlap > best.overlap)) {
+      best = { slug: topic.slug, overlap: Math.round(overlap * 10) / 10, hits };
+    }
+  }
+  return best;
+}
+
+function loadCoveredTopics() {
+  const topics = [];
+  if (existsSync(ARTICLES_DIR)) {
+    for (const f of readdirSync(ARTICLES_DIR).filter((f) => f.endsWith(".mdx") && !f.startsWith("_"))) {
+      const slug = f.replace(/\.mdx$/, "");
+      topics.push({ slug, tokens: slugTopicTokens(slug) });
+    }
+  }
+  // 過去に scout が採用した候補の suggestedSlug も既報テーマとして扱う
+  if (existsSync(PICKED_PATH)) {
+    try {
+      for (const p of JSON.parse(readFileSync(PICKED_PATH, "utf-8"))) {
+        if (p && p.suggestedSlug) topics.push({ slug: p.suggestedSlug, tokens: slugTopicTokens(p.suggestedSlug) });
+      }
+    } catch {}
+  }
+  return topics;
+}
+
 function loadKnownTitles() {
   const titles = [];
   // 既存記事の frontmatter title
@@ -199,6 +303,7 @@ export function slugFromPick(pick, now = new Date()) {
 export async function runScout({ config = loadConfig(), now = Date.now() } = {}) {
   const results = await Promise.all((config.sources || []).map((s) => fetchFeed(s)));
   const knownTitles = loadKnownTitles();
+  const coveredTopics = loadCoveredTopics();
   const seen = new Set();
   const candidates = [];
   const excluded = [];
@@ -223,6 +328,14 @@ export async function runScout({ config = loadConfig(), now = Date.now() } = {})
         continue;
       }
       const scored = scoreItem(item, source, config, now);
+      // 既報テーマペナルティ: 語彙が違う同一トピック（Jaccardで拾えない）を
+      // 公開済み slug のエンティティ照合で減点し、上位に来ないようにする
+      const covered = findCoveredTopic(item.title, coveredTopics);
+      if (covered) {
+        scored.score = Math.max(0, scored.score - COVERED_TOPIC.PENALTY);
+        scored.breakdown.coveredTopicPenalty = -COVERED_TOPIC.PENALTY;
+        scored.coveredTopic = covered;
+      }
       candidates.push({ ...item, source: r.source, sourceName: source.name, ...scored });
     }
   }
@@ -246,7 +359,7 @@ function recordPicked(pick) {
       arr = JSON.parse(readFileSync(PICKED_PATH, "utf-8"));
     } catch {}
   }
-  arr.push({ title: pick.title, link: pick.link, score: pick.score, at: new Date().toISOString() });
+  arr.push({ title: pick.title, link: pick.link, score: pick.score, suggestedSlug: pick.suggestedSlug || null, at: new Date().toISOString() });
   writeFileSync(PICKED_PATH, JSON.stringify(arr, null, 2) + "\n", "utf-8");
 }
 
