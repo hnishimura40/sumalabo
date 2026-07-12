@@ -136,5 +136,18 @@ testMode（3 本限定の実弾テスト）は 3 本完走（Claude Science / ai
   - weeklyCap（`logs/night/run-history.jsonl` の直近 7 日 completed 数）
   - gate full / 画像ファクトチェック / post-publish verify＋自動rollback / 除外カテゴリは従来どおり（緩めない）
 - **scout 品質ガード**: 候補スコアが閾値 50 未満の日は無理に書かず安全スキップ（「候補なし」通知のみ）
-- **昼の立ち会い 2 本目**: 候補が豊富な日は、ユーザーが対話セッションで「もう 1 本」と明示指示すれば立ち会いで 2 本目を作れる（user-directed mode の通常フロー＝Human Review Checkpoint あり。無人runの 1 晩 1 本ガードとは別枠）
 - **retract 時**: `npm run retract` は incident 記録に加えて nightRun も自動停止する
+
+## 7. 昼の立ち会い制作も完走型に統一（2026-07-12 ユーザー承認）
+
+夜間の無人 run（§6）と同様に、**ユーザーが対話セッションで記事制作を指示したら、Phase A → B → C（公開・X 投稿）まで確認なしで完走してよい**。Human Review Checkpoint（Phase A 完了時の停止）は昼の立ち会い制作でも**廃止**する。
+
+- **既定の挙動**: 「◯◯のテーマで記事を書いて」等の記事制作指示を受けたら、記事化 → PR → merge → 本番 deploy → strict verify → queue/ledger 更新 → X 投稿までを止めずに実行する。途中で「公開してよいか」を聞き返さない。
+- **停止してよい例外は 2 つだけ**:
+  1. **除外カテゴリ該当**（訴訟 / 事故 / 人事 / 買収 / 政治 等。`watch-sources.json` の `excludeCategories` 相当）と判断したテーマ → 着手前に 1 度だけ確認
+  2. **品質・安全のブロック**（事実確認が取れない / gate 不合格が自動修正後も残る / 画像生成経路が使えない / build・deploy・verify 失敗）→ 中止して報告
+- **事後の取り消しは `npm run retract -- --slug <slug>`** で行う（本番記事の取り下げ + 該当 X 投稿の削除 + incident 記録）。公開前の逐一確認に代えて、事後 retract で是正する運用とする。
+- **1 日の本数**: 昼の立ち会い制作は無人 run の「1 晩 1 本」ガードとは別枠（ユーザー指示ごとに実行）。ただし weeklyCap（§6・週 7 本）は運用の目安として意識する。
+- **deploy 時間帯**: 4:00〜7:00 は引き続き回避する。
+
+> この変更で、CLAUDE.md の「Phase A 完了時に必ず停止（Human Review Checkpoint）」は **ユーザーが記事制作を明示指示した立ち会いセッション**には適用しない（＝完走してよい）。ユーザーがテーマではなく「下書きだけ」「確認したい」等と明示した場合のみ従来どおり途中停止する。
