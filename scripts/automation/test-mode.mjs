@@ -51,6 +51,7 @@ import { loadAutonomy, saveAutonomy, autonomyPath } from "./autonomy.mjs";
 
 const LAST_RUN_PATH = path.join("logs", "night", "last-run.json");
 const RUN_HISTORY_PATH = path.join("logs", "night", "run-history.jsonl");
+const PHASE_TIMINGS_PATH = path.join("logs", "night", "phase-timings.jsonl");
 
 export const NIGHT_RUN_DEFAULT = Object.freeze({
   enabled: false,
@@ -236,13 +237,48 @@ export function canRunTonight({ now = new Date(), root = process.cwd() } = {}) {
   return { ok: true };
 }
 
+// ---- Phase 別所要時間の計測（2026-07-12・遅い工程の見える化） ----
+//
+// 夜間 run の各 Phase（例: "scout" / "Phase A" / "Phase B" / "Phase C"）の
+// 所要ミリ秒を logs/night/phase-timings.jsonl に追記する。run 終了時に
+// recordNightRun がこれを集計して run-history のエントリに phases として畳み込む。
+// night-report が「Phase 別所要時間」セクションを出す。
+export function recordPhaseTiming({ slug, phase, ms, root = process.cwd() } = {}) {
+  const entry = { at: new Date().toISOString(), slug: slug || null, phase: String(phase || "unknown"), ms: Math.max(0, Math.round(Number(ms) || 0)) };
+  const p = path.join(root, PHASE_TIMINGS_PATH);
+  mkdirSync(path.dirname(p), { recursive: true });
+  appendFileSync(p, JSON.stringify(entry) + "\n", "utf-8");
+  return entry;
+}
+
+/** phase-timings.jsonl を読む（slug 指定でその run 分のみ）。壊れた行は無視。 */
+export function readPhaseTimings({ slug = null, root = process.cwd() } = {}) {
+  const p = path.join(root, PHASE_TIMINGS_PATH);
+  if (!existsSync(p)) return [];
+  try {
+    return readFileSync(p, "utf-8")
+      .split("\n")
+      .filter(Boolean)
+      .map((l) => { try { return JSON.parse(l); } catch { return null; } })
+      .filter((e) => e && (!slug || e.slug === slug));
+  } catch {
+    return [];
+  }
+}
+
 export function recordNightRun({ slug, result, root = process.cwd() } = {}) {
+  // その run の Phase 別所要時間を集計して run-history に畳み込む
+  const timings = readPhaseTimings({ slug, root });
+  const phases = {};
+  for (const t of timings) phases[t.phase] = (phases[t.phase] || 0) + (t.ms || 0);
   const entry = { at: new Date().toISOString(), slug: slug || null, result: result || null };
+  if (Object.keys(phases).length) entry.phases = phases;
   const p = path.join(root, LAST_RUN_PATH);
   mkdirSync(path.dirname(p), { recursive: true });
   writeFileSync(p, JSON.stringify(entry, null, 2) + "\n", "utf-8");
   // weeklyCap 判定用の履歴（追記のみ）。last-run.json は従来互換のまま。
   appendFileSync(path.join(root, RUN_HISTORY_PATH), JSON.stringify(entry) + "\n", "utf-8");
+  return entry;
 }
 
 // ---- CLI ----
@@ -287,6 +323,13 @@ async function main() {
     const nrStopped = stopNightRun({ reason });
     const tm = stopTestMode({ reason });
     console.log(JSON.stringify({ enabled: tm.enabled, disabledReason: tm.disabledReason, nightRunStopped: nrStopped ? true : false }, null, 2));
+    return;
+  }
+  if (has("--phase-timing")) {
+    // 例: --phase-timing --slug X --phase "Phase C" --ms 32000  （--seconds も可）
+    const ms = val("--ms") != null ? Number(val("--ms")) : (val("--seconds") != null ? Number(val("--seconds")) * 1000 : 0);
+    const e = recordPhaseTiming({ slug: val("--slug"), phase: val("--phase"), ms });
+    console.log(JSON.stringify({ recorded: true, ...e }, null, 2));
     return;
   }
   if (has("--enable")) {

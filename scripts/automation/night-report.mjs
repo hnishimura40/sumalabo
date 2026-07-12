@@ -23,6 +23,7 @@ import process from "node:process";
 import { loadAutonomy } from "./autonomy.mjs";
 import { readLedger } from "./ledger.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
+import { readPhaseTimings } from "./test-mode.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -137,6 +138,26 @@ export function buildReport(slug) {
     lines.push(`- 投稿URL: ${entry.xPostUrl}（xPostedAt: ${entry.xPostedAt || "-"}）`);
   } else {
     lines.push("- 未投稿");
+  }
+  lines.push("");
+
+  // 5-bis. Phase 別所要時間（遅い工程の見える化・2026-07-12）
+  lines.push("## 5-bis. Phase 別所要時間");
+  const timings = readPhaseTimings({ slug, root: ROOT });
+  if (timings.length) {
+    const byPhase = {};
+    for (const t of timings) byPhase[t.phase] = (byPhase[t.phase] || 0) + (t.ms || 0);
+    const ordered = Object.entries(byPhase).sort((a, b) => b[1] - a[1]);
+    const total = ordered.reduce((a, [, ms]) => a + ms, 0);
+    for (const [phase, ms] of ordered) {
+      const pct = total > 0 ? Math.round((ms / total) * 100) : 0;
+      lines.push(`- ${phase}: ${fmtDuration(ms)}（${pct}%）`);
+    }
+    lines.push(`- 合計: ${fmtDuration(total)}`);
+    const slowest = ordered[0];
+    if (slowest) lines.push(`- 最も遅い工程: **${slowest[0]}**（${fmtDuration(slowest[1])}）`);
+  } else {
+    lines.push("- 計測なし（driver が `test-mode.mjs --phase-timing` を記録していない run）");
   }
   lines.push("");
 

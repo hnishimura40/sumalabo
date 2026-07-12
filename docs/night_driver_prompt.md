@@ -57,6 +57,7 @@ npm run article -- --theme "<pickedのタイトルを元にした記事テーマ
 - **画像生成は「常設キャラ工房チャット」の続きで行う（正本の添付は不要）**：`data/automation/image-workshop.json` の `conversationUrl` に navigate し、その会話の**続き**として slide_plan 順に生成する。この会話の冒頭には公式キャラ正本2枚（ひまり・らぼまる）が添付済みなので、毎回「この会話冒頭の正本2枚のキャラクター参照を厳守」と指示すれば足りる。**新規チャットを作らない／添付し直さない**（ヘッドレスからの画像添付は不可＝2026-07-05 に3方式とも実測失敗。この常設チャット方式が唯一のフォーカス/クリップボード非依存の経路）。
   - workshop チャットが開けない・会話冒頭に画像2枚が無い場合は、画像生成へ進まず `blocked_image_generation_unavailable` で中止・通知（人間が正本を貼り直す＝再シードが必要）。
   - 旧方式（`chatgpt-attach-files-clipboard.ps1` での添付）は**対話セッション限定のフォールバック**。ヘッドレスでは使わない。
+  - **ブラウザ必須作業（再シード＝正本画像の貼り付け 等）の前面化チェック（2026-07-12・粘らない）**: 画像の貼り付けを伴う作業は、**開始前に対象タブの `document.visibilityState === "visible"` を 1 回だけ確認**する。背面（hidden）なら OS クリップボード貼り付けが成立しないので、**合成 File 注入などの重い回避を試みず**、`blocked_image_generation_unavailable`（再シード必要時）または「次回に持ち越し」を **1 行で報告して終える**。前面化の格闘・リトライループは禁止。
   - **再シードの前倒し（2026-07-07 追加・キャラ参照劣化対策）**: `data/automation/image-workshop.json` の `generatedSinceSeed` が `reseedThreshold`(=10) を超える前、かつ **前記事ぶん(7〜8枚)を生成し終えていたら**、続きに詰め込まず**再シードを優先**する（新チャット+正本2枚添付+`conversationUrl`更新+`generatedSinceSeed`を0にリセット）。参照劣化は8枚1バッチの後半から出るため（2026-07-06 の ai-assistant 記事は slide06 からキャラ崩壊）。無人runで再シード（=画像添付）が経路上できない場合は `blocked_image_generation_unavailable` で安全停止し人間に依頼・通知する。生成のたびに `generatedSinceSeed` を +1 する。
 - **画像ファクトチェックは自分の目で行う**: 8 枚すべて Read で読み、slide_plan の数値・固有名詞・曜日・鉤括弧まで突き合わせる。**さらにキャラの視覚的破綻を「認識アンカー」で確認する（ひまり=金髪サイドテール・青い瞳・顔立ち・頭身／らぼまる=白い卵型ボディ・黄緑アンテナ・胸のオレンジのハートボタン。アンカー逸脱＝別人化・人型メカ化・途中からの変化は blocking）とレイアウト破綻・文字化けも必ず確認する**（`generate-slide-factcheck-prompt` の項目10/11）。**服・小道具の違いそのものは破綻ではない**（ただしスライド8枚は標準衣装で一貫が原則。バラつきは warning）。不合格は該当のみ再生成（最大 2 回）。「全体の見た目が良ければ pass」で崩れを見逃さない。結果は factcheck.json に正直に記録する。
 - **サムネの衣装チェック（崩れ検査とは別・★2026-07-08）**: サムネは `assets/characters/character-sheet.md` の「サムネの衣装は変えることを基本」に沿って、**記事テーマから連想される衣装・小道具・シチュエーションが標準から変えてあるか**を確認する。**標準衣装のままでも崩れではないので needs_revision にはしない**が、factcheck.json に `thumbnailCostume: "themed"`（テーマに沿って変えてある）/ `"standard_improvable"`（標準のまま＝改善余地あり）を記録する。`standard_improvable` は無人runでは注意ログに留め停止しない（立ち会い時のみ 1 枚差し替え再生成を検討）。認識アンカー不変・露出過多NGは前提。
@@ -74,20 +75,31 @@ finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待た�
 4. strict verify: `https://sumalabo.com/api/verify-publication?slug=<slug>` で `failedChecks: []` を確認。
 5. queue / ledger 更新（published。source: test_mode / triggeredBy: night_driver を記録）。
 
-## 4. Phase C（X 投稿・ブラウザ）
+## 4. Phase C（X 投稿・ブラウザ）— **タイムボックス厳守・粘らない**
 
 前提: Phase B 完了 + strict verify 8/8 + 本番 URL 200。
 
-1. `npm run social:generate-x-post -- --slug <slug>` — 出力の `X加重` が 280 以内であることを確認（280 ガードが downshift 済みのはず）。
+> **鉄則（2026-07-12）: Phase C の事前チェック（カード確認・画像添付の試行錯誤）は合計 5 分 / 3 回まで。上限を超えたら text_only で即投稿して Phase C を終える。カードは X の事後クロールに任せる。粘ることは禁止。** 詳細: [`x_post_workflow.md`](x_post_workflow.md)。
+
+1. `npm run social:generate-x-post -- --slug <slug>` — 出力の `X加重` が 280 以内であることを確認。
 2. Chrome で `x.com/compose/post` を**専用の新規タブ**で開く。アカウントが **@suma_labo** であることを DOM で確認。
-3. composer への入力は **computer type アクション**（execCommand は破損実績あり）。入力後に innerText を読み戻して前方一致・URL・タグ・破損なしを検証。
-3-bis. **OGP カードが出ない場合の自動フォールバック（2026-07-10）**: URL を貼っても composer にカードが出なければ、再 unfurl しつつ **15 分間隔で最大 2 回（約 30 分）**確認する。2 回でも出なければ、本番サムネ WebP を composer に画像添付して投稿してよい（カード鉄則の例外）。この場合は台帳へ `xPostVariant: "image_attach"` を記録する（通常は `card`）。**長時間の待ちループはしない。**
-4. tweetButton の DOM click → composer 空読み戻しで送信確認。**投稿は 1 回だけ**（失敗が曖昧なら syndication 照会で実在確認してから判断。二重投稿禁止）。
-5. プロフィール（x.com/suma_labo）から投稿 URL を取得 →
-   `node scripts/automation/phase-c-auto.mjs --slug <slug> --posted <tweetUrl>`
-   （ledger 記録 + カード画像確認まで自動で走る）
+3. composer へ本文を入力（背面タブでも JS の ClipboardEvent 貼り付けで text は入る）。innerText を読み戻して前方一致・URL・タグ・破損なしを検証。
+4. **タブ可視性で分岐**（`document.visibilityState`）:
+   - **背面（`!== "visible"`）**: 画像添付は**試みない**（OS クリップボード貼り付けが背面タブで成立しないため）。カード確認 1 回だけ→出なければ **text_only で即投稿**。合成 File 注入などの重い回避策は使わない。
+   - **前面（`=== "visible"`）**: ①カード確認（〜1 分）②出なければ再 unfurl 1 回（〜1 分）③まだ出なければサムネ WebP（`public/images/thumbnails/<slug>.webp`）を画像添付→ removeMedia が出たことを DOM 検証。ここまでで**合計 5 分 / 3 回**を超えない。超えたら text_only で投稿。
+5. tweetButton の DOM click → composer 空読み戻しで送信確認。**投稿は 1 回だけ**（二重投稿禁止）。
+6. プロフィール（x.com/suma_labo）から投稿 URL を取得 → 台帳に `xPostVariant`（`card` / `image_attach` / `text_only`）と URL を記録。text_only は失敗ではなく正常終了として扱う。
+7. **Phase C 所要時間を記録**: `node scripts/automation/test-mode.mjs --phase-timing --slug <slug> --phase "Phase C" --seconds <経過秒>`
 
 ## 5. 監査レポートと消し込み（必ず最後に実行）
+
+> **各 Phase の所要時間を記録する（2026-07-12・遅い工程の見える化）**: 各 Phase を終えるたびに経過秒を記録する。`recordNightRun` が run-history に畳み込み、`night-report` が「Phase 別所要時間」を出す。
+> ```
+> node scripts/automation/test-mode.mjs --phase-timing --slug <slug> --phase "scout"   --seconds <秒>
+> node scripts/automation/test-mode.mjs --phase-timing --slug <slug> --phase "Phase A" --seconds <秒>
+> node scripts/automation/test-mode.mjs --phase-timing --slug <slug> --phase "Phase B" --seconds <秒>
+> node scripts/automation/test-mode.mjs --phase-timing --slug <slug> --phase "Phase C" --seconds <秒>
+> ```
 
 ```
 node scripts/automation/test-mode.mjs --consume --slug <slug>
