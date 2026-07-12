@@ -8,15 +8,17 @@
 
 **Autonomy Level: 1 (L1)** — 状態は `data/automation/autonomy.json`、定義は [`docs/autonomy.md`](docs/autonomy.md)。この表記は autonomy.json の `level` と連動させる（変更時は両方更新）。**Claude が level を勝手に変更するのは禁止**（昇格・veto窓短縮はクリーン実績を根拠にユーザーが宣言する。自動降格だけは error budget 規定＝直近10記事で incident 2件以上→level -1 が適用される）。`paused: true`（kill switch）のときは finalize / Phase B / Phase C とも即停止する。
 
-**恒久無人運転（nightRun・2026-07-11 ユーザー承認）**: testMode（3本限定）完走を受け、夜間の無人 run は `autonomy.json` の `nightRun` による恒久運転（毎日 4:30 / scout 自動選定 / 1 晩 1 本 / weeklyCap 7）。恒久ガード＝incident 2 件で自動停止・kill switch・gate/factcheck/verify/rollback 従来どおり。scout 候補が閾値 50 未満の日は安全スキップ。候補豊富な日はユーザーの明示指示で昼に立ち会い 2 本目可。定義: [`docs/autonomy.md`](docs/autonomy.md) §6。**この無人 run は「ユーザー指定なしの自動収集をしない」原則の承認済み例外**（それ以外の対話セッションは従来どおり user-directed mode）。`nightRun.enabled` の再有効化はユーザー宣言のみ。
+**恒久無人運転（nightRun・2026-07-11 ユーザー承認）**: testMode（3本限定）完走を受け、夜間の無人 run は `autonomy.json` の `nightRun` による恒久運転（毎日 4:30 / scout 自動選定 / 1 晩 1 本 / weeklyCap 7）。恒久ガード＝incident 2 件で自動停止・kill switch・gate/factcheck/verify/rollback 従来どおり。scout 候補が閾値 50 未満の日は安全スキップ。定義: [`docs/autonomy.md`](docs/autonomy.md) §6。**この無人 run は「ユーザー指定なしの自動収集をしない」原則の承認済み例外**。`nightRun.enabled` の再有効化はユーザー宣言のみ。
+
+**昼の立ち会い制作も完走型（2026-07-12 ユーザー承認）**: ユーザーが対話セッションで**記事制作を明示指示**したら、**Human Review Checkpoint を廃止し、Phase A → B → C（公開・X 投稿）まで確認なしで完走**する。停止してよい例外は「除外カテゴリ該当（訴訟/事故/人事/買収/政治）」と「品質・安全のブロック（事実未確認・gate 不合格・build/deploy/verify 失敗・画像生成経路不可）」の 2 つだけ。**事後の取り消しは `npm run retract`**。詳細: [`docs/autonomy.md`](docs/autonomy.md) §7。ユーザーが「下書きだけ」「確認したい」等と明示したときのみ従来どおり途中停止する。
 
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと
 
 1. **ネタ収集は自動化しない。** ユーザーが URL / フォルダ / テーマ / 記事を指定したときだけ起動。
-2. **記事化 → PR 作成までは自動。その時点で必ず停止し、ユーザーの記事確認 + 明示了承を待つ。**
-3. **了承後だけ、PR merge → wrangler 本番 deploy → strict verify → queue 更新 → X 投稿まで一気に自動化。**
+2. **ユーザーが記事制作を指示したら、記事化 → PR → merge → 本番 deploy → strict verify → queue 更新 → X 投稿まで確認なしで完走してよい**（2026-07-12〜。Human Review Checkpoint は廃止）。
+3. **止まってよい例外は「除外カテゴリ該当」と「品質・安全のブロック」の 2 つだけ。事後の取り消しは `npm run retract`。**（ユーザーが「下書きだけ」「確認したい」等と明示したときのみ従来どおり途中停止）
 
 ### 全体フロー（3 フェーズ + チェックポイント）
 
@@ -101,7 +103,9 @@
 
 ### Human Review Checkpoint（Phase A → Phase B の間）
 
-Phase A 出口（finalize）通過後、**必ず停止する**。停止時には以下が揃っていること：プレビュー確認待ち通知送信済み / review item 登録済み（`review_waiting`、https Preview URL）/ PWA review 一覧で開ける状態 / 承認導線（承認ボタン or 「記事OK、公開へ」）が有効。
+> **⚠️ 2026-07-12 改訂**: ユーザーが対話セッションで**記事制作を明示指示**した場合、この Checkpoint は**適用しない**（Phase A → B → C まで完走する。[`docs/autonomy.md`](docs/autonomy.md) §7）。以下の Checkpoint 記述が生きるのは、ユーザーが「下書きだけ」「確認したい」等と**明示的に途中停止を求めたとき**だけ。
+
+（以下は途中停止を明示的に求められたときの手順）Phase A 出口（finalize）通過後、**停止する**。停止時には以下が揃っていること：プレビュー確認待ち通知送信済み / review item 登録済み（`review_waiting`、https Preview URL）/ PWA review 一覧で開ける状態 / 承認導線（承認ボタン or 「記事OK、公開へ」）が有効。
 
 **この時点で OK：**
 - **https の Cloudflare Pages Preview URL** の提示（スマホ/PWA から開ける）
