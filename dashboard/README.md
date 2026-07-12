@@ -158,18 +158,28 @@ GA4 Data API は `scripts/fetch-dashboard-data.mjs` で実装済み。**Cloudfla
 
 `GA4_SERVICE_ACCOUNT_JSON` がなければ全サイトサンプル fallback。あっても個別 `GA4_PROPERTY_ID_*` がないサイトは当該サイトだけサンプル維持 (画面の `stats.meta.warnings` にメッセージ記録)。
 
-### Search Console (⚠️ Phase 3B まで登録禁止)
+### Search Console (Phase 3B — 実装・連携済み)
 
-**Phase 3A の GA4 単独動作確認が完了するまで以下 4 件は登録しない。**
-先に登録しても fetch-dashboard-data.mjs はまだ Search Console API を呼ばないので無害だが、混乱を避けるため Phase 3B 着手まで保留する。
+`scripts/fetch-dashboard-data.mjs` に実装済み。**専用の Secrets / env は不要**:
 
-| Secret 名 | 用途 |
-|---|---|
-| `SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON` | Search Console API サービスアカウント鍵 JSON (GA4 と同じ鍵で兼用可) |
-| `SEARCH_CONSOLE_SITE_AINITORYU` / `_SUMALAB` / `_MIRADIA` | Search Console プロパティ (`https://...` または `sc-domain:...`) |
+- 認証は **GA4 と同じサービスアカウント鍵** (`GA4_SERVICE_ACCOUNT_JSON`) を使い、
+  scope `webmasters.readonly` のトークンを `google-auth-library` で取得して
+  webmasters/v3 REST を直接叩く (重量級の `googleapis` パッケージは不使用)。
+- SC プロパティ識別子はハードコードせず、**起動時に `sites.list` を 1 回呼び、
+  各サイトのホスト名 (site.url 由来、www 無視) でマッチして動的解決**する。
+  `sc-domain:` プロパティを優先し、なければ URL プレフィックスのホスト一致。
+- 解決できない / SC 取得に失敗したサイトは `searchSource: 'none'` として続行し、
+  GA4 取得や全体の実行は落とさない (warning を `stats.meta.warnings` に記録)。
+- 旧 `SEARCH_CONSOLE_SERVICE_ACCOUNT_JSON` / `SEARCH_CONSOLE_SITE_*` は**廃止**。
 
-Google Cloud Console でサービスアカウントを 1 つ作り、GA4 Data API と (Phase 3B で) Search Console API を有効化。
-GA4 / Search Console 側でそのサービスアカウントメールに「閲覧者」権限を付与する (3 サイト × 各 API)。
+前提 (設定済み): Google Cloud プロジェクトで **Search Console API を有効化**し、
+サービスアカウントメールを各 SC プロパティに追加しておくこと
+(未追加のプロパティは sites.list に出ないため自動的に `none` になる)。
+
+取得内容 (サイトごと、直近28日):
+- `type=web`: 日別 clicks/impressions (56日分 → 前28日比較)、合計 CTR / 掲載順位、上位クエリ 10 件
+- `type=discover`: 合計 impressions / clicks → `discover.listed` (表示>=1 で true)
+- GA4 追加クエリ (`pageReferrer`): サイト内回遊 PV 割合 `internalNavShare` (0〜1)
 
 ### Phase 3A の stats JSON 構造
 
@@ -178,7 +188,7 @@ GA4 / Search Console 側でそのサービスアカウントメールに「閲�
 ```json
 {
   "generatedAt": "...",
-  "sites": [ /* 既存 UI 用 (GA4 ライブ + Search Console は sample 値) */ ],
+  "sites": [ /* 既存 UI 用 (GA4 + Search Console live。searchSource/discover/internalNavShare 付き) */ ],
   "stats": {
     "generatedAt": "...",
     "dataRange": { "start": "YYYY-MM-DD", "end": "YYYY-MM-DD", "days": 90 },
@@ -276,6 +286,9 @@ PUBLIC リポジトリ + Direct Upload 構成では Access が唯一の閲覧制
 
 ## 実データ投入前チェックリスト
 
+> **注 (完了済み)**: Phase 3A/3B は連携済みのため、このチェックリストは初期セットアップ時の記録。
+> 新環境に移設する場合の手順書として残している。
+
 Phase 3 (GA4 / Search Console 実 API 取得) に進む前に、すべて ✅ を確認:
 
 - [ ] **リポジトリ可視性の方針が確定している** (現在 PUBLIC。Private 化するか、PUBLIC のまま Direct Upload 運用を継続するか決まっている)
@@ -294,10 +307,10 @@ Phase 3 (GA4 / Search Console 実 API 取得) に進む前に、すべて ✅ �
 - [ ] **別メールでログイン試行 → 拒否を確認済み**
 - [ ] **カスタムドメインを使うなら、そちらも Access で保護済み**
 - [ ] **`dashboard-latest.json` (サンプル状態でも) を `git log -- dashboard/public/data/` で確認 → ヒット 0 件** (= 過去 commit にも含まれていない)
-- [ ] ⚠️ **GA4 / Search Console の 8 件の Secrets はまだ一切登録しない** (このチェックリストを全部 ✅ にしてから初めて登録する。先に登録するとライブデータが流れ始めてしまう)
-- [ ] **サービスアカウントは GA4 / Search Console プロパティに「閲覧者」権限のみ付与** (編集権限はNG / Phase 3 で実施)
+- [ ] ⚠️ **GA4 の Secrets (env) はまだ設定しない** (このチェックリストを全部 ✅ にしてから初めて設定する。先に設定するとライブデータが流れ始めてしまう。Search Console 専用 Secrets は Phase 3B で廃止済み — GA4 と同じ鍵で動く)
+- [ ] **サービスアカウントは GA4 / Search Console プロパティに「閲覧者」権限のみ付与** (編集権限はNG)
 
-このチェックリストをすべて ✅ にしてから初めて Phase 3 (GA4 / Search Console Secrets の登録と fetch-dashboard-data.mjs の実装) に進む。
+このチェックリストをすべて ✅ にしてから初めて GA4 credentials を設定してライブ取得を開始する。
 
 ## ディレクトリ
 
@@ -351,17 +364,13 @@ dashboard/
 
 → 本ファイル冒頭の Direct Upload 構成のままにしておけば、Public/Private のどちらでも安全に運用できる。
 
-## 次フェーズへの作業 (Phase 3: 実 API 連携)
+## フェーズ進捗 (Phase 3: 実 API 連携 — 完了)
 
-「実データ投入前チェックリスト」がすべて ✅ になってから以下を行う。
-
-1. Google Cloud Console でサービスアカウントを作成 → GA4 Data API と Search Console API を有効化 → JSON 鍵を払い出す。
-2. GA4 / Search Console の各プロパティにサービスアカウントメールを「閲覧者」として追加 (3サイト × 2API)。
-3. GitHub Secrets に 8 件を登録 (上記 Secrets 表参照)。
-4. `dashboard/` に `npm i -D @google-analytics/data googleapis` を追加。
-5. `dashboard/scripts/fetch-dashboard-data.mjs` の TODO ブロックを実装:
-   - GA4 Data API で PV / users / sessions / topPages / risingPages / dailyViews
-   - `googleapis` の `webmasters.searchanalytics.query` で clicks / impressions / ctr / position / topQueries
-   - `DashboardSnapshot` 型に詰めて書き出し、`source` を `mixed` (or 個別の `ga4` / `search-console`)
-6. workflow を手動 dispatch → 緑になり、画面右上が 🟢「ライブデータ」になることを確認。
-7. 別メール / シークレットウィンドウで Access が依然有効か再確認 (Phase 3 投入直後の安全確認は必須)。
+- **Phase 3A (GA4)**: 実装・連携済み。GA4 Data API で PV / users / sessions /
+  topPages / risingPages / dailyViews / チャネル / デバイス / 記事動性を取得。
+- **Phase 3B (Search Console)**: 実装・連携済み。上記「Search Console」節のとおり、
+  GA4 と同じ鍵 + `webmasters.readonly` + `sites.list` 動的解決で
+  検索メトリクス / 上位クエリ / Discover 掲載状況 / 内部流入割合を取得。
+  専用 Secrets (`SEARCH_CONSOLE_*`) は不要になったため廃止。
+- 運用は GitHub Actions ではなく **0 円ローカル自動更新**
+  (Windows タスクスケジューラ → `npm run deploy:local`) が主経路。

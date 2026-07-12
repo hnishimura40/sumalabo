@@ -56,6 +56,34 @@ export interface SiteMetrics {
   averagePosition: number;
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Phase 3B: Search Console                                                  */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * 検索メトリクス (metrics.search* / topQueries) の出所。
+ *   - 'sc':     Search Console live 値
+ *   - 'sample': sample-dashboard.json の架空値
+ *   - 'none':   SC 未接続 (プロパティ未解決 / API 失敗)。metrics.search* は 0 埋め
+ * 旧スナップショット (Phase 3A 以前) にはこのフィールドが無いので optional。
+ */
+export type SearchSource = 'sc' | 'sample' | 'none';
+
+export interface DiscoverStatus {
+  /** Discover 掲載中か。true=直近28日で表示あり / false=0件 / null=SC未接続 */
+  listed: boolean | null;
+  impressions28d: number;
+  clicks28d: number;
+}
+
+/** SC type=web の直近28日 vs その前28日 (日別56日取得から分割集計) */
+export interface SearchTrend {
+  clicks28d: number;
+  clicksPrev28d: number;
+  impressions28d: number;
+  impressionsPrev28d: number;
+}
+
 /** 記事の動性ステータス。分類しきい値は scripts/fetch-dashboard-data.mjs の MOMENTUM 定数を正とする */
 export type ArticleMomentumStatus = 'rising' | 'falling' | 'new' | 'stable';
 
@@ -83,6 +111,14 @@ export interface SiteDashboard {
   improvements: ImprovementHint[];
   /** 記事ごとの動性（7日PV上位∪前週比上位∪新着、最大30記事/サイト）。未取得スナップショットでは省略 */
   articles?: ArticleMomentumEntry[];
+  /** 検索メトリクスの出所。旧スナップショットでは省略 (UI 側でフォールバック判定) */
+  searchSource?: SearchSource;
+  /** Discover 掲載状況 (直近28日)。旧スナップショットでは省略 */
+  discover?: DiscoverStatus;
+  /** SC 検索クリック/表示の前期比較。SC 未接続時・旧スナップショットでは省略 */
+  searchTrend?: SearchTrend;
+  /** サイト内回遊 PV 割合 (0〜1)。リファラーのホストが自サイトと同一の PV / 全 PV */
+  internalNavShare?: number;
   /** データ取得元 (sample / ga4 / search-console) と取得時刻 */
   source: 'sample' | 'ga4' | 'search-console' | 'mixed';
   fetchedAt: string;
