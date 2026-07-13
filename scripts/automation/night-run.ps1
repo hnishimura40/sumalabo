@@ -130,7 +130,36 @@ try {
   $sw.Stop()
   Log "claude exited: code=$claudeExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"
 
+  # ---- 3-bis. transient クラッシュからの1回だけ resume ----
+  # claude -p は稀に "tool call could not be parsed" 等の transient エラーで exit != 0 になる
+  # （2026-07-14 の atlas run: turn5 で発生し 21 分の作業を放棄）。orchestrator の状態は
+  # ステップ単位で保存されているので、**未完了の記事が直近に存在すれば1回だけ再開**する。
+  # 検出は find-resumable-run.mjs（halted=false / finalize未完 / research done / 60分以内）。
+  # 新規 scout はせず、resume 専用プロンプトで当該 slug を仕上げるだけ。
   if ($claudeExit -ne 0) {
+    $resumeSlug = (node scripts/automation/find-resumable-run.mjs --window-min 60 2>$null | Out-String).Trim()
+    if ($resumeSlug) {
+      Log "resume: 未完了の記事 '$resumeSlug' を検出。transient クラッシュとみなし1回だけ再開する。"
+      $ResumeTemplate = Get-Content (Join-Path $RepoRoot "docs\night_driver_resume_prompt.md") -Raw -Encoding utf8
+      $ResumePrompt = $ResumeTemplate.Replace("{{SLUG}}", $resumeSlug)
+      $swR = [System.Diagnostics.Stopwatch]::StartNew()
+      & claude -p $ResumePrompt `
+          --model claude-opus-4-8 `
+          --chrome `
+          --allowedTools $AllowedTools `
+          --max-turns 1200 `
+          2>&1 | Out-File -FilePath $ClaudeLog -Encoding utf8 -Append
+      $resumeExit = $LASTEXITCODE
+      $swR.Stop()
+      Log "claude resume exited: code=$resumeExit elapsed=$([Math]::Round($swR.Elapsed.TotalMinutes,1))min (slug=$resumeSlug)"
+      if ($resumeExit -ne 0) {
+        node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[testMode] 夜間運転: 再開も失敗（exit $resumeExit / slug=$resumeSlug）。logs/night/$DateStr.log を確認'}))" 2>&1 | Out-Null
+      } else {
+        Log "resume 成功: '$resumeSlug' を完走。"
+      }
+      exit $resumeExit
+    }
+    Log "resume: 再開対象の未完了記事なし（60分以内の in-progress state が無い）。"
     node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[testMode] 夜間運転が異常終了（exit $claudeExit）。logs/night/$DateStr.log を確認'}))" 2>&1 | Out-Null
   }
   exit $claudeExit
