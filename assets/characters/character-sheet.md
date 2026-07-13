@@ -10,7 +10,9 @@
 | ひまり | `assets/characters/himari-canonical.png` | 生成時のリファレンス添付（1枚目） |
 | らぼまる | `assets/characters/labomaru-canonical.png` | 生成時のリファレンス添付（2枚目） |
 
-貼り付けは 1 枚ずつ（ChatGPT の onpaste は files[0] しか拾わない）。
+**常設（2026-07-13〜・案A）**: 同じ正本2枚を ChatGPT プロジェクト「すまラボ台本」の**プロジェクトファイル（情報源）**に常設アップロード済み（`himari-canonical*.png` / `labomaru-canonical*.png`）。工房チャットの再シードは**新チャット作成+「プロジェクトファイルの正本2枚を厳守」のテキスト送信だけ**でよい（画像貼り付け不要・無人可。品質は 2026-07-13 参照テストでアンカー完全一致を実測）。プロジェクトファイル側の正本を差し替えた場合は repo 側（このフォルダ）と必ず同期する。
+
+チャットへ直接貼り付ける場合（フォールバック）は 1 枚ずつ（ChatGPT の onpaste は files[0] しか拾わない）。
 2 枚目が入らない環境では 2 キャラ合成 1 枚（`project/_characters_combined_ref.png` 方式）で代替。
 
 ## 認識アンカー（不変）と 衣装（可変）の区別 ★重要
