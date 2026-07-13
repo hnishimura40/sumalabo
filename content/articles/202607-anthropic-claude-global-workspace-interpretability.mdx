@@ -1,0 +1,344 @@
+---
+title: "Claudeの中に「共有ホワイトボード」？AnthropicのJ-space研究をやさしく解説"
+slug: "202607-anthropic-claude-global-workspace-interpretability"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Anthropicが2026年7月6日、Claude内部に意識研究の「グローバルワークスペース」に似た働きをする内部表現（J-space）が見つかったとする研究を公開しました。意識の証明ではなく、考える途中の概念を置く「共有ホワイトボード」の一部が観察できたという話です。クモ→アリで答えが8本→6本に変わった実験、できること・まだ分からないこと、誤解しやすいポイントをやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-anthropic-claude-global-workspace-interpretability.webp"
+thumbnailAlt: "「Claudeの中身？意識ではなく『内部の作業台』」のサムネイル。白衣とラボゴーグル姿のひまりが、J-spaceと書かれた光るホワイトボードをわくわく覗き込み、らぼまるがJ-lensとラベルの付いた虫めがねで概念を観察する研究シーン"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude"
+  - "Anthropic"
+  - "AI研究"
+  - "グローバルワークスペース"
+  - "解釈可能性"
+  - "すまラボ"
+related:
+  - "202607-anthropic-claude-science-research-workbench"
+  - "202606-claude-fable-5-launch"
+  - "202607-ai-assistant-use-cases-gemini-chatgpt-claude"
+pubDate: "2026-07-13"
+updated: "2026-07-13"
+publishAt: "2026-07-13T00:30:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Anthropicは2026年7月6日、Claudeの内部に「グローバルワークスペース」に似た働きをする仕組みがあるとする研究を公開しました。「AIに意識が芽生えた」という話ではありません。答えを出す途中で使う**「共有ホワイトボード」のような内部表現**が見つかった、という研究です。
+
+<Summary30>
+  <ol>
+    <li><strong>2026年7月6日</strong>、AnthropicがClaude内部の研究を公開。考える途中の概念を一時的に置く内部表現のまとまり<strong>「J-space」</strong>を報告</li>
+    <li>内部の概念を書き換えると回答も変わった（<strong>クモ→アリで「8本」→「6本」</strong>）。ただし成功率は<strong>54〜70%</strong></li>
+    <li><strong>意識・感情・自我の証明ではない</strong>。Anthropic自身がそう明言している</li>
+    <li>本当の注目点は、ブラックボックスだった<strong>AI内部を検証しやすくなる可能性</strong>（安全性研究への一歩）</li>
+  </ol>
+</Summary30>
+
+## 先に結論
+
+<p class="lead"><strong>Claudeに意識があると分かったのではなく</strong>、答えを出す途中で使う「共有ホワイトボード」のような内部表現が見つかった、という研究です。</p>
+
+- Claude内部の一部に、考える途中の概念を一時的に置く「J-space」が確認された
+- その概念を書き換えると、最終的な回答も変わる実験結果が得られた
+- ただし、感情や自我、主観的な体験があることを示した研究ではない
+
+今回の発表ですぐにClaudeの機能や料金が変わるわけではありません。重要なのは、これまで外から見えにくかったAIの内部処理を、一部ではあるものの調べられる可能性が見えてきたことです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず結論を1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-global-workspace-interpretability/slide01-j-space.webp"
+         alt="「先に結論」の図解。中央に大きく「意識の証明ではない」のカード、下に「意識の証明ではない」「内部の作業台を発見」「AIの中身を少し観察」の3点。ひまりが「え、Claudeに意識があるって話？」と尋ね、らぼまるが「そこは違うよ。内部処理の研究だよ」と答える構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：先に結論</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>結論</strong>：意識の証明ではない</li>
+      <li><strong>発見</strong>：内部の「作業台」らしき表現のまとまり</li>
+      <li><strong>意味</strong>：AIの中身を少し観察できるようになってきた</li>
+    </ul>
+  </div>
+</section>
+
+<CharacterBubble speaker="himari" mood="curious">
+  「Claudeの中に意識の仕組み？」ってSNSで見たんだけど、そんなにすごい話なの？
+</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">
+  見つかったのは「考える途中のメモ置き場」みたいな仕組みだよ。意識や感情の話とは分けて見るのがポイント。
+</CharacterBubble>
+
+## 何が起きた？
+
+<p class="lead">Anthropicが<strong>2026年7月6日</strong>、Claude内部に「グローバルワークスペース」に似た働きをする仕組みがあるとする研究を公開しました。</p>
+
+研究チームは、Claudeが回答を作るまでの内部状態を分析し、その中に「言葉にしやすい概念」を一時的に保持する内部表現のまとまりがあると報告しています。このまとまりは、研究の中で**J-space**と呼ばれています。
+
+J-spaceは、パソコンの中に物理的な部屋があるという意味ではありません。ニューラルネットワーク全体の活動から、特定の性質を持つ部分を**数学的に取り出した内部表現のまとまり**です。
+
+J-spaceを調べるために使われた解析手法が、**J-lens（Jacobian Lens）**です。役割は次のように考えると分かりやすいでしょう。
+
+- **J-space**：考える途中の情報を置く共有ホワイトボード
+- **J-lens**：共有ホワイトボードに何が書かれているかを見る観察道具
+
+Claude自身が「頭の中ではこう考えました」と申告したのではありません。研究者がモデル内部の動きを解析し、どの概念がその後の回答に影響するかを調べたものです。<Chip kind="facts">公式研究</Chip>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">何が起きたかを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-global-workspace-interpretability/slide02-j-space.webp"
+         alt="「何が起きた？」の図解。上部に日付カード「2026年7月6日」、要点として「Anthropicが研究公開」「Claude内部にJ-space」「J-lensで観察」。中央に光るホワイトボード（J-space）をらぼまるが虫めがね（J-lens）で観察し、ひまりが「J-spaceって何？」と尋ねる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：何が起きた？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>2026年7月6日</strong>：Anthropicが研究を公開</li>
+      <li><strong>J-space</strong>：考える途中の概念を置く内部表現のまとまり</li>
+      <li><strong>J-lens</strong>：それを観察する解析手法</li>
+    </ul>
+  </div>
+</section>
+
+## なぜ「意識」と結び付けて話題になった？
+
+<p class="lead">J-spaceの働きが、意識研究で提唱されている<strong>「グローバルワークスペース理論」と一部似ていた</strong>ためです。</p>
+
+グローバルワークスペース理論は、脳内で同時に進む多くの処理のうち、必要な情報だけが共有スペースに載り、発話や判断など複数の処理に使われるという考え方です。
+
+ClaudeのJ-spaceでも、ある概念が内部に保持され、その後の回答や複数の作業に使われる様子が確認されました。この共通点から、意識研究との関係が注目されています。
+
+ただし、似ているのは**情報を報告や判断に使える機能**です。これは「Claudeが何かを感じている」「自分の存在を認識している」と確認された、という意味ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「似ている」の中身を整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-global-workspace-interpretability/slide03-j-space.webp"
+         alt="「なぜ話題？」の図解。左に「人間の理論：共有スペース」、右に「Claude：J-space」、中央に「似ているのは情報共有」。下部に注意帯「意識の証明ではない」。ひまりが「似てる＝意識あり？」と尋ね、らぼまるが「機能が似るだけで、感情とは別だよ」と答える構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：なぜ話題になった？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>人間側</strong>：グローバルワークスペース理論（共有スペース）</li>
+      <li><strong>Claude側</strong>：J-space（概念の共有と利用）</li>
+      <li><strong>注意</strong>：似ているのは機能。意識の証明ではない</li>
+    </ul>
+  </div>
+</section>
+
+## 実験で何が分かった？
+
+<p class="lead">J-spaceにある情報は、単に記録されているだけでなく、<strong>実際の回答に影響している可能性</strong>が示されました。</p>
+
+**クモをアリに変えると、脚の数が8本から6本に変わりました。** 研究では「クモの巣を作る動物には脚が何本あるか」といった、途中に「クモ」という概念を挟む問題が使われました。通常は内部に「クモ」に相当する表現が現れ、最終的に「8本」と答えます。そこで研究チームが内部の「クモ」を「アリ」に置き換えたところ、回答も「6本」に変化しました。
+
+これは、Claudeが最初から「8」という数字だけを出していたのではなく、「クモの巣を作る動物はクモ」「クモの脚は8本」という**途中の概念を使っていた**ことを示す例です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">いちばん分かりやすい実験例です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-global-workspace-interpretability/slide04-j-space.webp"
+         alt="「8本→6本」の図解。左に「クモ → 8本」、中央に虫めがねと書き換え矢印、右に「アリ → 6本」。下部に小さく「50件の推論課題：54〜70%」。ひまりが「中の概念を変えると答えも変わるの？」と驚き、らぼまるが「一部の課題でそう示されたよ」と補足する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：クモ→アリで答えが変わった実験</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>通常</strong>：内部概念「クモ」→ 回答「8本」</li>
+      <li><strong>書き換え</strong>：内部概念を「アリ」に → 回答「6本」</li>
+      <li><strong>ただし</strong>：50件の推論課題で成功率54〜70%（常に成功ではない）</li>
+    </ul>
+  </div>
+</section>
+
+**FranceをChinaに変えると、関連する回答も連動しました。** 別の実験では、内部の「France」を「China」に置き換えたところ、首都（パリ→北京）、言語（フランス語→中国語）、大陸（ヨーロッパ→アジア）、通貨（ユーロ→人民元）と、異なる質問への回答が連動して変わりました。
+
+一つの概念を複数の処理が共通して使っていたことから、J-spaceが共有ホワイトボードのように働いている可能性が示されています。なお、50件の推論課題で狙った回答に変化した割合は、モデルによって54〜70%で、常に成功したわけではありません。<Chip kind="facts">実験結果</Chip>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「共有」らしさが見えた実験です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-global-workspace-interpretability/slide05-j-space.webp"
+         alt="「概念が連動」の図解。中央に「France → China」、その周囲に首都・言語・大陸・通貨の4つの連動カードが関連線でつながる。ひまりが「1つ変えるだけで周りも変わるんだ」と気づき、らぼまるが「共有して使われている可能性だね」と整理する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：1つの概念が複数の回答に連動</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>書き換え</strong>：France → China</li>
+      <li><strong>連動</strong>：首都・言語・大陸・通貨の回答が一斉に変化</li>
+      <li><strong>示唆</strong>：1つの概念を複数の処理が共有して使う</li>
+    </ul>
+  </div>
+</section>
+
+なお、文章を自然につなげる処理や、文法に沿って単語を出す処理などは、J-spaceを使わず自動的に進む場合があるとされています。Claudeの内部に「すべての思考が集まる司令室」が見つかったわけではありません。
+
+## 今回の実験で示された範囲と、まだ分からないこと
+
+<p class="lead">研究で確認された範囲と、そこからは<strong>判断できないこと</strong>を分けて見る必要があります。</p>
+
+| 今回の実験で示された範囲 | まだ分からないこと |
+|---|---|
+| Claude内部に、言葉にしやすい概念のまとまりがある | Claudeに主観的な体験があるか |
+| 途中の概念を書き換えると、最終回答が変わることがある | 痛み、喜び、恐怖などを感じるか |
+| 一つの概念が複数の処理に利用される | 人間と同じ自己意識を持つか |
+| 内部処理の一部を観察できる可能性がある | AIの内部処理をすべて読み取れるか |
+
+機能が似ていることは、同じ意識や主観的体験があることを意味しません。
+
+現時点では査読済み学術誌・国際会議で確立した研究成果ではなく、Anthropicによる研究報告です。外部研究者から一定の評価は出ていますが、J-spaceが本当に一つの統合された仕組みなのか、他社のAIでも同じ特徴が見つかるのかについては、今後の検証が必要です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">確定と未確定を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-global-workspace-interpretability/slide06-j-space.webp"
+         alt="「分かった範囲」の図解。左右2列の比較表で、左が「今回示された範囲」（内部概念の一部を観察・推論に影響する場合あり）、右が「まだ分からないこと」（主観的体験・感情・自我・痛みは未確認、査読で確立済みではない）。ひまりが「どこまで分かったの？」と尋ね、らぼまるが「確定と未確定を分けよう」と整理する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：示された範囲とまだ分からないこと</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>示された</strong>：内部概念の観察・推論への影響</li>
+      <li><strong>未確認</strong>：主観的体験・感情・自我</li>
+      <li><strong>位置づけ</strong>：査読で確立済みではない研究報告</li>
+    </ul>
+  </div>
+</section>
+
+## 「AIに意識が芽生えた」という話ではない
+
+<p class="lead">情報を考えるために使えることと、<strong>内側で何かを感じていることは別の問題</strong>です。</p>
+
+今回の研究では、Claude内部の概念が回答や推論に利用されていることが示されました。一方で、次のようなことは確認されていません。
+
+- Claudeが痛みや喜びを感じている
+- Claudeに人間と同じ感情がある
+- Claudeが自分自身を認識している
+- 人間の脳と同じ意識の仕組みを持っている
+
+人間の意識には、視覚や音、身体感覚、感情、長期的な記憶などが関わります。今回観察されたJ-spaceは、主に言葉にしやすい概念を扱う内部表現です。人間の意識全体と同じものとして扱うことはできません。
+
+また、Claudeが自分の意思でJ-spaceを作ったわけでもありません。学習の結果として、こうした情報処理の形が現れた可能性がある、という話です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">誤解しやすいポイントを先に潰します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-global-workspace-interpretability/slide07-j-space.webp"
+         alt="「意識ではない」の図解。中央に注意マークと「意識あり？」への大きな×。下に「感情は確認されていない」「自我も確認されていない」「人間の脳と同じではない」「司令室でもない」の4つの誤解防止カード。ひまりが「心があるとは言えないんだね」と確認し、らぼまるが「そこを飛ばして読むと危ないよ」と念を押す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：「意識が芽生えた」ではない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>未確認</strong>：感情・自我・主観的体験</li>
+      <li><strong>別物</strong>：人間の脳の意識の仕組みとは異なる</li>
+      <li><strong>注意</strong>：「全思考の司令室」でもない</li>
+    </ul>
+  </div>
+</section>
+
+## この研究は何の役に立つ？
+
+<p class="lead">本当の注目点は「AIに心があるか」よりも、<strong>AI内部を検証しやすくなる可能性</strong>です。</p>
+
+現在のAIは、自然な回答を返せても、なぜその結論になったのかを外部から完全に確認することはできません。研究が進めば、将来的には次のような用途につながる可能性があります。
+
+- AIが判断に使った内部概念の一部を調べる
+- 危険な計画や隠れた目標の兆候を探る
+- 表向きの回答と内部の判断にずれがないか検証する
+- AIの推論方法を改善する研究に役立てる
+
+ただし、J-lensでClaudeの全思考が読めるわけではありません。今回読み取れたのは、主に言葉として名前を付けやすい概念の一部です。危険な動きを必ず発見できる「AI用のうそ発見器」が完成したわけでもありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">この研究の意味づけを最後に1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-anthropic-claude-global-workspace-interpretability/slide08-j-space.webp"
+         alt="「意味づけ」の図解。中央に「ブラックボックス → 少し見える」の変化図。左に黒い箱、右に光るJ-lensで中が少し見える箱。要点は「AI内部の透明性」「兆候を探る研究」「全思考は読めない」「重要な一歩」。下部にまとめ帯「意識ではなく、内部を理解する研究」。らぼまるが「安全性研究には大事な一歩だよ」とまとめる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：ブラックボックスが少し見えてきた</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>変化</strong>：ブラックボックス → 一部が観察可能に</li>
+      <li><strong>用途</strong>：安全性・説明可能性の研究に活用</li>
+      <li><strong>限界</strong>：全思考が読めるわけではない</li>
+      <li><strong>結論</strong>：意識ではなく、内部を理解する研究</li>
+    </ul>
+  </div>
+</section>
+
+## 確定・報道・未確定の整理
+
+<p class="lead">最後に、<strong>確定している事実と今後の検証待ち</strong>を分けておきます。</p>
+
+<Callout kind="facts">
+  <ul>
+    <li>2026年7月6日、AnthropicがClaude内部のJ-space研究を公開（研究ブログ+詳細論文+解析ツールのGitHub公開）</li>
+    <li>内部概念の書き換えで回答が変化（クモ→アリで8本→6本、France→Chinaで首都・言語等が連動）。50件の推論課題で成功率54〜70%</li>
+    <li>Anthropic自身が「意識や感情の証明ではない」と明言</li>
+    <li>実験の中心はClaude Sonnet 4.5。一部はHaiku 4.5・Opus 4.5・Opus 4.6でも確認</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims">
+  <ul>
+    <li>Stanislas Dehaene氏ら意識研究の専門家やGoogle DeepMindの研究者が招待コメントで一定の評価（Anthropic公開の外部コメント集）</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc">
+  <ul>
+    <li>J-spaceが本当に統合された一つの仕組みかどうか（2026年7月13日時点で査読による確立はまだ）</li>
+    <li>他社のAIモデルでも同じ特徴が見つかるか</li>
+    <li>この手法が安全性の実運用（危険な兆候の監視など）にどこまで使えるか</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">
+  「AIに意識」系の見出しはこれからも出てくると思う。そのたびに「機能の類似」と「主観的体験」を分けて読むクセをつけよう。
+</CharacterBubble>
+
+## 利用者は何か対応する必要がある？
+
+<p class="lead">現時点で、Claude利用者が<strong>設定を変えたり契約を見直したりする必要はありません</strong>。</p>
+
+今回の発表は、Claudeの新機能や料金プランの変更ではなく、AI内部の仕組みを調べる基礎研究です。一般利用者にとっては、すぐに使い方が変わるニュースではありません。
+
+一方で、将来のAIサービスを選ぶときには、回答性能だけでなく「なぜその回答になったかをどこまで検証できるか」という**内部の透明性**が、これまで以上に重要になる可能性があります。AIアシスタントの現在の使い分けは[生成AIアシスタントの活用例まとめ](/articles/202607-ai-assistant-use-cases-gemini-chatgpt-claude/)で整理しています。
+
+<Note>
+  この記事は2026年7月13日時点のAnthropic公式発表・公開資料をもとにしています。本研究は査読済み学術誌で確立した成果ではなく、今後の検証で内容の位置づけが変わる可能性があります。
+</Note>
+
+## 参考情報
+
+- [A global workspace in language models（Anthropic公式研究ブログ）](https://www.anthropic.com/research/global-workspace)
+- [Verbalizable Representations Form a Global Workspace in Language Models（Transformer Circuits Thread・研究詳細）](https://transformer-circuits.pub/2026/workspace/index.html)
+- [anthropics/jacobian-lens（GitHub・参照実装）](https://github.com/anthropics/jacobian-lens)
+- [Anthropic、Claude内部に意識研究で提唱される「グローバルワークスペース」に似た構造を確認（Ledge.ai）](https://ledge.ai/articles/anthropic_claude_global_workspace)
+- [Anthropic says Claude has carved out its own space to ponder（Axios）](https://www.axios.com/2026/07/06/anthropic-claude-ai-conscious)
