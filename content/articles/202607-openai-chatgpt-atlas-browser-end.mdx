@@ -1,0 +1,306 @@
+---
+title: "OpenAIのChatGPTブラウザ「Atlas」は8月9日で終了へ。利用者が今やるべきことは？"
+slug: "202607-openai-chatgpt-atlas-browser-end"
+type: "news"
+category: "ニュースをかみくだく"
+description: "OpenAIがChatGPT搭載ブラウザ「Atlas」の提供終了を発表しました。2026年8月9日にアクセスできなくなり、ブックマークや履歴などのデータは別アプリへ自動移行されません。終了するのはAtlasというブラウザだけでChatGPT全体ではないこと、8月9日までにやるべきこと、代わりになる3つの経路（デスクトップアプリ内ブラウザ／Chrome拡張／クラウドブラウザ）を、公式情報と報道を分けてやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-openai-chatgpt-atlas-browser-end.webp"
+thumbnailAlt: "「Atlas 8/9で終了」のサムネイル。ひまりが8月9日のカレンダーを見ながらノートPCでブックマークを書き出し、らぼまるが『まず退避』のチェックボードを持って案内する変化実感型のイラスト。「終わる前にデータ退避を」のサブコピー入り"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "OpenAI"
+  - "ChatGPT"
+  - "Atlas"
+  - "ブラウザ"
+  - "AI"
+  - "すまラボ"
+related:
+  - "202607-openai-gpt-5-6-chatgpt-work"
+  - "202607-ai-assistant-use-cases-gemini-chatgpt-claude"
+  - "202607-gpt-5-6-sol-terra-luna-release"
+pubDate: "2026-07-14"
+updated: "2026-07-14"
+publishAt: "2026-07-14T09:00:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+OpenAIは、ChatGPTを搭載したブラウザ「Atlas」の提供を終了すると発表しました。Atlasへのアクセスは**2026年8月9日に完全終了**します。ただし、終了するのはAtlasというブラウザであって、ChatGPT全体ではありません。何が終わって何が残るのか、そして8月9日までに何をすればいいのかを、公式情報と報道を分けてやさしく整理します。
+
+<Summary30>
+  <ol>
+    <li>ChatGPT搭載ブラウザ「Atlas」は<strong>2026年8月9日に完全終了</strong>する</li>
+    <li>ブックマーク・履歴・タブ・パスワード・Cookieは<strong>別アプリへ自動移行されない</strong>（自分で退避が必要）</li>
+    <li>終わるのは<strong>Atlasだけ</strong>。ChatGPT本体は継続し、ブラウザ機能は<strong>3つの形</strong>で残る</li>
+    <li>やることは、まず<strong>8月9日までにブックマークをHTMLで書き出す</strong>こと</li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "8/9", cap: "Atlasのアクセス終了日（2026年）" },
+    { num: "5種類", cap: "自動移行されないデータ（ブックマーク・履歴・タブ・パスワード・Cookie）" },
+    { num: "3経路", cap: "Atlas終了後もChatGPT×Webが使える代替手段" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">ChatGPTのブラウザが終わるって聞いたけど、ChatGPT自体が使えなくなるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">終わるのは「Atlas」というブラウザだけだよ。ChatGPT本体は続くし、ブラウザ機能も別の形で残る。ただしデータの退避は自分でやる必要があるよ。</CharacterBubble>
+
+## 先に結論：Atlasは8月9日終了、でもChatGPTは終わらない
+
+<p class="lead"><strong>終了するのはAtlasというブラウザ</strong>で、ChatGPT全体ではありません。ただしデータは自動で移らないので、期限までに自分で退避が必要です。</p>
+
+要点は次の3つです。
+
+- Atlasは8月9日に完全終了する
+- ブックマークや保存データは、別のアプリへ自動移行されない
+- ChatGPTのブラウザ関連機能は、別の3つの形で続く
+
+現在Atlasを使っている人は、8月9日までにブックマークをHTML形式で書き出し、残したいデータを確認しておく必要があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず結論を1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-chatgpt-atlas-browser-end/slide01-conclusion.webp"
+         alt="「先に結論」の図解。Atlasは2026年8月9日に完全終了、終了するのはブラウザAtlasだけ、ChatGPT全体は終わらない、データは別アプリへ自動移行されない、ブラウザ機能は別の3形態で継続の5点を整理。ひまりが『ChatGPTが終わるの？』と不安がり、らぼまるが『終わるのはAtlasだけだよ』と整理する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Atlasは8月9日終了、ChatGPTは終わらない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>終了</strong>：ブラウザ「Atlas」は2026年8月9日にアクセス終了</li>
+      <li><strong>残る</strong>：ChatGPT本体は継続、ブラウザ機能も3形態で継続</li>
+      <li><strong>注意</strong>：データは自動移行されない（自分で退避）</li>
+    </ul>
+  </div>
+</section>
+
+## 何が起きた？Atlasは8月9日でアクセス終了
+
+<p class="lead">Atlasは<strong>公開から1年足らず</strong>で、独立したブラウザとしての提供を終えます。</p>
+
+OpenAIは、ChatGPTを搭載したブラウザ「Atlas」の提供を終了すると発表しました。Atlasへのアクセスは、**2026年8月9日に完全終了**します。これは新機能の開発が止まるだけではなく、終了日を過ぎるとAtlasというブラウザ自体を利用できなくなる予定です。
+
+Atlasは2025年10月に、macOS向けのブラウザとして公開されました。しかし、2026年7月の終了発表時点でも、Windows・iOS・Android版は一般提供されず、macOS専用のままでした。
+
+<div class="table-card article-wide-block">
+
+| 項目 | 確認されている内容 |
+|---|---|
+| 公開時期 | 2025年10月 |
+| 対応環境 | macOS |
+| Windows版 | 一般提供されず |
+| iOS・Android版 | 一般提供されず |
+| アクセス終了日 | 2026年8月9日 |
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">経緯を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-chatgpt-atlas-browser-end/slide02-what-happened.webp"
+         alt="「何が起きた？」の図解。2025年10月にmacOS向けに公開、Windows・iOS・Android版は一般提供されず、2026年8月9日にアクセス終了、公開から1年足らずの4点を年表で整理。ひまりが『もう終わり？』とカレンダーを見て、らぼまるが『約1年で終了だよ』と案内する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：公開から1年足らずで終了</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>公開</strong>：2025年10月・macOS向け</li>
+      <li><strong>展開</strong>：Windows・iOS・Android版は一般提供されず</li>
+      <li><strong>終了</strong>：2026年8月9日にアクセス終了（公開から1年足らず）</li>
+    </ul>
+  </div>
+</section>
+
+## 誤解しやすい点：ChatGPT全体が終わるわけではない
+
+<p class="lead">今回終了するのは<strong>Atlasという独立したブラウザ</strong>で、ChatGPT全体でも、Web閲覧機能の全廃でもありません。</p>
+
+整理すると、次のようになります。
+
+- 終了する：ChatGPT搭載ブラウザ「Atlas」
+- 終了しない：ChatGPTそのもの
+- 継続する：ChatGPTデスクトップアプリ内のブラウザ機能
+- 継続する：Chrome拡張からChatGPTを使う方法
+- 継続する：エージェントが操作するクラウドブラウザ
+
+「OpenAIのブラウザ機能がすべてなくなる」と受け取るのは正確ではありません。独立したAtlasは終了しますが、ChatGPTとWebを組み合わせる機能は、別の形で提供されます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「終わる／終わらない」を切り分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-chatgpt-atlas-browser-end/slide03-not-chatgpt-ending.webp"
+         alt="「終わるのはAtlasだけ」の図解。終了する：ブラウザ「Atlas」、終了しない：ChatGPTそのもの、継続：ChatGPTアプリ内ブラウザ・Chrome拡張・クラウドブラウザの切り分け。ひまりが『ぜんぶ無くなるの？』と尋ね、らぼまるが『Atlasだけ。機能は別の形で残るよ』と答える構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：終わるのはAtlasだけ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>終了</strong>：ブラウザ「Atlas」だけ</li>
+      <li><strong>終了しない</strong>：ChatGPTそのもの</li>
+      <li><strong>継続</strong>：アプリ内ブラウザ／Chrome拡張／クラウドブラウザ</li>
+    </ul>
+  </div>
+</section>
+
+## データは別のブラウザへ自動移行されない
+
+<p class="lead">Atlasに保存したデータは<strong>ほかのブラウザやアプリへ自動的に移りません</strong>。自分で退避が必要です。</p>
+
+自動移行されないと案内されているのは、次のデータです。
+
+- ブックマーク
+- 閲覧履歴
+- 開いているタブ
+- 保存したパスワード
+- Cookie
+
+OpenAIは、8月9日までにブックマークをHTML形式でエクスポートするよう案内しています。ブックマーク以外にも残したい情報がある場合は、利用者自身で確認し、手動でバックアップする必要があります。ただし、閲覧履歴、保存パスワード、Cookieなどを具体的にどの方法で移行できるかは、現時点では明確になっていません。<Chip kind="facts">公式案内</Chip>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">退避が必要なデータを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-chatgpt-atlas-browser-end/slide04-no-auto-migrate.webp"
+         alt="「自動移行されないデータ」の図解。ブックマーク・閲覧履歴・開いているタブ・保存したパスワード・Cookieの5種類は自動移行されず、ブックマークはHTML形式でエクスポートと案内。ひまりが『勝手に移らないんだ』と気づき、らぼまるが『自分で退避しよう』とチェック役をする構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：自動移行されない5種類のデータ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>対象</strong>：ブックマーク・履歴・タブ・パスワード・Cookie</li>
+      <li><strong>退避</strong>：ブックマークはHTML形式でエクスポート</li>
+      <li><strong>未確定</strong>：履歴・パスワード・Cookieの具体的な移行方法</li>
+    </ul>
+  </div>
+</section>
+
+## 8月9日までにやることチェックリスト
+
+<p class="lead">やることの中心は<strong>ブックマークの書き出し</strong>。早めに退避しておくのが安全です。</p>
+
+現在Atlasを使っている人は、次の順番で確認すると分かりやすいでしょう。
+
+- ブックマークをHTML形式でエクスポートする
+- 閲覧履歴に残しておきたい情報がないか確認する
+- 開いたままのタブに必要なページがないか確認する
+- 保存パスワードやCookieが自動移行されないことを把握する
+- Atlasの代わりに使うブラウザや機能を決める
+- ChatGPTアプリ内やメールで届く追加案内を確認する
+
+具体的な移行手順の詳細はまだ公開されていないため、現段階では「後から何とかなる」と考えず、必要な情報を早めに確認しておくほうが安全です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">期限までのチェックリスト。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-chatgpt-atlas-browser-end/slide05-checklist.webp"
+         alt="「8/9までにやること」の図解。ブックマークをHTMLで書き出す、残したい履歴・タブを確認、パスワード/Cookieは自動移行なしと把握、代わりのブラウザ/機能を決める、アプリ内・メールの追加案内を確認の5点をチェックリストで整理。ひまりがチェック表を持ち、らぼまるが『まずブックマークから』と補足する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：8月9日までにやること</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>最優先</strong>：ブックマークをHTMLで書き出す</li>
+      <li><strong>確認</strong>：残したい履歴・タブ、代わりの手段</li>
+      <li><strong>把握</strong>：パスワード・Cookieは自動移行されない</li>
+    </ul>
+  </div>
+</section>
+
+## Atlasの代わりになる3つの経路
+
+<p class="lead">Atlas終了後もChatGPT×Webは残ります。ただし<strong>3つの経路は役割が違います</strong>。</p>
+
+<div class="table-card article-wide-block">
+
+| 代替経路 | 主な役割 | 向いている使い方 |
+|---|---|---|
+| ChatGPTデスクトップアプリ内ブラウザ | ChatGPTアプリの中でWebページを開く | ChatGPTを中心に調べものや作業を進める |
+| Google Chrome拡張 | 普段のChromeからChatGPTを呼び出す | 今のブラウザを変えずにChatGPTを使う |
+| クラウドブラウザ | エージェントがサーバー上で操作する | Web上の作業をAIに任せる |
+
+</div>
+
+**ChatGPTデスクトップアプリ内のブラウザ機能**には、複数タブ、パスワードマネージャ、ファイルのダウンロード、印刷、ページ内検索、Webサイトへのログインが用意されます。Atlasに近い形で、ChatGPTの中からWebページを利用する経路です。ただし、日本での詳しい提供条件や対象プランは未確定です。
+
+**Google Chrome拡張**は、拡張機能を通じてサイドバーからChatGPTを利用する方法です。ブラウザを乗り換えるのではなく、今使っているChromeにChatGPTを追加する形に近くなります。
+
+**OpenAIのクラウドブラウザ**は、OpenAIのサーバー上でブラウザが動き、エージェントが利用者に代わってタスクを進めます。前の2つが「自分でWebを見るための機能」なのに対し、クラウドブラウザは「Web上の作業をAIに任せるための機能」です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">3経路の違いを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-chatgpt-atlas-browser-end/slide06-alternatives.webp"
+         alt="「3つの代替経路」の図解。アプリ内ブラウザ：ChatGPTの中でWebを開く、Chrome拡張：普段のChromeにChatGPTを追加、クラウドブラウザ：AIが代理で作業、自分の使い方に近い経路を選ぶ、の整理。ひまりが『どれを使えばいい？』と尋ね、らぼまるが『使い方で入口が分かれたよ』とまとめる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Atlas終了後の3つの代替経路</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>アプリ内ブラウザ</strong>：ChatGPTの中でWebを開く</li>
+      <li><strong>Chrome拡張</strong>：普段のChromeにChatGPTを追加</li>
+      <li><strong>クラウドブラウザ</strong>：Web作業をAIに任せる</li>
+    </ul>
+  </div>
+</section>
+
+## 確定・未確定と、なぜ終了するのか
+
+<p class="lead">確定していることと、まだ分からないことを分けて見ておきましょう。</p>
+
+<Callout kind="facts">
+  <ul>
+    <li>Atlasは2026年8月9日にアクセス終了</li>
+    <li>データ（ブックマーク・履歴・タブ・パスワード・Cookie）は他アプリへ自動移行されない</li>
+    <li>ブックマークはHTML形式で書き出すよう案内されている</li>
+    <li>代替経路として、ChatGPTアプリ内ブラウザ・Chrome拡張・クラウドブラウザがある</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc">
+  <ul>
+    <li>ブックマーク以外（履歴・パスワード・Cookie）の具体的な移行手順</li>
+    <li>日本での詳しい案内画面や提供条件・対象プラン</li>
+    <li>Atlasの全機能を代替手段で再現できるか</li>
+  </ul>
+</Callout>
+
+終了の直接的な理由について、利用者数や開発費などの数値は示されていません。一方、報道では、元アプリ担当CEOのFidji Simo氏が示したとされる「side quests（中心から離れた取り組み）を減らす」という方針との関連が指摘されています。動画生成サービスSoraの終了についても、同じ製品整理の流れにあると報じられています。ただし、これが終了の直接理由として公式に示されたわけではなく、「製品を絞り込む動きの一部とみられている」という距離で捉えるのが適切です。<Chip kind="claims">報道</Chip>
+
+<CharacterBubble speaker="labo" mood="worried">「なぜ終了か」は公式の数字が出ていないから、報道の見方として受け止めてね。確実なのは、8月9日までにデータを退避することだよ。</CharacterBubble>
+
+## 今回の終了をどう見る？
+
+<p class="lead">OpenAIは「一つの専用ブラウザにまとめる形」から、<strong>「目的ごとに入口を分ける形」</strong>へ移ろうとしているように見えます。</p>
+
+今回の発表は、OpenAIがブラウザとの連携をすべて諦めたという話ではありません。Webを閲覧する機能はChatGPTデスクトップアプリへ、普段のブラウザとの連携はChrome拡張へ、AIによる代理操作はクラウドブラウザへ分けられています。
+
+利用者にとって重要なのは、Atlasの名前がなくなることよりも、今後どの経路でChatGPTとWebを使うかです。まずは8月9日までにデータを確認し、その後、自分の使い方に近い代替経路を選ぶことになります。ChatGPTの現在の使い分けは[生成AIアシスタントの活用例まとめ](/articles/202607-ai-assistant-use-cases-gemini-chatgpt-claude/)でも整理しています。
+
+<Note>
+  この記事は2026年7月14日時点のOpenAIの発表・案内と報道をもとにしています。移行手順や日本での提供条件は今後変わる可能性があるため、実際の退避・乗り換えのときは、アプリ内やメールで届く公式の最新案内を確認してください。
+</Note>
+
+## 参考情報
+
+- [Evolving Atlas into ChatGPT for browser-based agentic work（OpenAI ヘルプセンター）](https://help.openai.com/en/articles/20001371-evolving-atlas-into-chatgpt-for-browser-based-agentic-work)
+- [OpenAI、ChatGPTを組み込んだWebブラウザ「Atlas」の提供終了を発表（ケータイ Watch）](https://k-tai.watch.impress.co.jp/docs/news/2124737.html)
+- [OpenAI kills ChatGPT Atlas less than a year after launch（Cybernews）](https://cybernews.com/ai-news/openai-shutters-atlas-ai/)
