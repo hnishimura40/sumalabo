@@ -93,7 +93,13 @@
 > - Chrome 拡張がペアリングされているか（**Edge ペアリングは経路なし扱い**）
 > - ChatGPT セッションが開ける状態か
 >
-> 経路が通らないと判定したら、**本文 MDX だけで PR を作成しない**。queue を `blocked_image_generation_unavailable` にして、原因 / 復旧手順 / 再開方法を報告して停止する。**ユーザーが明示的に「画像なしで進めて」と返答したときだけ画像なし PR を許可**。詳細: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) section 5-bis / 5-ter
+> **拡張未接続を検知したら、まず自己復旧を試みる（2026-07-14・人間に頼む前に）**:
+> 1. `npm run chrome:ensure`（= `scripts/automation/ensure-chrome.ps1`。night-run と同等の Chrome 起動＝プロセス確認→無ければ `--restore-last-session` で起動→安定待ち）を実行。
+> 2. **30 秒待って `list_connected_browsers` を再確認**。未接続ならもう一度だけ（`chrome:ensure` → 30 秒 → 再確認）。**最大 2 回**まで。
+> 3. 2 回試しても未接続なら**初めて人間に再接続を依頼**する（`blocked_image_generation_unavailable` で停止）。
+> ※ ensure-chrome は「Chrome が起動していること」を保証するだけ。**拡張のペアリング自体が切れている場合は Chrome 起動だけでは直らない**ので、2 回で見切って人間に渡す（粘らないルール準拠）。
+>
+> 上記の自己復旧でも経路が通らないと判定したら、**本文 MDX だけで PR を作成しない**。queue を `blocked_image_generation_unavailable` にして、原因 / 復旧手順 / 再開方法を報告して停止する。**ユーザーが明示的に「画像なしで進めて」と返答したときだけ画像なし PR を許可**。詳細: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) section 5-bis / 5-ter
 
 （上記 12 ステップが Phase A の正規フロー。下記は各工程の補足ルール。）
 

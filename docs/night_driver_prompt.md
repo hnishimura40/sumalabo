@@ -20,7 +20,12 @@ node scripts/automation/test-mode.mjs --status
 
 > **前提（2026-07-07 / 2026-07-09 更新）**: runner（`night-run.ps1`）は **デフォルトプロファイルの Chrome** が起動していることだけを保証して渡してくる（起動していなければ `--restore-last-session` で起動する）。ここが ChatGPT/X ログイン済み・claude-in-chrome 拡張ペアリング済みの本番環境。あなたは拡張でこのデフォルトプロファイルの Chrome を操作する。
 >
-> **Chrome 136+ 対応（2026-07-09）**: Chrome 136 以降はデフォルトプロファイルでの `--remote-debugging-port` を無効化する（実測 Chrome 150）。そのため runner 側の debug-port プリフライトは廃止し、**ログイン生存の検査は下記のとおりあなた（拡張）が最初に行う**。もし claude-in-chrome 拡張が未接続で `select_browser` / `tabs_context_mcp` が失敗する場合は、環境要因（Chrome 未起動 / 拡張 Connect 未実行）なので、ブラウザ操作を一切せず `blocked` で中止・通知する（testMode は消費しない）。
+> **Chrome 136+ 対応（2026-07-09）**: Chrome 136 以降はデフォルトプロファイルでの `--remote-debugging-port` を無効化する（実測 Chrome 150）。そのため runner 側の debug-port プリフライトは廃止し、**ログイン生存の検査は下記のとおりあなた（拡張）が最初に行う**。
+>
+> **拡張未接続時の自己復旧（2026-07-14・昼夜共通）**: `select_browser` / `tabs_context_mcp` / `list_connected_browsers` が失敗・空の場合は、人間に頼む前に自己復旧を試みる:
+> 1. `npm run chrome:ensure`（= `scripts/automation/ensure-chrome.ps1`。プロセス確認→無ければ `--restore-last-session` で起動→安定待ち）を実行。
+> 2. **30 秒待って `list_connected_browsers` を再確認**。未接続ならもう一度だけ（最大 2 回）。
+> 3. 2 回試しても未接続なら `blocked` で中止・通知（testMode は消費しない）。**拡張のペアリング自体が切れている場合は Chrome 起動だけでは直らない**ので 2 回で見切る（粘らないルール準拠）。
 
 ToolSearch で `mcp__claude-in-chrome__select_browser` をロードし、`data/automation/night-browser.json` の deviceId を **select_browser で明示選択**する（複数ブラウザ接続時、既定ルーティングが Edge を掴む実測事故が 2026-07-05 に 2 回発生）。選択後、任意のタブで `navigator.userAgent` に `Edg/` が含まれないことを確認。含まれる・ファイルが無い・選択に失敗する場合は、ブラウザを一切操作せず中止・通知する。list_connected_browsers が複数を返しても AskUserQuestion はしない（ユーザーは設定ファイルで Chrome を指定済み）。
 
