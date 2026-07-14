@@ -1,0 +1,378 @@
+---
+title: "ChatGPTの5時間制限が今だけ消えた。GPT-5.6はどこまで使って大丈夫？"
+slug: "202607-chatgpt-5h-limit-lifted-max-ultra"
+type: "news"
+category: "ニュースをかみくだく"
+description: "OpenAIがChatGPTの「5時間ごとの使用上限」を一時的に撤廃し、全ユーザーの使用量もリセットしました。ただし今だけで無制限ではありません。対象プラン、maxとultraの消費の仕組み、WorkとCodexが同じ財布を共有する点まで、確定・報道・未確定を分けてやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-chatgpt-5h-limit-lifted-max-ultra.webp"
+thumbnailAlt: "「5時間制限が今だけ消えた」のサムネイル。大きな「5時間」に取り消し線と「今だけ」の帯。金髪サイドテールのひまりが「制限が消えた!?」と明るく驚き、白い卵型のらぼまるが「ただし一時的」の注意札を掲げる、驚き×注意のコントラスト構図"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "ChatGPT"
+  - "OpenAI"
+  - "GPT-5.6"
+  - "使用上限"
+  - "max"
+  - "ultra"
+  - "Codex"
+  - "すまラボ"
+related:
+  - "202607-gpt-5-6-sol-terra-luna-release"
+  - "202607-claude-fable-5-free-extension-july20"
+  - "202607-claude-fable-5-usage-credits-switch"
+pubDate: "2026-07-14"
+updated: "2026-07-14"
+publishAt: "2026-07-14T08:00:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+OpenAIが、ChatGPTの「5時間ごとの使用上限」を一時的に取りやめました。あわせて全ユーザーの使用量もリセットされています。ただし、これは「今だけ」の措置で、無制限になったわけではありません。重い作業を試すチャンスであると同時に、戻ったときに慌てないよう、消費の仕組みを押さえておくと安心です。
+
+<Summary30>
+  <ol>
+    <li><strong>Plus / Business / Pro の5時間上限が一時撤廃</strong>され、全ユーザーの使用量もリセットされた</li>
+    <li>あくまで<strong>「一時的」で終了時期は未発表</strong>。週次の上限が残る可能性も指摘されている</li>
+    <li><strong>max・ultra は消費の増え方が大きい</strong>ので、回す前に仕組みを知っておくと安心</li>
+    <li>Work と Codex は<strong>同じ利用プールを共有</strong>する（片方使うともう片方が減る）</li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "5時間", cap: "使用上限を一時撤廃（今だけ）" },
+    { num: "600万", cap: "アクティブ利用者の規模" },
+    { num: "4", cap: "ultra が同時に動かすエージェント数" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">制限が消えたの!? もう使い放題ってこと？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">それが「今だけ」なんだ。無制限になったわけじゃないから、そこは要注意だよ。</CharacterBubble>
+
+## 先に結論
+
+<p class="lead"><strong>5時間の使用上限が一時的に外れました。でも「今だけ」で、無制限ではありません。</strong></p>
+
+- 5時間の上限が一時的に外れ、全ユーザーの使用量もリセットされた
+- あくまで「今だけ」で、終了時期は未発表。完全な無制限ではない
+- max・ultra は消費が積み上がりやすいので、回す前に仕組みを知っておくと安心
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず結論を1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide01-5h.webp"
+         alt="「先に結論」の図解。大きな「5時間」に取り消し線と「今だけ」の帯。下に「5時間の上限が一時的に外れた」「全ユーザーの使用量もリセット」「でも“今だけ”・無制限ではない」「重い作業を試すチャンス」の4点。ひまりが「制限、消えたの!?」と明るく驚き、らぼまるが「ただし一時的だよ」と注意する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：先に結論</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>撤廃</strong>：5時間の上限が一時的に外れた</li>
+      <li><strong>リセット</strong>：全ユーザーの使用量もリセット</li>
+      <li><strong>注意</strong>：でも「今だけ」・無制限ではない</li>
+      <li><strong>チャンス</strong>：重い作業を試すいい機会</li>
+    </ul>
+  </div>
+</section>
+
+## 何が起きた？ 5時間の壁が一時的に外れた
+
+<p class="lead">OpenAIが<strong>2026年7月12日（現地）/ 7月13日（日本時間）</strong>に、ChatGPTの<strong>5時間ごとの使用上限を一時的に撤廃</strong>すると発表しました。</p>
+
+製品責任者の Tibo 氏が X で明らかにしたものです。対象は **Plus・Business・Pro**。あわせて、**全ユーザーの使用量がリセット**されました。
+
+背景には、直近48時間で **Codex や ChatGPT Work の需要が急増**したことがあります。アクティブ利用者は600万人規模とされ、需要の集中に対応する形で、トークン消費を減らす効率化（Sol の改善）も進めているとしています。ただし、その効率化がどれくらい効くかの数値は「後日共有」とされ、現時点では出ていません。
+
+<Timeline>
+  <TimelineItem date="7/12">現地時間で5時間上限の一時撤廃を発表（製品責任者 Tibo 氏が X で公表）</TimelineItem>
+  <TimelineItem date="7/13" hot>日本時間に反映。全ユーザーの使用量もリセット</TimelineItem>
+</Timeline>
+
+<Callout kind="facts">
+  <ul>
+    <li>対象は Plus / Business / Pro。全ユーザーの使用量をリセット</li>
+    <li>製品責任者 Tibo 氏が X で公表</li>
+    <li>背景は直近48時間の需要急増（アクティブ利用者 600万人規模）</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「何が起きたか」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide02-5h.webp"
+         alt="「何が起きた?」の図解。7/12現地・7/13日本に5時間上限を一時的に撤廃し使用量をリセット。下に「対象は Plus / Business / Pro」「全ユーザーの使用量をリセット」「製品責任者 Tibo さんが X で公表」「背景=直近48時間で使う人が急増（アクティブ600万人）」の4点。ひまりが「なんで今?」と問い、らぼまるが「使う人が急に増えたんだ」と答える構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：何が起きた？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>日付</strong>：7/12（現地）/ 7/13（日本）</li>
+      <li><strong>対象</strong>：Plus / Business / Pro・全ユーザーの使用量をリセット</li>
+      <li><strong>発表</strong>：製品責任者 Tibo 氏が X で公表</li>
+      <li><strong>背景</strong>：直近48時間で急増（アクティブ600万人）</li>
+    </ul>
+  </div>
+</section>
+
+## 誤解しやすい点：「無制限になった」ではない
+
+<p class="lead">一番大事なのは、<strong>これは「一時的」な措置</strong>だということです。「ずっと使い放題」ではありません。</p>
+
+- 5時間上限は「撤廃された」が、**いつ元に戻るかは未発表**
+- 「完全な無制限」ではないとの指摘もある（<Chip kind="claims">報道</Chip>**週次の上限が残る可能性**が報じられている）
+
+「制限がなくなった＝ずっと使い放題」と受け取るのは正確ではありません。**今の余裕は期間限定**と考え、戻ったときに困らない準備をしておくのが安全です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「無制限ではない」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide03-5h.webp"
+         alt="「“無制限”ではない」の図解。中央に大きく「一時的」。下に「上限を外したのは“一時的”」「いつ戻るかは未発表」「完全な無制限ではないとの指摘」「週ごとの上限が残る可能性（報道）」「“ずっと使い放題”と読まない」の5点。ひまりが「ずっと使い放題?」と期待し、らぼまるが「そこは要注意」と釘を刺す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：「無制限」ではない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>一時的</strong>：上限を外したのは期間限定の対応</li>
+      <li><strong>未発表</strong>：いつ戻るかは示されていない</li>
+      <li><strong>報道</strong>：週ごとの上限が残る可能性が指摘</li>
+      <li><strong>注意</strong>：「ずっと使い放題」とは読まない</li>
+    </ul>
+  </div>
+</section>
+
+## max と ultra、消費の仕組みをやさしく整理
+
+<p class="lead">上限が緩んでいる今こそ、<strong>消費が大きい設定の仕組み</strong>を知っておきましょう。</p>
+
+<div class="table-card article-wide-block">
+
+| 設定 | 何をする設定か | 消費の傾向 |
+|---|---|---|
+| max | 1回の応答に最大の推論をかける | 1回が重い |
+| ultra | 既定で4エージェントを同時に動かし作業を分担 | 動いたぶん増えやすい |
+
+</div>
+
+**max** は、1回の応答にできるだけ深く考えさせる設定です。GPT-5.6 へのアクセスがあれば、Work / Codex で使えます。
+
+**ultra** は、既定で **4つのエージェントを同時に走らせて**作業を分担させる設定です。手分けして速く進む一方、**動いたエージェントのぶんだけ消費が積み上がります**。ルート側とサブ側のすべてが消費にカウントされるとされ、総消費は増えやすいと見られています。ただし、公式の固定倍率は公表されていません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">2つの設定を左右で対比。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide04-5h.webp"
+         alt="「max と ultra のちがい」の対比図解。左は max＝1回の応答を深く考える（1回が重い）、右は ultra＝4つを同時に動かして分担（そのぶん増えやすい・小さならぼまるが4体並ぶ絵）。下に「GPT-5.6 が使えれば Work / Codex で max が使える」。ひまりが「どっちが重いの?」と聞き、らぼまるが「ultra は手分けするぶん増えるよ」と説明する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：max と ultra のちがい</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>max</strong>：1回の応答を深く考える（1回が重い）</li>
+      <li><strong>ultra</strong>：4つを同時に動かして分担（そのぶん増えやすい）</li>
+      <li><strong>前提</strong>：GPT-5.6 が使えれば Work / Codex で max が使える</li>
+    </ul>
+  </div>
+</section>
+
+### Work と Codex は「同じ財布」を共有する
+
+<p class="lead">もう一つ大事なのが、<strong>ChatGPT Work と Codex が同一の利用プールを共有している</strong>点です。</p>
+
+- Work で使うと、**Codex 側の枠も一緒に減る**
+- 逆も同じで、片方を多く使うと、もう片方に回せる量が減る
+
+「別のツールだから別枠」ではなく、**一つの財布を2つの入口で使っているイメージ**です。ultra で並列に回すときは、この共有を意識すると消費の見通しが立てやすくなります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「同じ財布」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide05-5h.webp"
+         alt="「Work と Codex は同じ財布」の図解。ひとつの財布に Work と Codex の2つの入口から矢印が向かう絵。上に「Work と Codex は同じ利用プールを共有」「Work で使うと Codex の枠も減る」「逆も同じ」「“別ツール=別枠”ではない」の4点。ひまりが「別々じゃないんだ」と気づき、らぼまるが「一つの財布を2つの入口で使うイメージ」と例える構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Work と Codex は同じ財布</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>共有</strong>：Work と Codex は同じ利用プール</li>
+      <li><strong>連動</strong>：Work で使うと Codex の枠も減る（逆も同じ）</li>
+      <li><strong>誤解注意</strong>：「別ツール＝別枠」ではない</li>
+    </ul>
+  </div>
+</section>
+
+### ultra が使えるプランは Work と Codex で違う
+
+<p class="lead">ultra は、<strong>どこで使うかで提供範囲が変わります</strong>。</p>
+
+<div class="table-card article-wide-block">
+
+| 使う場所 | ultra が使えるプラン |
+|---|---|
+| ChatGPT Work | Pro / Enterprise |
+| Codex | Plus 以上 |
+
+</div>
+
+同じ ultra でも、Work では上位プラン向け、Codex ではより広いプラン向け、と条件が異なります。「自分のプランで ultra が使えるか」は、使う場所ごとに確認しておきましょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">使える場所を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide06-5h.webp"
+         alt="「ultra が使えるプラン」の図解。ChatGPT Work → Pro / Enterprise、Codex → Plus 以上。下に「同じ ultra でも使う場所で条件がちがう」「自分のプランで使えるか確認」。ひまりが「私のプランで使える?」と気にし、らぼまるが「使う場所ごとに確認しよう」と案内する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：ultra が使えるプラン</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Work</strong>：Pro / Enterprise</li>
+      <li><strong>Codex</strong>：Plus 以上</li>
+      <li><strong>確認</strong>：同じ ultra でも使う場所で条件がちがう</li>
+    </ul>
+  </div>
+</section>
+
+## 標準チャットの Sol / Terra / Luna 早見
+
+<p class="lead">標準チャットでどの効率化が効くかも、<strong>プランと設定で分かれます</strong>。</p>
+
+<div class="table-card article-wide-block">
+
+| 条件 | 効くもの |
+|---|---|
+| Plus 以上で Medium / High を選択 | Sol |
+| Extra High / Sol | Pro / Business / Enterprise 限定 |
+| Terra / Luna | 標準チャットでは選べない |
+
+</div>
+
+Plus 以上なら Medium / High で Sol が効きますが、**Extra High や Sol の明示選択は Pro 以上**です。**Terra / Luna は標準チャットの選択肢には出てこない**点も押さえておくと、設定画面で迷いません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">早見表を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide07-5h.webp"
+         alt="「標準チャットの早見」の表図解。Plus 以上 + Medium / High → Sol が効く、Extra High・Sol → Pro / Business / Enterprise 限定、Terra / Luna → 標準チャットでは選べない、の3行。ひまりが「設定で迷う…」と困り、らぼまるが「この早見で大丈夫」と表を指し示す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：標準チャットの早見</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Sol</strong>：Plus 以上 + Medium / High で効く</li>
+      <li><strong>Extra High・Sol</strong>：Pro / Business / Enterprise 限定</li>
+      <li><strong>Terra / Luna</strong>：標準チャットでは選べない</li>
+    </ul>
+  </div>
+</section>
+
+## いま何をするといい？ 3つの実践
+
+<p class="lead">上限が緩んでいる今の期間を、<strong>慌てず活かすための3ステップ</strong>です。</p>
+
+1. **今のうちに「重い作業」を試す** — 長い資料の整理、コードのまとまった生成、複数ステップの調査など、普段は後回しにしていた作業を試すチャンスです。max で深く考えさせる使い方もいまなら試しやすくなっています。
+2. **ultra を回す前に「消費構造」を知る** — ultra は速い反面、消費が積み上がりやすい設定です。Work と Codex が同じプールを共有することも思い出して、こまめに見ながら回すと反動を避けられます。
+3. **戻ったときに慌てない** — 一時撤廃はいつか終わります。普段の上限の感覚（例：Plus / Go は GPT-5.5 Instant で3時間あたり160通など）を先に思い出しておきましょう。
+
+<CharacterBubble speaker="himari" mood="aha">よし、今のうちに重い作業を試してみる！</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">いいね。戻ったときに慌てないよう、消費の感覚もつかんでおこう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">今やることを3つに。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide08-5h.webp"
+         alt="「いま何をする? 3つ」の図解。①今のうちに重い作業を試す ②ultra を回す前に消費の仕組みを知る ③戻ったときの上限を思い出す（例：Plus/Go = GPT-5.5 Instant 3時間160通）。下部に「今の余裕は一時的」の帯。ひまりが「よし、今のうちに!」と前向き、らぼまるが「戻ったとき慌てないようにね」と念押しする構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：いま何をする？ 3つ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>①</strong>：今のうちに重い作業を試す</li>
+      <li><strong>②</strong>：ultra を回す前に消費の仕組みを知る</li>
+      <li><strong>③</strong>：戻ったときの上限を思い出す（例：Plus/Go = GPT-5.5 Instant 3時間160通）</li>
+      <li><strong>前提</strong>：今の余裕は一時的</li>
+    </ul>
+  </div>
+</section>
+
+## 確定・報道・未確定の整理
+
+<p class="lead">ここは<strong>確定・報道・未確定を分けて</strong>見るところです。</p>
+
+<Callout kind="facts" title="確定（公式）">
+  <ul>
+    <li>5時間上限を一時撤廃・全ユーザーの使用量をリセット</li>
+    <li>Work と Codex は同一の利用プールを共有</li>
+    <li>ultra の提供範囲は Work=Pro/Enterprise、Codex=Plus以上</li>
+    <li>標準チャットで Terra/Luna は選べない・Extra High/Sol は Pro以上</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="報道ベース（断定しない）">
+  <ul>
+    <li>「完全な無制限ではない」「週次の上限が残る可能性」との指摘がある</li>
+    <li>Claude 側で Fable 5 の無料期間が延長されたこととあわせ、各社が制限を緩め合う構図との見方も報じられている（OpenAI が対抗を目的と明言したわけではない）</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年7月時点）">
+  <ul>
+    <li>上限撤廃の終了時期</li>
+    <li>効率化（Sol）の定量的な効果（「後日共有」とされ数値は未公表）</li>
+    <li>週次上限が残るかどうか</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">終了時期や週次上限はまだ動く情報。断定しないで、公式の最新表示で確認してね。</CharacterBubble>
+
+## この動きをどう見る？（補助）
+
+<p class="lead">大事なのは対抗構図そのものより、<strong>「今の余裕は一時的」という前提で消費の感覚をつかんでおくこと</strong>です。</p>
+
+今回の一時撤廃は、需要の急増への対応であると同時に、「制限を緩めて使ってもらう」動きの一つと報じられています。Claude 側で Fable 5 の無料期間が7月20日まで延長されたこととあわせて、各社が制限を緩め合う構図にある、という見方です。ただし、これは報道ベースの見立てです。
+
+- 今のうちに重い作業を試す
+- ultra を回す前に消費構造を知る
+- 戻ったときの上限を先に思い出しておく
+
+この3つを押さえておけば、期間が終わっても慌てずに済みます。
+
+<Note>この記事は2026年7月14日時点の情報です。上限撤廃の終了時期・提供条件・週次上限の扱いは変わる可能性があるため、最終的には公式の最新表示で確認してください。</Note>
+
+<div class="related-links article-wide-block">
+  <a href="/articles/202607-gpt-5-6-sol-terra-luna-release/">GPT-5.6の3モデル（Sol / Terra / Luna）の違いを読む</a>
+  <a href="/articles/202607-claude-fable-5-free-extension-july20/">Claude Fable 5、無料期間が7/20まで延長の解説を読む</a>
+  <a href="/articles/202607-claude-fable-5-usage-credits-switch/">Claude Fable 5、usage credits制への解説を読む</a>
+</div>
+
+## 参考情報
+
+この記事は公式情報と主要報道をもとに整理しています。週次上限の扱いや撤廃の終了時期は報道ベース・未確定の情報を含みます。最終的な提供条件・上限は、必ず公式の最新表示で確認してください。
+
+- OpenAI 製品責任者 Tibo 氏の X 投稿（5時間上限の一時撤廃・使用量リセット）
+- ケータイ Watch
+- ITmedia
+- CNET Japan

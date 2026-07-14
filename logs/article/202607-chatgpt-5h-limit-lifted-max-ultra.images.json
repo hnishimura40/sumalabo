@@ -1,0 +1,16 @@
+{
+  "slug": "202607-chatgpt-5h-limit-lifted-max-ultra",
+  "thumbnail": { "name": "202607-chatgpt-5h-limit-lifted-max-ultra.webp", "src": "/images/thumbnails/202607-chatgpt-5h-limit-lifted-max-ultra.webp" },
+  "slides": [
+    { "name": "slide01-5h.webp", "src": "/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide01-5h.webp", "theme": "先に結論" },
+    { "name": "slide02-5h.webp", "src": "/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide02-5h.webp", "theme": "何が起きた?" },
+    { "name": "slide03-5h.webp", "src": "/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide03-5h.webp", "theme": "無制限ではない" },
+    { "name": "slide04-5h.webp", "src": "/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide04-5h.webp", "theme": "max と ultra のちがい" },
+    { "name": "slide05-5h.webp", "src": "/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide05-5h.webp", "theme": "Work と Codex は同じ財布" },
+    { "name": "slide06-5h.webp", "src": "/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide06-5h.webp", "theme": "ultra が使えるプラン" },
+    { "name": "slide07-5h.webp", "src": "/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide07-5h.webp", "theme": "標準チャットの早見" },
+    { "name": "slide08-5h.webp", "src": "/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide08-5h.webp", "theme": "いま何をする? 3つ" }
+  ],
+  "generatedAt": "2026-07-14",
+  "note": "工房チャット 6a55fc9e で生成。slide05/06/07 は初回に内部ラベル(slideNN)が焼き込まれたため no-label 指示で再生成済み。"
+}

@@ -1,0 +1,30 @@
+{
+  "slug": "202607-chatgpt-5h-limit-lifted-max-ultra",
+  "theme": "ChatGPTの5時間制限が一時撤廃。GPT-5.6は今どこまで使って大丈夫? max/ultraの消費の仕組みもやさしく整理",
+  "status": "phase_a_complete_going_full",
+  "halted": false,
+  "branch": "preview/202607-chatgpt-5h-limit-lifted-max-ultra",
+  "mode": "完走型 (2026-07-12 ユーザー明示指示・Human Review Checkpoint 廃止・Phase A→B→C 一気)",
+  "completed": [
+    "input_check / research / editorial / final_article / review / slide_plan",
+    "gate --stage draft PASSED",
+    "images: thumbnail + slide01-08 生成→D:/downloads→public/images 配置",
+    "slide05/06/07 は初回に内部ラベル焼込み→no-label指示で再生成し解消",
+    "self factcheck (factcheck.json): 全9枚 ok・化けなし・アンカー一致",
+    "independent inspection (別Task Agent, independent-inspection.json): overallPass true",
+    "xSelection: [thumbnail, slide01-5h, slide08-5h, slide05-5h]",
+    "v3 MDX 作成 (NumCards[5時間/600万/4]・Timeline[7/12→7/13]・facts/claims/unc Callout・内部リンク3本)",
+    "gate --stage full PASSED (violations 0)",
+    "npm run build OK (65 pages, dist OGP 実測 pass)"
+  ],
+  "images": {
+    "thumbnail": "public/images/thumbnails/202607-chatgpt-5h-limit-lifted-max-ultra.webp",
+    "slides": "public/images/articles/202607-chatgpt-5h-limit-lifted-max-ultra/slide01-5h..slide08-5h.webp",
+    "xSelection": ["thumbnail", "slide01-5h", "slide08-5h", "slide05-5h"],
+    "excludedFromX": ["slide03-5h", "slide04-5h", "slide07-5h (textDensity high)"]
+  },
+  "resumeFrom": "commit → push → PR → Phase B (merge/deploy/verify 8/8) → Phase C (X 画像4枚+リプライにリンク)",
+  "extractionMethod": "工房DOMの main img(estuary content URL) を fetch(credentials:include)→canvas.toDataURL('image/webp',0.92)→clipboard→PowerShellでbase64 decode。生成が稀にDOMでstallするので、fresh画像が出ない時はページreload→再取得（reload後はfocus click→clipboard再writeが必要）。",
+  "internalLinks": ["202607-gpt-5-6-sol-terra-luna-release", "202607-claude-fable-5-free-extension-july20", "202607-claude-fable-5-usage-credits-switch"],
+  "updatedAt": "2026-07-14T21:10:00.000Z"
+}
