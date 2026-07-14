@@ -77,21 +77,21 @@ finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待た�
 4. strict verify: `https://sumalabo.com/api/verify-publication?slug=<slug>` で `failedChecks: []` を確認。
 5. queue / ledger 更新（published。source: test_mode / triggeredBy: night_driver を記録）。
 
-## 4. Phase C（X 投稿・ブラウザ）— **タイムボックス厳守・粘らない**
+## 4. Phase C（X 投稿・ブラウザ）— **画像4枚＋リプライにリンク・粘らない**
 
 前提: Phase B 完了 + strict verify 8/8 + 本番 URL 200。
 
-> **鉄則（2026-07-12）: Phase C の事前チェック（カード確認・画像添付の試行錯誤）は合計 5 分 / 3 回まで。上限を超えたら text_only で即投稿して Phase C を終える。カードは X の事後クロールに任せる。粘ることは禁止。** 詳細: [`x_post_workflow.md`](x_post_workflow.md)。
+> **投稿形式（2026-07-14 バズ強化）: 本投稿＝スライド画像4枚（1枚目=サムネ／2〜4枚目=slide01・02・03）＋短文＋ハッシュタグ2個。記事リンクは本投稿に入れず、本投稿へのリプライに1件だけ付ける。** 設定は `autonomy.json` の `xPostOptions`。詳細: [`x_post_workflow.md`](x_post_workflow.md) / 人間側の初速: [`growth_playbook.md`](growth_playbook.md)。
+> **鉄則: 画像添付は前面タブで行う（背面では OS クリップボード貼り付け不成立）。OGP カード待ちはしない（本投稿は画像）。画像が乗らないときのみ合計 5 分 / 3 回で打ち切りサムネ1枚→text_only にフォールバック。粘らない。**
 
-1. `npm run social:generate-x-post -- --slug <slug>` — 出力の `X加重` が 280 以内であることを確認。
-2. Chrome で `x.com/compose/post` を**専用の新規タブ**で開く。アカウントが **@suma_labo** であることを DOM で確認。
-3. composer へ本文を入力（背面タブでも JS の ClipboardEvent 貼り付けで text は入る）。innerText を読み戻して前方一致・URL・タグ・破損なしを検証。
-4. **タブ可視性で分岐**（`document.visibilityState`）:
-   - **背面（`!== "visible"`）**: 画像添付は**試みない**（OS クリップボード貼り付けが背面タブで成立しないため）。カード確認 1 回だけ→出なければ **text_only で即投稿**。合成 File 注入などの重い回避策は使わない。
-   - **前面（`=== "visible"`）**: ①カード確認（〜1 分）②出なければ再 unfurl 1 回（〜1 分）③まだ出なければサムネ WebP（`public/images/thumbnails/<slug>.webp`）を画像添付→ removeMedia が出たことを DOM 検証。ここまでで**合計 5 分 / 3 回**を超えない。超えたら text_only で投稿。
-5. tweetButton の DOM click → composer 空読み戻しで送信確認。**投稿は 1 回だけ**（二重投稿禁止）。
-6. プロフィール（x.com/suma_labo）から投稿 URL を取得 → 台帳に `xPostVariant`（`card` / `image_attach` / `text_only`）と URL を記録。text_only は失敗ではなく正常終了として扱う。
-7. **Phase C 所要時間を記録**: `node scripts/automation/test-mode.mjs --phase-timing --slug <slug> --phase "Phase C" --seconds <経過秒>`
+1. `npm run social:generate-x-post -- --slug <slug>` — `logs/social/<slug>.x-post.json` に本投稿文(`primary`)・リプライ文(`reply`)・添付画像(`attachmentPlan.attach` 4枚)が出る。`X加重` が 280 以内・本投稿にURLが無いことを確認。
+2. Chrome で `x.com/compose/post` を**専用の新規タブ**で**前面化**して開く。アカウントが **@suma_labo** であることを DOM で確認。
+3. 本投稿の composer へ本文（URL無し）を入力し innerText を読み戻して検証。`attachmentPlan.attach` の4枚を添付（`x-post-chrome.ps1 -ImagePaths <4枚>` でまとめて CF_HDROP → Ctrl+V、または1枚ずつ）。**添付枚数=4 を DOM 検証**してから送信。
+4. **画像が乗らない場合のみフォールバック**（合計 5 分 / 3 回まで）: サムネ1枚だけの画像投稿（`images1+reply`）→それも不可なら text_only（本投稿にリンク）で即投稿。
+5. tweetButton の DOM click → composer 空読み戻しで本投稿の送信確認。**本投稿は 1 回だけ**（二重投稿禁止）。
+6. 本投稿の直後に、その投稿への**リプライで記事リンク**（`reply.text`）を1件だけ付けて送信。
+7. プロフィール（x.com/suma_labo）から本投稿 URL（＋リプライURL）を取得 → 台帳に `variant`（`images4+reply` / `images1+reply` / `text_only`）と URL・`replyUrl` を記録。`node scripts/automation/phase-c-auto.mjs --slug <slug> --posted <本投稿URL> --variant <variant> --reply-url <リプライURL>` で記録できる。
+8. **Phase C 所要時間を記録**: `node scripts/automation/test-mode.mjs --phase-timing --slug <slug> --phase "Phase C" --seconds <経過秒>`
 
 ## 5. 監査レポートと消し込み（必ず最後に実行）
 

@@ -5,6 +5,8 @@
 # 仕様:
 #   - 引数 -PostText で投稿本文を受け取り、テキストクリップボードへセット
 #   - 任意で -ImagePath を渡せば CF_HDROP クリップボードへ画像 1 ファイルセット (Ctrl+V でX に添付できる)
+#   - 複数枚は -ImagePaths（カンマ区切り or 配列）で最大4枚まとめて CF_HDROP セット
+#     （X の composer は 1 回の Ctrl+V で複数画像を添付できる。画像投稿+リプライ運用・2026-07-14）
 #   - Chrome の x.com (またはタイトルに "X" / "𝕏" を含む) ウィンドウを AttachThreadInput + SetForegroundWindow で前面化
 #   - Edge は触らない
 #   - 本スクリプトは **クリック/投稿そのものはしない**。投稿の最終クリックは Claude in Chrome MCP が DOM 経由で行う。
@@ -28,16 +30,29 @@
 param(
   [Parameter(Mandatory = $true)][string] $PostText,
   [string] $ImagePath = "",
+  [string[]] $ImagePaths = @(),
   [string] $WindowTitlePattern = "*x.com*",
   [int] $ForegroundWaitMs = 300
 )
 
 $ErrorActionPreference = 'Stop'
 
+# 添付画像リストの正規化: -ImagePaths（複数・カンマ区切りも許容）優先、無ければ -ImagePath 1枚。最大4枚。
+$imageList = @()
+if ($ImagePaths -and $ImagePaths.Count -gt 0) {
+  foreach ($p in $ImagePaths) { foreach ($q in ($p -split ',')) { if ($q.Trim()) { $imageList += $q.Trim() } } }
+}
+elseif ($ImagePath) {
+  $imageList += $ImagePath
+}
+if ($imageList.Count -gt 4) { $imageList = $imageList[0..3] }
+
 # 画像ファイル存在チェック (指定時のみ)
-if ($ImagePath -and -not (Test-Path -LiteralPath $ImagePath)) {
-  Write-Error "Image file not found: $ImagePath"
-  exit 3
+foreach ($img in $imageList) {
+  if (-not (Test-Path -LiteralPath $img)) {
+    Write-Error "Image file not found: $img"
+    exit 3
+  }
 }
 
 # === Win32 P/Invoke ===
@@ -105,12 +120,12 @@ if ($fg -ne $chrome.MainWindowHandle) {
 
 # === クリップボード設定: テキストか画像か ===
 try {
-  if ($ImagePath) {
-    # 画像優先で CF_HDROP セット (Ctrl+V で添付を意図)
+  if ($imageList.Count -gt 0) {
+    # 画像優先で CF_HDROP セット (Ctrl+V で添付を意図)。複数枚は1回の貼り付けでまとめて添付。
     $sc = New-Object System.Collections.Specialized.StringCollection
-    [void]$sc.Add((Resolve-Path -LiteralPath $ImagePath).Path)
+    foreach ($img in $imageList) { [void]$sc.Add((Resolve-Path -LiteralPath $img).Path) }
     [System.Windows.Forms.Clipboard]::SetFileDropList($sc)
-    Write-Host ("clipboard: image CF_HDROP = {0}" -f $ImagePath)
+    Write-Host ("clipboard: image CF_HDROP = {0} file(s): {1}" -f $imageList.Count, ($imageList -join ' | '))
   }
   else {
     # テキストクリップボード

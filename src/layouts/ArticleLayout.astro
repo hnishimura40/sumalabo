@@ -133,6 +133,32 @@ const articleSchema = {
       本サイトの記事・図解はAIの支援を受けて制作し、公開前に人間が確認しています。詳しくは<a href="/ai-policy/">本サイトのAI利用について</a>をご覧ください。
     </p>
 
+    <div class="article-share" aria-label="この記事をシェア">
+      <span class="article-share-label">この記事をシェア</span>
+      <div class="article-share-buttons">
+        <a
+          class="share-btn share-btn--x"
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(articleUrl)}&hashtags=${encodeURIComponent("すまラボ")}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Xでシェア"
+        >Xでシェア</a>
+        <a
+          class="share-btn share-btn--hatena"
+          href={`https://b.hatena.ne.jp/entry/panel/?url=${encodeURIComponent(articleUrl)}&title=${encodeURIComponent(article.title)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="はてなブックマークに追加"
+        >はてブ</a>
+        <button
+          class="share-btn share-btn--copy"
+          type="button"
+          data-share-url={articleUrl}
+          aria-label="記事のURLをコピー"
+        >URLをコピー</button>
+      </div>
+    </div>
+
     <PreviewApprovalButton slug={article.slug} />
 
     <ArticleNavigation previousArticle={previousArticle} nextArticle={nextArticle} />
@@ -155,6 +181,33 @@ const articleSchema = {
     const toc = document.getElementById("article-toc") as HTMLDetailsElement | null;
     if (toc && window.matchMedia("(min-width: 1080px)").matches) {
       toc.open = true;
+    }
+  }
+
+  // 記事シェア: 「URLをコピー」ボタン
+  {
+    const btn = document.querySelector<HTMLButtonElement>(".share-btn--copy");
+    if (btn) {
+      const url = btn.dataset.shareUrl || location.href;
+      const label = btn.textContent || "URLをコピー";
+      btn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(url);
+        } catch {
+          const ta = document.createElement("textarea");
+          ta.value = url;
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand("copy"); } catch { /* noop */ }
+          ta.remove();
+        }
+        btn.classList.add("is-copied");
+        btn.textContent = "コピーしました";
+        window.setTimeout(() => {
+          btn.classList.remove("is-copied");
+          btn.textContent = label;
+        }, 1800);
+      });
     }
   }
 </script>
@@ -1609,6 +1662,67 @@ const articleSchema = {
 
   .article-ai-note a {
     color: var(--teal-deep);
+  }
+
+  /* --- 記事シェア（X / はてなブックマーク / URLコピー・2026-07-14 バズ導線） --- */
+  .article-share {
+    margin: 22px 0 0;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--bg-elev);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+  }
+  .article-share-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fg-soft);
+  }
+  .article-share-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .share-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+    transition: filter 0.15s ease, background 0.15s ease;
+  }
+  .share-btn:hover {
+    filter: brightness(0.96);
+  }
+  .share-btn--x {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+  .share-btn--hatena {
+    background: #00a4de;
+    color: #fff;
+    border-color: #00a4de;
+  }
+  .share-btn--copy {
+    background: var(--bg);
+    color: var(--teal-deep);
+    border-color: var(--teal-deep);
+  }
+  .share-btn--copy.is-copied {
+    background: var(--teal-deep);
+    color: #fff;
   }
 
   /* --- 広告表示ラベル（景表法ステマ規制対応・hasAffiliate: true で記事冒頭に自動表示） --- */

@@ -37,8 +37,9 @@
   strict verify（全記事 8/8 pass）→ queue を published に更新
                             ↓
 [Phase C: X 投稿]
-  本番URL確認 → Chrome で X 投稿画面 → OGPカード / サムネ表示確認 →
-  投稿アカウント @suma_labo 確認 → 投稿 → 投稿URL取得 → queue を x_posted に更新
+  本番URL確認 → Chrome で X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証 →
+  投稿アカウント @suma_labo 確認 → 本投稿(リンク無し) → リプライに記事リンク →
+  投稿URL取得 → queue を x_posted に更新
                             ↓
                           完了報告
 ```
@@ -173,25 +174,30 @@ Phase B 完了後だけ実行：
 - 投稿アカウントが **@suma_labo** であることを確認
 - **Chrome を使う**（Edge 禁止）
 
+**投稿形式（2026-07-14 バズ強化・ユーザー指示）＝ 画像4枚の本投稿＋リプライに記事リンク：**
+- 既定を「リンク付き投稿1本」→「**スライド画像4枚を直接添付した本投稿（1枚目=サムネ／2〜4枚目=slide01・02・03）＋その投稿へのリプライに記事リンク1件**」に変更。X はリンク付き投稿の露出を絞るため画像単体投稿の方が伸びる。
+- 設定は `data/automation/autonomy.json` の `xPostOptions`（`attachSlides/attachSlidesCount:4/leadWithThumbnail/linkInReply`）。投稿文・添付画像・リプライ文は `npm run social:generate-x-post -- --slug <slug>` が `logs/social/{slug}.x-post.json`（`attachmentPlan` / `primary` / `reply`）に出力する。
+- **本投稿に記事リンクを入れない。** リンクは必ずリプライ側。本投稿は画像＋短文＋ハッシュタグ2個。
+- 詳細手順: [`docs/x_post_workflow.md`](docs/x_post_workflow.md) / 人間側の初速の付け方: [`docs/growth_playbook.md`](docs/growth_playbook.md)
+
 **投稿前に必ず確認：**
-- URL を投稿画面に貼る → OGP カード表示 / サムネ表示 / タイトルが記事内容と合っている / サムネが古くない / 投稿文に URL 含む / 投稿文に禁則表現や誤字がない
+- 本投稿に画像4枚（1枚目=サムネ）が乗っている（DOM で枚数確認）/ サムネ・スライドが古くない / 本投稿に URL を入れていない / リプライに記事リンク1件 / 投稿文に禁則表現や誤字がない / アカウントが @suma_labo
 
 **投稿してはいけない条件：**
-- サムネが古い / タイトルが違う / strict verify 失敗 / 本番URLが開けない / 投稿アカウントが @suma_labo ではない / ユーザー了承前 / 記事確認前
+- サムネ/スライドが古い / 添付枚数不一致 / strict verify 失敗 / 本番URLが開けない / 投稿アカウントが @suma_labo ではない / ユーザー了承前 / 記事確認前
 
-**カードが出ない場合の自動フォールバック（2026-07-10 追加・鉄則改訂）：**
-- OGP カードが出ない原因はほぼ「新規 URL の negative-cache（unfurl 遅延）」で、待てば解消するが 2 時間超のループになることがある。**待ちループを長時間続けない。**
-- 手順：URL を投稿画面に貼る → カード未表示なら再 unfurl（URL 打ち直し / 全消し→再入力）を試みつつ、**15 分間隔で最大 2 回（＝約 30 分）まで**確認する。
-- **2 回確認してもカードが出なければ、サムネ画像添付方式に自動フォールバックしてよい**（`本番記事のサムネ WebP を composer に画像添付 → 添付を目視/DOM 検証してから投稿`）。カード鉄則の例外として、この経路は自動で選んでよい。
-- フォールバックで投稿したときは、台帳に `xPostVariant: "image_attach"` を必ず記録する（通常カード投稿は `card`）。
-- 画像添付でも **投稿は 1 回のみ・二重投稿禁止**。添付が composer に乗っていることを確認してから送信する。
+**タイムボックス・フォールバック（粘らない・2026-07-12 の原則は維持）：**
+- 画像添付は**前面タブ**で行う（背面タブでは OS クリップボード貼り付け不成立）。`x-post-chrome.ps1 -ImagePaths <4枚>` でまとめて CF_HDROP → Ctrl+V、または1枚ずつ。**添付枚数を DOM 検証してから送信**。
+- **OGP カード待ちはしない**（本投稿は画像なのでカード不要。リプライのリンクのカード化も待たない）。
+- 画像添付が合計 **5 分 / 3 回**試しても乗らなければ、**サムネ1枚だけの画像投稿**にフォールバック（リプライのリンクは維持）。それも不可なら text_only（本投稿にリンク）で即投稿して終える。
+- 台帳の `variant`: `images4+reply` / `images1+reply` / `text_only`。**投稿は本投稿＋リプライの最小回数のみ・二重投稿禁止。**
 
 **投稿後：**
-- 投稿URL を取得
-- queue に `xPostUrl` / `xPostedAt` / `xPostText` を記録、status を `x_posted` に更新
+- 本投稿URL（＋リプライURL）を取得
+- queue に `xPostUrl` / `xReplyUrl` / `xPostedAt` / `xPostText` を記録、status を `x_posted` に更新
 - 完了報告に投稿URL を含める
 
-**投稿文ルール：** 短め / URL を含める / ハッシュタグ 2〜3 個 / 「普通の人」表現禁止 / 煽らない / 記事内容に沿う
+**投稿文ルール：** 短め / 本投稿に URL は入れない（リンクはリプライ） / ハッシュタグ 2 個 / 「普通の人」表現禁止 / 煽らない / 記事内容に沿う
 
 ### 入口（user-directed mode）
 
@@ -276,7 +282,7 @@ Phase B 完了後だけ実行：
 15. **Phase A 最終報告**: 完了サマリ（生成ファイル一覧、検証結果、PR URL、Preview URL、人間が承認時に見る観点）を 1 メッセージで提示 → **ここで必ず停止する**（Human Review Checkpoint）
 16. **ユーザー明示了承を待つ**: 「記事OK / 公開へ / 承認」等のトリガーが来るまで Phase B / C に進まない
 17. **Phase B（公開）**: PR merge → main 同期 → wrangler 本番 deploy（正規手順）→ strict verify 8/8 → queue を `published` に更新
-18. **Phase C（X 投稿）**: 本番URL確認 → Chrome で X 投稿画面 → OGPカード/サムネ/アカウント (@suma_labo) を確認 → 投稿 → 投稿URL取得 → queue を `x_posted` に更新
+18. **Phase C（X 投稿）**: 本番URL確認 → Chrome で X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証/アカウント (@suma_labo) 確認 → 本投稿(リンク無し) → リプライに記事リンク → 投稿URL取得 → queue を `x_posted` に更新
 19. **Phase B / C 完了報告**: 本番URL / 投稿URL / queue 更新内容を 1 メッセージで提示
 
 ## 禁止事項（Claude Code 側）

@@ -184,6 +184,53 @@ function checkForbiddenWords(text, fileLabel, scope, patterns) {
   }
 }
 
+// ---- タイトルの主張が本文 facts で裏付けられているか（2026-07-14 バズ強化・感情に刺すタイトルの安全弁）----
+// 感情に刺す主タイトル（消える/終了/値上げ+あなた 等）を許可する代わりに、
+// 「事実に反する煽り」を弾く。判定は自動でできる範囲＝(1) タイトルにも禁則語検査を効かせる、
+// (2) タイトル中の数値・日付・割合・価格が本文に存在するか（未確定を確定と言い切って
+// いないかの機械的な裏取り）。意味的な主張の妥当性は引き続き reviewer + プロンプト規則で担保。
+function normalizeNumeric(s) {
+  return s
+    .replace(/[０-９]/g, (d) => String("０１２３４５６７８９".indexOf(d)))
+    .replace(/％/g, "%")
+    .replace(/／/g, "/");
+}
+function bodyHasNumericToken(nbody, tok) {
+  const variants = new Set([tok]);
+  let m = tok.match(/^(\d{1,2})\/(\d{1,2})$/);
+  if (m) variants.add(`${m[1]}月${m[2]}日`);
+  m = tok.match(/^(\d{1,2})月(\d{1,2})日$/);
+  if (m) variants.add(`${m[1]}/${m[2]}`);
+  for (const v of variants) if (nbody.includes(v)) return true;
+  return false;
+}
+function checkTitleFactBacking(title, body, mdxLabel, patterns) {
+  if (!title) return;
+  // (1) タイトルにも禁則語（煽り・断定・普通の人 等）検査を効かせる
+  checkForbiddenWords(title, `${mdxLabel} (title)`, "mdx", patterns);
+  // (2) タイトル中の数値・日付・割合・価格の裏取り
+  const ntitle = normalizeNumeric(title);
+  const nbody = normalizeNumeric(body);
+  const tokenRes = [
+    /\d{1,2}\/\d{1,2}/g,
+    /\d{1,4}年\d{1,2}月\d{1,2}日/g,
+    /\d{1,2}月\d{1,2}日/g,
+    /\d{1,4}年/g,
+    /\d{1,3}%/g,
+    /\d[\d,]*円/g,
+    /\$\d[\d,]*/g,
+    /\d[\d,]*ドル/g,
+  ];
+  const found = new Set();
+  for (const re of tokenRes) for (const m of ntitle.matchAll(re)) found.add(m[0]);
+  for (const tok of found) {
+    if (!bodyHasNumericToken(nbody, tok)) {
+      report("violation", "title-fact-backing", mdxLabel,
+        `タイトルの「${tok}」が本文に見当たりません。タイトルの数値・日付・価格は本文の facts で裏付けてください（未確定を確定と言い切らない）`);
+    }
+  }
+}
+
 // ---- draft ステージ ----
 // stage=draft: drafts ディレクトリ不在 = violation（画像生成前は必ず必要）
 // stage=full : drafts ディレクトリ不在 = warning（レガシー記事 / 別環境制作 /
@@ -269,6 +316,8 @@ function checkMdxStage(slug, patterns) {
     report("violation", "mdx-frontmatter", mdxPath, `frontmatter slug "${fmSlug}" がファイル名 "${slug}" と不一致`);
   }
   checkForbiddenWords(body, `content/articles/${slug}.mdx`, "mdx", patterns);
+  const title = frontmatterValue(frontmatter, "title");
+  checkTitleFactBacking(title, body, `content/articles/${slug}.mdx`, patterns);
   return { body, fm: frontmatter };
 }
 

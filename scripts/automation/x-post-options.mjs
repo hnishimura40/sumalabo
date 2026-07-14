@@ -6,11 +6,17 @@
 // 切り替えは testMode 完了後にユーザーが宣言する。
 //
 //   "xPostOptions": {
-//     "attachSlides": false,      // ONで投稿にスライドWebP先頭N枚を添付（サムネよりスライド優先）
-//     "attachSlidesCount": 3,     // 添付枚数の既定
+//     "attachSlides": false,      // ONで本投稿に画像を直接添付（バズの主戦場をX画像投稿に）
+//     "attachSlidesCount": 4,     // 本投稿の添付枚数（最大4）
+//     "leadWithThumbnail": false, // ONで1枚目をサムネ、続けてslide01..でN枚に満たす（サムネが最強フックのとき）
+//     "linkInReply": false,       // ONで記事リンクを本投稿から外し、返信(リプライ)に置く（画像単体投稿でインプレを伸ばす）
 //     "threadAllSlides": false,   // ONで残りスライドを返信ツリーにぶら下げる（1返信4枚まで）
 //     "postWindow": null          // {"start":"07:20","end":"08:00"} で投稿時間帯を指定。nullなら即投稿
 //   }
+//
+// 2026-07-14 バズ強化: 既定運転を「リンク付き投稿1本」→「画像4枚を直接添付した本投稿
+// ＋リプライに記事リンク」に切り替える（Xはリンク付き投稿の露出を絞るため画像単体投稿の方が
+// 伸びる。スライドは単体で読める設計なので相性が良い）。autonomy.json 側でフラグをON。
 //
 // 提供関数（純関数中心・テスト可能）:
 //   loadXPostOptions()                    … autonomy.json から読み込み（欠落は既定値で補完）
@@ -28,7 +34,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", ".
 
 export const X_POST_OPTIONS_DEFAULT = Object.freeze({
   attachSlides: false,
-  attachSlidesCount: 3,
+  attachSlidesCount: 4,
+  leadWithThumbnail: false,
+  linkInReply: false,
   threadAllSlides: false,
   postWindow: null,
 });
@@ -39,6 +47,8 @@ export function loadXPostOptions(state = null) {
   return {
     attachSlides: raw.attachSlides === true,
     attachSlidesCount: Number.isInteger(raw.attachSlidesCount) && raw.attachSlidesCount > 0 ? Math.min(raw.attachSlidesCount, 4) : X_POST_OPTIONS_DEFAULT.attachSlidesCount,
+    leadWithThumbnail: raw.leadWithThumbnail === true,
+    linkInReply: raw.linkInReply === true,
     threadAllSlides: raw.threadAllSlides === true,
     postWindow:
       raw.postWindow && typeof raw.postWindow === "object" && /^\d{2}:\d{2}$/.test(raw.postWindow.start || "") && /^\d{2}:\d{2}$/.test(raw.postWindow.end || "")
@@ -70,38 +80,68 @@ export function resolvePostWindow(now = new Date(), options = X_POST_OPTIONS_DEF
   return { postNow: true, reason: "after_window_post_anyway" };
 }
 
-/** slug のスライドWebP一覧（fig01.. 順）を返す。 */
+/** slug のスライドWebP一覧（slide01.. / 旧 fig01.. 順）を返す。 */
 export function listSlideImages(slug, root = ROOT) {
   const dir = path.join(root, "public", "images", "articles", slug);
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
-    .filter((f) => /^fig\d+.*\.webp$/.test(f))
+    // slide01-*.webp（新）と fig01-*.webp（旧）の両方に対応（2026-07-14 修正: 従来 fig のみで
+    // 新記事のスライドが 0 件になり text_only に落ちていた不具合を修正）
+    .filter((f) => /^(?:slide|fig)\d+.*\.webp$/.test(f))
     .sort()
     .map((f) => path.join(dir, f));
 }
 
+/** slug のサムネ WebP パス（無ければ null）。 */
+export function thumbnailPath(slug, root = ROOT) {
+  const p = path.join(root, "public", "images", "thumbnails", `${slug}.webp`);
+  return existsSync(p) ? p : null;
+}
+
 /**
  * 添付計画。フラグOFF → 添付なし（現状どおり）。
- * attachSlides ON → 先頭N枚を本投稿に添付（サムネではなくスライド優先）。
- * threadAllSlides ON → 残りを4枚ずつ返信ツリー用にバッチ化。
+ * attachSlides ON → 本投稿に画像を N 枚（最大4）添付。
+ *   leadWithThumbnail ON → 1枚目=サムネ、続けて slide01.. で N 枚に満たす。
+ *   linkInReply ON → 記事リンクは本投稿に含めず、返信(リプライ)に置く（画像単体投稿でインプレを伸ばす）。
+ * threadAllSlides ON → 本投稿に載らなかった残りスライドを4枚ずつ返信ツリー用にバッチ化。
+ * 戻り値の linkInReply は Phase C 実行側（本投稿にURLを入れない／リプライにURLを付ける）が参照する。
  */
 export function buildAttachmentPlan(slug, options = X_POST_OPTIONS_DEFAULT, root = ROOT) {
   if (!options.attachSlides) {
-    return { variant: "text_only", attach: [], threadBatches: [] };
+    return { variant: "text_only", attach: [], threadBatches: [], linkInReply: false };
   }
   const slides = listSlideImages(slug, root);
-  const attach = slides.slice(0, options.attachSlidesCount);
-  const rest = slides.slice(options.attachSlidesCount);
+  const count = options.attachSlidesCount;
+  let attach;
+  let usedSlides;
+  if (options.leadWithThumbnail) {
+    const thumb = thumbnailPath(slug, root);
+    const lead = thumb ? [thumb] : [];
+    usedSlides = slides.slice(0, Math.max(0, count - lead.length));
+    attach = [...lead, ...usedSlides];
+  } else {
+    usedSlides = slides.slice(0, count);
+    attach = usedSlides;
+  }
+  const rest = slides.slice(usedSlides.length);
   const threadBatches = [];
   if (options.threadAllSlides) {
     for (let i = 0; i < rest.length; i += 4) threadBatches.push(rest.slice(i, i + 4));
   }
-  return { variant: variantName(options, attach.length), attach, threadBatches };
+  return {
+    variant: variantName(options, attach.length),
+    attach,
+    threadBatches,
+    linkInReply: options.linkInReply === true,
+  };
 }
 
 export function variantName(options, attachedCount = 0) {
   if (!options.attachSlides || attachedCount === 0) return "text_only";
-  return options.threadAllSlides ? `slides${attachedCount}+thread` : `slides${attachedCount}`;
+  const base = `images${attachedCount}`;
+  const reply = options.linkInReply ? "+reply" : "";
+  const thread = options.threadAllSlides ? "+thread" : "";
+  return `${base}${reply}${thread}`;
 }
 
 // ---- CLI（状態確認用） ----

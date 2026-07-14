@@ -36,10 +36,13 @@
     "disabledAt": "2026-07-09T21:23:22.687Z"
   },
   "xPostOptions": {
-    "attachSlides": false,
-    "attachSlidesCount": 3,
+    "attachSlides": true,
+    "attachSlidesCount": 4,
+    "leadWithThumbnail": true,
+    "linkInReply": true,
     "threadAllSlides": false,
-    "postWindow": null
+    "postWindow": null,
+    "_note": "2026-07-14 ユーザー指示でバズ強化。画像投稿(サムネ+slide01-03の4枚)を本投稿に直接添付し、記事リンクはリプライに置く。Xはリンク付き投稿の露出を絞るため。xPostMethodは引き続きbrowser(API経路は未実装)。"
   },
   "nightRun": {
     "enabled": true,

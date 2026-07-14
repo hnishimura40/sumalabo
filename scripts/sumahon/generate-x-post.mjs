@@ -162,8 +162,10 @@ function leadingSentences(text, count = 1) {
 // 280 加重ガード: 途中カット（slice + …）はしない。長い本文候補から順に
 // 「そのまま入るか」を加重換算で試し、最初に収まった候補を採用する
 // （= 超過時は自動短縮ではなく、より短い構成での生成し直し）。
+// articleUrl が空文字なら本投稿に URL 行を入れない（画像投稿＋リンクはリプライ運用）。
 function compose({ lead, body, hashtags, articleUrl, isReporting }) {
   const hashtagStr = hashtags.join(" ");
+  const withUrl = (text) => (articleUrl ? `${text}\n${articleUrl}\n${hashtagStr}` : `${text}\n${hashtagStr}`);
   const bodyCandidates = [
     body, // 1. フル
     leadingSentences(body, 2), // 2. 先頭2文
@@ -175,7 +177,7 @@ function compose({ lead, body, hashtags, articleUrl, isReporting }) {
   let downshifted = false;
   for (const candidate of bodyCandidates) {
     const text = candidate ? `${lead}\n\n${candidate}`.trim() : lead.trim();
-    const post = `${text}\n${articleUrl}\n${hashtagStr}`;
+    const post = withUrl(text);
     if (weightedTweetLength(post) <= MAX_TWEET_LEN - SAFE_MARGIN) {
       picked = post;
       break;
@@ -185,7 +187,7 @@ function compose({ lead, body, hashtags, articleUrl, isReporting }) {
   if (!picked) {
     // lead 単体でも収まらない（タイトルが極端に長い）: 読点区切りの先頭句で組み直す
     const shortLead = lead.split(/[、,]/)[0].trim();
-    picked = `${shortLead}\n${articleUrl}\n${hashtagStr}`;
+    picked = withUrl(shortLead);
     downshifted = true;
   }
   const weighted = weightedTweetLength(picked);
@@ -209,10 +211,14 @@ export function generateXPost({
   productionUrl = "https://sumalabo.com",
   articleBrief = null,
   sourceMeta = null,
+  linkInReply = false,
 } = {}) {
   if (!slug) throw new Error("generateXPost: slug is required");
 
   const articleUrl = buildArticleUrl({ slug, productionUrl });
+  // linkInReply: 記事リンクを本投稿から外し、リプライに置く（画像投稿でインプレを伸ばす運用）。
+  // 本投稿の compose には URL 無し（空文字）を渡す。ハッシュタグは本投稿に残す。
+  const mainUrl = linkInReply ? "" : articleUrl;
   const isReporting = isReportingTopic({ title, description, type, articleBrief });
   const cleanTitle = sanitizeText(stripQuestionMark(title));
   const cleanDescription = sanitizeText(description);
@@ -234,7 +240,7 @@ export function generateXPost({
   const primaryLead = `${cleanTitle}`;
   const primaryBodyRaw = cleanDescription || `${cleanTitle}を、やさしく整理しました。`;
   const primaryBody = ensureHedge(primaryBodyRaw, isReporting);
-  const primaryRes = compose({ lead: primaryLead, body: primaryBody, hashtags, articleUrl, isReporting });
+  const primaryRes = compose({ lead: primaryLead, body: primaryBody, hashtags, articleUrl: mainUrl, isReporting });
 
   // === Alt1: 結論先出し型 ===
   const altConclusion = articleBrief?.coreAngle
@@ -242,14 +248,14 @@ export function generateXPost({
     : `結論: ${cleanTitle.replace(/。$/, "")}`;
   const alt1Lead = altConclusion.slice(0, 60);
   const alt1Body = ensureHedge(cleanDescription || `要点をやさしく整理しました。`, isReporting);
-  const alt1Res = compose({ lead: alt1Lead, body: alt1Body, hashtags, articleUrl, isReporting });
+  const alt1Res = compose({ lead: alt1Lead, body: alt1Body, hashtags, articleUrl: mainUrl, isReporting });
 
   // === Alt2: 問いかけ型 ===
   const alt2Lead = isReporting
     ? `${cleanTitle.split(/[、,]/)[0]}という噂、本当のところは？`
     : `${cleanTitle.split(/[、,]/)[0]}、どう変わる？`;
   const alt2Body = ensureHedge(cleanDescription || `要点と注意点をやさしく整理しました。`, isReporting);
-  const alt2Res = compose({ lead: alt2Lead, body: alt2Body, hashtags, articleUrl, isReporting });
+  const alt2Res = compose({ lead: alt2Lead, body: alt2Body, hashtags, articleUrl: mainUrl, isReporting });
 
   // === ガード: BAN ワードや すまほん表記が万が一残っていないか最終確認 ===
   const finalBanCheck = (text) => BAN_WORDS.some((w) => text.includes(w));
@@ -260,10 +266,17 @@ export function generateXPost({
   if (!primaryRes.fitsLimit) warnings.push(`primary が加重280字を超過しています（weighted=${primaryRes.weightedLength}。要修正）`);
   if (primaryRes.downshifted) warnings.push("primary は280字ガードにより短い構成で生成し直しました（description全文は不使用）");
 
+  // linkInReply 運用時の返信（記事リンク）。本投稿の直後にぶら下げる。
+  const reply = linkInReply
+    ? { text: `記事で続きと出典まで読めます👇\n${articleUrl}`, articleUrl }
+    : null;
+
   return {
     slug,
     articleUrl,
     isReporting,
+    linkInReply,
+    reply,
     attachThumbnail: Boolean(thumbnail),
     thumbnailPath: thumbnail || null,
     hashtags,
