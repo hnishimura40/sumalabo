@@ -25,6 +25,7 @@
     "automation:run-queue": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/run-sumahon-queue.ps1",
     "automation:register-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/register-sumahon-tasks.ps1",
     "automation:disable-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/disable-sumahon-tasks.ps1",
+    "normalize:publish-at": "node scripts/automation/normalize-publish-at.mjs",
     "deploy:production": "node scripts/automation/deploy-production-from-main.mjs",
     "rollback:production": "node scripts/automation/rollback-production.mjs",
     "purge:cache": "node scripts/automation/cache-purge.mjs",
