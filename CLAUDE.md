@@ -158,6 +158,7 @@
 
 1. **PR merge**：`mergeable: MERGEABLE` / `mergeStateStatus: CLEAN` / `isDraft: false` を確認 → `gh pr merge <N> --merge --delete-branch=false`。main への直接 push 禁止。merge commit を記録。
 2. **main 最新化**：`git fetch origin main && git pull origin main`。merge commit が含まれていることを確認。
+2-bis. **publishAt 補正（2026-07-14・一覧順ずれ防止）**：deploy 前に `npm run normalize:publish-at -- --slug=<slug>` を実行。publishAt が**未来**（build 除外回避で過去化）または**他の最新公開記事より古い**（一覧最上位化のため前進）場合に実公開時刻へ自動補正する。変更が出たら追加コミットして main に反映してから deploy する（変更なしなら何もせず次へ）。原則は Phase A の write_mdx で実公開見込み時刻を入れておき、ここは最終セーフティネット。
 3. **wrangler 本番 deploy（正規手順）**：`npm run deploy:production -- --slug=<代表slug>`。複数記事の場合も 1 回でよい（main 全体が反映されるため代表 slug を渡す）。
 4. **strict verify**：対象記事すべてで `/api/verify-publication` 実行。`status: published` / `failedChecks: []` / 8 項目（`httpStatus` / `titleNotGeneric` / `slugInHtml` / `notHomepageFallback` / `hasArticleBody` / `hasThumbnailRef` / `noProhibitedCopy` / `indexListsArticle`）全 pass を確認。
 5. **queue 更新**：strict verify 成功後だけ `published` に更新。`productionUrl` / `publishedAt` / `prUrl` / `mergeCommit` / `deployResult` / `verifyResult` / `source: user_directed` / `triggeredBy: user` / 指定対象（URL or フォルダ）を記録。
