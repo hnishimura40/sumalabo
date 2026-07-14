@@ -1,0 +1,97 @@
+{
+  "overallPass": true,
+  "inspectedBy": "independent_agent",
+  "slides": [
+    {
+      "id": "slide01-5h",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 88,
+      "revisionHint": "先に結論のまとめスライド。4項目とも事実一致（一時的に外れた/全ユーザーのリセット/今だけ・無制限ではない/重い作業を試すチャンス）。文字化け・崩れなし、キャラ一貫。X向きに強い。"
+    },
+    {
+      "id": "slide02-5h",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 72,
+      "revisionHint": "7/12現地・7/13日本、対象Plus/Business/Pro、Tibo氏がXで公表、直近48時間で急増・アクティブ600万人—すべて事実一致。吹き出し＋4項目でやや情報密度が高いが可読。"
+    },
+    {
+      "id": "slide03-5h",
+      "verdict": "ok",
+      "issues": ["中央ボックス＋5項目＋吹き出し2つで文字密度が高い（Xでは誤読・誤字拡散リスク）"],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 45,
+      "revisionHint": "『週ごとの上限が残る可能性(報道)』『完全な無制限ではないとの指摘』など未確定は正しくヘッジ済み。文字化けなし。ただし密度が高いので記事内専用向き、Xからは外す。"
+    },
+    {
+      "id": "slide04-5h",
+      "verdict": "ok",
+      "issues": ["図解＋3項目＋ラベルで文字密度が高い"],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 45,
+      "revisionHint": "max=1回を深く考える(1回が重い)/ultra=4つを同時に分担(増えやすい)/GPT-5.6でWork・Codexでmax可—事実一致。ultra列のミニらぼまる4体もキャラ一貫。密度高のためXからは外す。"
+    },
+    {
+      "id": "slide05-5h",
+      "verdict": "ok",
+      "issues": ["らぼまるの胸アイコンが虫眼鏡＋グラフ、オレンジのハートは首元に配置（アンカーは胸のハートボタン）。ハート自体は存在するため軽微。"],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 80,
+      "revisionHint": "同じ利用プールを共有/片方使うと他方の枠も減る/別ツール=別枠ではない—事実一致。上部4項目が簡潔で財布のビジュアルも直感的。X向き良好。"
+    },
+    {
+      "id": "slide06-5h",
+      "verdict": "ok",
+      "issues": ["カード＋吹き出し＋下部チェックリストで密度やや高め"],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 68,
+      "revisionHint": "ChatGPT Work=Pro/Enterprise、Codex=Plus以上—ultra提供範囲の事実一致。文字化けなし。"
+    },
+    {
+      "id": "slide07-5h",
+      "verdict": "ok",
+      "issues": ["3行×3列の早見表で文字密度が高い"],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 40,
+      "revisionHint": "Plus以上+Medium/High→Sol、Extra High・Sol=Pro/Business/Enterprise限定、Terra/Lunaは標準チャットで選べない—事実一致。表なので密度高、Xからは外し記事内専用に。"
+    },
+    {
+      "id": "slide08-5h",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 85,
+      "revisionHint": "実践3つ（今のうちに試す/ultra前に消費構造を知る/戻ったときの上限を思い出す 例:Plus/Go=GPT-5.5 Instant 3時間160通）と『今の余裕は一時的』—事実一致。締めスライドとして強く、X向き良好。"
+    }
+  ],
+  "thumbnail": {
+    "verdict": "ok",
+    "issues": [],
+    "revisionHint": "『5時間制限が5時間(取り消し線)消えた・今だけ・でも一時的』『利用制限 一時的に解除されました』『ただし一時的』—一時性を強調し無制限と誤読させない。事実一致、文字化けなし、ひまり・らぼまるとも一貫。フックとして強い。"
+  },
+  "xSelection": ["thumbnail", "slide01-5h", "slide08-5h", "slide05-5h"],
+  "excludedFromX": [
+    { "id": "slide03-5h", "reason": "textDensity=high。中央ボックス＋5項目＋吹き出しで文字量多く、X縮小表示で誤読・誤字が目立ちやすい。記事内専用。" },
+    { "id": "slide04-5h", "reason": "textDensity=high。max/ultra比較図＋3項目でラベルが細かく、単体投稿では読みにくい。記事内専用。" },
+    { "id": "slide07-5h", "reason": "textDensity=high。Sol/Terra/Lunaの早見表（3行×3列）で情報密度が高く、Xの縮小表示に不向き。記事内専用。" }
+  ]
+}

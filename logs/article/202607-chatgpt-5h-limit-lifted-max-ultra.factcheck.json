@@ -1,0 +1,21 @@
+{
+  "slug": "202607-chatgpt-5h-limit-lifted-max-ultra",
+  "checkedBy": "generator_self",
+  "checkedAt": "2026-07-14",
+  "overallPass": true,
+  "thumbnail": { "verdict": "ok", "issues": [], "notes": "『5時間制限が消えた』『でも一時的』。ひまり=ポジ驚き・らぼまる=注意札。実在ロゴなし・化けなし。" },
+  "slides": [
+    { "id": "slide01-5h", "verdict": "ok", "issues": [], "notesText": "先に結論/今だけ/5時間(取消線)/4bullet。数値・表現一致。" },
+    { "id": "slide02-5h", "verdict": "ok", "issues": [], "notesText": "7/12現地・7/13日本・Plus/Business/Pro・Tibo・X・48時間・600万人。全て最終稿一致。" },
+    { "id": "slide03-5h", "verdict": "ok", "issues": [], "notesText": "無制限ではない/一時的/未発表/週ごと上限(報道)/使い放題と読まない。誤読防止OK。" },
+    { "id": "slide04-5h", "verdict": "ok", "issues": [], "notesText": "max=1回を深く/ultra=4つ同時分担/GPT-5.6でWork/Codex。倍率断定なし。" },
+    { "id": "slide05-5h", "verdict": "ok", "issues": [], "regen": "初回は内部ラベル『slide05』焼込み→no-label指示で再生成し解消。Work/Codex同一プール共有・別枠ではない。" },
+    { "id": "slide06-5h", "verdict": "ok", "issues": [], "regen": "初回は内部ラベル『slide06』焼込み→再生成で解消。Work=Pro/Enterprise・Codex=Plus以上。" },
+    { "id": "slide07-5h", "verdict": "ok", "issues": [], "regen": "初回は内部ラベル『slide07』焼込み→再生成で解消。Plus以上+Medium/High→Sol・ExtraHigh/SolはPro以上・Terra/Luna不可。" },
+    { "id": "slide08-5h", "verdict": "ok", "issues": [], "notesText": "3実践/例:Plus・Go=GPT-5.5 Instant 3時間160通/今の余裕は一時的。" }
+  ],
+  "characterAnchors": "ひまり(金髪サイドテール+ティールリボン+青瞳+白衣装)・らぼまる(白卵型+黄緑アンテナ+黒丸目+オレンジハートボタン)は全9枚で一致。",
+  "kanjiGarble": "なし（全画像で判読可能）",
+  "realLogos": "なし",
+  "note": "本人チェック。次に独立検品(別Taskエージェント)でダブルチェックする。"
+}
