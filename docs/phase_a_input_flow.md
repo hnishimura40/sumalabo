@@ -265,9 +265,19 @@ Phase A 本処理に入った直後、以下を確認する：
    - ペアリングが **Edge / その他のブラウザ** になっている場合は経路なし扱い（CLAUDE.md ポリシーで Edge 禁止）
 3. **ChatGPT セッションが開ける状態にあるか**（Chrome MCP でナビゲーション可能か）
 
+### 拡張未接続時の自己復旧（2026-07-14・人間に頼む前に）
+
+`tabs_context_mcp` / `list_connected_browsers` が失敗・空の場合は、**人間に再接続を頼む前に自己復旧を試みる**（夜間 run の Chrome 自動起動を昼のセッションでも使う）：
+
+1. `npm run chrome:ensure`（= `scripts/automation/ensure-chrome.ps1`。プロセス確認 → 無ければ `--restore-last-session` で起動 → 安定待ち）を実行。
+2. **30 秒待って `list_connected_browsers` を再確認**。未接続ならもう一度だけ（`chrome:ensure` → 30 秒 → 再確認）。**最大 2 回**。
+3. 2 回試しても未接続なら、初めて人間に再接続を依頼する（下記「画像生成不可」の挙動へ）。
+
+> ensure-chrome は「Chrome が起動していること」を保証するだけ。**拡張のペアリング自体が切れている場合は Chrome 起動だけでは直らない**ので、2 回で見切って人間に渡す（粘らないルール準拠）。
+
 ### 画像生成不可と判定した場合の挙動
 
-**本文 MDX だけで PR を作成しない。** 次の挙動を取る：
+**（上記の自己復旧を 2 回試しても駄目だったときだけ）本文 MDX だけで PR を作成しない。** 次の挙動を取る：
 
 1. queue のエントリ status を `blocked_image_generation_unavailable` にする
 2. 報告に下記を含める：
