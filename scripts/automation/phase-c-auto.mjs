@@ -43,16 +43,18 @@ const HARDENING = `
 
 async function main() {
   const argv = process.argv.slice(2);
-  const args = { slug: null, trigger: "auto_after_veto", posted: null, variant: null };
+  const args = { slug: null, trigger: "auto_after_veto", posted: null, variant: null, replyUrl: null };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--slug") args.slug = argv[++i];
     else if (argv[i] === "--trigger") args.trigger = argv[++i];
     else if (argv[i] === "--posted") args.posted = argv[++i];
     else if (argv[i] === "--variant") args.variant = argv[++i];
+    else if (argv[i] === "--reply-url") args.replyUrl = argv[++i];
     else if (argv[i].startsWith("--slug=")) args.slug = argv[i].slice(7);
     else if (argv[i].startsWith("--trigger=")) args.trigger = argv[i].slice(10);
     else if (argv[i].startsWith("--posted=")) args.posted = argv[i].slice(9);
     else if (argv[i].startsWith("--variant=")) args.variant = argv[i].slice(10);
+    else if (argv[i].startsWith("--reply-url=")) args.replyUrl = argv[i].slice(12);
   }
   if (!args.slug) {
     console.error("usage: --slug <slug> [--trigger auto_after_veto|manual] [--posted <tweetUrl>]");
@@ -64,12 +66,24 @@ async function main() {
   if (args.posted) {
     const idMatch = args.posted.match(/status\/(\d+)/);
     if (!idMatch) { console.error("posted URL から tweetId を特定できません"); process.exitCode = 2; return; }
+    // variant: --variant 指定 > xPostOptions からの導出（全OFFなら text_only = 現状どおり）
+    const plan = buildAttachmentPlan(args.slug, loadXPostOptions());
+    const variant = args.variant || plan.variant;
+    const isImagePost = /^images\d+/.test(String(variant)) || plan.attach.length > 0;
     if (!(await hasPosted(args.slug))) {
-      // variant: --variant 指定 > xPostOptions からの導出（全OFFなら text_only = 現状どおり）
-      const plan = buildAttachmentPlan(args.slug, loadXPostOptions());
-      await recordPost({ slug: args.slug, postUrl: args.posted, postText: "(recorded via phase-c-auto)", method: loadAutonomy().xPostMethod || "chrome", variant: args.variant || plan.variant });
+      await recordPost({ slug: args.slug, postUrl: args.posted, postText: "(recorded via phase-c-auto)", method: loadAutonomy().xPostMethod || "chrome", variant, replyUrl: args.replyUrl || null, imagesAttached: plan.attach.length });
     }
-    upsertEntry(args.slug, { xPostUrl: args.posted, xPostedAt: new Date().toISOString() });
+    upsertEntry(args.slug, { xPostUrl: args.posted, xPostedAt: new Date().toISOString(), xReplyUrl: args.replyUrl || null });
+
+    // 画像投稿（images{N}）は本投稿がOGPカードではなく画像なので、カード不成立を失敗としない。
+    // 画像は添付された時点で描画されるため、成功条件は「投稿が実在する」こと。
+    if (isImagePost) {
+      await notifyAutonomyEvent({ slug: args.slug, status: "x_posted", title: `[autonomy] Phase C完了: ${args.slug}（画像投稿 ${plan.attach.length}枚${args.replyUrl ? "＋リンクはリプライ" : ""}）`, previewUrl: `https://sumalabo.com/articles/${args.slug}/` }).catch(() => {});
+      console.log(`[phase-c] 完了（画像投稿 ${plan.attach.length}枚・カード確認はスキップ）`);
+      return;
+    }
+
+    // text_only（リンク付き本投稿）は従来どおり OGP カード確認する。
     console.log("[phase-c] カード確認（syndication照会、画像は非同期生成のため最大5分待ち）...");
     const card = await checkCardWithWait(idMatch[1], { waitMinutes: 5 });
     console.log(JSON.stringify(card, null, 2));
@@ -136,19 +150,23 @@ async function main() {
     console.log(`0. 投稿時間帯(postWindow ${xOpts.postWindow.start}-${xOpts.postWindow.end})より前のため、` +
       `${windowCheck.waitUntil.toISOString()} まで投稿を保留してから以下を実行（約${windowCheck.waitMinutes}分待機）`);
   }
-  console.log(`1. npm run social:generate-x-post -- --slug ${args.slug} で投稿文を生成・確認`);
+  console.log(`1. npm run social:generate-x-post -- --slug ${args.slug} で投稿文を生成・確認（logs/social/${args.slug}.x-post.json に本投稿文・reply・attachmentPlan が入る）`);
   if (plan.attach.length > 0) {
-    console.log(`2. Chrome で x.com/compose/post を開き、投稿文を入力後、以下のスライド ${plan.attach.length} 枚を添付`);
-    console.log("   （サムネではなくスライドを優先。既存のクリップボード/ファイル選択実績方式を流用し、添付枚数の一致をDOMで検証してから投稿）");
+    console.log(`2. Chrome で x.com/compose/post を前面で開き、本投稿文を入力後、以下の画像 ${plan.attach.length} 枚を添付（1枚目=サムネ or slide01。画像投稿がバズの主戦場）:`);
+    console.log("   （既存のクリップボード/ファイル選択実績方式を流用。複数枚は x-post-chrome.ps1 に -ImagePath を複数渡す or 1枚ずつ添付。添付枚数の一致をDOMで検証してから投稿）");
     for (const f of plan.attach) console.log(`   - ${f}`);
+    if (plan.linkInReply) {
+      console.log("2b. 本投稿には記事リンクを入れない（リンク付き投稿は露出が絞られるため）。本投稿は画像＋短文＋ハッシュタグのみ。");
+      console.log(`2c. 本投稿の直後に、その投稿へのリプライで記事リンクを1件だけ付ける（logs/social/${args.slug}.x-post.json の reply.text をそのまま使用）。`);
+    }
     if (plan.threadBatches.length > 0) {
-      console.log(`2b. 投稿後、返信ツリーで残りスライドをぶら下げる（1返信4枚まで・${plan.threadBatches.length}返信）:`);
+      console.log(`2d. さらに残りスライドを返信ツリーにぶら下げてもよい（1返信4枚まで・${plan.threadBatches.length}返信）:`);
       plan.threadBatches.forEach((batch, i) => console.log(`   返信${i + 1}: ${batch.map((f) => f.split(/[\\/]/).pop()).join(", ")}`));
     }
   } else {
     console.log("2. Chrome で x.com/compose/post を開き、投稿文を入力（下記チェックリスト厳守）");
   }
-  console.log(`3. 投稿後: node scripts/automation/phase-c-auto.mjs --slug ${args.slug} --posted <tweetUrl> --variant ${plan.variant}`);
+  console.log(`3. 投稿後: node scripts/automation/phase-c-auto.mjs --slug ${args.slug} --posted <tweetUrl> --variant ${plan.variant}${plan.linkInReply ? " --reply-url <replyTweetUrl>" : ""}`);
   console.log(HARDENING);
   process.exitCode = 10;
 }

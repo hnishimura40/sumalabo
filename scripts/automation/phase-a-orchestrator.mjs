@@ -254,6 +254,11 @@ function assistedInstruction(state, step) {
     generate_images: `同チャットに正本画像（assets/characters/himari-canonical.png → labomaru-canonical.png を1枚ずつ）を添付し、character-sheet.md の仕様を厳守して slide_plan の順に 8+1 枚を生成。**サムネは slide_plan で選んだテーマ連想の衣装・小道具を反映して生成（標準衣装のまま出さない。認識アンカーは不変）。** 全てダウンロードし D:\\downloads に保存。`,
     factcheck_images: `ダウンロードした 9 枚を Claude 自身が Read で読み、slide_plan と突き合わせて数値・固有名詞・誤字・ブランド表記を検査。**キャラ破綻は認識アンカー（ひまり=金髪サイドテール・顔立ち・頭身／らぼまる=白い卵型ボディ・アンテナ・胸のハートボタン）で判定（服・小道具の違いは破綻ではない）。サムネは衣装がテーマに沿って標準から変えてあるかも確認**。結果を logs/article/${slug}.factcheck.json に保存:\n  { "pass": true|false, "regenerate": [{"which":"slide06","reason":"..."}], "slides": [{"src":"D:/downloads/xxx.png","name":"slide01-xxx.webp"}...], "thumbnail": {"src":"D:/downloads/yyy.png"}, "thumbnailCostume": "themed" | "standard_improvable" }\nサムネが標準衣装のまま（standard_improvable）でも崩れではないので needs_revision にはしない（注意記録のみ）。不合格があれば該当のみ再生成（最大2回）してから advance。pass 時は slides/thumbnail のマッピングが logs/article/${slug}.images.json にコピーされる。`,
     write_mdx: `final_article を MDX 化（frontmatter 12キー / lead-first / 禁則語なし）→ content/articles/${slug}.mdx。前記事への内部リンクがテーマ上自然なら本文に入れる。
+  **タイトルは「感情に刺す主タイトル＋やさしく整理するサブ」で組む（2026-07-14 バズ強化・第一候補）:**
+  - 主タイトルは「読者への影響」を主語にした感情に刺す型を第一候補にする。型の例:「消える／変わる／損する＋あなた（のデータ／料金／使い方）」「まだ〇〇してるの?」「知らないと損する〇〇」。例:「Atlasは8月9日で終了へ」→「Atlasが8/9で消える。あなたのデータも」。
+  - **ただし事実に反する煽りは禁止**。主タイトルの主張（消える・値上げ・終了・危険 等）と数字・固有名詞は、必ず final_article の facts で裏付けられていること（未確定を確定と言い切らない。gate の title-fact-backing 検査で弾かれる）。
+  - サブタイトル（description 相当・本文リード）は従来どおり「何が変わって誰に関係あるかをやさしく整理」を維持する。主タイトルで刺し、サブと本文で落ち着かせる二段構え。
+  - 「絶対」「100%」「必見」「全部〇〇化」等の断定・誇張、および既存の禁則語（普通の人 等）はタイトルにも入れない。
   **本文は v3 コンポーネントで組む（docs/article_components_v3.md 準拠・2026-07-08 有効化。お手本: content/articles/202607-claude-fable-5-free-extension-july13.mdx）:**
   - import 文を frontmatter 直後に置く（Summary30 / Callout / Chip / NumCards / Timeline / TimelineItem / CharacterBubble / Note。使うものだけ。パスは ../../src/components/article/{Name}.astro）
   - 冒頭に <Summary30>（<ol><li> で要点3〜5個・1記事1回）

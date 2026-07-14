@@ -24,6 +24,7 @@ import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { generateXPost } from "../sumahon/generate-x-post.mjs";
+import { loadXPostOptions, buildAttachmentPlan } from "../automation/x-post-options.mjs";
 
 function parseArgs(argv) {
   const args = {};
@@ -91,6 +92,10 @@ async function main() {
 
   const productionUrl = args.productionUrl || "https://sumalabo.com";
 
+  // Phase C 投稿形式（autonomy.json の xPostOptions）を読み、画像添付計画とリンク運用を決める。
+  const xPostOptions = loadXPostOptions();
+  const attachmentPlan = buildAttachmentPlan(slug, xPostOptions);
+
   const result = generateXPost({
     slug,
     title: fm.title || "",
@@ -101,7 +106,10 @@ async function main() {
     productionUrl,
     articleBrief,
     sourceMeta,
+    linkInReply: attachmentPlan.linkInReply === true,
   });
+  // 添付計画（本投稿の画像 / 返信ツリー / variant）を投稿JSONに載せて Phase C 実行側へ渡す。
+  result.attachmentPlan = attachmentPlan;
 
   // ファイル保存
   const draftsDir = "drafts/social";
@@ -109,22 +117,29 @@ async function main() {
   if (!existsSync(draftsDir)) mkdirSync(draftsDir, { recursive: true });
   if (!existsSync(logsDir)) mkdirSync(logsDir, { recursive: true });
 
+  const plan = result.attachmentPlan || { variant: "text_only", attach: [], threadBatches: [], linkInReply: false };
+  const attachRel = (plan.attach || []).map((p) => p.replace(/\\/g, "/").replace(/^.*?(public\/images\/.*)$/, "$1"));
   const md = [
     `# X 投稿文ドラフト: ${slug}`,
     "",
     `- 記事URL: ${result.articleUrl}`,
     `- 報道ベース: ${result.isReporting ? "はい (hedge 表現を含める)" : "いいえ"}`,
-    `- サムネ添付: ${result.attachThumbnail ? `はい (${result.thumbnailPath})` : "いいえ"}`,
+    `- 投稿形式(variant): ${plan.variant}`,
+    `- 本投稿に添付する画像(${(plan.attach || []).length}枚): ${attachRel.length ? attachRel.join(" , ") : "なし"}`,
+    `- 記事リンクの置き場所: ${plan.linkInReply ? "リプライ（本投稿には入れない）" : "本投稿に含める"}`,
     `- 生成日時: ${result.generatedAt}`,
     `- ハッシュタグ: ${result.hashtags.join(" ")}`,
     "",
-    "## primary",
+    "## primary（本投稿）",
     "",
     "```",
     result.primary.text,
     "```",
     `(${result.primary.charCount} 文字 / X加重=${result.primary.weightedLength}/280 / downshifted=${result.primary.downshifted})`,
     "",
+    ...(result.reply
+      ? ["## reply（本投稿にぶら下げる記事リンク）", "", "```", result.reply.text, "```", ""]
+      : []),
     "## 代替案",
     "",
     ...result.alternates.flatMap((alt) => [
