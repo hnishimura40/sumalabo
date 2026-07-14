@@ -24,7 +24,7 @@
 //   buildAttachmentPlan(slug, options)    … {variant, attach:[], threadBatches:[][]}
 //   variantName(options, attachedCount)   … 台帳に記録する variant 文字列
 
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
@@ -99,6 +99,29 @@ export function thumbnailPath(slug, root = ROOT) {
 }
 
 /**
+ * 独立検品（Phase C 前）の xSelection を実ファイルパス配列に解決する。
+ * logs/article/{slug}.independent-inspection.json の xSelection（id 配列・'thumbnail' / slide id）を
+ * public 以下の実ファイルへマップする。ファイルが無い id はスキップ。最大4枚。
+ * 検品結果が無い / xSelection 空 → null（呼び出し側は従来のサムネ+先頭スライドにフォールバック）。
+ */
+export function loadInspectionSelection(slug, root = ROOT) {
+  const p = path.join(root, "logs", "article", `${slug}.independent-inspection.json`);
+  if (!existsSync(p)) return null;
+  let data;
+  try { data = JSON.parse(readFileSync(p, "utf-8")); } catch { return null; }
+  const sel = Array.isArray(data.xSelection) ? data.xSelection : [];
+  if (sel.length === 0) return null;
+  const resolved = [];
+  for (const id of sel.slice(0, 4)) {
+    let file;
+    if (id === "thumbnail") file = path.join(root, "public", "images", "thumbnails", `${slug}.webp`);
+    else file = path.join(root, "public", "images", "articles", slug, `${id}.webp`);
+    if (existsSync(file)) resolved.push(file);
+  }
+  return resolved.length ? resolved : null;
+}
+
+/**
  * 添付計画。フラグOFF → 添付なし（現状どおり）。
  * attachSlides ON → 本投稿に画像を N 枚（最大4）添付。
  *   leadWithThumbnail ON → 1枚目=サムネ、続けて slide01.. で N 枚に満たす。
@@ -108,22 +131,34 @@ export function thumbnailPath(slug, root = ROOT) {
  */
 export function buildAttachmentPlan(slug, options = X_POST_OPTIONS_DEFAULT, root = ROOT) {
   if (!options.attachSlides) {
-    return { variant: "text_only", attach: [], threadBatches: [], linkInReply: false };
+    return { variant: "text_only", attach: [], threadBatches: [], linkInReply: false, selectionSource: "none" };
   }
   const slides = listSlideImages(slug, root);
   const count = options.attachSlidesCount;
+
+  // 優先: 独立検品（Phase C 前）が選んだ xSelection を使う（文字量少・数字正確・単体で意味が通る上位4枚。
+  // needs_revision と文字密度 high は検品側で除外済み）。無ければ従来のサムネ+先頭スライドにフォールバック。
+  const inspected = loadInspectionSelection(slug, root);
   let attach;
   let usedSlides;
-  if (options.leadWithThumbnail) {
+  let selectionSource;
+  if (inspected && inspected.length) {
+    attach = inspected.slice(0, count);
+    selectionSource = "independent_inspection";
+    const attachSet = new Set(attach);
+    usedSlides = slides.filter((s) => attachSet.has(s));
+  } else if (options.leadWithThumbnail) {
     const thumb = thumbnailPath(slug, root);
     const lead = thumb ? [thumb] : [];
     usedSlides = slides.slice(0, Math.max(0, count - lead.length));
     attach = [...lead, ...usedSlides];
+    selectionSource = "default_lead_thumbnail";
   } else {
     usedSlides = slides.slice(0, count);
     attach = usedSlides;
+    selectionSource = "default_first_slides";
   }
-  const rest = slides.slice(usedSlides.length);
+  const rest = slides.filter((s) => !usedSlides.includes(s));
   const threadBatches = [];
   if (options.threadAllSlides) {
     for (let i = 0; i < rest.length; i += 4) threadBatches.push(rest.slice(i, i + 4));
@@ -133,6 +168,7 @@ export function buildAttachmentPlan(slug, options = X_POST_OPTIONS_DEFAULT, root
     attach,
     threadBatches,
     linkInReply: options.linkInReply === true,
+    selectionSource,
   };
 }
 

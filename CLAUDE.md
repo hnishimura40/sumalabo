@@ -174,6 +174,13 @@ Phase B 完了後だけ実行：
 - 投稿アカウントが **@suma_labo** であることを確認
 - **Chrome を使う**（Edge 禁止）
 
+**独立検品（2026-07-14・X直接投稿の拡散リスク対策）＝ Phase C の必須前提：**
+- X 直接投稿の前に、**生成した本人のセッションとは別の Task エージェント**を起動し、全画像を白紙の目で再検査する（本人チェック=factcheck_images との**ダブルチェック**）。手順: `npm run sumalabo:inspect -- --slug <slug>` → 独立エージェント起動 → 出力を `logs/article/<slug>.independent-inspection.json` に保存。
+- 検品は factcheck 12項目＋スライド本文と最終稿の突合＋X選抜スコア（文字量少・数字正確・単体で意味が通る）を判定する。**本人チェックと差が出たら独立検品を優先。**
+- **X 投稿するスライドは選抜制**: 4枚を機械的に選ばず、検品の `xSelection`（上位4枚・先頭=サムネ）を使う。文字密度の高い（誤字リスク大）スライドは X から外し記事内専用にする。
+- **崩れ検出時**: `needs_revision` は該当スライドのみ**最大2回**再生成 → 直らなければそのスライドを **X から除外**して残りで投稿する（**記事の公開自体は止めない**）。
+- 定義: [`docs/kanji_pitfalls.md`](docs/kanji_pitfalls.md)（化けやすい漢字の回避）/ `scripts/sumahon/generate-independent-inspection-prompt.mjs`（検品プロンプト・スキーマ）。
+
 **投稿形式（2026-07-14 バズ強化・ユーザー指示）＝ 画像4枚の本投稿＋リプライに記事リンク：**
 - 既定を「リンク付き投稿1本」→「**スライド画像4枚を直接添付した本投稿（1枚目=サムネ／2〜4枚目=slide01・02・03）＋その投稿へのリプライに記事リンク1件**」に変更。X はリンク付き投稿の露出を絞るため画像単体投稿の方が伸びる。
 - 設定は `data/automation/autonomy.json` の `xPostOptions`（`attachSlides/attachSlidesCount:4/leadWithThumbnail/linkInReply`）。投稿文・添付画像・リプライ文は `npm run social:generate-x-post -- --slug <slug>` が `logs/social/{slug}.x-post.json`（`attachmentPlan` / `primary` / `reply`）に出力する。

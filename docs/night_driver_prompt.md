@@ -84,7 +84,8 @@ finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待た�
 > **投稿形式（2026-07-14 バズ強化）: 本投稿＝スライド画像4枚（1枚目=サムネ／2〜4枚目=slide01・02・03）＋短文＋ハッシュタグ2個。記事リンクは本投稿に入れず、本投稿へのリプライに1件だけ付ける。** 設定は `autonomy.json` の `xPostOptions`。詳細: [`x_post_workflow.md`](x_post_workflow.md) / 人間側の初速: [`growth_playbook.md`](growth_playbook.md)。
 > **鉄則: 画像添付は前面タブで行う（背面では OS クリップボード貼り付け不成立）。OGP カード待ちはしない（本投稿は画像）。画像が乗らないときのみ合計 5 分 / 3 回で打ち切りサムネ1枚→text_only にフォールバック。粘らない。**
 
-1. `npm run social:generate-x-post -- --slug <slug>` — `logs/social/<slug>.x-post.json` に本投稿文(`primary`)・リプライ文(`reply`)・添付画像(`attachmentPlan.attach` 4枚)が出る。`X加重` が 280 以内・本投稿にURLが無いことを確認。
+0. **【必須】独立検品（生成の文脈を持たない別エージェントでの白紙再検査）**: `npm run sumalabo:inspect -- --slug <slug>` でプロンプト生成 → **生成した本人のセッションとは別の Task エージェント**を起動し、全画像（サムネ+スライド8）を1枚ずつ Read で読ませ、factcheck 12項目＋スライド本文と最終稿の突合を白紙の目で判定させる。出力（`INDEPENDENT_INSPECTION_SCHEMA`）を `logs/article/<slug>.independent-inspection.json` に保存。**本人チェック（factcheck_images）との判定差があれば独立検品を優先**。`needs_revision` は該当のみ**最大2回**再生成→直らなければそのスライドを X から除外（`excludedFromX`）して残りで投稿（**記事の公開自体は止めない**）。X 直接投稿の画像は検品の `xSelection`（文字量少・数字正確・単体で意味が通る上位4枚）を使う。
+1. `npm run social:generate-x-post -- --slug <slug>` — `logs/social/<slug>.x-post.json` に本投稿文(`primary`)・リプライ文(`reply`)・添付画像(`attachmentPlan.attach`＝検品の xSelection)が出る。`X加重` が 280 以内・本投稿にURLが無いことを確認。
 2. Chrome で `x.com/compose/post` を**専用の新規タブ**で**前面化**して開く。アカウントが **@suma_labo** であることを DOM で確認。
 3. 本投稿の composer へ本文（URL無し）を入力し innerText を読み戻して検証。`attachmentPlan.attach` の4枚を添付（`x-post-chrome.ps1 -ImagePaths <4枚>` でまとめて CF_HDROP → Ctrl+V、または1枚ずつ）。**添付枚数=4 を DOM 検証**してから送信。
 4. **画像が乗らない場合のみフォールバック**（合計 5 分 / 3 回まで）: サムネ1枚だけの画像投稿（`images1+reply`）→それも不可なら text_only（本投稿にリンク）で即投稿。

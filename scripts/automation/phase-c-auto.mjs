@@ -144,16 +144,28 @@ async function main() {
   const xOpts = loadXPostOptions();
   const windowCheck = resolvePostWindow(new Date(), xOpts);
   const plan = buildAttachmentPlan(args.slug, xOpts);
+  const inspectionPath = path.join(ROOT, "logs", "article", `${args.slug}.independent-inspection.json`);
+  const inspectionDone = existsSync(inspectionPath);
 
   console.log(`\n=== PHASE C NEXT ACTION [browser post] ${args.slug} ===`);
   if (!windowCheck.postNow) {
     console.log(`0. 投稿時間帯(postWindow ${xOpts.postWindow.start}-${xOpts.postWindow.end})より前のため、` +
       `${windowCheck.waitUntil.toISOString()} まで投稿を保留してから以下を実行（約${windowCheck.waitMinutes}分待機）`);
   }
+  // 独立検品ゲート: X 直接投稿の前に、生成の文脈を持たない検品エージェントで全画像を白紙再検査する。
+  if (xOpts.attachSlides) {
+    if (!inspectionDone) {
+      console.log(`0-検品. **【必須】独立検品を先に実行**: npm run sumalabo:inspect -- --slug ${args.slug} でプロンプト生成 →`);
+      console.log(`   生成の文脈を持たない別 Task エージェントを起動し全画像を白紙検査 → 結果を logs/article/${args.slug}.independent-inspection.json に保存。`);
+      console.log(`   needs_revision は該当のみ最大2回再生成→直らなければ X から除外（記事公開は止めない）。検品後に本投稿の画像は xSelection に自動で切り替わる。`);
+    } else {
+      console.log(`0-検品. 独立検品済み（logs/article/${args.slug}.independent-inspection.json）。selectionSource=${plan.selectionSource}。`);
+    }
+  }
   console.log(`1. npm run social:generate-x-post -- --slug ${args.slug} で投稿文を生成・確認（logs/social/${args.slug}.x-post.json に本投稿文・reply・attachmentPlan が入る）`);
   if (plan.attach.length > 0) {
-    console.log(`2. Chrome で x.com/compose/post を前面で開き、本投稿文を入力後、以下の画像 ${plan.attach.length} 枚を添付（1枚目=サムネ or slide01。画像投稿がバズの主戦場）:`);
-    console.log("   （既存のクリップボード/ファイル選択実績方式を流用。複数枚は x-post-chrome.ps1 に -ImagePath を複数渡す or 1枚ずつ添付。添付枚数の一致をDOMで検証してから投稿）");
+    console.log(`2. Chrome で x.com/compose/post を前面で開き、本投稿文を入力後、以下の画像 ${plan.attach.length} 枚を添付（独立検品の xSelection・1枚目=サムネ）:`);
+    console.log("   （既存のクリップボード/ファイル選択実績方式を流用。複数枚は x-post-chrome.ps1 に -ImagePaths を渡す or 1枚ずつ添付。添付枚数の一致をDOMで検証してから投稿）");
     for (const f of plan.attach) console.log(`   - ${f}`);
     if (plan.linkInReply) {
       console.log("2b. 本投稿には記事リンクを入れない（リンク付き投稿は露出が絞られるため）。本投稿は画像＋短文＋ハッシュタグのみ。");
