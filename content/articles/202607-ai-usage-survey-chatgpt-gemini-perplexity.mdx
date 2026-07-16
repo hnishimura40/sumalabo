@@ -1,0 +1,377 @@
+---
+title: "ChatGPTが47.5％で最多。でも「日本で一番使われているAI」とは言い切れない理由"
+slug: "202607-ai-usage-survey-chatgpt-gemini-perplexity"
+type: "news"
+category: "ニュースをかみくだく"
+description: "305人への調査でChatGPTが47.5％、Gemini29.5％、Perplexity3.6％という結果が話題です。ただしこれは日本全体の市場シェアではなく、回答者が自己申告した「最もよく使うAI」。数字の意味と、この手の調査の読み方を、確定・解釈・不明を分けてやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-ai-usage-survey-chatgpt-gemini-perplexity.webp"
+thumbnailAlt: "「一番使うAIは？」のサムネイル。ひまりが調査員風の装いで虫めがねとクリップボードを手に、ChatGPT・Gemini・Perplexityの棒グラフボードを確かめ、らぼまるが『読み方メモ』を掲げる、305人調査の数字を読む活用シーン型のイラスト"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "生成AI"
+  - "ChatGPT"
+  - "Gemini"
+  - "Perplexity"
+  - "調査データの読み方"
+  - "AI利用実態"
+  - "すまラボ"
+related:
+  - "202607-google-play-store-fee-cut-japan"
+  - "202607-claude-fable-5-free-extension-july20"
+pubDate: "2026-07-17"
+updated: "2026-07-17"
+publishAt: "2026-07-17T05:55:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+2026年7月16日に公表された305人への調査で、最もよく使うAIはChatGPTが47.5％、Geminiが29.5％、Perplexityが3.6％という結果が出ました。「一番使われているAIはChatGPT」という見出しが注目を集めていますが、この数字が何を測ったものなのかは、少し立ち止まって確認する価値があります。この記事では、結果の中身と、この手の調査の読み方を、確定・解釈・不明を分けてやさしく整理します。
+
+<Summary30>
+  <ol>
+    <li>今回の305人調査では、最もよく使うAIは<strong>ChatGPT47.5％・Gemini29.5％・Perplexity3.6％</strong>だった</li>
+    <li>複数のAIを<strong>使い分ける人も9.5％</strong>いた</li>
+    <li>これは自己申告の「最もよく使うAI」であり、<strong>日本全体の市場シェアではない</strong></li>
+    <li>回答者の募集方法や調査時期が公表されておらず、<strong>一つの参考値</strong>として読むのが安全</li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "47.5%", cap: "ChatGPTが最多（今回の回答者内）" },
+    { num: "305人", cap: "調査対象は20〜59歳の男女" },
+    { num: "参考値", cap: "市場シェアではなく自己申告の結果" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">47.5％なら、日本のAI利用者の半分がChatGPTってこと？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">そこまでは分からないよ。今回は305人にメインのAIを聞いた結果なんだ。</CharacterBubble>
+
+## 先に結論：ChatGPTが最多、でも市場シェアではない
+
+<p class="lead">今回の調査で<strong>ChatGPTが最多</strong>だったのは事実です。ただし、これは<strong>日本全体のAI市場シェアが確定したという話ではありません</strong>。</p>
+
+注目したいのは「ChatGPTが1位だった」ことだけではありません。利用率、市場シェア、最もよく使うAIは、それぞれ意味が違います。今回のニュースは、AIの順位を決める材料というより、調査結果をどこまで信じてよいのかを考える題材として見ると分かりやすくなります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず結論を、1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/slide01-ai-usage-survey.webp"
+         alt="「まず結論」の図解。305人に一番よく使うAIを聞いたところChatGPTが47.5％で最多。ただし日本全体の市場シェアではなく、今回の回答者の中での結果であることを整理。ひまりが数字カードを見比べ、らぼまるが補足する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：ChatGPTが最多だが市場シェアではない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>質問</strong>：305人に「一番よく使うAI」を聞いた</li>
+      <li><strong>結果</strong>：ChatGPTが47.5％で最多</li>
+      <li><strong>注意</strong>：日本全体の市場シェアではない</li>
+      <li><strong>結論</strong>：今回の回答者の中での結果として読む</li>
+    </ul>
+  </div>
+</section>
+
+## 305人に「最もよく使うAI」を聞いた調査
+
+<p class="lead">2026年7月16日、ナレッジホールディングスが、生成AIの利用状況に関する調査結果を公表しました。</p>
+
+調査対象は20〜59歳の男女305人です。インターネットアンケート形式で、最もよく利用しているAI、利用頻度、AIを選ぶ理由の3項目が質問されました。
+
+<div class="table-card article-wide-block">
+
+| 回答 | 割合 | 人数の目安 |
+|---|---:|---:|
+| ChatGPT | 47.5％ | 約145人 |
+| Gemini | 29.5％ | 約90人 |
+| Perplexity | 3.6％ | 約11人 |
+| 複数を使い分ける | 9.5％ | 約29人 |
+| AIを使っていない | 9.8％ | 約30人 |
+
+</div>
+
+<Note>小数第2位以下を四捨五入しているため、合計は100％になりません。（出典：ナレッジHD調査リリース）</Note>
+
+この調査の中では、ChatGPTがGeminiを約18ポイント上回りました。一方で、Geminiも29.5％を占め、今回の回答者の中では一定の存在感がありました。ChatGPTだけに利用が集中している、という結果ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">回答割合を、棒グラフで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/slide02-ai-usage-survey.webp"
+         alt="「305人の回答」の図解。ChatGPT47.5％、Gemini29.5％、Perplexity3.6％、使い分け9.5％、使っていない9.8％を横棒グラフで整理し、四捨五入のため合計は100％にならないと注記。らぼまるが最上段を指して整理する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：305人の回答割合</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>ChatGPT</strong>：47.5％（約145人）</li>
+      <li><strong>Gemini</strong>：29.5％（約90人）</li>
+      <li><strong>Perplexity</strong>：3.6％（約11人）</li>
+      <li><strong>使い分け</strong>：9.5％／<strong>使っていない</strong>：9.8％</li>
+    </ul>
+  </div>
+</section>
+
+## 「利用率」「市場シェア」「最もよく使うAI」は別の数字
+
+<p class="lead">今回の調査で分かったのは、回答者が自己申告した「<strong>最もよく使うAI</strong>」であり、<strong>市場シェアではありません</strong>。</p>
+
+似た言葉でも、調べている内容は異なります。
+
+<div class="table-card article-wide-block">
+
+| 言葉 | 主な意味 | 確認したい条件 |
+|---|---|---|
+| 利用率 | 調査対象のうち、サービスを使った人の割合 | 期間、利用経験の定義 |
+| 市場シェア | 市場全体に占める割合 | 売上、契約数、利用者数、アクセス数など |
+| 最もよく使うAI | 回答者がメインだと考えるAI | 選択肢、自己申告、回答方法 |
+
+</div>
+
+今回の質問は「現在、最もよく利用しているAIサービスはどれですか」という単一回答です。そのため、「ChatGPTの国内利用率が47.5％」「生成AI市場の47.5％をChatGPTが占める」と言い換えることはできません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">3つの数字の違いを、カードで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/slide03-ai-usage-survey.webp"
+         alt="「3つの数字は別もの」の図解。利用率＝使った人の割合、市場シェア＝市場全体に占める割合、一番よく使うAI＝回答者が選んだメインのAIの3枚を並べ、今回調べたのは一番よく使うAI、47.5％＝国内市場シェアではない、と整理。らぼまるがカードを仕分ける構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：3つの数字は別もの</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>利用率</strong>：使った人の割合</li>
+      <li><strong>市場シェア</strong>：市場全体に占める割合</li>
+      <li><strong>一番よく使うAI</strong>：回答者が選んだメインのAI</li>
+      <li><strong>結論</strong>：47.5％＝国内市場シェアではない</li>
+    </ul>
+  </div>
+</section>
+
+## AIを選ぶ理由は「性能」だけではない
+
+<p class="lead">利用者は回答の賢さだけでなく、<strong>使いやすさや無料範囲、速さ</strong>も重視していました。</p>
+
+AIを利用している275人に、サービスを選んだ理由を複数回答で聞いた結果は次のとおりです。
+
+<div class="table-card article-wide-block">
+
+| 選んだ理由 | 割合 |
+|---|---:|
+| 使いやすい | 50.2％ |
+| 無料で使える範囲が広い | 42.6％ |
+| 回答が速い | 40.0％ |
+| 検索に強い | 38.6％ |
+| 回答の質が高い | 36.0％ |
+
+</div>
+
+<Note>複数回答のため、合計は100％を超えます。（出典：ナレッジHD調査リリース）</Note>
+
+最も多かったのは「使いやすい」でした。ただし、これは「ChatGPTの性能が最も高い」と証明する結果ではありません。利用者が多いことと、あらゆる用途で性能が優れていることは別の話で、性能表の数字だけでなく、画面の分かりやすさや無料で試せる範囲も、選ぶ際に重視されていることがうかがえます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">選ばれた理由を、ランキングで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/slide04-ai-usage-survey.webp"
+         alt="「選ばれた理由」の図解。使いやすい50.2％を最上位に、無料で使える範囲が広い42.6％、回答が速い40.0％、検索に強い38.6％、回答の質が高い36.0％をランキングで整理し、AI利用者275人・複数回答と注記。ひまりが使いやすさや速さのカードも見比べる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：AI選びは使いやすさが最多</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>使いやすい</strong>：50.2％（最多）</li>
+      <li><strong>無料で使える範囲が広い</strong>：42.6％</li>
+      <li><strong>回答が速い</strong>：40.0％／<strong>検索に強い</strong>：38.6％</li>
+      <li><strong>回答の質が高い</strong>：36.0％（AI利用者275人・複数回答）</li>
+    </ul>
+  </div>
+</section>
+
+## 「週に数回以上が82.2％」は誰の中での数字か
+
+<p class="lead">82.2％という数字の分母は、全回答者305人ではなく、<strong>AIを利用している275人</strong>です。</p>
+
+AI利用者275人の利用頻度は、「ほぼ毎日」が45.8％、「週に数回」が36.4％でした。この2つを合わせて、週に数回以上使う人が82.2％とされています。
+
+ここだけを見ると「回答者の8割以上が日常的にAIを使っている」と受け取ってしまうかもしれません。しかし、AIを使っていない30人は、この利用頻度の集計に含まれていません。全回答者305人を分母に置き直すと、週に数回以上使う人は約226人で、全体の約74％です。どちらも同じ調査結果ですが、分母によって受ける印象は変わります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">分母がどこかを、図で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/slide05-ai-usage-survey.webp"
+         alt="「82.2％の分母」の図解。全305人からAI利用者275人を切り出し、その中でほぼ毎日45.8％＋週に数回36.4％＝82.2％を示し、全305人で見ると約226人・約74％になると整理。らぼまるが分母の枠を指し示す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：82.2％の分母は275人</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>分母</strong>：AI利用者275人（全305人ではない）</li>
+      <li><strong>内訳</strong>：ほぼ毎日45.8％＋週に数回36.4％＝82.2％</li>
+      <li><strong>全305人で見ると</strong>：約226人・約74％</li>
+      <li><strong>結論</strong>：同じ結果でも分母で印象が変わる</li>
+    </ul>
+  </div>
+</section>
+
+## 数字を読むときに注意したい点
+
+<p class="lead">今回の調査は興味深い一方、<strong>日本全体の傾向に広げるには分からない情報が残っています</strong>。</p>
+
+<Callout kind="facts" title="回答者の構成で確認できること">
+  <ul>
+    <li>回答者の74.1％が男性で、性別構成に偏りがある</li>
+    <li>AIを使っていない人は9.8％で、AI利用に関心の高い層が多い可能性がある</li>
+    <li>Perplexityを最もよく使うと答えた人は3.6％＝約11人</li>
+  </ul>
+</Callout>
+
+とくに気をつけたいのが、少人数の割合です。リリースでは、Perplexity利用者の72.7％がほぼ毎日使うとの結果も紹介されています。ただし、母数が約11人のグループでは、1人違うだけで割合が約9ポイント変わります。
+
+<Note>「Perplexity利用者の多くは毎日使う」と広く一般化するより、<Chip kind="facts">確定</Chip>「今回の11人では利用頻度が高かった」と読むのが安全です。</Note>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">3.6％を人数に直すと。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/slide06-ai-usage-survey.webp"
+         alt="「3.6％は約11人」の図解。Perplexityの3.6％を人数に直すと約11人で、ほぼ毎日使うが72.7％（11人中では約8人）、1人違うと割合が約9ポイント動く、少人数の割合は動きやすいと整理。ひまりが百分率と人数を見比べる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Perplexity 3.6％は約11人</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Perplexity</strong>：3.6％ ↔ 約11人</li>
+      <li><strong>ほぼ毎日使う</strong>：72.7％（11人中では約8人）</li>
+      <li><strong>1人違うと</strong>：割合は約9ポイント動く</li>
+      <li><strong>結論</strong>：少人数の割合は動きやすい</li>
+    </ul>
+  </div>
+</section>
+
+さらに、調査方法はインターネットアンケートとされていますが、回答者をどこで募集したのかは公表資料から確認できません。ClaudeやMicrosoft Copilotなどをどう扱ったのか、完全な調査票も公開されていないため、回答者に示した選択肢によって順位や割合が変わる可能性もあります。
+
+また、調査を発表したナレッジホールディングスは、SEOやLLMOなどのマーケティング支援を行う企業です。企業が自社で調査を行うこと自体に問題はありませんが、リリース内の集計結果と、発表企業による分析や意味づけは分けて読む必要があります。
+
+## 確認できたことと、まだ分からないこと
+
+<p class="lead">調査で公表された事実と、資料だけでは判断できない点を分けると、ニュースの輪郭が見えやすくなります。</p>
+
+<Callout kind="facts" title="公表資料で確認できる（集計事実）">
+  <ul>
+    <li>対象は20〜59歳の305人、ネット調査、男性74.1％、設問3問</li>
+    <li>ChatGPT47.5％、Gemini29.5％、Perplexity3.6％、使い分け9.5％</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="リリース側の解釈（断定しない）">
+  <ul>
+    <li>リリース側は、ChatGPTを「総合力」、Perplexityを「品質重視の利用者に支持」と分析している</li>
+    <li>「日常インフラとして定着」などの表現は、集計された数字そのものではなく企業側の解釈</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="公表資料では不明（2026年7月時点）">
+  <ul>
+    <li>調査時期、対象地域、回答者の募集元、補正の有無</li>
+    <li>ClaudeやCopilotなどを含む完全な選択肢</li>
+    <li>日本全体における各AIの利用率や市場シェア</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">「集計された事実」と「発表側の分析」「まだ分からない点」は、分けて読むのがコツだよ。</CharacterBubble>
+
+実際、別の大規模調査では、生成AIを利用した人の割合を約5割とする結果も公表されています。設問や対象年齢が異なるため直接比較はできませんが、今回の回答者はAI利用者が多い集団だった可能性があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">確定・解釈・不明を、3つに仕分け。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/slide07-ai-usage-survey.webp"
+         alt="「わかったこと／わからないこと」の3列図解。わかった＝305人・ネット調査・男性74.1％・設問3問・ChatGPT47.5％・Gemini29.5％、発表側の分析＝ChatGPTは総合力・Perplexityは品質重視、わからない＝調査時期・地域・募集元・補正の有無・完全な選択肢、を仕分け、日本全体の市場シェアは判断できないと結ぶ。らぼまるが情報カードを箱に仕分ける構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：確定・解釈・不明の整理</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>わかった</strong>：305人・ネット調査・男性74.1％・主要割合</li>
+      <li><strong>発表側の分析</strong>：ChatGPTは総合力／Perplexityは品質重視</li>
+      <li><strong>わからない</strong>：調査時期・地域・募集元・補正・完全な選択肢</li>
+      <li><strong>結論</strong>：日本全体の市場シェアは判断できない</li>
+    </ul>
+  </div>
+</section>
+
+## このニュースから分かること：順位より「調査の中身」を見る
+
+<p class="lead">順位そのものより、<strong>ChatGPTとGeminiが主要な選択肢となり、複数のAIを使う人もいる</strong>ことが見えてきます。</p>
+
+今回の調査では、ChatGPTをメインにする人が最多でした。一方で、Geminiも約3割を占め、使い分ける人も約1割いました。少なくとも一部の利用者が複数のAIを使い分けていることは分かりますが、今回の調査では具体的な利用シーンを聞いていないため、どの用途で何が選ばれたかまでは分かりません。
+
+そしてAIニュースを見るときは、順位だけでなく次の点を確認すると、数字の意味を落ち着いて読めます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">調査を読むコツを、チェックリストで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/slide08-ai-usage-survey.webp"
+         alt="「調査を読む6つのコツ」の図解。だれに聞いた？／何人に聞いた？／選択肢は？／数字の分母は？／実利用データ？／自己申告？の6項目を3組のカードで示し、順位だけでなく調査の中身を見る、と結ぶ。ひまりがチェックリストを読み、らぼまるが最後の確認をする構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：調査を読む6つのコツ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>チェックリスト（コピー可能）</strong></p>
+    <ul>
+      <li>だれに聞いた？／何人に聞いた？</li>
+      <li>選択肢は？／数字の分母は？</li>
+      <li>実利用データ？／自己申告？</li>
+      <li><strong>結論</strong>：順位だけでなく調査の中身を見る</li>
+    </ul>
+  </div>
+</section>
+
+## この結果だけでAIを乗り換えたり課金したりする必要はない
+
+<p class="lead">利用者が多いという理由だけで、<strong>現在使っているAIを変更する必要はありません</strong>。</p>
+
+ChatGPTが最多だったことは、知名度や使いやすさを知る参考にはなります。ただし、文章作成、検索、画像生成、長い資料の整理など、得意分野はサービスや機能によって変わります。
+
+<CharacterBubble speaker="himari" mood="aha">順位を見て慌てて乗り換えなくてもいいんだね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">うん。この調査では有料版の満足度や費用対効果までは調べていないからね。まずは無料で試して、自分の作業が楽になるかを見るのが現実的だよ。</CharacterBubble>
+
+## まとめ：分かったのは「305人の回答傾向」まで
+
+<p class="lead">今回の調査ではChatGPTが47.5％で最多でしたが、<strong>分かったのは305人の回答傾向まで</strong>です。</p>
+
+- Geminiは29.5％、Perplexityは3.6％で、使い分ける人も9.5％いた
+- AIを選ぶ理由は、性能だけでなく使いやすさ・無料範囲・速さも重視されていた
+- 回答者の74.1％が男性、Perplexity利用者は約11人、募集方法や調査時期は非公表
+
+「ChatGPTが日本の市場シェアで1位」と受け取るのではなく、「今回の305人調査では、メインのAIとしてChatGPTを選ぶ人が最多だった」と整理するのが正確です。AIに限らず、調査ニュースでは「何％だったか」と同じくらい、「誰に、何を、どう聞いたのか」を見ることが大切です。
+
+## 参考情報
+
+この記事は調査リリースと主要報道をもとに整理しています。調査時期・対象地域・回答者の募集元・補正の有無は公表資料から確認できず、日本全体の利用率や市場シェアを示すものではありません。最終的な数字の解釈は、必ず一次資料でご確認ください。
+
+- [PR TIMES：【調査リリース】ChatGPT・Perplexity・Gemini、一番使われているAIはどれ？【305人調査】](https://prtimes.jp/main/html/rd/p/000000034.000166736.html)
+- [ナレッジホールディングス：ChatGPT・Perplexity・Gemini──一番使われているAIはどれ？](https://knowledge-hd.co.jp/chatgpt・perplexity・gemini──一番使われているaiはどれ？/)
+- [モバイル社会研究所：生成AIの利用動向](https://www.moba-ken.jp/project/lifestyle/20260406.html)
+- [帝国データバンク：生成AI活用に関する企業アンケート](https://www.tdb.co.jp/report/economic/20260514-genai/)
