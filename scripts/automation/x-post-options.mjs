@@ -111,12 +111,22 @@ export function loadInspectionSelection(slug, root = ROOT) {
   try { data = JSON.parse(readFileSync(p, "utf-8")); } catch { return null; }
   const sel = Array.isArray(data.xSelection) ? data.xSelection : [];
   if (sel.length === 0) return null;
+  // 検品 JSON の xSelection は素の id（例 "slide02"）で、実ファイルは記述サフィックス付き
+  // （"slide02-12gatu-to-9gatu.webp"）のことがある。完全一致→前方一致（basename が id または id- で始まる）
+  // の順に実ファイルへ解決する（2026-07-15: 素の id が解決できず1枚だけ添付になる不具合を修正）。
+  const slideDir = path.join(root, "public", "images", "articles", slug);
+  const slideFiles = existsSync(slideDir) ? readdirSync(slideDir).filter((f) => f.endsWith(".webp")) : [];
   const resolved = [];
   for (const id of sel.slice(0, 4)) {
-    let file;
-    if (id === "thumbnail") file = path.join(root, "public", "images", "thumbnails", `${slug}.webp`);
-    else file = path.join(root, "public", "images", "articles", slug, `${id}.webp`);
-    if (existsSync(file)) resolved.push(file);
+    if (id === "thumbnail") {
+      const thumb = path.join(root, "public", "images", "thumbnails", `${slug}.webp`);
+      if (existsSync(thumb)) resolved.push(thumb);
+      continue;
+    }
+    const exact = path.join(slideDir, `${id}.webp`);
+    if (existsSync(exact)) { resolved.push(exact); continue; }
+    const match = slideFiles.find((f) => f === `${id}.webp` || f.startsWith(`${id}-`));
+    if (match) resolved.push(path.join(slideDir, match));
   }
   return resolved.length ? resolved : null;
 }
