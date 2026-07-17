@@ -1,0 +1,406 @@
+---
+title: "米国の先生はClaudeが1年間無料に。日本は対象外、その中身と注意点をやさしく整理"
+slug: "202607-claude-for-teachers-free-us"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Anthropicが米国の認証済みK-12教員向けに「Claude for Teachers」の無償提供を始めました。2027年6月30日までの登録で1年間無料、授業準備だけでなくクラスデータ分析や定例作業の自動化まで含みます。ただし日本の先生は現時点で対象外。何が始まったのか、無料の中身、生徒データやFERPAで誤解しやすい点を、公式情報と報道を分けてやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-claude-for-teachers-free-us.webp"
+thumbnailAlt: "「先生向けClaude、1年無料」のサムネイル。放課後の教員作業スペースで、ひまりがノートPCで教材カードやクラス表、午後4時の定例タスクを見比べ、らぼまるが『米国のみ』『1年間』『データ確認』の3枚を整理する活用シーン型のイラスト"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude"
+  - "Claude for Teachers"
+  - "Anthropic"
+  - "教育AI"
+  - "K-12"
+  - "FERPA"
+  - "すまラボ"
+related:
+  - "202607-claude-fable-5-free-extension-july13"
+  - "202607-claude-fable-5-usage-credits-switch"
+pubDate: "2026-07-18"
+updated: "2026-07-18"
+publishAt: "2026-07-18T05:40:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Anthropicが、米国の教員向けに「Claude for Teachers」の無償提供を始めました。授業案を作るだけでなく、教育基準に沿った教材探し、クラスデータの整理、毎登校日の定例作業の自動化まで想定したサービスです。ただし、対象は米国の認証済みK-12教員に限られ、日本の先生が今すぐ無料で使える制度ではありません。この記事では、何が始まったのか、なぜ注目されているのか、プライバシー面で何に注意すべきかを、公式情報と報道を分けてやさしく整理します。
+
+<Summary30>
+  <ol>
+    <li>対象は<strong>米国の認証済みK-12教員個人</strong>で、<strong>日本は現時点で対象外</strong></li>
+    <li><strong>2027年6月30日まで</strong>に登録すると、プレミアムClaude機能を<strong>1年間無料</strong>で利用できる</li>
+    <li>授業案の作成だけでなく、<strong>教育基準の参照・クラスデータ分析・定例作業の自動化</strong>まで含む</li>
+    <li>入力データはモデル学習に使わないが、<strong>FERPA認証済みとは言えず</strong>、生徒データの利用には学校側の権限やルール確認が必要</li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "1年間", cap: "認証後から無料で使える期間" },
+    { num: "6/30", cap: "登録期限（2027年）" },
+    { num: "米国のみ", cap: "対象地域。日本は対象外" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">先生向けにClaudeが1年無料って聞いたよ。日本でも使えるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">対象は米国の認証済みK-12教員だよ。日本の先生は今のところ対象外。まず中身を整理しよう。</CharacterBubble>
+
+## 何が始まった？米国のK-12教員向け専用プラン
+
+<p class="lead">今回始まったのは、米国の<strong>K-12教員向けに用意された専用のClaudeプラン</strong>です。日本向けのサービスではありません。</p>
+
+Anthropicは2026年7月14日、「Claude for Teachers」を発表しました。対象となるのは、米国のK-12学校で働く認証済みの個人教員や教育職員です。学校のメールアドレスなどを使って、対象者であることを確認する仕組みです。
+
+<Note>K-12は、米国の幼稚園から高校卒業相当までの教育段階を指します。</Note>
+
+<Callout kind="facts" title="確定（公式）">
+  <ul>
+    <li>対象：米国の認証済みK-12教員・教育職員（個人）</li>
+    <li>登録期限：2027年6月30日まで</li>
+    <li>無償期間：認証後から1年間</li>
+    <li>対象地域：米国のみ（日本は現時点で対象外）</li>
+    <li>教員向けであり、生徒向けサービスではない</li>
+  </ul>
+</Callout>
+
+「教員であれば無料で使える」わけではなく、現時点では米国の対象者に限られます。また、1年間無料という案内であり、永久に無料で使えると決まったわけでもありません。無料期間終了後の料金や継続条件は、現時点では明らかになっていません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず結論を、対象と期間とセットで1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-for-teachers-free-us/slide01-claude-for-teachers.webp"
+         alt="「米国の先生に1年無料」の図解。米国のみ・先生向け・1年間・Claudeの4つのラベルで、Claude for Teachersが米国の教員向けに1年間無償提供されることを整理。ひまりが案内画面を見て『日本でも使えるの？』と気づく構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：米国の先生に1年間無料</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>対象</strong>：米国の認証済みK-12教員（先生向け・生徒向けではない）</li>
+      <li><strong>期間</strong>：認証後から1年間</li>
+      <li><strong>地域</strong>：米国のみ。日本は対象外</li>
+      <li><strong>結論</strong>：日本の先生が今すぐ無料で使える制度ではない</li>
+    </ul>
+  </div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">登録期限と対象条件を、カレンダーで見比べます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-for-teachers-free-us/slide02-claude-for-teachers.webp"
+         alt="「登録は2027年6月30日まで」の図解。米国のみ・認証あり・K-12・1年間・日本は対象外のラベルで、米国側にはチェック、日本側には対象外の案内札を配置。らぼまるが大きなカレンダーと対象条件を指し示し、ひまりが横で確認する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：登録は2027年6月30日まで</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>登録期限</strong>：2027年6月30日まで</li>
+      <li><strong>条件</strong>：認証済みのK-12教員（学校メールなどで確認）</li>
+      <li><strong>無償期間</strong>：認証後から1年間</li>
+      <li><strong>日本</strong>：現時点では対象外</li>
+    </ul>
+  </div>
+</section>
+
+## 無料で使えるのは何？チャットだけではない
+
+<p class="lead">無償提供の中身は、単なるチャット機能だけではありません。ただし、<strong>有料版とまったく同じ条件で無制限</strong>と受け取らない方がよいでしょう。</p>
+
+Claude for Teachersは、Claude Proで提供される機能を含む、教員向けの無料プランです。ただし、利用上限や管理機能を含め、通常の有料プランと完全に同じ条件とは限りません。
+
+<Callout kind="facts">
+  <ul>
+    <li>プレミアムClaude機能</li>
+    <li>教員向けのスキル</li>
+    <li>Learning Commonsとの接続</li>
+    <li>Claude Code / Claude Cowork</li>
+    <li>クラスデータの分析・定例作業の自動化</li>
+  </ul>
+</Callout>
+
+利用回数やClaude Code、Coworkの正確な上限は<Chip kind="unc">未確定</Chip>公表されていません。「有料版とまったく同じ条件で無制限に使える」と受け取らない方がよいでしょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">無料の中身を、4つの機能カードで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-for-teachers-free-us/slide03-claude-for-teachers.webp"
+         alt="「無料なのはチャットだけではない」の図解。上位機能・教育スキル・Claude Code・Coworkの4つの機能カードを並べ、背景に教材や表、作業リストを抽象的に配置。ひまりが『文章だけじゃないんだ』と気づく構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：無料なのはチャットだけではない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>プレミアムClaude機能</strong>：通常の無料版より利用枠が広い</li>
+      <li><strong>教員向けスキル</strong>：授業計画や理解度に応じた調整など</li>
+      <li><strong>Claude Code / Cowork</strong>：定例作業の自動化に使う</li>
+      <li><strong>注意</strong>：各機能の正確な上限は公表されていない</li>
+    </ul>
+  </div>
+</section>
+
+## 授業準備だけではない：教育基準・クラス分析・自動化
+
+<p class="lead">今回の注目点は、AIに授業案を書かせるだけで終わっていないことです。<strong>教材の整理や学校業務の流れそのもの</strong>にAIを組み込む使い方が想定されています。</p>
+
+### Learning Commonsで米国50州の教育基準を参照
+
+Learning Commonsとの接続では、米国50州の教育基準や、学習の順序、前提となる技能、カリキュラム情報を参照できます。たとえば授業案を考えるとき、単に「中学生向けの数学問題を作って」と頼むだけでなく、州ごとの教育基準に沿って内容を確認しやすくなります。
+
+一方で、対応しているのは米国の教育基準です。日本の学習指導要領や教科書、評価基準に対応しているとは発表されていません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">教育基準への接続を、地図と教材カードで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-for-teachers-free-us/slide04-claude-for-teachers.webp"
+         alt="「米国50州の教育基準につながる」の図解。米国50州・教育基準・教材さがし・学びの順番・日本は別のラベルで、らぼまるが米国地図と教材カードを線でつないで整理し、ひまりが日本の教科書カードを持ち『日本向けではない』と確認する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：米国50州の教育基準につながる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>接続先</strong>：米国50州の教育基準・学習の順序・前提技能</li>
+      <li><strong>使い方</strong>：基準に沿って教材や授業案を確認しやすい</li>
+      <li><strong>注意</strong>：対応は米国基準。日本の学習指導要領は別</li>
+    </ul>
+  </div>
+</section>
+
+### クラスデータをまとめて分析・毎登校日の作業を自動化
+
+公式には、名簿・学習評価・出欠状況・教員のメモ・学習状況の記録といった情報をまとめて扱う例が示されています。これらをもとに、つまずいている生徒の傾向を整理したり、クラス全体の状況を確認したりする使い方が想定されています。
+
+<Callout kind="unc" title="注意（未確定・運用面）">
+  <ul>
+    <li>データを入力できることと、入力してよいことは別</li>
+    <li>特に氏名・成績・出欠・学習評価などは慎重に扱う必要がある</li>
+  </ul>
+</Callout>
+
+Claude CodeやClaude Coworkを使い、定例作業を自動化する例も紹介されています。公式発表では、毎登校日の午後4時に退室チケット（授業の最後に生徒が理解度や疑問点を書いて提出する短い振り返り）を確認する処理が例として挙げられています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">クラス分析と定例作業の自動化を、ダッシュボードで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-for-teachers-free-us/slide05-claude-for-teachers.webp"
+         alt="「クラス分析と定例作業も」の図解。名前リスト・学習評価・出欠データ・教員メモ・毎登校日のラベルで、ひまりがクラス情報のダッシュボードを確認し、時計は午後4時、カレンダーと矢印で毎登校日に作業が動く流れを表す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：クラス分析と定例作業も</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>扱う例</strong>：名簿・学習評価・出欠・教員メモ・学習記録</li>
+      <li><strong>自動化例</strong>：毎登校日の午後4時に退室チケットを確認</li>
+      <li><strong>注意</strong>：入力できることと、入力してよいことは別</li>
+    </ul>
+  </div>
+</section>
+
+## なぜ話題になっている？教育AIの役割が一段広がった
+
+<p class="lead">Claude for Teachersが注目される理由は、<strong>教育AIの役割が一段広がった</strong>ためです。</p>
+
+これまで教員向けAIは、授業案を作る・問題文を作る・保護者向けの文章を整える・教材の説明を簡単にする、といった使い方が中心でした。Claude for Teachersは、そこからさらに踏み込み、データ整理や日々の業務フローまで対象にしています。
+
+つまり、AIが「質問すると答えてくれる道具」から、「学校の仕事を一部支える道具」へ変わり始めた動きと見られます。
+
+<Callout kind="claims" title="企業側の説明（実証済みではない）">
+  <ul>
+    <li>Anthropicは、授業準備や事務作業の時間を減らし、先生が生徒と向き合う時間を増やせると説明している</li>
+    <li>ただし、これは企業側が示している狙い。実際にどれだけ作業時間が減るか、学習成果が上がるかはまだ十分に検証されていない</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="himari" mood="aha">道具というより、学校の仕事の一部を支える感じに近づいてるんだね。</CharacterBubble>
+
+## 入力データは学習に使わない。ただし「何でも入力してよい」ではない
+
+<p class="lead">Claude for Teachersに入力したデータは、Anthropicの<strong>モデル学習に使わない</strong>とされています。ただし、それだけでどんな情報でも入力できるわけではありません。</p>
+
+対象には、チャットに入力した内容・アップロードしたファイル・外部サービスから接続した情報・Claudeが生成した出力が含まれます。学校でAIを使う場合、生徒の情報がAIモデルの改善に再利用されるのではないかという不安があります。学習に使わないという方針は、生徒データの扱いを考えるうえで重要な条件の一つです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">学習非利用と、学校ルールの確認をセットで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-for-teachers-free-us/slide06-claude-for-teachers.webp"
+         alt="「入力データは学習に使わない」の図解。学習に不使用・入力データ・学校ルール・利用の権限・自由入力NGのラベルで、らぼまるがデータ箱とAI学習箱の間にストップ札を置き、もう一方の手で学校ルールのチェック表を示す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：入力データは学習に使わない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>学習に不使用</strong>：入力・アップロード・接続・出力を学習に使わない</li>
+      <li><strong>それでも</strong>：どんな情報でも入力してよいわけではない</li>
+      <li><strong>要確認</strong>：学校のルールと、データ処理の権限</li>
+      <li><strong>結論</strong>：「学習に使わない＝何でも安全」ではない</li>
+    </ul>
+  </div>
+</section>
+
+## 言い切れない点に注意：FERPA・AFT・スキル
+
+<p class="lead">ここは<strong>「公式で確認できること」と「確認できないこと」を分けて</strong>読むところです。安全性やお墨付きを断定しない方が正確です。</p>
+
+### FERPA認証済みとは言えない
+
+Anthropicは、米国の学校向けにK-12 Data Processing Addendum（生徒データをどのように処理するかを定めた契約文書）を用意しています。公式には、米国の教育記録に関する法律であるFERPAに沿うよう設計された仕組みとして説明されています。ただし、ここは表現に注意が必要です。
+
+<Callout kind="facts" title="公式で確認できる">
+  <ul>
+    <li>「FERPAに沿うよう設計されている」</li>
+    <li>K-12向けのData Processing Addendumが用意されている</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="確認できない（2026年7月時点）">
+  <ul>
+    <li>「FERPAの第三者認証を取得している」とは確認できない</li>
+    <li>「FERPA認証済みだから絶対に安全」とは言えない</li>
+  </ul>
+</Callout>
+
+そのため、「FERPA準拠の安全なサービス」と断定するより、「FERPAへの対応を意識した契約と設計が用意されている」と表現する方が正確です。
+
+### AFTの正式認証・巨大スキルライブラリとも言い切れない
+
+Anthropicは、米国教員連盟AFTのGold Standardを踏まえた設計であると説明していますが、その基準は現時点で策定中とされ、AFTから正式認証を受けたと確認できる情報はありません。また、教員向けスキルは用意されているものの、現時点で公開されている内容だけから「大量の教育機能がそろった巨大ライブラリ」と断定するのは早いでしょう。
+
+<CharacterBubble speaker="labo" mood="worried">「設計に取り入れた」と「正式認証を取った」は別だよ。ここは断定しないのが安全。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">確認できることと、できないことを仕分け。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-for-teachers-free-us/slide07-claude-for-teachers.webp"
+         alt="「言い切れない点に注意」の図解。認証ではない・基準は策定中・巨大とは言えず・日本は対象外のラベルで、らぼまるが『公式で確認』と『確認できず』の2列にFERPA・AFT・教育スキル・日本対応のカードを仕分け、ひまりがメモを取る構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：言い切れない点に注意</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>公式で確認</strong>：FERPAに沿う設計・K-12向けDPA</li>
+      <li><strong>確認できず</strong>：FERPA第三者認証・AFT正式認証</li>
+      <li><strong>断定しない</strong>：巨大スキルライブラリとは言えない</li>
+      <li><strong>結論</strong>：安全・お墨付きを言い切らずに読む</li>
+    </ul>
+  </div>
+</section>
+
+## 生徒データを自由に入力できるわけではない
+
+<p class="lead">規約では、教員が<strong>生徒データを処理するための権限</strong>を持っていることが求められています。個人の判断だけで、氏名や成績を入力してよいとは限りません。</p>
+
+学校や学区のルール、契約、情報管理方針に従う必要があります。入力前には、次のような点を確認しておきたいところです。
+
+<Callout kind="facts" title="入力前に確認したいこと">
+  <ul>
+    <li>学校や教育委員会が利用を認めているか</li>
+    <li>児童・生徒の氏名を入力してよいか</li>
+    <li>成績や出欠情報を扱ってよいか</li>
+    <li>学習評価や教員メモを入力してよいか</li>
+    <li>ファイルがどこに保存されるか / 外部サービスと接続してよいか</li>
+  </ul>
+</Callout>
+
+<Note>モデル学習に使われないとしても、校内規程や個人情報保護の確認は別に必要です。</Note>
+
+## 確定していること・未確定なこと
+
+<p class="lead">今回の発表を、<strong>確定と未確定に分けて</strong>整理します。</p>
+
+<Callout kind="facts" title="確定（公式）">
+  <ul>
+    <li>米国の認証済みK-12教員が対象</li>
+    <li>2027年6月30日までの登録で1年間無料</li>
+    <li>プレミアムClaude機能・Learning Commons・Claude Code・Coworkを利用可能</li>
+    <li>入力データはモデル学習に使わない</li>
+    <li>現在は個人教員向け</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年7月時点）">
+  <ul>
+    <li>日本向けに提供されるか / 日本の学習指導要領に対応するか</li>
+    <li>無料期間終了後の料金</li>
+    <li>利用回数や各機能の正確な上限</li>
+    <li>学校・学区向けプランの開始日（「coming soon」とだけ案内）</li>
+    <li>実際にどれだけ業務時間を減らせるか</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、AIが学校の仕事に入り始めた流れを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-for-teachers-free-us/slide08-claude-for-teachers.webp"
+         alt="「AIが学校の仕事に入る」の図解。文章だけでない・校務を支える・管理も大事・日本はこれからのラベルで、左にチャット画面、右に教材・表・時計・作業フローを置き、ひまりが左から右への変化を理解し、らぼまるが『無料か』だけでなく『データ管理』も確認するチェック札を掲げる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：AIが学校の仕事に入る</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>変化</strong>：文章作成から、学校業務のワークフローへ</li>
+      <li><strong>広がる範囲</strong>：教材整理・基準確認・クラス分析・自動化</li>
+      <li><strong>見るべき点</strong>：無料かだけでなく、誰が使えて、どのデータを扱えるか</li>
+      <li><strong>日本</strong>：同様のサービスが来るなら、学校単位の管理が鍵</li>
+    </ul>
+  </div>
+</section>
+
+## 日本の先生にはどう関係する？
+
+<p class="lead">日本の先生は、現時点ではClaude for Teachersの<strong>対象外</strong>です。今すぐ申し込むためのニュースではなく、<strong>海外で教育AIがどこまで進み始めたか</strong>を見るニュースとして捉えるのがよいでしょう。</p>
+
+特に注目したいのは、AIの利用範囲が、授業案の作成・教材の整理・教育基準の確認・クラス状況の分析・定例作業の自動化へと広がっている点です。AIの役割が、文章作成から学校業務の仕組みづくりへ広がっています。
+
+日本で同様のサービスが始まる場合も、料金や性能だけでなく、学校単位で管理できるか、生徒データをどこまで扱えるかが重要になります。生徒データを使った実践を独自に始めるのではなく、まずは個人情報を含まない教材作成や業務整理から検討する方が、取り組みやすいでしょう。
+
+<CharacterBubble speaker="himari" mood="explain">日本ではまだ使えないけど、教育AIがどこまで来たかを見るニュース、として読むといいんだね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">そう。日本で似たサービスが出たら、無料かだけでなく、誰が使えて・どのデータを扱えて・学校が管理できるかを確認しよう。</CharacterBubble>
+
+## まとめ
+
+<p class="lead">Claude for Teachersは、米国の認証済みK-12教員に<strong>プレミアムClaude機能を1年間無償提供</strong>する取り組みです。<strong>日本の先生は現時点で対象外</strong>です。</p>
+
+2027年6月30日までに登録した対象者は、認証後から1年間利用できます。授業案の作成だけでなく、米国50州の教育基準への接続、クラスデータの分析、定例作業の自動化まで含まれる点が特徴です。
+
+入力データをモデル学習に使わない設計は重要ですが、FERPAの正式認証を受けたとは確認できず、生徒データの利用には学校側の権限やルール確認も必要です。今回のニュースで見えてきたのは、教育AIが「文章を作る便利なチャット」から、「学校の仕事の流れを支える仕組み」へ進み始めていることです。
+
+日本で同様のサービスが登場したときは、無料かどうかだけでなく、誰が使えるのか、どのデータを扱えるのか、学校側が管理できるのかまで確認する必要があります。
+
+<div class="related-links article-wide-block">
+  <a href="/articles/202607-claude-fable-5-free-extension-july13/">Claude Fable 5、無料枠が7月13日まで延長の解説を読む</a>
+  <a href="/articles/202607-claude-fable-5-usage-credits-switch/">Claude Fable 5、usage credits制への切り替えの解説を読む</a>
+</div>
+
+## 参考情報
+
+この記事は公式情報と主要報道をもとに整理しています。日本向け提供の有無、無料期間終了後の料金、FERPAの第三者認証、各機能の正確な上限は未確定・確認できない情報で、公式に断定されたものではありません。最終的な提供条件は、必ず公式の最新情報で確認してください。
+
+- [Anthropic公式：Claude for Teachers](https://www.anthropic.com/news/claude-for-teachers)
+- [Claude公式：Solutions for teachers](https://claude.com/solutions/teachers)
+- [Anthropicサポート：Claude for Teachers - your data and our terms](https://support.claude.com/en/articles/15926041-claude-for-teachers-your-data-and-our-terms)
+- [Anthropic公式：K-12 Data Processing Addendum](https://www.anthropic.com/legal/k12-dpa)
+- [The Verge：Anthropic introduced a Claude product for K-12 teachers](https://www.theverge.com/ai-artificial-intelligence/965544/anthropic-introduced-a-claude-product-for-k-12-teachers)
+- [EdSurge：Anthropic Introduces Claude for Teachers](https://edsurge.com/news/anthropic-introduces-claude-for-teachers)
