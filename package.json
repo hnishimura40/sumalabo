@@ -36,6 +36,7 @@
     "ledger:check": "node scripts/automation/ledger.mjs --check",
     "digest": "node scripts/automation/weekly-digest.mjs",
     "scout": "node scripts/automation/scout.mjs",
+    "scout:calibrate": "node scripts/automation/scout-calibration.mjs",
     "retract": "node scripts/automation/retract.mjs",
     "schedule:auto-run": "node scripts/automation/register-night-task.mjs",
     "night:report": "node scripts/automation/night-report.mjs",
