@@ -1,0 +1,23 @@
+{
+  "slug": "202607-claude-cowork-mobile-ios-android",
+  "checkedBy": "generator_self",
+  "checkedAt": "2026-07-18",
+  "overallPass": true,
+  "thumbnailCostume": "themed",
+  "thumbnail": { "verdict": "ok", "issues": [], "notes": "『スマホから“作業”を頼める』『Coworkがモバイル対応』。ひまり=ポジ驚き+外出先で仕事の装い(通勤コート/トートバッグ/スマホ/カフェ・駅背景)。らぼまる=雲+歯車で端末閉じても動く。装い根拠適用・化けなし・実在ロゴなし。" },
+  "slides": [
+    { "id": "slide01-cowork", "verdict": "ok", "issues": [], "notesText": "7月7日iOS/Android+web(従来デスクトップ)/クラウドで端末閉じても続く/同日M365書き込み/ベータ・万能でない。" },
+    { "id": "slide02-cowork", "verdict": "ok", "issues": [], "notesText": "Cowork=作業を任せる場所/7月7日web+モバイル/beta/複数ステップ最後まで。作業の流れ図。" },
+    { "id": "slide03-cowork", "verdict": "ok", "issues": [], "notesText": "クラウド実行/端末閉じても続く/スケジュールは端末オフでも/頼んで放っておく。" },
+    { "id": "slide04-cowork", "verdict": "ok", "issues": [], "notesText": "通勤中の実例3つ:メール下書き整理/カレンダー調整会議準備/資料下書き要約/着いたら確認するだけ。駅ホーム背景。" },
+    { "id": "slide05-cowork", "verdict": "ok", "issues": [], "notesText": "M365書き込み:メール下書き送信整理/カレンダー管理/OneDrive・SharePointファイル作成/Teams読み取りのみ。" },
+    { "id": "slide06-cowork", "verdict": "ok", "issues": [], "notesText": "Cowork(作業の委任) vs Claude Code(ターミナル開発)=別物。Teams読み取りのみ/beta。線引き明確。" },
+    { "id": "slide07-cowork", "verdict": "ok", "issues": [], "notesText": "5/11-31・120万セッション・60万組織超/業務33.4%/コンテンツ16.4%/ソフト8.7%(9割超が非コード)。数値正確。" },
+    { "id": "slide08-cowork", "verdict": "ok", "issues": [], "notesText": "向く人=スマホで下ごしらえ/注意=ターミナル期待は別物/日本提供は公式確認/まず軽いタスクから。" }
+  ],
+  "characterAnchors": "ひまり(金髪サイドテール+ティールリボン+青瞳+白衣装)・らぼまる(白卵型+黄緑アンテナ+黒丸目+オレンジハートボタン+胸の虫めがね/グラフ)は全9枚で一致。",
+  "kanjiGarble": "なし",
+  "realLogos": "なし(汎用デバイス)",
+  "leakedLabels": "なし(no-label指示が効いた)",
+  "note": "本人チェック。次に独立検品(別Taskエージェント)でダブルチェック。"
+}

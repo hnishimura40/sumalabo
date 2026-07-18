@@ -1,0 +1,16 @@
+{
+  "slug": "202607-claude-cowork-mobile-ios-android",
+  "thumbnail": { "name": "202607-claude-cowork-mobile-ios-android.webp", "src": "/images/thumbnails/202607-claude-cowork-mobile-ios-android.webp" },
+  "slides": [
+    { "name": "slide01-cowork.webp", "src": "/images/articles/202607-claude-cowork-mobile-ios-android/slide01-cowork.webp", "theme": "先に結論" },
+    { "name": "slide02-cowork.webp", "src": "/images/articles/202607-claude-cowork-mobile-ios-android/slide02-cowork.webp", "theme": "何が起きた?" },
+    { "name": "slide03-cowork.webp", "src": "/images/articles/202607-claude-cowork-mobile-ios-android/slide03-cowork.webp", "theme": "クラウドで動く" },
+    { "name": "slide04-cowork.webp", "src": "/images/articles/202607-claude-cowork-mobile-ios-android/slide04-cowork.webp", "theme": "通勤中に任せる 実例3つ" },
+    { "name": "slide05-cowork.webp", "src": "/images/articles/202607-claude-cowork-mobile-ios-android/slide05-cowork.webp", "theme": "M365でできること" },
+    { "name": "slide06-cowork.webp", "src": "/images/articles/202607-claude-cowork-mobile-ios-android/slide06-cowork.webp", "theme": "できないことの線引き" },
+    { "name": "slide07-cowork.webp", "src": "/images/articles/202607-claude-cowork-mobile-ios-android/slide07-cowork.webp", "theme": "利用実態" },
+    { "name": "slide08-cowork.webp", "src": "/images/articles/202607-claude-cowork-mobile-ios-android/slide08-cowork.webp", "theme": "どう見る? 誰が試すと便利" }
+  ],
+  "generatedAt": "2026-07-18",
+  "note": "工房チャット 6a5ac3d3(案A再シード)で生成。no-label指示・全9枚アンカー一致・化けなし。サムネは外出先で仕事の装い(装い根拠適用)。"
+}

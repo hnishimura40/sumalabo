@@ -1,0 +1,341 @@
+---
+title: "スマホのClaudeが「作業」までやるように。Coworkがモバイル対応、何を任せられる？"
+slug: "202607-claude-cowork-mobile-ios-android"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Anthropicが7月7日、AIに仕事を任せる「Claude Cowork」をiOS/Androidとウェブでも提供開始しました。クラウド実行で端末を閉じても作業が続くこと、Microsoft 365連携の書き込み機能、スマホでできないことの線引き、利用実態(9割超が非コード)まで、確定・報道・未確定を分けてやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-claude-cowork-mobile-ios-android.webp"
+thumbnailAlt: "「スマホから作業を頼める」のサムネイル。通勤コートにトートバッグ、スマホを片手にした金髪サイドテールのひまりがカフェ・駅の背景で「スマホから作業を頼めるの!?」と明るく驚き、白い卵型のらぼまるが雲と歯車の小道具で「端末を閉じても動くよ」と案内する構図。文字は『スマホから“作業”を頼める』『Coworkがモバイル対応』"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude"
+  - "Anthropic"
+  - "Claude Cowork"
+  - "AIエージェント"
+  - "Microsoft 365"
+  - "スマホ"
+  - "すまラボ"
+related:
+  - "202607-claude-fable-5-free-extension-july20"
+  - "202607-chatgpt-5h-limit-lifted-max-ultra"
+  - "202607-gpt-5-6-sol-terra-luna-release"
+pubDate: "2026-07-18"
+updated: "2026-07-18"
+publishAt: "2026-07-18T09:50:34+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Anthropicが、AIに仕事を任せる「Claude Cowork」を、7月7日からスマホ（iOS / Android）とウェブでも使えるようにしました。従来はデスクトップ限定でした。「スマホのAIが“答える”から“作業する”へ」一歩近づいた、という話です。
+
+<Summary30>
+  <ol>
+    <li><strong>7月7日にCoworkがスマホ（iOS / Android）+ウェブに対応</strong>（従来デスクトップ / web・モバイルはベータ）</li>
+    <li>セッションは<strong>クラウドで動く</strong>ので、スマホで頼んで端末を閉じても作業は続く</li>
+    <li>同日、<strong>Microsoft 365連携へ書き込み機能</strong>を追加（メール・カレンダー・OneDrive / SharePoint）。Teamsは読み取り専用</li>
+    <li>ただし<strong>ベータ</strong>。スマホのCoworkは「作業の委任」で、Claude Codeとは別物</li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "7/7", cap: "スマホ・ウェブ対応の開始日" },
+    { num: "3つ", cap: "通勤中に任せられる実例（メール・予定・資料）" },
+    { num: "90%超", cap: "コード以外の仕事での利用（利用実態）" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">スマホから作業を頼めるの!? もう外出先でも大丈夫ってこと？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">クラウドで動くから、端末を閉じても続くよ。ただしまだベータで、何でもできるわけじゃない。</CharacterBubble>
+
+## 先に結論
+
+<p class="lead"><strong>7月7日、Claude Coworkがスマホとウェブに対応しました。クラウドで動くので、端末を閉じても作業が続きます。</strong></p>
+
+- 7月7日にスマホ（iOS / Android）+ウェブ対応（従来デスクトップ / web・モバイルはベータ）
+- クラウドで動くので、スマホで頼んで端末を閉じても続く
+- 同じ日にMicrosoft 365連携へ書き込み機能が追加された
+- ただしベータで、万能ではない
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず結論を1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-cowork-mobile-ios-android/slide01-cowork.webp"
+         alt="「スマホからも“作業”を頼める」の図解。7月7日にスマホ(iOS/Android)+ウェブ対応(従来デスクトップ)、クラウドで動くので端末を閉じても続く、同じ日にMicrosoft 365連携へ書き込み機能が追加、ただしベータ・万能ではない、の4点。ひまりがスマホ片手に「スマホから頼めるの!?」と明るく驚き、らぼまるが「クラウドで動くよ」と案内する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：先に結論</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>対応</strong>：7月7日にスマホ（iOS / Android）+ウェブ（従来デスクトップ）</li>
+      <li><strong>クラウド</strong>：端末を閉じても作業が続く</li>
+      <li><strong>M365</strong>：同じ日に書き込み機能が追加</li>
+      <li><strong>注意</strong>：ベータで万能ではない</li>
+    </ul>
+  </div>
+</section>
+
+## 何が起きた？ スマホからも「作業」を頼めるように
+
+<p class="lead">Coworkは、チャットで「答えてもらう」のではなく、<strong>Claudeに実際の作業を任せる</strong>ための場所です。その入口が、スマホとウェブに広がりました。</p>
+
+Coworkは、ファイルやツールを操作しながら、複数ステップの作業を最初から最後まで進めます。今回、その場所が **web と mobile（iOS / Android）でも提供開始**されました（web / mobile はベータ）。
+
+<Callout kind="facts">
+  <ul>
+    <li>7月7日にCoworkがweb・モバイル（iOS / Android）に対応（従来デスクトップ / web・モバイルはベータ）</li>
+    <li>Coworkは「答える」ではなく「作業を任せる」場所（複数ステップを最後までやる）</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「何が起きたか」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-cowork-mobile-ios-android/slide02-cowork.webp"
+         alt="「Cowork=Claudeに“作業”を任せる場所」の図解。作業の流れ(例)として調査する→まとめる→整理する→仕上げる→完了の4ステップ。下に「Coworkは“答える”でなく“作業を任せる”場所」「7月7日にweb+モバイル対応」「web・モバイルはベータ」「複数ステップの作業を最後までやる」の4点。ひまりが「作業を任せるって?」と問い、らぼまるが「手を動かして仕上げてくれるんだ」と説明する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：何が起きた？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Cowork</strong>：「答える」でなく「作業を任せる」場所</li>
+      <li><strong>対応</strong>：7月7日にweb + モバイル（ベータ）</li>
+      <li><strong>特徴</strong>：複数ステップの作業を最後までやる</li>
+    </ul>
+  </div>
+</section>
+
+## クラウドで動く：端末を閉じても作業が続く
+
+<p class="lead">今回のポイントは、Coworkが<strong>クラウドで動く</strong>ようになったことです。スマホで頼めば、端末を閉じても作業は続きます。</p>
+
+セッションはクラウド側で実行され、スマホからタスクを頼むと、**端末を閉じても作業が続きます**。スケジュールしたタスクは、端末がオフでも実行されます。「頼んで放っておく」ような使い方ができる、ということです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「クラウドで動く」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-cowork-mobile-ios-android/slide03-cowork.webp"
+         alt="「端末を閉じても作業が続く」の図解。スマホからクラウドへ矢印が伸び、クラウドで進行し、端末を閉じてもOK、スケジュールも動く様子。下に「セッションはクラウドで実行」「スマホで頼んで端末を閉じても続く」「スケジュールしたタスクは端末オフでも動く」「“頼んで放っておく”ができる」の4点。ひまりが「閉じても大丈夫なの?」と気にし、らぼまるが「クラウドで進めておくよ」と答える構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：クラウドで動く</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>実行</strong>：セッションはクラウドで動く</li>
+      <li><strong>継続</strong>：スマホで頼んで端末を閉じても続く</li>
+      <li><strong>予約</strong>：スケジュールしたタスクは端末オフでも動く</li>
+    </ul>
+  </div>
+</section>
+
+## 通勤中にスマホから何を任せられる？ 実例3つ
+
+<p class="lead">移動中にスマホから<strong>「下ごしらえ」を頼んでおく</strong>——そんな使い方が具体的にイメージできます。M365連携の書き込み機能がその土台です。</p>
+
+1. **メールの下書き・整理** — 通勤中に「この件、返信の下書きだけ用意しておいて」と頼んでおく
+2. **カレンダーの調整・会議準備** — 空き時間の確認や予定の調整を下ごしらえしておき、着いたら確認するだけ
+3. **資料の下書き・要約** — 長い資料の要約や提案書のたたき台を移動中に頼み、戻ったら中身を詰める
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">通勤中に任せる実例を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-cowork-mobile-ios-android/slide04-cowork.webp"
+         alt="「移動中にスマホから“下ごしらえ”」の図解。駅ホームでトートバッグを持ちスマホを操作するひまり。①メールの下書き・整理 ②カレンダーの調整・会議準備 ③資料の下書き・要約 の3つと「着いたら確認するだけ」。らぼまるが「着くころには下ごしらえ完了」、ひまりが「通勤中に頼めるの、便利!」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：通勤中に任せる 実例3つ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>①</strong>：メールの下書き・整理</li>
+      <li><strong>②</strong>：カレンダーの調整・会議準備</li>
+      <li><strong>③</strong>：資料の下書き・要約</li>
+      <li><strong>流れ</strong>：着いたら確認するだけ</li>
+    </ul>
+  </div>
+</section>
+
+## Microsoft 365でできること（Teamsは読み取り専用）
+
+<p class="lead">7月7日、Microsoft 365連携に<strong>書き込みの機能</strong>が加わりました。ただし<strong>Teamsは読み取り専用</strong>のままです。</p>
+
+<div class="table-card article-wide-block">
+
+| できること | 内容 |
+|---|---|
+| メール | 下書き・送信・整理、メールボックス設定の更新 |
+| カレンダー | 予定の管理 |
+| OneDrive / SharePoint | ファイルの作成・更新 |
+| Teams | 読み取り専用（読み取り・検索のみ） |
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">M365でできることを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-cowork-mobile-ios-android/slide05-cowork.webp"
+         alt="「7月7日に“書き込み”が追加」の図解。できることとしてメール・カレンダー・ファイル作成・連絡先(読み取り)のアイコン。下に「メールの下書き・送信・整理」「カレンダー管理」「OneDrive・SharePointのファイル作成」「Teamsは読み取りのみ」の4点。らぼまるが「Teamsは読むだけね」、ひまりが「メールも書いてくれるの?」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：M365でできること</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>メール</strong>：下書き・送信・整理</li>
+      <li><strong>カレンダー</strong>：予定の管理</li>
+      <li><strong>ファイル</strong>：OneDrive / SharePoint の作成・更新</li>
+      <li><strong>Teams</strong>：読み取り専用</li>
+    </ul>
+  </div>
+</section>
+
+## できないことの線引き（ここが大事）
+
+<p class="lead">便利になった一方で、<strong>「スマホで何でもできる」ではありません</strong>。誤解しやすい点を整理します。</p>
+
+- **Cowork ≠ Claude Code**。スマホのCoworkは「作業の委任・エージェント実行」であって、コードをターミナル（CLI）で直接動かすClaude Codeの操作をスマホでやる機能ではありません
+- **Teamsは読み取り専用**のままです（メール・カレンダー・OneDrive / SharePointは書き込み可）
+- **まだベータ**です。挙動や対象は変わりえます
+
+<CharacterBubble speaker="labo" mood="point">スマホCoworkは「作業の委任」。ターミナルでコードを動かすClaude Codeとは役割がちがうよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">できないことの線引きを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-cowork-mobile-ios-android/slide06-cowork.webp"
+         alt="「スマホでも“万能”ではない」の図解。左にスマホCowork=作業の委任(指示して進捗を確認する)、右にClaude Code=ターミナルでの開発(ターミナルでコードを実行・開発)を並べ「別もの・役割がちがう」。下に「スマホCoworkは“作業の委任”」「コードをターミナルで動かすClaude Codeとは別物」「Teamsは読み取りのみ」「まだベータ」の4点。ひまりが「何でもできる?」、らぼまるが「そこは線引きが大事」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：できないことの線引き</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Cowork</strong>：作業の委任（指示して進捗を確認）</li>
+      <li><strong>Claude Code</strong>：ターミナルでコードを実行・開発（別物）</li>
+      <li><strong>Teams</strong>：読み取り専用</li>
+      <li><strong>前提</strong>：まだベータ</li>
+    </ul>
+  </div>
+</section>
+
+## 利用実態：9割超が「コード以外」の仕事
+
+<p class="lead">Anthropicの利用実態データを見ると、Coworkは<strong>エンジニア以外の普段の仕事</strong>で多く使われています。</p>
+
+<div class="table-card article-wide-block">
+
+| カテゴリ | 割合 |
+|---|---|
+| 業務プロセス・オペレーション | 33.4% |
+| コンテンツ作成・コピーライティング | 16.4% |
+| ソフトウェア開発 | 8.7% |
+
+</div>
+
+データは **2026年5月11〜31日** に収集され、**約120万セッション / 60万組織超**が対象です。上位2カテゴリで約半分を占め、**90%超がソフトウェア開発以外**でした。「コードを書く人のツール」ではなく、**誰の職場にもある“作業の周りの作業”**を任せる使われ方が中心、という裏付けです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">利用実態を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-cowork-mobile-ios-android/slide07-cowork.webp"
+         alt="「9割超が“コード以外”の仕事」の図解。棒グラフで①業務プロセス33.4% ②コンテンツ作成16.4% ③ソフト開発8.7%、「9割超が非コード」。下部に「5月11〜31日・120万セッション・60万組織超」。らぼまるが「“作業の周りの作業”が主戦場」、ひまりが「エンジニア以外も使ってるんだ」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：利用実態</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>調査</strong>：5月11〜31日・120万セッション・60万組織超</li>
+      <li><strong>業務プロセス</strong>：33.4%</li>
+      <li><strong>コンテンツ作成</strong>：16.4%</li>
+      <li><strong>ソフト開発</strong>：8.7%（90%超が非コード）</li>
+    </ul>
+  </div>
+</section>
+
+## 確定・報道・未確定の整理
+
+<p class="lead">ここは<strong>確定・報道・未確定を分けて</strong>見るところです。</p>
+
+<Callout kind="facts" title="確定（公式）">
+  <ul>
+    <li>7月7日にCoworkがiOS / Android・webに対応（web / mobileはベータ）。クラウド実行で端末を閉じても継続・スケジュールは端末オフでも動く</li>
+    <li>7月7日にM365連携へ書き込みツール追加（メール・カレンダー・OneDrive / SharePoint）。Teamsは読み取り専用</li>
+    <li>利用実態（5/11〜31・120万セッション・60万組織超）：業務プロセス33.4% / コンテンツ作成16.4% / ソフト開発8.7%</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="報道ベース（断定しない）">
+  <ul>
+    <li>ロールアウトはMaxプランから始まり順次拡大との言及（プラン別の細かな条件は変動しうる）</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年7月時点）">
+  <ul>
+    <li>日本での提供範囲・対象プランの細部（日本個別の公式記載は確認できていない）</li>
+    <li>下位プランでのモバイルCoworkの可否の細部</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">日本での提供や対象プランの細部はまだ動く情報。最後は公式の最新表示で確認してね。</CharacterBubble>
+
+## どう見る？ 誰が試すと便利（補助）
+
+<p class="lead">大事なのは、<strong>「スマホでも作業を任せられる」入口が増えたこと</strong>です。まずは軽いタスクから試すのが向いています。</p>
+
+- スマホから軽い作業を前もって頼んでおきたい人 → 相性がよい
+- コードのターミナル操作をスマホでやりたい人 → それはCoworkではなく別物なので期待しすぎない
+- 日本での提供や対象プランが気になる人 → 公式の最新表示で確認するのが確実
+
+同じ時期に、Claude Fable 5の無料期間の延長や、ChatGPTの使用上限の一時撤廃といった動きもありました。各社が「まず触ってもらう」方向に動いている中で、**スマホから作業を任せる体験**が広がった、と位置づけられます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、判断のヒントを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-cowork-mobile-ios-android/slide08-cowork.webp"
+         alt="「まずは軽いタスクから」の図解。どう見る? 誰が試すと便利。向く人=スマホで下ごしらえを頼みたい人=相性よい、注意点=ターミナル操作を期待する人=別物なので注意、確認=日本での提供は公式で確認、まず試す=まずは軽いタスクから試す、の4点。ひまりが「まず軽いのから試す!」、らぼまるが「日本での提供は公式で確認しようね」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：どう見る？ 誰が試すと便利</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>判断ガイド（コピー可能）</strong></p>
+    <ul>
+      <li><strong>向く人</strong>：スマホで下ごしらえを頼みたい人</li>
+      <li><strong>注意</strong>：ターミナル操作を期待する人は別物なので注意</li>
+      <li><strong>確認</strong>：日本での提供は公式で確認</li>
+      <li><strong>はじめ方</strong>：まずは軽いタスクから</li>
+    </ul>
+  </div>
+</section>
+
+<Note>この記事は2026年7月18日時点の情報です。web / mobileはベータ提供で、対象プランや日本での提供範囲は変わる可能性があるため、最終的には公式の最新表示で確認してください。</Note>
+
+<div class="related-links article-wide-block">
+  <a href="/articles/202607-claude-fable-5-free-extension-july20/">Claude Fable 5、無料期間が7/20まで延長の解説を読む</a>
+  <a href="/articles/202607-chatgpt-5h-limit-lifted-max-ultra/">ChatGPTの5時間制限が一時撤廃の解説を読む</a>
+  <a href="/articles/202607-gpt-5-6-sol-terra-luna-release/">GPT-5.6の3モデルの違いを読む</a>
+</div>
+
+## 参考情報
+
+この記事は公式情報をもとに整理しています。対象プランや日本での提供範囲は変動・未確定の情報を含みます。最終的な提供条件は、必ず公式の最新表示で確認してください。
+
+- Claude Cowork リリースノート（support.claude.com）
+- Claude Cowork 製品ページ（claude.com/product/cowork）
+- 「How people are using Claude Cowork」（claude.com/blog）

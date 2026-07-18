@@ -1,0 +1,30 @@
+{
+  "slug": "202607-claude-cowork-mobile-ios-android",
+  "theme": "スマホのClaudeが作業までやってくれるように。Coworkのモバイル対応で何ができる?できないことは?をやさしく整理",
+  "status": "refinement_done_starting_images",
+  "mode": "立ち会い完走型 (ユーザー明示指示・A→B→C)",
+  "branch": "preview/202607-claude-cowork-mobile-ios-android",
+  "completed": [
+    "Research Pass: 公式裏取り完了(support.claude.com リリースノート / claude.com/product/cowork / claude.com/blog)",
+    "facts確定: 7/7モバイル(iOS/Android)+web対応・クラウド実行(端末閉じても継続) / M365書き込み(メール/カレンダー/OneDrive/SharePoint, Teams読み取りのみ) / 利用実態(5/11-31・120万セッション・60万組織超・業務33.4%/コンテンツ16.4%/ソフト8.7%)",
+    "editorial_selection / draft / revised / review_report / final_article / slide_plan 作成",
+    "gate --stage draft PASSED (violations 0 / warnings 0)",
+    "drafts commit (P7・preview/202607-claude-cowork-mobile-ios-android ブランチ)"
+  ],
+  "resumeFrom": "image_generation (thumbnail + slide01-08)",
+  "reseedRequired": true,
+  "reseedReason": "工房チャット 6a5a8e51 は既に前記事(claude-for-teachers 7/18)の画像9枚を保持(generatedSinceSeed:0 は stale)。参照劣化回避のため Cowork 画像生成前に案A再シード(新チャット+正本2枚 himari/labomaru 添付+conversationUrl更新+counter=0)が必須。",
+  "resumeSteps": [
+    "【最初に】工房を案A再シード(新チャット作成→himari-canonical.png/labomaru-canonical.png を合成dropで1枚ずつ添付→準備OK確認→image-workshop.json の conversationUrl更新・generatedSinceSeed=0)",
+    "slide_plan の thumbnail(ポジ驚き+外出先で仕事の装い) + 8スライドを生成→D:\\downloads へ保存",
+    "本人factcheck(logs/article/{slug}.factcheck.json) + サムネ衣装themed確認 → needs_revisionは再生成",
+    "独立検品(npm run sumalabo:inspect → 別Task Agent) → xSelection確定",
+    "WebP化→v3 MDX(NumCards[7/7,3,90%]・Callout facts/claims/unc・内部リンク: 202607-claude-fable-5-free-extension-july20 / 202607-chatgpt-5h-limit-lifted-max-ultra)",
+    "gate --stage full → build → PR → normalize:publish-at → merge → deploy → verify 8/8 → queue published",
+    "Phase C(画像4枚+リプライにリンク)"
+  ],
+  "imageExtractionMethod": "工房DOMの main img(estuary content URL) を fetch(credentials:include)→canvas.toDataURL('image/webp',0.92)→clipboard→PowerShellでbase64 decode。生成がDOMでstallしたらページreload→focus click→clipboard再write(memory: chatgpt-workshop-image-stall-reload)。",
+  "internalLinks": ["202607-claude-fable-5-free-extension-july20", "202607-chatgpt-5h-limit-lifted-max-ultra"],
+  "thumbnailCostumeNote": "装い根拠: 外出先で仕事(通勤・カフェ・スマホ片手)。ポジ驚き。character-sheet.md 2026-07-14 フォールバック規則準拠。",
+  "updatedAt": "2026-07-18T12:00:00+09:00"
+}
