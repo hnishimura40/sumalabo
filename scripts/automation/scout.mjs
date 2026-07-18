@@ -8,12 +8,24 @@
 // 設定: data/automation/watch-sources.json
 //   sources[] / minScore / maxAgeHours / excludeCategories / tier1-2 / impactKeywords
 //
-// 採点（0-100 目安）:
-//   +30..0  鮮度（6h/24h/48h の段階）
-//   +24 max tier1 キーワード（AI・主要製品名）×8
-//   +12 max tier2 キーワード（発表・料金・日本 等）×4
-//   +8      インパクト語（値上げ/無料/提供終了 等）
-//   +weight ソース信頼度（設定値。公式は高め）
+// 採点（クリティカル度＝自分ごと度を最重要軸にする・2026-07-18 方針転換）:
+//   ±criticality クリティカル度（自分ごと度）＝最重要軸。加点 最大+40 / 減点 最大-20 の
+//               振れ幅で、他のどの単一軸より大きくランキングを支配する。詳細は scoreCriticality。
+//               加点=提供開始/終了/締切・料金/制限・日本で使える・今日できる対処・安全。
+//               減点=事業者向けのみ・米国限定(日本展開見込み薄)・調査/統計・資金調達。
+//   +30..0      鮮度（6h/24h/48h の段階）
+//   +24 max     tier1 キーワード（AI・主要製品名）×8
+//   +12 max     tier2 キーワード（発表・料金・日本 等）×4
+//   +8          インパクト語（値上げ/無料/提供終了 等）
+//   +weight     ソース信頼度（設定値。公式は高め）
+//
+// 「今日書くか」の判定（part 3・量より的中率）:
+//   auto-pick は isEligible（score>=minScore かつ criticality.net>=minCriticality かつ
+//   readerChange が書ける）を満たす 1 位だけ採用する。クリティカル度が低い候補しか
+//   ない日は picked=null（exit 10）＝書かない日があってよい。
+//
+// 選定ログの言語化（part 4）: 各候補に readerChange（「この記事で読者の何が変わるか」1行）を
+//   付ける。加点シグナルが 0 で readerChange が書けない候補は選ばない。
 //
 // 除外:
 //   - 除外カテゴリ語（事件・政治・訴訟・相場・アダルト）を含む → excluded
@@ -100,6 +112,102 @@ export function ageHours(pubDate, now = Date.now()) {
   return (now - t) / 3600_000;
 }
 
+// ---- クリティカル度（自分ごと度）＝最重要軸（2026-07-18 方針転換） ----
+//
+// 選定基準を「ニュースの大きさ」から「読者の自分ごと度」に変更。
+// 判定: 日本で ChatGPT/Claude/スマホを日常利用する人が、この記事を読んで
+// 今日〜今週の行動や判断を変えるか。加点(最大 POSITIVE_CAP)と減点で評価し、
+// 加点の最大 40 / 減点の最大 -20 という「他のどの単一軸(鮮度30・tier1 24)より
+// 大きい振れ幅」でランキングを支配する＝最重要の重み。
+//
+// 加点（読者の行動が変わる兆候）:
+//   availability  使えるものが増える/減る/締切（提供開始・終了・期限・撤廃・開放）
+//   priceLimit    料金・制限・無料枠が変わる（プラン・上限・無料枠）
+//   japanUsable   日本で使える（日本提供・日本語対応）
+//   actionable    今日できる対処・設定がある（データ退避・設定変更・申込）
+//   safety        安全に関わる（リコール・脆弱性・詐欺）
+// 減点（単体では行動が変わらない）:
+//   usOnly        米国限定で日本展開の見込みが薄い（「日本にも来る流れの初報」= japanComingCues があれば減点しない＝中立）
+//   businessOnly  事業者向けのみ（API価格・企業契約・開発者向け）
+//   surveyStats   調査レポート/統計もの
+//   funding       資金調達（人事は excludeCategories.hr_ma 側で除外済み）
+//
+// readerChange（part 4 の義務化）: 加点シグナルから「この記事で読者の何が変わるか」を
+// 1 行で合成する。加点シグナルが 0（＝行動変化を言語化できない）候補は readerChange=null
+// とし、auto-pick の対象外にする＝「書けない候補は選ばない」。
+export const CRITICALITY = Object.freeze({
+  AVAILABILITY: 12,
+  PRICE_LIMIT: 12,
+  JAPAN_USABLE: 8,
+  ACTIONABLE: 8,
+  SAFETY: 14,
+  /** 加点の上限。criticality を最重要軸にする最大値 */
+  POSITIVE_CAP: 40,
+  US_ONLY: -16,
+  BUSINESS_ONLY: -16,
+  SURVEY_STATS: -20,
+  FUNDING: -14,
+});
+
+const READER_CHANGE_TEMPLATES = Object.freeze({
+  availability: "使えるもの・締切が動く（提供開始/終了/期限）",
+  priceLimit: "料金・制限・無料枠が変わる",
+  japanUsable: "日本で/日本語で使える",
+  actionable: "今日できる対処・設定がある",
+  safety: "安全に関わる（確認・対処が要る）",
+});
+
+/**
+ * クリティカル度（自分ごと度）を採点する純関数。
+ * config.criticalityKeywords / criticalityDeductions / japanComingCues を使う。
+ * これらが未設定なら net=0（既存テスト・旧設定と後方互換）。
+ */
+export function scoreCriticality(item, config, w = CRITICALITY) {
+  const text = `${item.title} ${item.description || ""}`;
+  const groups = config.criticalityKeywords || {};
+  const ded = config.criticalityDeductions || {};
+  const comingCues = config.japanComingCues || [];
+  const hit = (words) => (words || []).filter((k) => text.includes(k));
+
+  const matched = {
+    availability: hit(groups.availability),
+    priceLimit: hit(groups.priceLimit),
+    japanUsable: hit(groups.japanUsable),
+    actionable: hit(groups.actionable),
+    safety: hit(groups.safety),
+    usOnly: hit(ded.usOnly),
+    businessOnly: hit(ded.businessOnly),
+    surveyStats: hit(ded.surveyStats),
+    funding: hit(ded.funding),
+    comingCues: hit(comingCues),
+  };
+
+  const reasons = [];
+  let positive = 0;
+  if (matched.availability.length) { positive += w.AVAILABILITY; reasons.push("availability"); }
+  if (matched.priceLimit.length) { positive += w.PRICE_LIMIT; reasons.push("priceLimit"); }
+  if (matched.japanUsable.length) { positive += w.JAPAN_USABLE; reasons.push("japanUsable"); }
+  if (matched.actionable.length) { positive += w.ACTIONABLE; reasons.push("actionable"); }
+  if (matched.safety.length) { positive += w.SAFETY; reasons.push("safety"); }
+  positive = Math.min(w.POSITIVE_CAP, positive);
+
+  const deductions = [];
+  let negative = 0;
+  // 米国限定は減点。ただし「日本にも来る流れの初報」キューがあれば中立（減点しない）
+  if (matched.usOnly.length && matched.comingCues.length === 0) { negative += w.US_ONLY; deductions.push("usOnly"); }
+  if (matched.businessOnly.length) { negative += w.BUSINESS_ONLY; deductions.push("businessOnly"); }
+  if (matched.surveyStats.length) { negative += w.SURVEY_STATS; deductions.push("surveyStats"); }
+  if (matched.funding.length) { negative += w.FUNDING; deductions.push("funding"); }
+
+  return { net: positive + negative, positive, negative, reasons, deductions, matched };
+}
+
+/** 加点シグナルから「読者の何が変わるか」を 1 行で合成。加点 0 なら null（＝選ばない） */
+export function readerChangeLine(criticality) {
+  if (!criticality || criticality.positive <= 0 || criticality.reasons.length === 0) return null;
+  return criticality.reasons.map((r) => READER_CHANGE_TEMPLATES[r]).filter(Boolean).join(" / ");
+}
+
 export function scoreItem(item, source, config, now = Date.now()) {
   const text = `${item.title} ${item.description || ""}`;
   const h = ageHours(item.pubDate, now);
@@ -115,9 +223,12 @@ export function scoreItem(item, source, config, now = Date.now()) {
   const tier2 = Math.min(12, tier2Hits.length * 4);
   const impact = impactHits.length > 0 ? 8 : 0;
   const weight = Number(source.weight) || 0;
+  const criticality = scoreCriticality(item, config);
   return {
-    score: recency + tier1 + tier2 + impact + weight,
-    breakdown: { recency, tier1, tier2, impact, sourceWeight: weight },
+    score: recency + tier1 + tier2 + impact + weight + criticality.net,
+    breakdown: { recency, tier1, tier2, impact, sourceWeight: weight, criticality: criticality.net },
+    criticality,
+    readerChange: readerChangeLine(criticality),
     matched: { tier1: tier1Hits, tier2: tier2Hits, impact: impactHits },
     ageHours: Math.round(h * 10) / 10,
   };
@@ -340,7 +451,27 @@ export async function runScout({ config = loadConfig(), now = Date.now() } = {})
     }
   }
   candidates.sort((a, b) => b.score - a.score);
-  return { candidates, excluded, sourceStatus, minScore: config.minScore || 50 };
+  return {
+    candidates,
+    excluded,
+    sourceStatus,
+    minScore: config.minScore || 50,
+    minCriticality: Number.isFinite(config.minCriticality) ? config.minCriticality : 12,
+  };
+}
+
+/**
+ * auto-pick / 「今日書くか」判定の適格性。
+ * score>=minScore かつ クリティカル度>=minCriticality かつ readerChange が書ける候補だけ。
+ * これで「クリティカル度が低い候補しかない日は書かない」を実装（part 3）。
+ */
+export function isEligible(candidate, minScore, minCriticality) {
+  return (
+    candidate.score >= minScore &&
+    candidate.criticality != null &&
+    candidate.criticality.net >= minCriticality &&
+    Boolean(candidate.readerChange)
+  );
 }
 
 function saveScoutLog(result) {
@@ -375,7 +506,7 @@ async function main() {
   const top = result.candidates.slice(0, limit);
 
   if (asJson || autoPick) {
-    const eligible = result.candidates.filter((c) => c.score >= result.minScore);
+    const eligible = result.candidates.filter((c) => isEligible(c, result.minScore, result.minCriticality));
     const picked = autoPick && eligible.length > 0 ? eligible[0] : null;
     if (picked) {
       picked.suggestedSlug = slugFromPick(picked);
@@ -385,11 +516,21 @@ async function main() {
       JSON.stringify(
         {
           picked,
-          top: top.map((c) => ({ score: c.score, title: c.title, source: c.source, ageHours: c.ageHours, breakdown: c.breakdown })),
+          top: top.map((c) => ({
+            score: c.score,
+            title: c.title,
+            source: c.source,
+            ageHours: c.ageHours,
+            breakdown: c.breakdown,
+            readerChange: c.readerChange,
+            criticalityDeductions: c.criticality ? c.criticality.deductions : [],
+            eligible: isEligible(c, result.minScore, result.minCriticality),
+          })),
           excludedCount: result.excluded.length,
           excludedSample: result.excluded.slice(0, 8),
           sourceStatus: result.sourceStatus,
           minScore: result.minScore,
+          minCriticality: result.minCriticality,
           logPath: path.relative(ROOT, logPath),
         },
         null,
@@ -400,12 +541,17 @@ async function main() {
     return;
   }
 
-  console.log(`=== scout: 候補 ${result.candidates.length} 件 / 除外 ${result.excluded.length} 件（閾値 ${result.minScore}） ===`);
+  console.log(
+    `=== scout: 候補 ${result.candidates.length} 件 / 除外 ${result.excluded.length} 件（閾値 ${result.minScore} / クリティカル度 ${result.minCriticality}） ===`,
+  );
   for (const c of top) {
-    console.log(`  [${String(c.score).padStart(3)}] ${c.title.slice(0, 60)} (${c.source}, ${c.ageHours}h)`);
+    const mark = isEligible(c, result.minScore, result.minCriticality) ? "○" : "×";
+    const crit = c.criticality ? c.criticality.net : 0;
+    console.log(`  ${mark} [${String(c.score).padStart(3)}|c${String(crit).padStart(3)}] ${c.title.slice(0, 52)} (${c.source}, ${c.ageHours}h)`);
+    console.log(`       読者変化: ${c.readerChange || "（書けない＝選ばない）"}`);
   }
   console.log(`log: ${path.relative(ROOT, logPath)}`);
-  process.exitCode = result.candidates.some((c) => c.score >= result.minScore) ? 0 : 10;
+  process.exitCode = result.candidates.some((c) => isEligible(c, result.minScore, result.minCriticality)) ? 0 : 10;
 }
 
 const isDirectRun = process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;

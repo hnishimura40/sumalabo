@@ -135,7 +135,7 @@ testMode（3 本限定の実弾テスト）は 3 本完走（Claude Science / ai
   - 1 晩 1 本（`logs/night/last-run.json`）
   - weeklyCap（`logs/night/run-history.jsonl` の直近 7 日 completed 数）
   - gate full / 画像ファクトチェック / post-publish verify＋自動rollback / 除外カテゴリは従来どおり（緩めない）
-- **scout 品質ガード**: 候補スコアが閾値 50 未満の日は無理に書かず安全スキップ（「候補なし」通知のみ）
+- **scout 品質ガード（2026-07-18 改訂・自分ごと度優先）**: 選定基準を「ニュースの大きさ」→「読者の自分ごと度（クリティカル度）」に転換。最重要軸 `criticality`（`scout.mjs` の `scoreCriticality`）で採点し、**score>=50 かつ criticality>=`minCriticality`(=12) かつ readerChange（読者の何が変わるか1行）が書ける候補だけ**を採用する（`isEligible`）。**クリティカル度が低い候補しかない日は書かない（量より的中率・書かない日があってよい）**。事業者向けのみ（API価格・企業契約）／米国限定で日本展開見込み薄／調査・統計もの／資金調達は減点。設定・語彙は `data/automation/watch-sources.json`（`minCriticality` / `criticalityKeywords` / `criticalityDeductions` / `japanComingCues`）。較正は `npm run scout:calibrate`
 - **retract 時**: `npm run retract` は incident 記録に加えて nightRun も自動停止する
 
 ## 7. 昼の立ち会い制作も完走型に統一（2026-07-12 ユーザー承認）

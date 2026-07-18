@@ -4,12 +4,18 @@ import assert from "node:assert/strict";
 import {
   parseFeed,
   scoreItem,
+  scoreCriticality,
+  readerChangeLine,
+  isEligible,
   findExclusion,
   findDuplicate,
   titleSimilarity,
   slugFromPick,
   ageHours,
 } from "../../scripts/automation/scout.mjs";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const CONFIG = {
   minScore: 50,
@@ -22,6 +28,10 @@ const CONFIG = {
     legal_scandal: ["訴訟", "炎上"],
   },
 };
+
+// 本番の watch-sources.json のクリティカル度設定を実際に使ってテストする
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const PROD_CONFIG = JSON.parse(readFileSync(path.join(ROOT, "data", "automation", "watch-sources.json"), "utf-8"));
 
 test("1. parseFeed: RSS2.0 の item から title/link/pubDate を取れる", () => {
   const xml = `<?xml version="1.0"?><rss><channel>
@@ -89,4 +99,95 @@ test("7. slugFromPick: 英数字ベースの slug を生成（日本語のみで
 
 test("8. ageHours: 不正な日付は Infinity（=捨てられる）", () => {
   assert.equal(ageHours("not-a-date"), Infinity);
+});
+
+// ---- クリティカル度（自分ごと度）＝最重要軸 ----
+
+test("9. scoreCriticality: 提供終了+締切+料金/制限で加点、readerChange が書ける", () => {
+  const r = scoreCriticality(
+    { title: "ChatGPTの5時間ごとの利用制限が一時撤廃、Max/Ultraで上限が開放", description: "" },
+    PROD_CONFIG,
+  );
+  assert.ok(r.reasons.includes("availability"), "撤廃/開放で availability");
+  assert.ok(r.reasons.includes("priceLimit"), "制限/上限で priceLimit");
+  assert.ok(r.positive >= 24, `加点が積み上がる (positive=${r.positive})`);
+  assert.equal(r.negative, 0);
+  assert.ok(readerChangeLine(r), "readerChange が書ける");
+});
+
+test("10. 減点: 調査/統計ものは surveyStats 減点、加点0なら readerChange=null（＝選ばない）", () => {
+  const r = scoreCriticality(
+    { title: "AI利用調査、ChatGPT・Gemini・Perplexityの利用実態を305人に聞いた", description: "" },
+    PROD_CONFIG,
+  );
+  assert.ok(r.deductions.includes("surveyStats"), "調査/実態/人に聞いた で surveyStats");
+  assert.equal(r.positive, 0, "行動が変わる加点は無い");
+  assert.ok(r.net < 0, `net は負 (net=${r.net})`);
+  assert.equal(readerChangeLine(r), null, "書けない候補は readerChange=null");
+});
+
+test("11. 減点: 米国限定は usOnly 減点。ただし『日本にも来る初報』キューがあれば中立", () => {
+  const usOnly = scoreCriticality({ title: "Claude for Teachers、米国の教員に無償提供", description: "" }, PROD_CONFIG);
+  assert.ok(usOnly.deductions.includes("usOnly"), "米国の で usOnly 減点");
+  assert.ok(usOnly.positive > 0, "無償で priceLimit の加点はある");
+  assert.ok(usOnly.net < usOnly.positive, "減点で net は加点より下がる");
+
+  const coming = scoreCriticality(
+    { title: "新機能を米国で先行提供、まず米国を皮切りに日本にも順次展開予定", description: "" },
+    PROD_CONFIG,
+  );
+  assert.equal(coming.deductions.includes("usOnly"), false, "初報キュー(皮切り/順次/日本にも)があれば usOnly を打ち消す＝中立");
+});
+
+test("12. 減点: 事業者向け(API)と資金調達も減点対象", () => {
+  const api = scoreCriticality({ title: "OpenAI、API料金を改定し開発者向けに新モデル提供", description: "" }, PROD_CONFIG);
+  assert.ok(api.deductions.includes("businessOnly"), "API/開発者向け で businessOnly");
+  const fund = scoreCriticality({ title: "AIスタートアップが資金調達、評価額は10億ドルに", description: "" }, PROD_CONFIG);
+  assert.ok(fund.deductions.includes("funding"), "資金調達/評価額 で funding");
+});
+
+test("13. isEligible: クリティカル度が低い候補は不適格（今日書かない）", () => {
+  const high = { score: 70, criticality: { net: 24 }, readerChange: "料金・制限・無料枠が変わる" };
+  const lowCrit = { score: 70, criticality: { net: 4 }, readerChange: "料金が変わる" };
+  const noChange = { score: 70, criticality: { net: 0 }, readerChange: null };
+  assert.equal(isEligible(high, 50, 12), true);
+  assert.equal(isEligible(lowCrit, 50, 12), false, "criticality<minCriticality は不適格");
+  assert.equal(isEligible(noChange, 50, 12), false, "readerChange が書けない候補は不適格");
+});
+
+test("14. 較正: 過去2週間の実ネタで新基準の並びを確認（自分ごと上位 / 米国限定・調査は下位）", () => {
+  const now = Date.parse("2026-07-18T00:00:00Z");
+  const mk = (title) => ({ title, description: "", pubDate: new Date(now - 3 * 3600_000).toUTCString() });
+  const topics = {
+    fiveHour: "ChatGPTの5時間ごとの利用制限が一時撤廃、Max/Ultraで上限が開放",
+    atlas: "ChatGPT Atlasが提供終了、データの移行・退避はどうすればいい",
+    fable: "Claude Fable 5 の無料枠を7月20日まで延長、いま使える範囲は",
+    teacherUS: "Claude for Teachers、米国の教員に無償提供（日本は対象外）",
+    survey: "AI利用調査、ChatGPT・Gemini・Perplexityの利用実態を305人に聞いた",
+  };
+  const src = { weight: 10 };
+  const scored = Object.fromEntries(
+    Object.entries(topics).map(([k, t]) => [k, scoreItem(mk(t), src, PROD_CONFIG, now)]),
+  );
+
+  // 自分ごと度の高い3本が、米国限定・調査ものより上位に来る
+  const critFor = (k) => scored[k].criticality.net;
+  for (const low of ["teacherUS", "survey"]) {
+    for (const high of ["fiveHour", "atlas", "fable"]) {
+      assert.ok(
+        scored[high].score > scored[low].score,
+        `${high}(score ${scored[high].score}) は ${low}(score ${scored[low].score}) より上位のはず`,
+      );
+      assert.ok(critFor(high) > critFor(low), `${high} のクリティカル度 > ${low}`);
+    }
+  }
+  // 調査ものは行動が変わらない＝readerChange 書けない＝不適格
+  assert.equal(scored.survey.readerChange, null);
+  assert.equal(isEligible(scored.survey, PROD_CONFIG.minScore, PROD_CONFIG.minCriticality), false);
+  // 米国限定(日本対象外)も不適格に落ちる（減点で criticality が minCriticality 未満）
+  assert.equal(isEligible(scored.teacherUS, PROD_CONFIG.minScore, PROD_CONFIG.minCriticality), false);
+  // 自分ごとの高い3本は適格
+  for (const high of ["fiveHour", "atlas", "fable"]) {
+    assert.equal(isEligible(scored[high], PROD_CONFIG.minScore, PROD_CONFIG.minCriticality), true, `${high} は適格`);
+  }
 });
