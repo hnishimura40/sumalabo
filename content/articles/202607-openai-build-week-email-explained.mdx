@@ -1,0 +1,314 @@
+---
+title: "OpenAIから英語のメール、届いていませんか？「Build Week」の正体と、参加する人・しない人それぞれの答え"
+slug: "202607-openai-build-week-email-explained"
+type: "news"
+category: "ニュースをかみくだく"
+description: "ChatGPTを使っているとOpenAIから届く英語のメール「Build Week」の正体を、やさしく解説します。怪しくない公式のイベント案内であること、2026年7月13〜21日・賞金総額10万ドル規模・締め切りは日本時間7月22日午前9時ごろという中身、参加しない人の対処（配信停止）、覗くだけの楽しみ方、英語メールをAIに訳させる手順、偽メール(フィッシング)への注意まで、確定・報道・未確定を分けて整理します。"
+thumbnail: "/images/thumbnails/202607-openai-build-week-email-explained.webp"
+thumbnailAlt: "「その英語メール、何?」のサムネイル。金髪サイドテールのひまりがスマホの英語メール（Build Weekの案内）を見て「?」と困り顔で驚き、白い卵型のらぼまるが「日本語訳」の札を持って案内する構図。文字は『その英語メール、何?』『OpenAI「Build Week」の正体』"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "OpenAI"
+  - "Build Week"
+  - "ChatGPT"
+  - "Codex"
+  - "英語メール"
+  - "フィッシング"
+  - "すまラボ"
+related:
+  - "202607-gpt-5-6-sol-terra-luna-release"
+  - "202607-chatgpt-5h-limit-lifted-max-ultra"
+  - "202607-claude-cowork-mobile-ios-android"
+pubDate: "2026-07-18"
+updated: "2026-07-18"
+publishAt: "2026-07-18T13:21:51+09:00"
+---
+
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+## 先に結論
+
+**ChatGPTを使っていると、OpenAIから英語のニュースレターが届くことがあります。今週届いた「Build Week」のメール——これは怪しいメールではなく、OpenAI公式のイベント案内です。**
+
+- **無視しても何も起きません。** 参加は任意で、放っておいて問題ありません
+- **興味があれば面白い企画です。** 世界規模の「作ってみようウィーク」で、賞金や特典もあります
+- 英語で戸惑ったら、**メール本文をAIに貼って日本語に訳してもらう**のが手軽です（後半で紹介します）
+
+まずは「怪しいものではない」と分かれば十分。そのうえで、参加しない人・ちょっと気になる人、それぞれの答えを用意しました。
+
+## メールの中身を、日本語でかみくだく
+
+<p class="lead">「Build Week」は、OpenAIが開く<strong>世界規模の“作ってみようウィーク”</strong>です。AIツール「Codex」を使って、何かを作って応募する企画です。</p>
+
+要点を整理すると、こうなります。
+
+<div class="table-card article-wide-block">
+
+| 項目 | 内容 |
+|---|---|
+| 期間 | 2026年7月13日〜21日（世界で40以上のイベント） |
+| 何をする | Codexなどで作品を作り、Devpostで応募 |
+| 賞金 | 総額10万ドル規模。審査はOpenAIの幹部 |
+| 副賞（一例） | DevDayのチケット、ChatGPT Pro 1年無料 など |
+| 参加形態 | ソロ（1人）参加もOK |
+
+</div>
+
+いちばん大事な**提出期限**は、**7月21日 午後5時（米国太平洋時間）**。日本時間に直すと、**7月22日 午前9時ごろ**が締め切りです。「7月21日まで」と読んで油断しないよう、日本時間で押さえておきましょう。
+
+<Callout kind="facts" title="Build Week の要点">
+  <ul>
+    <li>期間：2026年7月13日〜21日（Codexで作る世界規模の企画）</li>
+    <li>賞金総額10万ドル規模・審査はOpenAI幹部・副賞にDevDayチケットやChatGPT Pro 1年無料（一例）</li>
+    <li>ソロ参加OK・応募はDevpost</li>
+    <li><strong>提出期限：7月21日 午後5時（PT）＝ 日本時間 7月22日 午前9時ごろ</strong></li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず「何のメールか」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-build-week-email-explained/slide01-buildweek.webp"
+         alt="「その英語メール、怪しくない」の図解。OpenAIから届いた英語のニュースレターについて、怪しいメールではない・OpenAI公式のイベント案内、無視しても何も起きない、興味があれば面白い企画、英語はAIに訳させればOK、の4点。ひまりがスマホの英語メールを見て「?」と困り顔で驚き、らぼまるが「公式のお知らせだよ」と日本語訳の札を持って案内する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：その英語メール、怪しくない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>正体</strong>：OpenAI公式のイベント案内（怪しくない）</li>
+      <li><strong>無視OK</strong>：参加は任意・放っておいて問題ない</li>
+      <li><strong>面白い</strong>：世界規模の「作ってみよう」企画</li>
+      <li><strong>英語</strong>：AIに貼れば日本語に訳せる</li>
+    </ul>
+  </div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Build Weekの中身を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-build-week-email-explained/slide02-buildweek.webp"
+         alt="「Build Weekの中身」の図解。期間2026年7月13〜21日、賞金総額10万ドル・審査はOpenAI幹部、副賞にDevDayチケット・ChatGPT Pro 1年無料（一例）、ソロ参加OK・応募はDevpost、の4点。締め切りは日本時間7月22日午前9時ごろ。ひまりが「作ってみようウィークなんだ」、らぼまるが「締切は日本時間7/22の朝だよ」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Build Weekの中身</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>期間</strong>：7月13日〜21日</li>
+      <li><strong>賞金</strong>：総額10万ドル規模・審査はOpenAI幹部</li>
+      <li><strong>副賞（一例）</strong>：DevDayチケット・ChatGPT Pro 1年無料</li>
+      <li><strong>締切</strong>：日本時間 7月22日 午前9時ごろ</li>
+    </ul>
+  </div>
+</section>
+
+## 「参加しない人」へ：何もしなくてOK
+
+<p class="lead">結論から言うと、<strong>参加しないなら、何もする必要はありません</strong>。メールを閉じて、いつも通りにChatGPTを使えば大丈夫です。</p>
+
+**メールが届いた理由**は、あなたのOpenAIアカウントで**ニュースレターの配信がオン**になっているからです。何か契約が始まったわけでも、料金が発生するわけでもありません。
+
+もし**この手のお知らせを止めたい**場合は、メールをいちばん下までスクロールすると、小さく **「Unsubscribe（配信停止）」** というリンクがあります。それを押せば、以後のニュースレターは届かなくなります（ChatGPTの利用自体には影響しません）。
+
+<CharacterBubble speaker="himari" mood="curious">何か申し込んじゃったのかと思った…。届いただけなんだね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">そう、お知らせが届いただけ。いらなければメール末尾のUnsubscribeで止められるよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">参加しない人のために1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-build-week-email-explained/slide03-buildweek.webp"
+         alt="「参加しないなら何もしなくてOK」の図解。参加は任意・放っておいて問題ない、料金は発生しない、届いた理由はニュースレター設定がオン、止めたいならメール末尾のUnsubscribe、の4点。ひまりが「何か申し込んじゃった?」と不安がり、らぼまるが「届いただけ。いらなければ止められるよ」と安心させる構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：参加しないなら何もしなくてOK</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>任意</strong>：放っておいて問題ない・料金も発生しない</li>
+      <li><strong>理由</strong>：ニュースレター配信がオンだから届く</li>
+      <li><strong>止め方</strong>：メール末尾の「Unsubscribe」を押す</li>
+      <li><strong>影響なし</strong>：ChatGPTの利用自体は変わらない</li>
+    </ul>
+  </div>
+</section>
+
+## 「ちょっと面白そう」な人へ：覗くだけでもいい
+
+<p class="lead">最近は、<strong>コードを書けない人でも、AIに指示して何かを作れる時代</strong>になってきました。Codexや、話しかけて作る“バイブコーディング”がその例です。</p>
+
+Build Weekは、その流れを体験するのにちょうどよい機会です。**いきなり賞金を狙う必要はありません**。まずは、
+
+- **キックオフの配信**（OpenAIのGreg Brockman氏らが登場）を見る
+- **Discordのコミュニティ**を覗いて、参加者がどんな作品を作っているか眺める
+
+だけでも十分に楽しめます。「作品を出そう」と思わなくても、**締め切りがあると、人はふしぎと何かを作りたくなる**もの。軽い気持ちで、作る側の空気に触れてみるのがおすすめです。
+
+<CharacterBubble speaker="himari" mood="aha">エンジニアじゃなくても、覗くだけならできそう！</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">面白そうな人のために1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-build-week-email-explained/slide04-buildweek.webp"
+         alt="「覗くだけでもいい」の図解。いまはコードを書けなくてもAIで作れる（Codex・バイブコーディング）、キックオフ配信（Greg Brockman氏ら）を見る、Discordで作品を眺める、賞金狙いでなく“締切があると人は作る”、の4点。ひまりが「覗くだけならできそう!」と前向き、らぼまるが「作る側の空気に触れてみよう」と誘う構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：覗くだけでもいい</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>背景</strong>：コードを書けなくてもAIで作れる時代</li>
+      <li><strong>配信</strong>：キックオフ（Greg Brockman氏ら）を見る</li>
+      <li><strong>Discord</strong>：参加者の作品を眺めるだけでもOK</li>
+      <li><strong>トーン</strong>：賞金狙いでなく「締切があると人は作る」</li>
+    </ul>
+  </div>
+</section>
+
+## 豆知識：英語メールは、AIに訳してもらえばいい
+
+<p class="lead">今回のような英語メールが来ても、もう身構えなくて大丈夫です。<strong>メール本文をコピーして、ChatGPTやClaudeに貼るだけ</strong>で、日本語に訳して要約してくれます。</p>
+
+たとえば、こう頼むだけです。
+
+- 「このメールを日本語に訳して、3行で要約して」
+- 「これは何のお知らせ？私がやるべきことはある？」
+
+こうすれば、**英語のニュースレターやお知らせが来ても、自分で読み解けるようになります**。Build Weekに限らず、今後この手のメールが届いたときの“翻訳役”として、AIをそばに置いておくと安心です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">英語メールをAIで読み解く手順を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-build-week-email-explained/slide05-buildweek.webp"
+         alt="「英語メールはAIに訳してもらう」の図解。①英語メールの本文をコピー ②ChatGPTやClaudeに貼る ③『日本語に訳して3行で要約して』と頼む ④『私がやるべきことは?』も聞ける、の4ステップ。ひまりがスマホの英語メールを貼り付け、らぼまるが日本語訳の札を掲げて「これで自分で読み解けるね」と話す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：英語メールはAIに訳してもらう</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>①</strong>：英語メールの本文をコピー</li>
+      <li><strong>②</strong>：ChatGPTやClaudeに貼る</li>
+      <li><strong>③</strong>：「日本語に訳して3行で要約して」と頼む</li>
+      <li><strong>④</strong>：「私がやるべきことは？」も聞ける</li>
+    </ul>
+  </div>
+</section>
+
+## 念のため：似た「偽メール」には注意
+
+<p class="lead">今回のBuild Weekのメールは<strong>OpenAI公式から届いたもの</strong>ですが、有名企業をかたる<strong>そっくりな偽メール（フィッシング）</strong>も世の中にはあります。</p>
+
+見分けの基本は、**差出人のメールアドレスのドメイン**と、**リンク先のURL**を確認することです。少しでも不自然だと感じたら、メール内のリンクは押さず、公式サイトを自分で検索して開くのが安全です。判断に迷うときは、前述のようにAIに「これは本物？怪しい点はある？」と聞いてみるのも一つの手です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">見分けのポイントを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-build-week-email-explained/slide06-buildweek.webp"
+         alt="「似た偽メールには注意」の図解。今回のBuild Weekは公式から届いたもの、でも有名企業をかたる偽メール（フィッシング）もある、差出人ドメインとリンク先URLを確認、不安ならリンクを押さず公式サイトを自分で開く、の4点。ひまりが「本物か見分けられる?」と気にし、らぼまるが「ドメインとリンク先をチェック」と教える構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：似た偽メールには注意</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>前提</strong>：今回のBuild Weekは公式から届いたもの</li>
+      <li><strong>注意</strong>：有名企業をかたる偽メールもある</li>
+      <li><strong>確認</strong>：差出人ドメインとリンク先URL</li>
+      <li><strong>安全</strong>：不安ならリンクを押さず公式を自分で開く</li>
+    </ul>
+  </div>
+</section>
+
+## 確定・報道・未確定の整理
+
+<p class="lead">ここは<strong>確定・報道・未確定を分けて</strong>見るところです。</p>
+
+<Callout kind="facts" title="確定">
+  <ul>
+    <li>Build Weekは2026年7月13日〜21日（Codexで作る世界規模の企画・40以上のイベント）</li>
+    <li>賞金総額10万ドル規模・審査はOpenAI幹部・ソロ参加OK・応募はDevpost</li>
+    <li>提出期限：7月21日 午後5時（PT）＝ 日本時間 7月22日 午前9時ごろ</li>
+    <li>キックオフ配信・Discordコミュニティあり</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="報道・見立て（断定しない）">
+  <ul>
+    <li>副賞の細部（DevDayチケット・ChatGPT Pro 1年無料 など）は受賞区分で変わりうる（一例）</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年7月時点）">
+  <ul>
+    <li>日本国内イベントの有無・日本語対応の細部</li>
+    <li>トラック別の賞金内訳</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">確定・報道・未確定を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-build-week-email-explained/slide07-buildweek.webp"
+         alt="「確定・報道・未確定」の図解。確定＝Build Weekは7月13〜21日・賞金10万ドル規模・ソロOK・締切は日本時間7/22午前9時ごろ。報道＝副賞の細部（DevDayチケット・ChatGPT Pro 1年など）は一例。未確定＝日本国内イベント・トラック別賞金の細部。らぼまるが「事実と一例を分けて見よう」と整理する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：確定・報道・未確定</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>確定</strong>：7/13〜21・賞金10万ドル規模・ソロOK・締切は日本時間7/22朝</li>
+      <li><strong>報道</strong>：副賞の細部は一例（受賞区分で変わりうる）</li>
+      <li><strong>未確定</strong>：日本国内イベント・トラック別賞金の細部</li>
+    </ul>
+  </div>
+</section>
+
+## この動きをどう見る？（補助）
+
+<p class="lead">大事なのは、<strong>「英語のメールが届いても、慌てなくていい」</strong>という感覚を持てることです。</p>
+
+Build Weekは、参加してもしなくてもいい任意のイベントです。参加しないなら閉じればいいし、気になるなら覗くだけでもいい。そして、英語で戸惑ったら**AIに訳してもらえばいい**——この3つを覚えておけば、今後この手のお知らせが来ても自分で対処できます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、覚えておく3つを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-build-week-email-explained/slide08-buildweek.webp"
+         alt="「慌てなくていい 3つ」の図解。①参加しないなら閉じればいい ②気になるなら覗くだけでもいい ③英語で戸惑ったらAIに訳してもらえばいい、の3点。ひまりが「これだけ覚えておけば安心!」と前向き、らぼまるが「英語メールが来ても自分で対処できるね」と締める構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：慌てなくていい 3つ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>①</strong>：参加しないなら閉じればいい</li>
+      <li><strong>②</strong>：気になるなら覗くだけでもいい</li>
+      <li><strong>③</strong>：英語で戸惑ったらAIに訳してもらえばいい</li>
+    </ul>
+  </div>
+</section>
+
+<Note>この記事は2026年7月18日時点の情報です。締め切りや賞・特典の内容は変わる可能性があるため、応募を検討する場合は必ず公式サイト（openai.com/build-week・Devpostの公式ページ）で最新の情報を確認してください。</Note>
+
+<div class="related-links article-wide-block">
+  <a href="/articles/202607-gpt-5-6-sol-terra-luna-release/">GPT-5.6の3モデル（Codexの背景）の違いを読む</a>
+  <a href="/articles/202607-chatgpt-5h-limit-lifted-max-ultra/">ChatGPTの5時間制限が一時撤廃の解説を読む</a>
+  <a href="/articles/202607-claude-cowork-mobile-ios-android/">スマホのClaudeが作業までやるCoworkの解説を読む</a>
+</div>
+
+## 参考情報
+
+この記事は公式情報と主要報道をもとに整理しています。締め切りや賞・特典は変動する可能性があるため、最終的には公式の最新表示で確認してください。
+
+- OpenAI Build Week 公式ページ（openai.com/build-week）
+- OpenAI Build Week 応募ページ（Devpost）
+- OpenAI開発者コミュニティ（community.openai.com）

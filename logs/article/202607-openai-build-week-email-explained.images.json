@@ -1,0 +1,16 @@
+{
+  "slug": "202607-openai-build-week-email-explained",
+  "thumbnail": { "name": "202607-openai-build-week-email-explained.webp", "src": "/images/thumbnails/202607-openai-build-week-email-explained.webp" },
+  "slides": [
+    { "name": "slide01-buildweek.webp", "src": "/images/articles/202607-openai-build-week-email-explained/slide01-buildweek.webp", "theme": "その英語メール、怪しくない（先に結論）" },
+    { "name": "slide02-buildweek.webp", "src": "/images/articles/202607-openai-build-week-email-explained/slide02-buildweek.webp", "theme": "Build Weekの中身（締切JST）" },
+    { "name": "slide03-buildweek.webp", "src": "/images/articles/202607-openai-build-week-email-explained/slide03-buildweek.webp", "theme": "参加しないなら何もしなくてOK（Unsubscribe）" },
+    { "name": "slide04-buildweek.webp", "src": "/images/articles/202607-openai-build-week-email-explained/slide04-buildweek.webp", "theme": "覗くだけでもいい（Greg Brockman・Discord）" },
+    { "name": "slide05-buildweek.webp", "src": "/images/articles/202607-openai-build-week-email-explained/slide05-buildweek.webp", "theme": "英語メールはAIに訳してもらう（4ステップ）" },
+    { "name": "slide06-buildweek.webp", "src": "/images/articles/202607-openai-build-week-email-explained/slide06-buildweek.webp", "theme": "似た偽メールには注意（フィッシング）" },
+    { "name": "slide07-buildweek.webp", "src": "/images/articles/202607-openai-build-week-email-explained/slide07-buildweek.webp", "theme": "確定・報道・未確定" },
+    { "name": "slide08-buildweek.webp", "src": "/images/articles/202607-openai-build-week-email-explained/slide08-buildweek.webp", "theme": "慌てなくていい 3つ（まとめ）" }
+  ],
+  "generatedAt": "2026-07-18",
+  "note": "工房チャット 6a5af309(案A再シード)で生成。全9枚アンカー一致・化けなし・実在ロゴなし（buildweek.com/example のダミードメイン使用）。サムネは翻訳サポートの装い（装い根拠適用）。slide04のDiscordアイコンは簡略化（要独立検品確認）。"
+}
