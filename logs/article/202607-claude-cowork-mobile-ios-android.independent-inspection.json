@@ -1,0 +1,123 @@
+{
+  "overallPass": true,
+  "inspectedBy": "independent_agent",
+  "slides": [
+    {
+      "id": "slide01-cowork",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 80,
+      "revisionHint": ""
+    },
+    {
+      "id": "slide02-cowork",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 70,
+      "revisionHint": "作業の流れ図＋4bullet＋2吹き出しでやや情報過多。単体では成立するがX最優先ではない"
+    },
+    {
+      "id": "slide03-cowork",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 76,
+      "revisionHint": ""
+    },
+    {
+      "id": "slide04-cowork",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 84,
+      "revisionHint": "①メール②カレンダー③資料の3実例が視覚的に明快。X向き"
+    },
+    {
+      "id": "slide05-cowork",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 74,
+      "revisionHint": ""
+    },
+    {
+      "id": "slide06-cowork",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 66,
+      "revisionHint": "比較図＋4bulletで文字密度高め。記事内専用向き"
+    },
+    {
+      "id": "slide07-cowork",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 55,
+      "revisionHint": "棒グラフ＋メタ行＋4bulletで数字が多く高密度。数値は全て正確だがXでは誤読/誤字拡散リスクのため記事内専用向き"
+    },
+    {
+      "id": "slide08-cowork",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 70,
+      "revisionHint": ""
+    }
+  ],
+  "thumbnail": {
+    "verdict": "ok",
+    "issues": [],
+    "textDensity": "low",
+    "numbersAccurate": true,
+    "standsAlone": true,
+    "xPostScore": 92,
+    "revisionHint": "「スマホから“作業”を頼める／Coworkがモバイル対応」＋吹き出し「端末を閉じても動くよ」。文字化けなし。ひまり=金髪サイドテール・ティールリボン・青い瞳・通勤コート/トートバッグ(外出先で仕事の装い=規定内)、らぼまる=卵型・黄緑アンテナ・黒目・オレンジハート・虫めがね+グラフ 全アンカー一致"
+  },
+  "xSelection": [
+    "thumbnail",
+    "slide04-cowork",
+    "slide01-cowork",
+    "slide03-cowork"
+  ],
+  "excludedFromX": [
+    {
+      "id": "slide06-cowork",
+      "reason": "textDensity=high（比較図＋4bullet）。誤字拡散リスクのためX非添付、記事内専用"
+    },
+    {
+      "id": "slide07-cowork",
+      "reason": "textDensity=high（棒グラフ＋メタ＋4bulletで数字密度が高い）。数値は正確だがX直接投稿では読みづらいため記事内専用"
+    },
+    {
+      "id": "slide02-cowork",
+      "reason": "xPostScore下位（4枠に届かず）。内容・数値は正確、記事内で使用"
+    },
+    {
+      "id": "slide05-cowork",
+      "reason": "xPostScore下位（4枠に届かず）。内容・数値は正確、記事内で使用"
+    },
+    {
+      "id": "slide08-cowork",
+      "reason": "xPostScore下位（4枠に届かず）。内容・数値は正確、記事内で使用"
+    }
+  ]
+}
