@@ -1,0 +1,16 @@
+{
+  "slug": "202607-claude-fable-5-final-deadline-checklist",
+  "thumbnail": { "name": "202607-claude-fable-5-final-deadline-checklist.webp", "src": "/images/thumbnails/202607-claude-fable-5-final-deadline-checklist.webp" },
+  "slides": [
+    { "name": "slide01-fable.webp", "src": "/images/articles/202607-claude-fable-5-final-deadline-checklist/slide01-fable.webp", "theme": "残り時間と、やっておくといい3つ" },
+    { "name": "slide02-fable.webp", "src": "/images/articles/202607-claude-fable-5-final-deadline-checklist/slide02-fable.webp", "theme": "重い頼みごとは今のうちに" },
+    { "name": "slide03-fable.webp", "src": "/images/articles/202607-claude-fable-5-final-deadline-checklist/slide03-fable.webp", "theme": "使用量の確認（50%枠）" },
+    { "name": "slide04-fable.webp", "src": "/images/articles/202607-claude-fable-5-final-deadline-checklist/slide04-fable.webp", "theme": "続けたい会話の整理（履歴は残る/続きはクレジット）" },
+    { "name": "slide05-fable.webp", "src": "/images/articles/202607-claude-fable-5-final-deadline-checklist/slide05-fable.webp", "theme": "期限後の選択肢（何もしない/クレジット/API）" },
+    { "name": "slide06-fable.webp", "src": "/images/articles/202607-claude-fable-5-final-deadline-checklist/slide06-fable.webp", "theme": "3週間の振り返り（7/1→7/7→7/13→7/20）" },
+    { "name": "slide07-fable.webp", "src": "/images/articles/202607-claude-fable-5-final-deadline-checklist/slide07-fable.webp", "theme": "確定・報道・未確定" },
+    { "name": "slide08-fable.webp", "src": "/images/articles/202607-claude-fable-5-final-deadline-checklist/slide08-fable.webp", "theme": "またね、Fable（まとめ・惜別）" }
+  ],
+  "generatedAt": "2026-07-19",
+  "note": "工房チャット 6a5b15b2(案A再シード)で生成。惜別+感謝トーン(満面の笑み/泣き顔なし)。実在ロゴなし・Fableは汎用の大きな絵本で象徴。本人チェックで slide05/06/07 のらぼまるが二本アンテナ(正本は一本)の参照劣化を検知→独立検品で確認・要修正なら該当のみ再生成予定。"
+}
