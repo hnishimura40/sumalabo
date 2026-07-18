@@ -1,0 +1,28 @@
+{
+  "overallPass": true,
+  "slides": [
+    { "id": "slide01", "verdict": "ok", "issues": [], "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 88 },
+    { "id": "slide02", "verdict": "ok", "issues": ["数字・固有名詞は全て最終稿と一致。文字密度が高くX直添付には不向き"], "textDensity": "high", "numbersAccurate": true, "standsAlone": true, "xPostScore": 55 },
+    { "id": "slide03", "verdict": "ok", "issues": [], "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 82 },
+    { "id": "slide04", "verdict": "ok", "issues": ["v2で修正済み: 実在Discordロゴ→汎用『コミュニティ』アイコンに差し替え。本文内容は正確"], "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 70 },
+    { "id": "slide05", "verdict": "ok", "issues": ["4手順+メール本文で文字密度が非常に高く、X直添付は誤字拡散リスク・単体では意味が通りにくい"], "textDensity": "high", "numbersAccurate": true, "standsAlone": false, "xPostScore": 40 },
+    { "id": "slide06", "verdict": "ok", "issues": ["差出人info@buildweek.example等ダミードメインで適切。フィッシング注意4項目は最終稿と一致"], "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 70 },
+    { "id": "slide07", "verdict": "ok", "issues": ["確定/報道/未確定の3分類が最終稿と完全一致"], "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 75 },
+    { "id": "slide08", "verdict": "ok", "issues": ["まとめ3点が最終稿と一致"], "textDensity": "low", "numbersAccurate": true, "standsAlone": true, "xPostScore": 90 }
+  ],
+  "thumbnail": {
+    "verdict": "ok",
+    "issues": ["メイン『その英語メール、何?』＋サブ『OpenAI『Build Week』の正体』が指定文言と一致。team@buildweek.comはダミー・実在ロゴ画像なし。認識アンカー一致・文字化けなし"]
+  },
+  "xSelection": ["thumbnail", "slide01", "slide08", "slide03"],
+  "excludedFromX": [
+    { "id": "slide04", "reason": "v2で実在ロゴは修正済みだがX枠4枚に収まらないため次点（記事内には掲載）" },
+    { "id": "slide02", "reason": "textDensity=high。数字は正確だが文字量が多く誤字拡散リスク" },
+    { "id": "slide05", "reason": "textDensity=high かつ standsAlone=false（4手順の連続で単体では意味が通りにくい）" },
+    { "id": "slide06", "reason": "内容は正確だが枠が4枚に収まらないため次点" },
+    { "id": "slide07", "reason": "内容は正確だが3列で文字がやや多く、枠4枚に収まらないため除外" }
+  ],
+  "inspectedBy": "independent_agent_white_eyes",
+  "inspectedAt": "2026-07-18",
+  "note": "slide04はv1で実在Discordロゴ混入(needs_revision)→v2で汎用コミュニティアイコンに差し替え済み。他8枚は初回でok。overallPass=true(修正反映後)。"
+}

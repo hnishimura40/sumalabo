@@ -2,18 +2,124 @@
   "name": "すまラボ画像工房",
   "purpose": "画像生成専用の常設ChatGPTチャット。会話冒頭に公式キャラ正本2枚（ひまり/らぼまる）を添付済み。以後の記事スライド・サムネ生成はこの会話の続きで行い、フォーカス/クリップボード非依存で無人運転を可能にする。",
   "project": "すまラボ台本",
-  "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a50688a-f6dc-83ee-bcce-3b928e55da0b",
-  "canonicalRefs": ["assets/characters/himari-canonical.png", "assets/characters/labomaru-canonical.png"],
+  "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5af309-a1d8-83e8-ada5-4f48518e2c21",
+  "canonicalRefs": [
+    "assets/characters/himari-canonical.png",
+    "assets/characters/labomaru-canonical.png"
+  ],
   "createdAt": "2026-07-05",
-  "reseededAt": "2026-07-10",
+  "reseededAt": "2026-07-18T13:30:00+09:00",
   "generatedSinceSeed": 9,
   "reseedThreshold": 10,
   "reseedPolicy": "【前倒し・定量トリガー】この工房チャットでの累計生成画像(generatedSinceSeed)が reseedThreshold(=10枚)を超える前に、必ず再シード(新チャット作成+正本2枚 himari/labomaru 添付+conversationUrl更新+generatedSinceSeedを0にリセット)する。加えて、1記事(7〜8枚)を生成し終えるごとに次の記事の画像生成前に再シードするのを既定とする(参照劣化は8枚1バッチの後半から出やすいため)。崩れを検知した場合(factcheck項目10/11)は即座に再シードして崩れたスライドだけ作り直す。無人runで再シード(=画像添付)が経路上できない場合は blocked_image_generation_unavailable で安全停止し、人間に再シードを依頼して通知する。",
   "reseedHistory": [
-    { "at": "2026-07-07", "reason": "ai-assistant記事のslide06-08でキャラ参照劣化(別人化)を検知→再シード。旧chat 6a4a0b45→新chat 6a4cf0e8。崩れた3枚を再生成し差し替え", "prevConversationId": "6a4a0b45-ef80-83ee-86dd-514f51ee2d64" },
-    { "at": "2026-07-08", "reason": "fable5無料枠延長(7/13)記事の画像生成前に予防再シード(前記事分3枚で閾値接近)。旧chat 6a4cf0e8→新chat 6a4d9073。全8スライド+サムネをキャラ一貫で生成", "prevConversationId": "6a4cf0e8-636c-83ee-9700-4c08f81c89cc" },
-    { "at": "2026-07-09", "reason": "今夜のrun前の予防再シード。前chat 6a4d9073はseed=10で閾値到達(fable5の8スライド+サムネ+衣装テスト1枚)。無人runは画像添付=再シードが経路上できないため立ち会いで先行実施。新chat 6a4f0471に正本2枚(ひまり/らぼまる)添付+認識アンカー/衣装ルールを確立。generatedSinceSeed=0にリセット", "prevConversationId": "6a4d9073-31d0-83ee-b2e2-5f4e6dc669ad" },
-    { "at": "2026-07-10", "reason": "GPT-5.6 GA記事の画像生成前に予防再シード。前chat 6a4f0471は7/10未明の無人run(ChatGPT Work記事)でスライド+サムネ生成済み=1記事分消化のため、ポリシー(1記事ごとに次の生成前へ再シード)に従い実施。新chat 6a50688aに正本2枚添付+アンカー/衣装ルール確立。seed=0", "prevConversationId": "6a4f0471-84dc-83e8-9422-43ac0bd2a025" }
+    {
+      "at": "2026-07-07",
+      "reason": "ai-assistant記事のslide06-08でキャラ参照劣化(別人化)を検知→再シード。旧chat 6a4a0b45→新chat 6a4cf0e8。崩れた3枚を再生成し差し替え",
+      "prevConversationId": "6a4a0b45-ef80-83ee-86dd-514f51ee2d64"
+    },
+    {
+      "at": "2026-07-08",
+      "reason": "fable5無料枠延長(7/13)記事の画像生成前に予防再シード(前記事分3枚で閾値接近)。旧chat 6a4cf0e8→新chat 6a4d9073。全8スライド+サムネをキャラ一貫で生成",
+      "prevConversationId": "6a4cf0e8-636c-83ee-9700-4c08f81c89cc"
+    },
+    {
+      "at": "2026-07-09",
+      "reason": "今夜のrun前の予防再シード。前chat 6a4d9073はseed=10で閾値到達(fable5の8スライド+サムネ+衣装テスト1枚)。無人runは画像添付=再シードが経路上できないため立ち会いで先行実施。新chat 6a4f0471に正本2枚(ひまり/らぼまる)添付+認識アンカー/衣装ルールを確立。generatedSinceSeed=0にリセット",
+      "prevConversationId": "6a4d9073-31d0-83ee-b2e2-5f4e6dc669ad"
+    },
+    {
+      "at": "2026-07-10",
+      "reason": "GPT-5.6 GA記事の画像生成前に予防再シード。前chat 6a4f0471は7/10未明の無人run(ChatGPT Work記事)でスライド+サムネ生成済み=1記事分消化のため、ポリシー(1記事ごとに次の生成前へ再シード)に従い実施。新chat 6a50688aに正本2枚添付+アンカー/衣装ルール確立。seed=0",
+      "prevConversationId": "6a4f0471-84dc-83e8-9422-43ac0bd2a025"
+    },
+    {
+      "at": "2026-07-11",
+      "reason": "恒久無人運転モード切替前の予防再シード。前chat 6a50688aはseed=9(GPT-5.6 GA記事のスライド8枚+サムネ)で閾値10目前。新chat 6a51b479に正本2枚(ひまり/らぼまる)添付+認識アンカー/衣装ルール確立(準備OK応答確認)。seed=0",
+      "prevConversationId": "6a50688a-f6dc-83ee-bcce-3b928e55da0b"
+    },
+    {
+      "at": "2026-07-12",
+      "reason": "Tesla Grok記事(スライド8枚+サムネ=9枚)でseed=10到達目前。前chat 6a51b479は1記事分消化のためポリシー(1記事ごとに次の生成前へ再シード)に従い実施。タブ前面化を確認して正本2枚(ひまり/らぼまる)をクリップボード添付→アンカー/衣装ルール確立(準備OK応答確認)。新chat 6a5307f9。seed=0",
+      "prevConversationId": "6a51b479-3418-83ee-82ab-ea9c9fb85fae"
+    }
   ],
-  "note": "夜間ドライバーはこのURLに navigate して会話の続きで生成する。ただし generatedSinceSeed が閾値超過、または前記事ぶんが未リセットなら、続きに詰め込まず再シードを優先する。"
+  "note": "夜間ドライバーはこのURLに navigate して会話の続きで生成する。ただし generatedSinceSeed が閾値超過、または前記事ぶんが未リセットなら、続きに詰め込まず再シードを優先する。",
+  "lastUsedAt": "2026-07-18T04:30:00.000Z",
+  "lastUsedFor": "202607-openai-build-week-email-explained",
+  "history": [
+    {
+      "at": "2026-07-18T13:30:00+09:00",
+      "action": "reseed(案A・textのみ)",
+      "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5af309-a1d8-83e8-ada5-4f48518e2c21",
+      "reason": "Build Week記事の画像生成前。前チャット6a5ad626に1Password画像10枚(参照劣化回避)"
+    },
+    {
+      "at": "2026-07-18T00:00:00+09:00",
+      "from": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a593b54-0d7c-83ee-855b-60e889462ce3",
+      "to": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5a8e51-9200-83ee-9747-28a646effbbb",
+      "reason": "Claude for Teachers記事の画像生成前に再シード。前chat 6a593b54 は実画像数18枚(AI利用調査記事1本分消化・generatedSinceSeedカウンタはstaleで0表示)で閾値10を大幅超過。案A(プロジェクトファイル参照・テキストのみ・準備OK確認)で再シード。seed=0"
+    },
+    {
+      "at": "2026-07-17T00:00:00+09:00",
+      "from": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a569535-9990-83ee-83a9-77329f8485a9",
+      "to": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a593b54-0d7c-83ee-855b-60e889462ce3",
+      "reason": "AI利用調査(305人)記事の画像生成前に再シード。前chat 6a569535 はseed=10(Google Play記事1本分消化)で閾値到達。案A(プロジェクトファイル参照・テキストのみ・準備OK確認)で再シード。seed=0"
+    },
+    {
+      "at": "2026-07-15T05:20:00+09:00",
+      "from": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a55fc9e-685c-83e8-84bc-2ebb866e7fc4",
+      "to": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a569535-9990-83ee-83a9-77329f8485a9",
+      "reason": "Google Play手数料引き下げ記事の画像生成前に再シード。前chat 6a55fc9e はbackend-api実測で画像21枚(>閾値10・generatedSinceSeed=0はstale)を確認し案A(プロジェクトファイル参照・テキストのみ・準備OK確認)で再シード。seed=0"
+    },
+    {
+      "at": "2026-07-14T12:05:00+09:00",
+      "from": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a558cb9-a268-83e8-8e73-0f755a6f9299",
+      "to": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a55fc9e-685c-83e8-84bc-2ebb866e7fc4",
+      "reason": "5時間制限記事の画像生成前に予防再シード(8スライド1バッチのため)。案A(プロジェクトファイル参照・テキストのみ・準備OK確認)。拡張自己復旧(ensure-chrome)でChrome再起動後に実施"
+    },
+    {
+      "at": "2026-07-14T10:10:00+09:00",
+      "from": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a557c45-0248-83ee-91b0-bf3d2e3fcaf2",
+      "to": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a558cb9-a268-83e8-8e73-0f755a6f9299",
+      "reason": "Atlasサムネ3世代目(驚きトーン)生成前の再シード。前chat実画像数18(>閾値10)をbackend-apiで確認し案A(プロジェクトファイル参照・テキストのみ・準備OK確認)で再シード。感情トーン改訂(注意速報系=驚き×安心)を初回アンカーに含めた"
+    },
+    {
+      "at": "2026-07-13T00:35:00+09:00",
+      "from": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5307f9-1074-83e8-8a1e-0ee3048e706e",
+      "to": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5448eb-ca0c-83e8-bb51-74197bbcd209",
+      "reason": "夜間runブロック回収: seed 12>閾値10のため再シード(正本2枚CF_HDROP添付・前面化1回で成功)"
+    },
+    {
+      "at": "2026-07-13T13:15:00+09:00",
+      "from": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5448eb-ca0c-83e8-bb51-74197bbcd209",
+      "to": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a54593e-a420-83e8-bc6e-9eba699cb0ea",
+      "reason": "seed 10>閾値10で再シード。案A(プロジェクトファイル参照・テキストのみ)の初の本番使用で成功(準備OK確認・画像添付なし)"
+    },
+    {
+      "at": "2026-07-14T09:30:00+09:00",
+      "from": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a54593e-a420-83e8-bc6e-9eba699cb0ea",
+      "to": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a557c45-0248-83ee-91b0-bf3d2e3fcaf2",
+      "reason": "Atlas記事resume: seed10閾値で案A再シード(プロジェクトファイル参照・テキストのみ・準備OK確認)"
+    },
+    {
+      "at": "2026-07-18T12:15:00+09:00",
+      "action": "reseed(案A・textのみ)",
+      "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5ac3d3-2724-83e8-8766-ac2540898d6c",
+      "reason": "Cowork記事の画像生成前。前チャット6a5a8e51に前記事画像9枚(参照劣化回避)"
+    },
+    {
+      "at": "2026-07-18T10:20:00+09:00",
+      "action": "reseed(案A・textのみ)",
+      "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5ad626-8898-83e8-8ff7-4ab54ae393fb",
+      "reason": "1Password記事の画像生成前。前チャット6a5ac3d3にCowork画像9枚"
+    }
+  ],
+  "reseedMethod": "project_files_text_only",
+  "projectFiles": {
+    "himari": "himari-canonical(4).png",
+    "labomaru": "labomaru-canonical(4).png",
+    "uploadedAt": "2026-07-13T12:30:00+09:00",
+    "note": "プロジェクト「すまラボ台本」の情報源に常設。再シードは新チャット+テキスト参照のみ(案A・2026-07-13品質検証済み)"
+  }
 }
