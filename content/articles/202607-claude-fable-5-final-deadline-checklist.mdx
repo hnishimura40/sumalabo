@@ -1,0 +1,323 @@
+---
+title: "Claude Fable 5、いよいよ7/20(月)15:59まで。最後にやり残しはありませんか？"
+slug: "202607-claude-fable-5-final-deadline-checklist"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Claude Fable 5を追加料金なしでサブスク内から使える無料枠が、日本時間7月20日（月）15:59:59でいよいよ最終。2度の延長（7/7→7/13→7/20）を経た最終期限の前に、対象プランの人がやっておくといい最終チェックリスト（重い頼みごと・使用量50%枠の確認・続けたい会話の整理・期限後の選択肢）を、シリーズ完結編としてやさしく整理します。期限後は利用クレジットまたはAPI、過去の会話履歴は残ること、標準復帰の時期が未定なことまで、確定・報道・未確定を分けて解説。"
+thumbnail: "/images/thumbnails/202607-claude-fable-5-final-deadline-checklist.webp"
+thumbnailAlt: "「またね、Fable」のサムネイル。夕暮れ空の下、金髪サイドテールのひまりがFableを象徴する大きな絵本に手を振り（笑顔と少しの寂しさの中間）、白い卵型のらぼまるが『7/20 15:59まで』のカレンダーと砂時計を添えて見送る惜別＋感謝の構図。文字は『またね、Fable』『無料枠は7/20 15:59まで』"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude"
+  - "Claude Fable 5"
+  - "Anthropic"
+  - "usage credits"
+  - "サブスクリプション"
+  - "締切"
+  - "すまラボ"
+related:
+  - "202607-claude-fable-5-free-extension-july20"
+  - "202607-claude-fable-5-free-extension-july13"
+  - "202607-claude-fable-5-usage-credits-switch"
+pubDate: "2026-07-19"
+updated: "2026-07-19"
+publishAt: "2026-07-19T00:32:45+09:00"
+---
+
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+## 30秒サマリー
+
+<p class="lead"><strong>Claude Fable 5をサブスク内で追加料金なしに使える期間は、日本時間<strong>7月20日(月)15:59:59</strong>まで。残りわずかです。</strong></p>
+
+対象プランの人が、残り時間でやっておくといいことは3つです。
+
+- **重い頼みごとは今のうちに** ——「ここぞ」の仕事を残り時間で試す
+- **使用量を確認する** —— 週間上限の50%枠を、まだ余らせていないか
+- **続けたい会話を整理する** —— 期限後もFableで続きを書きたいものはどれか
+
+まだ試していない対象プランの人は、この3つだけ押さえておけば大丈夫です。
+
+<NumCards
+  items={[
+    { num: "7/20", cap: "無料枠の最終期限（日本時間15:59:59）" },
+    { num: "50%", cap: "週間上限のうち追加料金なしで使える割合" },
+    { num: "残り", cap: "申請不要・対象なら試すだけ" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">7月20日って、もうすぐだよね。今のうちに何をしておけばいいの?</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">重い頼みごと・使用量の確認・続けたい会話の整理。この3つだけでいいよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず「残り時間と、やっておくといい3つ」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-final-deadline-checklist/slide01-fable.webp"
+         alt="「残り時間と、やっておくといい3つ」の図解。Claude Fable 5の無料枠は日本時間7月20日15:59:59まで。①重い頼みごとは今のうちに ②使用量の確認 ③続けたい会話の整理、の3点。ひまりがカレンダーを見て、らぼまるが7/20 15:59の日付カードを持つ構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：残り時間と、やっておくといい3つ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>期限</strong>：日本時間7月20日(月)15:59:59まで</li>
+      <li><strong>①</strong>：重い頼みごとは今のうちに</li>
+      <li><strong>②</strong>：使用量（50%枠）の確認</li>
+      <li><strong>③</strong>：続けたい会話の整理</li>
+    </ul>
+  </div>
+</section>
+
+## 締切前の最終チェックリスト
+
+<p class="lead">対象は <strong>Pro / Max / Team ＋ Enterpriseのプレミアムシート</strong>。<strong>申請不要</strong>で、対象なら残り時間で試すだけです。</p>
+
+<div class="check-box article-wide-block">
+  <p><strong>やり残しがないか、上から確認</strong></p>
+  <ul>
+    <li><strong>□ 重い頼みごとは今のうちに</strong>：長文の分析・大きな執筆・複雑な相談など、"ここぞ"の仕事を残り時間で回しておく</li>
+    <li><strong>□ 使用量の確認</strong>：週間上限の最大50%まで追加料金なし。まだ枠を余らせていないか、設定・使用状況の画面で見ておく</li>
+    <li><strong>□ 続けたい会話の整理</strong>：期限後も過去の会話履歴は残るが、その続きをFableで書かせるにはクレジット/APIが要る。今のうちに進めたい会話を決めておく</li>
+    <li><strong>□ 期限後の選択肢を知っておく</strong>：何もしない（他モデルで続行）／クレジット購入／API。自分がどれ向けかを把握しておく</li>
+  </ul>
+</div>
+
+### ① 重い頼みごとは今のうちに
+
+<p class="lead">Fable 5は「いちばん高性能なClaude」として出たモデル。<strong>ここぞという重い仕事ほど、残り時間で試す価値</strong>があります。</p>
+
+長文ドキュメントの分析、まとまった量の執筆、込み入った相談——ふだん「あとで」にしていた重めの頼みごとを、残り時間で回しておきましょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「重い頼みごと」の例を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-final-deadline-checklist/slide02-fable.webp"
+         alt="「重い頼みごとは今のうちに」の図解。長文の分析・大きな執筆・複雑な相談など「ここぞ」の仕事を残り時間で試す。ひまりが「ずっと後回しにしてたやつ、今やろう」、らぼまるが「重い仕事ほど今のうちに」と促す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：重い頼みごとは今のうちに</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>長文の分析</strong>：資料・ログ・議事録などをまとめて読ませる</li>
+      <li><strong>大きな執筆</strong>：構成から本文まで一気に相談する</li>
+      <li><strong>複雑な相談</strong>：条件が多い意思決定を整理してもらう</li>
+    </ul>
+  </div>
+</section>
+
+### ② 使用量の確認（50%枠を余らせていないか）
+
+<p class="lead">追加料金なしで使えるのは<strong>週間上限の最大50%</strong>まで。<strong>まだ枠が余っているなら、それが「試せる残り」</strong>です。</p>
+
+Claudeの設定・使用状況の画面で、今週どれくらい使ったかを確認できます。50%枠に余裕があるうちに、①の重い頼みごとに充てるのがおすすめです。なお**Claude Codeの週間上限50%増量も同じ期限（7/20 15:59）で終了**します。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">使用量の見方を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-final-deadline-checklist/slide03-fable.webp"
+         alt="「使用量の確認」の図解。週間上限の最大50%まで追加料金なし。設定・使用状況の画面で残り枠を確認する。Claude Codeの50%増量も同じ期限で終了。ひまりが使用量メーターを見て、らぼまるが「余ってるなら今使おう」と案内する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：使用量の確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>50%枠</strong>：週間上限の半分まで追加料金なし</li>
+      <li><strong>見る場所</strong>：Claudeの設定・使用状況の画面</li>
+      <li><strong>余っていたら</strong>：重い頼みごとに充てる</li>
+      <li><strong>Claude Code</strong>：50%増量も同じ期限で終了</li>
+    </ul>
+  </div>
+</section>
+
+### ③ 続けたい会話の整理
+
+<p class="lead">誤解しやすい点。<strong>期限後もFableとの過去の会話履歴は消えません</strong>。ただし、<strong>その会話の続きをFableで書かせる</strong>には、期限後はクレジット/APIが必要になります。</p>
+
+つまり「読み返す」ことはこれまで通りできますが、「Fableに続きを頼む」には別の手段が要る、ということです。今のうちに、続きを進めておきたい会話を決めておくと安心です。
+
+<CharacterBubble speaker="himari" mood="worried">今までのやりとりが消えちゃうの?</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">履歴は残るよ。ただ"続きをFableで書く"には期限後はクレジットが要る、ってだけ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「履歴」と「続き」を分けて1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-final-deadline-checklist/slide04-fable.webp"
+         alt="「続けたい会話の整理」の図解。期限後も過去の会話履歴は残る（読み返せる）。ただし続きをFableで書かせるにはクレジット/APIが必要。今のうちに進めたい会話を決めておく。ひまりが会話ログを眺め、らぼまるが「履歴は残る/続きはクレジット」と2つに分けて説明する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：続けたい会話の整理</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>残る</strong>：過去の会話履歴は期限後も消えない</li>
+      <li><strong>要る</strong>：続きをFableで書くには期限後クレジット/API</li>
+      <li><strong>今のうちに</strong>：進めたい会話を決めておく</li>
+    </ul>
+  </div>
+</section>
+
+### ④ 期限後の選択肢を知っておく
+
+<p class="lead">期限が来ても、慌てて何かを買う必要はありません。<strong>選択肢は3つ</strong>。自分がどれ向けかを知っておけば十分です。</p>
+
+<div class="decision-guide article-wide-block">
+  <ul>
+    <li><strong>何もしない（他モデルで続行）</strong>：ふだんの用途はSonnetなど他のモデルで足りる人。いちばん多い選択で、追加費用なし</li>
+    <li><strong>クレジットを購入する</strong>：期限後もFable 5を使い続けたい人。プリペイドの利用クレジット経由（単価は<strong>報道ベース</strong>で入力$10・出力$50 / 100万トークン）</li>
+    <li><strong>APIを使う</strong>：開発・自動化で組み込みたい人向け。日常のチャット用途なら通常は不要</li>
+  </ul>
+</div>
+
+Anthropicは「**キャパシティ次第でサブスク標準への復帰を目指す**」としていますが、**時期は未定**です。焦らず、まずは残り時間を使い切ることを優先しましょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">期限後の3つの道を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-final-deadline-checklist/slide05-fable.webp"
+         alt="「期限後の選択肢」の図解。①何もしない（他モデルで続行・費用なし）②クレジット購入（Fableを使い続けたい人・単価は報道ベースで入力10ドル/出力50ドル・100万トークン）③API（開発・自動化向け）。それぞれ誰向けか。らぼまるが3つの道の分かれ道を案内する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：期限後の選択肢</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>何もしない</strong>：他モデルで続行・費用なし（多くの人向け）</li>
+      <li><strong>クレジット購入</strong>：Fableを使い続けたい人（単価は報道ベース）</li>
+      <li><strong>API</strong>：開発・自動化で組み込みたい人向け</li>
+    </ul>
+  </div>
+</section>
+
+## この3週間の振り返り
+
+<p class="lead">Fable 5は、<strong>止まって、戻って、2度延びた</strong>——短い間にいろいろ動いたモデルでした。</p>
+
+<Timeline>
+  <TimelineItem date="2026-07-01">グローバル再開。対象サブスクで無料枠スタート</TimelineItem>
+  <TimelineItem date="2026-07-07">当初の無料枠期限（usage creditsへ移行予定だった）</TimelineItem>
+  <TimelineItem date="2026-07-13">1度目の延長（日本時間7月13日まで）</TimelineItem>
+  <TimelineItem date="2026-07-20" hot>2度目の延長＝最終（日本時間7月20日 15:59:59まで）</TimelineItem>
+</Timeline>
+
+経緯をくわしく知りたい人は、シリーズの各記事もどうぞ。
+
+<div class="related-links article-wide-block">
+  <a href="/articles/202607-claude-fable-5-usage-credits-switch/">usage credits制への切り替えを読む</a>
+  <a href="/articles/202607-claude-fable-5-free-extension-july13/">1度目の延長（7/13まで）を読む</a>
+  <a href="/articles/202607-claude-fable-5-free-extension-july20/">2度目の延長（7/20まで）を読む</a>
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">3週間の流れを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-final-deadline-checklist/slide06-fable.webp"
+         alt="「3週間の振り返り」のタイムライン図解。7/1グローバル再開（無料枠スタート）→7/7当初の期限→7/13 1度目の延長→7/20 15:59 2度目＝最終、の4ステップ。ひまり「止まって、戻って、2回延びたんだね」、らぼまる「めまぐるしい3週間だったね」の対話つき"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：3週間の振り返り（7/1→7/7→7/13→7/20）</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>7/1</strong>：グローバル再開（無料枠スタート）</li>
+      <li><strong>7/7</strong>：当初の無料枠期限</li>
+      <li><strong>7/13</strong>：1度目の延長</li>
+      <li><strong>7/20 15:59</strong>：2度目＝最終</li>
+    </ul>
+  </div>
+</section>
+
+## 確定・報道・未確定の整理
+
+<p class="lead">ここは<strong>確定・報道・未確定を分けて</strong>見るところです。</p>
+
+<Callout kind="facts" title="確定">
+  <ul>
+    <li>無料枠の最終期限は日本時間7月20日(月)15:59:59（=米太平洋時間7/19 23:59:59）</li>
+    <li>対象＝Pro / Max / Team ＋ Enterpriseプレミアム・週間上限の最大50%・申請不要（据え置き）</li>
+    <li>Claude Codeの週間上限50%増量も同じ期限で終了</li>
+    <li>期限後は利用クレジット（別課金）またはAPI。過去の会話履歴自体は残る</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="報道・見立て（断定しない）">
+  <ul>
+    <li>利用クレジットの単価（入力$10・出力$50 / 100万トークン）は報道ベース。公式の最新表示を優先</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年7月18日時点）">
+  <ul>
+    <li>サブスク標準への復帰の具体的な時期（「キャパシティ次第で目指す」まで）</li>
+    <li>3度目の延長の有無（過去に2度延びた前例はあるが、現時点で告知なし）</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">確定・報道・未確定を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-final-deadline-checklist/slide07-fable.webp"
+         alt="「確定・報道・未確定」の図解。確定＝期限は日本時間7/20 15:59・対象据え置き・Claude Code50%も同期限・履歴は残る。報道＝クレジット単価(入力10ドル/出力50ドル・100万トークン)。未確定＝標準復帰の時期・3度目の延長の有無。らぼまるが3分類に整理する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：確定・報道・未確定</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>確定</strong>：期限は日本時間7/20 15:59・対象据え置き・履歴は残る</li>
+      <li><strong>報道</strong>：クレジット単価は報道ベース</li>
+      <li><strong>未確定</strong>：標準復帰の時期・3度目の延長の有無</li>
+    </ul>
+  </div>
+</section>
+
+## おわりに：試せた人は、幸運だったと思う
+
+<p class="lead">Fable 5とこの3週間つき合えた人は、ちょっと幸運だったと思います。<strong>やり残しだけ、残り時間でそっと片付けておきましょう</strong>。</p>
+
+期限が来ても、慌てることはありません。ふだんの用途は他のモデルで続けられますし、どうしてもFableを使いたければクレジットという道もあります。そして——Anthropicが言うように、キャパシティが整えば**また会える**かもしれません。それまでは、いったんお別れです。
+
+<CharacterBubble speaker="himari" mood="smile">短い間だったけど、けっこう頼りにしてたなあ。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">やり残しだけ片付けておこう。復帰したら、また会えるよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、覚えておくことを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-fable-5-final-deadline-checklist/slide08-fable.webp"
+         alt="「またね、Fable」のまとめ図解。①やり残し（重い頼みごと）は残り時間で ②期限後も慌てない（他モデルで続行できる）③復帰したらまた会える。夕暮れ空の下、ひまりが本に手を振り、らぼまるが7/20 15:59のカレンダーを持つ、惜別だが軽いトーンの構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：またね、Fable（覚えておく3つ）</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>①</strong>：やり残し（重い頼みごと）は残り時間で</li>
+      <li><strong>②</strong>：期限後も慌てない（他モデルで続行できる）</li>
+      <li><strong>③</strong>：復帰したらまた会えるかも</li>
+    </ul>
+  </div>
+</section>
+
+<Note>この記事は2026年7月19日時点の情報です。期限（日本時間7月20日15:59:59）・利用クレジットの単価・サブスク標準復帰の時期は変わる可能性があります。応募や購入を検討する場合は、必ずAnthropic公式（claude.ai / Anthropic のヘルプ・お知らせ）で最新の表示を確認してください。</Note>
+
+## 参考情報
+
+この記事は公式情報と主要報道をもとに整理しています。期限や単価は変動する可能性があるため、最終的には公式の最新表示で確認してください。
+
+- Anthropic / Claude 公式のお知らせ（claude.ai・ヘルプセンター）
+- 主要報道（Fable 5 無料枠の7月19日 PT＝日本時間7月20日までの延長を報じた各社）

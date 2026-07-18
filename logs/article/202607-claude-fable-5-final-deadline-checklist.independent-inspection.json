@@ -1,0 +1,29 @@
+{
+  "overallPass": true,
+  "slides": [
+    { "id": "slide01", "verdict": "ok", "issues": [], "antennaCount": 1, "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 78 },
+    { "id": "slide02", "verdict": "ok", "issues": [], "antennaCount": 1, "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 72 },
+    { "id": "slide03", "verdict": "ok", "issues": ["50%枠・Claude Code同期限も正確"], "antennaCount": 1, "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 80 },
+    { "id": "slide04", "verdict": "ok_with_warning", "issues": ["チャット風テキストが多く文字密度が高い。履歴/続きの説明は最終稿と一致。X添付には不向き"], "antennaCount": 1, "textDensity": "high", "numbersAccurate": true, "standsAlone": false, "xPostScore": 40 },
+    { "id": "slide05", "verdict": "ok", "issues": ["v2で修正済み: らぼまるのアンテナを2本→正本どおり1本に。3択(何もしない/クレジット/API)・報道ベース単価は正確"], "antennaCount": 1, "textDensity": "high", "numbersAccurate": true, "standsAlone": true, "xPostScore": 55 },
+    { "id": "slide06", "verdict": "ok", "issues": ["v2で修正済み: アンテナ2本→1本に。タイムライン(7/1→7/7→7/13→7/20 15:59)は正確"], "antennaCount": 1, "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 68 },
+    { "id": "slide07", "verdict": "ok", "issues": ["v2で修正済み: アンテナ2本→1本に。確定/報道/未確定の仕分けは正確"], "antennaCount": 1, "textDensity": "high", "numbersAccurate": true, "standsAlone": true, "xPostScore": 55 },
+    { "id": "slide08", "verdict": "ok", "issues": ["まとめ3点は最終稿と一致。惜別+感謝の中間トーン(炎/涙/パニックなし)。カレンダー7/20 15:59まで一致・実在ロゴなし"], "antennaCount": 1, "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 82 }
+  ],
+  "thumbnail": {
+    "verdict": "ok",
+    "issues": ["「またね、Fable」+サブ「無料枠は7/20 15:59まで」一致。ひまり正本一致・惜別+感謝の中間トーン。絵本は汎用ファンタジー意匠で実在ロゴなし"],
+    "antennaCount": 1
+  },
+  "xSelection": ["thumbnail", "slide08", "slide03", "slide01"],
+  "excludedFromX": [
+    { "id": "slide04", "reason": "textDensity=high(チャット風テキスト多)かつ単体で要点が伝わりにくい" },
+    { "id": "slide05", "reason": "textDensity=high。修正済みだがX枠4枚に収まらず次点" },
+    { "id": "slide06", "reason": "内容正確だがX枠4枚に収まらず次点" },
+    { "id": "slide07", "reason": "textDensity=high。修正済みだがX枠4枚に収まらず次点" },
+    { "id": "slide02", "reason": "内容okだが選抜上位4枚に入らず" }
+  ],
+  "inspectedBy": "independent_agent_white_eyes",
+  "inspectedAt": "2026-07-19",
+  "note": "slide05/06/07はv1でらぼまる二本アンテナ(needs_revision)→v2で正本どおり一本に修正済み。他6枚は初回ok。overallPass=true(修正反映後)。X選抜=thumbnail/slide08/slide03/slide01(全て一本アンテナ・低〜中密度)。"
+}
