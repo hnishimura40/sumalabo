@@ -1,0 +1,298 @@
+---
+title: "Codexって何？ブラウザ内蔵とClaude Code、乗り換えて分かった使い分け"
+slug: "202607-openai-codex-claude-code-browser-imagegen"
+type: "news"
+category: "ニュースをかみくだく"
+description: "ChatGPTの中でファイル・コード・ブラウザ・画像を扱うCodexとは何か。内蔵ブラウザと普段のChromeを使う方式の違い、Claude Codeとの使い分けを、画像運用を実際に乗り換えた当事者目線で整理します。"
+thumbnail: "/images/thumbnails/202607-openai-codex-claude-code-browser-imagegen.webp"
+thumbnailAlt: "Codexって何？をテーマに、金髪サイドテールのひまりが内蔵ブラウザの工房とコマンドで画像ファイルを直接保存する工房を見比べ、白い卵型のらぼまるが何をさせたいかで選ぼうと案内するサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+related:
+  - "202607-openai-gpt-5-6-chatgpt-work"
+  - "202607-claude-cowork-mobile-ios-android"
+  - "202607-chatgpt-5h-limit-lifted-max-ultra"
+pubDate: "2026-07-19"
+updated: "2026-07-19"
+publishAt: "2026-07-19T15:30:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Codexは、質問に答えるだけでなく、ファイルを読み、コードを書き、ブラウザで動作を確かめ、画像を作り、成果物として保存するところまで進めるAIエージェントです。
+
+<Summary30>
+  <ol>
+    <li>CodexとClaude Codeの違いは、知能の順位より<strong>どの作業場所をAIに渡すか</strong></li>
+    <li>内蔵ブラウザは専用環境とlocalhost確認、Chrome拡張は既存ログインを使う作業に向く</li>
+    <li>本サイトは画像生成をブラウザ操作からCodexの直接保存へ切り替え、周辺の不安定工程を減らした</li>
+    <li>会話・コード・ブラウザ・画像量産の4用途で選び、併用もあり</li>
+  </ol>
+</Summary30>
+
+<CharacterBubble speaker="himari" mood="curious">Codexって、コードを書く人だけのものじゃないの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">今はブラウザ確認や画像のファイル保存までつなげられるよ。何を任せるかで見よう。</CharacterBubble>
+
+## 先に結論
+
+<p class="lead"><strong>CodexとClaude Codeは、どちらも強力な「働くAI」です。違いは知能の順位より、どの作業場所をAIに渡すかにあります。</strong></p>
+
+- Web制作をlocalhostの確認までつなげたいなら、Codexの内蔵ブラウザが分かりやすい
+- ログイン済みのサイトを普段のChromeで動かしたいなら、Chrome拡張が便利
+- コード中心なら両方が候補。既存の開発習慣と自動化資産で選ぶ
+- 画像を繰り返し保存するなら、生成後の「ファイル搬出」まで含めて比べる
+
+## Codexとは？ 「コードを書くAI」より一段広い
+
+<p class="lead">Codexは、コードを返すだけでなく、<strong>作業を完了条件まで進めるAIエージェント</strong>です。</p>
+
+OpenAIはCodexを、コードを書き、理解し、レビューし、デバッグするAIエージェントとして案内しています。現在はChatGPTのデスクトップアプリ、Web・クラウド、CLI、IDE拡張、iOSなどから使えます。Plus、Pro、Business、Enterprise/Eduなどの対象プランでは、ChatGPT側の利用枠とCodex側の利用枠がつながっています。APIキーで使う場合は別課金です。
+
+大事なのは、作業フォルダを読み、ファイルを直し、コマンドを実行し、テストし、必要ならブラウザで見た目まで確認できること。内蔵の画像生成では、参照画像を渡し、作った画像をファイルとして保存する流れも作れます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずはCodexができることを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide01-codex-working-ai.webp" alt="Codexとは何かを示す図解。ChatGPTの中の働くAIとして、ファイルを読む、コードを書く、テストする、ブラウザで確認、画像を保存の5工程を、ひまりとらぼまるが案内する" loading="lazy" decoding="async" />
+    <figcaption>図解：Codexは「答える」だけでなく完了まで進む</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>読む</strong>：作業フォルダやファイルを確認</li>
+      <li><strong>作る</strong>：コードや画像を生成</li>
+      <li><strong>確かめる</strong>：テストとブラウザ確認</li>
+      <li><strong>残す</strong>：成果物をファイルとして保存</li>
+    </ul>
+  </div>
+</section>
+
+ChatGPTのChat、成果物づくりを進めるWork、開発を進めるCodexの関係は、[ChatGPT Workの解説](/articles/202607-openai-gpt-5-6-chatgpt-work/)で詳しく整理しています。
+
+## 内蔵ブラウザは「AI専用の作業机」
+
+<p class="lead">ChatGPTデスクトップアプリの内蔵ブラウザは、<strong>普段のブラウザと分かれたAI専用の作業机</strong>です。</p>
+
+Codexと人が同じ画面を見ながら、URLを開き、クリックし、入力し、スクリーンショットを撮り、結果を確認できます。
+
+Web制作では `localhost` を開けるのが効きます。コードを直す→ローカルで起動する→ブラウザで崩れを確認する→もう一度直す、という往復を同じ作業の中で続けられます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">内蔵ブラウザで何がつながるのかを1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide02-built-in-browser.webp" alt="内蔵ブラウザはAI専用の作業机という図解。専用プロファイル、URLを開く、クリックと入力、スクリーンショット、localhost確認を並べ、コード修正から表示確認、再修正まで循環する様子" loading="lazy" decoding="async" />
+    <figcaption>図解：コード修正と表示確認を往復できる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>環境</strong>：専用プロファイル</li>
+      <li><strong>操作</strong>：URL、クリック、入力、スクリーンショット</li>
+      <li><strong>開発</strong>：localhostで表示確認</li>
+      <li><strong>流れ</strong>：コード修正→表示確認→再修正</li>
+    </ul>
+  </div>
+</section>
+
+## 内蔵BrowserとChrome拡張はどう違う？
+
+<p class="lead">違いは、<strong>専用プロファイルを使うか、普段のChromeを使うか</strong>です。</p>
+
+内蔵だから普段のChromeのログイン状態が自動で引き継がれるわけではありません。内蔵側でログインするか、既存のChromeタブやログイン済みサイトが必要ならChatGPTのChrome拡張を使います。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">2つのブラウザ方式を左右で比較。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide03-browser-vs-chrome.webp" alt="内蔵BrowserとChrome拡張の比較図。内蔵Browserは専用プロファイル、環境を分離、localhost向き。Chrome拡張は普段のChrome、既存ログインを使いやすい。普段のログインは自動共有されないという注意" loading="lazy" decoding="async" />
+    <figcaption>図解：分離環境か、既存ログインか</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>内蔵Browser</strong>：専用プロファイル・環境を分離・localhost向き</li>
+      <li><strong>Chrome拡張</strong>：普段のChrome・既存ログインを使いやすい</li>
+      <li><strong>注意</strong>：内蔵でも普段のログインは自動共有されない</li>
+    </ul>
+  </div>
+</section>
+
+## Claude Code側は「開発机」と「普段のChrome」の組み合わせ
+
+<p class="lead">ブラウザを操作するのは、厳密にはClaude Code本体の内蔵ブラウザではなく<strong>Claude for Chrome</strong>です。</p>
+
+Claude Codeは、ターミナル、IDE、Claude Desktopから使えるエージェント型のコーディングシステムです。コードベースを読み、複数ファイルを変更し、テストまで進めるという中心部分はCodexとよく似ています。
+
+Claude for Chromeは、ユーザーが普段使っているChromeのタブを読み、ログイン済みのサイトを操作します。つまり、Codexは「アプリ内に独立した工房を持つ」使い方ができ、Claude側は「開発机のClaude Codeと、普段のChromeを借りる拡張」を組み合わせる形です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">混同しやすい製品名と役割を整理。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide04-claude-code-combination.webp" alt="Claude Code側の組み合わせを示す図解。Claude Codeはターミナル、IDE、デスクトップで開発。Claude for Chromeは普段のChromeタブを操作し、Claude Codeの内蔵ブラウザではないと整理" loading="lazy" decoding="async" />
+    <figcaption>図解：Claude CodeとClaude for Chromeは役割が別</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Claude Code</strong>：ターミナル・IDE・デスクトップで開発</li>
+      <li><strong>Claude for Chrome</strong>：普段のChromeタブを操作</li>
+      <li><strong>整理</strong>：「Claude Codeの内蔵ブラウザ」ではない</li>
+    </ul>
+  </div>
+</section>
+
+## 3つの差：ログイン、準備、安定性
+
+<p class="lead">ブラウザ方式は、<strong>ログイン・準備・安定性</strong>の3点で比べると分かりやすくなります。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">運用に効く3つの差を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide05-login-setup-stability.webp" alt="専用環境と既存環境をログイン、準備、安定性の3つで比べる図。専用は専用ログイン、アプリ内、分離しやすい。既存は既存ログイン、拡張接続、タブと接続の影響。勝敗ではなく用途で便利さが変わる" loading="lazy" decoding="async" />
+    <figcaption>図解：用途で便利さが変わる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>ログイン</strong>：専用か既存か</li>
+      <li><strong>準備</strong>：アプリ内か拡張接続か</li>
+      <li><strong>安定性</strong>：分離しやすいか、タブ・接続の影響か</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card article-wide-block">
+
+| 比べる点 | Codexの内蔵ブラウザ | 既存Chromeを使う拡張 |
+|---|---|---|
+| ログイン | 専用プロファイル。必要なサイトへ内蔵側でログイン | 普段のChromeのログイン状態を使いやすい |
+| 準備 | アプリ内でURLを開きやすい。localhost確認と相性が良い | 拡張の導入・接続・対象タブの許可が必要 |
+| 安定性 | 作業環境を分離しやすい | タブの可視性、拡張接続、ブラウザ更新の影響を受ける場合がある |
+
+</div>
+
+これは「内蔵が常に上」という意味ではありません。社内ツールやSNSなど、ログイン済みの普段のChromeが必要な作業では拡張が自然です。逆に、作っているWebページを分離した環境で確認したいなら、内蔵ブラウザが扱いやすくなります。
+
+## 本サイトで起きたこと：画像生成より「搬出」と格闘していた
+
+<p class="lead">本サイトの画像運用で一番変わったのは、画質ではなく<strong>生成前後の周辺工程</strong>です。</p>
+
+従来は、参照画像をWindowsのクリップボードへ1枚ずつ入れ、Chromeを前面にし、貼り付けの間を待ち、添付数を画面上で確認し、生成後にダウンロードしたファイルを探して移動していました。
+
+生成AIそのものより、フォーカスが別画面へ移る、2枚目が貼れない、クリップボードが上書きされる、ダウンロードを拾えない、といった周辺工程に手間がかかっていました。
+
+今回、画像生成をCodexのコマンド経路へ切り替えました。参照画像と保存先をジョブに渡し、生成物を指定ファイルへ直接保存します。**「貼る→待つ→画面から持ち出す」という不安定な工程が消えた**ことが、運用上の一番大きな変化です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">本サイトの画像運用を、以前と今回で比較。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide06-image-workflow.webp" alt="本サイトの画像運用実例。以前は1枚ずつ貼る、待つ、添付確認、ダウンロード、移動の複雑な工程。今回は参照画像と保存先を渡し、ファイルへ直接保存。不安定な周辺工程が消えたことを示す" loading="lazy" decoding="async" />
+    <figcaption>図解：画像生成より「搬出」の工程が減った</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>以前</strong>：1枚ずつ貼る→待つ→添付確認→ダウンロード→移動</li>
+      <li><strong>今回</strong>：参照画像と保存先を渡す→ファイルへ直接保存</li>
+      <li><strong>変化</strong>：不安定な周辺工程が消えた</li>
+    </ul>
+  </div>
+</section>
+
+<Callout kind="facts">
+  <ul>
+    <li>この段落は本サイトの運用記録にもとづく実例です</li>
+    <li>今回の本番初適用では、サムネ1枚+スライド8枚をCodex exec経路で生成しました</li>
+    <li>所要時間・成功率・使用量は生成ログの実測値で管理しています</li>
+  </ul>
+</Callout>
+
+## 4つの仕事で選ぶ
+
+<p class="lead">二択で悩むより、<strong>会話・コード・ブラウザ・画像量産</strong>の4用途で入口を選ぶと整理できます。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">使い分けを4象限で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide07-four-use-cases.webp" alt="何をさせたいかを4つで選ぶ図解。会話と執筆はChatGPTとClaude、コードはCodexとClaude Code、ブラウザは分離環境か既存ログイン、画像量産は保存までの段数。どちらが上ではないと案内" loading="lazy" decoding="async" />
+    <figcaption>図解：何をさせたいかで入口を選ぶ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>会話と執筆</strong>：ChatGPT / Claude</li>
+      <li><strong>コード</strong>：Codex / Claude Code</li>
+      <li><strong>ブラウザ</strong>：分離環境か既存ログイン</li>
+      <li><strong>画像量産</strong>：保存までの段数</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card article-wide-block">
+
+| やりたいこと | 向く入口 | 理由 |
+|---|---|---|
+| 会話と執筆 | ChatGPT / Claude | 相談、構成、長文の推敲を会話で進めやすい |
+| コード作業 | Codex / Claude Code | どちらもファイル変更・コマンド・テストまで進められる |
+| ブラウザ作業 | 内蔵Browser / Chrome拡張 | 分離環境か、既存ログインかで選ぶ |
+| 画像量産 | 保存まで自動化できる経路 | 参照画像の投入とファイル回収の段数が効く |
+
+</div>
+
+コード作業だけなら、すでに持っている指示ファイル、スキル、フック、MCP、シェル環境を捨ててまで乗り換える必要はありません。両方を併用し、得意な入口へ仕事を振る方法もあります。
+
+Claude側でコード以外の作業を任せる入口については、[Claude Coworkのモバイル対応](/articles/202607-claude-cowork-mobile-ios-android/)も参考になります。
+
+## 最新機能は「使える場所」を確認する
+
+Codexには、GUIを操作するComputer Use、macOSでのバックグラウンド/Locked use、iOSからワークスペースを確認・操作するRemoteなども広がっています。画像生成もbuilt-inで利用できます。
+
+ただし、これらはOS、地域、プラン、組織の管理設定、段階展開で差があります。「公式に存在する」と「自分の画面ですぐ使える」は別です。
+
+<Note>契約前に、実際のアプリでBrowser、Computer Use、画像生成、Remoteの表示を確認するのが安全です。</Note>
+
+画像生成は一般のCodex利用枠から消費されます。大量生成では減り方も大きくなるため、利用枠の仕組みは[ChatGPTの5時間制限と共有プールの解説](/articles/202607-chatgpt-5h-limit-lifted-max-ultra/)もあわせて確認してください。
+
+## 選ぶ基準は「人の手数」
+
+<p class="lead">仕事が終わるまでに、<strong>人が何回コピーし、何回タブを切り替え、何回ファイルを運ぶか</strong>を見ます。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後の判断基準を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide08-human-steps.webp" alt="選ぶ基準は人の手数という図解。コピー回数、タブ切替回数、ファイル運搬回数、完了までの人の手数を数え、少ない方を選ぶ。何をさせたいかで選び、併用もありと案内" loading="lazy" decoding="async" />
+    <figcaption>図解：完了までの人の手数が少ない方を選ぶ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>数える</strong>：コピー回数・タブ切替回数・ファイル運搬回数</li>
+      <li><strong>比べる</strong>：完了までに人が介入する回数</li>
+      <li><strong>選ぶ</strong>：何をさせたいかに合い、手数が少ない入口</li>
+      <li><strong>結論</strong>：併用もあり</li>
+    </ul>
+  </div>
+</section>
+
+- **Codexが合いやすい**：ChatGPTを中心に、コード・localhost確認・画像生成・成果物保存まで一つの作業線にしたい
+- **Claude Codeが合いやすい**：ターミナル中心の開発習慣があり、Claudeの指示資産や普段のChromeを活かしたい
+- **併用が合いやすい**：執筆、コード、ログイン済みブラウザ、画像生成を、それぞれ得意な入口へ分けたい
+
+その回数が減る道具を選ぶと、日々の差は大きくなります。
+
+## 参考情報
+
+- OpenAI「[Codex Manual](https://developers.openai.com/codex/codex-manual.md)」— 提供面、料金、Browser、Computer Use、画像生成
+- OpenAI「[Browser](https://learn.chatgpt.com/docs/browser)」— 内蔵ブラウザの専用プロファイルとlocalhost
+- OpenAI「[Image generation](https://learn.chatgpt.com/docs/image-generation)」— built-in画像生成と利用枠
+- Anthropic「[Claude Code](https://www.anthropic.com/product/claude-code)」— エージェント型コーディングシステム
+- Anthropic「[Claude Opus 4.5](https://www.anthropic.com/news/claude-opus-4-5)」— Claude Codeのデスクトップ対応とClaude for Chrome
+- Anthropic Help「[Using Claude Code with your Pro or Max plan](https://support.anthropic.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan)」— 共有利用枠
