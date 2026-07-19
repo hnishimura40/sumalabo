@@ -1,0 +1,215 @@
+<!-- provenance: すまラボ立ち会い / draft+review×2反映の最終稿（情報提供に徹する・中国AS固有リスク明記・明確な推奨） -->
+
+# 中国発のオープンAI「Kimi K3」が話題。すごさと、使う前に知っておきたいこと
+
+## 30秒サマリー
+
+<p class="lead"><strong>中国発のオープンAI「Kimi K3」が、コード生成のベンチマークで最上位に並んで話題です。すごさは事実。でも公式サービスに何を入れるかは、使う前に知っておくことがあります。</strong></p>
+
+- **すごさ（ベンチマーク上は）**: Arenaの「Frontend Code」で**1位（1,679点）**。Claude Fable 5（1,631）・GPT-5.6 Sol（1,618）を上回った。ただし開発元自身は「総合性能では両者の後ろ」と説明
+- **注意（確認すべき事実）**: 公式サービスに入れたデータはモデル改善に使われる。運営はシンガポール法人だが、親会社は北京拠点。中国系AIには各国政府が対応してきた前例がある
+- **すまラボの結論**: 仕事・個人情報・機密を**公式サービスに入れるのは推奨しません**。試すなら捨てても良い情報だけ。企業利用は情シス確認を必須に
+
+<NumCards
+  items={[
+    { num: "1,679", cap: "Frontend Code Arenaでの1位スコア（Fable 5は1,631）" },
+    { num: "2.8兆", cap: "パラメータ数。開発元いわく最大級のオープンウェイト" },
+    { num: "7/27", cap: "完全な重み（オープンウェイト）の公開予定日" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">ベンチマーク1位ってすごい! でも、使うときに気をつけることはあるの?</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">すごさは事実。あとは「入れたデータがどこへ行くか」を分けて見よう。推奨でも危険視でもなく、判断材料を整理するね。</CharacterBubble>
+
+## 何者か：Moonshot AIのオープンモデル
+
+<p class="lead">Kimi K3は、中国の<strong>Moonshot AI</strong>が2026年7月16日に発表した<strong>オープンモデル</strong>（重みが公開されるAI）です。コード生成の一分野で、最上位勢に並びました。</p>
+
+「オープンモデル」とは、モデルの中身（重み）が配布され、ライセンス条件を満たせば各自でダウンロード・改変・自己ホストできるAIのこと。Kimi K3は2.8兆パラメータで、完全な重みは7月27日にModified-MITライセンスで公開予定です。
+
+ベンチマークでの位置づけは、**限定して読む**のが大事です。Arenaの「Frontend Code（フロントエンドのコード生成）」では1位。ただし、これは**その分野に限った1位**であって、総合力の逆転ではありません。開発元のMoonshot自身が「K3は総合性能ではまだ Claude Fable 5 と GPT-5.6 Sol の後ろ」と述べています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず「何者か」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-kimi-k3-open-model-china-risk/slide01-kimi.webp"
+         alt="「Kimi K3とは」の図解。Moonshot AIが2026年7月16日に発表したオープンモデル（2.8兆パラメータ）。Arenaの Frontend Code で1位（1,679点、Fable 5は1,631、GPT-5.6 Solは1,618）だが、開発元自身が総合性能では両者の後ろと説明、という限定つきの事実。ひまりがベンチマークのグラフを興味深そうに見る構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Kimi K3とは（オープンモデル／ベンチ最上位に並んだ）</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>開発元</strong>：Moonshot AI（発表 2026/7/16）</li>
+      <li><strong>オープンモデル</strong>：重みを公開（Modified-MIT・7/27完全公開予定）</li>
+      <li><strong>Frontend Code Arena</strong>：1位 1,679（Fable 5 1,631／GPT-5.6 Sol 1,618）</li>
+      <li><strong>限定</strong>：総合性能はまだ両者の後ろ（開発元説明）＝「ベンチの一分野で1位」</li>
+    </ul>
+  </div>
+</section>
+
+## 図解の主役：オープンモデルの「2つの使い方」
+
+<p class="lead">同じKimi K3でも、<strong>使い方でデータの行き先がまったく違います</strong>。ここが判断の分かれ目です。</p>
+
+オープンモデルには、大きく2つの使い方があります。**A：重みをダウンロードして自分のPC・サーバーで動かす**か、**B：公式アプリ・Webサービスを使う**か。Aなら入力データは外部に出ませんが、高性能なマシンが要る上級者向け。Bは手軽ですが、入力は開発元のサーバーに送られます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">2つの使い方でデータの行き先が違う。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-kimi-k3-open-model-china-risk/slide02-kimi.webp"
+         alt="「オープンモデルの2つの使い方」の図解。A=重みをダウンロードして自分のPC/サーバーで動かす→入力データは外部に出ない（ただし高性能PCが必要・上級者向け）。B=公式アプリ/Webを使う→入力データは開発元のサーバーへ送られる。らぼまるが「データの行き先は?」と確認する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：オープンモデルの2つの使い方（A=ローカル／B=公式サービス）</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>A：ローカルで動かす</strong>：重みをDL→自分のPC/サーバー。<strong>入力データは外部に出ない</strong>。ただし高性能PC必須・上級者向け</li>
+      <li><strong>B：公式アプリ/Web</strong>：手軽。ただし<strong>入力データは開発元のサーバーへ</strong></li>
+      <li><strong>分かれ目</strong>：どちらを使うかで「データの行き先」が根本的に変わる</li>
+    </ul>
+  </div>
+</section>
+
+## 中国のAIサービス固有の、確認すべき事実
+
+<p class="lead">ここは「危ない」と煽る話ではなく、<strong>確認すべき事実</strong>の整理です。海外AI全般の一般論には薄めず、中国のAIサービスに固有の論点を分けて見ます。</p>
+
+まず制度の事実として、中国には**国家情報法（2017年制定・2018年改正）**があります。**第7条は「いかなる組織・市民も、法に従い国家の情報活動を支持・援助・協力しなければならない」**と定めています。第14条では情報機関が協力を要求できます。ただし、この条文が実際にどこまでの協力を強制できるかは**専門家の間で解釈に幅がある**点も、公平のため添えておきます。
+
+次に前例の事実として、中国系AI「DeepSeek」に各国政府が対応した実例があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">制度と前例を、事実として1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-kimi-k3-open-model-china-risk/slide03-kimi.webp"
+         alt="「中国AIサービス固有の確認すべき事実」の図解。制度=国家情報法（2017制定・2018改正）第7条で組織・市民は国家の情報活動に協力する義務。前例=DeepSeekへの各国対応（イタリアは全面禁止、台湾は政府機関・重要インフラで制限、韓国はアプリDL一時停止、日本は個人情報保護委員会が『データは中国サーバに保存・中国の法令が適用』と注意喚起）。らぼまるが盾を持って冷静に確認する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：制度（国家情報法）と前例（DeepSeekへの各国対応）</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>制度</strong>：中国・国家情報法（2017/2018）第7条＝組織・市民は情報活動に協力する義務（運用の幅は議論あり）</li>
+      <li><strong>イタリア</strong>：DeepSeekを全面ブロック（一般公衆も対象・2025/1）</li>
+      <li><strong>台湾</strong>：政府機関・重要インフラで利用制限</li>
+      <li><strong>日本</strong>：個人情報保護委員会が「DeepSeekのデータは中国サーバに保存・中国の法令が適用」と注意喚起（2025/2）</li>
+    </ul>
+  </div>
+</section>
+
+## Kimi公式サービスの構造：どこの法域か
+
+<p class="lead">では、Kimi K3の<strong>公式サービス</strong>はどうか。ここはDeepSeekと事実が違うので、正確に分けます。</p>
+
+Kimiの公式サービス（アプリ・API）を運営するのは、**シンガポール法人「Moonshot AI PTE. LTD.」**（2023年7月登記）です。**利用規約の準拠法はシンガポール法**、プライバシーポリシー上の**サーバーもシンガポール**とされています。つまり、日本の個人情報保護委員会が「中国サーバに保存・中国法が適用」と明示したDeepSeekとは、**建て付けが異なります**。
+
+一方で、事実として**親会社は北京拠点**であり、中国登記の関連会社の存在も示唆されています。ここから「中国の国家情報法が、シンガポール子会社が持つデータにも及び得る」という指摘が識者から出ています。ただしこれは**検証済みの法的判断ではなく、構造からの推論（見解）**です。すまラボは、この懸念を**事実ではなく見解（claims）**として扱います。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Kimi公式の構造を、事実と見解に分けて。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-kimi-k3-open-model-china-risk/slide04-kimi.webp"
+         alt="「Kimi公式サービスの構造」の図解。事実=公式サービスの運営はシンガポール法人 Moonshot AI PTE. LTD.、準拠法シンガポール、サーバーもシンガポール。ただし親会社は北京拠点で中国登記の関連会社も示唆。見解（claims）=中国の国家情報法がシンガポール子会社のデータにも及び得るという識者の指摘（検証済みの法的判断ではなく推論）。らぼまるが『データの行き先は?』の札を持つ構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Kimi公式サービスの構造（事実＝シンガポール／懸念＝見解）</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>事実</strong>：公式運営はシンガポール法人・準拠法シンガポール・サーバーもシンガポール</li>
+      <li><strong>事実</strong>：入力・生成データはモデル改善（学習・最適化）にも使われる</li>
+      <li><strong>事実</strong>：親会社は北京拠点／中国登記の関連会社も示唆</li>
+      <li><strong>見解(claims)</strong>：国家情報法が子会社データにも及び得るとの指摘（推論であり法的確定ではない）</li>
+    </ul>
+  </div>
+</section>
+
+## 使う前のチェックと、すまラボの推奨
+
+<p class="lead">両論併記で逃げず、<strong>すまラボとしての推奨をはっきり出します</strong>。国籍だけで危険と決めつけるのではなく、上の事実にもとづく判断です。</p>
+
+<div class="check-box article-wide-block">
+  <p><strong>Kimi公式サービスを使うなら（推奨）</strong></p>
+  <ul>
+    <li><strong>□ 仕事・個人情報・機密は入れない</strong>：入力はモデル改善に使われる前提で考える</li>
+    <li><strong>□ 試すなら「捨てても良い情報」だけ</strong>：公開情報・練習用のコード・当たり障りのない質問に限る</li>
+    <li><strong>□ 企業利用は情シス確認を必須に</strong>：業務での利用可否・データ取り扱いは組織の判断を仰ぐ</li>
+    <li><strong>□ 規約のデータ利用条項を読む</strong>：入力がどう使われ、どこに保存されるかを確認する</li>
+  </ul>
+</div>
+
+大事な切り分けは、**「技術の評価」と「サービスの評価」を分ける**ことです。Kimi K3の性能が高いのは事実。そして**重みをダウンロードして自分の環境で動かす（使い方A）分には、データ法域の問題は生じません**。問題になるのは、公式アプリ・APIに機密を入れる場合です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">推奨と「技術／サービスの切り分け」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-kimi-k3-open-model-china-risk/slide05-kimi.webp"
+         alt="「使う前のチェックとすまラボの推奨」の図解。推奨=仕事・個人情報・機密は公式サービスに入れない／試すなら捨てても良い情報だけ／企業利用は情シス確認必須。切り分け=技術の評価（性能は高い・重みをローカルで動かす分は問題なし）とサービスの評価（公式アプリ・APIに機密を入れるのは避ける）を分ける。ひまりがチェックリスト、らぼまるが盾を持つ構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：すまラボの推奨と、技術／サービスの切り分け</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>推奨</strong>：機密・個人情報・仕事は公式サービスに入れない</li>
+      <li><strong>試すなら</strong>：捨てても良い情報だけ。企業利用は情シス確認必須</li>
+      <li><strong>技術は評価してよい</strong>：ローカルで動かす分にはデータ法域の問題は生じない</li>
+      <li><strong>分けて考える</strong>：性能の高さ＝サービスに機密を入れてよい、ではない</li>
+    </ul>
+  </div>
+</section>
+
+## 業界地図：オープンモデルが競争に加わった
+
+<p class="lead">この夏は、<strong>クローズドの最上位勢に、オープンモデルが割って入った</strong>のが大きな変化です。</p>
+
+Claude Fable 5の扱いが決着し、GPT-5.6が出て、という競争に、Kimi K3のような**重みが公開されるオープンモデル**が加わりました。ベンチの一分野とはいえ最上位に並んだことは、「使いたい人が自分の環境に持ち込める強いAI」という選択肢が現実味を増したことを意味します。だからこそ、**性能の話とデータの話を分けて**受け止めるのが大切です。
+
+<div class="related-links article-wide-block">
+  <a href="/articles/202607-claude-fable-5-max-standard-pro-credits/">Claude Fable 5の決着（プラン別の結論）を読む</a>
+  <a href="/articles/202607-gpt-5-6-sol-terra-luna-release/">GPT-5.6（Sol / Terra / Luna）の登場を読む</a>
+</div>
+
+## 確定・見解・未確定の整理
+
+<Callout kind="facts" title="確定">
+  <ul>
+    <li>Moonshot AIが2026年7月16日にKimi K3を発表。2.8兆パラメータのオープンモデル（Modified-MIT・完全な重みは7/27公開予定）</li>
+    <li>Arenaの Frontend Code で1位（1,679）。Fable 5（1,631）・GPT-5.6 Sol（1,618）を上回る。ただし開発元は総合性能では両者の後ろと説明</li>
+    <li>中国・国家情報法（2017/2018）第7条は組織・市民に国家の情報活動への協力を義務づける</li>
+    <li>DeepSeekへの各国対応：イタリアは全面ブロック、台湾は政府機関・重要インフラで制限、日本は個人情報保護委員会が「中国サーバ保存・中国法適用」と注意喚起（2025年）</li>
+    <li>Kimi公式サービスの運営はシンガポール法人、準拠法・サーバーもシンガポール。入力・生成データはモデル改善にも利用</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="見解・見立て（断定しない）">
+  <ul>
+    <li>「Kimi K3が実力でGPT-5.x/Opus 4.8/Fable 5を上回る」— ベンチの一分野で1位は事実だが、総合の優劣は識者の見解</li>
+    <li>「中国の国家情報法がシンガポール子会社のデータにも及び得る」— 構造からの推論であり、検証済みの法的判断ではない（識者見解）</li>
+    <li>国家情報法の協力義務が実際にどこまで強制されるかは、専門家の間で解釈に幅がある</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年7月19日時点）">
+  <ul>
+    <li>7/27の完全な重み公開後の実際のライセンス細部・日本語での提供状況</li>
+    <li>国家情報法がシンガポール法人のデータに適用・執行された確定事例（公開情報では確認できず）</li>
+    <li>日本政府がKimi（DeepSeekではなく）について個別の注意喚起を出すか</li>
+  </ul>
+</Callout>
+
+<Note>この記事は2026年7月19日時点の公開情報にもとづく整理です。特定の国・企業を一律に危険と断定する意図はなく、「性能の評価」と「サービスにデータを入れる判断」を分けて考えるための材料を示すものです。ライセンス・提供形態・規約は変わる可能性があります。最新の詳細は各社の公式（Moonshot AI / Kimi の規約・プライバシーポリシー）と、各国当局の公表情報でご確認ください。</Note>
+
+## 参考情報
+
+この記事は公式情報と主要報道、一次資料をもとに整理しています。
+
+- Moonshot AI / Kimi 公式（利用規約・プライバシーポリシー・OpenPlatform）
+- Arena「Frontend Code」leaderboard（公式X @arena）
+- 主要報道（VentureBeat / Tom's Hardware / TechCrunch / Tech Startups ほか）
+- 中国・国家情報法の条文・解説（China Law Translate ほか）
+- DeepSeekへの各国対応：各国当局の公表、日本＝個人情報保護委員会（ppc.go.jp）・ITmedia
+- 識者分析（NIL到達の議論を「法的確定ではなく推論」と整理した公開メモ）
