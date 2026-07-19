@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-19T01:40:00.000Z",
+  "updatedAt": "2026-07-19T04:45:00.000Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -894,6 +894,28 @@
       "xPostText": "Claude Fable 5、3週間の延長劇に決着。あなたのプランはどっち? / Max・Team Premium→標準搭載50%恒久 / Pro・Team Standard→7/20 15:59終了→クレジット制+$100 #Claude #すまラボ",
       "independentInspection": "PASS(別エージェント・アンテナ1本・実在ロゴなし・数字全一致・決着トーン)",
       "thumbnailUpdate": "2026-07-19: サムネを喜び爆発型「Fable 5、残ります!」に差し替え（PR#172・deploy cedb1f9a）。X本投稿の画像4枚はそのまま維持。感情トーン=朗報・喜び爆発を恒久ルール化（character-sheet/factcheck項目12）"
+    },
+    {
+      "slug": "202607-kimi-k3-open-model-china-risk",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "triggerInput": "theme: 中国発オープンAI Kimi K3・情報提供に徹する(すごさ＋使う前の注意)",
+      "articleUrl": "https://sumalabo.com/articles/202607-kimi-k3-open-model-china-risk/",
+      "productionUrl": "https://sumalabo.com/articles/202607-kimi-k3-open-model-china-risk/",
+      "publishedAt": "2026-07-19T13:10:00+09:00",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/173",
+      "mergeCommit": "main",
+      "status": "published",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "verifyResult": {
+        "strict": "8/8",
+        "failedChecks": []
+      },
+      "independentInspection": "PASS(別エージェント・アンテナ1本・実在ロゴなし・数字全一致・事実/見解の分離OK)",
+      "imageNote": "thumbnail+slide01〜06(7枚)。中国リスクトピックだが新chat 6a5c465eでcontent-policy拒否なく全生成。"
     }
   ]
 }
