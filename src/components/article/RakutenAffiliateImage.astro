@@ -1,0 +1,120 @@
+---
+import { buildMallLink } from "../../config/affiliate";
+
+interface Props {
+  imageUrl: string;
+  rakutenUrl: string;
+  alt: string;
+  productName: string;
+}
+
+const { imageUrl, rakutenUrl, alt, productName } = Astro.props;
+const imageHost = new URL(imageUrl).hostname;
+const allowedImageHosts = new Set([
+  "tshop.r10s.jp",
+  "thumbnail.image.rakuten.co.jp",
+  "image.rakuten.co.jp",
+]);
+
+if (!allowedImageHosts.has(imageHost)) {
+  throw new Error(`[RakutenAffiliateImage] Unsupported Rakuten image host: ${imageHost}`);
+}
+
+const affiliateLink = buildMallLink("rakuten", rakutenUrl);
+if (!affiliateLink.affiliate || !affiliateLink.href.startsWith("https://hb.afl.rakuten.co.jp/")) {
+  throw new Error(`[RakutenAffiliateImage] Rakuten image requires an hb.afl affiliate link: ${productName}`);
+}
+---
+
+<div class="rakuten-affiliate-image" data-rakuten-image-state="ready">
+  <a
+    class="rakuten-affiliate-image-link"
+    href={affiliateLink.href}
+    target="_blank"
+    rel="nofollow sponsored noopener"
+    aria-label={`${productName}を楽天市場で見る`}
+  >
+    <img
+      data-rakuten-affiliate-image
+      data-product-name={productName}
+      src={imageUrl}
+      alt={alt || productName}
+      loading="lazy"
+      decoding="async"
+      width="240"
+      height="240"
+    />
+  </a>
+  <div class="rakuten-affiliate-image-fallback" data-rakuten-image-fallback hidden aria-hidden="true">
+    <span>画像準備中</span>
+  </div>
+</div>
+
+<script>
+  document.addEventListener(
+    "error",
+    (event) => {
+      const image = event.target;
+      if (!(image instanceof HTMLImageElement) || !image.matches("[data-rakuten-affiliate-image]")) return;
+
+      const wrapper = image.closest<HTMLElement>("[data-rakuten-image-state]");
+      const link = image.closest<HTMLAnchorElement>("a");
+      const fallback = wrapper?.querySelector<HTMLElement>("[data-rakuten-image-fallback]");
+      if (!wrapper || !link || !fallback || wrapper.dataset.rakutenImageState === "error") return;
+
+      wrapper.dataset.rakutenImageState = "error";
+      link.hidden = true;
+      fallback.hidden = false;
+      console.warn("[sumalabo:rakuten-image-error]", {
+        productName: image.dataset.productName || image.alt,
+        imageUrl: image.currentSrc || image.src,
+      });
+    },
+    true,
+  );
+</script>
+
+<style>
+  .rakuten-affiliate-image,
+  .rakuten-affiliate-image-link,
+  .rakuten-affiliate-image-fallback {
+    width: 128px;
+    height: 128px;
+  }
+
+  .rakuten-affiliate-image-link {
+    display: block;
+    border-radius: var(--radius-md);
+  }
+
+  .rakuten-affiliate-image-link img {
+    display: block;
+    width: 128px;
+    height: 128px;
+    object-fit: contain;
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius-md);
+    background: #fff;
+    filter: var(--img-filter);
+  }
+
+  .rakuten-affiliate-image-link:focus-visible {
+    outline: 3px solid var(--teal);
+    outline-offset: 3px;
+  }
+
+  .rakuten-affiliate-image-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--bg-sunk);
+    color: var(--fg-faint);
+    font-size: 12px;
+  }
+
+  .rakuten-affiliate-image-fallback[hidden] {
+    display: none;
+  }
+</style>

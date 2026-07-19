@@ -12,7 +12,7 @@
 //
 //   <ProductCard
 //     name="Anker 511 Charger (Nano 3, 30W)"
-//     image="/images/products/anker-511-nano-3.webp"
+//     rakutenImageUrl="https://tshop.r10s.jp/example/cabinet/product.jpg"
 //     points={["約31gの小型30W", "iPhone/Androidの急速充電に対応", "コンセント折りたたみ式"]}
 //     amazonUrl="https://www.amazon.co.jp/dp/XXXXXXXXXX"
 //     rakutenUrl="https://item.rakuten.co.jp/..."
@@ -21,12 +21,13 @@
 //     note="価格・在庫は販売ページで最新情報を確認してください"
 //   />
 import { buildMallLink, type MallStore } from "../../config/affiliate";
+import RakutenAffiliateImage from "./RakutenAffiliateImage.astro";
 
 interface Props {
   /** 商品名（カードの見出し） */
   name: string;
-  /** 商品画像（/images/products/... の WebP）。省略時はプレースホルダ枠 */
-  image?: string;
+  /** 楽天の商品画像URL。楽天アフィリエイトリンク付きでのみ描画する */
+  rakutenImageUrl?: string;
   imageAlt?: string;
   /** 推しポイント（3 行目安・最大 5） */
   points?: string[];
@@ -42,7 +43,7 @@ interface Props {
 
 const {
   name,
-  image = "",
+  rakutenImageUrl = "",
   imageAlt = "",
   points = [],
   amazonUrl = "",
@@ -70,8 +71,13 @@ const buttons = malls
   <div class="product-card-body">
     <div class="product-card-media">
       {
-        image ? (
-          <img src={image} alt={imageAlt || name} loading="lazy" decoding="async" width="240" height="240" />
+        rakutenImageUrl ? (
+          <RakutenAffiliateImage
+            imageUrl={rakutenImageUrl}
+            rakutenUrl={rakutenUrl}
+            alt={imageAlt || name}
+            productName={name}
+          />
         ) : (
           <div class="product-card-placeholder" aria-hidden="true">
             <span>画像準備中</span>
