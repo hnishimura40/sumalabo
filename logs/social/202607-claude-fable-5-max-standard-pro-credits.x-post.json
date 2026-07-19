@@ -1,0 +1,60 @@
+{
+  "slug": "202607-claude-fable-5-max-standard-pro-credits",
+  "articleUrl": "https://sumalabo.com/articles/202607-claude-fable-5-max-standard-pro-credits/",
+  "isReporting": true,
+  "linkInReply": true,
+  "reply": {
+    "text": "記事で続きと出典まで読めます👇\nhttps://sumalabo.com/articles/202607-claude-fable-5-max-standard-pro-credits/",
+    "articleUrl": "https://sumalabo.com/articles/202607-claude-fable-5-max-standard-pro-credits/"
+  },
+  "attachThumbnail": true,
+  "thumbnailPath": "/images/thumbnails/202607-claude-fable-5-max-standard-pro-credits.webp",
+  "hashtags": [
+    "#AI",
+    "#すまラボ"
+  ],
+  "primary": {
+    "text": "Claude Fable 5、3週間の延長劇に決着。あなたのプランではどうなる\n\n3週間続いたClaude Fable 5の延長劇に決着。7月18日、AnthropicはFable 5の扱いを恒久条件で確定しました。\n#AI #すまラボ",
+    "charCount": 118,
+    "weightedLength": 179,
+    "fitsLimit": true,
+    "downshifted": true,
+    "truncated": false
+  },
+  "alternates": [
+    {
+      "label": "結論先出し",
+      "text": "結論: Claude Fable 5、3週間の延長劇に決着。あなたのプランではどうなる\n\n3週間続いたClaude Fable 5の延長劇に決着。7月18日、AnthropicはFable 5の扱いを恒久条件で確定しました。\n#AI #すまラボ",
+      "charCount": 122,
+      "weightedLength": 185,
+      "fitsLimit": true,
+      "downshifted": true,
+      "truncated": false
+    },
+    {
+      "label": "問いかけ",
+      "text": "Claude Fable 5という噂、本当のところは？\n\n3週間続いたClaude Fable 5の延長劇に決着。7月18日、AnthropicはFable 5の扱いを恒久条件で確定しました。\n#AI #すまラボ",
+      "charCount": 106,
+      "weightedLength": 156,
+      "fitsLimit": true,
+      "downshifted": true,
+      "truncated": false
+    }
+  ],
+  "warnings": [
+    "primary は280字ガードにより短い構成で生成し直しました（description全文は不使用）"
+  ],
+  "generatedAt": "2026-07-19T00:31:46.832Z",
+  "attachmentPlan": {
+    "variant": "images4+reply",
+    "attach": [
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\thumbnails\\202607-claude-fable-5-max-standard-pro-credits.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-claude-fable-5-max-standard-pro-credits\\slide01-fable.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-claude-fable-5-max-standard-pro-credits\\slide02-fable.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-claude-fable-5-max-standard-pro-credits\\slide03-fable.webp"
+    ],
+    "threadBatches": [],
+    "linkInReply": true,
+    "selectionSource": "default_lead_thumbnail"
+  }
+}

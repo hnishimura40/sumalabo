@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-10T08:40:01.786Z",
+  "updatedAt": "2026-07-19T00:37:00.000Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -11,7 +11,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-100-dollar-ai-monthly-plan-comparison/",
       "publishedAt": "2026-05-23T11:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-ai-agent-tools-comparison-2026",
@@ -22,7 +23,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-ai-agent-tools-comparison-2026/",
       "publishedAt": "2026-05-23T12:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-airpods-dual-camera-siri-visual-information",
@@ -33,7 +35,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-airpods-dual-camera-siri-visual-information/",
       "publishedAt": "2026-05-09T21:24:09+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-apple-airtag-size-ai-pendant-iphone-siri",
@@ -45,7 +48,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-apple-airtag-size-ai-pendant-iphone-siri/",
       "publishedAt": "2026-05-16T15:05:06+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-claude-opus-4-8-launch",
@@ -57,7 +61,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-claude-opus-4-8-launch/",
       "publishedAt": "2026-06-01T11:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor",
@@ -69,7 +74,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-galaxy-s27-ultra-camera-bar-redesign-3x-telephoto-rumor/",
       "publishedAt": "2026-05-12T22:48:02+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-github-copilot-shifts-to-token-based-pricing-june-1",
@@ -80,7 +86,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-github-copilot-shifts-to-token-based-pricing-june-1/",
       "publishedAt": "2026-05-09T08:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-ai-pro-youtube-premium-lite-benefits-overview",
@@ -91,7 +98,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-ai-pro-youtube-premium-lite-benefits-overview/",
       "publishedAt": "2026-05-23T09:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-ai-studio-mobile-android-app-builder",
@@ -102,7 +110,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-ai-studio-mobile-android-app-builder/",
       "publishedAt": "2026-05-21T10:30:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-ai-ultra-100-dollar-plan-launch",
@@ -113,7 +122,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-ai-ultra-100-dollar-plan-launch/",
       "publishedAt": "2026-05-20T21:10:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-android-xr-smartglasses-gemini-eyewear",
@@ -124,7 +134,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-android-xr-smartglasses-gemini-eyewear/",
       "publishedAt": "2026-05-21T10:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-antigravity-2-0-ai-agent-developer-tool",
@@ -135,7 +146,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-antigravity-2-0-ai-agent-developer-tool/",
       "publishedAt": "2026-05-21T09:30:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-gemini-3-5-flash-search-ai-mode",
@@ -146,7 +158,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-gemini-3-5-flash-search-ai-mode/",
       "publishedAt": "2026-05-20T21:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-gemini-daily-brief-morning-assistant-launches-us",
@@ -157,7 +170,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-gemini-daily-brief-morning-assistant-launches-us/",
       "publishedAt": "2026-05-20T21:20:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-gemini-omni-avatar-video-launch",
@@ -168,7 +182,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-gemini-omni-avatar-video-launch/",
       "publishedAt": "2026-05-20T19:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-gemini-spark-personal-ai-agent-gmail",
@@ -179,7 +194,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-gemini-spark-personal-ai-agent-gmail/",
       "publishedAt": "2026-05-21T08:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-google-quick-share-android-iphone-airdrop-qr",
@@ -190,7 +206,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-google-quick-share-android-iphone-airdrop-qr/",
       "publishedAt": "2026-05-21T09:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-ios-27-apple-intelligence-external-ai-chatgpt-choice",
@@ -202,7 +219,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-ios-27-apple-intelligence-external-ai-chatgpt-choice/",
       "publishedAt": "2026-05-14T18:50:08+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-iphone-18-pro-dynamic-island-top-left-rumor",
@@ -214,7 +232,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-iphone-18-pro-dynamic-island-top-left-rumor/",
       "publishedAt": "2026-05-11T07:22:48+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-meta-one-instagram-facebook-whatsapp-ai-subscription",
@@ -226,7 +245,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-meta-one-instagram-facebook-whatsapp-ai-subscription/",
       "publishedAt": "2026-05-30T11:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-openai-gpt-5-5-cyber-tac-japan-government",
@@ -237,7 +257,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-openai-gpt-5-5-cyber-tac-japan-government/",
       "publishedAt": "2026-05-22T09:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-xperia-1-viii-carrier-270k-simfree-230k",
@@ -249,7 +270,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-xperia-1-viii-carrier-270k-simfree-230k/",
       "publishedAt": "2026-05-14T23:00:04+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202605-xperia-1-viii",
@@ -261,7 +283,8 @@
       "productionUrl": "https://sumalabo.com/articles/202605-xperia-1-viii/",
       "publishedAt": "2026-05-13T23:29:37+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202606-claude-fable-5-launch",
@@ -275,7 +298,8 @@
       "publishedAt": "2026-07-04T22:14:30+09:00",
       "xPostedAt": "2026-07-04T22:31:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "ai-smartphone-guide",
@@ -286,7 +310,8 @@
       "productionUrl": "https://sumalabo.com/articles/ai-smartphone-guide/",
       "publishedAt": "2026-05-08T12:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "claude-code-usage-limits-doubled",
@@ -296,7 +321,8 @@
       "articleUrl": "https://sumalabo.com/articles/claude-code-usage-limits-doubled/",
       "productionUrl": "https://sumalabo.com/articles/claude-code-usage-limits-doubled/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "company-ai-copilot-gemini-work-tips",
@@ -307,7 +333,8 @@
       "productionUrl": "https://sumalabo.com/articles/company-ai-copilot-gemini-work-tips/",
       "publishedAt": "2026-05-18T20:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "foldable-smartphone-iphone-guide",
@@ -317,7 +344,8 @@
       "articleUrl": "https://sumalabo.com/articles/foldable-smartphone-iphone-guide/",
       "productionUrl": "https://sumalabo.com/articles/foldable-smartphone-iphone-guide/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "huawei-ai-glasses-pay",
@@ -328,7 +356,8 @@
       "productionUrl": "https://sumalabo.com/articles/huawei-ai-glasses-pay/",
       "publishedAt": "2026-05-08T07:00:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "iphone-vs-android",
@@ -338,7 +367,8 @@
       "articleUrl": "https://sumalabo.com/articles/iphone-vs-android/",
       "productionUrl": "https://sumalabo.com/articles/iphone-vs-android/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "moonix-ai-smart-glasses",
@@ -348,7 +378,8 @@
       "articleUrl": "https://sumalabo.com/articles/moonix-ai-smart-glasses/",
       "productionUrl": "https://sumalabo.com/articles/moonix-ai-smart-glasses/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "power-bank-comparison",
@@ -358,7 +389,8 @@
       "articleUrl": "https://sumalabo.com/articles/power-bank-comparison/",
       "productionUrl": "https://sumalabo.com/articles/power-bank-comparison/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": true
     },
     {
       "slug": "power-bank-guide",
@@ -368,7 +400,8 @@
       "articleUrl": "https://sumalabo.com/articles/power-bank-guide/",
       "productionUrl": "https://sumalabo.com/articles/power-bank-guide/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "sample-esim",
@@ -378,7 +411,8 @@
       "articleUrl": "https://sumalabo.com/articles/sample-esim/",
       "productionUrl": "https://sumalabo.com/articles/sample-esim/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "smartphone-under-30000-guide",
@@ -388,7 +422,8 @@
       "articleUrl": "https://sumalabo.com/articles/smartphone-under-30000-guide/",
       "productionUrl": "https://sumalabo.com/articles/smartphone-under-30000-guide/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "tokyo-senior-smartphone-subsidy",
@@ -398,7 +433,8 @@
       "articleUrl": "https://sumalabo.com/articles/tokyo-senior-smartphone-subsidy/",
       "productionUrl": "https://sumalabo.com/articles/tokyo-senior-smartphone-subsidy/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "usb-c-charger-comparison",
@@ -408,7 +444,8 @@
       "articleUrl": "https://sumalabo.com/articles/usb-c-charger-comparison/",
       "productionUrl": "https://sumalabo.com/articles/usb-c-charger-comparison/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": true
     },
     {
       "slug": "usb-c-charger-guide",
@@ -418,7 +455,8 @@
       "articleUrl": "https://sumalabo.com/articles/usb-c-charger-guide/",
       "productionUrl": "https://sumalabo.com/articles/usb-c-charger-guide/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "used-smartphone-guide",
@@ -428,7 +466,8 @@
       "articleUrl": "https://sumalabo.com/articles/used-smartphone-guide/",
       "productionUrl": "https://sumalabo.com/articles/used-smartphone-guide/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "what-is-ai-smartphone",
@@ -438,7 +477,8 @@
       "articleUrl": "https://sumalabo.com/articles/what-is-ai-smartphone/",
       "productionUrl": "https://sumalabo.com/articles/what-is-ai-smartphone/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "what-is-cheap-sim",
@@ -448,7 +488,8 @@
       "articleUrl": "https://sumalabo.com/articles/what-is-cheap-sim/",
       "productionUrl": "https://sumalabo.com/articles/what-is-cheap-sim/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "what-is-esim",
@@ -458,7 +499,8 @@
       "articleUrl": "https://sumalabo.com/articles/what-is-esim/",
       "productionUrl": "https://sumalabo.com/articles/what-is-esim/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "_template",
@@ -468,7 +510,8 @@
       "articleUrl": "https://sumalabo.com/articles/_template/",
       "productionUrl": "https://sumalabo.com/articles/_template/",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-claude-fable-5-usage-credits-switch",
@@ -482,19 +525,23 @@
       "autonomyLevel": 0,
       "trigger": "manual",
       "xPostUrl": "https://x.com/suma_labo/status/2073551770933178667",
-      "xPostedAt": "2026-07-04T23:38:00.059Z"
+      "xPostedAt": "2026-07-04T23:38:00.059Z",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-ai-assistant-use-cases-gemini-chatgpt-claude",
       "incidents": [],
-      "source": "user_directed",
+      "source": "test_mode",
       "triggerKind": "user",
       "articleUrl": "https://sumalabo.com/articles/202607-ai-assistant-use-cases-gemini-chatgpt-claude/",
       "previewUrl": "https://sumalabo.com/articles/202607-ai-assistant-use-cases-gemini-chatgpt-claude/",
       "productionUrl": "https://sumalabo.com/articles/202607-ai-assistant-use-cases-gemini-chatgpt-claude/",
-      "publishedAt": "2026-07-06T04:40:04+09:00",
+      "publishedAt": "2026-07-06T05:46:52.786+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "xPostUrl": "https://x.com/suma_labo/status/2073906189663088910",
+      "xPostedAt": "2026-07-05T23:06:14.296Z"
     },
     {
       "slug": "202607-anthropic-claude-science-research-workbench",
@@ -508,7 +555,8 @@
       "publishedAt": "2026-07-05T07:00:00+09:00",
       "xPostedAt": "2026-07-05T08:51:54.949Z",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-claude-fable-5-free-extension-july13",
@@ -527,7 +575,8 @@
       "triggerInput": "theme: Claude Fable 5 無料枠7/13延長（v3コンポーネント刷新）",
       "xPostUrl": "https://x.com/suma_labo/status/2074712367150325808",
       "xPostedAt": "2026-07-08T04:30:19.821Z",
-      "xPostText": "Claude Fable 5、サブスク無料枠が7月13日まで延長。何が変わって、いつまでに何をすればいい / 追加料金なしで使える期間が7/7→日本時間7/13 15:59:59まで延長 + URL + #AI #すまラボ"
+      "xPostText": "Claude Fable 5、サブスク無料枠が7月13日まで延長。何が変わって、いつまでに何をすればいい / 追加料金なしで使える期間が7/7→日本時間7/13 15:59:59まで延長 + URL + #AI #すまラボ",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-gpt-5-6-sol-terra-luna-release",
@@ -546,9 +595,10 @@
       "triggerInput": "theme: GPT-5.6一般公開・3モデル整理(v3様式)",
       "xPostPending": "x_card_not_generated_after_2h15m_retries(composer再作成/静置10分x3含む)。OGP/Twitterbot取得はサーバ側全て正常。X側クロール遅延とみられる。再試行待ち",
       "xPostUrl": "https://x.com/suma_labo/status/2075499434960728204",
-      "xPostedAt": "2026-07-10T17:36:00+09:00",
+      "xPostedAt": "2026-07-10T08:36:00.000Z",
       "xPostVariant": "image_attach",
-      "xPostText": "GPT-5.6、ついに一般公開。ChatGPTで今日から何が使える？3モデルの違いをやさしく整理 + 一般提供が7/9(現地)開始 + URL + #AI #すまラボ（サムネ画像添付方式）"
+      "xPostText": "GPT-5.6、ついに一般公開。ChatGPTで今日から何が使える？3モデルの違いをやさしく整理 + 一般提供が7/9(現地)開始 + URL + #AI #すまラボ（サムネ画像添付方式）",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-openai-gpt-5-6-chatgpt-work",
@@ -560,7 +610,289 @@
       "productionUrl": "https://sumalabo.com/articles/202607-openai-gpt-5-6-chatgpt-work/",
       "publishedAt": "2026-07-10T05:40:00+09:00",
       "autonomyLevel": 0,
-      "trigger": "manual"
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "xPostUrl": "https://x.com/suma_labo/status/2075329721223811272",
+      "xPostedAt": "2026-07-09T21:23:05.408Z"
+    },
+    {
+      "slug": "202607-tesla-grok-in-car-japan",
+      "incidents": [],
+      "status": "x_posted",
+      "productionUrl": "https://sumalabo.com/articles/202607-tesla-grok-in-car-japan/",
+      "articleUrl": "https://sumalabo.com/articles/202607-tesla-grok-in-car-japan/",
+      "publishedAt": "2026-07-12T09:00:00+09:00",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/142",
+      "mergeCommit": "2a845c7383f2b3ed0737be6a334e890e6c61d8c1",
+      "source": "user_directed",
+      "triggerKind": "theme",
+      "autonomyLevel": 1,
+      "xPostUrl": "https://x.com/suma_labo/status/2076131186871779784",
+      "xPostedAt": "2026-07-12T02:32:29.413Z",
+      "xPostVariant": "text_only",
+      "previewUrl": "https://sumalabo.com/articles/202607-tesla-grok-in-car-japan/",
+      "trigger": "manual",
+      "hasAffiliate": false
+    },
+    {
+      "slug": "power-bank-recall-check",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "theme",
+      "articleUrl": "https://sumalabo.com/articles/power-bank-recall-check/",
+      "previewUrl": "https://f446e3c2.sumalabo.pages.dev/articles/power-bank-recall-check/",
+      "productionUrl": "https://sumalabo.com/articles/power-bank-recall-check/",
+      "publishedAt": "2026-07-12T12:00:00+09:00",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": true,
+      "status": "x_posted",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/146",
+      "mergeCommit": "c96a6b947babf513fc124cabf0b423ff2d0e579a",
+      "triggeredBy": "user",
+      "xPostUrl": "https://x.com/suma_labo/status/2076322700612849730",
+      "xPostedAt": "2026-07-12T15:08:02.000Z",
+      "xPostVariant": "text_only",
+      "xPostText": "回収対象の約6割がまだ手元に——あなたのモバイルバッテリーは大丈夫？\n\n本体の「SN:」から始まる16桁を公式フォームに入れるだけ。1分で確認できます。対象なら無償交換、対象外でも点検を。\n\n→ https://sumalabo.com/articles/power-bank-recall-check/\n\n#モバイルバッテリー #リコール",
+      "note": "背面タブ+カード未表示のためタイムボックス規定でtext_only即投稿(試行1回・約4分)。カードはXの事後クロール任せ"
+    },
+    {
+      "slug": "202607-anthropic-claude-global-workspace-interpretability",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-anthropic-claude-global-workspace-interpretability/",
+      "previewUrl": "https://0a01d05a.sumalabo.pages.dev/articles/202607-anthropic-claude-global-workspace-interpretability/",
+      "productionUrl": "https://sumalabo.com/articles/202607-anthropic-claude-global-workspace-interpretability/",
+      "publishedAt": "2026-07-13T00:30:00+09:00",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "status": "x_posted",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/147",
+      "mergeCommit": "41e7f69123c72e5055817a7774f6873cf213cead",
+      "triggeredBy": "user",
+      "xPostUrl": "https://x.com/suma_labo/status/2076497492418650380",
+      "xPostedAt": "2026-07-13T02:42:36.000Z",
+      "xPostVariant": "card",
+      "xPostText": "Claudeの中に「共有ホワイトボード」？\n\nAnthropicが公開した研究をやさしく解説。意識の証明ではなく、考える途中の概念を置く「内部の作業台」が見つかった話です。内部の「クモ」を「アリ」に書き換えると答えが8本→6本に変わる実験も。\n\n→ https://sumalabo.com/articles/202607-anthropic-claude-global-workspace-interpretability/\n\n#Claude #AI研究",
+      "note": "夜間runブロック(再シード必要)を立ち会い回収して完走。カードは composer 内で表示済みのまま投稿(card variant)"
+    },
+    {
+      "slug": "202607-claude-fable-5-free-extension-july20",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "theme",
+      "articleUrl": "https://sumalabo.com/articles/202607-claude-fable-5-free-extension-july20/",
+      "productionUrl": "https://sumalabo.com/articles/202607-claude-fable-5-free-extension-july20/",
+      "publishedAt": "2026-07-13T12:00:00+09:00",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "status": "x_posted",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/149",
+      "mergeCommit": "3d6f192770cadefdf9d4110f13dd4bc8b663f262",
+      "triggeredBy": "user",
+      "xPostUrl": "https://x.com/suma_labo/status/2076517428050489457",
+      "xPostedAt": "2026-07-13T04:01:49.000Z",
+      "xPostVariant": "card",
+      "xPostText": "Claude Fable 5、まさかの再延長。追加料金なしで使える期間が7/13→7/20（日本時間15:59:59）まで、2度目の延長です。\n\n変わったのは期限だけ。対象・週間上限50%・申請不要は据え置き。対象プランなら期限内に試すだけ。\n\n→ https://sumalabo.com/articles/202607-claude-fable-5-free-extension-july20/\n\n#Claude #ClaudeFable5",
+      "note": "前記事july13の続報。案A再シード後の初完走。OGPカード表示ありで投稿(card)"
+    },
+    {
+      "slug": "202607-openai-chatgpt-atlas-browser-end",
+      "incidents": [],
+      "source": "night_run_recovered",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-openai-chatgpt-atlas-browser-end/",
+      "previewUrl": "https://8fe2de91.sumalabo.pages.dev/articles/202607-openai-chatgpt-atlas-browser-end/",
+      "productionUrl": "https://sumalabo.com/articles/202607-openai-chatgpt-atlas-browser-end/",
+      "publishedAt": "2026-07-14T00:26:43.121Z",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "status": "x_posted",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/152",
+      "mergeCommit": "2d36dbe25683d175717894959562a0f292779045",
+      "triggeredBy": "user",
+      "xPostUrl": "https://x.com/suma_labo/status/2076826022352388227",
+      "xPostedAt": "2026-07-14T09:28:03+09:00",
+      "xPostVariant": "text_only",
+      "xPostText": "OpenAIのChatGPTブラウザ「Atlas」が2026年8月9日で終了。終わるのはAtlasだけで、ChatGPT本体は続きます。\n\n注意はデータ。ブックマーク・履歴・パスワード等は自動移行されないので、8/9までにHTMLで書き出しを。\n\n→ https://sumalabo.com/articles/202607-openai-chatgpt-atlas-browser-end/\n\n#ChatGPT #OpenAI",
+      "note": "夜間run(7/14)がturn5でtransientクラッシュ→立ち会いresumeで完走。案A再シード後の工房で画像生成(slide06は目/自の漢字化けで2回再生成し文言変更で回避)。背面タブ+カード未表示でtext_only"
+    },
+    {
+      "slug": "202607-google-play-store-fee-cut-japan",
+      "incidents": [],
+      "source": "night_run",
+      "triggerKind": "scout",
+      "articleUrl": "https://sumalabo.com/articles/202607-google-play-store-fee-cut-japan/",
+      "productionUrl": "https://sumalabo.com/articles/202607-google-play-store-fee-cut-japan/",
+      "publishedAt": "2026-07-15T05:30:00+09:00",
+      "autonomyLevel": 1,
+      "trigger": "nightRun",
+      "hasAffiliate": false,
+      "status": "x_posted",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/160",
+      "mergeCommit": "87e96df",
+      "triggeredBy": "scout",
+      "xPostUrl": "https://x.com/suma_labo/status/2077137962727530649",
+      "xReplyUrl": "https://x.com/suma_labo/status/2077138263891128824",
+      "xPostedAt": "2026-07-15T06:07:00+09:00",
+      "xPostVariant": "images4+reply",
+      "xPostText": "Google Playの手数料が9月末までに下がる。あなたのアプリ代はどうなる\n\nGoogleが日本向けのGoogle Play手数料引き下げと新しい課金オプションを、当初の2026年12月31日から2026年9月30日までに前倒しします。\n#ITニュース #すまラボ",
+      "note": "夜間run(7/15)完走。独立検品(overallPass)後、images4+reply方式で投稿(本投稿=サムネ+slide02+slide01+slide07の4枚/リプライに記事リンク)。x-post-options.mjsのxSelection id解決バグ(素のslideNNが実ファイルslideNN-*.webpに解決できず1枚落ち)を前方一致で修正。CF_HDROP保持プロセス(x-post-hold-clipboard.ps1新規)経由で4枚1回貼付・DOM検証4枚OK"
+    },
+    {
+      "slug": "202607-ai-usage-survey-chatgpt-gemini-perplexity",
+      "incidents": [],
+      "source": "night_run",
+      "triggerKind": "scout",
+      "trigger": "nightRun",
+      "triggeredBy": "scout",
+      "autonomyLevel": 1,
+      "hasAffiliate": false,
+      "status": "x_posted",
+      "articleUrl": "https://sumalabo.com/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/",
+      "productionUrl": "https://sumalabo.com/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/",
+      "publishedAt": "2026-07-17T05:55:00+09:00",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/161",
+      "mergeCommit": "4fbaef7",
+      "xPostUrl": "https://x.com/suma_labo/status/2077867845489414322",
+      "xReplyUrl": "https://x.com/suma_labo/status/2077868222284722490",
+      "xPostedAt": "2026-07-17T06:27:00+09:00",
+      "xPostVariant": "images4+reply",
+      "xPostText": "ChatGPTが47.5％で最多。でも「日本で一番使われているAI」とは言い切れない理由 / 305人への調査でChatGPTが47.5％、Gemini29.5％、Perplexity3.6％という結果が話題です。ただしこれは日本全体の市場シェアではなく、回答者が自己申告した「最もよく使うAI」。 #AI #すまラボ"
+    },
+    {
+      "slug": "202607-claude-for-teachers-free-us",
+      "incidents": [],
+      "source": "night_run",
+      "triggerKind": "scout",
+      "trigger": "nightRun",
+      "triggeredBy": "scout",
+      "autonomyLevel": 1,
+      "hasAffiliate": false,
+      "status": "x_posted",
+      "articleUrl": "https://sumalabo.com/articles/202607-claude-for-teachers-free-us/",
+      "productionUrl": "https://sumalabo.com/articles/202607-claude-for-teachers-free-us/",
+      "publishedAt": "2026-07-18T08:01:00+09:00",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/162",
+      "mergeCommit": "09516f6",
+      "xPostUrl": "https://x.com/suma_labo/status/2078268437470810409",
+      "xReplyUrl": "https://x.com/suma_labo/status/2078269513691508971",
+      "xPostedAt": "2026-07-18T08:59:00+09:00",
+      "xPostVariant": "images4+reply",
+      "xPostText": "米国の先生はClaudeが1年間無料に。日本は対象外、その中身と注意点をやさしく整理\n\nAnthropicが米国の認証済みK-12教員向けに「Claude for Teachers」の無償提供を始めました。\n#AI #すまラボ",
+      "note": "7/18夜間runがPhase A止まり→publish後にX未投稿だったのを手動で整合(独立検品→画像4枚+リプ)。"
+    },
+    {
+      "slug": "202607-openai-build-week-email-explained",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "triggerInput": "theme: OpenAI Build Week メール解説（改訂版）",
+      "articleUrl": "https://sumalabo.com/articles/202607-openai-build-week-email-explained/",
+      "productionUrl": "https://sumalabo.com/articles/202607-openai-build-week-email-explained/",
+      "publishedAt": "2026-07-18T13:21:51+09:00",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/167",
+      "mergeCommit": "a659845",
+      "status": "x_posted",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "verifyResult": {
+        "strict": "8/8",
+        "failedChecks": []
+      },
+      "xPostUrl": "https://x.com/suma_labo/status/2078343061252489516",
+      "xReplyUrl": "https://x.com/suma_labo/status/2078346398433738853",
+      "xPostedAt": "2026-07-18T13:56:00+09:00",
+      "xPostText": "(本投稿=画像4枚のみ・キャプション未反映) リプライ: 記事で続きと出典まで読めます https://sumalabo.com/articles/202607-openai-build-week-email-explained/ #AI #すまラボ",
+      "xVariant": "images4+reply",
+      "xNote": "本投稿はサムネ+slide01+slide08+slide03の4枚。X composerの不具合でキャプション本文が未反映(画像のみ投稿)。誤操作で本投稿に「。」だけのリプライが1件付いた(要手動削除)。記事リンクリプライはOGPカード表示OK。"
+    },
+    {
+      "slug": "202607-claude-fable-5-final-deadline-checklist",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "triggerInput": "theme: Claude Fable 5 締切前の最終チェックリスト(シリーズ完結編)",
+      "articleUrl": "https://sumalabo.com/articles/202607-claude-fable-5-final-deadline-checklist/",
+      "productionUrl": "https://sumalabo.com/articles/202607-claude-fable-5-final-deadline-checklist/",
+      "publishedAt": "2026-07-19T00:32:45+09:00",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/169",
+      "mergeCommit": "ada7078",
+      "status": "x_posted",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "verifyResult": {
+        "strict": "8/8",
+        "failedChecks": []
+      },
+      "xPostUrl": "https://x.com/suma_labo/status/2078509171423711397",
+      "xPostedAt": "2026-07-19T00:56:00+09:00",
+      "xPostText": "Claude Fable 5、いよいよ7/20(月)15:59まで。最後にやり残しはありませんか？ 無料枠は日本時間7月20日(月)15:59:59でいよいよ最終。残り時間でやっておくといい3つを整理しました。 #AI #すまラボ",
+      "xReplyText": "記事で続きと出典まで読めます。締切前のチェックにどうぞ👇 [記事URL] #Claude #すまラボ",
+      "xVariant": "images4+reply",
+      "xNote": "本投稿=画像4枚(サムネ+slide08+slide03+slide01・全て一本アンテナ)+キャプション本文あり。リプに記事リンク(OGP)。typeアクションで本文・リプとも正常反映。"
+    },
+    {
+      "slug": "202607-apple-japan-icloud-plus-price-hike",
+      "incidents": [],
+      "source": "test_mode",
+      "triggerKind": "night_driver",
+      "trigger": "nightRun",
+      "triggerInput": "scout: Appleが日本でiCloud＋も値上げ (gigazine)",
+      "articleUrl": "https://sumalabo.com/articles/202607-apple-japan-icloud-plus-price-hike/",
+      "productionUrl": "https://sumalabo.com/articles/202607-apple-japan-icloud-plus-price-hike/",
+      "publishedAt": "2026-07-18T20:51:03.492Z",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/170",
+      "mergeCommit": "877b2dd",
+      "status": "published",
+      "autonomyLevel": 1,
+      "hasAffiliate": false,
+      "verifyResult": {
+        "strict": "8/8",
+        "failedChecks": []
+      },
+      "xPostUrl": "https://x.com/suma_labo/status/2078585311475667277",
+      "xPostedAt": "2026-07-18T21:02:20.860Z",
+      "xReplyUrl": "https://x.com/suma_labo/status/2078585976738517281"
+    },
+    {
+      "slug": "202607-claude-fable-5-max-standard-pro-credits",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "triggerInput": "theme: Claude Fable 5 決着（Max標準搭載/Proクレジット制+$100・シリーズ完結編）",
+      "articleUrl": "https://sumalabo.com/articles/202607-claude-fable-5-max-standard-pro-credits/",
+      "productionUrl": "https://sumalabo.com/articles/202607-claude-fable-5-max-standard-pro-credits/",
+      "publishedAt": "2026-07-19T09:29:09+09:00",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/171",
+      "mergeCommit": "28935f7",
+      "status": "x_posted",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "verifyResult": {
+        "strict": "8/8",
+        "failedChecks": []
+      },
+      "imageNote": "thumbnail+slide01〜06(7枚)。slide07/08はcontent-policy誤判定でHTML担保。独立検品PASS。",
+      "xPostUrl": "https://x.com/suma_labo/status/2078640392225091646",
+      "xReplyUrl": "https://x.com/suma_labo/status/2078640392225091646 (reply with article link posted)",
+      "xPostedAt": "2026-07-19T09:37:00+09:00",
+      "xPostVariant": "images4+reply",
+      "xPostImages": [
+        "thumbnail",
+        "slide01",
+        "slide03",
+        "slide06"
+      ],
+      "xPostText": "Claude Fable 5、3週間の延長劇に決着。あなたのプランはどっち? / Max・Team Premium→標準搭載50%恒久 / Pro・Team Standard→7/20 15:59終了→クレジット制+$100 #Claude #すまラボ",
+      "independentInspection": "PASS(別エージェント・アンテナ1本・実在ロゴなし・数字全一致・決着トーン)"
     }
   ]
 }
