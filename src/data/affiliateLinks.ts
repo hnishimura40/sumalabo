@@ -8,6 +8,12 @@
 // 楽天リンクは「型番で絞った検索URL」を採用（item URL は失効しやすいため）。
 // 型番キーワードにより "その商品" の販売ページに着地する。2026-07-19 楽天開通で一斉有効化。
 export const affiliateLinks = {
+  "apple-20w-usb-c": {
+    amazon: "https://www.amazon.co.jp/s?k=Apple%2020W%20USB-C%E9%9B%BB%E6%BA%90%E3%82%A2%E3%83%80%E3%83%97%E3%82%BF",
+    rakuten: "https://search.rakuten.co.jp/search/mall/Apple%2020W%20USB-C%E9%9B%BB%E6%BA%90%E3%82%A2%E3%83%80%E3%83%97%E3%82%BF/",
+    yahoo: "https://shopping.yahoo.co.jp/search?p=Apple%2020W%20USB-C%E9%9B%BB%E6%BA%90%E3%82%A2%E3%83%80%E3%83%97%E3%82%BF",
+    official: "",
+  },
   "anker-511-nano-3-30w": {
     amazon: "https://www.amazon.co.jp/s?k=Anker%20511%20Charger%20Nano%203%2030W",
     rakuten: "https://search.rakuten.co.jp/search/mall/Anker%20511%20Charger%20Nano%203%2030W/",
