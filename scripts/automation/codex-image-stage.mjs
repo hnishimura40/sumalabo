@@ -155,7 +155,7 @@ async function runCodex({ prompt, outputDir, timeoutMs }) {
   // インライン展開済みなのでリポジトリへの FS アクセスは不要。よって書き込み可能領域を
   // outputDir だけに絞り、リポジトリ（＝node_modules）を Codex から保護する。
   const args = [...cli.argsPrefix,
-    "exec", "--json", "--ephemeral", "--sandbox", "workspace-write",
+    "exec", "--json", "--ephemeral", "--skip-git-repo-check", "--sandbox", "workspace-write",
     "--cd", outputDir,
     "--image", CANONICAL[0], "--image", CANONICAL[1], "-",
   ];
