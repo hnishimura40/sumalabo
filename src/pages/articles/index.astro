@@ -2,12 +2,15 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
+import StapleGuideCard from "../../components/StapleGuideCard.astro";
 import CategoryNav from "../../components/CategoryNav.astro";
 import { isListableArticle, sortArticles } from "../../lib/articles";
+import { buildStapleCards, interleaveStaples } from "../../lib/staple-cards";
 
-const articles = (await getCollection("articles"))
-  .filter(isListableArticle)
-  .sort(sortArticles);
+const all = await getCollection("articles");
+const articles = all.filter(isListableArticle).sort(sortArticles);
+// D: 定番ガイド(収益記事)を N 件ごとに差し込む
+const items = interleaveStaples(articles, buildStapleCards(all));
 ---
 
 <BaseLayout
@@ -58,7 +61,15 @@ const articles = (await getCollection("articles"))
             </p>
           </div>
           <div class="article-grid">
-            {articles.map((article) => <ArticleCard article={article.data} />)}
+            {
+              items.map((item) =>
+                item.kind === "article" ? (
+                  <ArticleCard article={item.entry.data} />
+                ) : (
+                  <StapleGuideCard card={item.card} />
+                ),
+              )
+            }
           </div>
         </section>
       ) : (

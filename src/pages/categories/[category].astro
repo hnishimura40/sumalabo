@@ -2,9 +2,11 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
+import StapleGuideCard from "../../components/StapleGuideCard.astro";
 import CategoryNav from "../../components/CategoryNav.astro";
 import { categories, getCategoryBySlug } from "../../lib/categories";
 import { isListableArticle, sortArticles } from "../../lib/articles";
+import { buildStapleCards, interleaveStaples } from "../../lib/staple-cards";
 
 export function getStaticPaths() {
   return categories.map((category) => ({
@@ -14,10 +16,17 @@ export function getStaticPaths() {
 }
 
 const { category } = Astro.props;
-const articles = (await getCollection("articles"))
+const all = await getCollection("articles");
+const articles = all
   .filter(isListableArticle)
   .filter((article) => article.data.category === category.name)
   .sort(sortArticles);
+
+// D: 定番ガイドを差し込む。ただしこのカテゴリに既に並んでいる収益記事は重複回避で除外。
+const staples = buildStapleCards(all).filter(
+  (s) => !articles.some((a) => a.data.slug === s.slug),
+);
+const items = interleaveStaples(articles, staples);
 
 const currentCategory = getCategoryBySlug(category.slug) ?? category;
 ---
@@ -46,7 +55,15 @@ const currentCategory = getCategoryBySlug(category.slug) ?? category;
             <h2 id="category-articles-title">このカテゴリの記事</h2>
           </div>
           <div class="article-grid">
-            {articles.map((article) => <ArticleCard article={article.data} />)}
+            {
+              items.map((item) =>
+                item.kind === "article" ? (
+                  <ArticleCard article={item.entry.data} />
+                ) : (
+                  <StapleGuideCard card={item.card} />
+                ),
+              )
+            }
           </div>
         </section>
       ) : (

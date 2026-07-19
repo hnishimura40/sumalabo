@@ -42,6 +42,9 @@ const articles = defineCollection({
       secondary: z.string().default(""),
     }),
     related: z.array(z.string()).default([]),
+    // 多くの記事が frontmatter に tags を持つが、従来 schema に無く Zod に落とされていた。
+    // 収益記事への内部導線マッチ(src/lib/related-guides.ts)で使うため受け取る。
+    tags: z.array(z.string()).default([]),
     pubDate: z.string().default(""),
     updated: z.string(),
     publishAt: z.string().default(""),

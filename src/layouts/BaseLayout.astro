@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import { siteConfig } from "../config/site";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
+import DrainageTracking from "../components/DrainageTracking.astro";
 
 interface Props {
   title?: string;
@@ -88,6 +89,7 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
     {ogImage && <meta property="og:image" content={ogImage} />}
     <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
     <GoogleAnalytics />
+    <DrainageTracking />
     <title>{pageTitle}</title>
   </head>
   <body>

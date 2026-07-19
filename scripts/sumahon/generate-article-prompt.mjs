@@ -1,4 +1,31 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import { generateMaterialsFlowMarkdown, generateRefinementFlowMarkdown, generateThumbnailRetryFlowMarkdown } from "./generate-handoff.mjs";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// B: 収益記事への文脈リンクのルールを、Astro 側(A/D)と同じ data/related-guides.json から生成する。
+// 定義が 1 か所なので、収益記事や誘導キーワードを足したら夜間run のプロンプトにも自動反映される。
+function renderDrainageRule() {
+  let cfg;
+  try {
+    cfg = JSON.parse(readFileSync(join(__dirname, "..", "..", "data", "related-guides.json"), "utf-8"));
+  } catch {
+    return "";
+  }
+  const targets = (cfg.targets || [])
+    .map((t) => `  - \`/articles/${t.slug}/\`（${t.label}）: ${(t.keywords || []).slice(0, 6).join(" / ")} などに実質的に触れたときだけ`)
+    .join("\n");
+  if (!targets) return "";
+  return `
+### 収益記事への文脈リンク（内部導線 B）
+- 本文が下記の収益記事のトピックに**実質的に言及したときだけ**、自然な一文で内部リンクを**1本まで**挿入してよい（言及が無ければ**入れない**）。宣伝臭・唐突な挿入は禁止。読者が「次に読むと役立つ」と感じる文脈でだけ置く。
+- リンク先候補（トピックに触れたときのみ）:
+${targets}
+- 記事末尾の「関連ガイド」カードは Astro 側が自動表示するので、**本文中の手動リンクは最大1本**に抑える（重複させない）。
+`;
+}
 
 function listItems(items = []) {
   return items.map((item) => `- ${item}`).join("\n");
@@ -292,7 +319,7 @@ ${listItems(articleBrief.cautions)}
 
 ### 参考情報の実URL
 - 参考情報の各リンクは**実在を確認した実URL**にする（推測でURLを組み立てない）。一次資料（公式の該当ページ）を最優先し、無ければ元報道の該当記事URLを使う。
-
+${renderDrainageRule()}
 ## 参考情報セクションのルール
 
 記事末尾に \`## 参考情報\` セクションを必ず作り、以下を守ってください。これは公開記事に出すセクションです。

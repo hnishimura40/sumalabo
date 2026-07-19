@@ -603,8 +603,22 @@ PC 表示では **横スクロールを原則使わない**。スマホでも基
 - `content/articles/202605-apple-airtag-size-ai-pendant-iphone-siri.mdx`
   （Apple AIペンダント記事。先に結論 + 5 図解スライド + 各 H2 lead 配置の例）
 
+## 内部導線（ニュース→収益記事）ルール（2026-07-19 追加）
+
+すまラボは「ニュース記事（流入）」と「収益記事（比較・リコール確認などアフィリエイト付き）」の二層構造。ニュースから収益記事へ**自然に**送客する導線を、以下 3 経路＋計測で持つ。**定義の単一ソースは `data/related-guides.json`**（Astro 側 `src/lib/related-guides.ts` と夜間run `scripts/sumahon/generate-article-prompt.mjs` の両方がこの JSON を読む。収益記事や誘導キーワードを足すときはこの JSON だけ直す）。
+
+- **A: 記事末尾「関連ガイド」カード（自動）** — 記事の本文・タグ・カテゴリを JSON の収益記事定義と照合し、一致した収益記事カードを最大2枚、記事末尾に表示（`src/components/RelatedGuides.astro`）。ラベルは「編集部おすすめ」＝**広告と誤認されない表現**にし、アフィボックスとは視覚的に区別する。スコア=キーワード一致+2/件・カテゴリ一致+1、閾値3（＝カテゴリだけ/1キーワードだけでは出さない）。**無関係な記事には出さない**。導線先ページ自身には出さない。
+- **B: 本文内の文脈リンク（夜間run組み込み）** — Phase A のプロンプト（`generate-article-prompt.mjs` の「収益記事への文脈リンク」節・`phase-a-orchestrator.mjs` の write_mdx）で、**本文が実際にそのトピックに触れたときだけ**自然な一文で内部リンクを**1本まで**挿入可（言及が無ければ入れない）。検品（`generate-independent-inspection-prompt.mjs` の (D) internalLinks）で「文脈的に自然か・無理な挿入がないか・1本以内か」を判定。**リンク問題の直し方は本文MDXの削除/修正**（画像再生成ではない・overallPass に影響させない）。
+- **D: 一覧面「定番ガイド」差し込み** — ニュース/記事一覧・カテゴリ一覧・トップのニュースセクション直下に、収益記事カードを N 件ごと（既定6）に差し込む（`src/components/StapleGuideCard.astro` + `src/lib/staple-cards.ts`）。必ず**「定番ガイド」ラベル**＋**「更新日」表記**にして新着ニュースと誤認させない。同じ収益記事が何度も出ないよう 1 覧あたり各カード最大1回に上限化。既にそのカテゴリに並ぶ収益記事は重複回避で除外。
+- **計測** — A/B/D の全リンクに `data-drainage`（lane）を付け、`src/components/DrainageTracking.astro` の1個の委譲リスナが GA4 custom event `internal_drainage`（params: lane / target / from_path）を発火。B の本文内リンクは data 属性が無くても href が収益記事なら lane='in_body' で拾う。可視化（司令室）はスコープ外＝イベント発火まで。
+
+**アフィリエイトボタンのコントラスト標準**: 店舗ボタン（`AffiliateLinks.astro` / `ProductCard.astro`）は**テーマで反転する `var(--teal)` を背景に使わない**（ダークで明色化し白文字が読めなくなる）。白文字で light/dark 両方 WCAG AA(4.5:1)以上の固定色に統一する（amazon/base #0f766e・楽天 #0e7167・Yahoo #115e59・公式 #3f5168）。
+
+> 詳細: [`docs/internal_drainage.md`](docs/internal_drainage.md)
+
 ## 関連ドキュメント
 
+- `docs/internal_drainage.md` — 内部導線 A/B/D＋計測の仕組みと収益記事の足し方
 - `docs/visual_preview_review.md` — Preview スクショ 2 パスレビューの手順とチェック観点
 - `docs/chatgpt_file_attach_clipboard.md` — クリップボード添付（標準）
 - `docs/uwsc_chatgpt_file_attach_test.md` — UWSC フォールバック
