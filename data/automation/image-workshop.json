@@ -2,14 +2,14 @@
   "name": "すまラボ画像工房",
   "purpose": "画像生成専用の常設ChatGPTチャット。会話冒頭に公式キャラ正本2枚（ひまり/らぼまる）を添付済み。以後の記事スライド・サムネ生成はこの会話の続きで行い、フォーカス/クリップボード非依存で無人運転を可能にする。",
   "project": "すまラボ台本",
-  "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5b15b2-030c-83ee-898b-6a8d021fb012",
+  "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5c0f57-0b24-83e8-9400-e1b9c2f57d30",
   "canonicalRefs": [
     "assets/characters/himari-canonical.png",
     "assets/characters/labomaru-canonical.png"
   ],
   "createdAt": "2026-07-05",
-  "reseededAt": "2026-07-18T15:10:00+09:00",
-  "generatedSinceSeed": 9,
+  "reseededAt": "2026-07-19T01:40:00+09:00",
+  "generatedSinceSeed": 7,
   "reseedThreshold": 10,
   "reseedPolicy": "【前倒し・定量トリガー】この工房チャットでの累計生成画像(generatedSinceSeed)が reseedThreshold(=10枚)を超える前に、必ず再シード(新チャット作成+正本2枚 himari/labomaru 添付+conversationUrl更新+generatedSinceSeedを0にリセット)する。加えて、1記事(7〜8枚)を生成し終えるごとに次の記事の画像生成前に再シードするのを既定とする(参照劣化は8枚1バッチの後半から出やすいため)。崩れを検知した場合(factcheck項目10/11)は即座に再シードして崩れたスライドだけ作り直す。無人runで再シード(=画像添付)が経路上できない場合は blocked_image_generation_unavailable で安全停止し、人間に再シードを依頼して通知する。",
   "reseedHistory": [
@@ -45,9 +45,22 @@
     }
   ],
   "note": "夜間ドライバーはこのURLに navigate して会話の続きで生成する。ただし generatedSinceSeed が閾値超過、または前記事ぶんが未リセットなら、続きに詰め込まず再シードを優先する。",
-  "lastUsedAt": "2026-07-18T06:10:00.000Z",
-  "lastUsedFor": "202607-claude-fable-5-final-deadline-checklist",
+  "lastUsedAt": "2026-07-19T05:30:00.000Z",
+  "lastUsedFor": "202607-claude-fable-5-max-standard-pro-credits",
+  "lastUsedNote": "決着記事: thumbnail+slide01〜06を生成(7枚)。slide07/08はセッション級の画像セーフティ・クールダウンで連続content-policy誤判定(5回)→粘らず本文HTMLで内容担保・図版は6枚で確定。次回生成前に再シード推奨(seed=7で閾値接近)。",
   "history": [
+    {
+      "at": "2026-07-19T01:40:00+09:00",
+      "action": "reseed(案A・textのみ・クリーン検証済み)",
+      "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5c0f57-0b24-83e8-9400-e1b9c2f57d30",
+      "reason": "決着記事の画像生成前。直前に記録した6a5ba3e6はDOMのstale混在で識別が不確実だったため、新チャット6a5c0f57を作成し【reseed=message#1・準備OK・prior images=0】を厳密検証してから使用。アンテナ1本アンカー入り。seed=0"
+    },
+    {
+      "at": "2026-07-19T01:05:00+09:00",
+      "action": "reseed(案A・textのみ)",
+      "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5ba3e6-f204-83ee-bdc2-a603a4f5b4ee",
+      "reason": "今夜(7/19 4:30)のrun前の予防再シード。前チャット6a5b15b2はFable完結編で12枚(9+アンテナ修正3枚)消化。案A(プロジェクトファイル参照・テキストのみ・準備OK確認)。**らぼまるのアンテナ=必ず1本**をアンカーに追記(Fableで二本アンテナ劣化が出たため)。seed=0"
+    },
     {
       "at": "2026-07-18T15:10:00+09:00",
       "action": "reseed(案A・textのみ)",
@@ -128,5 +141,5 @@
     "uploadedAt": "2026-07-13T12:30:00+09:00",
     "note": "プロジェクト「すまラボ台本」の情報源に常設。再シードは新チャット+テキスト参照のみ(案A・2026-07-13品質検証済み)"
   },
-  "updatedAt": "2026-07-18T15:10:00+09:00"
+  "updatedAt": "2026-07-19T01:40:00+09:00"
 }
