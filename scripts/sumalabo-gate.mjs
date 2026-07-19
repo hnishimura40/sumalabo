@@ -448,6 +448,33 @@ function checkDistOgp(slug) {
   }
 }
 
+// dist の rendered HTML に「生の Markdown 記法」が残っていないか検査する
+// （2026-07-19 追加）。CJK の intra-word で **bold** が未変換のまま出る等を検出。
+// 記法掃除は dist ベースで判定する（source の ** は正常にレンダされる場合もあるため）。
+function checkDistRawMarkdown(slug) {
+  const htmlPath = path.join(CONFIG.distDir, "articles", slug, "index.html");
+  const html = readTextOrNull(htmlPath);
+  if (html === null) {
+    report("warning", "dist-raw-markdown", htmlPath, "dist が未 build のため記法掃除の実測をスキップ");
+    return;
+  }
+  // <script>（JSON-LD 等）を除いた本文領域だけを対象にする。
+  const body = html.replace(/<script[\s\S]*?<\/script>/gi, "");
+  const checks = [
+    { re: /\*\*/g, label: "未変換の太字記法 **（<strong> を使うか、CJK 語中では ** を避ける）" },
+    { re: /(^|[^!])\]\(https?:\/\//g, label: "未変換のリンク記法 ](http…（Markdown リンクが素で出ている）" },
+  ];
+  for (const { re, label } of checks) {
+    const m = body.match(re);
+    if (m && m.length > 0) {
+      // 文脈を1つ添える
+      const idx = body.search(re);
+      const ctx = body.slice(Math.max(0, idx - 20), idx + 30).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+      report("violation", "dist-raw-markdown", htmlPath, `${label} が ${m.length} 箇所（例: …${ctx}…）`);
+    }
+  }
+}
+
 // ---- main ----
 function main() {
   const args = parseArgs(process.argv.slice(2));
@@ -467,6 +494,7 @@ function main() {
     checkImageStage(slug, mdx);
     checkAffiliate(slug, mdx);
     checkDistOgp(slug);
+    checkDistRawMarkdown(slug);
   }
 
   const violations = findings.filter((f) => f.severity === "violation");

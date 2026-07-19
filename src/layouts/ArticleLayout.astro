@@ -37,11 +37,8 @@ const { article, previousArticle, nextArticle, headings = [] } = Astro.props;
 const tocHeadings = headings.filter((h) => h.depth === 2);
 const showToc = tocHeadings.length >= 2;
 
-const typeLabels = {
-  foundation: "土台記事",
-  revenue: "収益記事",
-  news: "流入記事",
-};
+// 内部レーン名（土台/収益/流入=foundation/revenue/news）は運用分類であり、
+// 公開ページには出さない（カテゴリのみ表示）。2026-07-19。
 
 // JSON-LD Article schema（M3 SEO基盤）。datePublished は pubDate、無ければ updated。
 const articleUrl = new URL(`/articles/${article.slug}/`, siteConfig.siteUrl).toString();
@@ -84,7 +81,6 @@ const articleSchema = {
     }
     <header class="article-header">
       <div class="meta-row">
-        <span>{typeLabels[article.type]}</span>
         <span>{article.category}</span>
         <time datetime={article.updated}>更新日: {article.updated}</time>
       </div>
