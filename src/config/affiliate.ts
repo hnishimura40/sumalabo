@@ -38,10 +38,20 @@ interface MoshimoProgram {
 }
 
 export const affiliateConfig: {
+  /**
+   * 楽天アフィリエイト（直リンク運用・2026-07-19 開通）。
+   * ドット区切りの楽天アフィリエイト ID（管理画面に表示される値）。
+   * 設定されていると楽天ボタンだけ hb.afl.rakuten.co.jp 経由の
+   * 正規アフィリエイトリンク（rel="sponsored"）になる。
+   * 空文字なら楽天も素の URL（通常リンク）のまま。
+   */
+  rakutenAffiliateId: string;
   moshimo: Record<MallStore, MoshimoProgram>;
   a8: { mediaId: string };
 } = {
+  rakutenAffiliateId: "55e28e2f.7241aa0f.55e28e30.472ff37b",
   moshimo: {
+    // Amazon / Yahoo は ASP 未開通のため空のまま = 素の URL（通常リンク）で共存。
     amazon: { aId: "", pId: "", pcId: "", plId: "" },
     rakuten: { aId: "", pId: "", pcId: "", plId: "" },
     yahoo: { aId: "", pId: "", pcId: "", plId: "" },
@@ -49,19 +59,47 @@ export const affiliateConfig: {
   a8: { mediaId: "" },
 };
 
+/** 楽天の直リンク運用が有効か（ID 設定済みか） */
+function isRakutenDirectReady(): boolean {
+  return Boolean(affiliateConfig.rakutenAffiliateId);
+}
+
 /** そのモールのアフィリエイト ID が設定済みか */
 export function isMallAffiliateReady(store: MallStore): boolean {
+  // 楽天は直リンク（rakutenAffiliateId）を優先。未設定でも moshimo 側があれば true。
+  if (store === "rakuten" && isRakutenDirectReady()) return true;
   const p = affiliateConfig.moshimo[store];
   return Boolean(p && p.aId && p.pId && p.pcId && p.plId);
 }
 
 /**
+ * 楽天の素の商品/ショップ URL を hb.afl.rakuten.co.jp 経由の
+ * 正規アフィリエイトリンクに変換する。
+ *   https://hb.afl.rakuten.co.jp/hgc/{ID}/?pc={encoded}&m={encoded}
+ * pc（PC 用）・m（モバイル用）とも同じ商品 URL を URL エンコードして渡す。
+ */
+function buildRakutenDirectLink(rawUrl: string): string {
+  const id = affiliateConfig.rakutenAffiliateId;
+  const enc = encodeURIComponent(rawUrl);
+  return `https://hb.afl.rakuten.co.jp/hgc/${id}/?pc=${enc}&m=${enc}`;
+}
+
+/**
  * 素のモール URL をアフィリエイトリンクに変換する。
  * ID 未設定なら素の URL をそのまま返す（通常リンク動作）。
+ *   - 楽天: rakutenAffiliateId 設定時は hb.afl.rakuten.co.jp 経由（優先）
+ *   - Amazon / Yahoo: moshimo ID 設定時のみ af.moshimo.com 経由
  */
 export function buildMallLink(store: MallStore, rawUrl: string): { href: string; affiliate: boolean } {
   if (!rawUrl) return { href: "", affiliate: false };
+
+  // 楽天は直リンク運用を最優先（Amazon/Yahoo が未開通でも楽天だけ稼働）。
+  if (store === "rakuten" && isRakutenDirectReady()) {
+    return { href: buildRakutenDirectLink(rawUrl), affiliate: true };
+  }
+
   if (!isMallAffiliateReady(store)) return { href: rawUrl, affiliate: false };
+
   const p = affiliateConfig.moshimo[store];
   const href =
     `https://af.moshimo.com/af/c/click?a_id=${encodeURIComponent(p.aId)}` +
