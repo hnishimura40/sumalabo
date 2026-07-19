@@ -27,6 +27,13 @@ const MOODS: Record<Speaker, readonly string[]> = {
   labo: ["smile", "point", "worried"],
 };
 
+const MOOD_ALIASES: Partial<Record<Speaker, Record<string, string>>> = {
+  himari: {
+    worried: "curious",
+    smile: "aha",
+  },
+};
+
 const DEFAULT_NAME: Record<Speaker, string> = {
   himari: "ひまり",
   labo: "らぼまる",
@@ -35,8 +42,9 @@ const DEFAULT_NAME: Record<Speaker, string> = {
 const { speaker, mood, name } = Astro.props;
 const displayName = name ?? DEFAULT_NAME[speaker];
 const initial = speaker === "himari" ? "ひ" : "ら";
-const hasFace = typeof mood === "string" && MOODS[speaker]?.includes(mood);
-const faceSrc = hasFace ? `/images/characters/faces/${speaker}-${mood}.webp` : null;
+const resolvedMood = typeof mood === "string" ? (MOOD_ALIASES[speaker]?.[mood] ?? mood) : null;
+const hasFace = typeof resolvedMood === "string" && MOODS[speaker]?.includes(resolvedMood);
+const faceSrc = hasFace ? `/images/characters/faces/${speaker}-${resolvedMood}.webp` : null;
 ---
 
 <div class:list={["talk", speaker]}>

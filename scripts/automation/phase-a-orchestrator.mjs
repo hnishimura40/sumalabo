@@ -198,7 +198,12 @@ const jobs = ${JSON.stringify(jobs)};
     require("fs").mkdirSync(require("path").dirname(dst), { recursive: true });
     let q = 82, buf;
     for (; q >= 40; q -= 8) {
-      buf = await sharp(src).resize(w, h, { fit: "fill" }).webp({ quality: q }).toBuffer();
+      // Preserve the artwork's intrinsic ratio. Unexpected source dimensions
+      // must be letterboxed instead of stretching characters and diagrams.
+      buf = await sharp(src)
+        .resize(w, h, { fit: "contain", background: { r: 255, g: 255, b: 255, alpha: 1 } })
+        .webp({ quality: q })
+        .toBuffer();
       if (buf.length <= 500 * 1024) break;
     }
     require("fs").writeFileSync(dst, buf);
