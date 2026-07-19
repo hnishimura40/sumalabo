@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-19T00:37:00.000Z",
+  "updatedAt": "2026-07-19T01:40:00.000Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -892,7 +892,8 @@
         "slide06"
       ],
       "xPostText": "Claude Fable 5、3週間の延長劇に決着。あなたのプランはどっち? / Max・Team Premium→標準搭載50%恒久 / Pro・Team Standard→7/20 15:59終了→クレジット制+$100 #Claude #すまラボ",
-      "independentInspection": "PASS(別エージェント・アンテナ1本・実在ロゴなし・数字全一致・決着トーン)"
+      "independentInspection": "PASS(別エージェント・アンテナ1本・実在ロゴなし・数字全一致・決着トーン)",
+      "thumbnailUpdate": "2026-07-19: サムネを喜び爆発型「Fable 5、残ります!」に差し替え（PR#172・deploy cedb1f9a）。X本投稿の画像4枚はそのまま維持。感情トーン=朗報・喜び爆発を恒久ルール化（character-sheet/factcheck項目12）"
     }
   ]
 }
