@@ -26,6 +26,7 @@ import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { execSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { findProductNameVariants, FORMAL_PRODUCT_NAMES_PATH, loadFormalProductNames } from "./sumahon/formal-product-names.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
@@ -184,6 +185,13 @@ function checkForbiddenWords(text, fileLabel, scope, patterns) {
   }
 }
 
+function checkFormalProductNames(text, fileLabel, products) {
+  for (const finding of findProductNameVariants(text, products)) {
+    report("violation", "formal-product-name", fileLabel,
+      `L${finding.line}: 「${finding.variant}」は正式表記「${finding.canonical}」に直してください → ${finding.excerpt}`);
+  }
+}
+
 // ---- タイトルの主張が本文 facts で裏付けられているか（2026-07-14 バズ強化・感情に刺すタイトルの安全弁）----
 // 感情に刺す主タイトル（消える/終了/値上げ+あなた 等）を許可する代わりに、
 // 「事実に反する煽り」を弾く。判定は自動でできる範囲＝(1) タイトルにも禁則語検査を効かせる、
@@ -235,7 +243,7 @@ function checkTitleFactBacking(title, body, mdxLabel, patterns) {
 // stage=draft: drafts ディレクトリ不在 = violation（画像生成前は必ず必要）
 // stage=full : drafts ディレクトリ不在 = warning（レガシー記事 / 別環境制作 /
 //              Temp クリーンアップ後の再実行を想定。存在するのに成果物欠落なら violation）
-function checkDraftStage(slug, patterns, stage) {
+function checkDraftStage(slug, patterns, productNames, stage) {
   const dir = path.join(CONFIG.draftsDir, slug);
   if (!existsSync(dir)) {
     const sev = stage === "draft" ? "violation" : "warning";
@@ -259,7 +267,11 @@ function checkDraftStage(slug, patterns, stage) {
   // 禁則語: 公開物の元になる final_article と slide_plan のみ対象
   for (const f of ["final_article.md", "slide_plan.md"]) {
     const t = readTextOrNull(path.join(dir, f));
-    if (t !== null) checkForbiddenWords(stripProvenanceHeader(t), `drafts/refinement/${slug}/${f}`, "draft", patterns);
+    if (t !== null) {
+      const body = stripProvenanceHeader(t);
+      checkForbiddenWords(body, `drafts/refinement/${slug}/${f}`, "draft", patterns);
+      checkFormalProductNames(body, `drafts/refinement/${slug}/${f}`, productNames);
+    }
   }
 
   // full ステージ: 成果物保全チェック（P7）。
@@ -295,7 +307,7 @@ function checkDraftsCommitted(slug) {
 }
 
 // ---- full ステージ（MDX / 画像 / OGP）----
-function checkMdxStage(slug, patterns) {
+function checkMdxStage(slug, patterns, productNames) {
   const mdxPath = path.join(CONFIG.articlesDir, `${slug}.mdx`);
   const raw = readTextOrNull(mdxPath);
   if (raw === null) {
@@ -316,6 +328,7 @@ function checkMdxStage(slug, patterns) {
     report("violation", "mdx-frontmatter", mdxPath, `frontmatter slug "${fmSlug}" がファイル名 "${slug}" と不一致`);
   }
   checkForbiddenWords(body, `content/articles/${slug}.mdx`, "mdx", patterns);
+  checkFormalProductNames(raw, `content/articles/${slug}.mdx`, productNames);
   const title = frontmatterValue(frontmatter, "title");
   checkTitleFactBacking(title, body, `content/articles/${slug}.mdx`, patterns);
   return { body, fm: frontmatter };
@@ -392,17 +405,18 @@ function checkAffiliate(slug, mdx) {
   const hasAffiliateContent = linkHits.length > 0 || hasComponent;
 
   const fmType = fm ? frontmatterValue(fm, "type") : null;
+  const fmCategory = fm ? frontmatterValue(fm, "category") : null;
   const fmHasAffiliate = fm ? frontmatterValue(fm, "hasAffiliate") : null;
 
-  if (fmType === "news") {
+  if (fmType === "news" || fmCategory === "やってみた・検証") {
     if (hasAffiliateContent) {
       const what = [...linkHits, ...(hasComponent ? ["アフィリエイト系コンポーネント"] : [])].join(" / ");
       report("violation", "affiliate-lane", label,
-        `ニュースレーン(type: news)の記事にアフィリエイトは入れられません（検出: ${what}）。収益導線は資産記事(type: revenue/foundation)限定`);
+        `ニュースレーンまたはhands-onの記事にアフィリエイトは入れられません（検出: ${what}）。hands-onにも当面は無広告原則を適用します`);
     }
     if (fmHasAffiliate === "true") {
       report("violation", "affiliate-lane", label,
-        "ニュースレーン(type: news)の記事に hasAffiliate: true は設定できません（ニュースには広告を入れない方針）");
+        "ニュースレーンまたはhands-onの記事に hasAffiliate: true は設定できません（当面は無広告の方針）");
     }
     return;
   }
@@ -487,10 +501,16 @@ function main() {
   }
 
   const patterns = loadForbiddenWords();
+  let productNames = [];
+  try {
+    productNames = loadFormalProductNames();
+  } catch (e) {
+    report("violation", "config", FORMAL_PRODUCT_NAMES_PATH, `正式表記リストが読めません: ${e.message}`);
+  }
 
-  checkDraftStage(slug, patterns, stage);
+  checkDraftStage(slug, patterns, productNames, stage);
   if (stage === "full") {
-    const mdx = checkMdxStage(slug, patterns);
+    const mdx = checkMdxStage(slug, patterns, productNames);
     checkImageStage(slug, mdx);
     checkAffiliate(slug, mdx);
     checkDistOgp(slug);

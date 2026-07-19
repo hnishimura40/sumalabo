@@ -72,7 +72,7 @@
 
 ## 成功した順序（人間が事前に整える）
 
-- ChromeにClaude for Chrome拡張をインストールし、Claude Codeセッションとペアリングする
+- ChromeにClaude in Chrome拡張をインストールし、Claude Codeセッションとペアリングする
 - 接続名はChromeとわかる名前にする（Edgeの拡張は使わない）
 - UWSCをインストールし、`D:\documents\uwsc5302\UWSC.exe` から実行できる状態にする
 - ベース画像が `public/images/characters/base/{himari,labomaru}-base.png` に存在することを確認

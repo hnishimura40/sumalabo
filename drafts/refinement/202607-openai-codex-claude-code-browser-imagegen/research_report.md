@@ -10,7 +10,7 @@
 - Codex/ChatGPTのbuilt-in画像生成はgpt-image-2を使い、一般のCodex利用上限から消費される。CLIでは参照画像を添付でき、成果物をファイルとして保存できる。
 - Computer Useは対応地域のmacOS/Windowsで、Work modeまたはCodexからGUIを操作できる。macOSにはバックグラウンド/Locked use系の機能があるが、地域・OS・設定に依存する。
 - Claude Codeはターミナルからコードベースを読み、ファイルを変更し、テストを実行するエージェント型コーディングシステム。ターミナル、IDE、Claude Desktopからローカル/リモートセッションを扱える。
-- Claude for ChromeはClaude Code本体ではなく、ClaudeがユーザーのChromeタブを操作する拡張。既存タブ・ログイン済みサイトを使える。
+- Claude in ChromeはClaude Code本体ではなく、ClaudeがユーザーのChromeタブを操作する拡張。既存タブ・ログイン済みサイトを使える。
 - Claude Pro/MaxではClaudeアプリとClaude Codeが利用枠を共有する。
 
 ## 本サイトの運用実例（一次資料=リポジトリ内の運用記録）
@@ -40,6 +40,5 @@
 - OpenAI Computer Use: https://learn.chatgpt.com/docs/computer-use
 - Anthropic Claude Code: https://www.anthropic.com/product/claude-code
 - Anthropic Claude Code setup: https://docs.anthropic.com/en/docs/claude-code/getting-started
-- Anthropic Claude Code in desktop / Claude for Chrome: https://www.anthropic.com/news/claude-opus-4-5
+- Anthropic Claude Code in desktop / Claude in Chrome: https://www.anthropic.com/news/claude-opus-4-5
 - Anthropic Pro/Max shared usage: https://support.anthropic.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan
-

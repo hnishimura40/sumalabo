@@ -17,6 +17,8 @@
 // 検品者がやらないこと: 画像の生成・再生成の判断（それは呼び出し側=driver が行う）。
 //   検品者は「白紙の目での判定」だけを返す。
 
+import { formalProductNamesChecklist } from "./formal-product-names.mjs";
+
 /**
  * 独立検品エージェントに渡す構造化出力スキーマ（StructuredOutput 用）。
  * xSelection は「X 直接投稿に載せる画像の並び」。先頭は原則サムネ。
@@ -83,6 +85,7 @@ export const INDEPENDENT_INSPECTION_SCHEMA = {
  * @returns {string}
  */
 export function buildIndependentInspectionPrompt({ slug, finalArticle = "", slidePlanText = "", slideImages = [], thumbnailPath = null } = {}) {
+  const formalNames = formalProductNamesChecklist();
   const imgList = [
     ...(thumbnailPath ? [`- thumbnail: ${thumbnailPath}`] : []),
     ...slideImages.map((s) => `- ${s.id}: ${s.path}`),
@@ -109,6 +112,9 @@ ${slidePlanText.slice(0, 4000)}
 \`\`\`
 
 ## (A) factcheck 12 項目（各画像で判定）
+固有名詞の正式表記: ${formalNames}。旧称・表記ゆれは needs_revision とし、
+data/qa/formal-product-names.json を正本として照合する。
+
 1. 事実誤認の有無（画像内記述が最終稿と矛盾しない）
 2. 報道/噂段階の明示（未確定を確定と言い切っていない）
 3. 比較軸のズレがない
@@ -118,7 +124,7 @@ ${slidePlanText.slice(0, 4000)}
 7. ひまり・らぼまるが記事内容に即している
 8. 置物化していない
 9. 道具の使い方に意味がある
-10. **キャラの視覚的破綻（認識アンカー一致）** — ひまり=金髪サイドテール+水色/ティールのリボン・青い瞳・正本の顔立ち/頭身 / らぼまる=白い卵型ボディ+黄緑アンテナ+黒い丸い目+胸のオレンジのハートボタン+正本の体型。逸脱・別人化・途中変化は needs_revision（blocking）。服・小道具の違いは破綻ではない
+10. **キャラの視覚的破綻（認識アンカー一致）** — ひまり=金髪サイドテール+水色/ティールのリボン・青い瞳・正本の顔立ち/頭身 / らぼまる=白い卵型ボディ+黄緑アンテナ+黒い丸い目+胸のオレンジのハートボタン+青い首輪バンド+左右の青い耳ビレ+正本の体型。逸脱・別人化・途中変化は needs_revision（blocking）。**耳ビレが正本より短い・丸い傾向だけなら warning として監視し、別キャラ化していなければ pass のまま**。服・小道具の違いは破綻ではない
 11. **文字化け・レイアウト破綻** — 日本語の文字化け・意味を成さない誤字（助詞欠落「目的ことで」等）・見切れ・重なり・枠崩れは needs_revision。**漢字の類似化け（例「目的→自的」目→自・未→末・微→徴 等。docs/kanji_pitfalls.md 参照）を重点確認**
 12. **表情・トーンが記事の性質と矛盾しない** — 終了/障害/リコール等の注意・速報系は「驚き＋対処」がOK。ニコニコ/ムスッ・無表情/炎・涙・パニックは needs_revision。**朗報・喜び爆発系（継続決定「残る/使い続けられる」・無料化・復活・値下げ等、読者が確実に得する確定ニュース）は、キャラが万歳/ジャンプ/ガッツポーズ＋満面の笑みで喜びきっているのが正。案内板・分岐図（矢印→）・比較表・無表情の説明構図・控えめな指さし案内で読者の歓喜を代弁できていなければ warning（改善指摘・公開は止めない）**
 

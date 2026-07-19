@@ -5,6 +5,11 @@ export const categories = [
     description: "AI・スマホ・ガジェットのニュースを、普通の人にもわかるように整理します。",
   },
   {
+    name: "やってみた・検証",
+    slug: "hands-on",
+    description: "実際に使って・試して分かったことを、体験ベースで整理します",
+  },
+  {
     name: "スマホの選び方",
     slug: "smartphone",
     description: "iPhone、Android、中古スマホなど、買い替えや選び方で迷いやすいポイントを整理します。",

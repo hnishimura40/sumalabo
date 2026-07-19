@@ -26,7 +26,7 @@
 
 ## slide04（4:5）— Claude Codeとの違い
 - 見出し帯: Claude Code側の組み合わせ
-- 要素: Claude Code=ターミナル/IDE/デスクトップで開発 / Claude for Chrome=普段のChromeタブを操作 / 「Claude Codeの内蔵ブラウザ」ではない / 開発机+普段のChrome
+- 要素: Claude Code=ターミナル/IDE/デスクトップで開発 / Claude in Chrome=普段のChromeタブを操作 / 「Claude Codeの内蔵ブラウザ」ではない / 開発机+普段のChrome
 - キャラ: ひまりが名称カードを分け、らぼまるが混同注意。中立。
 
 ## slide05（4:5）— ログイン・準備・安定性
@@ -50,8 +50,7 @@
 - キャラ: ひまりが少ない手数の道を選び、らぼまるが「何をさせたいかで選ぼう」。明るい締め。
 
 ## 生成メモ
-- 全9枚で日本語の誤字を最優先検品。「Codex」「Claude Code」「Claude for Chrome」「localhost」の表記を厳守。
+- 全9枚で日本語の誤字を最優先検品。「Codex」「Claude Code」「Claude in Chrome」「localhost」の表記を厳守。
 - 実在企業ロゴは描かず、英字名は文字情報としてのみ使う。
 - キャラクター正本2枚を毎回参照。らぼまるは黄緑アンテナ1本、青い首輪バンド、左右の青い耳ビレ、胸のオレンジのハートボタンを保持。
 - 生成工程と独立検品は分離する。
-

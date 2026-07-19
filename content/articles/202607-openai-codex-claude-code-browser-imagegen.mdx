@@ -2,7 +2,7 @@
 title: "Codexって何？ブラウザ内蔵とClaude Code、乗り換えて分かった使い分け"
 slug: "202607-openai-codex-claude-code-browser-imagegen"
 type: "news"
-category: "ニュースをかみくだく"
+category: "やってみた・検証"
 description: "ChatGPTの中でファイル・コード・ブラウザ・画像を扱うCodexとは何か。内蔵ブラウザと普段のChromeを使う方式の違い、Claude Codeとの使い分けを、画像運用を実際に乗り換えた当事者目線で整理します。"
 thumbnail: "/images/thumbnails/202607-openai-codex-claude-code-browser-imagegen.webp"
 thumbnailAlt: "Codexって何？をテーマに、金髪サイドテールのひまりが内蔵ブラウザの工房とコマンドで画像ファイルを直接保存する工房を見比べ、白い卵型のらぼまるが何をさせたいかで選ぼうと案内するサムネイル"
@@ -20,6 +20,7 @@ related:
 pubDate: "2026-07-19"
 updated: "2026-07-19"
 publishAt: "2026-07-19T15:30:00+09:00"
+hasAffiliate: false
 ---
 
 import Summary30 from "../../src/components/article/Summary30.astro";
@@ -127,23 +128,23 @@ Web制作では `localhost` を開けるのが効きます。コードを直す�
 
 ## Claude Code側は「開発机」と「普段のChrome」の組み合わせ
 
-<p class="lead">ブラウザを操作するのは、厳密にはClaude Code本体の内蔵ブラウザではなく<strong>Claude for Chrome</strong>です。</p>
+<p class="lead">ブラウザを操作するのは、厳密にはClaude Code本体の内蔵ブラウザではなく<strong>Claude in Chrome</strong>です。</p>
 
 Claude Codeは、ターミナル、IDE、Claude Desktopから使えるエージェント型のコーディングシステムです。コードベースを読み、複数ファイルを変更し、テストまで進めるという中心部分はCodexとよく似ています。
 
-Claude for Chromeは、ユーザーが普段使っているChromeのタブを読み、ログイン済みのサイトを操作します。つまり、Codexは「アプリ内に独立した工房を持つ」使い方ができ、Claude側は「開発机のClaude Codeと、普段のChromeを借りる拡張」を組み合わせる形です。
+Claude in Chromeは、ユーザーが普段使っているChromeのタブを読み、ログイン済みのサイトを操作します。つまり、Codexは「アプリ内に独立した工房を持つ」使い方ができ、Claude側は「開発机のClaude Codeと、普段のChromeを借りる拡張」を組み合わせる形です。
 
 <section class="article-slide-section article-wide-block">
   <p class="slide-intro">混同しやすい製品名と役割を整理。</p>
   <figure class="article-slide-figure">
-    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide04-claude-code-combination.webp" alt="Claude Code側の組み合わせを示す図解。Claude Codeはターミナル、IDE、デスクトップで開発。Claude for Chromeは普段のChromeタブを操作し、Claude Codeの内蔵ブラウザではないと整理" loading="lazy" decoding="async" />
-    <figcaption>図解：Claude CodeとClaude for Chromeは役割が別</figcaption>
+    <img src="/images/articles/202607-openai-codex-claude-code-browser-imagegen/slide04-claude-code-combination.webp" alt="Claude Code側の組み合わせを示す図解。Claude Codeはターミナル、IDE、デスクトップで開発。Claude in Chromeは普段のChromeタブを操作し、Claude Codeの内蔵ブラウザではないと整理" loading="lazy" decoding="async" />
+    <figcaption>図解：Claude CodeとClaude in Chromeは役割が別</figcaption>
   </figure>
   <div class="slide-reading-note">
     <p><strong>図のポイント（コピー可能）</strong></p>
     <ul>
       <li><strong>Claude Code</strong>：ターミナル・IDE・デスクトップで開発</li>
-      <li><strong>Claude for Chrome</strong>：普段のChromeタブを操作</li>
+      <li><strong>Claude in Chrome</strong>：普段のChromeタブを操作</li>
       <li><strong>整理</strong>：「Claude Codeの内蔵ブラウザ」ではない</li>
     </ul>
   </div>
@@ -294,5 +295,5 @@ Codexには、GUIを操作するComputer Use、macOSでのバックグラウン�
 - OpenAI「[Browser](https://learn.chatgpt.com/docs/browser)」— 内蔵ブラウザの専用プロファイルとlocalhost
 - OpenAI「[Image generation](https://learn.chatgpt.com/docs/image-generation)」— built-in画像生成と利用枠
 - Anthropic「[Claude Code](https://www.anthropic.com/product/claude-code)」— エージェント型コーディングシステム
-- Anthropic「[Claude Opus 4.5](https://www.anthropic.com/news/claude-opus-4-5)」— Claude Codeのデスクトップ対応とClaude for Chrome
+- Anthropic「[Claude Opus 4.5](https://www.anthropic.com/news/claude-opus-4-5)」— Claude Codeのデスクトップ対応とClaude in Chrome
 - Anthropic Help「[Using Claude Code with your Pro or Max plan](https://support.anthropic.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan)」— 共有利用枠

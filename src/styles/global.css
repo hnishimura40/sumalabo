@@ -57,6 +57,8 @@
 
   --cat-news: #34549c;
   --cat-news-tint: #e8edf8;
+  --cat-hands-on: #9a5b00;
+  --cat-hands-on-tint: #fbf2e0;
   --cat-smartphone: #3a7d8a;
   --cat-smartphone-tint: #dfecef;
   --cat-mobile-plan: #1f7a6e;
@@ -145,6 +147,7 @@ html.dark {
 
   --cat-news: #9ab2ec;
   --cat-news-tint: #232d42;
+  --cat-hands-on-tint: #332813;
   --cat-smartphone: #6cb0bd;
   --cat-smartphone-tint: #1d2c30;
   --cat-mobile-plan: #63c7b8;

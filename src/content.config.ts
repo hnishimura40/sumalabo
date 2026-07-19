@@ -4,6 +4,7 @@ import { glob } from "astro/loaders";
 const articleType = z.enum(["foundation", "revenue", "news"]);
 const articleCategory = z.enum([
   "ニュースをかみくだく",
+  "やってみた・検証",
   "スマホの選び方",
   "通信費を下げる",
   "周辺機器・ガジェット",

@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "note": "記事本文・制作稿・画像検品で使う固有名詞の正式表記。variants はゲートで violation として検出する。",
+  "products": [
+    {
+      "canonical": "Claude in Chrome",
+      "variants": ["Claude for Chrome", "Claude In Chrome", "Claude-in-Chrome"]
+    },
+    {
+      "canonical": "ChatGPT",
+      "variants": ["Chat GPT", "Chat-GPT", "ChatGpt"]
+    },
+    {
+      "canonical": "Cowork",
+      "variants": ["CoWork", "Co-work", "Co Work"]
+    },
+    {
+      "canonical": "Codex",
+      "variants": ["CodeX", "CODEX"]
+    },
+    {
+      "canonical": "Claude Code",
+      "variants": ["Claude code", "ClaudeCode"]
+    }
+  ]
+}
