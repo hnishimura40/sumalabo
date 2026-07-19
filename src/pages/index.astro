@@ -2,14 +2,17 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
+import StapleGuideCard from "../components/StapleGuideCard.astro";
+import { buildStapleCards } from "../lib/staple-cards";
 import { siteConfig } from "../config/site";
 
-const sorted = (await import("../lib/articles")).getSortedVisibleArticles(
-  await getCollection("articles"),
-);
+const all = await getCollection("articles");
+const sorted = (await import("../lib/articles")).getSortedVisibleArticles(all);
 // ヒーロー = 最新1本、新着グリッド = その次から
 const [lead, ...restAll] = sorted;
 const rest = restAll.slice(0, 6);
+// D: ニュースセクション直下の「定番ガイド」枠
+const stapleCards = buildStapleCards(all);
 
 // ヒーローの「30秒サマリー先頭1行」は description の1文目を使う
 // （既存記事は Summary30 未搭載のため description を代用。先頭の句点まで）
@@ -120,6 +123,25 @@ const websiteSchema = {
         {rest.map((article) => <ArticleCard article={article.data} />)}
       </div>
     </section>
+
+    {/* ===== 定番ガイド枠（ニュースセクション直下・常設の収益記事導線） ===== */}
+    {
+      stapleCards.length > 0 && (
+        <section class="section-block">
+          <div class="section-heading">
+            <div>
+              <h2>定番ガイド</h2>
+              <p>いつ読んでも役立つ、選び方・比較の定番記事です。</p>
+            </div>
+          </div>
+          <div class="article-list">
+            {stapleCards.map((card) => (
+              <StapleGuideCard card={card} />
+            ))}
+          </div>
+        </section>
+      )
+    }
 
     {/* ===== キャラ紹介: 小さな帯（格下げ） ===== */}
     <a class="char-strip" href="/characters/" aria-label="らぼまる・ひまりについて">

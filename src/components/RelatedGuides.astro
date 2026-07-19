@@ -1,0 +1,159 @@
+---
+// A: 記事末尾「関連ガイド」カード（自動マッチ）。
+// ニュース/ガイド記事の本文・タグ・カテゴリを収益記事の定義(data/related-guides.json)と
+// 照合し、一致した収益記事カードを最大2枚表示する。無関係な記事には何も出さない。
+// ラベルは「編集部おすすめ」＝広告と誤認されない表現。アフィボックスとは視覚的に区別する。
+import { getCollection } from "astro:content";
+import { matchGuidesForArticle, relatedGuideSettings } from "../lib/related-guides";
+
+interface Props {
+  slug: string;
+  category?: string;
+  title?: string;
+  description?: string;
+  tags?: string[];
+}
+
+const { slug, category, title, description, tags = [] } = Astro.props;
+
+// 本文(生Markdown)もマッチ対象にするため、コレクションを先に読む。
+const all = await getCollection("articles");
+const self = all.find((a) => a.data.slug === slug);
+const body = self?.body ?? "";
+
+const matches = matchGuidesForArticle({ slug, category, title, description, tags, body });
+
+// マッチした導線先の実記事データ（サムネ・更新日）を引く
+const cards = matches
+  .map((m) => {
+    const entry = all.find((a) => a.data.slug === m.slug);
+    if (!entry) return null;
+    return {
+      slug: m.slug,
+      label: m.label,
+      blurb: m.blurb,
+      thumbnail: entry.data.thumbnail || "",
+      thumbnailAlt: entry.data.thumbnailAlt || m.label,
+      updated: entry.data.updated,
+    };
+  })
+  .filter((c): c is NonNullable<typeof c> => c !== null);
+---
+
+{
+  cards.length > 0 && (
+    <aside class="related-guides" aria-label="編集部おすすめの関連ガイド">
+      <p class="related-guides__label">{relatedGuideSettings.articleEndLabel}</p>
+      <div class="related-guides__list">
+        {cards.map((c) => (
+          <a
+            class="related-guides__card"
+            href={`/articles/${c.slug}/`}
+            data-drainage="article-end"
+            data-drainage-target={c.slug}
+          >
+            {c.thumbnail && (
+              <span class="related-guides__thumb">
+                <img src={c.thumbnail} alt={c.thumbnailAlt} loading="lazy" decoding="async" />
+              </span>
+            )}
+            <span class="related-guides__body">
+              <span class="related-guides__title">{c.label}</span>
+              <span class="related-guides__blurb">{c.blurb}</span>
+              <time class="related-guides__meta" datetime={c.updated}>更新日: {c.updated}</time>
+            </span>
+          </a>
+        ))}
+      </div>
+    </aside>
+  )
+}
+
+<style>
+  /* アフィリエイトボックスと視覚的に区別: 広告色(teal ソリッド)ではなく、
+     編集導線とわかる薄いカード＋点線見出し。sponsored な見た目を避ける。 */
+  .related-guides {
+    margin: 32px 0 8px;
+    padding: 16px 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--bg-elev) 92%, var(--bg-tint));
+  }
+  .related-guides__label {
+    margin: 0 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--fg-soft);
+  }
+  .related-guides__label::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--teal) 70%, var(--fg));
+  }
+  .related-guides__list {
+    display: grid;
+    gap: 10px;
+  }
+  @media (min-width: 620px) {
+    .related-guides__list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .related-guides__card {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--bg);
+    text-decoration: none;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .related-guides__card:hover {
+    border-color: color-mix(in srgb, var(--teal) 55%, var(--line));
+    transform: translateY(-1px);
+  }
+  .related-guides__thumb {
+    flex: 0 0 auto;
+    width: 72px;
+    height: 72px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-tint);
+  }
+  .related-guides__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .related-guides__body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .related-guides__title {
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+    color: var(--fg);
+  }
+  .related-guides__blurb {
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--fg-soft);
+  }
+  .related-guides__meta {
+    font-size: 11px;
+    color: var(--fg-soft);
+    opacity: 0.85;
+  }
+</style>

@@ -1,0 +1,49 @@
+---
+// 計測: 内部導線(A 記事末尾カード / D 一覧カード / B 本文内リンク)のクリックを
+// GA4 の custom event `internal_drainage` として発火する。導線種別を lane で区別:
+//   - article-end : A（記事末尾「編集部おすすめ」カード）
+//   - list        : D（一覧の「定番ガイド」カード）
+//   - in_body     : B（本文中の収益記事への文脈リンク。data 属性が無くても href から判定）
+// 可視化(メディア司令室)は今回スコープ外。イベント発火まで。
+import { getAllTargetSlugs } from "../lib/related-guides";
+const targetSlugs = getAllTargetSlugs();
+---
+
+<script define:vars={{ targetSlugs }}>
+  (function () {
+    var slugs = new Set(targetSlugs);
+
+    function fire(a, evtType) {
+      var lane = a.getAttribute("data-drainage");
+      var target = a.getAttribute("data-drainage-target");
+      if (!lane) {
+        // data 属性の無い本文内リンク → href が収益記事なら in_body 扱い
+        var href = a.getAttribute("href") || "";
+        var m = href.match(/^\/articles\/([^/?#]+)\/?(?:[?#].*)?$/);
+        if (m && slugs.has(m[1])) {
+          lane = "in_body";
+          target = m[1];
+        }
+      }
+      if (!lane || !target) return;
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "internal_drainage", {
+          lane: lane,
+          target: target,
+          from_path: location.pathname,
+          interaction: evtType,
+        });
+      }
+    }
+
+    function handler(e) {
+      var el = e.target;
+      var a = el && el.closest ? el.closest("a[href]") : null;
+      if (a) fire(a, e.type);
+    }
+
+    // capture で navigation より前に拾う。auxclick は中クリック(新規タブ)対応。
+    document.addEventListener("click", handler, { capture: true });
+    document.addEventListener("auxclick", handler, { capture: true });
+  })();
+</script>

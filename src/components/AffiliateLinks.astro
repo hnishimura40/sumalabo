@@ -57,14 +57,21 @@ const MALL_STORES: ReadonlyArray<AffiliateStore> = ["amazon", "rakuten", "yahoo"
     padding-top: 12px;
   }
 
+  /* コントラスト修正(2026-07-19): 従来は background:var(--teal) だったが、
+     --teal はダークテーマで明るい色(#63c7b8)に反転し、白文字とのコントラストが
+     約1.9:1 まで落ちて読めなかった（かつ楽天の --mint は未定義で無効→base に脱落）。
+     テーマで反転しない固定色に統一し、白文字で light/dark 両方とも WCAG AA(4.5:1)以上を確保。
+     楽天の見やすさ(濃いティール+白文字)を基準に全店舗を揃える。
+     実測(白文字): amazon/base #0f766e=5.5:1, 楽天 #0e7167=5.6:1,
+     Yahoo #115e59=7:1, 公式 #3f5168=8:1。 */
   .affiliate-button {
     display: inline-flex;
     min-height: 36px;
     align-items: center;
     justify-content: center;
-    border: 1px solid color-mix(in srgb, var(--teal) 38%, var(--line));
+    border: 1px solid rgba(0, 0, 0, 0.14);
     border-radius: 999px;
-    background: var(--teal);
+    background: #0f766e;
     padding: 8px 13px;
     color: #fff;
     font-size: 13px;
@@ -74,22 +81,21 @@ const MALL_STORES: ReadonlyArray<AffiliateStore> = ["amazon", "rakuten", "yahoo"
   }
 
   .affiliate-button--rakuten {
-    background: color-mix(in srgb, var(--teal) 84%, var(--mint));
+    background: #0e7167;
   }
 
   .affiliate-button--yahoo {
-    background: color-mix(in srgb, var(--teal) 72%, var(--fg));
+    background: #115e59;
   }
 
   .affiliate-button--official {
-    background: color-mix(in srgb, var(--teal) 62%, var(--slate));
+    background: #3f5168;
   }
 
-  .affiliate-button--pending {
-    border-style: dashed;
-    border-color: color-mix(in srgb, var(--fg-soft) 26%, var(--line));
-    background: color-mix(in srgb, var(--bg-elev) 88%, var(--bg-tint));
-    color: var(--fg-soft);
+  /* 記事本文の `.article-content a`(＝teal-deep, 特異度0,2,1)が白文字を上書きして
+     ボタン文字が読めなくなるため、親クラス＋要素で特異度を上げて #fff を確定させる。 */
+  .affiliate-links a.affiliate-button {
+    color: #fff;
   }
 
   @media (max-width: 520px) {

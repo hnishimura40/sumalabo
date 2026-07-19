@@ -192,6 +192,8 @@ const buttons = malls
     gap: 8px;
   }
 
+  /* コントラスト修正(2026-07-19): AffiliateLinks と同じ理由で、テーマ反転する
+     var(--teal) をやめ、白文字で light/dark 両方 WCAG AA(4.5:1)以上の固定色に統一。 */
   .product-card-button {
     display: inline-flex;
     min-height: 36px;
@@ -204,20 +206,25 @@ const buttons = malls
     line-height: 1.35;
     color: #fff;
     text-decoration: none;
-    background: var(--teal);
-    border: 1px solid color-mix(in srgb, var(--teal) 38%, var(--line));
+    background: #0f766e;
+    border: 1px solid rgba(0, 0, 0, 0.14);
   }
 
   .product-card-button--rakuten {
-    background: color-mix(in srgb, var(--teal) 84%, var(--mint, var(--teal-soft)));
+    background: #0e7167;
   }
 
   .product-card-button--yahoo {
-    background: color-mix(in srgb, var(--teal) 72%, var(--fg));
+    background: #115e59;
   }
 
   .product-card-button--official {
-    background: color-mix(in srgb, var(--teal) 62%, var(--slate));
+    background: #3f5168;
+  }
+
+  /* 記事本文の `.article-content a`(teal-deep, 特異度0,2,1)が白文字を上書きするのを打ち消す。 */
+  .product-card-buttons a.product-card-button {
+    color: #fff;
   }
 
   .product-card-pending {

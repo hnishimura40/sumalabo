@@ -26,9 +26,23 @@ import { formalProductNamesChecklist } from "./formal-product-names.mjs";
 export const INDEPENDENT_INSPECTION_SCHEMA = {
   type: "object",
   additionalProperties: false,
-  required: ["overallPass", "slides", "thumbnail", "xSelection", "excludedFromX"],
+  required: ["overallPass", "slides", "thumbnail", "xSelection", "excludedFromX", "internalLinks"],
   properties: {
-    overallPass: { type: "boolean", description: "全スライド+サムネに needs_revision が無ければ true" },
+    overallPass: { type: "boolean", description: "全スライド+サムネに needs_revision が無ければ true（internalLinks は画像とは独立。needs_revision でも overallPass は下げず、本文リンクの削除/修正で対応する）" },
+    internalLinks: {
+      type: "object",
+      additionalProperties: false,
+      required: ["verdict", "issues"],
+      description: "本文中の収益記事(/articles/power-bank-comparison/ 等)への内部リンクが文脈的に自然か（B: 内部導線）。リンクが無ければ verdict='not_applicable'。",
+      properties: {
+        verdict: { type: "string", enum: ["ok", "ok_with_warning", "needs_revision", "not_applicable"] },
+        issues: {
+          type: "array",
+          items: { type: "string" },
+          description: "無理な挿入・唐突・宣伝臭・トピック不一致・本数過多(1本超)を1行ずつ。無ければ空配列",
+        },
+      },
+    },
     slides: {
       type: "array",
       items: {
@@ -145,8 +159,16 @@ X には**上位4枚だけ**を直接添付する。次の3点が満たされる
 - **textDensity=high と needs_revision は xSelection に入れない**（記事内専用に回す）。excludedFromX に理由付きで列挙。
 - 選べるものが4未満でも構わない（無理に埋めない。3枚でも2枚でもよい）。
 
+## (D) 本文の内部導線リンクの自然さ（B: 収益記事への文脈リンク）
+最終稿(final_article)本文に、収益記事への内部リンク（\`/articles/power-bank-comparison/\`・\`/articles/usb-c-charger-comparison/\`・\`/articles/power-bank-recall-check/\`）が入っている場合、次を白紙の目で判定して internalLinks に返す:
+- **文脈的に自然か**（そのリンク先トピックに本文が実際に触れている流れで置かれているか）。
+- **無理な挿入・唐突・宣伝臭がないか**（関係の薄い所へ差し込んでいないか、「〜はこちら」の押し売りでないか）。
+- **本数は1本までか**（2本以上入っていれば needs_revision）。記事末尾の関連ガイドカードは自動表示なので本文リンクとの重複も指摘。
+- リンクが1本も無ければ verdict='not_applicable'（無いこと自体は問題ではない）。
+- **needs_revision の直し方は画像再生成ではなく「本文MDXの該当リンクを削除/修正」**。この項目は overallPass を下げない（画像とは独立）。
+
 ## 出力（StructuredOutput ツールで返す。前置きの解説文は不要）
-INDEPENDENT_INSPECTION_SCHEMA に従い、slides[]（全スライド）・thumbnail・xSelection・excludedFromX・overallPass を返す。
-overallPass は「全スライド+サムネに needs_revision が無い」ときだけ true。
+INDEPENDENT_INSPECTION_SCHEMA に従い、slides[]（全スライド）・thumbnail・xSelection・excludedFromX・internalLinks・overallPass を返す。
+overallPass は「全スライド+サムネに needs_revision が無い」ときだけ true（internalLinks は overallPass に影響させない）。
 `;
 }

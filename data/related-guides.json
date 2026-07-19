@@ -1,0 +1,70 @@
+{
+  "_note": "収益/土台記事への内部導線の単一定義。Astro側(src/lib/related-guides.ts)と夜間run(scripts/*.mjs)の両方がこのファイルを参照する。スコア=キーワード一致+2/件・カテゴリ一致+1。articleEndMinScore=3 は『最低1キーワード+カテゴリ』か『2キーワード』相当＝カテゴリだけ/1キーワードだけでは出さない。編集したら npm run build で照合サンプルを確認すること。ラベルは広告と誤認されない表現にする。",
+  "settings": {
+    "articleEndMaxCards": 2,
+    "articleEndMinScore": 3,
+    "keywordWeight": 2,
+    "categoryWeight": 1,
+    "listInsertEveryN": 6,
+    "articleEndLabel": "編集部おすすめ",
+    "listLabel": "定番ガイド"
+  },
+  "targets": [
+    {
+      "slug": "power-bank-comparison",
+      "label": "モバイルバッテリーおすすめ比較",
+      "blurb": "容量・重さ・メーカーで選ぶ",
+      "categories": ["周辺機器・ガジェット"],
+      "_kwNote": "誤爆回避: 汎用語(容量/持ち運び/安全)や短い部分一致語(PD/GaN/mAh)は入れない。話題を一意に示す語だけ。",
+      "keywords": [
+        "モバイルバッテリー",
+        "モバイルバッテリ",
+        "モバブ",
+        "ポータブル電源",
+        "急速充電",
+        "PSEマーク",
+        "バッテリー発火",
+        "充電器"
+      ],
+      "listStaple": true
+    },
+    {
+      "slug": "usb-c-charger-comparison",
+      "label": "USB-C充電器おすすめ比較",
+      "blurb": "PD対応・W数・サイズで選ぶ",
+      "categories": ["周辺機器・ガジェット"],
+      "_kwNote": "誤爆回避: 単独の 'PD'(update等に部分一致)や 'GaN'(organ等に部分一致)は使わず、句で持つ。",
+      "keywords": [
+        "USB-C充電器",
+        "USB充電器",
+        "USB Type-C",
+        "PD対応",
+        "USB PD",
+        "急速充電器",
+        "窒化ガリウム",
+        "GaN充電",
+        "電源アダプタ",
+        "ACアダプタ",
+        "W出力"
+      ],
+      "listStaple": true
+    },
+    {
+      "slug": "power-bank-recall-check",
+      "label": "モバイルバッテリーのリコール確認方法",
+      "blurb": "型番でリコール対象かを確認",
+      "categories": ["周辺機器・ガジェット"],
+      "_kwNote": "誤爆回避: 汎用の '安全'/'発熱' は入れない(AI安全性・CPU発熱に誤爆)。リコール文脈語のみ。",
+      "keywords": [
+        "リコール",
+        "自主回収",
+        "バッテリー発火",
+        "バッテリー膨張",
+        "PSEマーク",
+        "製品事故",
+        "モバイルバッテリー"
+      ],
+      "listStaple": true
+    }
+  ]
+}

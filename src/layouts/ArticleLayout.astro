@@ -2,6 +2,7 @@
 import BaseLayout from "./BaseLayout.astro";
 import ArticleNavigation from "../components/ArticleNavigation.astro";
 import PreviewApprovalButton from "../components/PreviewApprovalButton.astro";
+import RelatedGuides from "../components/RelatedGuides.astro";
 
 import { siteConfig } from "../config/site";
 
@@ -15,6 +16,7 @@ type ArticleData = {
   thumbnailAlt?: string;
   updated: string;
   pubDate?: string;
+  tags?: string[];
 };
 
 type Heading = {
@@ -124,6 +126,14 @@ const articleSchema = {
     <div class="article-content">
       <slot />
     </div>
+
+    <RelatedGuides
+      slug={article.slug}
+      category={article.category}
+      title={article.title}
+      description={article.description}
+      tags={article.tags}
+    />
 
     <p class="article-ai-note">
       本サイトの記事・図解はAIの支援を受けて制作し、公開前に人間が確認しています。詳しくは<a href="/ai-policy/">本サイトのAI利用について</a>をご覧ください。
