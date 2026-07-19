@@ -10,7 +10,7 @@ interface Props {
 const {
   activeSlug = "",
   title = "カテゴリから探す",
-  text = "すまラボの主要テーマを4つの入口に分けて整理しています。",
+  text = "すまラボの主要テーマを5つの入口に分けて整理しています。",
 } = Astro.props;
 ---
 
@@ -72,7 +72,7 @@ const {
 
   .category-links {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 14px;
   }
 
@@ -124,6 +124,10 @@ const {
 
   .category-news {
     background: linear-gradient(135deg, var(--cat-news-tint), var(--bg-elev) 52%);
+  }
+
+  .category-hands-on {
+    background: linear-gradient(135deg, var(--cat-hands-on-tint), var(--bg-elev) 52%);
   }
 
   .category-smartphone {

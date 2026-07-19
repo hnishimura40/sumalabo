@@ -243,7 +243,7 @@ try {
       reason = "chrome_not_running"
       chromeRunning = $false
       edgeRunning = $edgeRunning
-      nextAction = "Start Chrome with the Claude-in-Chrome extension and ChatGPT logged in, then re-run. Edge is NOT an acceptable substitute."
+      nextAction = "Start Chrome with the Claude in Chrome extension and ChatGPT logged in, then re-run. Edge is NOT an acceptable substitute."
     }
     Fail-Stage "browser_check" "chrome_not_running: Chrome is not running. Edge fallback is forbidden by すまラボ automation policy."
   }
@@ -794,7 +794,7 @@ If Chrome cannot be reached, return ok=false with one of:
   - "chrome_mcp_unavailable" (the MCP server itself is not responding)
   - "browser_mismatch"       (a non-Chrome browser was selected / detected)
 
-Provide a brief nextAction such as "user must start Chrome with Claude-in-Chrome extension and ChatGPT logged in" — NEVER suggest using Edge.
+Provide a brief nextAction such as "user must start Chrome with Claude in Chrome extension and ChatGPT logged in" — NEVER suggest using Edge.
 
 REQUIRED OUTPUT (last line of your response, on its own line, parseable JSON):
 SUCCESS:  {"ok": true,  "stage": "phase_b", "slug": "$TargetSlug", "outputs": ["$DraftPath"], "summary": "<short>"}
@@ -1481,7 +1481,7 @@ If Chrome cannot be reached, return ok=false with reason in:
   - "chrome_not_connected"
   - "chrome_mcp_unavailable"
   - "browser_mismatch"
-nextAction must say "user must start Chrome with Claude-in-Chrome extension and ChatGPT logged in" — NEVER suggest Edge.
+nextAction must say "user must start Chrome with Claude in Chrome extension and ChatGPT logged in" — NEVER suggest Edge.
 
 REQUIRED OUTPUT (last line, JSON):
 SUCCESS:  {"ok": true,  "stage": "thumbnail", "slug": "$TargetSlug", "outputs": ["$ThumbnailPath"], "summary": "<bytes/dimensions/sha256 only; no prompt content>"}

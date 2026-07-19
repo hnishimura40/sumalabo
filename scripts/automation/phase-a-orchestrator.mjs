@@ -33,6 +33,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
 import { gate } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
+import { classifyArticleCategory } from "../sumahon/category-classification.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..", "..");
@@ -100,6 +101,7 @@ export function newState({ slug, theme }) {
   return {
     slug,
     theme,
+    category: classifyArticleCategory(theme),
     createdAt: new Date().toISOString(),
     updatedAt: null,
     halted: false,
@@ -246,14 +248,14 @@ function assistedInstruction(state, step) {
   const common = `\n完了したら:\n  node scripts/automation/phase-a-orchestrator.mjs --slug ${slug} --advance ${step.name}${step.name === "factcheck_images" ? " --result logs/article/" + slug + ".factcheck.json" : ""}\n失敗したら:\n  node scripts/automation/phase-a-orchestrator.mjs --slug ${slug} --fail ${step.name} --reason "..."\n${HARDENING}`;
   const map = {
     chatgpt_turn1_research: `ChatGPT「すまラボ台本」プロジェクトで新規チャットを開き、テーマ「${state.theme}」の Research Pass を実行。公式一次情報を根拠に facts/claims/uncertain を区分した research_report を作らせ、${dir}/research_report.md に保存（出所ヘッダ付き）。`,
-    chatgpt_turn2_selection: `同チャットで Editorial Selection（採用/限定採用/不採用）→ ${dir}/editorial_selection.md に保存。`,
+    chatgpt_turn2_selection: `同チャットで Editorial Selection（採用/限定採用/不採用）→ ${dir}/editorial_selection.md に保存。カテゴリ候補は「${state.category?.name || "ニュースをかみくだく"}」。当サイトの実体験・検証が記事の核なら hands-on を選ぶ。`,
     chatgpt_turn3_draft: `同チャットで本文ドラフト（lead-first / 噛み砕き主軸 / 判断は補助）→ ${dir}/draft_article.md に保存。`,
     chatgpt_turn4_review: `同チャットでセルフレビュー（日付数値整合 / 煽り断定 / 禁則語 / 線引き / 旧情報残存）→ ${dir}/review_report.md に保存。`,
     chatgpt_turn5_final: `レビュー反映の確定稿 → ${dir}/final_article.md に保存。`,
     chatgpt_turn6_slideplan: `slide_plan（本文スライド8枚 4:5 1280×1600 + サムネ16:9 体験図方針）→ ${dir}/slide_plan.md に保存。サムネは assets/characters/character-sheet.md の「体験図」3型から選ぶこと。**サムネは同 sheet の「衣装は変えることを基本」に従い、記事テーマから連想される衣装・小道具・シチュエーションを必ず1つ選んで slide_plan に明記する（認識アンカーは不変・露出過多NG）。マッピング表のどの行にも該当しないテーマでも「標準衣装のまま」は禁止＝記事の名詞から連想する小道具＋装いを最低1点入れ、選んだ根拠を slide_plan のサムネ節に1行記録する（例: \`装い根拠:「制限撤廃」→ 解放感＝腕まくり＋ストップウォッチ\`）。スライド8枚側は標準衣装で一貫。** **漢字化け対策（docs/kanji_pitfalls.md）: スライドの帯・見出し・吹き出しの短い文言は、化けやすい漢字（目/未/末/微 等）を避け、ひらがな・言い換えを優先する（例「目的別」→「使い方で」）。特に1〜4文字のラベルは優先的にやさしい和語にする。** **X直接投稿を見据え、各スライドは「文字量を絞り・数字は正確に・単体で意味が通る」ことを意識（文字密度の高いスライドは X 選抜から外れ記事内専用になる）。**`,
     generate_images: `同チャットに正本画像（assets/characters/himari-canonical.png → labomaru-canonical.png を1枚ずつ）を添付し、character-sheet.md の仕様を厳守して slide_plan の順に 8+1 枚を生成。**サムネは slide_plan で選んだテーマ連想の衣装・小道具を反映して生成（標準衣装のまま出さない。認識アンカーは不変）。** 全てダウンロードし D:\\downloads に保存。`,
     factcheck_images: `ダウンロードした 9 枚を Claude 自身が Read で読み、slide_plan と突き合わせて数値・固有名詞・誤字・ブランド表記を検査。**キャラ破綻は認識アンカー（ひまり=金髪サイドテール・顔立ち・頭身／らぼまる=白い卵型ボディ・アンテナ・胸のハートボタン）で判定（服・小道具の違いは破綻ではない）。サムネは衣装がテーマに沿って標準から変えてあるかも確認**。結果を logs/article/${slug}.factcheck.json に保存:\n  { "pass": true|false, "regenerate": [{"which":"slide06","reason":"..."}], "slides": [{"src":"D:/downloads/xxx.png","name":"slide01-xxx.webp"}...], "thumbnail": {"src":"D:/downloads/yyy.png"}, "thumbnailCostume": "themed" | "standard_improvable" }\nサムネが標準衣装のまま（standard_improvable）でも「崩れ」ではないので記事公開は止めない。ただし **2026-07-14 格上げ: standard_improvable を検知したら、X 投稿前（Phase C 前）であれば "サムネのみ" テーマ連想の衣装・小道具を入れて 1 回だけ再生成を試みる**（slide_plan の装い根拠に沿う。表情・文字が良ければ差し替え不要と判断してもよい。再生成が難しい/時間超過なら現状サムネのまま advance）。この再生成はサムネ1枚限定で、記事本文の公開・スライドには影響させない。不合格（needs_revision）があれば該当のみ再生成（最大2回）してから advance。pass 時は slides/thumbnail のマッピングが logs/article/${slug}.images.json にコピーされる。`,
-    write_mdx: `final_article を MDX 化（frontmatter 12キー / lead-first / 禁則語なし）→ content/articles/${slug}.mdx。前記事への内部リンクがテーマ上自然なら本文に入れる。
+    write_mdx: `final_article を MDX 化（frontmatter 12キー / lead-first / 禁則語なし）→ content/articles/${slug}.mdx。category は「${state.category?.name || "ニュースをかみくだく"}」。当サイトの実体験・検証を軸にした記事は「やってみた・検証」（hands-on）に分類する。前記事への内部リンクがテーマ上自然なら本文に入れる。
   **publishAt は実公開見込み時刻を入れる（2026-07-14・一覧順ずれ防止）**: 固定の朝時刻（08:00 等）をデフォルトにしない。完走型なら「今」に近い時刻、後で公開予定なら公開予定時刻。未来にすると build から除外され、他記事より古いと一覧で最上位に来ない。**公開直前（Phase B deploy 前）に \`npm run normalize:publish-at -- --slug ${slug}\` を実行して実公開時刻へ自動補正し、その変更を build→commit に含めて deploy する。**
   **タイトルは「感情に刺す主タイトル＋やさしく整理するサブ」で組む（2026-07-14 バズ強化・第一候補）:**
   - 主タイトルは「読者への影響」を主語にした感情に刺す型を第一候補にする。型の例:「消える／変わる／損する＋あなた（のデータ／料金／使い方）」「まだ〇〇してるの?」「知らないと損する〇〇」。例:「Atlasは8月9日で終了へ」→「Atlasが8/9で消える。あなたのデータも」。

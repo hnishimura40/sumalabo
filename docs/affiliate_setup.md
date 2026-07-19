@@ -8,7 +8,7 @@
 
 ## 0. すまラボの設計（前提の再確認）
 
-- **二層構造**: ニュース記事（type: news）には広告を入れない。収益導線は資産記事（type: revenue / foundation の比較・選び方系）と「周辺機器・ガジェット」「スマホの選び方」「通信費を下げる」カテゴリ限定
+- **二層構造**: ニュース記事（type: news）と「やってみた・検証」（hands-on）には当面広告を入れない。収益導線は資産記事（type: revenue / foundation の比較・選び方系）と「周辺機器・ガジェット」「スマホの選び方」「通信費を下げる」カテゴリ限定
 - **主軸 = 物販**（Amazon / 楽天 / Yahoo!ショッピング、**もしもアフィリエイト**経由）
 - **従 = SIM 系など高単価 ASP 案件**（**A8.net**、資産記事限定・CTABox 使用）
 - 広告を含む記事は frontmatter `hasAffiliate: true` → 記事冒頭に広告表示ラベルが自動表示（景表法ステマ規制対応）。ラベル無し・ニュース混入は `sumalabo:gate` が不合格にする
@@ -101,6 +101,6 @@ SIM 系など高単価案件用。**登録時サイト審査が実質なし**で
 ## 6. 運用ルール（再掲・gate が機械的に強制するもの）
 
 - アフィリエイトリンク / ProductCard / CTABox / AffiliateLinks を含む記事は **`hasAffiliate: true` 必須**（無いと gate 不合格）→ 記事冒頭に「本記事は広告（アフィリエイトリンク）を含みます」が自動表示
-- **type: news の記事にアフィリエイトは一切不可**（リンク・コンポーネント・hasAffiliate すべて gate 不合格）
+- **type: news または category: やってみた・検証 の記事にアフィリエイトは当面不可**（リンク・コンポーネント・hasAffiliate すべて gate 不合格）。将来解禁する場合も `hasAffiliate: true` と広告表示を必須にする。
 - 台帳（ledger.json）に `hasAffiliate` が写像される（`ledger.mjs --sync`）。広告あり記事の流入・成果分析の下地
 - リンクの rel は自動制御: アフィリエイト時 `nofollow sponsored noopener` / 通常リンク時 `noopener`

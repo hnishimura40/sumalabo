@@ -51,6 +51,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
+import { classifyArticleCategory } from "../sumahon/category-classification.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const CONFIG_PATH = path.join(ROOT, "data", "automation", "watch-sources.json");
@@ -447,7 +448,13 @@ export async function runScout({ config = loadConfig(), now = Date.now() } = {})
         scored.breakdown.coveredTopicPenalty = -COVERED_TOPIC.PENALTY;
         scored.coveredTopic = covered;
       }
-      candidates.push({ ...item, source: r.source, sourceName: source.name, ...scored });
+      candidates.push({
+        ...item,
+        source: r.source,
+        sourceName: source.name,
+        suggestedCategory: classifyArticleCategory(`${item.title} ${item.description || ""}`),
+        ...scored,
+      });
     }
   }
   candidates.sort((a, b) => b.score - a.score);

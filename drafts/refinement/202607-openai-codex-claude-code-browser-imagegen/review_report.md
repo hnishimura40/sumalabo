@@ -6,7 +6,7 @@
 
 - Codexの公式な提供面とPlus以上の利用を公式マニュアルで確認。API利用は別課金として分離。OK。
 - 内蔵Browserは専用プロファイル、Chrome拡張は既存プロファイルという公式説明に合わせた。OK。
-- Claude CodeとClaude for Chromeを別製品として記述。OK。
+- Claude CodeとClaude in Chromeを別製品として記述。OK。
 - Computer Use/バックグラウンド系は対応地域・OS・設定依存と明記。OK。
 
 ## Pass 2 — 中立性・すまラボらしさ
@@ -30,4 +30,3 @@
 4. facts/claims/uncertainを分離: pass
 5. 禁則表現0件: pass
 6. スライド8枚+サムネの論点確定: pass
-

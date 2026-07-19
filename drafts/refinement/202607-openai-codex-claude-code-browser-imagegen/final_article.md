@@ -33,7 +33,7 @@ Web制作では `localhost` を開けるのが効きます。コードを直す�
 
 Claude Codeは、ターミナル、IDE、Claude Desktopから使えるエージェント型のコーディングシステムです。コードベースを読み、複数ファイルを変更し、テストまで進めるという中心部分はCodexとよく似ています。
 
-ブラウザ側は名称を分けて理解するとすっきりします。ブラウザを操作するのは、厳密にはClaude Code本体の内蔵ブラウザではなく**Claude for Chrome**です。ユーザーが普段使っているChromeのタブを読み、ログイン済みのサイトを操作できます。
+ブラウザ側は名称を分けて理解するとすっきりします。ブラウザを操作するのは、厳密にはClaude Code本体の内蔵ブラウザではなく**Claude in Chrome**です。ユーザーが普段使っているChromeのタブを読み、ログイン済みのサイトを操作できます。
 
 つまり、Codexは「アプリ内に独立した工房を持つ」使い方ができ、Claude側は「開発机のClaude Codeと、普段のChromeを借りる拡張」を組み合わせる形です。どちらもブラウザ作業はできますが、ログイン状態の持ち方が違います。
 
@@ -90,6 +90,5 @@ Codexには、GUIを操作するComputer Use、macOSでのバックグラウン�
 - OpenAI「[Browser](https://learn.chatgpt.com/docs/browser)」— 内蔵ブラウザの専用プロファイルとlocalhost
 - OpenAI「[Image generation](https://learn.chatgpt.com/docs/image-generation)」— built-in画像生成と利用枠
 - Anthropic「[Claude Code](https://www.anthropic.com/product/claude-code)」— エージェント型コーディングシステム
-- Anthropic「[Claude Opus 4.5](https://www.anthropic.com/news/claude-opus-4-5)」— Claude Codeのデスクトップ対応とClaude for Chrome
+- Anthropic「[Claude Opus 4.5](https://www.anthropic.com/news/claude-opus-4-5)」— Claude Codeのデスクトップ対応とClaude in Chrome
 - Anthropic Help「[Using Claude Code with your Pro or Max plan](https://support.anthropic.com/en/articles/11145838-using-claude-code-with-your-pro-or-max-plan)」— 共有利用枠
-
