@@ -222,10 +222,51 @@ function stepGitSync(result, skipGitSync) {
   return true;
 }
 
+// 環境ヘルスチェック（2026-07-19・node_modules 消失事故の恒久対策）。
+// Codex 画像工程などがビルド前に node_modules を壊すケースに備え、build 直前に
+// astro が解決できるか確認し、できなければ自動復旧（npm ci → 失敗時 npm install）する。
+// 完走型を保つため、復旧できた場合は中断せず続行。復旧してもなお解決できない場合のみ中断する。
+function ensureNodeModulesForBuild(result) {
+  const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
+  const astroPkg = join(ROOT, "node_modules", "astro", "package.json");
+  const astroBin = join(ROOT, "node_modules", ".bin", process.platform === "win32" ? "astro.cmd" : "astro");
+  const resolvable = () => existsSync(astroPkg) && existsSync(astroBin);
+
+  if (resolvable()) {
+    result.steps.envHealth = { status: "ok" };
+    return true;
+  }
+
+  // runSync は既定で stdio:"inherit"（=npm の進捗がそのまま流れる）。
+  console.warn("[env] astro が解決できません（node_modules 破損の可能性）。自動復旧を試みます: npm ci");
+  let method = "npm ci";
+  let r = runSync(npmCmd, ["ci"]);
+  if (r.status !== 0 || !resolvable()) {
+    console.warn("[env] npm ci で未復旧。npm install を試します");
+    method = "npm install";
+    r = runSync(npmCmd, ["install"]);
+  }
+
+  if (resolvable()) {
+    console.log(`[env] node_modules を自動復旧しました（${method}）。ビルドを続行します。`);
+    result.steps.envHealth = { status: "recovered", method };
+    return true;
+  }
+
+  // 復旧してもなお解決不能 = 真のブロッキング。ここでのみ中断する。
+  console.error("[env] node_modules を復旧できませんでした。ビルドを中止します。");
+  result.steps.envHealth = { status: "failed", reason: "node_modules_unrecoverable", method };
+  return false;
+}
+
 function stepBuild(result, skipBuild) {
   if (skipBuild) {
     result.steps.build = { status: "skipped", reason: "--skip-build" };
     return true;
+  }
+  if (!ensureNodeModulesForBuild(result)) {
+    result.steps.build = { status: "failed", reason: "env_health_unrecoverable" };
+    return false;
   }
   console.log("[2/5] npm run build");
   const r = runSync(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"]);

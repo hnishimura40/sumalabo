@@ -33,6 +33,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
 import { gate } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
+import { recordFallback } from "./codex-image-stage.mjs";
 import { classifyArticleCategory } from "../sumahon/category-classification.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -53,7 +54,7 @@ export const STEPS = [
   { name: "chatgpt_turn6_slideplan", type: "assisted", label: "Turn6: slide_plan（8枚+サムネ体験図）" },
   { name: "save_drafts", type: "script" },
   { name: "gate_draft", type: "script" },
-  { name: "generate_images", type: "assisted", label: "スライド8枚+サムネ生成（正本添付・character-sheet 準拠）" },
+  { name: "generate_images", type: "script", label: "Codex exec優先でスライド8枚+サムネ生成（正本添付・工房fallback）" },
   { name: "factcheck_images", type: "assisted", label: "画像ファクトチェック（Claude が画像を読み slide_plan と突き合わせ）" },
   { name: "webp_convert", type: "script" },
   { name: "write_mdx", type: "assisted", label: "MDX 作成（final_article v→ 記事テンプレ準拠）" },
@@ -161,6 +162,24 @@ const scriptSteps = {
     return r.status === 0 ? { ok: true } : { ok: false, reason: "gate_draft_failed" };
   },
 
+  generate_images(state) {
+    if (STUB) return { ok: true, data: { transport: "codex_exec", stub: true } };
+    const r = spawnSync(process.execPath, [
+      path.join(ROOT, "scripts", "automation", "codex-image-stage.mjs"),
+      "--slug", state.slug,
+    ], { cwd: ROOT, stdio: "inherit", env: process.env });
+    if (r.status === 0) return { ok: true, data: { transport: "codex_exec" } };
+    if (r.status === 10) {
+      return {
+        ok: false,
+        fallback: true,
+        reason: "codex_exec_fallback_required",
+        data: { transport: "workshop_chat", fallbackManifest: `logs/article/${state.slug}.image-fallback.json` },
+      };
+    }
+    return { ok: false, reason: `codex_image_stage_failed_exit_${r.status ?? "unknown"}` };
+  },
+
   webp_convert(state) {
     if (STUB) return { ok: true };
     // factcheck_images の結果に含まれる mapping（logs/article/{slug}.images.json）を変換
@@ -253,8 +272,8 @@ function assistedInstruction(state, step) {
     chatgpt_turn4_review: `同チャットでセルフレビュー（日付数値整合 / 煽り断定 / 禁則語 / 線引き / 旧情報残存）→ ${dir}/review_report.md に保存。`,
     chatgpt_turn5_final: `レビュー反映の確定稿 → ${dir}/final_article.md に保存。`,
     chatgpt_turn6_slideplan: `slide_plan（本文スライド8枚 4:5 1280×1600 + サムネ16:9 体験図方針）→ ${dir}/slide_plan.md に保存。サムネは assets/characters/character-sheet.md の「体験図」3型から選ぶこと。**サムネは同 sheet の「衣装は変えることを基本」に従い、記事テーマから連想される衣装・小道具・シチュエーションを必ず1つ選んで slide_plan に明記する（認識アンカーは不変・露出過多NG）。マッピング表のどの行にも該当しないテーマでも「標準衣装のまま」は禁止＝記事の名詞から連想する小道具＋装いを最低1点入れ、選んだ根拠を slide_plan のサムネ節に1行記録する（例: \`装い根拠:「制限撤廃」→ 解放感＝腕まくり＋ストップウォッチ\`）。スライド8枚側は標準衣装で一貫。** **漢字化け対策（docs/kanji_pitfalls.md）: スライドの帯・見出し・吹き出しの短い文言は、化けやすい漢字（目/未/末/微 等）を避け、ひらがな・言い換えを優先する（例「目的別」→「使い方で」）。特に1〜4文字のラベルは優先的にやさしい和語にする。** **X直接投稿を見据え、各スライドは「文字量を絞り・数字は正確に・単体で意味が通る」ことを意識（文字密度の高いスライドは X 選抜から外れ記事内専用になる）。**`,
-    generate_images: `同チャットに正本画像（assets/characters/himari-canonical.png → labomaru-canonical.png を1枚ずつ）を添付し、character-sheet.md の仕様を厳守して slide_plan の順に 8+1 枚を生成。**サムネは slide_plan で選んだテーマ連想の衣装・小道具を反映して生成（標準衣装のまま出さない。認識アンカーは不変）。** 全てダウンロードし D:\\downloads に保存。`,
-    factcheck_images: `ダウンロードした 9 枚を Claude 自身が Read で読み、slide_plan と突き合わせて数値・固有名詞・誤字・ブランド表記を検査。**キャラ破綻は認識アンカー（ひまり=金髪サイドテール・顔立ち・頭身／らぼまる=白い卵型ボディ・アンテナ・胸のハートボタン）で判定（服・小道具の違いは破綻ではない）。サムネは衣装がテーマに沿って標準から変えてあるかも確認**。結果を logs/article/${slug}.factcheck.json に保存:\n  { "pass": true|false, "regenerate": [{"which":"slide06","reason":"..."}], "slides": [{"src":"D:/downloads/xxx.png","name":"slide01-xxx.webp"}...], "thumbnail": {"src":"D:/downloads/yyy.png"}, "thumbnailCostume": "themed" | "standard_improvable" }\nサムネが標準衣装のまま（standard_improvable）でも「崩れ」ではないので記事公開は止めない。ただし **2026-07-14 格上げ: standard_improvable を検知したら、X 投稿前（Phase C 前）であれば "サムネのみ" テーマ連想の衣装・小道具を入れて 1 回だけ再生成を試みる**（slide_plan の装い根拠に沿う。表情・文字が良ければ差し替え不要と判断してもよい。再生成が難しい/時間超過なら現状サムネのまま advance）。この再生成はサムネ1枚限定で、記事本文の公開・スライドには影響させない。不合格（needs_revision）があれば該当のみ再生成（最大2回）してから advance。pass 時は slides/thumbnail のマッピングが logs/article/${slug}.images.json にコピーされる。`,
+    generate_images: `Codex exec が自動退避条件に該当したため、常設キャラ工房チャット方式へ切り替える。logs/article/${slug}.image-fallback.json の condition を確認し、slide_plan の未生成または要修正分だけを工房で生成する。正本2枚、青い首輪バンド、左右の青い耳ビレ（短く丸くしすぎない）を厳守。完了したら --advance generate_images で続行する。`,
+    factcheck_images: `logs/article/${slug}.codex-images.json に記録された画像を1枚ずつ Read し、slide_plan と突き合わせて数値・固有名詞・誤字・ブランド表記を検査。**キャラ破綻は認識アンカー（ひまり=金髪サイドテール・顔立ち・頭身／らぼまる=白い卵型ボディ・黄緑アンテナ1本・胸のハートボタン・青い首輪バンド・左右の青い耳ビレ）で判定**。耳ビレが正本より短い・丸い傾向は warning として監視し、別キャラ化していなければ pass のまま。服・小道具の違いは破綻ではない。サムネは衣装がテーマに沿って標準から変えてあるかも確認。結果を logs/article/${slug}.factcheck.json に保存:\n  { "pass": true|false, "regenerate": [{"which":"slide06","reason":"..."}], "slides": [{"src":"D:/downloads/xxx.png","name":"slide01-xxx.webp"}...], "thumbnail": {"src":"D:/downloads/yyy.png"}, "thumbnailCostume": "themed" | "standard_improvable" }\n日本語誤字または認識アンカー不一致は、--advance 時に Codex の対象1回修正を自動実行する。修正後も不合格なら工房チャットへ自動退避する。サムネが standard_improvable でも公開は止めない。不合格は該当のみ最大2回。pass 時は slides/thumbnail のマッピングが logs/article/${slug}.images.json にコピーされる。`,
     write_mdx: `final_article を MDX 化（frontmatter 12キー / lead-first / 禁則語なし）→ content/articles/${slug}.mdx。category は「${state.category?.name || "ニュースをかみくだく"}」。当サイトの実体験・検証を軸にした記事は「やってみた・検証」（hands-on）に分類する。前記事への内部リンクがテーマ上自然なら本文に入れる。
   **publishAt は実公開見込み時刻を入れる（2026-07-14・一覧順ずれ防止）**: 固定の朝時刻（08:00 等）をデフォルトにしない。完走型なら「今」に近い時刻、後で公開予定なら公開予定時刻。未来にすると build から除外され、他記事より古いと一覧で最上位に来ない。**公開直前（Phase B deploy 前）に \`npm run normalize:publish-at -- --slug ${slug}\` を実行して実公開時刻へ自動補正し、その変更を build→commit に含めて deploy する。**
   **タイトルは「感情に刺す主タイトル＋やさしく整理するサブ」で組む（2026-07-14 バズ強化・第一候補）:**
@@ -279,7 +298,39 @@ function assistedInstruction(state, step) {
 function onAdvance(state, stepName, resultPath) {
   if (stepName === "factcheck_images" && resultPath) {
     const fc = JSON.parse(readFileSync(resultPath, "utf-8"));
-    if (!fc.pass) return { ok: false, reason: "factcheck_not_passed（regenerate を処理してから advance する）" };
+    if (!fc.pass) {
+      const issueText = JSON.stringify(fc);
+      const japaneseMismatch = /文字化け|誤字|脱字|表記|漢字|目.?自|未.?末|微.?徴|\$記号/i.test(issueText);
+      const anchorMismatch = /アンカー|別人|別キャラ|耳ビレ|首輪|アンテナ|ハート|体型|人型メカ/i.test(issueText);
+      if (japaneseMismatch || anchorMismatch) {
+        const retryCount = state.steps.factcheck_images.data?.codexTargetedRetries || 0;
+        if (retryCount < 1) {
+          const targets = (fc.regenerate || []).map((entry) => entry.which || entry.id).filter(Boolean);
+          if (targets.length) {
+            const correction = (fc.regenerate || []).map((entry) => `${entry.which || entry.id}: ${entry.reason || "検品指摘を修正"}`).join(" / ");
+            const retry = spawnSync(process.execPath, [
+              path.join(ROOT, "scripts", "automation", "codex-image-stage.mjs"),
+              "--slug", state.slug,
+              "--only", targets.join(","),
+              "--correction", correction,
+            ], { cwd: ROOT, stdio: "inherit", env: process.env });
+            state.steps.factcheck_images.data = {
+              ...(state.steps.factcheck_images.data || {}),
+              codexTargetedRetries: 1,
+              lastRetryAt: new Date().toISOString(),
+            };
+            saveState(state);
+            if (retry.status === 0) {
+              return { ok: false, reason: "codex_targeted_retry_completed（独立した画像検品を再実行してから advance）" };
+            }
+          }
+        }
+        const condition = retryCount >= 1 ? "targeted_retry_exhausted" : (anchorMismatch ? "character_anchor_mismatch" : "japanese_text_mismatch");
+        const fallbackManifest = recordFallback(state.slug, condition, { source: resultPath });
+        return { ok: false, fallback: true, reason: `workshop_fallback_required:${condition}`, fallbackManifest };
+      }
+      return { ok: false, reason: "factcheck_not_passed（regenerate を処理してから advance する）" };
+    }
     // WebP 変換用マッピングへコピー
     const mapPath = path.join(ROOT, "logs", "article", `${state.slug}.images.json`);
     writeFileSync(mapPath, JSON.stringify({ slides: fc.slides, thumbnail: fc.thumbnail }, null, 2) + "\n", "utf-8");
@@ -362,6 +413,18 @@ async function main() {
     if (!st) { console.error(`unknown step: ${args.advance}`); process.exitCode = 2; return; }
     const r = onAdvance(state, args.advance, args.result);
     if (!r.ok) {
+      if (r.fallback) {
+        state.steps[args.advance].data = {
+          ...(state.steps[args.advance].data || {}),
+          transport: "workshop_chat",
+          fallbackManifest: r.fallbackManifest || `logs/article/${state.slug}.image-fallback.json`,
+        };
+        saveState(state);
+        console.error(`[orchestrator] ${r.reason}`);
+        console.log(assistedInstruction(state, STEPS.find((s) => s.name === args.advance)));
+        process.exitCode = 10;
+        return;
+      }
       console.error(`[orchestrator] advance 拒否: ${r.reason}`);
       process.exitCode = 1;
       return;
@@ -396,6 +459,13 @@ async function main() {
     const impl = scriptSteps[step.name];
     const r = await impl(state);
     if (!r.ok) {
+      if (r.fallback) {
+        state.steps[step.name].data = { ...(state.steps[step.name].data || {}), ...(r.data || {}) };
+        saveState(state);
+        console.log(assistedInstruction(state, step));
+        process.exitCode = 10;
+        return;
+      }
       const st = state.steps[step.name];
       st.attempts++;
       st.lastError = r.reason;

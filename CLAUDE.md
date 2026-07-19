@@ -363,6 +363,12 @@ Phase B 完了後だけ実行：
 - **`drafts/refinement/{slug}/` は記事の PR に含めてコミットする（Phase A 完了の条件）。** 初稿→レビュー→修正版→最終稿の流れを後から追えるようにする。`sumalabo:gate --stage full` と `sumalabo:finalize` が未追跡/未コミットの drafts を検出して停止する
 - **教訓（2026-07）**: Temp 配下の worktree が OS クリーンアップで破損し、未コミットだった drafts/refinement 3記事分（Meta One / Opus 4.8 / Fable 5）が消失した。文書が要求する保存を仕組みで強制していなかったことが原因
 
+### node_modules 消失の恒久対策（2026-07-19）
+
+- **原因**: 画像工程 `scripts/automation/codex-image-stage.mjs` が Codex CLI を `--sandbox workspace-write --cd <ROOT>` で起動しており、**リポジトリ全体（＝`node_modules` を含む）が Codex の書き込み可能領域になっていた**。画像生成の副作用で `node_modules`（astro 等）が消え、後続の `npm run build` が「astro not recognized」で失敗した。
+- **恒久対策1（根本原因）**: Codex の書き込み先を **外部の出力ディレクトリ（`--cd <outputDir>`・既定 `D:\downloads\sumalabo-codex`）だけに限定**した。正本画像は `--image` 添付（FS不要）、slide_plan 対象はプロンプトへインライン展開済みなので、リポジトリへの FS アクセスは不要。**これで Codex はリポジトリ（node_modules 含む）を触れない**。
+- **恒久対策2（防御・自己復旧）**: 本番 deploy の build 直前（`scripts/automation/deploy-production-from-main.mjs` の `ensureNodeModulesForBuild()`）で **astro が解決できるか確認し、できなければ自動で `npm ci`（失敗時 `npm install`）で復旧してから build に進む**。復旧できたら中断せず続行（完走型を維持）、復旧してもなお解決不能なときだけ build を失敗扱いにしてログに明記する。夜間 run（Phase B）もこの経路を通るため保護される。**画像工程は build より前に走るので、build 直前チェックが復旧の最適地点**（run 冒頭の一律チェックでは、まだ壊れていない段階を見て素通りしてしまう）。
+
 ## 例外: 判断を仰ぐ最小ケース
 
 以下のいずれかに該当する場合のみ、人間に **1 度だけ** 短く相談する（実行前に必ず提示）:

@@ -16,6 +16,7 @@
     "sumalabo:finalize": "node scripts/run/phase-a-finalize.mjs",
     "sumalabo:gate": "node scripts/sumalabo-gate.mjs",
     "sumalabo:inspect": "node scripts/run/independent-inspection.mjs",
+    "sumalabo:images:codex": "node scripts/automation/codex-image-stage.mjs",
     "chrome:ensure": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/automation/ensure-chrome.ps1",
     "sumahon:watch": "node scripts/run/sumahon-watch.mjs",
     "sumahon:regenerate-next": "node scripts/run/regenerate-from-queue.mjs",
