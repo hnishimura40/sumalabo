@@ -2,14 +2,14 @@
   "name": "すまラボ画像工房",
   "purpose": "画像生成専用の常設ChatGPTチャット。会話冒頭に公式キャラ正本2枚（ひまり/らぼまる）を添付済み。以後の記事スライド・サムネ生成はこの会話の続きで行い、フォーカス/クリップボード非依存で無人運転を可能にする。",
   "project": "すまラボ台本",
-  "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5c0f57-0b24-83e8-9400-e1b9c2f57d30",
+  "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5c465e-a4c0-83ee-a282-3be837baa22b",
   "canonicalRefs": [
     "assets/characters/himari-canonical.png",
     "assets/characters/labomaru-canonical.png"
   ],
   "createdAt": "2026-07-05",
-  "reseededAt": "2026-07-19T01:40:00+09:00",
-  "generatedSinceSeed": 7,
+  "reseededAt": "2026-07-19T10:20:00+09:00",
+  "generatedSinceSeed": 1,
   "reseedThreshold": 10,
   "reseedPolicy": "【前倒し・定量トリガー】この工房チャットでの累計生成画像(generatedSinceSeed)が reseedThreshold(=10枚)を超える前に、必ず再シード(新チャット作成+正本2枚 himari/labomaru 添付+conversationUrl更新+generatedSinceSeedを0にリセット)する。加えて、1記事(7〜8枚)を生成し終えるごとに次の記事の画像生成前に再シードするのを既定とする(参照劣化は8枚1バッチの後半から出やすいため)。崩れを検知した場合(factcheck項目10/11)は即座に再シードして崩れたスライドだけ作り直す。無人runで再シード(=画像添付)が経路上できない場合は blocked_image_generation_unavailable で安全停止し、人間に再シードを依頼して通知する。",
   "reseedHistory": [
@@ -45,10 +45,16 @@
     }
   ],
   "note": "夜間ドライバーはこのURLに navigate して会話の続きで生成する。ただし generatedSinceSeed が閾値超過、または前記事ぶんが未リセットなら、続きに詰め込まず再シードを優先する。",
-  "lastUsedAt": "2026-07-19T05:30:00.000Z",
-  "lastUsedFor": "202607-claude-fable-5-max-standard-pro-credits",
-  "lastUsedNote": "決着記事: thumbnail+slide01〜06を生成(7枚)。slide07/08はセッション級の画像セーフティ・クールダウンで連続content-policy誤判定(5回)→粘らず本文HTMLで内容担保・図版は6枚で確定。次回生成前に再シード推奨(seed=7で閾値接近)。",
+  "lastUsedAt": "2026-07-19T10:25:00.000Z",
+  "lastUsedFor": "202607-claude-fable-5-max-standard-pro-credits (サムネ喜び爆発版に差し替え)",
+  "lastUsedNote": "決着記事サムネを喜び爆発型（Fable 5、残ります!）に差し替え。旧chat 6a5c0f57はセッション級content-policyクールダウンが継続（slide07/08以降ずっと拒否）→案A再シードで新chat 6a5c465e作成しクールダウン解消、サムネ1枚生成。準備OK確認済み。アンテナ1本アンカー入り。",
   "history": [
+    {
+      "at": "2026-07-19T10:20:00+09:00",
+      "action": "reseed(案A・textのみ・クールダウン解消)",
+      "conversationUrl": "https://chatgpt.com/g/g-p-69f165a1b6948191ae8adaea61552b73-sumarahotai-ben/c/6a5c465e-a4c0-83ee-a282-3be837baa22b",
+      "reason": "決着記事サムネの喜び爆発版差し替え時、旧chat 6a5c0f57がセッション級content-policyクールダウン継続（slide07/08以降・サムネ再生成も連続拒否）。案A（プロジェクトファイル参照・テキストのみ・準備OK確認・アンテナ1本アンカー）で新chat 6a5c465e作成。新chatではサムネ即生成成功＝クールダウンはチャット単位でリセットされることを確認。seed=1"
+    },
     {
       "at": "2026-07-19T01:40:00+09:00",
       "action": "reseed(案A・textのみ・クリーン検証済み)",
@@ -141,5 +147,5 @@
     "uploadedAt": "2026-07-13T12:30:00+09:00",
     "note": "プロジェクト「すまラボ台本」の情報源に常設。再シードは新チャット+テキスト参照のみ(案A・2026-07-13品質検証済み)"
   },
-  "updatedAt": "2026-07-19T01:40:00+09:00"
+  "updatedAt": "2026-07-19T10:25:00+09:00"
 }
