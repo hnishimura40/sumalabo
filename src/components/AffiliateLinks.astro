@@ -31,8 +31,10 @@ const MALL_STORES: ReadonlyArray<AffiliateStore> = ["amazon", "rakuten", "yahoo"
 <div class="affiliate-links" aria-label="購入リンク欄">
   {stores.map((store) => {
     const raw = links[store.key];
+    // URL が空の store はボタン自体を出さない（「準備中」表示は廃止・2026-07-19）。
+    if (!raw) return null;
     const isMall = MALL_STORES.includes(store.key);
-    const built = raw && isMall ? buildMallLink(store.key as MallStore, raw) : { href: raw, affiliate: false };
+    const built = isMall ? buildMallLink(store.key as MallStore, raw) : { href: raw, affiliate: false };
     return built.href ? (
       <a
         class={`affiliate-button affiliate-button--${store.key}`}
@@ -42,11 +44,7 @@ const MALL_STORES: ReadonlyArray<AffiliateStore> = ["amazon", "rakuten", "yahoo"
       >
         {store.label}
       </a>
-    ) : (
-      <span class={`affiliate-button affiliate-button--pending affiliate-button--${store.key}`}>
-        {store.pendingLabel}
-      </span>
-    );
+    ) : null;
   })}
 </div>
 
