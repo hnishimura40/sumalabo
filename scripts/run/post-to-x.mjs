@@ -41,6 +41,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import { hasPosted, getPostRecord, recordPost } from "../sumahon/x-posted-ledger.mjs";
+import { VERIFY_LOOP_STEPS } from "../sumahon/x-post-verify.mjs";
 import { gate } from "../automation/autonomy.mjs";
 import { notifyAutonomyEvent } from "../automation/autonomy-notify.mjs";
 
@@ -220,12 +221,23 @@ async function modeChrome(args) {
   console.log("=== NEXT STEPS (Claude in Chrome MCP が実行する想定) ===");
   console.log("1. Chrome MCP で x.com の compose textarea を取得しフォーカス");
   console.log("2. PowerShell SendKeys ^v でテキストを貼り付け（または直接 type）");
-  console.log("3. サムネがある場合は、再度 PowerShell で -ImagePath を渡してクリップボード切り替え → 再 Ctrl+V");
-  console.log("4. DOM 上で投稿文と添付件数を確認");
-  console.log("5. 「ポストする」ボタンを MCP click で押す（投稿)");
-  console.log("6. 完了確認後: node scripts/run/post-to-x.mjs --record --slug " + slug + " --postUrl <URL>");
+  console.log("3. サムネ/スライドがある場合は -ImagePaths でクリップボード切替 → 前面タブで Ctrl+V");
+  console.log("4. DOM 上で投稿文と添付件数を確認（MEDIA_COUNT_JS で枚数一致を検証）");
+  console.log("5. 「ポストする」ボタンを MCP click で押す（投稿）");
   console.log("");
-  console.log("失敗時: node scripts/run/post-to-x.mjs --error --slug " + slug + " --reason '...'");
+  console.log("★ 6. 【投稿確定の検証ループ（必須・2026-07-19 恒久対策）】");
+  console.log("     『クリックした＝投稿できた』は禁止。DOM で実在を確認するまで完了としない。");
+  for (const s of VERIFY_LOOP_STEPS) console.log("     - " + s);
+  console.log("     検証スニペットは scripts/sumahon/x-post-verify.mjs（postExistsJs / REPLY_COUNT_JS /");
+  console.log("     MEDIA_COUNT_JS / SEND_READY_JS）。手順は docs/x_post_workflow.md『投稿確定の検証ループ』。");
+  console.log("");
+  console.log("★ 7. 【台帳は投稿確定の直後に書く】確定を確認したら“その場で”記録する（作業の最後にまとめない）:");
+  console.log("     node scripts/run/post-to-x.mjs --record --slug " + slug + " --postUrl <本投稿URL>");
+  console.log("     さらに data/automation/ledger.json も本投稿確定直後に status=x_posted / xPostUrl を書く。");
+  console.log("     リプライも確定を確認した直後に xReplyUrl を書く（本投稿とリプライを別々に記録）。");
+  console.log("");
+  console.log("未確定で終える場合: 本投稿とリプライの実在状態を明記して『未投稿』と報告し、");
+  console.log("     node scripts/run/post-to-x.mjs --error --slug " + slug + " --reason '...(実在状態)' を残す。");
   process.exit(0);
 }
 
