@@ -53,6 +53,19 @@ if (-not $BrowserCheckOnly) {
 try {
   if ($BrowserCheckOnly) { Log "=== BrowserCheckOnly ドライラン（testMode未消費・claude未起動） ===" }
 
+  # ---- 1-bis. Codex画像archiveの期限整理 ----
+  # 本番採用済み原本だけが対象。archive移動から30日を超えた記事フォルダを削除し、
+  # D:\downloads\sumalabo-codex\cleanup-ledger.jsonl に監査記録を残す。
+  if (-not $BrowserCheckOnly) {
+    Log "image cleanup: archive 30日経過分を確認"
+    $cleanup = node scripts/automation/image-output-lifecycle.mjs --prune 2>&1
+    $cleanupExit = $LASTEXITCODE
+    Log ($cleanup | Out-String).Trim()
+    if ($cleanupExit -ne 0) {
+      Log "WARN: image archive cleanup failed (exit $cleanupExit)。記事生成は継続し、原本は削除しません。"
+    }
+  }
+
   # ---- 2. 軽量プリフライト（Claude を起動する前に node だけで判定） ----
   # ドライランでは testMode ゲートをスキップ（ブラウザ経路だけ確かめたいため）。
   if (-not $BrowserCheckOnly) {

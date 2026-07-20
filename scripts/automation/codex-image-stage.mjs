@@ -17,6 +17,7 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { markGenerated } from "./image-output-lifecycle.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const DEFAULT_OUTPUT_ROOT = "D:\\downloads\\sumalabo-codex";
@@ -319,6 +320,7 @@ export async function runImageStage(options) {
     completedAt: new Date().toISOString(),
   };
   writeJson(manifestPath(slug), manifest);
+  markGenerated(slug, manifest.outputs);
   return { ok: true, ...manifest };
 }
 

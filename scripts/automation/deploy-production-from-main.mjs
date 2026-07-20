@@ -58,6 +58,7 @@ import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 // 対策2: 防御として本スクリプトの HTTP も undici(fetch) を避け node:http/https に統一。
 import http from "node:http";
 import https from "node:https";
+import { archiveAfterSuccessfulDeploy } from "./image-output-lifecycle.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -139,6 +140,7 @@ function makeResult() {
       verify: { status: "skipped" },
       lastGoodSnapshot: { status: "skipped" },
       postPublishVerify: { status: "skipped" },
+      imageOutputCleanup: { status: "skipped" },
     },
     productionUrl: null,
     errorReason: null,
@@ -535,6 +537,28 @@ async function main() {
   }
 
   result.ok = result.errorReason === null;
+  if (result.ok && !args.dryRun) {
+    try {
+      const cleanup = archiveAfterSuccessfulDeploy({
+        slug: args.slug,
+        deploymentProof: {
+          ok: true,
+          verifyStatus: result.steps.verify.status,
+          postPublishStatus: result.steps.postPublishVerify.status,
+          productionUrl: result.productionUrl,
+          deploymentId: result.steps.lastGoodSnapshot?.deploymentId || null,
+          verifiedAt: new Date().toISOString(),
+        },
+      });
+      result.steps.imageOutputCleanup = cleanup;
+      if (cleanup.status === "archived") console.log(`[post] Codex画像原本をarchiveへ移動: ${cleanup.destination}`);
+      else if (cleanup.status === "skipped") console.warn(`[post] Codex画像原本は作業中のまま維持: ${cleanup.reason}`);
+    } catch (error) {
+      // 後片付け失敗で公開済みdeployを失敗扱いにはしない。原本は移動されず安全側に残る。
+      result.steps.imageOutputCleanup = { status: "failed", reason: error.message || String(error) };
+      console.warn(`[post] Codex画像後片付け失敗（原本は維持）: ${error.message || error}`);
+    }
+  }
   finalize(result, args, result.ok ? 0 : 1);
 }
 

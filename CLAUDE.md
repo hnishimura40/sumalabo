@@ -12,6 +12,10 @@
 
 **昼の立ち会い制作も完走型（2026-07-12 ユーザー承認）**: ユーザーが対話セッションで**記事制作を明示指示**したら、**Human Review Checkpoint を廃止し、Phase A → B → C（公開・X 投稿）まで確認なしで完走**する。停止してよい例外は「除外カテゴリ該当（訴訟/事故/人事/買収/政治）」と「品質・安全のブロック（事実未確認・gate 不合格・build/deploy/verify 失敗・画像生成経路不可）」の 2 つだけ。**事後の取り消しは `npm run retract`**。詳細: [`docs/autonomy.md`](docs/autonomy.md) §7。ユーザーが「下書きだけ」「確認したい」等と明示したときのみ従来どおり途中停止する。
 
+**着手前の現状態照合（2026-07-20）**: タスクを始める前に、必ず `git log`・対象ファイル・公開ログ・本番状態を指示内容と突き合わせる。指示内容がすでに実装済みなら、同じ変更を重ねず**検証モード**へ切り替え、差分・不足・本番反映だけを確認する。
+
+**Codex画像原本の後片付け（2026-07-20）**: `D:\downloads\sumalabo-codex\<slug>\` は作業領域とする。独立検品合格→WebPをリポジトリへ正本採用→本番deploy/verify成功の3条件がそろった後だけ、公開フロー末尾で `archive\YYYYMM\<slug>\` へ移動する。検品不合格・未採用・deploy未成功は移動しない。archive移動から30日経過した記事フォルダは夜間run冒頭で自動削除し、移動・期限削除・安全側スキップを `cleanup-ledger.jsonl` に記録する。即時削除や手動の見切り削除は禁止。
+
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと

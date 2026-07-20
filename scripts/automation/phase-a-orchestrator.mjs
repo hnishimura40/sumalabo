@@ -34,6 +34,7 @@ import process from "node:process";
 import { gate } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 import { recordFallback } from "./codex-image-stage.mjs";
+import { markAdopted, markInspection } from "./image-output-lifecycle.mjs";
 import { classifyArticleCategory } from "../sumahon/category-classification.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -211,7 +212,14 @@ const jobs = ${JSON.stringify(jobs)};
   }
 })();`;
     const r = spawnSync(process.execPath, ["-e", script], { cwd: ROOT, stdio: "inherit" });
-    return r.status === 0 ? { ok: true } : { ok: false, reason: "webp_convert_failed" };
+    if (r.status !== 0) return { ok: false, reason: "webp_convert_failed" };
+    try {
+      markAdopted(state.slug, jobs.map(([, destination]) => destination));
+    } catch (error) {
+      // 工房fallbackなどCodex outputDirを使わない経路では状態ファイルを作らない。
+      console.warn(`[orchestrator] image output adoption marker skipped: ${error.message || error}`);
+    }
+    return { ok: true };
   },
 
   commit_pr(state) {
@@ -339,6 +347,16 @@ function onAdvance(state, stepName, resultPath) {
     // WebP 変換用マッピングへコピー
     const mapPath = path.join(ROOT, "logs", "article", `${state.slug}.images.json`);
     writeFileSync(mapPath, JSON.stringify({ slides: fc.slides, thumbnail: fc.thumbnail }, null, 2) + "\n", "utf-8");
+    try {
+      markInspection(state.slug, {
+        pass: true,
+        source: path.resolve(resultPath),
+        regenerated: (fc.regenerated || []).length,
+      });
+    } catch (error) {
+      // 工房fallbackなど外部Codexフォルダが存在しない経路は後片付け対象外。
+      console.warn(`[orchestrator] image output inspection marker skipped: ${error.message || error}`);
+    }
     return { ok: true, data: { factcheck: { pass: true, regenerated: (fc.regenerated || []).length } } };
   }
   if (stepName === "write_mdx") {
