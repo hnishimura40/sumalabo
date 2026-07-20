@@ -619,6 +619,7 @@ PC 表示では **横スクロールを原則使わない**。スマホでも基
 ## 関連ドキュメント
 
 - `docs/internal_drainage.md` — 内部導線 A/B/D＋計測の仕組みと収益記事の足し方
+- `docs/force_refresh.md` — 検品用の強制更新（PWAで最上部プル→画像までキャッシュ回避で再取得）と、更新が見えない真因の切り分け
 - `docs/visual_preview_review.md` — Preview スクショ 2 パスレビューの手順とチェック観点
 - `docs/chatgpt_file_attach_clipboard.md` — クリップボード添付（標準）
 - `docs/uwsc_chatgpt_file_attach_test.md` — UWSC フォールバック
