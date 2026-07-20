@@ -3,6 +3,7 @@ import "../styles/global.css";
 import { siteConfig } from "../config/site";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 import DrainageTracking from "../components/DrainageTracking.astro";
+import ForceRefresh from "../components/ForceRefresh.astro";
 
 interface Props {
   title?: string;
@@ -163,5 +164,6 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
         });
       })();
     </script>
+    <ForceRefresh />
   </body>
 </html>
