@@ -293,7 +293,7 @@ function assistedInstruction(state, step) {
   - 経緯・締切・続報は <Timeline> + <TimelineItem date="...">（今後動く点は hot）
   - 価格・日付・数量など数字が主役の要点は <NumCards items={[{num,cap},...]}>（3枚組基本・事実確認済みの数字のみ）
   - ひまり・らぼまるの会話は <CharacterBubble speaker="himari|labo" mood="...">（himari: curious/aha/explain、labo: smile/point/worried。labo worried は unc ボックス併設が定型）
-  - 文中の確度ラベルは <Chip kind="...">（1段落2個まで）、軽い注記は <Note>
+  - 確度ラベルを使う場合は <Chip kind="..."> を本文から独立した位置に置く（1段落2個まで）。**「確定・報道・未確定」はChipまたは見出しのラベルとしてのみ使用し、地の文に単独で書かない。Chipの直後へ引用や本文を続けず、句読点または改行で区切る。**軽い注記は <Note>
   - **図解スライド8枚（article-slide-section + slide-reading-note + ライトボックス）と「## 参考情報」（URL2件以上）は従来どおり併用**（v3 はこれらを置き換えない）`,
   };
   return `\n=== NEXT ACTION [${step.name}] ${step.label} ===\n${map[step.name] || "(手順未定義)"}\n${common}`;

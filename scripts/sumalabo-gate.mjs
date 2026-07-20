@@ -192,6 +192,32 @@ function checkFormalProductNames(text, fileLabel, products) {
   }
 }
 
+// ---- 確度ラベルの地の文混入 ----
+// Chip は独立したラベルとしてのみ許可する。ラベル直後に本文が続くケースと、
+// 文末にラベルだけが残るケースを限定検出し、正常な見出し・表の「確定」等は対象外にする。
+const STRAY_STATUS_LABEL_SEVERITY = "violation";
+function checkStrayStatusLabels(text, fileLabel) {
+  const lines = text.split(/\r?\n/);
+  const chipRe = /<Chip\b[^>]*>\s*(確定|報道|未確定)\s*<\/Chip>/g;
+  const bareBeforeQuoteRe = /(?:^|[、。！？]\s*)(確定|報道|未確定)(?=[「『“"])/g;
+
+  lines.forEach((line, idx) => {
+    for (const match of line.matchAll(chipRe)) {
+      const tail = line.slice(match.index + match[0].length);
+      const followedByProse = /^\s*(?:[「『“"（(ぁ-んァ-ヶ一-龠々〆ヵヶA-Za-z0-9*]|<(?:strong|em)\b)/u.test(tail);
+      const dangling = /^\s*(?:$|[。．.!?！？）)】」』]|<\/(?:Note|p|li|div|aside)>)/u.test(tail);
+      if (followedByProse || dangling) {
+        report(STRAY_STATUS_LABEL_SEVERITY, "stray-status-label", fileLabel,
+          `L${idx + 1}: ラベル「${match[1]}」を地の文へ直結・孤立させないでください → ${line.trim().slice(0, 80)}`);
+      }
+    }
+    for (const match of line.matchAll(bareBeforeQuoteRe)) {
+      report(STRAY_STATUS_LABEL_SEVERITY, "stray-status-label", fileLabel,
+        `L${idx + 1}: ラベル語「${match[1]}」が引用文の前に単独で混入しています → ${line.trim().slice(0, 80)}`);
+    }
+  });
+}
+
 // ---- タイトルの主張が本文 facts で裏付けられているか（2026-07-14 バズ強化・感情に刺すタイトルの安全弁）----
 // 感情に刺す主タイトル（消える/終了/値上げ+あなた 等）を許可する代わりに、
 // 「事実に反する煽り」を弾く。判定は自動でできる範囲＝(1) タイトルにも禁則語検査を効かせる、
@@ -271,6 +297,9 @@ function checkDraftStage(slug, patterns, productNames, stage) {
       const body = stripProvenanceHeader(t);
       checkForbiddenWords(body, `drafts/refinement/${slug}/${f}`, "draft", patterns);
       checkFormalProductNames(body, `drafts/refinement/${slug}/${f}`, productNames);
+      if (f === "final_article.md") {
+        checkStrayStatusLabels(body, `drafts/refinement/${slug}/${f}`);
+      }
     }
   }
 
@@ -329,6 +358,7 @@ function checkMdxStage(slug, patterns, productNames) {
   }
   checkForbiddenWords(body, `content/articles/${slug}.mdx`, "mdx", patterns);
   checkFormalProductNames(raw, `content/articles/${slug}.mdx`, productNames);
+  checkStrayStatusLabels(body, `content/articles/${slug}.mdx`);
   const title = frontmatterValue(frontmatter, "title");
   checkTitleFactBacking(title, body, `content/articles/${slug}.mdx`, patterns);
   return { body, fm: frontmatter };
