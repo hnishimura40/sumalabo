@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-19T05:10:00.000Z",
+  "updatedAt": "2026-07-20T08:28:19.6425991Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -929,6 +929,24 @@
       "xPostText": "話題のKimi K3、使う前に知っておきたいこと。中国発オープンAIがコード生成ベンチで1位。すごさは事実。でも公式サービスに機密は入れない・企業利用は情シス確認を。性能とデータは分けて見る。#AI #すまラボ",
       "xReplyText": "確定・見解・未確定を分けて整理しています / https://sumalabo.com/articles/202607-kimi-k3-open-model-china-risk/",
       "xReplyNote": "初回投稿時にリプライが未確定だったため後追いで確定投稿（本投稿は1件のみ・二重投稿なし）。本投稿reply=1件で確認済み。"
+    },
+    {
+      "slug": "202607-ai-pc-cloud-local-spec-guide",
+      "incidents": [],
+      "source": "attended_article",
+      "triggerKind": "manual",
+      "trigger": "manual",
+      "articleUrl": "https://sumalabo.com/articles/202607-ai-pc-cloud-local-spec-guide/",
+      "productionUrl": "https://sumalabo.com/articles/202607-ai-pc-cloud-local-spec-guide/",
+      "publishedAt": "2026-07-20T07:58:51.000Z",
+      "status": "x_posted",
+      "autonomyLevel": 1,
+      "hasAffiliate": true,
+      "xPostUrl": "https://x.com/suma_labo/status/2079119434795667803",
+      "xPostedAt": "2026-07-20T08:22:16.811Z",
+      "xReplyUrl": "https://x.com/suma_labo/status/2079120937988034666",
+      "xPostText": "AIを使うのに高いPCは必要？10万円台で足りる理由と例外 / ChatGPTやClaude、Codex、クラウド画像生成に高性能PCは必要なのか。クラウド型とローカル型の違い、16GBメモリを軸にした選び方、値上がり局面の買い時を体験ベースで整理します。 #AI #すまラボ",
+      "xReplyText": "記事で続きと出典まで読めます👇 https://sumalabo.com/articles/202607-ai-pc-cloud-local-spec-guide/"
     }
   ]
 }

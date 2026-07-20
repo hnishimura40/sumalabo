@@ -28,6 +28,24 @@
       "thumbnailAttached": false,
       "charCount": 0,
       "variant": "text_only"
+    },
+    {
+      "slug": "202607-ai-pc-cloud-local-spec-guide",
+      "articleUrl": "https://sumalabo.com/articles/202607-ai-pc-cloud-local-spec-guide/",
+      "postedAt": "2026-07-20T08:22:16.811Z",
+      "postText": "AIを使うのに高いPCは必要？10万円台で足りる理由と例外\n\nChatGPTやClaude、Codex、クラウド画像生成に高性能PCは必要なのか。クラウド型とローカル型の違い、16GBメモリを軸にした選び方、値上がり局面の買い時を体験ベースで整理します。\n#AI #すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2079119434795667803",
+      "method": "chrome_file_chooser",
+      "thumbnailAttached": true,
+      "charCount": 137,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2079120937988034666",
+      "mainExistenceCount": 1,
+      "replyCountBefore": 0,
+      "replyCountAfter": 1,
+      "replyExistenceCount": 1,
+      "replyStatus": "verified"
     }
   ]
 }
