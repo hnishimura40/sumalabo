@@ -43,6 +43,17 @@ const STUB = process.env.ORCH_STUB === "1"; // テスト: script ステップを
 const MAX_ATTEMPTS = 2;
 const FRESHNESS_DAYS = 7;
 
+export function hasIdentityAnchorMismatch(issueText = "") {
+  return /認識アンカー|別人|別キャラ|顔立ち|髪色|髪型|頭身|サイドテール|耳ビレ|首輪|アンテナ|ハート(?:ボタン|バッジ)?|体型|人型メカ|卵型ボディ/i.test(issueText);
+}
+
+function validatePerformanceBlock(text = "") {
+  if (!/^##\s+演出ブロック(?:\s|（|\(|$)/m.test(text)) return { ok: false, missing: ["演出ブロック"] };
+  const required = ["衣装", "小道具", "ポーズ", "背景", "演出根拠"];
+  const missing = required.filter((label) => !text.includes(label));
+  return { ok: missing.length === 0, missing };
+}
+
 // ---------- ステップ定義（順序どおり） ----------
 export const STEPS = [
   { name: "init", type: "script" },
@@ -155,6 +166,11 @@ const scriptSteps = {
     const dir = path.join(ROOT, "drafts", "refinement", state.slug);
     const missing = REQUIRED_DRAFTS.filter((f) => !existsSync(path.join(dir, f)));
     if (missing.length) return { ok: false, reason: `drafts_missing: ${missing.join(", ")}` };
+    const slidePlanText = readFileSync(path.join(dir, "slide_plan.md"), "utf-8");
+    const performance = validatePerformanceBlock(slidePlanText);
+    if (!performance.ok) {
+      return { ok: false, reason: `slide_plan_performance_block_missing: ${performance.missing.join(", ")}` };
+    }
     return { ok: true };
   },
 
@@ -284,9 +300,17 @@ function assistedInstruction(state, step) {
     chatgpt_turn3_draft: `同チャットで本文ドラフト（lead-first / 噛み砕き主軸 / 判断は補助）→ ${dir}/draft_article.md に保存。`,
     chatgpt_turn4_review: `同チャットでセルフレビュー（日付数値整合 / 煽り断定 / 禁則語 / 線引き / 旧情報残存）→ ${dir}/review_report.md に保存。`,
     chatgpt_turn5_final: `レビュー反映の確定稿 → ${dir}/final_article.md に保存。`,
-    chatgpt_turn6_slideplan: `slide_plan（本文スライド8枚 4:5 1280×1600 + サムネ16:9 体験図方針）→ ${dir}/slide_plan.md に保存。サムネは assets/characters/character-sheet.md の「体験図」3型から選ぶこと。**サムネは同 sheet の「衣装は変えることを基本」に従い、記事テーマから連想される衣装・小道具・シチュエーションを必ず1つ選んで slide_plan に明記する（認識アンカーは不変・露出過多NG）。マッピング表のどの行にも該当しないテーマでも「標準衣装のまま」は禁止＝記事の名詞から連想する小道具＋装いを最低1点入れ、選んだ根拠を slide_plan のサムネ節に1行記録する（例: \`装い根拠:「制限撤廃」→ 解放感＝腕まくり＋ストップウォッチ\`）。スライド8枚側は標準衣装で一貫。** **漢字化け対策（docs/kanji_pitfalls.md）: スライドの帯・見出し・吹き出しの短い文言は、化けやすい漢字（目/未/末/微 等）を避け、ひらがな・言い換えを優先する（例「目的別」→「使い方で」）。特に1〜4文字のラベルは優先的にやさしい和語にする。** **X直接投稿を見据え、各スライドは「文字量を絞り・数字は正確に・単体で意味が通る」ことを意識（文字密度の高いスライドは X 選抜から外れ記事内専用になる）。**`,
-    generate_images: `Codex exec が自動退避条件に該当したため、常設キャラ工房チャット方式へ切り替える。logs/article/${slug}.image-fallback.json の condition を確認し、slide_plan の未生成または要修正分だけを工房で生成する。正本2枚、青い首輪バンド、左右の青い耳ビレ（短く丸くしすぎない）を厳守。完了したら --advance generate_images で続行する。`,
-    factcheck_images: `logs/article/${slug}.codex-images.json に記録された画像を1枚ずつ Read し、slide_plan と突き合わせて数値・固有名詞・誤字・ブランド表記を検査。**キャラ破綻は認識アンカー（ひまり=金髪サイドテール・顔立ち・頭身／らぼまる=白い卵型ボディ・黄緑アンテナ1本・胸のハートボタン・青い首輪バンド・左右の青い耳ビレ）で判定**。耳ビレが正本より短い・丸い傾向は warning として監視し、別キャラ化していなければ pass のまま。服・小道具の違いは破綻ではない。サムネは衣装がテーマに沿って標準から変えてあるかも確認。結果を logs/article/${slug}.factcheck.json に保存:\n  { "pass": true|false, "regenerate": [{"which":"slide06","reason":"..."}], "slides": [{"src":"D:/downloads/xxx.png","name":"slide01-xxx.webp"}...], "thumbnail": {"src":"D:/downloads/yyy.png"}, "thumbnailCostume": "themed" | "standard_improvable" }\n日本語誤字または認識アンカー不一致は、--advance 時に Codex の対象1回修正を自動実行する。修正後も不合格なら工房チャットへ自動退避する。サムネが standard_improvable でも公開は止めない。不合格は該当のみ最大2回。pass 時は slides/thumbnail のマッピングが logs/article/${slug}.images.json にコピーされる。`,
+    chatgpt_turn6_slideplan: `slide_plan（本文スライド8枚 4:5 1280×1600 + サムネ16:9 体験図方針）→ ${dir}/slide_plan.md に保存。サムネは assets/characters/character-sheet.md の「体験図」3型から選ぶこと。**先頭付近に必ず \`## 演出ブロック\` を設け、\`衣装\`・\`小道具\`・\`ポーズ・動き\`・\`背景・状況\`・\`演出根拠\` の5欄を記事テーマから自動生成する。さらに \`スライド演出方針\` として、本文8枚で使う小道具・動き・背景（必要なら一貫したテーマ衣装）を記す。** 同一性は「顔・体型・髪型・耳ビレ・首輪・アンテナ・ハート」の正本アンカーに限定して固定し、衣装・小道具・ポーズ・背景は演出ブロックに従い自由に変える。サムネは標準衣装＋棒立ちを禁止し、記事テーマから連想される衣装・小道具・シチュエーションを最低1つ入れる。スライドも置物化を避け、比較なら2つを見比べる、検証なら道具で調べる等の動きを付ける。スライドで衣装を変える場合は8枚で一貫させる（露出過多・無関係なコスプレNG）。例:
+\`## 演出ブロック\`
+\`- 衣装: 検証用の作業ベスト\`
+\`- 小道具: 虫眼鏡、工具、対象機器\`
+\`- ポーズ・動き: 手元を調べ、らぼまるがチェックする\`
+\`- 背景・状況: 明るい検品机\`
+\`- 演出根拠: 「実機検証」→点検作業を体験図にする\`
+\`- スライド演出方針: 衣装は一貫、小道具・ポーズ・背景は各purposeに合わせる\`
+**漢字化け対策（docs/kanji_pitfalls.md）: スライドの帯・見出し・吹き出しの短い文言は、化けやすい漢字（目/未/末/微 等）を避け、ひらがな・言い換えを優先する（例「目的別」→「使い方で」）。特に1〜4文字のラベルは優先的にやさしい和語にする。** **X直接投稿を見据え、各スライドは「文字量を絞り・数字は正確に・単体で意味が通る」ことを意識（文字密度の高いスライドは X 選抜から外れ記事内専用になる）。**`,
+    generate_images: `Codex exec が自動退避条件に該当したため、常設キャラ工房チャット方式へ切り替える。logs/article/${slug}.image-fallback.json の condition を確認し、slide_plan の未生成または要修正分だけを工房で生成する。**fallback のキャラ不一致は、顔・体型・髪型・耳ビレ・首輪・アンテナ・ハート等の認識アンカー不一致に限る。衣装・小道具・ポーズ・背景の変化を理由に退避しない。** 正本2枚の同一性を守りつつ、演出ブロックは維持して生成する。完了したら --advance generate_images で続行する。`,
+    factcheck_images: `logs/article/${slug}.codex-images.json に記録された画像を1枚ずつ Read し、slide_plan と突き合わせて数値・固有名詞・誤字・ブランド表記を検査。**キャラ破綻は認識アンカー（ひまり=金髪サイドテール・顔立ち・頭身／らぼまる=白い卵型ボディ・黄緑アンテナ1本・胸のハートボタン・青い首輪バンド・左右の青い耳ビレ）だけで判定**。耳ビレが正本より短い・丸い傾向は warning として監視し、別キャラ化していなければ pass のまま。服・小道具・ポーズ・背景の違いは破綻ではない。**演出ブロックと照合し、衣装・小道具・ポーズ・背景が記事テーマを体験として表しているかを warning 観察項目にする。弱くても公開停止はしないが改善点を記録する。** 結果を logs/article/${slug}.factcheck.json に保存:\n  { "pass": true|false, "regenerate": [{"which":"slide06","reason":"..."}], "slides": [{"src":"D:/downloads/xxx.png","name":"slide01-xxx.webp"}...], "thumbnail": {"src":"D:/downloads/yyy.png"}, "performanceFit": "themed" | "weak_warning" }\n日本語誤字または認識アンカー不一致は、--advance 時に Codex の対象1回修正を自動実行する。修正後も不合格なら工房チャットへ自動退避する。演出が弱いだけなら warning とし、Hiroの実物レビューへ回す。不合格は該当のみ最大2回。pass 時は slides/thumbnail のマッピングが logs/article/${slug}.images.json にコピーされる。`,
     write_mdx: `final_article を MDX 化（frontmatter 12キー / lead-first / 禁則語なし）→ content/articles/${slug}.mdx。category は「${state.category?.name || "ニュースをかみくだく"}」。当サイトの実体験・検証を軸にした記事は「やってみた・検証」（hands-on）に分類する。前記事への内部リンクがテーマ上自然なら本文に入れる。**収益記事(モバイルバッテリー比較 /articles/power-bank-comparison/・USB-C充電器比較 /articles/usb-c-charger-comparison/・リコール確認 /articles/power-bank-recall-check/)への文脈リンクは、本文が実際にそのトピックに触れたときだけ自然な一文で1本まで（言及が無ければ入れない・宣伝臭NG）。記事末尾の関連ガイドカードは自動表示されるので本文の手動リンクは重複させない。定義: data/related-guides.json。**
   **publishAt は実公開見込み時刻を入れる（2026-07-14・一覧順ずれ防止）**: 固定の朝時刻（08:00 等）をデフォルトにしない。完走型なら「今」に近い時刻、後で公開予定なら公開予定時刻。未来にすると build から除外され、他記事より古いと一覧で最上位に来ない。**公開直前（Phase B deploy 前）に \`npm run normalize:publish-at -- --slug ${slug}\` を実行して実公開時刻へ自動補正し、その変更を build→commit に含めて deploy する。**
   **タイトルは「感情に刺す主タイトル＋やさしく整理するサブ」で組む（2026-07-14 バズ強化・第一候補）:**
@@ -314,7 +338,7 @@ function onAdvance(state, stepName, resultPath) {
     if (!fc.pass) {
       const issueText = JSON.stringify(fc);
       const japaneseMismatch = /文字化け|誤字|脱字|表記|漢字|目.?自|未.?末|微.?徴|\$記号/i.test(issueText);
-      const anchorMismatch = /アンカー|別人|別キャラ|耳ビレ|首輪|アンテナ|ハート|体型|人型メカ/i.test(issueText);
+      const anchorMismatch = hasIdentityAnchorMismatch(issueText);
       if (japaneseMismatch || anchorMismatch) {
         const retryCount = state.steps.factcheck_images.data?.codexTargetedRetries || 0;
         if (retryCount < 1) {

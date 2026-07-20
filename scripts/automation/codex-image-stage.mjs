@@ -61,6 +61,7 @@ function writeJson(file, value) {
 }
 
 export function parseSlidePlan(text) {
+  const performanceBlock = parsePerformanceBlock(text);
   const headings = [...text.matchAll(/^##\s+([^\r\n]+)$/gm)];
   return headings.map((match, index) => {
     const idMatch = match[1].match(/^(thumbnail|slide\d{2})/i);
@@ -70,10 +71,20 @@ export function parseSlidePlan(text) {
     return {
       id,
       section: text.slice(match.index, end).trim(),
+      performanceBlock,
       width: id === "thumbnail" ? 1600 : 1122,
       height: id === "thumbnail" ? 900 : 1402,
     };
   }).filter((item) => item && (item.id === "thumbnail" || /^slide0[1-8]$/.test(item.id)));
+}
+
+export function parsePerformanceBlock(text) {
+  const headings = [...text.matchAll(/^##\s+([^\r\n]+)$/gm)];
+  const index = headings.findIndex((match) => /^演出ブロック(?:\s|（|\(|$)/.test(match[1].trim()));
+  if (index < 0) return "";
+  const start = headings[index].index;
+  const end = headings[index + 1]?.index ?? text.length;
+  return text.slice(start, end).trim();
 }
 
 export function pngDimensions(file) {
@@ -102,14 +113,30 @@ function resolveCodexCli() {
   return { command: "codex", argsPrefix: [] };
 }
 
-function buildPrompt({ item, outputFile, planPath, correction = "" }) {
+export function buildPrompt({ item, outputFile, planPath, correction = "" }) {
+  const performanceBlock = item.performanceBlock || `## 演出ブロック（互換補完）
+- 衣装: 対象セクションのテーマから連想し、サムネは標準衣装だけにしない
+- 小道具: 対象セクションで意味のある道具を最低1点使う
+- ポーズ・動き: 道具を実際に使う、見比べる、確認するなど動作で主題を表す
+- 背景・状況: テーマ固有の現場を描く
+- 演出根拠: 対象セクションの中心名詞から導出する`;
   return `画像生成ジョブを1件だけ実行してください。必ず imagegen スキルと built-in imagegen を使います。
 
-添付した2枚はキャラクター正本です。最初に両方を見比べ、同一キャラクターとして厳守してください。
-- ひまり: 金髪サイドテール、水色〜ティールのリボン、大きな青い瞳、正本と同じ顔立ち・頭身。スライドでは白い標準衣装。
+添付した2枚はキャラクター正本です。最初に両方を見比べ、「同一性」と「演出」を混同せずに描いてください。
+
+【同一性（正本厳守・変更禁止）】
+- ひまり: 金髪サイドテール、水色〜ティールのリボン、大きな青い瞳、正本と同じ顔立ち・頭身・体型。
 - らぼまる: 白い卵型ボディ、黄緑アンテナ1本、黒い丸い目、胸のオレンジのハートボタン、青い首輪バンド、左右の青い耳ビレ。
 - 耳ビレは正本同様の横へ伸びる青い形を保つ。短く丸い突起へ縮めすぎない。首輪バンドと耳ビレを省略しない。
 - 別人化、人型メカ化、アンテナ増加、体型変更は禁止。
+
+【演出（記事テーマに合わせて積極的に変える）】
+- 衣装・小道具・ポーズ・背景はキャラ同一性の判定対象ではない。下の演出ブロックを優先し、記事テーマ固有の体験を描く。
+- サムネは標準衣装で棒立ち・指さし説明だけにしない。道具を手に持つ、操作する、見比べる、調べるなど動作を主役にする。
+- 本文スライドも、小道具・ポーズ・背景は各スライドの役割に合わせて変えてよい。衣装を変える場合は演出ブロックに従い、記事内で一貫させる。
+- 露出の多い衣装、記事と無関係なコスプレ、実在ロゴは不可。
+
+${performanceBlock}
 
 対象: ${item.id}
 出力: PNG ${item.width}×${item.height}px

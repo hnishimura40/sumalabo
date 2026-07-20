@@ -300,6 +300,10 @@ function checkDraftStage(slug, patterns, productNames, stage) {
       if (f === "final_article.md") {
         checkStrayStatusLabels(body, `drafts/refinement/${slug}/${f}`);
       }
+      if (f === "slide_plan.md" && !/^##\s+演出ブロック(?:\s|（|\(|$)/m.test(body)) {
+        report("warning", "image-performance", `drafts/refinement/${slug}/${f}`,
+          "演出ブロックがありません。新規記事は衣装・小道具・ポーズ・背景・演出根拠を明記してください（Phase Aでは必須）");
+      }
     }
   }
 

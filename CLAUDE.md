@@ -16,6 +16,8 @@
 
 **Codex画像原本の後片付け（2026-07-20）**: `D:\downloads\sumalabo-codex\<slug>\` は作業領域とする。独立検品合格→WebPをリポジトリへ正本採用→本番deploy/verify成功の3条件がそろった後だけ、公開フロー末尾で `archive\YYYYMM\<slug>\` へ移動する。検品不合格・未採用・deploy未成功は移動しない。archive移動から30日経過した記事フォルダは夜間run冒頭で自動削除し、移動・期限削除・安全側スキップを `cleanup-ledger.jsonl` に記録する。即時削除や手動の見切り削除は禁止。
 
+**画像の「同一性」と「演出」を分離する（2026-07-20）**: キャラ同一性のblocking判定は、ひまりの顔・体型・髪型／らぼまるの耳ビレ・首輪・アンテナ・ハート・卵型体型など、`assets/characters/character-sheet.md` の認識アンカーに限る。衣装・小道具・ポーズ・背景は記事テーマを伝えるために積極的に変え、これらの差をキャラ不一致や工房fallbackの理由にしない。新規記事の `slide_plan.md` は `## 演出ブロック` を必須とし、衣装・小道具・ポーズ・背景・演出根拠・スライド演出方針をPhase Aで自動生成する。独立検品はアンカー不一致をblocking、演出の弱さをwarningとして分ける。サムネは標準衣装の棒立ち・汎用背景・指さし説明だけを避け、道具を実際に使う体験図にする。本文スライドも小道具・動き・背景をテーマに合わせ、衣装を変える場合は記事内で一貫させる。次の立ち会い記事では、機械検品後にHiroが演出の質を実物レビューして採否を決める。
+
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと

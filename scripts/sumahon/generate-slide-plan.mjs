@@ -134,6 +134,90 @@ const PURPOSE_RECIPES = {
   },
 };
 
+const PERFORMANCE_RECIPES = [
+  {
+    priority: 10,
+    pattern: /充電|チャージ|charger|battery|バッテリー|電源/i,
+    rationale: "充電・電源を扱う記事なので、手元のケーブルと機器で『実際に扱っている瞬間』を見せる",
+    thumbnail: {
+      wardrobe: "ティール差し色の軽い作業ベストまたは機器点検用ジャケット",
+      props: ["USB-Cケーブル", "充電器またはバッテリー", "確認カード"],
+      pose: "ひまりがケーブルと機器を手に持って接続先を確かめ、らぼまるが確認カードを示す",
+      background: "明るいガジェット作業机。対象機器が一目で分かる",
+    },
+  },
+  {
+    priority: 20,
+    pattern: /比較|選び方|どっち|vs|ランキング/i,
+    rationale: "比較・選択の記事なので、2つ以上を身体の向きと視線で見比べる体験を主役にする",
+    thumbnail: {
+      wardrobe: "比較作業に合うスマートなジャケットまたは軽いスタッフベスト",
+      props: ["比較対象2点", "小さな比較カード"],
+      pose: "ひまりが左右の2つを手に取って見比べ、らぼまるが違いを指し示す",
+      background: "左右対等の比較カウンター。勝敗や優劣の煽りは入れない",
+    },
+  },
+  {
+    priority: 30,
+    pattern: /検証|試す|レビュー|実測|リコール|確認|点検|安全/i,
+    rationale: "検証・確認の記事なので、調べる手元と道具を見せて体験性を出す",
+    thumbnail: {
+      wardrobe: "作業着または点検用ベスト。必要に応じて探偵・検査員風の軽い意匠",
+      props: ["虫眼鏡", "チェックリスト", "対象物"],
+      pose: "ひまりが対象物を虫眼鏡で確認し、らぼまるがチェック項目を案内する",
+      background: "明るい検品・作業スペース。炎や過剰な危険演出は使わない",
+    },
+  },
+  {
+    pattern: /AI|モデル|研究|性能|Codex|ChatGPT|Claude|Gemini/i,
+    rationale: "AI・技術解説なので、研究・制作の現場で手を動かす姿を見せる",
+    thumbnail: {
+      wardrobe: "白衣を固定化せず、テーマに応じた研究ジャケット・工具ポーチ・制作スタッフ風の装い",
+      props: ["テーマを象徴する端末または道具", "グラフ・工程カード"],
+      pose: "ひまりが端末や道具を実際に操作し、らぼまるが工程または判断軸を補足する",
+      background: "記事テーマ固有の研究室・工房・作業机。汎用的な青い研究室だけにしない",
+    },
+  },
+  {
+    pattern: /料金|値上げ|価格|プラン|サブスク|買い時/i,
+    rationale: "価格・料金の記事なので、数字を見るだけでなく支払い判断の場面を演じる",
+    thumbnail: {
+      wardrobe: "ビジネスカジュアルまたは買い物・相談カウンターに合う装い",
+      props: ["電卓", "価格札", "財布または料金表"],
+      pose: "ひまりが価格札と選択肢を見比べ、らぼまるが計算結果または注意点を示す",
+      background: "売り場または相談カウンター。過剰な札束・煽り表現は使わない",
+    },
+  },
+];
+
+export function derivePerformanceBlock({ theme = "本記事", variant = "news" } = {}) {
+  // 複数意図が重なる場合は、記事固有の動作を描けるレシピを優先する。
+  // 例: 「バッテリーのリコール検証」は製品一般より検証の演技を採る。
+  const recipe = PERFORMANCE_RECIPES
+    .filter((candidate) => candidate.pattern.test(theme))
+    .sort((a, b) => (b.priority || 0) - (a.priority || 0))[0] || {
+    rationale: `記事テーマ「${theme}」の中心名詞を、持ち物・動き・場所の3点で体験図に変換する`,
+    thumbnail: {
+      wardrobe: "記事テーマの現場に合う上着・ベスト・アクセサリーを最低1点。標準衣装だけにしない",
+      props: [`「${theme}」を象徴する小道具`, "判断または作業に使う道具"],
+      pose: "ひまりが小道具を実際に使い、らぼまるが別の道具で整理・補助する",
+      background: "記事テーマが伝わる具体的な現場。汎用スタジオ背景にしない",
+    },
+  };
+  return {
+    rationale: recipe.rationale,
+    identityRule: "顔・体型・髪型・耳ビレ・首輪・アンテナ・ハートは正本厳守。衣装・小道具・ポーズ・背景は演出として変えてよい",
+    thumbnail: { ...recipe.thumbnail, props: [...recipe.thumbnail.props] },
+    slides: {
+      wardrobe: "記事内で一貫する衣装。演出ブロックに根拠があれば標準衣装以外も可",
+      props: ["各スライドのpurposeに意味のある道具"],
+      pose: "比較・確認・操作など、各スライドのcharacterRoleを身体の動きで表す",
+      background: "情報を邪魔しない範囲でテーマ固有の場所・机・工程を反映する",
+      optional: variant !== "comparison",
+    },
+  };
+}
+
 /**
  * understanding + 任意の bodySummary を元に最終 slidePlan を生成する。
  *
@@ -161,20 +245,23 @@ export function generateSlidePlan({ understanding, bodySummary, maxSlides = 8 } 
     throw new Error("generateSlidePlan: understanding is required");
   }
 
+  const theme = understanding.articleTheme || "本記事";
+  const variant = understanding.articleVariant || "news";
+  const performance = derivePerformanceBlock({ theme, variant });
+
   // 1. slideNeeded=false (短い速報) は 0 枚で返す
   if (understanding.slideNeeded === false) {
     return {
       count: 0,
       reason: "slideNeeded=false (短い速報・軽いニュース判定)。スライド無し運用。",
       slides: [],
+      performance,
     };
   }
 
   // 2. understanding.slidePlan が既に存在すれば、それを土台にして bodySummary で
   //    必要なら微調整する。なければ variant / tone から組み立てる。
-  const variant = understanding.articleVariant || "news";
   const tone = understanding._meta?.tone || "neutral";
-  const theme = understanding.articleTheme || "本記事";
   const hasComplexTopic = !!understanding._meta?.hasComplexTopic;
 
   let purposes = [];
@@ -271,6 +358,7 @@ export function generateSlidePlan({ understanding, bodySummary, maxSlides = 8 } 
     count: slides.length,
     reason: reasonParts.join(" / "),
     slides,
+    performance,
   };
 }
 
@@ -284,6 +372,15 @@ export function validateSlidePlan(slidePlan, { maxBlockingCount = 10 } = {}) {
   }
   if (!Array.isArray(slidePlan.slides)) {
     return { verdict: "blocking", reason: "slides_not_array" };
+  }
+  if (!slidePlan.performance?.thumbnail) {
+    return { verdict: "blocking", reason: "performance_block_missing" };
+  }
+  for (const key of ["wardrobe", "props", "pose", "background"]) {
+    const value = slidePlan.performance.thumbnail[key];
+    if (!value || (Array.isArray(value) && value.length === 0)) {
+      return { verdict: "blocking", reason: `performance_thumbnail_${key}_missing` };
+    }
   }
   const count = slidePlan.slides.length;
   // 異常値: 上限を大きく超える

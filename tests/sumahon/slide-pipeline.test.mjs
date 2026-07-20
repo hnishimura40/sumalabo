@@ -17,6 +17,7 @@ import assert from "node:assert/strict";
 
 import { generateArticleUnderstanding } from "../../scripts/sumahon/generate-article-understanding.mjs";
 import {
+  derivePerformanceBlock,
   generateSlidePlan,
   validateSlidePlan,
 } from "../../scripts/sumahon/generate-slide-plan.mjs";
@@ -121,6 +122,10 @@ test("generateSlidePlan: Apple-like news returns 4-6 slides with character roles
   });
   const plan = generateSlidePlan({ understanding: u });
   assert.ok(plan.count >= 4 && plan.count <= 6, `expected 4..6, got ${plan.count}`);
+  assert.ok(plan.performance?.thumbnail?.wardrobe, "thumbnail performance wardrobe missing");
+  assert.ok(plan.performance?.thumbnail?.props?.length, "thumbnail performance props missing");
+  assert.ok(plan.performance?.thumbnail?.pose, "thumbnail performance pose missing");
+  assert.ok(plan.performance?.thumbnail?.background, "thumbnail performance background missing");
   for (const s of plan.slides) {
     assert.ok(s.characterRole?.himari, `slide ${s.id} himari role missing`);
     assert.ok(s.characterRole?.labomaru, `slide ${s.id} labomaru role missing`);
@@ -132,6 +137,12 @@ test("generateSlidePlan: Apple-like news returns 4-6 slides with character roles
       `slide ${s.id} has static role keyword`,
     );
   }
+});
+
+test("derivePerformanceBlock: specific verification staging wins over generic product staging", () => {
+  const performance = derivePerformanceBlock({ theme: "モバイルバッテリーのリコールを検証" });
+  assert.match(performance.thumbnail.props.join(" "), /虫眼鏡|チェックリスト/);
+  assert.match(performance.thumbnail.pose, /確認|虫眼鏡/);
 });
 
 test("generateSlidePlan: foundation article returns 2-4 slides", () => {
@@ -279,7 +290,7 @@ test("generateSlidePrompt: mentions character role and props", () => {
 // generateSlideFactcheckPrompt
 // ------------------------------------------------------------------------
 
-test("generateSlideFactcheckPrompt: lists all slides and exposes 9 checks", () => {
+test("generateSlideFactcheckPrompt: lists all slides and exposes 13 checks", () => {
   const u = generateArticleUnderstanding({
     articleBrief: APPLE_PENDANT_BRIEF,
     source: APPLE_SOURCE,
@@ -289,8 +300,8 @@ test("generateSlideFactcheckPrompt: lists all slides and exposes 9 checks", () =
   for (const slide of plan.slides) {
     assert.ok(out.includes(slide.id), `factcheck prompt missing slide id ${slide.id}`);
   }
-  // 9 番までの番号付き check が含まれる
-  for (let i = 1; i <= 9; i++) {
+  // 演出適合を含む13番までの番号付き check が含まれる
+  for (let i = 1; i <= 13; i++) {
     assert.ok(out.includes(`${i}.`), `factcheck prompt missing check ${i}`);
   }
 });
