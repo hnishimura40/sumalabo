@@ -4,6 +4,7 @@ import { siteConfig } from "../config/site";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 import DrainageTracking from "../components/DrainageTracking.astro";
 import ForceRefresh from "../components/ForceRefresh.astro";
+import { BUILD_ID } from "../lib/build-id";
 
 interface Props {
   title?: string;
@@ -89,6 +90,8 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
     <meta property="og:url" content={canonicalUrl} />
     {ogImage && <meta property="og:image" content={ogImage} />}
     <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+    {/* このページが焼かれたビルドID。/version.json と比較して新デプロイを検知する */}
+    <meta name="sumalabo-build" content={BUILD_ID} />
     <GoogleAnalytics />
     <DrainageTracking />
     <title>{pageTitle}</title>
