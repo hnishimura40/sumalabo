@@ -1,0 +1,420 @@
+---
+title: "AIを使うのに高いPCは必要？10万円台で足りる理由と例外"
+slug: "202607-ai-pc-cloud-local-spec-guide"
+type: "revenue"
+category: "周辺機器・ガジェット"
+description: "ChatGPTやClaude、Codex、クラウド画像生成に高性能PCは必要なのか。クラウド型とローカル型の違い、16GBメモリを軸にした選び方、値上がり局面の買い時を体験ベースで整理します。"
+thumbnail: "/images/thumbnails/202607-ai-pc-cloud-local-spec-guide.webp"
+thumbnailAlt: "AIを使うのに高いPCは必要かをテーマに、ひまりがクラウド型の軽いノートPCとローカル型の大型GPU搭載PCを見比べ、らぼまるがほとんどの人は10万円台で十分と案内する図解"
+status: "ready"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+related:
+  - "usb-c-charger-comparison"
+  - "what-is-ai-smartphone"
+  - "202605-ai-agent-tools-comparison-2026"
+pubDate: "2026-07-20"
+updated: "2026-07-20"
+publishAt: "2026-07-20T16:58:51+09:00"
+hasAffiliate: true
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+import ProductCard from "../../src/components/article/ProductCard.astro";
+
+「AIを本格的に使うなら、GPUを積んだ高いPCが必要」と思っていませんか。
+
+ChatGPTやClaudeのチャット、CodexのAIモデル、サブスク型の画像・音楽生成の多くは、重い推論処理をサービス側のコンピューターで行います。手元のPCは、指示を送り、結果を表示し、ファイルを扱う窓口です。
+
+<div class="check-box">
+  <p class="box-label">PR表記</p>
+  <p>この記事には広告・アフィリエイトリンクを含みます。商品カードは3点だけに絞り、本文はPC選びの考え方を中心にしています。価格・在庫・販売元は変動するため、購入前に販売ページで最新情報をご確認ください。</p>
+</div>
+
+<Summary30>
+  <ol>
+    <li><strong>クラウド型AIが中心なら、10万円台のPCで十分使い切れる人が多い</strong></li>
+    <li>効きやすい順は、メモリ、画面、ネット回線、SSD。まず16GB、余裕を持つなら32GBが目安</li>
+    <li>高性能GPUが必要なのは、ローカル画像・動画生成や重い動画編集など一部の用途</li>
+    <li>2026年7月時点はPC相場が高値圏。大幅な値下がりを待つより、必要になった時に条件を絞って選ぶ</li>
+  </ol>
+</Summary30>
+
+<CharacterBubble speaker="himari" mood="curious">AI PCって書いてある高いモデルじゃないと、ChatGPTも遅くなるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">クラウド型なら、答えを考える主役はサービス側だよ。まず「どこで計算するAIか」を見よう。</CharacterBubble>
+
+## 先に結論：高いPCより、使いやすいPCを選ぶ
+
+<p class="lead"><strong>ChatGPTやClaudeを会話・文章・調査・クラウド画像生成に使うだけなら、PCのGPU性能で回答速度が大きく変わるわけではありません。</strong></p>
+
+OpenAIのWindows版ChatGPTはWindows 10以降、AnthropicのClaude DesktopもWindows 10以降を動作要件として案内しており、専用GPUを必須条件にしていません。これは「古いPCなら何でも快適」という意味ではありませんが、クラウド型AIのためだけにゲーミングPC級へ上げる必要は薄い、という判断材料になります。
+
+2026年7月時点なら、普段使いとAI利用を兼ねるPCは、次を目安にすると選びやすくなります。
+
+- メモリ16GB以上。ブラウザのタブや編集ソフトを多く開くなら32GB
+- SSD 512GB以上を目安に、写真・動画を多く置くなら1TBか外付けSSD
+- 長時間作業しやすい画面とキーボード
+- 安定したWi-Fiまたは有線回線
+
+この条件を満たす10万円台のWindowsノートやMacBook Air級で、ほとんどのクラウド型AIは十分活用できます。
+
+## AIには「クラウド型」と「ローカル型」がある
+
+<p class="lead">PC選びの分かれ道は、<strong>AIの計算をインターネットの向こうで行うか、自分のPCで行うか</strong>です。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは、2つの仕組みを左右で比較。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-pc-cloud-local-spec-guide/slide01-cloud-vs-local.webp" alt="クラウド型AIとローカル型AIの仕組みを比較する図解。クラウド型は軽いノートPCからネット経由でサービス側の大きな計算機を使い、ローカル型は手元のGPUと大容量メモリで計算する" loading="lazy" decoding="async" />
+    <figcaption>図解：重い計算をどこで行うかが違う</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>クラウド型</strong>：手元のPCは指示と表示を担当。重い計算はサービス側</li>
+      <li><strong>ローカル型</strong>：モデルを手元へ置き、自分のGPU・メモリで計算</li>
+      <li><strong>選び方</strong>：ほとんどの初心者はクラウド型からで十分</li>
+    </ul>
+  </div>
+</section>
+
+### クラウド型
+
+ブラウザやアプリから依頼し、サービス側で処理します。ChatGPTやClaudeのチャット、Codexが使うAIモデル、Webサービス型の画像・音楽生成などが代表例です。
+
+Codexには手元でファイルを読み、コマンドやビルドを実行する場面もあります。そのローカル作業はPC性能の影響を受けますが、文章の提案やコードを考えるAIモデル自体はクラウド側です。小〜中規模のブログ運営や一般的なコード作業なら、GPUよりメモリと作業環境の方が体感に効きます。
+
+### ローカル型
+
+ローカルLLM、Stable Diffusion系のローカル画像生成、ローカル動画生成など、モデルを手元で動かす方式です。ネットに出さず処理できる一方、GPUのVRAM、大容量メモリ、空き容量、冷却、電源まで考える必要があります。
+
+<Note>迷ったら、いま契約しているAIをブラウザや公式アプリで使っているか確認してください。それなら多くの場合はクラウド型です。</Note>
+
+## 用途別：どこまでPC性能が関係する？
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">よくあるAI用途を、PCへの負荷で早見。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-pc-cloud-local-spec-guide/slide02-use-cases.webp" alt="AI用途別の必要スペック早見表。チャット、文章、ブログ、Codex、クラウド画像生成、クラウド音楽生成は通常PCでよく、動画編集は素材と編集内容、ローカル生成は高性能GPUが必要と示す" loading="lazy" decoding="async" />
+    <figcaption>図解：クラウド利用と手元の処理を分けて考える</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>通常PCで十分</strong>：チャット、文章、ブログ、クラウド画像・音楽生成</li>
+      <li><strong>作業内容しだい</strong>：Codexの大規模ビルド、動画編集</li>
+      <li><strong>高性能GPUの領域</strong>：ローカル画像・動画生成、大規模ローカルLLM</li>
+    </ul>
+  </div>
+</section>
+
+<div class="table-card article-wide-block">
+
+| やりたいこと | 主な処理場所 | PC選びの目安 |
+|---|---|---|
+| チャット・文章作成 | クラウド | メモリ16GBと使いやすい画面を優先 |
+| ブログ運営 | クラウド＋手元のブラウザ | タブを多く開くためメモリが効く |
+| Codexなどのエージェント作業 | AIはクラウド、コマンドは手元の場合あり | 一般的な制作なら16GB。大規模ビルドはCPU・メモリも見る |
+| 画像生成（クラウド） | クラウド | GPUは原則不要。回線と保存容量を確認 |
+| 動画編集 | 主に手元 | 解像度、エフェクト、素材量でCPU・GPU・メモリが効く |
+| 音楽生成（クラウド） | クラウド | GPUは原則不要。音源保存用SSDがあると安心 |
+| ローカルAI生成 | 手元 | 高性能GPU、大容量メモリ、十分なSSDが必要 |
+
+</div>
+
+動画は「AIで作る部分」がクラウドでも、ダウンロード後の編集・書き出しは手元で行います。4K素材を何層も重ねるなら、そこではPC性能が効きます。AI利用と制作ソフトの負荷を分けて考えるのがコツです。
+
+## 本当に効くスペックは、GPUより先にある
+
+<p class="lead">クラウド型AI中心なら、優先順位は<strong>メモリ→画面→回線→SSD</strong>です。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">お金をかける順番をピラミッドで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-pc-cloud-local-spec-guide/slide03-spec-priority.webp" alt="クラウド型AIで効くPCスペックの順番を示すピラミッド。土台からメモリ16GB、見やすい画面とデュアルモニター、安定したネット回線、SSD容量。GPUはローカル生成など必要な人だけ" loading="lazy" decoding="async" />
+    <figcaption>図解：GPUより先に、毎日触る部分へ投資する</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1位 メモリ</strong>：16GBが基準、32GBなら同時作業に余裕</li>
+      <li><strong>2位 画面</strong>：広さとデュアルモニターが作業の往復を減らす</li>
+      <li><strong>3位 回線</strong>：クラウドAIの待ち時間とファイル転送に影響</li>
+      <li><strong>4位 SSD</strong>：画像・動画・ダウンロードの置き場</li>
+    </ul>
+  </div>
+</section>
+
+### 1. メモリは16GBを基準にする
+
+AIの回答計算に使うのではなく、ブラウザ、資料、画像編集、チャット、表計算などを同時に開く余裕として効きます。8GBでもチャットはできますが、これから数年使うPCなら16GBを基準にする方が安心です。32GBは、タブを大量に開く人、動画編集や開発環境を同時に使う人の余裕枠です。
+
+これはメーカーが保証する境界ではなく、2026年7月時点の実用上の目安です。使うアプリやタブ数で必要量は変わります。
+
+### 2. 画面は処理速度より毎日の差が出る
+
+AIの回答、元資料、執筆画面を並べると、1画面では切り替えが増えます。24インチ前後の外部モニターを1枚足すだけでも、コピー元と作業先を同時に見やすくなります。高性能GPUより、デュアルモニターの方が生産性に効く人は少なくありません。
+
+### 3. 回線は「最高速度」より安定性
+
+クラウドAIは常時大容量通信を続けるわけではありません。ただし、画像・音声・動画のアップロードとダウンロードでは回線が効きます。Wi-Fiが不安定なら、ルーターとの距離、5GHz/6GHz帯、有線接続を先に見直す価値があります。
+
+### 4. SSDは後から外付けでも増やせる
+
+文章中心なら512GBでも始めやすい一方、画像・音声・動画を残すと空き容量は減ります。内蔵SSDを上げると高くなる場合は、1TB級の外付けSSDへ完成素材を逃がす方法もあります。
+
+## GPUとNPUが必要な人、いらない人
+
+<p class="lead"><strong>GPUはローカルで重い映像・AI処理をする人向け。NPUは対応機能を手元で使うための専用回路</strong>です。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">GPU・NPU・クラウドの役割を整理。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-pc-cloud-local-spec-guide/slide04-gpu-npu.webp" alt="GPUとNPUが必要な人を線引きする図解。クラウド型AIは高性能GPU不要、動画編集とローカル生成はGPUが効く。Copilot+ PCは40TOPS以上のNPU、16GBメモリ、256GB SSDが要件だが対応機能を使う人向け" loading="lazy" decoding="async" />
+    <figcaption>図解：AIという名前だけでGPU・NPUを足さない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>GPUが効く</strong>：重い動画編集、3D、ローカル画像・動画生成</li>
+      <li><strong>NPUが効く</strong>：NPU向けに作られたオンデバイス機能</li>
+      <li><strong>不要になりやすい</strong>：ChatGPTなどクラウド型AIを使うだけの人</li>
+    </ul>
+  </div>
+</section>
+
+MicrosoftはCopilot+ PCの要件として、40 TOPS以上のNPU、16GB以上のメモリ、256GB以上のSSD、Windows 11 24H2以降を挙げています。Recall、Click to Do、Live Captions、Windows Studio Effectsなど、NPUを使うオンデバイス機能も増えました。
+
+一方、Microsoftの開発者向け資料は、NPUの恩恵を得るにはソフト側がNPU向けに作られている必要があるとも説明しています。ChatGPTやClaudeを使うためだけなら、2026年7月時点でNPU搭載を最優先にして買い替える必要はまだ薄い、というのが本記事の判断です。
+
+<Callout kind="facts" title="公式資料で確認できること">
+  <ul>
+    <li>Copilot+ PCは40 TOPS以上のNPU、16GB以上のメモリ、256GB以上のSSDが基準</li>
+    <li>Recall、Click to Do、Live Captionsなど、NPUを使う機能が提供されている</li>
+    <li>NPUは、対応するよう設計されたソフトで使われる</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="将来性について、まだ決めきれないこと（2026年7月時点）">
+  <ul>
+    <li>NPU対応アプリがどの速度で一般化し、日常利用の決め手になるか</li>
+    <li>現在の40 TOPS級NPUが、数年後の機能にも十分か</li>
+    <li>地域・機種ごとのCopilot+機能の提供時期と範囲</li>
+  </ul>
+</Callout>
+
+## 本サイトの実例：高性能PCの壁を感じたのは2か所だけ
+
+<p class="lead">本サイトでは、ブログ運営、記事画像の生成、動画素材づくりをクラウド型AIのサブスク中心で回しています。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">実運用で、PC性能の壁が出た場所だけを可視化。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-pc-cloud-local-spec-guide/slide05-real-example.webp" alt="本サイトの運用実例を示す図解。ブログ運営、クラウド画像生成、クラウドAI活用は通常PCで進み、壁を感じたのはローカル動画生成とWhisper高精度モデルの手元実行の2か所だけ。どちらもクラウド代替がある" loading="lazy" decoding="async" />
+    <figcaption>図解：壁が出たのは、手元で重い計算をした時</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>問題なし</strong>：ブログ、クラウド画像生成、AIでの調査・執筆</li>
+      <li><strong>壁1</strong>：ローカルでの動画生成</li>
+      <li><strong>壁2</strong>：Whisperの高精度モデルを手元ですばやく動かす</li>
+      <li><strong>代替</strong>：どちらもクラウドサービスへ逃がせる</li>
+    </ul>
+  </div>
+</section>
+
+スペックの壁を感じたのは、ローカルで動画生成を試した時と、文字起こしのWhisper高精度モデルを手元ですばやく動かしたい時の2か所でした。どちらも「AIを使ったから」ではなく、重いモデルを自分のPCで計算させようとした時です。
+
+この2つにはクラウド側の代替があります。毎日大量に処理するなら高性能PCへ投資する意味が出ますが、時々使う程度なら、必要な時だけクラウドを使う方が機材費と管理の負担を抑えられます。
+
+ここで伝えたいのは、特定サービスのおすすめではありません。**AIを本格的に使うことと、重いAIモデルを手元で動かすことは別**だという実感です。
+
+<Callout kind="facts" title="本サイトの運用実例">
+  <p>この節は本サイト運営者の実体験です。一般的な性能保証ではなく、クラウド型とローカル型を分けて考えるための一例として掲載しています。</p>
+</Callout>
+
+## 初心者ならMacBook Airも候補。Windowsと公平に選ぶ
+
+<p class="lead">OSはAI性能で決めるより、<strong>使うソフト、ゲーム、予算、周辺機器</strong>で決める方が失敗しにくくなります。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">MacとWindowsの得意な場面を対等に比較。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-pc-cloud-local-spec-guide/slide06-mac-vs-windows.webp" alt="初心者向けにMacBook AirとWindowsノートを公平に比較する図解。Macは操作の一貫性、静かさ、電池持ち。Windowsは価格帯、ゲーム、業務ソフト、端子や機種の選択肢。クラウドAIはどちらでも使える" loading="lazy" decoding="async" />
+    <figcaption>図解：AIではなく、普段の用途でOSを選ぶ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>MacBook Air</strong>：操作の一貫性、静かさ、持ち運びやすさ</li>
+      <li><strong>Windows</strong>：価格と機種の幅、ゲーム、業務ソフト</li>
+      <li><strong>共通</strong>：クラウド型AIはどちらでも十分使える</li>
+    </ul>
+  </div>
+</section>
+
+M系チップのMacBook Airは、ファンレスで静か、画面やトラックパッドを含めた操作がまとまり、クラウド型AIを使う初心者にも十分な性能があります。M4搭載13インチモデルは標準16GBメモリで、外部ディスプレイ2台にも対応します。
+
+Windowsは、同じ予算でも画面サイズ、端子、重量、修理性、セールの選択肢が広いのが強みです。Windows専用の業務ソフトやPCゲームを使うなら、Windowsを選ぶ理由が明確です。
+
+ノートPCを持ち歩くなら、充電器も整理できます。複数機器をまとめたい人は、[100W級まで含めたUSB-C充電器比較](/articles/usb-c-charger-comparison/)も参考にしてください。PC側が受けられるW数を超えても充電が速くなるわけではないため、対応出力の確認が先です。
+
+## いまは買い時じゃない？ 値上がり局面への答え
+
+<p class="lead"><strong>2026年7月時点は安値を待ちやすい局面ではありません。ただし、「今すぐ買わないと損」と急ぐ必要もありません。</strong></p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">価格相場と判断を、事実・報道・見方で分けて整理。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-pc-cloud-local-spec-guide/slide07-buying-timing.webp" alt="PCの買い時を整理する図解。2026年4月の平均単価上昇、5月ノート平均約13.4万円、メモリ供給の逼迫を示し、必要なら条件を絞って早めに、急がないならセールや整備済み品も候補と案内する" loading="lazy" decoding="async" />
+    <figcaption>図解：値下がり待ちより、必要性と条件で決める</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>相場</strong>：2026年春から国内PCの平均単価は高値圏</li>
+      <li><strong>背景</strong>：メモリ・SSDの供給逼迫とメーカーの価格改定</li>
+      <li><strong>判断</strong>：必要なら先延ばししすぎず、セール・中古・整備済み品も使う</li>
+    </ul>
+  </div>
+</section>
+
+<Callout kind="facts" title="統計・公式情報で確認できること（2026年7月20日時点）">
+  <ul>
+    <li>JEITA統計では、2026年4月の国内PC平均単価は約14.0万円で、3月比35%上昇</li>
+    <li>2026年5月のノートPCは44.5万台・596億円で、平均は計算上約13.4万円</li>
+    <li>4月の上昇率には、3月に低価格のGIGAスクール向け出荷が多かった反動も含まれる</li>
+    <li>2026年7月にはIntelの一部デスクトップCPUで希望価格の引き上げが確認された</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="報道・調査会社の見立て（2026年7月20日時点）">
+  <ul>
+    <li>メモリ価格は2025年後半から上がり、AIデータセンター向け需要と供給配分の変化が背景とされる</li>
+    <li>低価格PCは部材高の影響を吸収しにくく、エントリー機の選択肢が狭まるとの予測がある</li>
+    <li>2026年後半は値上がり率が鈍る見方もあるが、価格下落ではなく高値での上昇鈍化を指す</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="今後の価格について決まっていないこと">
+  <ul>
+    <li>消費者向けPCの価格がいつ下がり始めるか</li>
+    <li>メモリ需給が2027年中に正常化するか、2028年以降まで長引くか</li>
+    <li>為替、在庫、メーカー別セールで実売価格がどこまで変わるか</li>
+  </ul>
+</Callout>
+
+結論は、**必要になった時が買い時**です。故障や仕事・学習の開始時期が迫っているなら、大幅値下がりだけを期待して先延ばしする理由は薄くなっています。急がない人は、決算セール、型落ち、メーカー整備済み品、中古専門店の保証付き商品を待つ方法があります。
+
+なお、「2027年以降に落ち着く」という予測は将来の見方であり、決定事項ではありません。2026年後半に上昇率が鈍る予測もありますが、すぐ元の価格へ戻るという意味ではありません。
+
+## ローカル生成は別世界。必要になってから調べればいい
+
+ローカルLLMやローカル画像・動画生成では、モデルごとに必要なGPUのVRAM、メモリ、SSD容量が変わります。高性能GPUを積むと本体価格だけでなく、消費電力、熱、騒音、ドライバー管理も増えます。
+
+機密性、毎日の大量処理、ネットなしでの利用など、ローカルで動かす理由が明確になった時に調べれば十分です。ほとんどの人は、まずクラウド型AIを使い、回数や費用が増えてからローカル化を検討する順番で困りません。
+
+## PC周りを整えるなら、この3点だけ
+
+PC選びそのものを商品ランキングにしないため、カードは本文で触れた3つの受け皿だけに絞りました。Windows PC本体はSKUの入れ替わりが速いため、特定モデルへ固定しません。
+
+<ProductCard
+  name="Apple MacBook Air 13インチ（M4・メモリ16GB・SSD 256GB）MW0Y3J/A"
+  rakutenImageUrl="https://tshop.r10s.jp/auc-gion/cabinet/shopping308/mw0y3ja.jpg"
+  points={[
+    "M4チップ・13.6インチ・メモリ16GBの2025年モデル",
+    "クラウド型AI、文章作成、ブログ、軽い画像編集に十分な構成",
+    "M2/M3や8GB構成ではなく、型番MW0Y3J/Aを確認"
+  ]}
+  rakutenUrl="https://item.rakuten.co.jp/auc-gion/mw0y3ja/"
+  officialUrl="https://www.apple.com/jp/newsroom/2025/03/apple-introduces-the-new-macbook-air-with-the-m4-chip-and-a-sky-blue-color/"
+  note="M4は2025年モデルです。価格・在庫・保証条件は2026年7月20日時点でも変動するため、販売ページでご確認ください。"
+/>
+
+<ProductCard
+  name="Dell 24 Plus モニター S2425HSM-R（23.8インチ）"
+  rakutenImageUrl="https://tshop.r10s.jp/jism/cabinet/0057/4573661274708.jpg"
+  points={[
+    "23.8インチ・フルHD・IPSの現行24インチ級モデル",
+    "高さ・左右・縦横・角度を調整でき、2画面作業の入口にしやすい",
+    "144Hz対応だが、AI作業では画面の広さと調整しやすさを重視"
+  ]}
+  rakutenUrl="https://item.rakuten.co.jp/jism/4573661274708-44-25528-n/"
+  officialUrl="https://www.dell.com/ja-jp/shop/dell-24-plus-s2425hsm/apd/210-bsqf/-"
+  note="価格・在庫は2026年7月20日時点でも変動します。PC側の映像出力端子もご確認ください。"
+/>
+
+<ProductCard
+  name="サンワダイレクト ポータブルSSD 1TB 600-USSH1TB"
+  rakutenImageUrl="https://tshop.r10s.jp/sanwadirect/cabinet/6/600-ussh.jpg"
+  points={[
+    "USB Type-C接続の1TB構成。MacとWindowsの両方に対応",
+    "画像・動画・ダウンロード素材の退避先に使いやすい",
+    "最大速度は接続先のUSB規格で変わるため、対応ポートを確認"
+  ]}
+  rakutenUrl="https://item.rakuten.co.jp/sanwadirect/600-ussh/"
+  officialUrl="https://direct.sanwa.co.jp/ItemPage/600-USSH1TB"
+  note="楽天ページは512GB〜4TBの共通ページです。購入時に1TB（600-USSH1TB）が選ばれているかご確認ください。"
+/>
+
+## 買い替え判断チェックリスト
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、買い替える前の確認を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-ai-pc-cloud-local-spec-guide/slide08-checklist.webp" alt="AI用PCの買い替え判断チェックリスト。今のPCが遅い場面、クラウドかローカルか、メモリ16GB、画面、回線、SSD、専用GPUが必要な用途、セールや整備済み品を順に確認する" loading="lazy" decoding="async" />
+    <figcaption>図解：AIという言葉ではなく、困っている場面から決める</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li>遅いのはAIの回答か、ブラウザ・編集・書き出しか</li>
+      <li>使うAIはクラウド型か、ローカル型か</li>
+      <li>メモリ16GB、画面、回線、SSDを先に確認</li>
+      <li>ローカル生成を毎日する人だけGPUを具体化</li>
+    </ul>
+  </div>
+</section>
+
+- 今のPCで遅いのは、AIの回答ではなくブラウザや編集ソフトではないか
+- メモリは16GB以上あるか。増設できるか
+- 画面が狭いだけなら、外部モニターで解決しないか
+- 回線が不安定なら、PCより先にネット環境を直せないか
+- SSDの空き不足なら、外付けSSDで延命できないか
+- Windows専用ソフトやゲームを使うか
+- ローカル画像・動画生成を毎日行う明確な理由があるか
+- 今すぐ必要か。セール、型落ち、整備済み品を待てるか
+
+全部を高性能にするより、困っている場所へだけ予算を使う方が満足しやすくなります。
+
+## まとめ
+
+AIを使うために高いPCが必要なのではありません。**クラウド型AIを使う人は、メモリ16GB、見やすい画面、安定した回線、十分なSSDを優先すれば、10万円台のPCで足りることが多い**というのが結論です。
+
+高性能GPUが必要なのは、ローカル生成や重い動画編集を手元で行う人です。NPUも将来性はありますが、2026年7月時点ではChatGPTやClaudeを使うためだけの必須条件ではありません。
+
+PC相場は高値圏ですが、必要性がないのに急ぐ必要はありません。必要になった時に16GBを軸に選び、セールや整備済み品も使う。AIという名前に押されず、自分の作業で選びましょう。
+
+## 参考情報
+
+- OpenAI Help「[Using the ChatGPT Windows app](https://help.openai.com/en/articles/9982051-using-the-chatgpt-windows-app)」— Windows版の動作要件
+- Anthropic Help「[Install Claude Desktop](https://support.claude.com/en/articles/10065433-install-claude-desktop)」— Claude Desktopの動作要件
+- Microsoft Learn「[Develop AI applications for Copilot+ PCs](https://learn.microsoft.com/en-us/windows/ai/npu-devices/)」— NPUの役割と40 TOPS要件
+- Microsoft「[Copilot+ PCs vs. Windows PCs](https://www.microsoft.com/en-us/windows/learning-center/copilot-plus-pcs-windows-pcs-differences)」— 16GB/256GB要件と対応機能
+- JEITA「[2026年 パーソナルコンピュータ国内出荷実績](https://www.jeita.or.jp/japanese/stat/pc/2026/)」— 2026年4月・5月の台数と金額
+- PC Watch「[PC価格、1カ月で3割高騰](https://pc.watch.impress.co.jp/docs/news/2111549.html)」— 4月平均単価とGIGAスクール反動の補足
+- PC Watch「[Core Ultra 7 270K Plus/5 250K Plusが最大50ドルの値上げ](https://pc.watch.impress.co.jp/docs/news/2122119.html)」— 2026年7月の一部CPU価格改定
+- TrendForce「[Memory Price Outlook for 1Q26](https://www.trendforce.com/presscenter/news/20260202-12911.html)」— メモリ供給逼迫
+- TrendForce「[Agentic AI Drives Structural Expansion in Memory Demand](https://www.trendforce.com/presscenter/news/20260529-13068.html)」— 2027年までの需給見通し
+- Apple「[M4搭載MacBook Air発表](https://www.apple.com/jp/newsroom/2025/03/apple-introduces-the-new-macbook-air-with-the-m4-chip-and-a-sky-blue-color/)」— 16GBメモリと外部ディスプレイ対応
+- Dell「[Dell 24 Plus モニター S2425HSM](https://www.dell.com/ja-jp/shop/dell-24-plus-s2425hsm/apd/210-bsqf/-)」— 画面・調整機能
+- サンワダイレクト「[600-USSH1TB](https://direct.sanwa.co.jp/ItemPage/600-USSH1TB)」— USB Type-C外付けSSDの仕様

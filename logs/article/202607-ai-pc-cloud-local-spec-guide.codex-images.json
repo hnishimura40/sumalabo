@@ -1,0 +1,84 @@
+{
+  "slug": "202607-ai-pc-cloud-local-spec-guide",
+  "transport": "codex_exec",
+  "outputDir": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide",
+  "canonicalImages": [
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\himari-canonical.png",
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\labomaru-canonical.png"
+  ],
+  "outputs": [
+    {
+      "id": "thumbnail",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\thumbnail.png",
+      "width": 1600,
+      "height": 900,
+      "sha256": "e61e8aef38c1f6ea60bbb32eb27a5a713d5faf715b7af6c176a3719369ed6ac9",
+      "bytes": 3048702
+    },
+    {
+      "id": "slide01",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide01.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "e2493d157664cc7476adeab3b56a252a0cc12243c5de276efab7fcabfc72ac61",
+      "bytes": 2104711
+    },
+    {
+      "id": "slide02",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide02.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "df37cec5fcb5b47aaf336ccf91c6139053ae1373ce205cf1ddb8f8f8c52957b5",
+      "bytes": 1335844
+    },
+    {
+      "id": "slide03",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide03.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "6535434c84f08121ce6c28cfb264291342cdaf07fdf0fa0fb803ab6e22910ee1",
+      "bytes": 1648491
+    },
+    {
+      "id": "slide04",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide04.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "6d4718e4b299b981298e8dfeca575e5d92e93fe3c0f74dd415403ec5740fba7a",
+      "bytes": 1831437
+    },
+    {
+      "id": "slide05",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide05.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "f68fd2a078f2e38c79c5e33065d3efc284d9c0e3a9cd16c44a2dabaeb15e4b48",
+      "bytes": 1437114
+    },
+    {
+      "id": "slide06",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide06.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "3607a8dcb4bce7dfa1903bfe4ab56d0f9c061267fed07cd1674920e7d84a5264",
+      "bytes": 1579758
+    },
+    {
+      "id": "slide07",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide07.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "e7b8dbad0c4d320d226ed61e981ae355e4dbdc1d63e284bf10a783e401e0e2b8",
+      "bytes": 1632995
+    },
+    {
+      "id": "slide08",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide08.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "c3aebf22d4fff98dd59263c79414fe046cab0cbd30826ebb4674f92887e7f20f",
+      "bytes": 2111662
+    }
+  ],
+  "completedAt": "2026-07-20T07:51:02.821Z"
+}

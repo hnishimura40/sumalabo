@@ -401,7 +401,7 @@ Phase B 完了後だけ実行：
 - sourceCheck: ok / urlCount / sumahon非露出 / reportingNotice
 - articleQualityCheck: titleDuplicate / markdownResidue / character_visual_missing 等
 - 禁則チェック: 0 hits（普通の人 / すまほん / smhn / ここから本文 / 最終稿 / 初稿 / 元記事）
-- npm run build: N pages OK
+- ビルド: N pages OK
 - 画像: 元 XX.X MB → WebP X.X MB（22 枚など）
 
 ### 自動化結果
@@ -433,7 +433,7 @@ Phase B 完了後だけ実行：
 ### Phase B（公開）
 - PR #NN merge 済み（merge commit: xxxx）
 - main 同期 OK
-- wrangler 本番 deploy: ok
+- 本番デプロイ: ok
 - strict verify: 8/8 pass（httpStatus / titleNotGeneric / slugInHtml / notHomepageFallback / hasArticleBody / hasThumbnailRef / noProhibitedCopy / indexListsArticle）
 
 ### Phase C（X 投稿）

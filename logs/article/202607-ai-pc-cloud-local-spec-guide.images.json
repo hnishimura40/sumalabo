@@ -1,0 +1,13 @@
+{
+  "slides": [
+    { "src": "D:/downloads/sumalabo-codex/202607-ai-pc-cloud-local-spec-guide/slide01.png", "name": "slide01-cloud-vs-local.webp", "check": "ok" },
+    { "src": "D:/downloads/sumalabo-codex/202607-ai-pc-cloud-local-spec-guide/slide02.png", "name": "slide02-use-cases.webp", "check": "ok" },
+    { "src": "D:/downloads/sumalabo-codex/202607-ai-pc-cloud-local-spec-guide/slide03.png", "name": "slide03-spec-priority.webp", "check": "ok" },
+    { "src": "D:/downloads/sumalabo-codex/202607-ai-pc-cloud-local-spec-guide/slide04.png", "name": "slide04-gpu-npu.webp", "check": "ok" },
+    { "src": "D:/downloads/sumalabo-codex/202607-ai-pc-cloud-local-spec-guide/slide05.png", "name": "slide05-real-example.webp", "check": "ok" },
+    { "src": "D:/downloads/sumalabo-codex/202607-ai-pc-cloud-local-spec-guide/slide06.png", "name": "slide06-mac-vs-windows.webp", "check": "ok" },
+    { "src": "D:/downloads/sumalabo-codex/202607-ai-pc-cloud-local-spec-guide/slide07.png", "name": "slide07-buying-timing.webp", "check": "ok" },
+    { "src": "D:/downloads/sumalabo-codex/202607-ai-pc-cloud-local-spec-guide/slide08.png", "name": "slide08-checklist.webp", "check": "ok" }
+  ],
+  "thumbnail": { "src": "D:/downloads/sumalabo-codex/202607-ai-pc-cloud-local-spec-guide/thumbnail.png", "check": "ok" }
+}

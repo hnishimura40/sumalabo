@@ -1,0 +1,185 @@
+{
+  "slug": "202607-ai-pc-cloud-local-spec-guide",
+  "transport": "codex_exec",
+  "runs": [
+    {
+      "item": "thumbnail",
+      "startedAt": "2026-07-20T07:04:32.957Z",
+      "finishedAt": "2026-07-20T07:07:52.317Z",
+      "elapsedMs": 199359,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 373949,
+        "cached_input_tokens": 334336,
+        "output_tokens": 3655,
+        "reasoning_output_tokens": 1337
+      },
+      "failureCondition": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "e61e8aef38c1f6ea60bbb32eb27a5a713d5faf715b7af6c176a3719369ed6ac9",
+      "bytes": 3048702,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\thumbnail.png"
+    },
+    {
+      "item": "slide01",
+      "startedAt": "2026-07-20T07:07:52.323Z",
+      "finishedAt": "2026-07-20T07:15:12.815Z",
+      "elapsedMs": 440492,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 1189229,
+        "cached_input_tokens": 1084160,
+        "output_tokens": 7795,
+        "reasoning_output_tokens": 2935
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "e2493d157664cc7476adeab3b56a252a0cc12243c5de276efab7fcabfc72ac61",
+      "bytes": 2104711,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide01.png"
+    },
+    {
+      "item": "slide02",
+      "startedAt": "2026-07-20T07:15:12.819Z",
+      "finishedAt": "2026-07-20T07:19:31.269Z",
+      "elapsedMs": 258450,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 606775,
+        "cached_input_tokens": 536576,
+        "output_tokens": 4442,
+        "reasoning_output_tokens": 1518
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "df37cec5fcb5b47aaf336ccf91c6139053ae1373ce205cf1ddb8f8f8c52957b5",
+      "bytes": 1335844,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide02.png"
+    },
+    {
+      "item": "slide03",
+      "startedAt": "2026-07-20T07:19:31.273Z",
+      "finishedAt": "2026-07-20T07:22:38.933Z",
+      "elapsedMs": 187660,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 253992,
+        "cached_input_tokens": 204032,
+        "output_tokens": 3145,
+        "reasoning_output_tokens": 1102
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "6535434c84f08121ce6c28cfb264291342cdaf07fdf0fa0fb803ab6e22910ee1",
+      "bytes": 1648491,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide03.png"
+    },
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-20T07:22:38.937Z",
+      "finishedAt": "2026-07-20T07:27:21.840Z",
+      "elapsedMs": 282902,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 587467,
+        "cached_input_tokens": 525312,
+        "output_tokens": 5818,
+        "reasoning_output_tokens": 2521
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "6d4718e4b299b981298e8dfeca575e5d92e93fe3c0f74dd415403ec5740fba7a",
+      "bytes": 1831437,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide04.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-20T07:27:21.843Z",
+      "finishedAt": "2026-07-20T07:32:45.000Z",
+      "elapsedMs": 323157,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 758205,
+        "cached_input_tokens": 653568,
+        "output_tokens": 3534,
+        "reasoning_output_tokens": 1092
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "f68fd2a078f2e38c79c5e33065d3efc284d9c0e3a9cd16c44a2dabaeb15e4b48",
+      "bytes": 1437114,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide05.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-20T07:32:45.005Z",
+      "finishedAt": "2026-07-20T07:38:51.132Z",
+      "elapsedMs": 366127,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 571581,
+        "cached_input_tokens": 512256,
+        "output_tokens": 4288,
+        "reasoning_output_tokens": 1482
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "3607a8dcb4bce7dfa1903bfe4ab56d0f9c061267fed07cd1674920e7d84a5264",
+      "bytes": 1579758,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide06.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-20T07:38:51.135Z",
+      "finishedAt": "2026-07-20T07:44:39.602Z",
+      "elapsedMs": 348467,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 766737,
+        "cached_input_tokens": 688384,
+        "output_tokens": 3516,
+        "reasoning_output_tokens": 842
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "e7b8dbad0c4d320d226ed61e981ae355e4dbdc1d63e284bf10a783e401e0e2b8",
+      "bytes": 1632995,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide07.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-20T07:44:39.607Z",
+      "finishedAt": "2026-07-20T07:51:02.816Z",
+      "elapsedMs": 383209,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 828825,
+        "cached_input_tokens": 743424,
+        "output_tokens": 6054,
+        "reasoning_output_tokens": 2819
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "c3aebf22d4fff98dd59263c79414fe046cab0cbd30826ebb4674f92887e7f20f",
+      "bytes": 2111662,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-ai-pc-cloud-local-spec-guide\\slide08.png"
+    }
+  ],
+  "updatedAt": "2026-07-20T07:51:02.820Z",
+  "totalElapsedMs": 2789823,
+  "totalUsage": {
+    "input_tokens": 5936760,
+    "cached_input_tokens": 5282048,
+    "output_tokens": 42247,
+    "reasoning_output_tokens": 15648
+  }
+}
