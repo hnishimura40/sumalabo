@@ -22,6 +22,10 @@
   <span class="force-refresh__text">更新中…</span>
 </div>
 
+<button id="update-banner" class="update-banner" type="button" hidden>
+  新しい版があります（タップで更新）
+</button>
+
 <script>
   (() => {
     const IND_ID = "force-refresh-ind";
@@ -171,6 +175,69 @@
     );
 
     window.addEventListener("touchcancel", reset, { passive: true });
+
+    // ── 新デプロイ検知バナー ───────────────────────────────────────────
+    // /version.json のビルドIDと、このページに焼かれた <meta name="sumalabo-build">
+    // を比較し、違えば「新しい版があります」を出して、タップで上の forceRefresh() を呼ぶ。
+    const PAGE_LOADED_AT = Date.now();
+    const MIN_PAGE_AGE_MS = 60_000; // 読み込み直後は判定しない（deploy伝播レース対策）
+    const MIN_INTERVAL_MS = 30_000; // 連続チェックの間引き
+    const CONFIRM_DELAY_MS = 10_000; // 差分を検知したら再確認してから出す（エッジ不整合対策）
+
+    const banner = document.getElementById("update-banner") as HTMLButtonElement | null;
+    const currentBuild =
+      document.querySelector<HTMLMetaElement>('meta[name="sumalabo-build"]')?.content || "";
+
+    let lastCheck = 0;
+    let checking = false;
+    let bannerShown = false;
+
+    async function fetchBuildId(): Promise<string> {
+      try {
+        const res = await fetch("/version.json", {
+          cache: "no-store",
+          credentials: "same-origin",
+        });
+        if (!res.ok) return "";
+        const json = await res.json();
+        return json?.buildId || "";
+      } catch {
+        return "";
+      }
+    }
+
+    async function checkForUpdate() {
+      if (!banner || !currentBuild || bannerShown || checking || running) return;
+      // 伝播レース猶予: 開いた直後は判定しない
+      if (Date.now() - PAGE_LOADED_AT < MIN_PAGE_AGE_MS) return;
+      if (Date.now() - lastCheck < MIN_INTERVAL_MS) return;
+      lastCheck = Date.now();
+      checking = true;
+      try {
+        const first = await fetchBuildId();
+        if (!first || first === currentBuild) return;
+        // 伝播途中でエッジごとに版が揺れている可能性があるため、間をおいて再確認。
+        // 同じ新IDが2回続けて返ったときだけ「本当に新版が出た」と判定する。
+        await new Promise((r) => setTimeout(r, CONFIRM_DELAY_MS));
+        const second = await fetchBuildId();
+        if (second && second === first && second !== currentBuild) {
+          bannerShown = true;
+          banner.hidden = false;
+        }
+      } finally {
+        checking = false;
+      }
+    }
+
+    banner?.addEventListener("click", () => {
+      banner.hidden = true;
+      forceRefresh();
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) checkForUpdate();
+    });
+    window.addEventListener("focus", checkForUpdate);
   })();
 </script>
 
@@ -198,5 +265,42 @@
       opacity 120ms ease;
     translate: -50% 0;
     pointer-events: none;
+  }
+
+  /* 新デプロイ検知バナー。読者が見ても違和感のない控えめな通知トーンにする
+     （広告・警告色にしない。下部中央の小さなピル）。 */
+  .update-banner {
+    position: fixed;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    z-index: 3000;
+    translate: -50% 0;
+    max-width: calc(100vw - 32px);
+    padding: 9px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg-elev);
+    box-shadow: var(--shadow-md);
+    color: var(--fg);
+    font-size: 12.5px;
+    font-weight: 700;
+    line-height: 1.4;
+    cursor: pointer;
+    animation: update-banner-in 160ms ease-out;
+  }
+
+  .update-banner:active {
+    transform: scale(0.98);
+  }
+
+  @keyframes update-banner-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
