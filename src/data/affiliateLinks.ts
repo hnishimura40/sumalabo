@@ -20,10 +20,16 @@ export const affiliateLinks = {
     yahoo: "https://shopping.yahoo.co.jp/search?p=Anker%20511%20Charger%20Nano%203%2030W",
     official: "",
   },
-  "belkin-30w-pd-pps": {
-    amazon: "https://www.amazon.co.jp/s?k=Belkin%20BoostCharge%2030W%20USB-C%20PD%20PPS",
-    rakuten: "https://search.rakuten.co.jp/search/mall/Belkin%20BoostCharge%2030W%20USB-C%20PD%20PPS/",
-    yahoo: "https://shopping.yahoo.co.jp/search?p=Belkin%20BoostCharge%2030W%20USB-C%20PD%20PPS",
+  "ugreen-nexode-air-65w": {
+    amazon: "https://www.amazon.co.jp/s?k=UGREEN%20Nexode%20Air%2065W",
+    rakuten: "https://item.rakuten.co.jp/ugreen-gear/75813/",
+    yahoo: "https://shopping.yahoo.co.jp/search?p=UGREEN%20Nexode%20Air%2065W",
+    official: "https://ugreen.jp/products/nexode-air-65w-charger",
+  },
+  "ugreen-nexode-pro-100w": {
+    amazon: "https://www.amazon.co.jp/s?k=UGREEN%20Nexode%20Pro%20100W",
+    rakuten: "https://item.rakuten.co.jp/ugreen-gear/15202/",
+    yahoo: "https://shopping.yahoo.co.jp/search?p=UGREEN%20Nexode%20Pro%20100W",
     official: "",
   },
   "samsung-45w-power-adapter": {
@@ -74,11 +80,23 @@ export const affiliateLinks = {
     yahoo: "https://shopping.yahoo.co.jp/search?p=%E3%82%A8%E3%83%AC%E3%82%B3%E3%83%A0%20DE-C69L-10000%20%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AB%E3%83%90%E3%83%83%E3%83%86%E3%83%AA%E3%83%BC",
     official: "",
   },
-  "motteru-mot-mb10003-ec": {
-    amazon: "https://www.amazon.co.jp/s?k=MOTTERU%20MOT-MB10003-EC",
-    rakuten: "https://search.rakuten.co.jp/search/mall/MOTTERU%20MOT-MB10003-EC/",
-    yahoo: "https://shopping.yahoo.co.jp/search?p=MOTTERU%20MOT-MB10003-EC",
-    official: "",
+  "cio-smartcoby-slim-ii-wireless22-pro-ss10k": {
+    amazon: "https://www.amazon.co.jp/s?k=CIO-MB35W1C-SS10K-S2W25",
+    rakuten: "https://item.rakuten.co.jp/machinoomise/cio-mb35w1c-ss10k-s2w25/",
+    yahoo: "https://shopping.yahoo.co.jp/search?p=CIO-MB35W1C-SS10K-S2W25",
+    official: "https://connectinternationalone.co.jp/cioproduct/mobilebattery/smartcoby/cio-mb35w1c-ss10k-s2w25/",
+  },
+  "matech-magon-powermax-cable-10000": {
+    amazon: "https://www.amazon.co.jp/s?k=MATECH%20MagOn%20PowerMax%20Cable%2010000",
+    rakuten: "",
+    yahoo: "",
+    official: "https://matech-jp.com/",
+  },
+  "qiroca-qp-10wa": {
+    amazon: "",
+    rakuten: "",
+    yahoo: "",
+    official: "https://qiroca.jp/",
   },
   "cio-smartcoby-pro-cable-c": {
     amazon: "https://www.amazon.co.jp/s?k=CIO%20SMARTCOBY%20Pro%20CABLE%20C",
@@ -102,18 +120,6 @@ export const affiliateLinks = {
     amazon: "https://www.amazon.co.jp/s?k=%E3%83%90%E3%83%83%E3%83%95%E3%82%A1%E3%83%AD%E3%83%BC%20BMPBSA10000%20%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AB%E3%83%90%E3%83%83%E3%83%86%E3%83%AA%E3%83%BC",
     rakuten: "https://search.rakuten.co.jp/search/mall/%E3%83%90%E3%83%83%E3%83%95%E3%82%A1%E3%83%AD%E3%83%BC%20BMPBSA10000%20%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AB%E3%83%90%E3%83%83%E3%83%86%E3%83%AA%E3%83%BC/",
     yahoo: "https://shopping.yahoo.co.jp/search?p=%E3%83%90%E3%83%83%E3%83%95%E3%82%A1%E3%83%AD%E3%83%BC%20BMPBSA10000%20%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AB%E3%83%90%E3%83%83%E3%83%86%E3%83%AA%E3%83%BC",
-    official: "",
-  },
-  "anker-maggo-power-bank-slim": {
-    amazon: "https://www.amazon.co.jp/s?k=Anker%20MagGo%20Power%20Bank%2010000mAh%20Slim",
-    rakuten: "https://search.rakuten.co.jp/search/mall/Anker%20MagGo%20Power%20Bank%2010000mAh%20Slim/",
-    yahoo: "https://shopping.yahoo.co.jp/search?p=Anker%20MagGo%20Power%20Bank%2010000mAh%20Slim",
-    official: "",
-  },
-  "belkin-qi2-15w-10k": {
-    amazon: "https://www.amazon.co.jp/s?k=Belkin%20Qi2%2015W%20%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AB%E3%83%90%E3%83%83%E3%83%86%E3%83%AA%E3%83%BC%2010000mAh",
-    rakuten: "https://search.rakuten.co.jp/search/mall/Belkin%20Qi2%2015W%20%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AB%E3%83%90%E3%83%83%E3%83%86%E3%83%AA%E3%83%BC%2010000mAh/",
-    yahoo: "https://shopping.yahoo.co.jp/search?p=Belkin%20Qi2%2015W%20%E3%83%A2%E3%83%90%E3%82%A4%E3%83%AB%E3%83%90%E3%83%83%E3%83%86%E3%83%AA%E3%83%BC%2010000mAh",
     official: "",
   },
 } as const;
