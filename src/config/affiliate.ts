@@ -49,7 +49,9 @@ export const affiliateConfig: {
   moshimo: Record<MallStore, MoshimoProgram>;
   a8: { mediaId: string };
 } = {
-  rakutenAffiliateId: "55e28e2f.7241aa0f.55e28e30.472ff37b",
+  // 楽天アフィリエイト ID の切り替えはこの1行だけ変更すれば全リンクに反映される
+  // （全リンクは buildMallLink 経由で生成。直書きリンクは存在しない）。
+  rakutenAffiliateId: "55f569f3.98a66352.55f569f4.924c9179",
   moshimo: {
     // Amazon / Yahoo は ASP 未開通のため空のまま = 素の URL（通常リンク）で共存。
     amazon: { aId: "", pId: "", pcId: "", plId: "" },

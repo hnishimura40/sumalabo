@@ -81,6 +81,15 @@ SIM 系など高単価案件用。**登録時サイト審査が実質なし**で
 4. `npm run build` → 既存の ProductCard / AffiliateLinks のリンクが**一斉にもしも経由のアフィリエイトリンク（rel="sponsored"）に切り替わる**（ID 未設定のモールは通常リンクのまま）
 5. deploy（**4:00〜7:00 は回避**）
 
+### 5-1b. 楽天アフィリエイト（直リンク）の ID 設定・切り替え — 1 行で全リンク反映
+
+楽天だけは、もしもを介さない**直リンク運用**（`hb.afl.rakuten.co.jp/hgc/{ID}/?pc=...&m=...`）が有効。
+
+- **ID の管理場所は [`src/config/affiliate.ts`](../src/config/affiliate.ts) の `affiliateConfig.rakutenAffiliateId` の 1 か所のみ**（ドット区切りの楽天アフィリエイト ID。**具体値はこのドキュメントに書かない** — 常に設定ファイルを正とする）。
+- 全楽天リンクは `buildMallLink()` がビルド時に生成する。**MDX・コンポーネントに直書きの `hb.afl` リンクは存在しない**ため、**ID を切り替えるときはこの 1 行を書き換えて `npm run build` するだけ**で全ページに反映される。
+- 切り替え後の検証: dist / 本番 HTML で **旧 ID 残存 0 件**・**新 ID のリンク総数が切り替え前と一致**・rel が `nofollow sponsored noopener` 維持・標本リンクが実際に `item.rakuten.co.jp` の元の着地先（`pc=` の URL）へ到達すること（`?scid=af_pc_etc` が付けば成果計測有効）を確認する。着地先 URL（`pc=`）は ID 差し替えでは変えない。
+- `rakutenAffiliateId` が空文字なら楽天も素の URL（通常リンク）に戻る。
+
 ### 5-2. A8（案件）の設定 — 記事ごと
 
 1. A8 管理画面 → 提携済み案件 → 広告リンク作成 → テキストリンクの URL（`https://px.a8.net/svt/ejp?a8mat=...`）を控える
