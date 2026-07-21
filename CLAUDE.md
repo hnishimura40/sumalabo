@@ -620,6 +620,8 @@ PC 表示では **横スクロールを原則使わない**。スマホでも基
 
 **アフィリエイトボタンのコントラスト標準**: 店舗ボタン（`AffiliateLinks.astro` / `ProductCard.astro`）は**テーマで反転する `var(--teal)` を背景に使わない**（ダークで明色化し白文字が読めなくなる）。白文字で light/dark 両方 WCAG AA(4.5:1)以上の固定色に統一する（amazon/base #0f766e・楽天 #0e7167・Yahoo #115e59・公式 #3f5168）。
 
+**楽天アフィリエイト ID の管理**: ID は `src/config/affiliate.ts` の `rakutenAffiliateId` **1 か所のみ**で管理する（具体値はドキュメントに書かない）。全楽天リンクは `buildMallLink()` がビルド時に生成し直書きリンクは無いので、**切り替えはこの 1 行を書き換えて build するだけ**で全ページに反映される。切替後は旧 ID 残存 0・リンク総数一致・rel 維持・着地先（`pc=`）不変を dist/本番で確認する。詳細: [`docs/affiliate_setup.md`](docs/affiliate_setup.md) §5-1b
+
 > 詳細: [`docs/internal_drainage.md`](docs/internal_drainage.md)
 
 ## 関連ドキュメント
