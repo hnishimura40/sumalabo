@@ -67,3 +67,11 @@ URL と GA4 計測を汚さない `fetch(..., {cache:'reload'})` を選択した
   - 差分を検知したら **10秒**おいて再取得し、**同じ新IDが2回続いたときだけ**表示
     （deploy 直後はエッジごとに版が揺れることがあるため）
 - 有効範囲はプル更新と同じ（既定 standalone、`?ptr=1` / localStorage で検証可）。
+
+### ビルドIDの決め方（2026-07-22 修正）
+- `BUILD_ID` は **`git rev-parse HEAD` を最優先**で決める（`src/lib/build-id.ts`）。
+  本番反映は wrangler Direct Upload のローカルビルドで、実デプロイ版は常に作業ツリーの HEAD。
+  `CF_PAGES_COMMIT_SHA` / `GITHUB_SHA` は git が使えない環境のフォールバックに限定
+  （以前は env を優先していて、stale な env があると version.json が古いコミットを指した）。
+- `/version.json` は Astro が静的ファイル化するためエンドポイントの `no-store` が落ちる。
+  `public/_headers` で `/version.json` に `no-store` を固定し、常に最新を取得させる。
