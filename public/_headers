@@ -1,0 +1,10 @@
+# Cloudflare Pages のカスタムヘッダー。public/ の静的アセットは dist へそのままコピーされる。
+# 新デプロイ検知(version.json)と Service Worker は、常に最新を取得させるためキャッシュ無効化する。
+# ※ version.json は Astro が静的ファイルとして出力するため、エンドポイント側の Response
+#    ヘッダー(no-store)は反映されない。ここで確実に no-store を付ける。
+
+/version.json
+  Cache-Control: no-store, max-age=0, must-revalidate
+
+/sw.js
+  Cache-Control: no-cache, max-age=0, must-revalidate
