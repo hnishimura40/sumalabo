@@ -88,9 +88,14 @@ const { title, description = "", buttonLabel, href = "", note = "", sponsored = 
     line-height: 1.35;
     color: #fff;
     text-decoration: none;
-    background: var(--teal);
-    border: 1px solid color-mix(in srgb, var(--teal) 38%, var(--line));
+    background: #0f766e;
+    border: 1px solid rgba(0, 0, 0, 0.14);
     box-shadow: var(--shadow-sm);
+  }
+
+  /* 記事本文の通常リンク色より特異度を上げ、CTAの白文字を確実に維持する。 */
+  .cta-box a.cta-box-button {
+    color: #fff;
   }
 
   .cta-box-button--pending {
