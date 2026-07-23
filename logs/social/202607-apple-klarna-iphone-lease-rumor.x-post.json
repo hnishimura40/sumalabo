@@ -1,0 +1,60 @@
+{
+  "slug": "202607-apple-klarna-iphone-lease-rumor",
+  "articleUrl": "https://sumalabo.com/articles/202607-apple-klarna-iphone-lease-rumor/",
+  "isReporting": true,
+  "linkInReply": true,
+  "reply": {
+    "text": "記事で続きと出典まで読めます👇\nhttps://sumalabo.com/articles/202607-apple-klarna-iphone-lease-rumor/",
+    "articleUrl": "https://sumalabo.com/articles/202607-apple-klarna-iphone-lease-rumor/"
+  },
+  "attachThumbnail": true,
+  "thumbnailPath": "/images/thumbnails/202607-apple-klarna-iphone-lease-rumor.webp",
+  "hashtags": [
+    "#iPhone",
+    "#すまラボ"
+  ],
+  "primary": {
+    "text": "iPhoneを月額で借りる？Apple×Klarnaの「リース計画」を、確定と未確定に分けて整理\n\nAppleがKlarnaと組み、iPhoneやMacを月額で使える『Apple Upgrade』を米国で始めると報じられています。\n#iPhone #すまラボ",
+    "charCount": 129,
+    "weightedLength": 195,
+    "fitsLimit": true,
+    "downshifted": true,
+    "truncated": false
+  },
+  "alternates": [
+    {
+      "label": "結論先出し",
+      "text": "結論: iPhoneを月額で借りる？Apple×Klarnaの「リース計画」を、確定と未確定に分けて整理\n\nAppleがKlarnaと組み、iPhoneやMacを月額で使える『Apple Upgrade』を米国で始めると報じられています。\n#iPhone #すまラボ",
+      "charCount": 133,
+      "weightedLength": 201,
+      "fitsLimit": true,
+      "downshifted": true,
+      "truncated": false
+    },
+    {
+      "label": "問いかけ",
+      "text": "iPhoneを月額で借りる？Apple×Klarnaの「リース計画」をという噂、本当のところは？\n\nAppleがKlarnaと組み、iPhoneやMacを月額で使える『Apple Upgrade』を米国で始めると報じられています。\n#iPhone #すまラボ",
+      "charCount": 129,
+      "weightedLength": 195,
+      "fitsLimit": true,
+      "downshifted": true,
+      "truncated": false
+    }
+  ],
+  "warnings": [
+    "primary は280字ガードにより短い構成で生成し直しました（description全文は不使用）"
+  ],
+  "generatedAt": "2026-07-23T20:37:49.928Z",
+  "attachmentPlan": {
+    "variant": "images4+reply",
+    "attach": [
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\thumbnails\\202607-apple-klarna-iphone-lease-rumor.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-apple-klarna-iphone-lease-rumor\\slide02-reported.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-apple-klarna-iphone-lease-rumor\\slide01-conclusion.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-apple-klarna-iphone-lease-rumor\\slide03-lease.webp"
+    ],
+    "threadBatches": [],
+    "linkInReply": true,
+    "selectionSource": "independent_inspection"
+  }
+}

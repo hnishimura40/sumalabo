@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20T08:28:19.6425991Z",
+  "updatedAt": "2026-07-23T20:46:27.346Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -390,7 +390,8 @@
       "productionUrl": "https://sumalabo.com/articles/power-bank-comparison/",
       "autonomyLevel": 0,
       "trigger": "manual",
-      "hasAffiliate": true
+      "hasAffiliate": true,
+      "publishedAt": "2026-05-05T09:00:00+09:00"
     },
     {
       "slug": "power-bank-guide",
@@ -401,7 +402,8 @@
       "productionUrl": "https://sumalabo.com/articles/power-bank-guide/",
       "autonomyLevel": 0,
       "trigger": "manual",
-      "hasAffiliate": false
+      "hasAffiliate": false,
+      "publishedAt": "2026-05-05T09:00:00+09:00"
     },
     {
       "slug": "sample-esim",
@@ -445,7 +447,8 @@
       "productionUrl": "https://sumalabo.com/articles/usb-c-charger-comparison/",
       "autonomyLevel": 0,
       "trigger": "manual",
-      "hasAffiliate": true
+      "hasAffiliate": true,
+      "publishedAt": "2026-05-05T09:00:00+09:00"
     },
     {
       "slug": "usb-c-charger-guide",
@@ -456,7 +459,8 @@
       "productionUrl": "https://sumalabo.com/articles/usb-c-charger-guide/",
       "autonomyLevel": 0,
       "trigger": "manual",
-      "hasAffiliate": false
+      "hasAffiliate": false,
+      "publishedAt": "2026-05-05T09:00:00+09:00"
     },
     {
       "slug": "used-smartphone-guide",
@@ -702,12 +706,12 @@
     {
       "slug": "202607-openai-chatgpt-atlas-browser-end",
       "incidents": [],
-      "source": "night_run_recovered",
+      "source": "user_directed",
       "triggerKind": "user",
       "articleUrl": "https://sumalabo.com/articles/202607-openai-chatgpt-atlas-browser-end/",
       "previewUrl": "https://8fe2de91.sumalabo.pages.dev/articles/202607-openai-chatgpt-atlas-browser-end/",
       "productionUrl": "https://sumalabo.com/articles/202607-openai-chatgpt-atlas-browser-end/",
-      "publishedAt": "2026-07-14T00:26:43.121Z",
+      "publishedAt": "2026-07-14T09:00:00+09:00",
       "autonomyLevel": 1,
       "trigger": "manual",
       "hasAffiliate": false,
@@ -716,7 +720,7 @@
       "mergeCommit": "2d36dbe25683d175717894959562a0f292779045",
       "triggeredBy": "user",
       "xPostUrl": "https://x.com/suma_labo/status/2076826022352388227",
-      "xPostedAt": "2026-07-14T09:28:03+09:00",
+      "xPostedAt": "2026-07-14T00:28:03.000Z",
       "xPostVariant": "text_only",
       "xPostText": "OpenAIのChatGPTブラウザ「Atlas」が2026年8月9日で終了。終わるのはAtlasだけで、ChatGPT本体は続きます。\n\n注意はデータ。ブックマーク・履歴・パスワード等は自動移行されないので、8/9までにHTMLで書き出しを。\n\n→ https://sumalabo.com/articles/202607-openai-chatgpt-atlas-browser-end/\n\n#ChatGPT #OpenAI",
       "note": "夜間run(7/14)がturn5でtransientクラッシュ→立ち会いresumeで完走。案A再シード後の工房で画像生成(slide06は目/自の漢字化けで2回再生成し文言変更で回避)。背面タブ+カード未表示でtext_only"
@@ -724,13 +728,13 @@
     {
       "slug": "202607-google-play-store-fee-cut-japan",
       "incidents": [],
-      "source": "night_run",
+      "source": "user_directed",
       "triggerKind": "scout",
       "articleUrl": "https://sumalabo.com/articles/202607-google-play-store-fee-cut-japan/",
       "productionUrl": "https://sumalabo.com/articles/202607-google-play-store-fee-cut-japan/",
       "publishedAt": "2026-07-15T05:30:00+09:00",
       "autonomyLevel": 1,
-      "trigger": "nightRun",
+      "trigger": "manual",
       "hasAffiliate": false,
       "status": "x_posted",
       "prUrl": "https://github.com/hnishimura40/sumalabo/pull/160",
@@ -741,14 +745,15 @@
       "xPostedAt": "2026-07-15T06:07:00+09:00",
       "xPostVariant": "images4+reply",
       "xPostText": "Google Playの手数料が9月末までに下がる。あなたのアプリ代はどうなる\n\nGoogleが日本向けのGoogle Play手数料引き下げと新しい課金オプションを、当初の2026年12月31日から2026年9月30日までに前倒しします。\n#ITニュース #すまラボ",
-      "note": "夜間run(7/15)完走。独立検品(overallPass)後、images4+reply方式で投稿(本投稿=サムネ+slide02+slide01+slide07の4枚/リプライに記事リンク)。x-post-options.mjsのxSelection id解決バグ(素のslideNNが実ファイルslideNN-*.webpに解決できず1枚落ち)を前方一致で修正。CF_HDROP保持プロセス(x-post-hold-clipboard.ps1新規)経由で4枚1回貼付・DOM検証4枚OK"
+      "note": "夜間run(7/15)完走。独立検品(overallPass)後、images4+reply方式で投稿(本投稿=サムネ+slide02+slide01+slide07の4枚/リプライに記事リンク)。x-post-options.mjsのxSelection id解決バグ(素のslideNNが実ファイルslideNN-*.webpに解決できず1枚落ち)を前方一致で修正。CF_HDROP保持プロセス(x-post-hold-clipboard.ps1新規)経由で4枚1回貼付・DOM検証4枚OK",
+      "previewUrl": "https://sumalabo.com/articles/202607-google-play-store-fee-cut-japan/"
     },
     {
       "slug": "202607-ai-usage-survey-chatgpt-gemini-perplexity",
       "incidents": [],
-      "source": "night_run",
+      "source": "user_directed",
       "triggerKind": "scout",
-      "trigger": "nightRun",
+      "trigger": "manual",
       "triggeredBy": "scout",
       "autonomyLevel": 1,
       "hasAffiliate": false,
@@ -760,23 +765,24 @@
       "mergeCommit": "4fbaef7",
       "xPostUrl": "https://x.com/suma_labo/status/2077867845489414322",
       "xReplyUrl": "https://x.com/suma_labo/status/2077868222284722490",
-      "xPostedAt": "2026-07-17T06:27:00+09:00",
+      "xPostedAt": "2026-07-16T21:30:37.213Z",
       "xPostVariant": "images4+reply",
-      "xPostText": "ChatGPTが47.5％で最多。でも「日本で一番使われているAI」とは言い切れない理由 / 305人への調査でChatGPTが47.5％、Gemini29.5％、Perplexity3.6％という結果が話題です。ただしこれは日本全体の市場シェアではなく、回答者が自己申告した「最もよく使うAI」。 #AI #すまラボ"
+      "xPostText": "ChatGPTが47.5％で最多。でも「日本で一番使われているAI」とは言い切れない理由 / 305人への調査でChatGPTが47.5％、Gemini29.5％、Perplexity3.6％という結果が話題です。ただしこれは日本全体の市場シェアではなく、回答者が自己申告した「最もよく使うAI」。 #AI #すまラボ",
+      "previewUrl": "https://sumalabo.com/articles/202607-ai-usage-survey-chatgpt-gemini-perplexity/"
     },
     {
       "slug": "202607-claude-for-teachers-free-us",
       "incidents": [],
-      "source": "night_run",
+      "source": "user_directed",
       "triggerKind": "scout",
-      "trigger": "nightRun",
+      "trigger": "manual",
       "triggeredBy": "scout",
       "autonomyLevel": 1,
       "hasAffiliate": false,
       "status": "x_posted",
       "articleUrl": "https://sumalabo.com/articles/202607-claude-for-teachers-free-us/",
       "productionUrl": "https://sumalabo.com/articles/202607-claude-for-teachers-free-us/",
-      "publishedAt": "2026-07-18T08:01:00+09:00",
+      "publishedAt": "2026-07-18T05:40:00+09:00",
       "prUrl": "https://github.com/hnishimura40/sumalabo/pull/162",
       "mergeCommit": "09516f6",
       "xPostUrl": "https://x.com/suma_labo/status/2078268437470810409",
@@ -784,7 +790,8 @@
       "xPostedAt": "2026-07-18T08:59:00+09:00",
       "xPostVariant": "images4+reply",
       "xPostText": "米国の先生はClaudeが1年間無料に。日本は対象外、その中身と注意点をやさしく整理\n\nAnthropicが米国の認証済みK-12教員向けに「Claude for Teachers」の無償提供を始めました。\n#AI #すまラボ",
-      "note": "7/18夜間runがPhase A止まり→publish後にX未投稿だったのを手動で整合(独立検品→画像4枚+リプ)。"
+      "note": "7/18夜間runがPhase A止まり→publish後にX未投稿だったのを手動で整合(独立検品→画像4枚+リプ)。",
+      "previewUrl": "https://sumalabo.com/articles/202607-claude-for-teachers-free-us/"
     },
     {
       "slug": "202607-openai-build-week-email-explained",
@@ -836,18 +843,19 @@
       "xPostText": "Claude Fable 5、いよいよ7/20(月)15:59まで。最後にやり残しはありませんか？ 無料枠は日本時間7月20日(月)15:59:59でいよいよ最終。残り時間でやっておくといい3つを整理しました。 #AI #すまラボ",
       "xReplyText": "記事で続きと出典まで読めます。締切前のチェックにどうぞ👇 [記事URL] #Claude #すまラボ",
       "xVariant": "images4+reply",
-      "xNote": "本投稿=画像4枚(サムネ+slide08+slide03+slide01・全て一本アンテナ)+キャプション本文あり。リプに記事リンク(OGP)。typeアクションで本文・リプとも正常反映。"
+      "xNote": "本投稿=画像4枚(サムネ+slide08+slide03+slide01・全て一本アンテナ)+キャプション本文あり。リプに記事リンク(OGP)。typeアクションで本文・リプとも正常反映。",
+      "previewUrl": "https://sumalabo.com/articles/202607-claude-fable-5-final-deadline-checklist/"
     },
     {
       "slug": "202607-apple-japan-icloud-plus-price-hike",
       "incidents": [],
-      "source": "test_mode",
+      "source": "user_directed",
       "triggerKind": "night_driver",
-      "trigger": "nightRun",
+      "trigger": "manual",
       "triggerInput": "scout: Appleが日本でiCloud＋も値上げ (gigazine)",
       "articleUrl": "https://sumalabo.com/articles/202607-apple-japan-icloud-plus-price-hike/",
       "productionUrl": "https://sumalabo.com/articles/202607-apple-japan-icloud-plus-price-hike/",
-      "publishedAt": "2026-07-18T20:51:03.492Z",
+      "publishedAt": "2026-07-19T05:48:38+09:00",
       "prUrl": "https://github.com/hnishimura40/sumalabo/pull/170",
       "mergeCommit": "877b2dd",
       "status": "published",
@@ -858,8 +866,9 @@
         "failedChecks": []
       },
       "xPostUrl": "https://x.com/suma_labo/status/2078585311475667277",
-      "xPostedAt": "2026-07-18T21:02:20.860Z",
-      "xReplyUrl": "https://x.com/suma_labo/status/2078585976738517281"
+      "xPostedAt": "2026-07-18T21:02:20.859Z",
+      "xReplyUrl": "https://x.com/suma_labo/status/2078585976738517281",
+      "previewUrl": "https://sumalabo.com/articles/202607-apple-japan-icloud-plus-price-hike/"
     },
     {
       "slug": "202607-claude-fable-5-max-standard-pro-credits",
@@ -931,14 +940,34 @@
       "xReplyNote": "初回投稿時にリプライが未確定だったため後追いで確定投稿（本投稿は1件のみ・二重投稿なし）。本投稿reply=1件で確認済み。"
     },
     {
+      "slug": "202607-eu-google-gemini-android-ai",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "night_driver",
+      "trigger": "manual",
+      "articleUrl": "https://sumalabo.com/articles/202607-eu-google-gemini-android-ai/",
+      "previewUrl": "https://sumalabo.com/articles/202607-eu-google-gemini-android-ai/",
+      "productionUrl": "https://sumalabo.com/articles/202607-eu-google-gemini-android-ai/",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/180",
+      "mergeCommit": "e675f3399b479c371861c87539317eedbcdcce55",
+      "publishedAt": "2026-07-20T05:53:33+09:00",
+      "status": "x_posted",
+      "autonomyLevel": 1,
+      "xPostUrl": "https://x.com/suma_labo/status/2078953395034226859",
+      "xPostedAt": "2026-07-19T21:21:46.986Z",
+      "xPostText": "AndroidのAI、あなたも選べるようになる? EUがGoogleに競合AI開放を要求 / EUは2026年7月16日、AndroidでGeminiが使うOS連携機能を、条件を満たす競合AIにも開放するようGoogleへ求めました。 #Android #すまラボ",
+      "xReplyUrl": "https://x.com/suma_labo/status/2078953792314478900",
+      "hasAffiliate": false
+    },
+    {
       "slug": "202607-ai-pc-cloud-local-spec-guide",
       "incidents": [],
-      "source": "attended_article",
+      "source": "user_directed",
       "triggerKind": "manual",
       "trigger": "manual",
       "articleUrl": "https://sumalabo.com/articles/202607-ai-pc-cloud-local-spec-guide/",
       "productionUrl": "https://sumalabo.com/articles/202607-ai-pc-cloud-local-spec-guide/",
-      "publishedAt": "2026-07-20T07:58:51.000Z",
+      "publishedAt": "2026-07-20T16:58:51+09:00",
       "status": "x_posted",
       "autonomyLevel": 1,
       "hasAffiliate": true,
@@ -947,6 +976,137 @@
       "xReplyUrl": "https://x.com/suma_labo/status/2079120937988034666",
       "xPostText": "AIを使うのに高いPCは必要？10万円台で足りる理由と例外 / ChatGPTやClaude、Codex、クラウド画像生成に高性能PCは必要なのか。クラウド型とローカル型の違い、16GBメモリを軸にした選び方、値上がり局面の買い時を体験ベースで整理します。 #AI #すまラボ",
       "xReplyText": "記事で続きと出典まで読めます👇 https://sumalabo.com/articles/202607-ai-pc-cloud-local-spec-guide/"
+    },
+    {
+      "slug": "202607-1password-for-claude-agentic-login",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-1password-for-claude-agentic-login/",
+      "productionUrl": "https://sumalabo.com/articles/202607-1password-for-claude-agentic-login/",
+      "xPostUrl": "https://x.com/suma_labo/status/2078304772764152005",
+      "publishedAt": "2026-07-18T02:19:45.624+09:00",
+      "xPostedAt": "2026-07-18T02:28:17.508+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
+    },
+    {
+      "slug": "202607-chatgpt-5h-limit-lifted-max-ultra",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-chatgpt-5h-limit-lifted-max-ultra/",
+      "previewUrl": "https://sumalabo.com/articles/202607-chatgpt-5h-limit-lifted-max-ultra/",
+      "productionUrl": "https://sumalabo.com/articles/202607-chatgpt-5h-limit-lifted-max-ultra/",
+      "xPostUrl": "https://x.com/suma_labo/status/2077008323912888427",
+      "publishedAt": "2026-07-14T12:23:44.206+09:00",
+      "xPostedAt": "2026-07-14T12:35:21.483+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
+    },
+    {
+      "slug": "202607-claude-cowork-mobile-ios-android",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-claude-cowork-mobile-ios-android/",
+      "previewUrl": "https://sumalabo.com/articles/202607-claude-cowork-mobile-ios-android/",
+      "productionUrl": "https://sumalabo.com/articles/202607-claude-cowork-mobile-ios-android/",
+      "xPostUrl": "https://x.com/suma_labo/status/2078283203417456870",
+      "publishedAt": "2026-07-18T00:54:38.772+09:00",
+      "xPostedAt": "2026-07-18T01:05:10.184+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
+    },
+    {
+      "slug": "202607-docomo-mirai-summer-fes",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-docomo-mirai-summer-fes/",
+      "productionUrl": "https://sumalabo.com/articles/202607-docomo-mirai-summer-fes/",
+      "publishedAt": "2026-07-21T05:30:00+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "xPostUrl": "https://x.com/suma_labo/status/2079309685782614073",
+      "xPostedAt": "2026-07-21T05:57:54.944+09:00",
+      "xPostVariant": "text_only"
+    },
+    {
+      "slug": "202607-openai-codex-claude-code-browser-imagegen",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-openai-codex-claude-code-browser-imagegen/",
+      "previewUrl": "https://bf1924db.sumalabo.pages.dev/articles/202607-openai-codex-claude-code-browser-imagegen/",
+      "productionUrl": "https://sumalabo.com/articles/202607-openai-codex-claude-code-browser-imagegen/",
+      "xPostUrl": "https://x.com/suma_labo/status/2078758717840048480",
+      "publishedAt": "2026-07-19T15:30:00+09:00",
+      "xPostedAt": "2026-07-19T17:29:32.0621745+09:00",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": false
+    },
+    {
+      "slug": "202607-yahoo-flea-auction-selling-fee-free-tcg",
+      "incidents": [],
+      "status": "x_posted",
+      "source": "test_mode",
+      "triggerKind": "night_driver",
+      "triggeredBy": "night_driver",
+      "productionUrl": "https://sumalabo.com/articles/202607-yahoo-flea-auction-selling-fee-free-tcg/",
+      "previewUrl": "https://6395f05f.sumalabo.pages.dev/articles/202607-yahoo-flea-auction-selling-fee-free-tcg/",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/189",
+      "mergeCommit": "a5f56dd",
+      "publishedAt": "2026-07-22T05:42:00+09:00",
+      "verifyResult": "8/8 pass",
+      "xPostUrl": "https://x.com/suma_labo/status/2079671427041735039",
+      "xPostedAt": "2026-07-21T20:57:12.889Z",
+      "xPostText": "トレカ手数料が実質無料に。Yahoo!フリマ・オークションの新キャンペーンは『最初から0円』じゃなく、手数料ぶんを後日ポイント還元する仕組み。対象は人気5ブランド、8月9日まで。仕組みと条件をやさしく整理しました。 #ITニュース #すまラボ",
+      "xVariant": "images4+reply",
+      "xReplyUrl": "https://x.com/suma_labo/status/2079671941364076607"
+    },
+    {
+      "slug": "202607-carriers-iphone-price-hike",
+      "incidents": [],
+      "status": "x_posted",
+      "source": "test_mode",
+      "triggerKind": "night_driver",
+      "triggeredBy": "night_driver",
+      "productionUrl": "https://sumalabo.com/articles/202607-carriers-iphone-price-hike/",
+      "previewUrl": "https://ab069ca7.sumalabo.pages.dev/articles/202607-carriers-iphone-price-hike/",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/193",
+      "mergeCommit": "f418c19",
+      "publishedAt": "2026-07-23T05:25:00+09:00",
+      "verifyResult": "8/8 pass",
+      "xPostUrl": "https://x.com/suma_labo/status/2080028607611867475",
+      "xPostedAt": "2026-07-22T20:36:57.964Z",
+      "xPostVariant": "images4+reply",
+      "xPostText": "4キャリアのiPhoneも値上げ？ ドコモ・au・ソフトバンク・楽天の答えは「まだ未定」\n\nAppleが日本限定でiPhoneを値上げしたのを受け、4キャリアの本体価格も上がるのか。\n#iPhone #すまラボ",
+      "xReplyUrl": "https://x.com/suma_labo/status/2080029064602267837"
+    },
+    {
+      "slug": "202607-apple-klarna-iphone-lease-rumor",
+      "incidents": [],
+      "status": "x_posted",
+      "source": "night_run",
+      "triggerKind": "night_driver",
+      "triggeredBy": "night_driver",
+      "productionUrl": "https://sumalabo.com/articles/202607-apple-klarna-iphone-lease-rumor/",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/197",
+      "mergeCommit": "fbeee40",
+      "deployCommit": "5f7b190",
+      "publishedAt": "2026-07-24T05:15:00+09:00",
+      "verifyResult": "8/8 pass",
+      "xPostUrl": "https://x.com/suma_labo/status/2080393434456904164",
+      "xPostedAt": "2026-07-23T20:44:16.011Z",
+      "xPostVariant": "images4+reply",
+      "xPostText": "iPhoneを月額で借りる？Apple×Klarnaの「リース計画」を、確定と未確定に分けて整理\n\nAppleがKlarnaと組み、iPhoneやMacを月額で使える『Apple Upgrade』を米国で始めると報じられています。\n#iPhone #すまラボ",
+      "xReplyUrl": "https://x.com/suma_labo/status/2080393848308818329"
     }
   ]
 }

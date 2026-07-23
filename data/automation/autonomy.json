@@ -54,6 +54,39 @@
     "enabledAt": "2026-07-11T03:03:08.417Z",
     "approvedBy": "user_instruction_2026-07-11",
     "note": "testMode 3本完走を受けた恒久無人運転。ガード: incident2件(enabledAt以降)で自動停止 / kill switch(paused) / 1晩1本 / weeklyCap7(毎日1本ペース許容)。scout閾値50未満の日は安全スキップ。候補豊富な日はユーザー指示で昼に立ち会い2本目可。gate/factcheck/post-publish verify/自動rollbackは従来どおり",
-    "consumed": []
+    "consumed": [
+      {
+        "slug": "202607-google-play-store-fee-cut-japan",
+        "at": "2026-07-15T06:07:00+09:00"
+      },
+      {
+        "slug": "202607-ai-usage-survey-chatgpt-gemini-perplexity",
+        "at": "2026-07-16T21:30:57.776Z"
+      },
+      {
+        "slug": "202607-apple-japan-icloud-plus-price-hike",
+        "at": "2026-07-18T21:03:01.695Z"
+      },
+      {
+        "slug": "202607-eu-google-gemini-android-ai",
+        "at": "2026-07-19T21:24:18.725Z"
+      },
+      {
+        "slug": "202607-docomo-mirai-summer-fes",
+        "at": "2026-07-20T20:58:40.025Z"
+      },
+      {
+        "slug": "202607-yahoo-flea-auction-selling-fee-free-tcg",
+        "at": "2026-07-21T20:57:39.862Z"
+      },
+      {
+        "slug": "202607-carriers-iphone-price-hike",
+        "at": "2026-07-22T20:37:09.081Z"
+      },
+      {
+        "slug": "202607-apple-klarna-iphone-lease-rumor",
+        "at": "2026-07-23T20:47:15.743Z"
+      }
+    ]
   }
 }
