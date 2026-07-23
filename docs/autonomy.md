@@ -136,6 +136,14 @@ testMode（3 本限定の実弾テスト）は 3 本完走（Claude Science / ai
   - weeklyCap（`logs/night/run-history.jsonl` の直近 7 日 completed 数）
   - gate full / 画像ファクトチェック / post-publish verify＋自動rollback / 除外カテゴリは従来どおり（緩めない）
 - **scout 品質ガード（2026-07-18 改訂・自分ごと度優先）**: 選定基準を「ニュースの大きさ」→「読者の自分ごと度（クリティカル度）」に転換。最重要軸 `criticality`（`scout.mjs` の `scoreCriticality`）で採点し、**score>=50 かつ criticality>=`minCriticality`(=12) かつ readerChange（読者の何が変わるか1行）が書ける候補だけ**を採用する（`isEligible`）。**クリティカル度が低い候補しかない日は書かない（量より的中率・書かない日があってよい）**。事業者向けのみ（API価格・企業契約）／米国限定で日本展開見込み薄／調査・統計もの／資金調達は減点。設定・語彙は `data/automation/watch-sources.json`（`minCriticality` / `criticalityKeywords` / `criticalityDeductions` / `japanComingCues`）。較正は `npm run scout:calibrate`
+- **scout 日本自分ごと度スコア（2026-07-24 追加・`scout.mjs` の `japanRelevance`）**: criticality とは別に、日本読者への「自分ごと度」を 4 軸で採点し **TOTAL score に合算**する。設定・語彙は `data/automation/watch-sources.json` の `japanScoring`。
+  - **(a) 日本影響** `+14`：日本のユーザーに今／近く影響する（`japanScoring.impact` or `japanComingCues`）
+  - **(b) 価格・制度** `+12`：日本の価格・提供・制度に関わる（`japanScoring.priceInstitution`）
+  - **(c) 公式/噂** 公式発表 `+8` ／ 噂段階 `-8` ／ **海外限定の噂はさらに `-12`**（`japanScoring.official` / `.rumor`）
+  - **(d) 日本の類似** `+10`：日本に既存の類似サービス・制度があり「日本ではこう」を実質的に書ける（`japanScoring.analog`）
+  - **rule #3（海外限定を落とす）**: `usOnly`（`criticalityDeductions.usOnly`。「全米」「米国の」等）または `japanScoring.japanNegation`（「日本は対象外」等）に該当し、かつ a/b/d のどれも立たない（＝「日本ではこう」を書けない）候補は `usOnlyBlocked=true` になり **`isEligible` が不適格判定**（＝「日本は未定」の一文で終わる記事は選定段階で落とす）。否定表現があるときは a/d を無効化して日本 false positive を防ぐ。
+  - **国内発ネタの母集団**: 国内一次・国内媒体（キャリア公式 / 総務省・経産省・公取委 Google News / ITmedia / ケータイWatch / Apple Newsroom JP）を watch-sources に追加し、国内発ネタが海外発と対等に競える。
+  - **選定理由ログ**: `scout` 実行時、コンソールに `[score|c criticality|jp 日本net]` と「日本自分ごと度: <立った軸> ／⚠ 海外限定で日本を書けない→選定除外」を各候補ごとに出力。JSON ログ（`logs/scout/<date>.json`）にも `breakdown.japanRelevance` / `japanReason` / `japanAxes` を記録。テスト: `tests/sumahon/scout.test.mjs` #15–18。
 - **retract 時**: `npm run retract` は incident 記録に加えて nightRun も自動停止する
 
 ## 7. 昼の立ち会い制作も完走型に統一（2026-07-12 ユーザー承認）

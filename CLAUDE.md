@@ -8,7 +8,7 @@
 
 **Autonomy Level: 1 (L1)** — 状態は `data/automation/autonomy.json`、定義は [`docs/autonomy.md`](docs/autonomy.md)。この表記は autonomy.json の `level` と連動させる（変更時は両方更新）。**Claude が level を勝手に変更するのは禁止**（昇格・veto窓短縮はクリーン実績を根拠にユーザーが宣言する。自動降格だけは error budget 規定＝直近10記事で incident 2件以上→level -1 が適用される）。`paused: true`（kill switch）のときは finalize / Phase B / Phase C とも即停止する。
 
-**恒久無人運転（nightRun・2026-07-11 ユーザー承認）**: testMode（3本限定）完走を受け、夜間の無人 run は `autonomy.json` の `nightRun` による恒久運転（毎日 4:30 / scout 自動選定 / 1 晩 1 本 / weeklyCap 7）。恒久ガード＝incident 2 件で自動停止・kill switch・gate/factcheck/verify/rollback 従来どおり。scout 候補が閾値 50 未満の日は安全スキップ。定義: [`docs/autonomy.md`](docs/autonomy.md) §6。**この無人 run は「ユーザー指定なしの自動収集をしない」原則の承認済み例外**。`nightRun.enabled` の再有効化はユーザー宣言のみ。
+**恒久無人運転（nightRun・2026-07-11 ユーザー承認）**: testMode（3本限定）完走を受け、夜間の無人 run は `autonomy.json` の `nightRun` による恒久運転（毎日 4:30 / scout 自動選定 / 1 晩 1 本 / weeklyCap 7）。恒久ガード＝incident 2 件で自動停止・kill switch・gate/factcheck/verify/rollback 従来どおり。scout 候補が閾値 50 未満の日は安全スキップ。scout の選定は criticality（自分ごと度）＋**日本自分ごと度 4 軸（a:日本影響 / b:価格・制度 / c:公式か噂か / d:日本の類似で書ける）**で採点し、海外限定・「日本は対象外」で日本を書けない候補は自動的に不適格にする（「日本は未定」で終わる記事を選ばない）。定義: [`docs/autonomy.md`](docs/autonomy.md) §6。**この無人 run は「ユーザー指定なしの自動収集をしない」原則の承認済み例外**。`nightRun.enabled` の再有効化はユーザー宣言のみ。
 
 **昼の立ち会い制作も完走型（2026-07-12 ユーザー承認）**: ユーザーが対話セッションで**記事制作を明示指示**したら、**Human Review Checkpoint を廃止し、Phase A → B → C（公開・X 投稿）まで確認なしで完走**する。停止してよい例外は「除外カテゴリ該当（訴訟/事故/人事/買収/政治）」と「品質・安全のブロック（事実未確認・gate 不合格・build/deploy/verify 失敗・画像生成経路不可）」の 2 つだけ。**事後の取り消しは `npm run retract`**。詳細: [`docs/autonomy.md`](docs/autonomy.md) §7。ユーザーが「下書きだけ」「確認したい」等と明示したときのみ従来どおり途中停止する。
 

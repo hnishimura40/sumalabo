@@ -7,6 +7,8 @@ import {
   scoreCriticality,
   readerChangeLine,
   isEligible,
+  japanRelevance,
+  japanReasonLine,
   findExclusion,
   findDuplicate,
   titleSimilarity,
@@ -190,4 +192,40 @@ test("14. 較正: 過去2週間の実ネタで新基準の並びを確認（自�
   for (const high of ["fiveHour", "atlas", "fable"]) {
     assert.equal(isEligible(scored[high], PROD_CONFIG.minScore, PROD_CONFIG.minCriticality), true, `${high} は適格`);
   }
+});
+
+test("15. japanRelevance: 日本の価格・提供・公式発表で加点し 4 軸が立つ", () => {
+  const item = { title: "ドコモが日本で新料金プランを正式発表、日本円で提供開始", description: "" };
+  const r = japanRelevance(item, PROD_CONFIG);
+  assert.ok(r.net > 0, `日本関連は加点 (net=${r.net})`);
+  assert.equal(r.axes.a_japanImpact.hit, true, "a: 日本影響");
+  assert.equal(r.axes.b_priceInstitution.hit, true, "b: 日本の価格・提供");
+  assert.equal(r.axes.c_officialRumor.official, true, "c: 公式発表");
+  assert.equal(r.usOnlyBlocked, false, "書けるので落とさない");
+  assert.ok(japanReasonLine(r), "選定理由ログの1行が出る");
+});
+
+test("16. japanRelevance: 海外限定の噂は大幅減点 + usOnlyBlocked で auto-pick 除外", () => {
+  const item = { title: "次期iPhoneに新機能とのリーク、米国限定でリリースの可能性との報道", description: "" };
+  const r = japanRelevance(item, PROD_CONFIG);
+  assert.ok(r.axes.c_officialRumor.rumor, "噂として検出");
+  assert.ok(r.net < 0, `海外限定の噂は減点 (net=${r.net})`);
+  const cand = { score: 70, criticality: { net: 24 }, readerChange: "x", japanAxes: r };
+  assert.equal(isEligible(cand, 50, 12), false, "海外限定で日本を書けない→不適格");
+});
+
+test("17. japanRelevance: 日本否定(日本は対象外)は a/d を無効化し落とす", () => {
+  const item = { title: "新サービス、米国で提供開始（日本は対象外）", description: "" };
+  const r = japanRelevance(item, PROD_CONFIG);
+  assert.equal(r.axes.a_japanImpact.hit, false, "否定表現で a を無効化（日本のfalse positive防止）");
+  assert.equal(r.usOnlyBlocked, true, "『日本は対象外』は書けない→落とす");
+  const cand = { score: 80, criticality: { net: 20 }, readerChange: "x", japanAxes: r };
+  assert.equal(isEligible(cand, 50, 12), false, "rule#3 で不適格");
+});
+
+test("18. japanRelevance: 日本に類似があり『日本ではこう』書ける海外ネタは残す", () => {
+  const item = { title: "海外で新決済が普及、日本にも同様のサービスがある", description: "" };
+  const r = japanRelevance(item, PROD_CONFIG);
+  assert.equal(r.axes.d_japanAnalog.hit, true, "d: 日本の類似で書ける");
+  assert.equal(r.usOnlyBlocked, false, "書けるので残す");
 });
