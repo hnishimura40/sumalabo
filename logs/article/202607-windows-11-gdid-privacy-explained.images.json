@@ -1,0 +1,15 @@
+{
+  "slides": [
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide01.png", "name": "slide01.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide02.png", "name": "slide02.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide03.png", "name": "slide03.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide04.png", "name": "slide04.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide05.png", "name": "slide05.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide06.png", "name": "slide06.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide07.png", "name": "slide07.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide08.png", "name": "slide08.webp" }
+  ],
+  "thumbnail": {
+    "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/thumbnail.png"
+  }
+}

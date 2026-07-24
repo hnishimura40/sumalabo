@@ -1,0 +1,287 @@
+---
+title: "Windows 11のGDIDとは？「VPNでも隠せない指紋」の誤解を整理"
+slug: "202607-windows-11-gdid-privacy-explained"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Windows 11のGDIDはVPNでも隠せない追跡指紋なのか。米司法省の訴状PDFとMicrosoft公式資料を確認し、誰に見えるIDなのか、日常利用への影響、できるプライバシー設定を整理します。"
+thumbnail: "/images/thumbnails/202607-windows-11-gdid-privacy-explained.webp"
+thumbnailAlt: "「VPNでも隠せない？ 半分誤解」のサムネイル。プライバシー調査員のひまりがVPNトンネルとWindows端末の識別タグを照合し、らぼまるが訪問先サイト・Microsoft・捜査機関の3層を仕分ける"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Windows 11"
+  - "GDID"
+  - "Microsoft"
+  - "VPN"
+  - "プライバシー"
+  - "セキュリティ"
+  - "すまラボ"
+pubDate: "2026-07-24"
+updated: "2026-07-24"
+publishAt: "2026-07-24T19:00:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Windows 11には「GDID（Global Device Identifier）」という、Microsoft内部で使われる端末識別子があります。米司法省が2026年7月1日に公開した刑事事件の訴状で、VPNを経由した端末の活動を同じ端末として結び付ける材料になったことが分かり、「VPNでも隠せない指紋」として話題になりました。
+
+ただし、GDIDが訪問先のWebサイトにそのまま渡り、どのサイトからでも個人を追跡できるわけではありません。今回見えたのは、**Microsoft側にある記録を、捜査機関がほかの事業者の記録と時刻・IPアドレスで照合した事例**です。怖がりすぎず、収集範囲の説明不足も見過ごさずに整理します。
+
+<Summary30>
+  <ol>
+    <li><strong>GDIDは実在する</strong>。Windowsのインストール単位に結び付く、Microsoft内部の永続的な端末ID</li>
+    <li>Windows Updateでは変わらず、再インストールでは新しいIDになる。GDID単体をオフにする一般向け設定は公開されていない</li>
+    <li><strong>訪問先サイトがGDIDを直接読む仕組みではない</strong>。サイト側が通常見られるIP・Cookie・ブラウザ指紋とは別物</li>
+    <li>今回はMicrosoftの記録と、ngrok・Googleなど複数社の記録を捜査機関が突き合わせた</li>
+    <li>今日から新しい追跡が始まったわけではない。ただしMicrosoftの消費者向け説明が極端に少ない点は正当に批判できる</li>
+  </ol>
+</Summary30>
+
+<CharacterBubble speaker="himari" mood="worried">VPNを使っても、見たサイト全部に同じ指紋が見えるってこと？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">そこが一番の誤解だよ。GDIDはMicrosoft内部の識別子。訪問先サイトにそのまま見える番号ではないんだ。</CharacterBubble>
+
+## 何が話題になった？ FBI資料でGDIDの使われ方が見えた
+
+<p class="lead">新しい追跡機能が追加されたニュースではなく、<strong>既存の識別子が捜査でどう使われたか</strong>が訴状で具体化したニュースです。</p>
+
+米司法省は7月1日、犯罪ハッキング集団「Scattered Spider」のメンバーとされるPeter Stokes被告について、フィンランドでの逮捕・米国への移送を発表しました。訴状上の主な容疑は、米国の高級宝飾品販売会社への不正侵入やデータ窃取、約800万ドルの身代金要求です。訴状は捜査段階の主張であり、有罪が確定したわけではありません。
+
+事件では、攻撃に使われたngrokアカウントが2025年5月12日19時21分（UTC）にVPNプロキシのIPアドレスから作られていました。訴状によると、同じ時刻に特定のGDIDを持つ端末がngrokの登録ページへアクセスしていたというMicrosoft記録がありました。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">訴状に書かれた照合の流れを、時系列で1枚にします。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-windows-11-gdid-privacy-explained/slide01.webp" alt="FBI資料で分かった流れの図解。VPN経由でngrokアカウント作成、同時刻にMicrosoft記録のGDID端末が登録ページへアクセス、複数社の記録と照合した流れ" loading="lazy" decoding="async" />
+    <figcaption>図解：FBI資料で分かったGDID照合の流れ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>2025年5月12日 19:21 UTC</strong>：VPN経由でngrokアカウント作成</li>
+      <li><strong>同時刻</strong>：同じGDIDの端末がngrok登録ページへアクセスしたとMicrosoft記録</li>
+      <li><strong>照合</strong>：別日時のIP、SNS・Apple・Google・Ubisoft等の記録と突き合わせ</li>
+    </ul>
+  </div>
+</section>
+
+VPNは接続先から見える送信元IPを変えます。しかし、OSやアプリがMicrosoftへ送る記録に同じ端末IDが付く場合、その端末であることまではVPNだけで変わりません。今回のポイントは「VPNが破られた」ことではなく、**IPとは別の識別情報がMicrosoft側にあった**ことです。
+
+## GDIDとは何か——Windowsの「インストール単位の管理番号」
+
+<p class="lead">GDIDは、広告会社がWebサイト横断で使うCookieとは違い、<strong>Microsoftが自社サービス内で端末を区別するための識別子</strong>です。</p>
+
+司法省の39ページの訴状PDFでは、Microsoft担当者の説明として、GDIDを次のように整理しています。
+
+- 物理端末または仮想マシン上のWindowsインストールを一意に識別する、永続的な端末レベルのID
+- Windows Updateを重ねても同じIDが維持される
+- Windowsを再インストールすると、新しいGDIDに結び付く
+- 1人のMicrosoftユーザーが複数のGDIDを持つ場合がある
+
+Microsoft公式のAzure Monitor資料にも、`GlobalDeviceId`という列があり、説明は「Microsoft内部のGlobal Device Identifier」という1文だけです。存在自体は公式資料でも確認できますが、一般利用者向けに目的・生成条件・送信範囲を説明したページではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">GDIDの変わる条件・変わらない条件を整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-windows-11-gdid-privacy-explained/slide02.webp" alt="GDIDはWindowsインストールの管理番号という図解。Windows Updateでは維持、VPNでIPが変わってもID自体は別軸、再インストールでは新しいGDIDになる" loading="lazy" decoding="async" />
+    <figcaption>図解：GDIDはWindowsインストール単位の管理番号</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Windows Update</strong>：同じGDIDを維持</li>
+      <li><strong>VPN</strong>：送信元IPは変わるがGDIDとは別軸</li>
+      <li><strong>再インストール</strong>：新しいGDIDになる</li>
+      <li><strong>設定</strong>：GDID単体の削除・オフ項目は公開されていない</li>
+    </ul>
+  </div>
+</section>
+
+<Callout kind="claims">
+  <strong>付与タイミングは仕分けが必要です。</strong> 訴状が確認しているのは「Windowsインストールに結び付く」という性質で、インストール操作のどの瞬間に番号が発行されるかまでは説明していません。一部報道は、Microsoftアカウントへサインインした際にサーバー側から識別子が付与されると独自解析をもとに説明しています。ここは公式説明が足りず、同じ確度で断定できません。
+</Callout>
+
+## 誤解解きの本丸：GDIDは誰に見える？
+
+<p class="lead">訪問先サイト・Microsoft・捜査機関を、<strong>3つの層</strong>に分けると誤解が解けます。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">GDIDが見える範囲を3層で整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-windows-11-gdid-privacy-explained/slide03.webp" alt="GDIDは誰に見えるかの3層図。訪問先サイトはIPやCookie等、Microsoftは内部記録とGDID、捜査機関はMicrosoftや各事業者から得た記録を照合する" loading="lazy" decoding="async" />
+    <figcaption>図解：訪問先サイト・Microsoft・捜査機関の3層</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>訪問先サイト</strong>：IP、Cookie、ログイン情報、一般的なブラウザ指紋</li>
+      <li><strong>Microsoft</strong>：Windowsや自社サービスから届く記録をGDID等で関連付け</li>
+      <li><strong>捜査機関</strong>：提供・法的照会で得た複数事業者の記録を時刻やIPで照合</li>
+    </ul>
+  </div>
+</section>
+
+| 層 | 通常見えるもの | GDIDとの関係 |
+|---|---|---|
+| 訪問先サイト | 接続元IP、Cookie、ログインID、ブラウザ情報 | 訴状・Microsoft資料に「サイトへGDIDを直接渡す」との記載はない |
+| Microsoft | Windows診断データ、自社サービスの利用記録、端末ID | GDIDはMicrosoft内部の識別子として使われる |
+| 捜査機関 | 事業者から得た記録、押収物、旅券・移動記録など | 今回事案ではGDID付きMicrosoft記録を他社記録と照合 |
+
+Webサイトが使う「ブラウザ指紋」は、画面サイズ・フォント・ブラウザ機能などを組み合わせて同じ利用者らしさを推測する別の技術です。**GDID＝あらゆるサイトに丸見えのブラウザ指紋**ではありません。
+
+ただし、Microsoftの公式資料では、オプションの診断データに閲覧したWebサイトに関する情報が含まれる場合があると説明しています。Stokes被告の端末で、どのWindows機能が各URLをMicrosoftへ送ったのかは訴状に書かれておらず、報道でも特定できていません。
+
+## あなたへの影響：日常のネット利用は今日から変わらない
+
+<p class="lead">今回の公表でWindowsに新しい機能が追加されたわけではありません。<strong>一般利用者のWebサイト閲覧が、7月から急に訪問先へ筒抜けになったわけでもありません。</strong></p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「変わったこと」と「変わっていないこと」を分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-windows-11-gdid-privacy-explained/slide04.webp" alt="今日から変わったわけではないという図解。変わったのは訴状で具体例が公開されたこと、変わらないのはWindowsの日常利用と訪問先サイトへGDIDが直接見える仕組みではないこと" loading="lazy" decoding="async" />
+    <figcaption>図解：公表で変わったのは「見え方」</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>変わった</strong>：GDIDが捜査で使われた具体例が訴状で可視化</li>
+      <li><strong>変わらない</strong>：Windowsの日常利用と、一般サイトの通常の見え方</li>
+      <li><strong>注意点</strong>：VPNはIPを隠す道具で、OSやログイン情報まで消す道具ではない</li>
+    </ul>
+  </div>
+</section>
+
+一般利用者がニュースを見て、VPNを解約したり、Windowsを慌てて初期化したりする必要はありません。再インストールでGDIDは変わると訴状にありますが、プライバシー対策として初期化を勧める根拠にはなりません。
+
+一方で、「自分の端末とWebアクセスがMicrosoft側でどこまで関連付けられるのか」は正当な疑問です。犯罪捜査で目的どおり機能した例と、一般利用者への説明責任は両立する論点です。
+
+## できること・できないこと——紐づく情報を減らす
+
+<p class="lead">GDIDそのものを消す設定ではなく、<strong>Microsoftへ送る追加情報やアカウントとの結び付きを減らす</strong>一般的なプライバシー設定です。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">現実的に見直せる設定を3つに絞ります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-windows-11-gdid-privacy-explained/slide05.webp" alt="紐づく情報を減らす3設定の図解。ローカルアカウントを検討、オプション診断データをオフ、広告IDとおすすめ設定を見直す" loading="lazy" decoding="async" />
+    <figcaption>図解：GDIDではなく、周辺の共有情報を減らす</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>アカウント</strong>：必要ならローカルアカウントを検討</li>
+      <li><strong>診断データ</strong>：「オプション」をオフにして必須のみに</li>
+      <li><strong>おすすめ・広告</strong>：広告IDや個人向け提案を見直す</li>
+    </ul>
+  </div>
+</section>
+
+1. **オプションの診断データをオフ**：設定 → プライバシーとセキュリティ → 診断とフィードバックで、「オプションの診断データを送信する」をオフにします。Microsoftは、必須データだけでもWindowsの安全性と通常動作は保たれると説明しています。
+2. **ローカルアカウントを検討**：設定 → アカウント → ユーザーの情報から切り替えられます。Microsoftアカウントの同期やOneDriveなどの利便性が下がるため、利用目的を確認して選ぶ設定です。
+3. **広告ID・おすすめ表示を見直す**：設定 → プライバシーとセキュリティ内の「全般」や「おすすめとオファー」で、個人向け広告・提案に使う項目を確認します。
+
+<Note>
+これらは一般的なプライバシー設定です。GDIDを消す保証も、Microsoft側の必須診断データをゼロにする方法でもありません。また、犯罪捜査を回避するための手順ではありません。
+</Note>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">設定でできないことも、同じ1枚で確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-windows-11-gdid-privacy-explained/slide06.webp" alt="できることとできないことの図解。追加共有を減らすことはできるがGDID単体オフ、完全匿名化、法的照会の無効化はできない" loading="lazy" decoding="async" />
+    <figcaption>図解：プライバシー設定の限界</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>できる</strong>：オプション診断データや個人向け提案を減らす</li>
+      <li><strong>できない</strong>：GDIDだけを設定画面でオフにする</li>
+      <li><strong>できない</strong>：VPNだけでOS・アカウント・Cookieまで匿名化する</li>
+    </ul>
+  </div>
+</section>
+
+## 本当に問題なのは、Microsoftの説明が少なすぎること
+
+<p class="lead">GDIDの存在よりも、<strong>一般利用者が目的・生成条件・送信範囲を理解できる公式説明がほぼない</strong>ことが問題です。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">公式説明で確認できることと、確認できないことを分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-windows-11-gdid-privacy-explained/slide07.webp" alt="Microsoftの説明不足を示す図解。公式Azure資料は内部識別子の1文、訴状には詳細説明、一般向けには生成条件や送信範囲の説明が不足" loading="lazy" decoding="async" />
+    <figcaption>図解：存在は公式、説明はほぼ1文</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>公式資料</strong>：Azure Monitor表の列説明は実質1文</li>
+      <li><strong>訴状</strong>：Microsoft担当者の詳しい説明が初めて表に出た</li>
+      <li><strong>不足</strong>：生成条件、収集範囲、利用者の制御手段</li>
+    </ul>
+  </div>
+</section>
+
+Azureの技術資料は、一般のWindows利用者がプライバシー設定を判断するための説明書ではありません。GDIDがWindows Updateをまたいで維持され、URLアクセス記録と結び付いた事例があるなら、Microsoftは少なくとも次を明示すべきです。
+
+- いつ、どの条件でGDIDが発行されるか
+- 必須・オプションのどのデータに付くか
+- URL情報が送られる具体的な条件
+- ローカルアカウント時に何が変わるか
+- 保存期間、利用目的、法執行機関への提供方針
+
+「犯罪者の逮捕に役立ったから問題なし」でも、「Windowsはすべてのサイトを常時監視するスパイウェアだ」でもなく、**役割に必要な識別子なら、利用者が理解できる形で説明し、選べる範囲を示すべき**というのが妥当な着地点です。
+
+## 確定・報道・未確定を整理
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">情報の確度を混ぜずに整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-windows-11-gdid-privacy-explained/slide08.webp" alt="GDID情報の確度を整理した図解。確認済みは実在・更新で維持・再インストールで新ID・捜査で照合、報道はMSAサインイン時付与、未確認はURL送信の正確な仕組みと全利用者への範囲" loading="lazy" decoding="async" />
+    <figcaption>図解：分かったこと、まだ分からないこと</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>確認済み</strong>：GDIDの実在、更新後も維持、再インストールで新ID</li>
+      <li><strong>報道段階</strong>：MSアカウントへのサインイン時にサーバーから付与</li>
+      <li><strong>未確認</strong>：今回URLを送った正確なWindows機能、全利用者での収集範囲</li>
+    </ul>
+  </div>
+</section>
+
+- <Chip kind="facts">確認済み</Chip> GDIDはMicrosoft内部の端末識別子として実在し、訴状ではWindowsインストール単位に結び付き、更新後も維持・再インストールで新IDになると説明されています。
+- <Chip kind="facts">確認済み</Chip> 今回事案では、Microsoft記録にGDID・アクセス先・時刻・IPの関連があり、複数事業者の記録と照合されました。
+- <Chip kind="claims">報道段階</Chip> Microsoftアカウントへのサインイン時にサーバーから識別子が付与されるという技術解説がありますが、Microsoftの一般向け公式説明では確認できません。
+- <Chip kind="unc">未確認</Chip> どのWindows機能が今回の各URLを送信したのか、必須診断データだけの端末でも同じ粒度になるのかは公表されていません。
+- <Chip kind="unc">未確認</Chip> 今後Microsoftが一般向け説明や制御設定を追加するかは分かりません。
+
+## まとめ
+
+<Callout kind="facts">
+  <ul>
+    <li>GDIDは実在するが、訪問先サイトに直接見える共通のWeb指紋ではない</li>
+    <li>VPNはIPを変える道具。OS・アカウント・Cookieなど別の識別情報までは消さない</li>
+    <li>一般利用者の日常利用が今日から変わったわけではなく、慌てて初期化する必要はない</li>
+    <li>オプション診断データ、ローカルアカウント、広告IDなど周辺の共有情報は見直せる</li>
+    <li>Microsoftには、GDIDの生成条件・送信範囲・制御手段を一般向けに説明する責任がある</li>
+  </ul>
+</Callout>
+
+「VPNでも隠せない指紋」という見出しは、IPとは別の識別子が残る点では正しい一方、あらゆるサイトに同じ番号が丸見えという印象なら誤解です。**GDIDを怖がりすぎず、説明不足はきちんと問う**。その両方が必要です。
+
+## 参考情報
+
+- [米司法省：Peter Stokes被告の刑事訴状PDF（39ページ）](https://www.justice.gov/usao-ndil/media/1450651/dl?inline=)
+- [米司法省：Scattered Spiderメンバーとされる被告の逮捕・移送発表](https://www.justice.gov/opa/pr/alleged-member-criminal-cyber-hacking-group-scattered-spider-arrested-finland-and-extradited)
+- [Microsoft Learn：Azure Monitor Logs reference — UCClient](https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/ucclient)
+- [Microsoft Support：Windowsの診断データ、フィードバック、プライバシー](https://support.microsoft.com/en-us/windows/privacy/diagnostics-feedback-and-privacy-in-windows)
+- [Microsoft Support：Microsoftアカウントとローカルアカウントの切り替え](https://support.microsoft.com/en-us/accounts-billing/manage/change-from-a-local-account-to-a-microsoft-account-in-windows)
+- [Windows Latest：GDIDの生成経路と設定に関する独自解析](https://www.windowslatest.com/2026/07/10/you-cant-fully-disable-microsofts-gdid-windows-11-tracker-but-these-settings-limit-what-it-captures/)
+- [Tom's Hardware：GDID報道で判明していない収集経路の整理](https://www.tomshardware.com/tech-industry/cyber-security/arrest-and-extradition-of-scattered-spider-hacker-shines-light-on-how-windows-telemetry-gdids-can-identify-users-microsoft-device-identifier-is-just-one-digital-fingerprint-in-a-software-world-rife-with-them)

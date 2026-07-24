@@ -1,0 +1,35 @@
+{
+  "overallPass": true,
+  "internalLinks": {
+    "verdict": "not_applicable",
+    "issues": []
+  },
+  "slides": [
+    { "id": "slide01", "verdict": "ok", "issues": [], "textDensity": "high", "numbersAccurate": true, "standsAlone": true, "xPostScore": 64 },
+    { "id": "slide02", "verdict": "ok", "issues": [], "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 84 },
+    { "id": "slide03", "verdict": "ok", "issues": [], "textDensity": "low", "numbersAccurate": true, "standsAlone": true, "xPostScore": 98 },
+    { "id": "slide04", "verdict": "ok", "issues": [], "textDensity": "low", "numbersAccurate": true, "standsAlone": true, "xPostScore": 96 },
+    { "id": "slide05", "verdict": "ok", "issues": [], "textDensity": "low", "numbersAccurate": true, "standsAlone": true, "xPostScore": 90 },
+    { "id": "slide06", "verdict": "ok", "issues": [], "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 92 },
+    { "id": "slide07", "verdict": "ok", "issues": [], "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 86 },
+    { "id": "slide08", "verdict": "ok", "issues": [], "textDensity": "mid", "numbersAccurate": true, "standsAlone": true, "xPostScore": 88 }
+  ],
+  "thumbnail": {
+    "verdict": "ok",
+    "issues": []
+  },
+  "xSelection": ["thumbnail", "slide03", "slide04", "slide06"],
+  "excludedFromX": [
+    { "id": "slide01", "reason": "時系列と補助文字が多く、記事内で読む方が適する" },
+    { "id": "slide02", "reason": "性質の4項目は本文併読向け" },
+    { "id": "slide05", "reason": "設定案は本文の注意書きと併読させる方が安全" },
+    { "id": "slide07", "reason": "説明不足の論点は本文の公式資料リンクと併読向け" },
+    { "id": "slide08", "reason": "確度の細分は本文の出典と併読向け" }
+  ],
+  "inspectionMeta": {
+    "checkedAt": "2026-07-24T20:12:00+09:00",
+    "mode": "fresh-pass-without-generation-context",
+    "articleSource": "content/articles/202607-windows-11-gdid-privacy-explained.mdx",
+    "result": "文字化け・誤字・数値不一致・認識アンカー不一致・過剰な恐怖演出なし。演出ブロック適合。"
+  }
+}

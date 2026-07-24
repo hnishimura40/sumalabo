@@ -1,0 +1,32 @@
+{
+  "pass": true,
+  "regenerate": [],
+  "performanceFit": "themed",
+  "checkedAt": "2026-07-24T20:06:00+09:00",
+  "checks": {
+    "textAndNumbers": "pass",
+    "articleConsistency": "pass",
+    "characterIdentityAnchors": "pass",
+    "performanceBlock": "pass",
+    "fearMongering": "pass"
+  },
+  "notes": [
+    "サムネは調査員衣装、虫眼鏡、VPN出口IP、端末タグ、境界シールドを用い、テーマ固有の動作を表現。",
+    "slide03は訪問先サイト・Microsoft・捜査機関を3層に分離し、GDIDがサイトへ直接見えるとの誤解を避けた。",
+    "slide06は設定で追加共有を減らせてもGDID単体OFF・完全匿名化はできないと明示。",
+    "slide08はMSAサインイン時付与を報道、URL送信経路と全利用者への範囲を未確定として配置。"
+  ],
+  "slides": [
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide01.png", "name": "slide01.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide02.png", "name": "slide02.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide03.png", "name": "slide03.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide04.png", "name": "slide04.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide05.png", "name": "slide05.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide06.png", "name": "slide06.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide07.png", "name": "slide07.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/slide08.png", "name": "slide08.webp" }
+  ],
+  "thumbnail": {
+    "src": "D:/downloads/sumalabo-codex/202607-windows-11-gdid-privacy-explained/thumbnail.png"
+  }
+}
