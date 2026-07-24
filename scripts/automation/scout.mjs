@@ -209,6 +209,111 @@ export function readerChangeLine(criticality) {
   return criticality.reasons.map((r) => READER_CHANGE_TEMPLATES[r]).filter(Boolean).join(" / ");
 }
 
+// ---- 日本読者への「自分ごと度」明示採点（2026-07-23 追加）----
+//
+// クリティカル度とは別に、日本読者にとっての自分ごと度を 4 軸で明示採点し、
+// ランキングと auto-pick フィルタに効かせる。net は総合スコアに加算し、
+// usOnlyBlocked は「海外限定で “日本ではこう” が書けない候補」を auto-pick から落とす（rule #3）。
+// 各軸は config.japanScoring のキーワード群で判定（未設定なら 0＝後方互換）。
+//   a) japanImpact      日本のユーザーに今すぐ/近い将来影響（日本提供・日本語・国内キャリア・近日/予定）
+//   b) priceInstitution 日本の価格・提供・制度に関わる（日本円・国内価格・総務省/経産省/公取委・法/制度/新法/ガイドライン）
+//   c) officialVsRumor  公式発表=加点 / 噂段階=減点 / 海外限定の噂=大幅減点
+//   d) japanAnalog      日本に既存の類似サービス・制度があり「日本ではこう」を実質的に書ける
+// 否定表現（日本は対象外/未定/非対応 等）があるときは a/d を無効化し、「書けない海外限定」として落とす。
+export const JAPAN = Object.freeze({
+  IMPACT: 14,
+  PRICE_INSTITUTION: 12,
+  OFFICIAL: 8,
+  ANALOG: 10,
+  POSITIVE_CAP: 36,
+  RUMOR: -8,
+  US_ONLY_RUMOR_EXTRA: -12,
+});
+
+const JAPAN_AXIS_TEMPLATES = Object.freeze({
+  a_japanImpact: "日本のユーザーに今/近く影響する",
+  b_priceInstitution: "日本の価格・提供・制度に関わる",
+  c_official: "公式発表（噂段階ではない）",
+  d_japanAnalog: "日本の類似サービス・制度で「日本ではこう」が書ける",
+});
+
+/**
+ * 日本読者への自分ごと度を 4 軸で採点する純関数。
+ * config.japanScoring.{impact, priceInstitution, official, analog, rumor, japanNegation} を使う。
+ * 未設定なら net=0（後方互換）。
+ */
+export function japanRelevance(item, config, w = JAPAN) {
+  const text = `${item.title} ${item.description || ""}`;
+  const g = config.japanScoring || {};
+  const ded = config.criticalityDeductions || {};
+  const hit = (words) => (words || []).filter((k) => text.includes(k));
+
+  const m = {
+    impact: hit(g.impact),
+    priceInstitution: hit(g.priceInstitution),
+    official: hit(g.official),
+    analog: hit(g.analog),
+    rumor: hit(g.rumor),
+    negation: hit(g.japanNegation),
+    usOnly: hit(ded.usOnly),
+    comingCues: hit(config.japanComingCues),
+  };
+  const negated = m.negation.length > 0;
+
+  // 各軸の成立（否定表現があるときは a/d を無効化）
+  const a = !negated && (m.impact.length > 0 || m.comingCues.length > 0);
+  const b = m.priceInstitution.length > 0;
+  const cOfficial = m.official.length > 0;
+  const cRumor = m.rumor.length > 0;
+  const d = !negated && m.analog.length > 0;
+  const japanWritable = a || b || d;
+
+  let positive = 0;
+  const reasons = [];
+  if (a) { positive += w.IMPACT; reasons.push("a_japanImpact"); }
+  if (b) { positive += w.PRICE_INSTITUTION; reasons.push("b_priceInstitution"); }
+  if (cOfficial) { positive += w.OFFICIAL; reasons.push("c_official"); }
+  if (d) { positive += w.ANALOG; reasons.push("d_japanAnalog"); }
+  positive = Math.min(w.POSITIVE_CAP, positive);
+
+  let negative = 0;
+  const deductions = [];
+  if (cRumor) { negative += w.RUMOR; deductions.push("rumor"); }
+  // 海外限定の噂は大幅減点（usOnly かつ 噂 かつ 日本アンカー無し）
+  const usOnlyRumor = m.usOnly.length > 0 && cRumor && m.comingCues.length === 0 && !d;
+  if (usOnlyRumor) { negative += w.US_ONLY_RUMOR_EXTRA; deductions.push("usOnlyRumor"); }
+
+  // rule #3: 海外限定 or 日本否定 で「日本ではこう」が書けない → auto-pick 対象外
+  const usOnlyBlocked = (m.usOnly.length > 0 || negated) && !japanWritable;
+
+  return {
+    net: positive + negative,
+    positive,
+    negative,
+    reasons,
+    deductions,
+    usOnlyBlocked,
+    japanWritable,
+    axes: {
+      a_japanImpact: { hit: a, matched: [...m.impact, ...m.comingCues] },
+      b_priceInstitution: { hit: b, matched: m.priceInstitution },
+      c_officialRumor: { official: cOfficial, rumor: cRumor, usOnlyRumor, matched: [...m.official, ...m.rumor] },
+      d_japanAnalog: { hit: d, matched: m.analog },
+      negated,
+    },
+  };
+}
+
+/** 日本自分ごと度の内訳を 1 行に合成（選定理由ログ用）。 */
+export function japanReasonLine(japan) {
+  if (!japan) return null;
+  const parts = (japan.reasons || []).map((r) => JAPAN_AXIS_TEMPLATES[r]).filter(Boolean);
+  const flags = [];
+  if (japan.axes?.c_officialRumor?.rumor) flags.push("噂段階(減点)");
+  if (japan.usOnlyBlocked) flags.push("海外限定で日本を書けない(auto-pick除外)");
+  return [parts.join(" / "), flags.join(" / ")].filter(Boolean).join(" ｜ ") || null;
+}
+
 export function scoreItem(item, source, config, now = Date.now()) {
   const text = `${item.title} ${item.description || ""}`;
   const h = ageHours(item.pubDate, now);
@@ -225,10 +330,13 @@ export function scoreItem(item, source, config, now = Date.now()) {
   const impact = impactHits.length > 0 ? 8 : 0;
   const weight = Number(source.weight) || 0;
   const criticality = scoreCriticality(item, config);
+  const japan = japanRelevance(item, config);
   return {
-    score: recency + tier1 + tier2 + impact + weight + criticality.net,
-    breakdown: { recency, tier1, tier2, impact, sourceWeight: weight, criticality: criticality.net },
+    score: recency + tier1 + tier2 + impact + weight + criticality.net + japan.net,
+    breakdown: { recency, tier1, tier2, impact, sourceWeight: weight, criticality: criticality.net, japanRelevance: japan.net },
     criticality,
+    japanAxes: japan,
+    japanReason: japanReasonLine(japan),
     readerChange: readerChangeLine(criticality),
     matched: { tier1: tier1Hits, tier2: tier2Hits, impact: impactHits },
     ageHours: Math.round(h * 10) / 10,
@@ -473,6 +581,9 @@ export async function runScout({ config = loadConfig(), now = Date.now() } = {})
  * これで「クリティカル度が低い候補しかない日は書かない」を実装（part 3）。
  */
 export function isEligible(candidate, minScore, minCriticality) {
+  // rule #3（2026-07-23）: 海外限定 or 日本否定で「日本ではどうなる/日本の類似」が書けない候補は
+  // auto-pick から落とす（「日本は未定」の一文で終わる記事を選定段階で除外）。
+  if (candidate.japanAxes && candidate.japanAxes.usOnlyBlocked) return false;
   return (
     candidate.score >= minScore &&
     candidate.criticality != null &&
@@ -554,8 +665,10 @@ async function main() {
   for (const c of top) {
     const mark = isEligible(c, result.minScore, result.minCriticality) ? "○" : "×";
     const crit = c.criticality ? c.criticality.net : 0;
-    console.log(`  ${mark} [${String(c.score).padStart(3)}|c${String(crit).padStart(3)}] ${c.title.slice(0, 52)} (${c.source}, ${c.ageHours}h)`);
+    const jp = c.breakdown ? c.breakdown.japanRelevance : 0;
+    console.log(`  ${mark} [${String(c.score).padStart(3)}|c${String(crit).padStart(3)}|jp${String(jp >= 0 ? "+" + jp : jp).padStart(3)}] ${c.title.slice(0, 52)} (${c.source}, ${c.ageHours}h)`);
     console.log(`       読者変化: ${c.readerChange || "（書けない＝選ばない）"}`);
+    console.log(`       日本自分ごと度: ${c.japanReason || "（該当なし）"}${c.japanAxes && c.japanAxes.usOnlyBlocked ? " ／⚠ 海外限定で日本を書けない→選定除外" : ""}`);
   }
   console.log(`log: ${path.relative(ROOT, logPath)}`);
   process.exitCode = result.candidates.some((c) => isEligible(c, result.minScore, result.minCriticality)) ? 0 : 10;
