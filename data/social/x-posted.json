@@ -46,6 +46,23 @@
       "replyCountAfter": 1,
       "replyExistenceCount": 1,
       "replyStatus": "verified"
+    },
+    {
+      "slug": "202607-windows-11-gdid-privacy-explained",
+      "postedAt": "2026-07-24T12:12:36.405Z",
+      "postText": "Windows 11の「GDID」は、VPNでも隠せない万能の指紋？\n\n半分は事実、半分は誤解です。\n訪問先サイトに番号が丸見えになる仕組みではありません。米司法省の訴状PDFとMicrosoft公式資料から、誰に何が見えるのかを3層で整理しました。\n#Windows11 #プライバシー #すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2080626909365600457",
+      "method": "codex_in_app_browser",
+      "thumbnailAttached": true,
+      "charCount": 150,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2080627397926514974",
+      "mainExistenceCount": 1,
+      "replyCountBefore": 0,
+      "replyCountAfter": 1,
+      "replyExistenceCount": 1,
+      "replyStatus": "verified"
     }
   ]
 }
