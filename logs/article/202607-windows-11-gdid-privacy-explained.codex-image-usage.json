@@ -1,0 +1,242 @@
+{
+  "slug": "202607-windows-11-gdid-privacy-explained",
+  "transport": "codex_exec",
+  "runs": [
+    {
+      "item": "thumbnail",
+      "startedAt": "2026-07-24T10:18:09.244Z",
+      "finishedAt": "2026-07-24T10:23:09.209Z",
+      "elapsedMs": 299964,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 706157,
+        "cached_input_tokens": 641792,
+        "output_tokens": 3438,
+        "reasoning_output_tokens": 671
+      },
+      "failureCondition": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "163aa11d5a67b2c30ed6304736682fa2214cfe157ee9b89697c98c3909c4650d",
+      "bytes": 3358776,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\thumbnail.png"
+    },
+    {
+      "item": "slide01",
+      "startedAt": "2026-07-24T10:23:09.217Z",
+      "finishedAt": "2026-07-24T10:27:53.210Z",
+      "elapsedMs": 283993,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 724795,
+        "cached_input_tokens": 666624,
+        "output_tokens": 2845,
+        "reasoning_output_tokens": 304
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "b504531ba6c7cfad82ad70a96bfe8b97c53826040965eab948fa9b5ed44ae2ad",
+      "bytes": 2139687,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide01.png"
+    },
+    {
+      "item": "slide02",
+      "startedAt": "2026-07-24T10:27:53.216Z",
+      "finishedAt": "2026-07-24T10:31:48.471Z",
+      "elapsedMs": 235255,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 471460,
+        "cached_input_tokens": 420608,
+        "output_tokens": 2287,
+        "reasoning_output_tokens": 218
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "23321afb1fbb16e1c501d5c963c870246032fe47c4497fd9ca8da101e67700ff",
+      "bytes": 2044496,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide02.png"
+    },
+    {
+      "item": "slide03",
+      "startedAt": "2026-07-24T10:31:48.476Z",
+      "finishedAt": "2026-07-24T10:36:16.107Z",
+      "elapsedMs": 267631,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 695798,
+        "cached_input_tokens": 633856,
+        "output_tokens": 3190,
+        "reasoning_output_tokens": 451
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "be1420f635f7ee24293c47eeb4ad5086e829dcad12663d4f72d6a3f1a1c8bec0",
+      "bytes": 2012405,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide03.png"
+    },
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-24T10:36:16.113Z",
+      "finishedAt": "2026-07-24T10:40:19.894Z",
+      "elapsedMs": 243781,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 532312,
+        "cached_input_tokens": 473344,
+        "output_tokens": 2151,
+        "reasoning_output_tokens": 220
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "7ce11004a4a6b89b1eeaa3b04a3fb1fa53fbf0a300837eb006a4ad562c373d3d",
+      "bytes": 2122010,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide04.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-24T10:40:19.899Z",
+      "finishedAt": "2026-07-24T10:45:03.863Z",
+      "elapsedMs": 283964,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 803320,
+        "cached_input_tokens": 733184,
+        "output_tokens": 4987,
+        "reasoning_output_tokens": 1481
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "270bba6a7ac1630233b1790057ebbd0290123b9cccb5c26e5742e66dbe6bb9d6",
+      "bytes": 2611957,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide05.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-24T10:45:03.870Z",
+      "finishedAt": "2026-07-24T10:49:49.810Z",
+      "elapsedMs": 285940,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 729581,
+        "cached_input_tokens": 652288,
+        "output_tokens": 4769,
+        "reasoning_output_tokens": 1150
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "d568ca11275c54f10ba871e87ca8b84a509f97223502698b3b283a61e5faf018",
+      "bytes": 2394460,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide06.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-24T10:49:49.817Z",
+      "finishedAt": "2026-07-24T10:53:47.209Z",
+      "elapsedMs": 237392,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 1648375,
+        "cached_input_tokens": 1540352,
+        "output_tokens": 3356,
+        "reasoning_output_tokens": 207
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "062ce4558a7d14935fe4d7fca9596c0e17af8aab423e366a1605b2a12280b992",
+      "bytes": 2021111,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide07.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-24T10:48:27.761Z",
+      "finishedAt": "2026-07-24T10:53:50.543Z",
+      "elapsedMs": 322781,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 953621,
+        "cached_input_tokens": 879104,
+        "output_tokens": 3620,
+        "reasoning_output_tokens": 743
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "a474dc193c2d74fe817a84e89e7b41dcec81af81c4cd551a8cfa12a3ad667aca",
+      "bytes": 2084809,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide06.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-24T10:53:50.553Z",
+      "finishedAt": "2026-07-24T10:59:06.932Z",
+      "elapsedMs": 316379,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 316390,
+        "cached_input_tokens": 266752,
+        "output_tokens": 2810,
+        "reasoning_output_tokens": 676
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "d9753a361844fe0251701b02a80558fadf05d5417f28987ef2e58b1358ea4369",
+      "bytes": 2008211,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide07.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-24T10:53:47.215Z",
+      "finishedAt": "2026-07-24T11:00:17.627Z",
+      "elapsedMs": 390412,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 787624,
+        "cached_input_tokens": 718848,
+        "output_tokens": 5525,
+        "reasoning_output_tokens": 1806
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "ccce9ca840436a6d0491e26edddfddba62ead208159c94a771188a6944716589",
+      "bytes": 2456841,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide08.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-24T10:59:06.938Z",
+      "finishedAt": "2026-07-24T11:03:54.826Z",
+      "elapsedMs": 287888,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 2037531,
+        "cached_input_tokens": 1924608,
+        "output_tokens": 4685,
+        "reasoning_output_tokens": 507
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "c2387c7ba8e2352acd30be35a7e2c413ac9dc548f672b15809ab50a7463a2adb",
+      "bytes": 1920695,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-windows-11-gdid-privacy-explained\\slide08.png"
+    }
+  ],
+  "updatedAt": "2026-07-24T11:03:54.831Z",
+  "totalElapsedMs": 3455380,
+  "totalUsage": {
+    "input_tokens": 10406964,
+    "cached_input_tokens": 9551360,
+    "output_tokens": 43663,
+    "reasoning_output_tokens": 8434
+  }
+}
