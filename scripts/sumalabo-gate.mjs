@@ -348,6 +348,28 @@ function checkDraftsCommitted(slug) {
 }
 
 // ---- full ステージ（MDX / 画像 / OGP）----
+const CHARACTER_BUBBLE_VARIANTS = {
+  himari: new Set(["curious", "aha", "explain", "worried", "smile", "serious"]),
+  labo: new Set(["smile", "point", "worried"]),
+};
+
+function checkCharacterBubbleVariants(body, file) {
+  for (const match of body.matchAll(/<CharacterBubble\b[^>]*>/g)) {
+    const tag = match[0];
+    const speaker = tag.match(/\bspeaker=["']([^"']+)["']/)?.[1];
+    const mood = tag.match(/\bmood=["']([^"']+)["']/)?.[1];
+    if (!speaker || !CHARACTER_BUBBLE_VARIANTS[speaker]) {
+      report("violation", "character-avatar", file, `CharacterBubble の speaker が未定義です: ${speaker || "(missing)"}`);
+      continue;
+    }
+    if (!mood || !CHARACTER_BUBBLE_VARIANTS[speaker].has(mood)) {
+      const allowed = [...CHARACTER_BUBBLE_VARIANTS[speaker]].join("/");
+      report("violation", "character-avatar", file,
+        `CharacterBubble mood="${mood || "(missing)"}" は未定義です。使用可能variant: ${allowed}`);
+    }
+  }
+}
+
 function checkMdxStage(slug, patterns, productNames) {
   const mdxPath = path.join(CONFIG.articlesDir, `${slug}.mdx`);
   const raw = readTextOrNull(mdxPath);
@@ -371,6 +393,7 @@ function checkMdxStage(slug, patterns, productNames) {
   checkForbiddenWords(body, `content/articles/${slug}.mdx`, "mdx", patterns);
   checkFormalProductNames(raw, `content/articles/${slug}.mdx`, productNames);
   checkStrayStatusLabels(body, `content/articles/${slug}.mdx`);
+  checkCharacterBubbleVariants(body, mdxPath);
   const title = frontmatterValue(frontmatter, "title");
   checkTitleFactBacking(title, body, `content/articles/${slug}.mdx`, patterns);
   return { body, fm: frontmatter };
@@ -480,6 +503,10 @@ function checkDistOgp(slug) {
   if (html === null) {
     report("warning", "dist-ogp", htmlPath, "dist が未 build のため OGP 実測をスキップ（finalize では gate 後に build されます）");
     return;
+  }
+  if (/<span\b[^>]*class=["'][^"']*\bface--fallback\b[^"']*["']/i.test(html)) {
+    report("violation", "character-avatar", htmlPath,
+      "CharacterBubble が文字アバターへフォールバックしています。speaker/mood variant と互換aliasを確認してください");
   }
   const metas = {
     "og:title": /<meta[^>]+property="og:title"[^>]+content="([^"]+)"/,

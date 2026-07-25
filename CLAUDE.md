@@ -18,6 +18,8 @@
 
 **画像の「同一性」と「演出」を分離する（2026-07-20）**: キャラ同一性のblocking判定は、ひまりの顔・体型・髪型／らぼまるの耳ビレ・首輪・アンテナ・ハート・卵型体型など、`assets/characters/character-sheet.md` の認識アンカーに限る。衣装・小道具・ポーズ・背景は記事テーマを伝えるために積極的に変え、これらの差をキャラ不一致や工房fallbackの理由にしない。新規記事の `slide_plan.md` は `## 演出ブロック` を必須とし、衣装・小道具・ポーズ・背景・演出根拠・スライド演出方針をPhase Aで自動生成する。独立検品はアンカー不一致をblocking、演出の弱さをwarningとして分ける。サムネは標準衣装の棒立ち・汎用背景・指さし説明だけを避け、道具を実際に使う体験図にする。本文スライドも小道具・動き・背景をテーマに合わせ、衣装を変える場合は記事内で一貫させる。次の立ち会い記事では、機械検品後にHiroが演出の質を実物レビューして採否を決める。
 
+**身体構造と画像経路の公開ブロック（2026-07-25）**: 認識アンカーとは別に、四肢・手指・顔・物体との融合を全画像で検査する。明確な手/腕/脚の本数異常は warning ではなく `needs_revision` とし、対象画像だけCodex CLIで1回再生成して再検品する。らぼまるは腕・手・脚・足が左右各1つで、それ以外の突起はアンテナ1本と左右の耳ビレだけ。画像生成の標準経路は `codex exec` とし、工房チャットは既定のfallback条件が記録された場合だけ使う。**工房fallbackが1回でも発動した完了報告には「工房退避あり（条件名）」を必須記載**し、発動しなかった場合も「工房退避なし（Codex exec）」と明記する。無記載のまま経路を変更してはならない。
+
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと
@@ -189,7 +191,7 @@ Phase B 完了後だけ実行：
 
 **独立検品（2026-07-14・X直接投稿の拡散リスク対策）＝ Phase C の必須前提：**
 - X 直接投稿の前に、**生成した本人のセッションとは別の Task エージェント**を起動し、全画像を白紙の目で再検査する（本人チェック=factcheck_images との**ダブルチェック**）。手順: `npm run sumalabo:inspect -- --slug <slug>` → 独立エージェント起動 → 出力を `logs/article/<slug>.independent-inspection.json` に保存。
-- 検品は factcheck 12項目＋スライド本文と最終稿の突合＋X選抜スコア（文字量少・数字正確・単体で意味が通る）を判定する。**本人チェックと差が出たら独立検品を優先。**
+- 検品は factcheck 14項目（認識アンカーに加えて身体構造を含む）＋スライド本文と最終稿の突合＋X選抜スコア（文字量少・数字正確・単体で意味が通る）を判定する。**本人チェックと差が出たら独立検品を優先。**
 - **X 投稿するスライドは選抜制**: 4枚を機械的に選ばず、検品の `xSelection`（上位4枚・先頭=サムネ）を使う。文字密度の高い（誤字リスク大）スライドは X から外し記事内専用にする。
 - **崩れ検出時**: `needs_revision` は該当スライドのみ**最大2回**再生成 → 直らなければそのスライドを **X から除外**して残りで投稿する（**記事の公開自体は止めない**）。
 - 定義: [`docs/kanji_pitfalls.md`](docs/kanji_pitfalls.md)（化けやすい漢字の回避）/ `scripts/sumahon/generate-independent-inspection-prompt.mjs`（検品プロンプト・スキーマ）。

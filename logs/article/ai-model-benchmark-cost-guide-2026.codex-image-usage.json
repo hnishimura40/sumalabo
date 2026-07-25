@@ -172,14 +172,33 @@
       "sha256": "291aea7d2d975a1e660d1356d2194fc7642cf63c5fab472db71436ca2fb2a380",
       "bytes": 1845447,
       "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide08.png"
+    },
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-25T13:22:31.032Z",
+      "finishedAt": "2026-07-25T13:26:16.873Z",
+      "elapsedMs": 225840,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 542529,
+        "cached_input_tokens": 486656,
+        "output_tokens": 3088,
+        "reasoning_output_tokens": 862
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "f5326db7abb777984a695baaa3a8a314d6682cd76f3e9ea034c8898f3be5a8df",
+      "bytes": 1846960,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide04.png"
     }
   ],
-  "updatedAt": "2026-07-25T11:17:46.436Z",
-  "totalElapsedMs": 2351382,
+  "updatedAt": "2026-07-25T13:26:16.876Z",
+  "totalElapsedMs": 2577222,
   "totalUsage": {
-    "input_tokens": 5419763,
-    "cached_input_tokens": 4863744,
-    "output_tokens": 40463,
-    "reasoning_output_tokens": 16088
+    "input_tokens": 5962292,
+    "cached_input_tokens": 5350400,
+    "output_tokens": 43551,
+    "reasoning_output_tokens": 16950
   }
 }
