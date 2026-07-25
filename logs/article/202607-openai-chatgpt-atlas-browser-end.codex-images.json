@@ -1,0 +1,20 @@
+{
+  "slug": "202607-openai-chatgpt-atlas-browser-end",
+  "transport": "codex_exec",
+  "outputDir": "D:\\downloads\\sumalabo-codex\\202607-openai-chatgpt-atlas-browser-end",
+  "canonicalImages": [
+    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\atlas-slide04-hotfix\\assets\\characters\\himari-canonical.png",
+    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\atlas-slide04-hotfix\\assets\\characters\\labomaru-canonical.png"
+  ],
+  "outputs": [
+    {
+      "id": "slide04",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-openai-chatgpt-atlas-browser-end\\slide04.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "8fc6df24ea7fa8951b732853ff821ffd8ff2b169f5ada6d35bad6a646cf65a7a",
+      "bytes": 1977046
+    }
+  ],
+  "completedAt": "2026-07-25T23:33:17.045Z"
+}
