@@ -44,6 +44,7 @@ test("performance block is extracted and passed to every image item", () => {
     "- 小道具: 虫眼鏡",
     "- ポーズ・動き: 端末を調べる",
     "- 背景・状況: 検品机",
+    "- 表情: 真剣に調べる顔",
     "- 演出根拠: 検証記事だから",
     "## thumbnail（16:9）",
     "- 入れる文字: テスト",
@@ -64,7 +65,11 @@ test("performance block is extracted and passed to every image item", () => {
   });
   assert.match(prompt, /同一性（正本厳守・変更禁止）/);
   assert.match(prompt, /演出（記事テーマに合わせて積極的に変える）/);
+  assert.match(prompt, /短く・太く・丸く/);
+  assert.match(prompt, /触手状・ホース状/);
+  assert.match(prompt, /自然に手が届く距離/);
   assert.match(prompt, /点検用ベスト/);
+  assert.match(prompt, /真剣に調べる顔/);
   assert.doesNotMatch(prompt, /スライドでは白い標準衣装/);
 });
 

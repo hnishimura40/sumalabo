@@ -2,7 +2,7 @@ export const categories = [
   {
     name: "ニュースをかみくだく",
     slug: "news",
-    description: "AI・スマホ・ガジェットのニュースを、普通の人にもわかるように整理します。",
+    description: "AI・スマホ・ガジェットのニュースを、専門用語をかみくだいて整理します。",
   },
   {
     name: "やってみた・検証",

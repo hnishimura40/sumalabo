@@ -42,7 +42,8 @@
     "retract": "node scripts/automation/retract.mjs",
     "schedule:auto-run": "node scripts/automation/register-night-task.mjs",
     "night:report": "node scripts/automation/night-report.mjs",
-    "test-mode": "node scripts/automation/test-mode.mjs"
+    "test-mode": "node scripts/automation/test-mode.mjs",
+    "sumalabo:audit": "node scripts/sumalabo-gate.mjs --audit"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",
