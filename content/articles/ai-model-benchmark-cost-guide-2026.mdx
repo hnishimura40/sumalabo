@@ -1,0 +1,235 @@
+---
+title: "AIモデル、結局どれを使えばいい？ベンチマークとコスパの読み方2026"
+slug: "ai-model-benchmark-cost-guide-2026"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Claude・ChatGPT・Geminiはどれを選ぶ？2026年夏の現行モデル、API単価、サブスク、ベンチマークの読み方を、用途と予算からやさしく整理します。"
+thumbnail: "/images/thumbnails/ai-model-benchmark-cost-guide-2026.webp"
+thumbnailAlt: "AIモデルを用途と予算で選ぶ比較ガイド。ひまりが3つのモデル棚を見比べ、らぼまるが無料・日常・最上位の選択肢を整理している。『AIモデル 結局どれ？』『数字より用途と予算』の文字入り"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "AIモデル"
+  - "Claude"
+  - "ChatGPT"
+  - "Gemini"
+  - "ベンチマーク"
+  - "AIサブスク"
+  - "API料金"
+related:
+  - "202607-claude-opus-5-everyday-value"
+  - "202607-gpt-5-6-sol-terra-luna-release"
+  - "202607-claude-fable-5-max-standard-pro-credits"
+  - "202607-chatgpt-5h-limit-lifted-max-ultra"
+  - "202607-ai-pc-cloud-local-spec-guide"
+pubDate: "2026-07-25"
+updated: "2026-07-25"
+publishAt: "2026-07-25T18:30:00+09:00"
+hasAffiliate: false
+---
+
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+## 30秒サマリー
+
+<p class="lead"><strong>AIモデルは、ベンチマーク1位を買うのではなく、用途と予算で選ぶものです。迷ったら、各社の無料枠から試してください。文章や調べ物は無料〜中位プランで足りることが多く、長い推論や大量の作業だけ上位モデルへ回すのが2026年夏の現実的な選び方です。</strong></p>
+
+- 最高難度の相談や設計：最上位モデルを必要なときだけ使う
+- 日常の文章・相談・コード：速度と料金の釣り合うモデルを中心にする
+- 画像・動画：チャットの賢さとは別に、作りたい形式で選ぶ
+- ベンチマーク：出典と測定条件を確認し、順位だけで決めない
+
+<Callout type="tip" title="先に結論">
+  新モデルが出ても、すぐ乗り換える必要はありません。同じ質問を無料枠で2〜3社に試し、答えの質、待ち時間、使いやすさを比べるのがいちばん確実です。
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは選び方を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-model-benchmark-cost-guide-2026/slide01-conclusion.webp" alt="AIモデルは数字より用途と予算で選び、迷ったら無料枠で試すという結論を示す図解" loading="lazy" decoding="async" />
+    <figcaption>AIモデル選びの結論</figcaption>
+  </figure>
+</section>
+
+## 2026年夏、競争は「賢さ」から「日常コスパ」へ
+
+象徴的なのが、Anthropicが2026年7月24日に発表したClaude Opus 5です。同社は、最上位のFable 5に<strong>近い</strong>知能を、APIではおよそ半分の単価で提供すると説明しました。「Fable 5を超えた」という意味ではありませんが、最高点だけでなく、日々の仕事をいくらで回せるかが競争の中心になったことは読み取れます。
+
+[Opus 5でMax・Pro・APIがどう変わったか](/articles/202607-claude-opus-5-everyday-value/)は別記事で詳しく整理しています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">3陣営を、用途の階級で見比べます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-model-benchmark-cost-guide-2026/slide02-landscape.webp" alt="Claude、OpenAI、Googleのモデルを最上位、日常用、軽量の3階級で整理した図解" loading="lazy" decoding="async" />
+    <figcaption>2026年夏のモデル勢力図</figcaption>
+  </figure>
+</section>
+
+### 3陣営を3つの役割で見る
+
+| 陣営 | 最高難度 | 日常・バランス | 軽量・高速 |
+|---|---|---|---|
+| Anthropic | Claude Fable 5 | Claude Opus 5 / Sonnet系 | 無料枠・軽量モデル |
+| OpenAI | GPT-5.6 Sol / Sol Pro | GPT-5.6 Terra | GPT-5.6 Luna |
+| Google | GeminiのPro系 | Gemini 3.6 Flash | Geminiの高速・無料枠 |
+
+この表は「総合順位」ではなく役割の地図です。OpenAIのTerraとLunaは標準のChatGPT会話画面では直接選ぶモデルではなく、Work、Codex、APIなどで提供されます。Googleの<strong>Gemini Omni Flash</strong>は動画などを生成する別系統なので、チャットモデルの上下関係には入れていません。
+
+[GPT-5.6のSol・Terra・Lunaの違い](/articles/202607-gpt-5-6-sol-terra-luna-release/)と、[Fable 5のプラン別の扱い](/articles/202607-claude-fable-5-max-standard-pro-credits/)も合わせて読むと位置づけが分かります。
+
+## ベンチマークは「誰が、何を、どう測ったか」で読む
+
+モデル発表のグラフは便利ですが、数字だけで万能な勝者は決まりません。
+
+| 表示 | 何が分かる | 注意点 |
+|---|---|---|
+| 自社発表 | 特定条件での強み、前世代との差 | 得意なベンチや設定が選ばれている可能性 |
+| 第三者の固定テスト | 同じ問題での横比較 | 実際の使い方と問題分野が違うことがある |
+| LMArenaなどの利用者投票 | 人が好んだ回答の傾向 | 投票者、質問、時期で結果が動く |
+
+たとえばOpus 5のFrontier-Bench v0.1やGDPval-AAの好成績は、Anthropicの<strong>自社発表</strong>です。一方、LMArenaは匿名の2回答を利用者が比較する<strong>第三者の選好データ</strong>です。どちらも参考になりますが、「自分のメールを直す」「長い仕様を考える」「動画を作る」といった用途そのものを保証する数字ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">数字を見る順番を整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-model-benchmark-cost-guide-2026/slide03-benchmarks.webp" alt="ベンチマークを出典、測定条件、自分の用途の順に確認する図解" loading="lazy" decoding="async" />
+    <figcaption>ベンチマークの読み方</figcaption>
+  </figure>
+</section>
+
+## APIのコスパは、入力と出力を分けて比べる
+
+開発者向けの標準テキスト料金をそろえると、次のようになります。
+
+| モデル | 入力 | 出力 | 位置づけ |
+|---|---:|---:|---|
+| Claude Fable 5 | $10 | $50 | 最高難度 |
+| Claude Opus 5 | $5 | $25 | Fableに近い知能を低コストで狙う |
+| GPT-5.6 Sol | $5 | $30 | OpenAIの最上位 |
+| GPT-5.6 Terra | $2.50 | $15 | バランス型 |
+| GPT-5.6 Luna | $1 | $6 | 高速・低価格 |
+| Gemini 3.6 Flash | $1.50 | $7.50 | マルチモーダルの日常処理 |
+
+<Note>2026年7月25日時点、100万トークン当たりの米ドル価格。キャッシュ、バッチ、長文コンテキスト、ツール、画像・動画生成の追加料金は含みません。</Note>
+
+出力は入力より高いモデルが多いため、長い回答を何度も生成する用途では差が広がります。ただし、安いモデルでやり直しが増えれば総額は逆転します。1回の単価ではなく、目的を達成するまでの回数で比べるのが大切です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">API単価は入力と出力を分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-model-benchmark-cost-guide-2026/slide04-api-prices.webp" alt="主要AIモデルのAPI入力単価と出力単価を比較する図解" loading="lazy" decoding="async" />
+    <figcaption>API価格比較・2026年7月25日時点</figcaption>
+  </figure>
+</section>
+
+## 個人利用はAPIよりサブスク比較が大事
+
+チャットや画像・動画をアプリで使うなら、毎月いくらで、どこまで使えるかを見る方が実用的です。
+
+| サービス | 主な個人向け有料プラン | 月額の目安 | 向いている使い方 |
+|---|---|---:|---|
+| Claude | Pro / Max 5x / Max 20x | $20 / $100 / $200 | 長文、設計、コーディング |
+| ChatGPT | Plus / Pro | $20 / $200 | 相談、調べ物、画像、各種ツール |
+| Google AI | Pro | 2,900円 | Gemini、Omni、Flow、Google連携 |
+
+<Note>2026年7月25日時点。ClaudeとChatGPTは米国の公式価格で、地域・税・決済方法により変わります。Google AI Proもキャンペーンや申込経路で表示が変わる場合があるため、購入画面を確認してください。</Note>
+
+無料枠で困っていなければ、課金は急がなくて大丈夫です。上位プランは「回答が少し良い」だけでなく、利用上限、長い作業、動画クレジットなどに毎月お金を払う選択です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">月額と用途を同じ表で見ます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-model-benchmark-cost-guide-2026/slide05-subscriptions.webp" alt="Claude、ChatGPT、Google AIの個人向けサブスク料金と用途を比較する図解" loading="lazy" decoding="async" />
+    <figcaption>個人向けAIサブスク比較</figcaption>
+  </figure>
+</section>
+
+## 用途別：迷ったらここから試す
+
+| 用途 | 最初の選択 | 上位へ上げる目安 |
+|---|---|---|
+| 文章・相談 | 各社の無料枠 | 長文の一貫性や深い検討が足りない |
+| コーディング | 日常・バランス型 | 大規模な変更、長時間の実行が必要 |
+| 画像 | 使いたい画風と編集機能で比較 | 枚数、解像度、商用条件が必要 |
+| 動画 | Gemini Omniなど動画向け機能 | 尺、品質、クレジットが不足 |
+| 調べ物 | 出典を示せる検索連携 | 複数資料の精査や長い報告書が必要 |
+| 無料で試す | 同じ依頼を2〜3社へ | 毎週上限に当たる、作業時間が減る |
+
+Gemini 3.6 Flashは公式APIで実在と価格を確認できました。一方、Gemini Omni FlashはGeminiアプリやFlow、YouTube Shortsなどへ広がる動画生成モデルです。名称が似ていても、同じ用途・同じ料金体系ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">用途から入口を選びます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-model-benchmark-cost-guide-2026/slide06-use-cases.webp" alt="文章、コード、画像、動画、調べ物の用途別にAIの選び方を示す図解" loading="lazy" decoding="async" />
+    <figcaption>用途別の選び方</figcaption>
+  </figure>
+</section>
+
+## 私の使い分け：考える、動かす、枠を配る
+
+筆者は、1社だけに統一せず、仕事の種類で使い分けています。
+
+- じっくり考える設計や重要な相談：Claude Fable 5を必要な場面だけ使う
+- コーディングなど、手を動かすエージェント：Claude Opus 5やSonnet系を中心に、費用と速度を見る
+- 日常の相談・調べ物：ChatGPTのGPT-5.6で推論を高めに設定し、別の回答とも見比べる
+- 作業量の大きいエージェント処理：ChatGPT側の高い推論設定へ回し、残りの利用枠を見て配分する
+- ショート動画：Gemini Omniを使う
+
+原則にすると、<strong>「考える仕事は最上位、手を動かす仕事はコスパ、制限枠は資源として配分」</strong>です。これは特定サービスの推奨ではありません。得意分野、待ち時間、残り枠が変われば、割り振りも変えます。
+
+ChatGPTの5時間制限は、2026年7月12日にPlus・Business・Pro向けの<strong>一時撤廃</strong>が案内され、7月25日の調査時点では終了告知を確認できていません。ただし公式ヘルプは利用上限が動的だと説明しています。恒久的な無制限ではなく、画面のUsage表示を確認してください。経緯は[GPT-5.6の5時間制限の記事](/articles/202607-chatgpt-5h-limit-lifted-max-ultra/)で追っています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">使い分けの原則を1枚に。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-model-benchmark-cost-guide-2026/slide07-principle.webp" alt="考える仕事は最上位、手を動かす仕事はコスパ、制限枠は資源として配分という原則の図解" loading="lazy" decoding="async" />
+    <figcaption>筆者の使い分けから得た原則</figcaption>
+  </figure>
+</section>
+
+## AIを使うために、高いPCまで買う必要はある？
+
+ChatGPT、Claude、Geminiの多くの機能はクラウド側で動きます。モデルを上位へ変えても、手元のPCに高価なGPUが必須になるわけではありません。ローカルでAIを動かす場合だけ事情が変わります。詳しくは[AIに高いPCが必要かを整理したガイド](/articles/202607-ai-pc-cloud-local-spec-guide/)で説明しています。
+
+## まとめ：迷ったら無料で試し、困る部分だけ上げる
+
+1. ベンチマークは出典と条件を確認する
+2. API価格とサブスク月額を混ぜない
+3. 文章、コード、画像、動画など用途から選ぶ
+4. 無料枠で比べ、上限や品質に困ったときだけ課金する
+
+<CharacterBubble speaker="himari" mood="smile">新モデルが増えても、全部を追いかけなくていいんだね。まず自分の用途で試してみる！</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">数字は地図の一部だよ。予算、待ち時間、使いやすさまで合わせて選ぼう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、選び方の手順を確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-model-benchmark-cost-guide-2026/slide08-checklist.webp" alt="用途を決め、無料で試し、必要な部分だけ上位へ上げる選択手順の図解" loading="lazy" decoding="async" />
+    <figcaption>AIモデル選びの4ステップ</figcaption>
+  </figure>
+</section>
+
+この記事は常設ガイドです。新モデル、料金、利用上限が変わるたびに更新します。
+
+## 参考情報
+
+- [Anthropic「Introducing Claude Opus 5」](https://www.anthropic.com/news/claude-opus-5)
+- [Anthropic「Claude Fable 5」](https://www.anthropic.com/claude/fable)
+- [Anthropic「Choosing a Claude plan」](https://support.anthropic.com/en/articles/11049762-choosing-a-claude-ai-plan)
+- [OpenAI「Introducing GPT-5.6」](https://openai.com/index/gpt-5-6/)
+- [OpenAI Help「GPT-5.6 in ChatGPT」](https://help.openai.com/en/articles/20001354-gpt-56-in-chatgpt)
+- [OpenAI Help「What is ChatGPT Plus?」](https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus)
+- [OpenAI Help「What is ChatGPT Pro?」](https://help.openai.com/en/articles/9793128-what-is-chatgpt-pro)
+- [Google AI for Developers「Gemini 3.6 Flash」](https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash)
+- [Google「Google I/O 2026 announcements」](https://blog.google/innovation-and-ai/technology/ai/google-io-2026-all-our-announcements/)
+- [Google One「Google AI のプラン」](https://one.google.com/intl/ja_jp/about/google-ai-plans/)
+- [LMArena FAQ](https://forward-testing.lmarena.ai/faq)
+

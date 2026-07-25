@@ -1,0 +1,68 @@
+{
+  "ok": true,
+  "slug": "202607-claude-opus-5-everyday-value",
+  "dryRun": false,
+  "trigger": "manual",
+  "autonomyLevel": 1,
+  "startedAt": "2026-07-25T02:00:49.013Z",
+  "finishedAt": "2026-07-25T02:01:29.165Z",
+  "steps": {
+    "autonomyGate": {
+      "status": "ok",
+      "level": 1,
+      "trigger": "manual",
+      "reason": null
+    },
+    "gitSync": {
+      "status": "skipped",
+      "reason": "--skip-git-sync"
+    },
+    "build": {
+      "status": "ok"
+    },
+    "distCheck": {
+      "status": "ok",
+      "articleHtml": true,
+      "articlesIndex": true,
+      "homeIndex": true,
+      "thumbnailFound": true,
+      "figFound": true
+    },
+    "wrangler": {
+      "status": "ok",
+      "command": "wrangler pages deploy dist --project-name=sumalabo --branch=main",
+      "hasCloudflareApiToken": true,
+      "hasCloudflareAccountId": true
+    },
+    "verify": {
+      "status": "ok",
+      "attempts": 2,
+      "productionUrl": "https://sumalabo.com/articles/202607-claude-opus-5-everyday-value/"
+    },
+    "lastGoodSnapshot": {
+      "status": "ok",
+      "deploymentId": "e8e06be3"
+    },
+    "postPublishVerify": {
+      "status": "ok",
+      "exitCode": 0,
+      "log": "logs/publish/202607-claude-opus-5-everyday-value.verify.json"
+    },
+    "imageOutputCleanup": {
+      "ok": true,
+      "status": "skipped",
+      "reason": "inspection_not_passed",
+      "slug": "202607-claude-opus-5-everyday-value",
+      "source": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value"
+    },
+    "envHealth": {
+      "status": "ok"
+    },
+    "cachePurge": {
+      "status": "ok",
+      "exitCode": 0
+    }
+  },
+  "productionUrl": "https://sumalabo.com/articles/202607-claude-opus-5-everyday-value/",
+  "errorReason": null
+}

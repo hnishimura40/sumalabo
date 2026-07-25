@@ -1,0 +1,235 @@
+---
+title: "Claude Opus 5登場。「また新モデル？」でも課金者は今日から自動で得する"
+slug: "202607-claude-opus-5-everyday-value"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Claude Opus 5は誰に関係する？ Maxではデフォルト、Proでは使える最上位モデルへ自動更新。Fable 5に近い性能、API価格据え置き、Mythos 5未満のサイバー能力まで整理します。"
+thumbnail: "/images/thumbnails/202607-claude-opus-5-everyday-value.webp"
+thumbnailAlt: "Claude Opus 5のカードがMaxとProへ自動で届く様子を、明るい笑顔のひまりとらぼまるが示すサムネイル。『また新モデル？』『課金者は自動で得』の文字入り"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude"
+  - "Claude Opus 5"
+  - "Claude Fable 5"
+  - "Claude Max"
+  - "Claude Pro"
+  - "Anthropic"
+  - "AIモデル"
+related:
+  - "ai-model-benchmark-cost-guide-2026"
+  - "202607-claude-fable-5-max-standard-pro-credits"
+  - "202606-claude-fable-5-launch"
+  - "202605-claude-opus-4-8-launch"
+pubDate: "2026-07-25"
+updated: "2026-07-25"
+publishAt: "2026-07-25T10:05:17+09:00"
+hasAffiliate: false
+---
+
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+## 30秒サマリー
+
+<p class="lead"><strong>「また新モデル？」で終わらせなくて大丈夫です。Claudeの有料プランを使っている人は、基本的に何もしなくても今日から恩恵を受けます。</strong></p>
+
+- <strong>Claude Max</strong>：デフォルトモデルが<strong>Opus 5</strong>へ更新
+- <strong>Claude Pro</strong>：プラン内で使える<strong>最上位モデルがOpus 5</strong>へ更新
+- <strong>API</strong>：入力<strong>$5</strong>・出力<strong>$25</strong>（100万トークン）で、Opus 4.8から<strong>値上げなし</strong>
+- <strong>位置づけ</strong>：多くの課題でFable 5に近い一方、サイバー系はMythos 5未満
+
+<NumCards
+  items={[
+    { num: "$5", cap: "API入力・100万トークン" },
+    { num: "$25", cap: "API出力・100万トークン" },
+    { num: "0", cap: "Max/Pro利用者が必要な設定変更" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">また新モデル？ 名前が増えただけなら、わたしには関係ないかも。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">今回は有料プランの人ほど分かりやすいよ。MaxとProの“いつものClaude”が、そのまま強くなるんだ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず「自分に関係あるか」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-opus-5-everyday-value/slide01-opus5.webp" alt="『課金者は今日から変わる』の図解。MaxはOpus 5がデフォルト、Proは使える最上位モデルが更新、基本は何もしなくてよい。ひまりがMaxとProへOpus 5カードを配り、らぼまるがチェック印を押す" loading="lazy" decoding="async" />
+    <figcaption>図解：Max / Pro利用者の結論</figcaption>
+  </figure>
+</section>
+
+## MaxとProは、何もしなくてもモデルが更新される
+
+Anthropicは2026年7月24日、Claude Opus 5を公開しました。公式発表で最も生活に近い変更は、ベンチマークの順位ではなく<strong>有料プランでの位置づけ</strong>です。
+
+<div class="table-card article-wide-block">
+
+| 利用方法 | 2026年7月24日からの位置づけ | やること |
+|---|---|---|
+| Claude Max | Opus 5が新しいデフォルトモデル | 基本は何もしなくてよい |
+| Claude Pro | プラン内で使える最上位モデルがOpus 5へ | モデル選択に表示されれば利用可能 |
+| Claude API | `claude-opus-5`として提供 | 必要な処理だけモデル名を切り替える |
+
+</div>
+
+ここでいう「何もしなくてよい」は、MaxやProの契約者が追加購入や移行作業をしなくても、モデルの選択肢が更新されるという意味です。月額料金や利用上限が増えた、という発表ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">プランごとの違いを整理。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-opus-5-everyday-value/slide02-plans.webp" alt="『あなたのプランでは』の図解。MaxはOpus 5がデフォルト、Proは使える最上位モデルが更新。どちらも設定変更なし。利用上限や月額の変更とは別と注記" loading="lazy" decoding="async" />
+    <figcaption>図解：MaxとProの違い</figcaption>
+  </figure>
+</section>
+
+Fable 5のプラン別条件を確認したい人は、既存記事「[Claude Fable 5、3週間の延長劇に決着。あなたのプランではどうなる？](/articles/202607-claude-fable-5-max-standard-pro-credits/)」もあわせて読むと、役割の違いが分かりやすくなります。
+
+## 大きいのは「賢さ」より「日常コスパ」
+
+AnthropicはOpus 5を、<strong>Fable 5のフロンティア級知能に近いモデルを半額で使える</strong>と説明しています。ただし、公式の言葉はあくまで「comes close」です。モデル全体でFable 5を超えた、と言っているわけではありません。
+
+この違いは重要です。最も難しい作業で一番強いモデルを競うだけなら、読者にとっては「またベンチの順位が変わった」で終わります。Opus 5は、毎日の資料整理、コード、調査、PC操作といった仕事へ、高い能力を現実的なコストで持ち込むモデルです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">競争軸の変化を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-opus-5-everyday-value/slide03-value.webp" alt="『賢さから日常コスパへ』の図解。Fable 5に近い、価格は約半分、毎日の仕事向けの3点。全面的なFable超えではないと注記" loading="lazy" decoding="async" />
+    <figcaption>図解：Opus 5が示す日常コスパ競争</figcaption>
+  </figure>
+</section>
+
+Reutersの取材に対し、Anthropicの製品責任者は、価値を重視するならOpus 5、数日かかる非常に自律的なプロジェクトならFable 5、という使い分けを示しています。これは「一番強い1モデルですべてを行う」のではなく、仕事の重さに応じて選ぶ考え方です。
+
+## API価格はOpus 4.8から据え置き
+
+Opus 5のAPI価格は、100万トークンあたり<strong>入力$5、出力$25</strong>です。前世代のOpus 4.8と同額で、値上げはありません。
+
+<Callout kind="facts" title="価格で確定していること">
+  <ul>
+    <li>入力：$5 / 100万トークン</li>
+    <li>出力：$25 / 100万トークン</li>
+    <li>Opus 4.8と同額</li>
+    <li>これはAPI単価であり、Claude Pro / Maxの月額料金ではない</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">価格の取り違えを防ぐ1枚。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-opus-5-everyday-value/slide04-price.webp" alt="『値上げなし』の図解。API価格は入力$5、出力$25、100万トークンあたりでOpus 4.8と同額。Claudeの月額料金ではないと注記" loading="lazy" decoding="async" />
+    <figcaption>図解：Opus 5のAPI価格</figcaption>
+  </figure>
+</section>
+
+性能が上がっても同じOpus価格帯に収めたことで、AI開発側は既存の予算感を大きく変えずにモデルを更新できます。ここが「日常コスパ」という見方の根拠です。
+
+## Fable 5とは、どちらを使えばいい？
+
+ざっくり分けると、<strong>毎日の仕事はOpus 5、最高難度で長く走る仕事はFable 5</strong>です。
+
+- Opus 5：日常の資料整理、コード、調査、PC操作。速度と費用のバランスを重視
+- Fable 5：数日単位の長い自律作業、最も難しい研究・開発タスク
+- Mythos 5：危険な二重用途を含む高度なサイバー・生物分野。一般の日常利用とは別枠
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">モデル名ではなく仕事で選ぶ。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-opus-5-everyday-value/slide05-roles.webp" alt="『毎日ならOpus 5』の使い分け図。Opus 5は日常の仕事とコード、Fable 5は数日かかる長い自律作業。ひまりが作業を2つの棚へ仕分ける" loading="lazy" decoding="async" />
+    <figcaption>図解：Opus 5とFable 5の使い分け</figcaption>
+  </figure>
+</section>
+
+Fable 5の発表から再開までの経緯は「[Claude Fable 5が復活。7月7日からの変更点](/articles/202606-claude-fable-5-launch/)」で整理しています。
+
+## ベンチは強い。でも「全面的にFable超え」ではない
+
+公式発表には目を引く数字があります。
+
+- <strong>Frontier-Bench v0.1</strong>：公式評価で他モデルを上回り、Opus 4.8の性能を2倍超に
+- <strong>CursorBench 3.2</strong>：max effortでFable 5のピークスコアから0.5%以内、1タスクあたりのコストは半分
+- <strong>OSWorld 2.0</strong>：Fable 5の最高結果を上回る成績を、3分の1強のコストで達成
+
+ただし、これらは特定の実行条件と評価セットでの結果です。Anthropic自身もモデル全体の説明では「Fable 5に近い」と表現しています。個別ベンチで上回ったことと、すべての仕事で上位になったことを混同しないのが安全です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">数字と線引きを同時に確認。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-opus-5-everyday-value/slide06-bench.webp" alt="『強い。でも全面勝利ではない』の図解。Frontier-Bench v0.1はOpus 4.8の2倍超、CursorBench 3.2はFable 5の0.5%以内でコスト半分。特定条件の公式評価と注記" loading="lazy" decoding="async" />
+    <figcaption>図解：公式ベンチの読み方</figcaption>
+  </figure>
+</section>
+
+## サイバー系はMythos 5より下。そこは正直に見る
+
+Opus 5はあらゆる用途で最上位のモデルではありません。Anthropicは、危険な二重用途につながる<strong>攻撃的サイバーセキュリティと生物研究ではMythos 5より下</strong>だと明記しています。
+
+サイバー分野では、ソフトウェアの脆弱性を見つける能力はMythos 5に近い一方、見つけた穴を実際の攻撃コードへ変える能力は大きく下回りました。つまり、一般利用者に役立つ分析力は伸ばしつつ、危険能力の最前線には置いていないモデルです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">“できること”と“最上位ではないこと”を分ける。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-opus-5-everyday-value/slide07-cyber.webp" alt="『Mythos 5未満』の図解。脆弱性の発見は近いが、攻撃コード化は大きく下、危険能力の最前線ではない。安全シールドを置く構図" loading="lazy" decoding="async" />
+    <figcaption>図解：Opus 5のサイバー能力の線引き</figcaption>
+  </figure>
+</section>
+
+## 結局、私に関係ある？
+
+<p class="lead"><strong>MaxかProを使っているなら、関係あります。しかも基本は何もしなくて大丈夫です。</strong></p>
+
+- Max：普段使うデフォルトモデルがOpus 5へ
+- Pro：選べる最上位モデルがOpus 5へ
+- API：同じOpus単価で、日常タスクの性能と効率が向上
+- 無料プラン：今回の公式発表は有料プランとAPIが中心。提供画面の最新表示を確認
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に3行で判断。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-claude-opus-5-everyday-value/slide08-conclusion.webp" alt="『課金者はそのままでOK』の結論図。Maxは自動でデフォルト更新、Proは最上位モデルの選択肢更新、APIは同じ単価で性能向上。AI競争は日常コスパへ" loading="lazy" decoding="async" />
+    <figcaption>図解：Opus 5で今日から変わること</figcaption>
+  </figure>
+</section>
+
+今回の発表は、モデル名が1つ増えただけではありません。高性能AIの競争が「誰が一番賢いか」から、「毎日の仕事で、同じ予算からどれだけ賢さを引き出せるか」へ移ってきたニュースです。
+
+<Callout kind="facts" title="確定（2026年7月25日時点）">
+  <ul>
+    <li>Opus 5は2026年7月24日から全プラットフォームで提供</li>
+    <li>Maxのデフォルト、Proで使える最上位モデル</li>
+    <li>API価格は入力$5・出力$25でOpus 4.8と同額</li>
+    <li>多くの課題でFable 5に近いが、サイバー・生物分野ではMythos 5未満</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="公式の評価・位置づけ">
+  <ul>
+    <li>「Fable 5に近い」「日常で使うためのモデル」はAnthropicによる説明</li>
+    <li>各ベンチ結果は公式測定。実利用で同じ差が出るとは限らない</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定・今後確認すること">
+  <ul>
+    <li>日本語利用での体感差や、長時間利用時の実際の消費量</li>
+    <li>各プランの利用上限やFast modeの表示はアカウント・時点で変わる可能性</li>
+  </ul>
+</Callout>
+
+<Note>この記事は2026年7月25日時点の情報です。モデルの提供範囲、利用上限、価格、表示名は変わる可能性があります。利用前にClaudeのモデル選択画面とAnthropic公式ドキュメントを確認してください。</Note>
+
+Claude以外も含めて選びたい場合は、常設の[AIモデル・ベンチマーク・コスパ比較ガイド](/articles/ai-model-benchmark-cost-guide-2026/)で、ChatGPT・Geminiとの役割と料金を見比べられます。
+
+## 参考情報
+
+- [Anthropic「Introducing Claude Opus 5」（2026年7月24日）](https://www.anthropic.com/news/claude-opus-5)
+- [Anthropic「Claude Opus 5 System Card」](https://www.anthropic.com/claude-opus-5-system-card)
+- [Reuters「Anthropic rolls out Opus 5 AI model in efficiency upgrade」（2026年7月24日）](https://www.investing.com/news/stock-market-news/anthropic-rolls-out-opus-5-ai-model-in-efficiency-upgrade-4812323)
+- [Axios「Anthropic releases new model, Opus 5」（2026年7月24日）](https://www.axios.com/2026/07/24/anthropic-releases-new-model-opus-5)

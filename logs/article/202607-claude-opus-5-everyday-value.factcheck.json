@@ -1,0 +1,19 @@
+{
+  "pass": true,
+  "regenerate": [],
+  "slides": [
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide01.png", "name": "slide01-opus5.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide02.png", "name": "slide02-plans.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide03.png", "name": "slide03-value.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide04.png", "name": "slide04-price.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide05.png", "name": "slide05-roles.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide06.png", "name": "slide06-bench.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide07.png", "name": "slide07-cyber.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide08.png", "name": "slide08-conclusion.webp" }
+  ],
+  "thumbnail": {
+    "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/thumbnail.png"
+  },
+  "performanceFit": "themed",
+  "notes": "全9枚を正本2枚・final_article・slide_planと照合。日本語、Claude Opus 5/Fable 5/Mythos 5、Frontier-Bench v0.1、CursorBench 3.2、$5/$25、0.5%、4.8などの文字・数字・記号は正確。ひまりの金髪サイドテール、水色リボン、青い瞳、白衣、らぼまるの白い卵型ボディ、黄緑アンテナ、黒い丸目、胸のオレンジハートボタン、青い首輪バンド、左右の青い耳ビレを維持。新機能系は明るい表情、サイバー注意点は穏やかで真剣な調べ顔。warning: 一部の耳ビレは正本より短く丸い傾向だが、認識アンカーは維持され別キャラ化なし。"
+}

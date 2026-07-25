@@ -1,0 +1,84 @@
+{
+  "slug": "ai-model-benchmark-cost-guide-2026",
+  "transport": "codex_exec",
+  "outputDir": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026",
+  "canonicalImages": [
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\himari-canonical.png",
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\labomaru-canonical.png"
+  ],
+  "outputs": [
+    {
+      "id": "thumbnail",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\thumbnail.png",
+      "width": 1600,
+      "height": 900,
+      "sha256": "d88ec59d797cc9ab1936cc46934e1a2df8954004167d651b7ce4c74e9d4bca6e",
+      "bytes": 2692940
+    },
+    {
+      "id": "slide01",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide01.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "bbb8ebc303673ee54ca7ea98e24ac01ccc168924db5a09b89e0d89e80c3a291d",
+      "bytes": 2240247
+    },
+    {
+      "id": "slide02",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide02.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "2c784388535eadeb02b7bfa1421c981884b5ba8961b5c7c4f6e78030c3ab4ddb",
+      "bytes": 1946525
+    },
+    {
+      "id": "slide03",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide03.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "2a770a4e645257fcab27622be30dc4d62d80fd112ce402dbb2c4efa98d45a051",
+      "bytes": 2012442
+    },
+    {
+      "id": "slide04",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide04.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "6a77bd4d7c746a8b746bd7f44f091d24664798d440074772277172534c8030c5",
+      "bytes": 1826557
+    },
+    {
+      "id": "slide05",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide05.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "9f11ee972d5abdfb066c94a1fa747a1f37ae5c69f4b434835e0e7f04718454cc",
+      "bytes": 2504442
+    },
+    {
+      "id": "slide06",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide06.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "a0267476cd72f1e600d1b97c127132f1cd454224a2094c22fe8a64914b608e0a",
+      "bytes": 1825370
+    },
+    {
+      "id": "slide07",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide07.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "1ac68373fd5d789bf4787739b463636bb8778e1ebe21af4c69a081f40627a259",
+      "bytes": 1853374
+    },
+    {
+      "id": "slide08",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide08.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "291aea7d2d975a1e660d1356d2194fc7642cf63c5fab472db71436ca2fb2a380",
+      "bytes": 1845447
+    }
+  ],
+  "completedAt": "2026-07-25T11:17:46.437Z"
+}

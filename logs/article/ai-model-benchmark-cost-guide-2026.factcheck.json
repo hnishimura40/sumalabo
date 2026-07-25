@@ -1,0 +1,24 @@
+{
+  "pass": true,
+  "regenerate": [],
+  "performanceFit": "themed",
+  "checkedAt": "2026-07-25T20:20:00+09:00",
+  "summary": "9枚すべてをslide_planと目視突合。日本語、英数字、日付、$記号、価格は一致。実在ロゴなし。ひまりとらぼまるの認識アンカーを維持。耳ビレは一部短め寄りだが青く左右へ伸びており、別キャラ化ではないためwarning扱いで合格。",
+  "warnings": [
+    "らぼまるの耳ビレは一部の画像で正本より短め・丸めだが、色・左右形状・首輪との連続性を維持している。",
+    "slide08は工程表現としてらぼまるを3体描いている。文字と意味は正確。"
+  ],
+  "slides": [
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide01.png", "name": "slide01-conclusion.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide02.png", "name": "slide02-landscape.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide03.png", "name": "slide03-benchmarks.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide04.png", "name": "slide04-api-prices.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide05.png", "name": "slide05-subscriptions.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide06.png", "name": "slide06-use-cases.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide07.png", "name": "slide07-principle.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide08.png", "name": "slide08-checklist.webp" }
+  ],
+  "thumbnail": {
+    "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/thumbnail.png"
+  }
+}
