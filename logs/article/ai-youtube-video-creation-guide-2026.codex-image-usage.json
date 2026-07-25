@@ -305,14 +305,33 @@
       "sha256": "2048340830b76fe412ce6d26f4d4840dd657ebdc45151b33f376329f569df850",
       "bytes": 1717278,
       "outputFile": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide07.png"
+    },
+    {
+      "item": "thumbnail",
+      "startedAt": "2026-07-25T22:31:47.536Z",
+      "finishedAt": "2026-07-25T22:33:29.675Z",
+      "elapsedMs": 102138,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 268511,
+        "cached_input_tokens": 226048,
+        "output_tokens": 2388,
+        "reasoning_output_tokens": 300
+      },
+      "failureCondition": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "aecec1665970a6b7ee219476fe9a9ac7ff081a127115cdf8178e193fb5a160c4",
+      "bytes": 2325748,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\thumbnail.png"
     }
   ],
-  "updatedAt": "2026-07-25T16:18:37.539Z",
-  "totalElapsedMs": 3380646,
+  "updatedAt": "2026-07-25T22:33:29.680Z",
+  "totalElapsedMs": 3482784,
   "totalUsage": {
-    "input_tokens": 8858398,
-    "cached_input_tokens": 8017408,
-    "output_tokens": 54625,
-    "reasoning_output_tokens": 12205
+    "input_tokens": 9126909,
+    "cached_input_tokens": 8243456,
+    "output_tokens": 57013,
+    "reasoning_output_tokens": 12505
   }
 }
