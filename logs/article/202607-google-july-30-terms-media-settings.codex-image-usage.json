@@ -210,14 +210,61 @@
       "sha256": "89d7014a85c92ae25734c1b7b5eddefcb6db208629d7d311588719d7515ccca6",
       "bytes": 1628701,
       "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide01.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-25T14:31:24.713Z",
+      "finishedAt": "2026-07-25T14:31:56.118Z",
+      "elapsedMs": 31403,
+      "exitCode": 1,
+      "usage": {},
+      "failureCondition": "cli_abnormal_exit"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-25T14:33:38.774Z",
+      "finishedAt": "2026-07-25T14:40:20.266Z",
+      "elapsedMs": 401491,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 1096257,
+        "cached_input_tokens": 1008384,
+        "output_tokens": 3417,
+        "reasoning_output_tokens": 558
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "8599b4775c3d97f1707cd8843bd0242a96a3a05ccd691dbf16b4cdeb466a05d2",
+      "bytes": 1635708,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide05.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-25T14:41:20.235Z",
+      "finishedAt": "2026-07-25T14:46:55.177Z",
+      "elapsedMs": 334941,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 798878,
+        "cached_input_tokens": 725504,
+        "output_tokens": 2858,
+        "reasoning_output_tokens": 522
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "d81ecb9473f49a4e57c5f7a722d8cefcf0fae643f51165414496fa965965aa98",
+      "bytes": 1558669,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide05.png"
     }
   ],
-  "updatedAt": "2026-07-25T13:32:58.375Z",
-  "totalElapsedMs": 2493970,
+  "updatedAt": "2026-07-25T14:46:55.182Z",
+  "totalElapsedMs": 3261805,
   "totalUsage": {
-    "input_tokens": 6367039,
-    "cached_input_tokens": 5742080,
-    "output_tokens": 37844,
-    "reasoning_output_tokens": 12936
+    "input_tokens": 8262174,
+    "cached_input_tokens": 7475968,
+    "output_tokens": 44119,
+    "reasoning_output_tokens": 14016
   }
 }
