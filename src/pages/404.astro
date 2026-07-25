@@ -1,0 +1,35 @@
+---
+// 404 ページ（2026-07-25 追加・soft 404 対策）。
+// 背景: これが無いと Cloudflare Pages は未知のパスに対してトップの HTML を
+// ステータス 200 で返していた（実測）。Google からは「存在しない URL が
+// トップの複製として無限に生える」状態に見え、Search Console で
+// 「代替ページ（適切な canonical タグあり）」として未登録に積み上がっていた
+// （未ビルドの下書き記事 URL 3 件が該当）。
+// Astro が dist/404.html を出力すると、Cloudflare Pages が未マッチのルートに
+// 対してこのページを 404 ステータスで返すようになる。
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { categories } from "../lib/categories";
+---
+
+<BaseLayout
+  title="ページが見つかりません"
+  description="お探しのページは見つかりませんでした。すまラボのトップや記事一覧からお探しください。"
+  noindex
+>
+  <section class="page-shell">
+    <h1>ページが見つかりません</h1>
+    <p class="lead">
+      お探しのページは、移動または削除された可能性があります。
+    </p>
+    <p>
+      URL の入力間違いでなければ、下のリンクからお探しください。
+    </p>
+    <ul>
+      <li><a href="/">トップページ</a></li>
+      <li><a href="/articles/">記事一覧</a></li>
+      {categories.map((c) => (
+        <li><a href={`/categories/${c.slug}/`}>{c.name}</a></li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
