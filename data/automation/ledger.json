@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-24T12:14:31.463Z",
+  "updatedAt": "2026-07-25T11:42:18.045Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -1114,6 +1114,58 @@
       "xPostUrl": "https://x.com/suma_labo/status/2080626909365600457",
       "xPostedAt": "2026-07-24T12:14:31.461Z",
       "xReplyUrl": "https://x.com/suma_labo/status/2080627397926514974"
+    },
+    {
+      "slug": "202607-netflix-poinpy-ios-android-free",
+      "incidents": [],
+      "status": "x_posted",
+      "source": "night_run",
+      "triggerKind": "night_driver",
+      "triggeredBy": "night_driver",
+      "productionUrl": "https://sumalabo.com/articles/202607-netflix-poinpy-ios-android-free/",
+      "previewUrl": "https://d9608ccf.sumalabo.pages.dev/articles/202607-netflix-poinpy-ios-android-free/",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/201",
+      "mergeCommit": "1d29432",
+      "publishedAt": "2026-07-25T05:30:00+09:00",
+      "verifyResult": "8/8 pass",
+      "xPostUrl": "https://x.com/suma_labo/status/2080759876725494062",
+      "xPostedAt": "2026-07-24T21:00:21.667Z",
+      "xPostVariant": "images4+reply",
+      "xPostText": "Netflix限定だった「Poinpy」が無料配信。契約なし・広告なしで遊べるように\n\nNetflix Games限定だったスマホゲーム「Poinpy（ポインピー）」が、Netflix契約なしで遊べる独立アプリとしてApp Store・Google Playで無料配信。\n#ITニュース #すまラボ",
+      "xReplyUrl": "https://x.com/suma_labo/status/2080760231613878756"
+    },
+    {
+      "slug": "202607-claude-opus-5-everyday-value",
+      "incidents": [],
+      "status": "x_posted",
+      "source": "user_directed",
+      "triggerKind": "user",
+      "productionUrl": "https://sumalabo.com/articles/202607-claude-opus-5-everyday-value/",
+      "publishedAt": "2026-07-25T10:05:17+09:00",
+      "verifyResult": "full gate 0 violations / 0 warnings; independent inspection pass",
+      "xPostUrl": "https://x.com/suma_labo/status/2080836830917022022",
+      "xPostedAt": "2026-07-25T02:06:21.719Z",
+      "xPostVariant": "images4+reply",
+      "xPostText": "Claude Opus 5登場。「また新モデル？」でも課金者は今日から自動で得する\n\nClaude Opus 5は誰に関係する？Maxではデフォルト、Proでは使える最上位モデルへ自動更新。\n#AI #すまラボ",
+      "xReplyUrl": "https://x.com/suma_labo/status/2080837281511084386"
+    },
+    {
+      "slug": "ai-model-benchmark-cost-guide-2026",
+      "incidents": [],
+      "status": "x_posted",
+      "source": "user_directed",
+      "triggerKind": "user",
+      "triggeredBy": "user",
+      "productionUrl": "https://sumalabo.com/articles/ai-model-benchmark-cost-guide-2026/",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/206",
+      "mergeCommit": "16433a71b6d61e1cd0c6deb3f7c78f271814987e",
+      "publishedAt": "2026-07-25T20:32:25+09:00",
+      "verifyResult": "full gate pass; build 90 pages; strict verify 8/8; independent inspection 9/9 pass",
+      "xPostUrl": "https://x.com/suma_labo/status/2080981382596309210",
+      "xPostedAt": "2026-07-25T11:40:27.868Z",
+      "xPostVariant": "images4+reply",
+      "xPostText": "AIモデル、結局どれを使えばいい？\n\nベンチ1位より、用途と予算。Claude・ChatGPT・Geminiの現行モデル、API単価、サブスクを一次情報で横断整理しました。迷ったら無料枠から。\n#AI #すまラボ",
+      "xReplyUrl": "https://x.com/suma_labo/status/2080981811979804854"
     }
   ]
 }
