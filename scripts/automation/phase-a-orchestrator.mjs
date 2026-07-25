@@ -328,8 +328,8 @@ function assistedInstruction(state, step) {
   - 確度ラベルを使う場合は <Chip kind="..."> を本文から独立した位置に置く（1段落2個まで）。**「確定・報道・未確定」はChipまたは見出しのラベルとしてのみ使用し、地の文に単独で書かない。Chipの直後へ引用や本文を続けず、句読点または改行で区切る。**軽い注記は <Note>
   - **図解スライド8枚（article-slide-section + slide-reading-note + ライトボックス）と「## 参考情報」（URL2件以上）は従来どおり併用**（v3 はこれらを置き換えない）`,
   };
-  map.chatgpt_turn6_slideplan += `\n**演出ブロックの追加必須欄**: \`手・小道具\` に、小道具を片手/両手のどちらで持つかと空いている手の位置を必ず書く。\`表情\` も記事の感情トーンから自動導出する。身体構造は、ひまり=腕/手/脚各2、らぼまる=腕・手・脚・足が左右各1つ（追加突起はアンテナ1本と左右の耳ビレのみ）を前提にする。`;
-  map.factcheck_images += `\n**身体構造は認識アンカーとは別の公開ブロック項目**: 手がある画像は手の本数と指を最初に確認する。ひまりは腕/手/脚各2、らぼまるは腕・手・脚・足が左右各1つで、追加突起はアンテナ1本と左右の耳ビレだけ。余分な手・腕、重複、顔の破綻、物体との融合は needs_revision。日本語誤字・アンカー不一致と同様に、対象画像だけCodexで1回再生成して再検品する。`;
+  map.chatgpt_turn6_slideplan += `\n**演出ブロックの追加必須欄**: \`手・小道具\` に、小道具を片手/両手のどちらで持つかと空いている手の位置を必ず書く。小道具は自然に手が届く距離へ置き、構図の都合で腕を伸長させない。\`表情\` も記事の感情トーンから自動導出する。身体構造は、ひまり=腕/手/脚各2、らぼまる=腕・手・脚・足が左右各1つ（追加突起はアンテナ1本と左右の耳ビレのみ、腕は短く・太く・丸い）を前提にする。`;
+  map.factcheck_images += `\n**身体構造は認識アンカーとは別の公開ブロック項目**: 手がある画像は手の本数と指を最初に確認し、形・比率・付け根も見る。ひまりは腕/手/脚各2、らぼまるは腕・手・脚・足が左右各1つで、追加突起はアンテナ1本と左右の耳ビレだけ。余分な手・腕、重複、顔の破綻、物体との融合、腕・脚の不自然な長さ/細さ、触手状・ホース状・急なS字、付け根や関節の破綻は needs_revision。日本語誤字・アンカー不一致と同様に、対象画像だけCodexで1回再生成して再検品する。`;
   return `\n=== NEXT ACTION [${step.name}] ${step.label} ===\n${map[step.name] || "(手順未定義)"}\n${common}`;
 }
 
@@ -341,7 +341,7 @@ function onAdvance(state, stepName, resultPath) {
       const issueText = JSON.stringify(fc);
       const japaneseMismatch = /文字化け|誤字|脱字|表記|漢字|目.?自|未.?末|微.?徴|\$記号/i.test(issueText);
       const anchorMismatch = hasIdentityAnchorMismatch(issueText);
-      const bodyStructureMismatch = /身体構造|四肢|手指|手が\d+本|腕が\d+本|余分な手|余分な腕|謎の手|重複.*(?:手|腕)|(?:手|腕).*重複|融合/i.test(issueText);
+      const bodyStructureMismatch = /身体構造|四肢|手指|手が\d+本|腕が\d+本|余分な手|余分な腕|謎の手|重複.*(?:手|腕)|(?:手|腕).*重複|融合|触手|ホース状|にょき|S字|(?:腕|脚).*(?:長すぎ|細すぎ|不自然.*(?:長|細))|(?:付け根|関節).*(?:破綻|不自然)|不快.*シルエット|(?:同一キャラ|らぼまる|ひまり).*(?:複製|分身|2体|2人)/i.test(issueText);
       if (japaneseMismatch || anchorMismatch || bodyStructureMismatch) {
         const retryCount = state.steps.factcheck_images.data?.codexTargetedRetries || 0;
         if (retryCount < 1) {

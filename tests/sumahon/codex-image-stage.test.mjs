@@ -64,6 +64,10 @@ test("performance block is extracted and passed to every image item", () => {
   });
   assert.match(prompt, /同一性（正本厳守・変更禁止）/);
   assert.match(prompt, /演出（記事テーマに合わせて積極的に変える）/);
+  assert.match(prompt, /短く・太く・丸く/);
+  assert.match(prompt, /触手状・ホース状/);
+  assert.match(prompt, /自然に手が届く距離/);
+  assert.match(prompt, /各1人\/1体だけ/);
   assert.match(prompt, /点検用ベスト/);
   assert.doesNotMatch(prompt, /スライドでは白い標準衣装/);
 });
