@@ -11,6 +11,13 @@
 //   --stage full  : draft の検査に加えて MDX（frontmatter 必須キー / slug 整合 /
 //                   本文禁則語）・画像参照整合（/images/ 参照の実在・WebP 限定・
 //                   サムネ実在・未参照画像）・dist の OGP メタ実測（build 済みの場合）。
+//   --audit       : 全記事棚卸しモード（2026-07-25 追加）。--slug は不要。
+//                   content/articles/ の公開 MDX を「全部」走査し、タイトルを
+//                   含む frontmatter と本文の禁則語を検査する。
+//                   背景: stage draft/full は制作中の 1 記事しか見ないため、
+//                   公開済みの記事に禁則語が残り続ける死角があった（実際に
+//                   「普通の人」が 7 記事・57 箇所で本番に出ていた）。月 1 回の
+//                   棚卸しでこの死角を塞ぐ。
 //
 // 終了コード:
 //   0 = 合格（violation 0 件。warning は許容）
@@ -19,6 +26,7 @@
 // 使い方:
 //   node scripts/sumalabo-gate.mjs --slug 202605-xxx --stage full
 //   npm run sumalabo:gate -- --slug 202605-xxx --stage draft
+//   npm run sumalabo:audit          # 全記事棚卸し（月 1 回）
 //
 // 検査を弱める変更（パターン削除・チェックのスキップ追加）は理由の報告が必要。
 
@@ -523,14 +531,75 @@ function checkDistRawMarkdown(slug) {
   }
 }
 
+// ---- 全記事棚卸し（--audit・2026-07-25 追加）----
+// stage draft/full は制作中の 1 記事しか見ないため、公開済み記事に禁則語が残り
+// 続ける死角があった。ここでは content/articles/ の MDX を全部走査し、
+// frontmatter（title / description を含む）と本文の両方を検査する。
+// 通常の stage full は本文のみを "mdx" スコープで見るが、棚卸しでは
+// タイトルにも同じパターンを効かせたいので frontmatter も同スコープで検査する。
+function runAudit(patterns) {
+  const dir = CONFIG.articlesDir;
+  if (!existsSync(dir)) {
+    report("violation", "audit", dir, "content/articles が見つかりません");
+    finishAudit(0);
+    return;
+  }
+  const files = readdirSync(dir)
+    .filter((f) => f.endsWith(".mdx") || f.endsWith(".md"))
+    .sort();
+
+  for (const f of files) {
+    const full = path.join(dir, f);
+    const raw = readTextOrNull(full);
+    if (raw === null) {
+      report("warning", "audit", full, "読み込めませんでした");
+      continue;
+    }
+    const { frontmatter, body } = splitFrontmatter(raw);
+    const label = path.join("content", "articles", f);
+    // frontmatter（title / description / thumbnailAlt など）も検査対象にする。
+    // 行番号を実ファイルと合わせるため、frontmatter は先頭 1 行分ずらして渡す。
+    if (frontmatter !== null) {
+      checkForbiddenWords(`---\n${frontmatter}`, `${label} (frontmatter)`, "mdx", patterns);
+    }
+    checkForbiddenWords(body, label, "mdx", patterns);
+  }
+
+  finishAudit(files.length);
+}
+
+function finishAudit(fileCount) {
+  const violations = findings.filter((f) => f.severity === "violation");
+  const warnings = findings.filter((f) => f.severity === "warning");
+
+  console.log(`\n=== sumalabo-gate: 全記事棚卸し (audit) — ${fileCount} ファイル ===`);
+  for (const f of findings) {
+    const mark = f.severity === "violation" ? "✗ VIOLATION" : "△ warning  ";
+    console.log(`${mark} [${f.check}] ${path.relative(REPO_ROOT, f.file) || f.file}`);
+    console.log(`             ${f.detail}`);
+  }
+  console.log(`--- violations: ${violations.length} / warnings: ${warnings.length} ---`);
+
+  if (violations.length > 0) {
+    console.error(
+      `AUDIT FAILED: ${violations.length} violation(s)。公開中の記事に禁則語が残っています。修正してから再実行してください。`
+    );
+    process.exit(1);
+  }
+  console.log("AUDIT PASSED（公開中の記事に禁則語なし）");
+  process.exit(0);
+}
+
 // ---- main ----
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const slug = (typeof args.slug === "string" ? args.slug : "").trim();
   const stage = (typeof args.stage === "string" ? args.stage : "full").trim();
+  const audit = args.audit === true || args.audit === "true";
 
-  if (!slug || !["draft", "full"].includes(stage)) {
+  if (!audit && (!slug || !["draft", "full"].includes(stage))) {
     console.error("Usage: sumalabo-gate --slug <slug> [--stage draft|full]");
+    console.error("       sumalabo-gate --audit   # 全記事棚卸し（slug 不要）");
     process.exit(1);
   }
 
@@ -540,6 +609,11 @@ function main() {
     productNames = loadFormalProductNames();
   } catch (e) {
     report("violation", "config", FORMAL_PRODUCT_NAMES_PATH, `正式表記リストが読めません: ${e.message}`);
+  }
+
+  if (audit) {
+    runAudit(patterns);
+    return;
   }
 
   checkDraftStage(slug, patterns, productNames, stage);
