@@ -1,0 +1,58 @@
+{
+  "slug": "ai-model-benchmark-cost-guide-2026",
+  "articleUrl": "https://sumalabo.com/articles/ai-model-benchmark-cost-guide-2026/",
+  "isReporting": true,
+  "linkInReply": true,
+  "reply": {
+    "text": "続きと出典は すまラボ の記事で👇\nhttps://sumalabo.com/articles/ai-model-benchmark-cost-guide-2026/",
+    "articleUrl": "https://sumalabo.com/articles/ai-model-benchmark-cost-guide-2026/"
+  },
+  "attachThumbnail": true,
+  "thumbnailPath": "/images/thumbnails/ai-model-benchmark-cost-guide-2026.webp",
+  "hashtags": [
+    "#AI",
+    "#すまラボ"
+  ],
+  "primary": {
+    "text": "AIモデル、結局どれを使えばいい？\n\nベンチ1位より、用途と予算。Claude・ChatGPT・Geminiの現行モデル、API単価、サブスクを一次情報で横断整理しました。迷ったら無料枠から。\n#AI #すまラボ",
+    "charCount": 106,
+    "weightedLength": 185,
+    "fitsLimit": true,
+    "downshifted": false,
+    "truncated": false
+  },
+  "alternates": [
+    {
+      "label": "結論先出し",
+      "text": "結論: AIモデル、結局どれを使えばいい？ベンチマークとコスパの読み方2026\n\nClaude・ChatGPT・Geminiはどれを選ぶ？2026年夏の現行モデル、API単価、サブスク、ベンチマークの読み方を、用途と予算からやさしく整理します（報道ベース・公式発表ではありません）\n#AI #すまラボ",
+      "charCount": 150,
+      "weightedLength": 258,
+      "fitsLimit": true,
+      "downshifted": false,
+      "truncated": false
+    },
+    {
+      "label": "問いかけ",
+      "text": "AIモデルという噂、本当のところは？\n\nClaude・ChatGPT・Geminiはどれを選ぶ？2026年夏の現行モデル、API単価、サブスク、ベンチマークの読み方を、用途と予算からやさしく整理します（報道ベース・公式発表ではありません）\n#AI #すまラボ",
+      "charCount": 129,
+      "weightedLength": 222,
+      "fitsLimit": true,
+      "downshifted": false,
+      "truncated": false
+    }
+  ],
+  "warnings": [],
+  "generatedAt": "2026-07-25T11:33:25.391Z",
+  "attachmentPlan": {
+    "variant": "images4+reply",
+    "attach": [
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\thumbnails\\ai-model-benchmark-cost-guide-2026.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\ai-model-benchmark-cost-guide-2026\\slide01-conclusion.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\ai-model-benchmark-cost-guide-2026\\slide02-landscape.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\ai-model-benchmark-cost-guide-2026\\slide07-principle.webp"
+    ],
+    "threadBatches": [],
+    "linkInReply": true,
+    "selectionSource": "independent_inspection"
+  }
+}
