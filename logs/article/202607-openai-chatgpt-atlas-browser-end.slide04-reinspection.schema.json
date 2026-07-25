@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["overallPass", "verdict", "textAccurate", "anchorAccurate", "bodyStructureAccurate", "issues", "evidence"],
+  "properties": {
+    "overallPass": { "type": "boolean" },
+    "verdict": { "type": "string", "enum": ["ok", "needs_revision"] },
+    "textAccurate": { "type": "boolean" },
+    "anchorAccurate": { "type": "boolean" },
+    "bodyStructureAccurate": { "type": "boolean" },
+    "issues": { "type": "array", "items": { "type": "string" } },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "himari", "labomaru", "limbs"],
+      "properties": {
+        "text": { "type": "string" },
+        "himari": { "type": "string" },
+        "labomaru": { "type": "string" },
+        "limbs": { "type": "string" }
+      }
+    }
+  }
+}

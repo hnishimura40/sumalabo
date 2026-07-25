@@ -1,0 +1,33 @@
+{
+  "slug": "202607-openai-chatgpt-atlas-browser-end",
+  "transport": "codex_exec",
+  "runs": [
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-25T23:30:28.438Z",
+      "finishedAt": "2026-07-25T23:33:17.040Z",
+      "elapsedMs": 168601,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 391775,
+        "cached_input_tokens": 352000,
+        "output_tokens": 3079,
+        "reasoning_output_tokens": 505
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "8fc6df24ea7fa8951b732853ff821ffd8ff2b169f5ada6d35bad6a646cf65a7a",
+      "bytes": 1977046,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-openai-chatgpt-atlas-browser-end\\slide04.png"
+    }
+  ],
+  "updatedAt": "2026-07-25T23:33:17.044Z",
+  "totalElapsedMs": 168601,
+  "totalUsage": {
+    "input_tokens": 391775,
+    "cached_input_tokens": 352000,
+    "output_tokens": 3079,
+    "reasoning_output_tokens": 505
+  }
+}
