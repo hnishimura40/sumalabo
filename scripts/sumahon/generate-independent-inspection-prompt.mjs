@@ -26,7 +26,7 @@ import { formalProductNamesChecklist } from "./formal-product-names.mjs";
 export const INDEPENDENT_INSPECTION_SCHEMA = {
   type: "object",
   additionalProperties: false,
-  required: ["overallPass", "slides", "thumbnail", "xSelection", "excludedFromX", "internalLinks"],
+  required: ["overallPass", "slides", "thumbnail", "xSelection", "excludedFromX", "internalLinks", "avatarFallback"],
   properties: {
     overallPass: { type: "boolean", description: "全スライド+サムネに needs_revision が無ければ true（internalLinks は画像とは独立。needs_revision でも overallPass は下げず、本文リンクの削除/修正で対応する）" },
     internalLinks: {
@@ -40,6 +40,24 @@ export const INDEPENDENT_INSPECTION_SCHEMA = {
           type: "array",
           items: { type: "string" },
           description: "無理な挿入・唐突・宣伝臭・トピック不一致・本数過多(1本超)を1行ずつ。無ければ空配列",
+        },
+      },
+    },
+    avatarFallback: {
+      type: "object",
+      additionalProperties: false,
+      required: ["verdict", "issues"],
+      description:
+        "本文の <CharacterBubble> の丸アバターが画像ではなく「ひ」「ら」の文字フォールバックになっていないか。" +
+        "mood は himari: curious/aha/explain、labo: smile/point/worried のみ有効で、" +
+        "それ以外や mood 省略は文字丸になる（実際にひまりのアバターが欠落した事故がある）。" +
+        "MDX を読んで無効な mood を見つけたら needs_revision。CharacterBubble が無ければ 'not_applicable'。",
+      properties: {
+        verdict: { type: "string", enum: ["ok", "ok_with_warning", "needs_revision", "not_applicable"] },
+        issues: {
+          type: "array",
+          items: { type: "string" },
+          description: "無効な mood を『speaker/mood（該当行の要約）』の形で1行ずつ。無ければ空配列",
         },
       },
     },
@@ -169,8 +187,17 @@ X には**上位4枚だけ**を直接添付する。次の3点が満たされる
 - リンクが1本も無ければ verdict='not_applicable'（無いこと自体は問題ではない）。
 - **needs_revision の直し方は画像再生成ではなく「本文MDXの該当リンクを削除/修正」**。この項目は overallPass を下げない（画像とは独立）。
 
+## (E) 本文の丸アバターが文字フォールバックになっていないか
+記事 MDX の \`<CharacterBubble speaker="..." mood="...">\` を全部拾い、**画像が出る mood になっているか**を判定して avatarFallback に返す:
+- 有効な mood は **himari: curious / aha / explain**、**labo: smile / point / worried** の 6 つだけ。
+- これ以外の mood、または **mood の省略**は、顔画像ではなく「ひ」「ら」の**文字だけの丸**にフォールバックする（実際にひまりのアバターが欠落した事故がある）。
+- 無効な mood を 1 つでも見つけたら **needs_revision**（issues に \`speaker/mood（該当セリフの要約）\` を1行ずつ）。
+- 互換エイリアスとして himari の \`worried→curious\` / \`smile→aha\` / \`serious→explain\` は画像に解決されるので ok。
+- \`<CharacterBubble>\` が 1 つも無ければ verdict='not_applicable'。
+- **直し方は画像再生成ではなく「本文MDXの mood を有効な値に修正」**。この項目は overallPass を下げない（画像とは独立）。
+
 ## 出力（StructuredOutput ツールで返す。前置きの解説文は不要）
-INDEPENDENT_INSPECTION_SCHEMA に従い、slides[]（全スライド）・thumbnail・xSelection・excludedFromX・internalLinks・overallPass を返す。
-overallPass は「全スライド+サムネに needs_revision が無い」ときだけ true（internalLinks は overallPass に影響させない）。
+INDEPENDENT_INSPECTION_SCHEMA に従い、slides[]（全スライド）・thumbnail・xSelection・excludedFromX・internalLinks・avatarFallback・overallPass を返す。
+overallPass は「全スライド+サムネに needs_revision が無い」ときだけ true（internalLinks・avatarFallback は overallPass に影響させない）。
 `;
 }
