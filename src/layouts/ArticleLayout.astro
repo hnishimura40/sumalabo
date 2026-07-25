@@ -5,6 +5,8 @@ import PreviewApprovalButton from "../components/PreviewApprovalButton.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
 
 import { siteConfig } from "../config/site";
+import { getCategoryByName } from "../lib/categories";
+import { buildBreadcrumbSchema, buildOrganizationSchema } from "../lib/structured-data";
 
 type ArticleData = {
   title: string;
@@ -55,14 +57,23 @@ const articleSchema = {
     ? { image: [new URL(article.thumbnail, siteConfig.siteUrl).toString()] }
     : {}),
   author: { "@type": "Organization", name: siteConfig.authorName, url: siteConfig.siteUrl },
-  publisher: {
-    "@type": "Organization",
-    name: siteConfig.siteName,
-    url: siteConfig.siteUrl,
-  },
+  // publisher は Organization を実体ごと出す（@id 付き）。@id はトップと同一なので
+  // 「同じ発行主体」だと示せて、かつ name/logo が同ページに揃うので Article リッチリザルトの
+  // 必須項目も満たす（@id 参照だけだと publisher の name/logo 欠落と判定される）。2026-07-25。
+  publisher: buildOrganizationSchema(),
   mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
   inLanguage: "ja",
 };
+
+// パンくず構造化データ（2026-07-25 追加）。ホーム → カテゴリ → 記事。
+// カテゴリが categories.ts に無い場合はカテゴリ階層を省いてホーム → 記事にする。
+const articleCategory = getCategoryByName(article.category);
+const breadcrumbSchema = buildBreadcrumbSchema([
+  ...(articleCategory
+    ? [{ name: articleCategory.name, path: `/categories/${articleCategory.slug}/` }]
+    : []),
+  { name: article.title },
+]);
 ---
 
 <BaseLayout
@@ -73,6 +84,7 @@ const articleSchema = {
   canonicalPath={`/articles/${article.slug}/`}
 >
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <article class={`article-shell article-shell--${article.type}`}>
     {
       article.hasAffiliate && (

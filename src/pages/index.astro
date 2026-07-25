@@ -4,7 +4,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
 import StapleGuideCard from "../components/StapleGuideCard.astro";
 import { buildStapleCards } from "../lib/staple-cards";
-import { siteConfig } from "../config/site";
+import { buildHomeGraph } from "../lib/structured-data";
 
 const all = await getCollection("articles");
 const sorted = (await import("../lib/articles")).getSortedVisibleArticles(all);
@@ -47,20 +47,13 @@ const homeCategories = [
   },
 ];
 
-// JSON-LD WebSite schema（M3 SEO基盤）
-const websiteSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  name: siteConfig.siteName,
-  url: siteConfig.siteUrl,
-  description: siteConfig.siteDescription,
-  publisher: { "@type": "Organization", name: siteConfig.siteName, url: siteConfig.siteUrl },
-  inLanguage: "ja",
-};
+// JSON-LD（M3 SEO基盤 → 2026-07-25 指名検索対策で WebSite + Organization の @graph に拡張）。
+// 検索結果のサイト名を「すまラボ」で出すための最優先シグナル。alternateName で表記ゆれも宣言する。
+const homeGraph = buildHomeGraph();
 ---
 
 <BaseLayout canonicalPath="/">
-  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(homeGraph)} />
   <section class="page-shell">
     <h1 class="sr-only">すまラボ — スマホ・AI・ガジェットをやさしく整理</h1>
 
