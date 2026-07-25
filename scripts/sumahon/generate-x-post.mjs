@@ -267,8 +267,12 @@ export function generateXPost({
   if (primaryRes.downshifted) warnings.push("primary は280字ガードにより短い構成で生成し直しました（description全文は不使用）");
 
   // linkInReply 運用時の返信（記事リンク）。本投稿の直後にぶら下げる。
+  // 「すまラボ」を明示的に名乗る（2026-07-25 指名検索対策）。Search Console 実測で
+  // 指名クエリ（すまラボ / sumalabo）の表示回数が 0＝そもそも検索されていない状態だった。
+  // 指名検索は SEO では作れず、露出のたびにブランド名を出して覚えてもらうしかないため、
+  // リンクを載せるリプライで必ずサイト名を名乗る。本投稿側は #すまラボ が必ず入る。
   const reply = linkInReply
-    ? { text: `記事で続きと出典まで読めます👇\n${articleUrl}`, articleUrl }
+    ? { text: `続きと出典は すまラボ の記事で👇\n${articleUrl}`, articleUrl }
     : null;
 
   return {
