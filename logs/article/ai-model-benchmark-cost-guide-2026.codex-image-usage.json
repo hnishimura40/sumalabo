@@ -1,0 +1,185 @@
+{
+  "slug": "ai-model-benchmark-cost-guide-2026",
+  "transport": "codex_exec",
+  "runs": [
+    {
+      "item": "thumbnail",
+      "startedAt": "2026-07-25T10:38:34.997Z",
+      "finishedAt": "2026-07-25T10:42:44.896Z",
+      "elapsedMs": 249898,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 594121,
+        "cached_input_tokens": 528896,
+        "output_tokens": 4718,
+        "reasoning_output_tokens": 1704
+      },
+      "failureCondition": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "d88ec59d797cc9ab1936cc46934e1a2df8954004167d651b7ce4c74e9d4bca6e",
+      "bytes": 2692940,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\thumbnail.png"
+    },
+    {
+      "item": "slide01",
+      "startedAt": "2026-07-25T10:42:44.905Z",
+      "finishedAt": "2026-07-25T10:47:01.517Z",
+      "elapsedMs": 256612,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 634790,
+        "cached_input_tokens": 570880,
+        "output_tokens": 5087,
+        "reasoning_output_tokens": 1514
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "bbb8ebc303673ee54ca7ea98e24ac01ccc168924db5a09b89e0d89e80c3a291d",
+      "bytes": 2240247,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide01.png"
+    },
+    {
+      "item": "slide02",
+      "startedAt": "2026-07-25T10:47:01.524Z",
+      "finishedAt": "2026-07-25T10:51:50.797Z",
+      "elapsedMs": 289273,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 613518,
+        "cached_input_tokens": 565248,
+        "output_tokens": 6457,
+        "reasoning_output_tokens": 3024
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "2c784388535eadeb02b7bfa1421c981884b5ba8961b5c7c4f6e78030c3ab4ddb",
+      "bytes": 1946525,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide02.png"
+    },
+    {
+      "item": "slide03",
+      "startedAt": "2026-07-25T10:51:50.804Z",
+      "finishedAt": "2026-07-25T10:56:30.469Z",
+      "elapsedMs": 279665,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 734656,
+        "cached_input_tokens": 655104,
+        "output_tokens": 4353,
+        "reasoning_output_tokens": 1684
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "2a770a4e645257fcab27622be30dc4d62d80fd112ce402dbb2c4efa98d45a051",
+      "bytes": 2012442,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide03.png"
+    },
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-25T10:56:30.475Z",
+      "finishedAt": "2026-07-25T11:00:16.529Z",
+      "elapsedMs": 226054,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 210670,
+        "cached_input_tokens": 187392,
+        "output_tokens": 2860,
+        "reasoning_output_tokens": 890
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "6a77bd4d7c746a8b746bd7f44f091d24664798d440074772277172534c8030c5",
+      "bytes": 1826557,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide04.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-25T11:00:16.535Z",
+      "finishedAt": "2026-07-25T11:05:07.894Z",
+      "elapsedMs": 291359,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 758318,
+        "cached_input_tokens": 697344,
+        "output_tokens": 5759,
+        "reasoning_output_tokens": 2980
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "9f11ee972d5abdfb066c94a1fa747a1f37ae5c69f4b434835e0e7f04718454cc",
+      "bytes": 2504442,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide05.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-25T11:05:07.901Z",
+      "finishedAt": "2026-07-25T11:09:17.885Z",
+      "elapsedMs": 249984,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 591494,
+        "cached_input_tokens": 498688,
+        "output_tokens": 3535,
+        "reasoning_output_tokens": 1460
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "a0267476cd72f1e600d1b97c127132f1cd454224a2094c22fe8a64914b608e0a",
+      "bytes": 1825370,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide06.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-25T11:09:17.890Z",
+      "finishedAt": "2026-07-25T11:13:37.365Z",
+      "elapsedMs": 259475,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 697097,
+        "cached_input_tokens": 632064,
+        "output_tokens": 4265,
+        "reasoning_output_tokens": 1699
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "1ac68373fd5d789bf4787739b463636bb8778e1ebe21af4c69a081f40627a259",
+      "bytes": 1853374,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide07.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-25T11:13:37.370Z",
+      "finishedAt": "2026-07-25T11:17:46.432Z",
+      "elapsedMs": 249062,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 585099,
+        "cached_input_tokens": 528128,
+        "output_tokens": 3429,
+        "reasoning_output_tokens": 1133
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "291aea7d2d975a1e660d1356d2194fc7642cf63c5fab472db71436ca2fb2a380",
+      "bytes": 1845447,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-model-benchmark-cost-guide-2026\\slide08.png"
+    }
+  ],
+  "updatedAt": "2026-07-25T11:17:46.436Z",
+  "totalElapsedMs": 2351382,
+  "totalUsage": {
+    "input_tokens": 5419763,
+    "cached_input_tokens": 4863744,
+    "output_tokens": 40463,
+    "reasoning_output_tokens": 16088
+  }
+}

@@ -11,6 +11,26 @@
   },
   "targets": [
     {
+      "slug": "ai-model-benchmark-cost-guide-2026",
+      "label": "AIモデル、結局どれを使えばいい？",
+      "blurb": "Claude・ChatGPT・Geminiを用途と予算で選ぶ常設ガイド",
+      "categories": ["ニュースをかみくだく"],
+      "_kwNote": "AIモデルの比較・料金・ベンチマーク・新モデル記事から定番受け皿へ案内する。単独のAI一般語ではなく複合語を使う。",
+      "keywords": [
+        "AIモデル比較",
+        "AIモデルの選び方",
+        "ベンチマーク",
+        "API価格",
+        "AIサブスク",
+        "ClaudeとChatGPT",
+        "ChatGPTとGemini",
+        "Claude Opus 5",
+        "GPT-5.6",
+        "Gemini 3.6 Flash"
+      ],
+      "listStaple": true
+    },
+    {
       "slug": "202607-claude-opus-5-everyday-value",
       "label": "Claude Opus 5で何が変わる？",
       "blurb": "Max・Pro・APIの違いとFable 5との使い分け",

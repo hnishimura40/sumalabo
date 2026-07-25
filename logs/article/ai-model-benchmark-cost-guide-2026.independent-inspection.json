@@ -1,0 +1,113 @@
+{
+  "overallPass": true,
+  "slides": [
+    {
+      "id": "slide01-conclusion",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 96
+    },
+    {
+      "id": "slide02-landscape",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 94
+    },
+    {
+      "id": "slide03-benchmarks",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 90
+    },
+    {
+      "id": "slide04-api-prices",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 70
+    },
+    {
+      "id": "slide05-subscriptions",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 68
+    },
+    {
+      "id": "slide06-use-cases",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 86
+    },
+    {
+      "id": "slide07-principle",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 93
+    },
+    {
+      "id": "slide08-checklist",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 91
+    }
+  ],
+  "thumbnail": {
+    "verdict": "ok",
+    "issues": []
+  },
+  "xSelection": [
+    "thumbnail",
+    "slide01-conclusion",
+    "slide02-landscape",
+    "slide07-principle"
+  ],
+  "excludedFromX": [
+    {
+      "id": "slide03-benchmarks",
+      "reason": "内容は正確で単体でも通じるが、選抜上位3枚より文字要素が多く、添付上限のため除外"
+    },
+    {
+      "id": "slide04-api-prices",
+      "reason": "価格表で文字・数字の密度がhighのため記事内専用"
+    },
+    {
+      "id": "slide05-subscriptions",
+      "reason": "料金、プラン名、注記、日付の密度がhighのため記事内専用"
+    },
+    {
+      "id": "slide06-use-cases",
+      "reason": "5用途の補足文まで含み、選抜上位3枚より情報量が多いため除外"
+    },
+    {
+      "id": "slide08-checklist",
+      "reason": "単体で意味は通るが、選抜上位3枚との比較でX投稿スコアがわずかに下回るため除外"
+    }
+  ],
+  "internalLinks": {
+    "verdict": "not_applicable",
+    "issues": []
+  }
+}

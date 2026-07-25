@@ -1,0 +1,16 @@
+{
+  "slug": "ai-model-benchmark-cost-guide-2026",
+  "slides": [
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide01.png", "name": "slide01-conclusion.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide02.png", "name": "slide02-landscape.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide03.png", "name": "slide03-benchmarks.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide04.png", "name": "slide04-api-prices.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide05.png", "name": "slide05-subscriptions.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide06.png", "name": "slide06-use-cases.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide07.png", "name": "slide07-principle.webp" },
+    { "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/slide08.png", "name": "slide08-checklist.webp" }
+  ],
+  "thumbnail": {
+    "src": "D:/downloads/sumalabo-codex/ai-model-benchmark-cost-guide-2026/thumbnail.png"
+  }
+}
