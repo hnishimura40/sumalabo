@@ -368,15 +368,81 @@ Phase B 完了後だけ実行：
 
 ## 成果物保全（P7・2026-07 事故対応）
 
-- **worktree は OS Temp 配下（`C:\Users\...\AppData\Local\Temp` 等）に作らない。作成先は `D:\work\` 配下とする**（例: `D:\work\sumalabo-worktree`、追加が必要なら `D:\work\sumalabo-<用途>`）。OS の Temp 自動クリーンアップで working tree が破壊される（2026-07 に Temp 配下の worktree 18 個を棚卸しし全撤去済み）
 - **`drafts/refinement/{slug}/` は記事の PR に含めてコミットする（Phase A 完了の条件）。** 初稿→レビュー→修正版→最終稿の流れを後から追えるようにする。`sumalabo:gate --stage full` と `sumalabo:finalize` が未追跡/未コミットの drafts を検出して停止する
-- **教訓（2026-07）**: Temp 配下の worktree が OS クリーンアップで破損し、未コミットだった drafts/refinement 3記事分（Meta One / Opus 4.8 / Fable 5）が消失した。文書が要求する保存を仕組みで強制していなかったことが原因
+- **worktree の置き場所・node_modules の扱い・撤去手順・作業ツリーの後始末は、下の「worktree と作業ツリーのライフサイクル」に集約した。** ここには重複して書かない
 
 ### node_modules 消失の恒久対策（2026-07-19）
 
 - **原因**: 画像工程 `scripts/automation/codex-image-stage.mjs` が Codex CLI を `--sandbox workspace-write --cd <ROOT>` で起動しており、**リポジトリ全体（＝`node_modules` を含む）が Codex の書き込み可能領域になっていた**。画像生成の副作用で `node_modules`（astro 等）が消え、後続の `npm run build` が「astro not recognized」で失敗した。
 - **恒久対策1（根本原因）**: Codex の書き込み先を **外部の出力ディレクトリ（`--cd <outputDir>`・既定 `D:\downloads\sumalabo-codex`）だけに限定**した。正本画像は `--image` 添付（FS不要）、slide_plan 対象はプロンプトへインライン展開済みなので、リポジトリへの FS アクセスは不要。**これで Codex はリポジトリ（node_modules 含む）を触れない**。
 - **恒久対策2（防御・自己復旧）**: 本番 deploy の build 直前（`scripts/automation/deploy-production-from-main.mjs` の `ensureNodeModulesForBuild()`）で **astro が解決できるか確認し、できなければ自動で `npm ci`（失敗時 `npm install`）で復旧してから build に進む**。復旧できたら中断せず続行（完走型を維持）、復旧してもなお解決不能なときだけ build を失敗扱いにしてログに明記する。夜間 run（Phase B）もこの経路を通るため保護される。**画像工程は build より前に走るので、build 直前チェックが復旧の最適地点**（run 冒頭の一律チェックでは、まだ壊れていない段階を見て素通りしてしまう）。
+- **注意**: node_modules が消える経路は Codex だけではない。**worktree に node_modules のリンクを張って撤去した場合も本体の実体が消える**（2026-07-25 実害）。そちらの防止策は次節にある。
+
+## worktree と作業ツリーのライフサイクル（2026-07-25 統合）
+
+worktree 関連の事故は、個別の禁止事項を足しても再発した。**「作る → 使う → 店じまいする」を一連のライフサイクルとして定義し、終了時の店じまいを必須手順にする**。散らばっていた注意書きはこの節に集約する（他の節には重複して書かない）。
+
+### なぜこの節があるか（実際に起きた 3 事象）
+
+| 時期 | 事象 | 直接の原因 |
+|---|---|---|
+| 2026-07 | `drafts/refinement` 3 記事分（Meta One / Opus 4.8 / Fable 5）が**消失** | worktree を OS Temp 配下に作り、OS の自動クリーンアップで working tree ごと破壊された |
+| 2026-07-19 | `node_modules` が消え `npm run build` が「astro not recognized」で**失敗** | Codex CLI の書き込み可能領域にリポジトリ全体が入っていた（前節で対策済み） |
+| 2026-07-25 | `node_modules` が**空**になり build 不能 | worktree に node_modules の**ジャンクション／symlink を張り**、`git worktree remove --force` が**リンクを辿って本体側の実体を削除**した |
+| （随時） | 夜間 run が記事を作れずに終了 | 本体の作業ツリーに **tracked な未コミット変更**が残ったままだった |
+
+共通する原因は「**worktree と本体作業ツリーの境界が曖昧なまま作業を終えている**」こと。個別の禁止ではなく、終了時の店じまいで塞ぐ。
+
+### 1. 作成時
+
+- **置き場所は `D:\work\sumalabo-<用途>` 固定。** OS Temp 配下（`C:\Users\...\AppData\Local\Temp` 等）には**絶対に作らない**（OS クリーンアップで破壊される。2026-07 に Temp 配下の worktree 18 個を棚卸しし全撤去済み）
+- **`origin/main` から切る。** 本体で作業中のブランチから切ると、無関係な差分が PR に混入する（実際に 29 ファイルの他記事が混入しかけた）
+
+```bash
+git fetch origin main && git worktree add -b <branch> D:\work\sumalabo-<用途> origin/main
+```
+
+- **node_modules を持ち込まない（symlink・ジャンクション・コピーとも禁止）。** `git worktree remove --force` がリンクを辿って**本体の実体を消す**
+- したがって **worktree でやるのは「編集・commit・push・PR」まで**。`npm run build` などの依存が要る検証は**本体リポジトリで行う**
+- 依存不要のスクリプト（`node scripts/sumalabo-gate.mjs --audit` など）は worktree でも実行してよい
+
+### 2. 作業中
+
+- **本体作業ツリーを汚す作業と、worktree での作業を同時に走らせない。** どちらの変更か追えなくなり、店じまいで取りこぼす
+- 原則として **編集は worktree 側に寄せ、本体は「検証（build / deploy）と読み取り」に使う**
+- 本体側での編集が必要になったら、**先に worktree を店じまいしてから**着手する
+
+### 3. 終了時（店じまいチェックリスト）
+
+**worktree を使ったセッションは、必ず全項目を実行してから終える。** 1 つでも残すと次のセッションか次の夜間 run で事故になる。
+
+```
+□ 1. worktree 内に node_modules が無いことを確認（リンク不在確認）
+      ls -la <worktree> | grep node_modules   → 何も出なければ OK
+      出たら、撤去より先に rm でリンクだけ外す
+□ 2. worktree を撤去
+      git worktree remove <path> --force
+□ 3. 残骸ゼロ確認
+      git worktree list        → 想定外のパスが残っていないこと
+      git worktree prune
+□ 4. 本体 node_modules の健全性
+      test -f node_modules/astro/package.json   → 無ければ npm ci で復旧
+□ 5. 本体作業ツリーのクリーン化（★夜間 run の可否を左右する）
+      git status --porcelain --untracked-files=no   → 空にする
+        ・意図した変更  → コミットして PR へ
+        ・一時的な変更  → git stash などへ退避
+        ・残す必要がある → 理由をユーザーに報告して残置（黙って残さない）
+□ 6. ブランチ位置
+      想定外の作業ブランチに居座らない
+```
+
+### 4. 夜間 run との関係
+
+- 夜間 run は 4:30 に `scripts/automation/night-run.ps1` → ヘッドレス `claude -p`（`docs/night_driver_prompt.md`）で走る
+- 記事化の入口（`scripts/run/prepare-from-sumahon.mjs` / `import-generated.mjs` / `create-from-sumahon.mjs`）で **`assertNoTrackedChanges()`**（`scripts/sumahon/push-preview.mjs`）が実行され、**tracked な未コミット変更が 1 つでもあれば例外で停止**する（`regenerate-from-queue.mjs` の exit 2）。**untracked は対象外**（`--untracked-files=no`）
+- `scripts/automation/run-sumahon-queue.ps1` も、main 以外のブランチにいて tracked dirty があると reset を拒否して安全終了する
+- つまり **本体作業ツリーが tracked dirty のまま朝を迎えると、その晩の記事は作られない**
+- **夜間 run の前に走る長時間セッションは §3 を厳守する。** とくに **5（本体のクリーン化）と 6（ブランチ位置）** を落とすと、静かに 1 本分の記事を失う
 
 ## 例外: 判断を仰ぐ最小ケース
 
