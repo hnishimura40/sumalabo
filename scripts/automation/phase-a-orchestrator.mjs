@@ -49,7 +49,7 @@ export function hasIdentityAnchorMismatch(issueText = "") {
 
 function validatePerformanceBlock(text = "") {
   if (!/^##\s+演出ブロック(?:\s|（|\(|$)/m.test(text)) return { ok: false, missing: ["演出ブロック"] };
-  const required = ["衣装", "小道具", "ポーズ", "背景", "演出根拠"];
+  const required = ["衣装", "小道具", "手・小道具", "ポーズ", "背景", "表情", "演出根拠"];
   const missing = required.filter((label) => !text.includes(label));
   return { ok: missing.length === 0, missing };
 }
@@ -328,6 +328,8 @@ function assistedInstruction(state, step) {
   - 確度ラベルを使う場合は <Chip kind="..."> を本文から独立した位置に置く（1段落2個まで）。**「確定・報道・未確定」はChipまたは見出しのラベルとしてのみ使用し、地の文に単独で書かない。Chipの直後へ引用や本文を続けず、句読点または改行で区切る。**軽い注記は <Note>
   - **図解スライド8枚（article-slide-section + slide-reading-note + ライトボックス）と「## 参考情報」（URL2件以上）は従来どおり併用**（v3 はこれらを置き換えない）`,
   };
+  map.chatgpt_turn6_slideplan += `\n**演出ブロックの追加必須欄**: \`手・小道具\` に、小道具を片手/両手のどちらで持つかと空いている手の位置を必ず書く。\`表情\` も記事の感情トーンから自動導出する。身体構造は、ひまり=腕/手/脚各2、らぼまる=腕・手・脚・足が左右各1つ（追加突起はアンテナ1本と左右の耳ビレのみ）を前提にする。`;
+  map.factcheck_images += `\n**身体構造は認識アンカーとは別の公開ブロック項目**: 手がある画像は手の本数と指を最初に確認する。ひまりは腕/手/脚各2、らぼまるは腕・手・脚・足が左右各1つで、追加突起はアンテナ1本と左右の耳ビレだけ。余分な手・腕、重複、顔の破綻、物体との融合は needs_revision。日本語誤字・アンカー不一致と同様に、対象画像だけCodexで1回再生成して再検品する。`;
   return `\n=== NEXT ACTION [${step.name}] ${step.label} ===\n${map[step.name] || "(手順未定義)"}\n${common}`;
 }
 
@@ -339,7 +341,8 @@ function onAdvance(state, stepName, resultPath) {
       const issueText = JSON.stringify(fc);
       const japaneseMismatch = /文字化け|誤字|脱字|表記|漢字|目.?自|未.?末|微.?徴|\$記号/i.test(issueText);
       const anchorMismatch = hasIdentityAnchorMismatch(issueText);
-      if (japaneseMismatch || anchorMismatch) {
+      const bodyStructureMismatch = /身体構造|四肢|手指|手が\d+本|腕が\d+本|余分な手|余分な腕|謎の手|重複.*(?:手|腕)|(?:手|腕).*重複|融合/i.test(issueText);
+      if (japaneseMismatch || anchorMismatch || bodyStructureMismatch) {
         const retryCount = state.steps.factcheck_images.data?.codexTargetedRetries || 0;
         if (retryCount < 1) {
           const targets = (fc.regenerate || []).map((entry) => entry.which || entry.id).filter(Boolean);
@@ -362,7 +365,9 @@ function onAdvance(state, stepName, resultPath) {
             }
           }
         }
-        const condition = retryCount >= 1 ? "targeted_retry_exhausted" : (anchorMismatch ? "character_anchor_mismatch" : "japanese_text_mismatch");
+        const condition = retryCount >= 1 || bodyStructureMismatch
+          ? "targeted_retry_exhausted"
+          : (anchorMismatch ? "character_anchor_mismatch" : "japanese_text_mismatch");
         const fallbackManifest = recordFallback(state.slug, condition, { source: resultPath });
         return { ok: false, fallback: true, reason: `workshop_fallback_required:${condition}`, fallbackManifest };
       }

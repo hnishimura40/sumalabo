@@ -18,6 +18,7 @@ import assert from "node:assert/strict";
 import { generateArticleUnderstanding } from "../../scripts/sumahon/generate-article-understanding.mjs";
 import {
   derivePerformanceBlock,
+  deriveExpression,
   generateSlidePlan,
   validateSlidePlan,
 } from "../../scripts/sumahon/generate-slide-plan.mjs";
@@ -143,6 +144,15 @@ test("derivePerformanceBlock: specific verification staging wins over generic pr
   const performance = derivePerformanceBlock({ theme: "モバイルバッテリーのリコールを検証" });
   assert.match(performance.thumbnail.props.join(" "), /虫眼鏡|チェックリスト/);
   assert.match(performance.thumbnail.pose, /確認|虫眼鏡/);
+  assert.match(performance.thumbnail.expression, /真剣|心配|調べ顔/);
+  assert.match(performance.thumbnail.handUse, /片手|両手/);
+  assert.match(performance.slides.handUse, /片手持ち.*両手持ち/);
+});
+
+test("deriveExpression follows article emotion instead of defaulting to a smile", () => {
+  assert.equal(deriveExpression({ theme: "GDIDのプライバシーと追跡を解説" }).tone, "caution");
+  assert.equal(deriveExpression({ theme: "便利な新機能を提供開始" }).tone, "positive");
+  assert.equal(deriveExpression({ theme: "通信方式の基礎を比較" }).tone, "neutral");
 });
 
 test("generateSlidePlan: foundation article returns 2-4 slides", () => {

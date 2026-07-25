@@ -1,0 +1,29 @@
+{
+  "overallPass": true,
+  "verdict": "pass",
+  "bodyStructure": {
+    "pass": true,
+    "himari": "腕2本、手2つ、脚2本。余分な手足、重複、融合なし。",
+    "labomaru": "左右の腕・手・脚・足が各1つ。アンテナ1本、左右の耳ビレ各1つ。虫眼鏡は右手で保持され、独立した追加手には見えない。"
+  },
+  "anchors": {
+    "pass": true,
+    "himari": "金髪サイドポニー、青緑のリボンとヘアピン、青い瞳、白衣、青緑の差し色を維持。",
+    "labomaru": "白い丸型ボディ、紺色の目と口、頬、青い襟、ハート章、腹部ロゴ、黄緑のアンテナを維持。"
+  },
+  "text": {
+    "pass": true,
+    "requiredText": {
+      "APIは入出力を分ける": true,
+      "100万トークン/2026年7月25日時点": true,
+      "Opus 5 $5/$25": true,
+      "Sol $5/$30": true,
+      "Terra $2.50/$15": true,
+      "Luna $1/$6": true,
+      "3.6 Flash $1.50/$7.50": true
+    },
+    "japanese": "日本語の欠落、文字化け、誤字なし。",
+    "numbersAndDollarSigns": "全数値、小数点、$記号を確認済み。"
+  },
+  "issues": []
+}

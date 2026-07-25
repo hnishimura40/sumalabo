@@ -190,6 +190,16 @@ const PERFORMANCE_RECIPES = [
   },
 ];
 
+export function deriveExpression({ theme = "本記事" } = {}) {
+  if (/セキュリティ|脆弱性|リコール|値上げ|トラブル|障害|不具合|プライバシー|追跡|注意|終了|漏えい/i.test(theme)) {
+    return { tone: "caution", direction: "真剣・心配・調べ顔。笑顔を既定にしない" };
+  }
+  if (/新機能|提供開始|無料|値下げ|改善|解決|復活|延長|お得|登場|更新/i.test(theme)) {
+    return { tone: "positive", direction: "明るい笑顔。記事の利点が伝わる前向きな表情" };
+  }
+  return { tone: "neutral", direction: "穏やかな標準表情。比較では見比べる集中顔も使う" };
+}
+
 export function derivePerformanceBlock({ theme = "本記事", variant = "news" } = {}) {
   // 複数意図が重なる場合は、記事固有の動作を描けるレシピを優先する。
   // 例: 「バッテリーのリコール検証」は製品一般より検証の演技を採る。
@@ -200,17 +210,26 @@ export function derivePerformanceBlock({ theme = "本記事", variant = "news" }
     thumbnail: {
       wardrobe: "記事テーマの現場に合う上着・ベスト・アクセサリーを最低1点。標準衣装だけにしない",
       props: [`「${theme}」を象徴する小道具`, "判断または作業に使う道具"],
+      handUse: "主役の小道具は片手で持ち、空いている手は補助動作または体側に置く",
       pose: "ひまりが小道具を実際に使い、らぼまるが別の道具で整理・補助する",
       background: "記事テーマが伝わる具体的な現場。汎用スタジオ背景にしない",
     },
   };
+  const expression = deriveExpression({ theme });
   return {
     rationale: recipe.rationale,
     identityRule: "顔・体型・髪型・耳ビレ・首輪・アンテナ・ハートは正本厳守。衣装・小道具・ポーズ・背景は演出として変えてよい",
-    thumbnail: { ...recipe.thumbnail, props: [...recipe.thumbnail.props] },
+    thumbnail: {
+      ...recipe.thumbnail,
+      props: [...recipe.thumbnail.props],
+      handUse: recipe.thumbnail.handUse || "主役の小道具は片手で持ち、空いている手は補助動作または体側に置く",
+      expression: recipe.thumbnail.expression || expression.direction,
+    },
     slides: {
       wardrobe: "記事内で一貫する衣装。演出ブロックに根拠があれば標準衣装以外も可",
       props: ["各スライドのpurposeに意味のある道具"],
+      handUse: "各小道具について片手持ち／両手持ちを明記し、空いている手の位置も指定する",
+      expression: expression.direction,
       pose: "比較・確認・操作など、各スライドのcharacterRoleを身体の動きで表す",
       background: "情報を邪魔しない範囲でテーマ固有の場所・机・工程を反映する",
       optional: variant !== "comparison",
