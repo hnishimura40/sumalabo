@@ -11,6 +11,23 @@
   },
   "targets": [
     {
+      "slug": "202607-claude-opus-5-everyday-value",
+      "label": "Claude Opus 5で何が変わる？",
+      "blurb": "Max・Pro・APIの違いとFable 5との使い分け",
+      "categories": ["ニュースをかみくだく"],
+      "_kwNote": "Claudeのモデル更新・有料プラン・Opus/Fable比較に限定して案内する。AI一般では表示しない。",
+      "keywords": [
+        "Claude Opus 5",
+        "Opus 5",
+        "Claude Max",
+        "Claude Pro",
+        "Claude Fable 5",
+        "Fable 5",
+        "Anthropicの新モデル"
+      ],
+      "listStaple": false
+    },
+    {
       "slug": "power-bank-comparison",
       "label": "モバイルバッテリーおすすめ比較",
       "blurb": "容量・重さ・メーカーで選ぶ",

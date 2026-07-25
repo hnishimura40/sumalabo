@@ -1,0 +1,15 @@
+{
+  "slides": [
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide01.png", "name": "slide01-opus5.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide02.png", "name": "slide02-plans.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide03.png", "name": "slide03-value.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide04.png", "name": "slide04-price.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide05.png", "name": "slide05-roles.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide06.png", "name": "slide06-bench.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide07.png", "name": "slide07-cyber.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/slide08.png", "name": "slide08-conclusion.webp" }
+  ],
+  "thumbnail": {
+    "src": "D:/downloads/sumalabo-codex/202607-claude-opus-5-everyday-value/thumbnail.png"
+  }
+}

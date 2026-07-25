@@ -1,0 +1,116 @@
+{
+  "overallPass": true,
+  "internalLinks": {
+    "verdict": "not_applicable",
+    "issues": []
+  },
+  "slides": [
+    {
+      "id": "slide01-opus5",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 95
+    },
+    {
+      "id": "slide02-plans",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 94
+    },
+    {
+      "id": "slide03-value",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 92
+    },
+    {
+      "id": "slide04-price",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 96
+    },
+    {
+      "id": "slide05-roles",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 88
+    },
+    {
+      "id": "slide06-bench",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 72
+    },
+    {
+      "id": "slide07-cyber",
+      "verdict": "ok_with_warning",
+      "issues": [
+        "見出し「Mythos 5未満」は比較軸を省いており、モデル全般で下位と誤読される余地がある。本文はサイバー能力の比較だと分かる",
+        "画像単体では、何がMythos 5未満なのかを示す「Opus 5」の表記がない"
+      ],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": false,
+      "xPostScore": 55
+    },
+    {
+      "id": "slide08-conclusion",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 60
+    }
+  ],
+  "thumbnail": {
+    "verdict": "ok",
+    "issues": []
+  },
+  "xSelection": [
+    "thumbnail",
+    "slide04-price",
+    "slide01-opus5",
+    "slide02-plans"
+  ],
+  "excludedFromX": [
+    {
+      "id": "slide03-value",
+      "reason": "問題はないが、xPostScore上位3スライドの選抜外"
+    },
+    {
+      "id": "slide05-roles",
+      "reason": "問題はないが、選抜上位3スライドより文字量と説明要素が多い"
+    },
+    {
+      "id": "slide06-bench",
+      "reason": "ベンチ名・条件・数値を含む詳細説明型で、Xでは前提の読み落としが起きやすい"
+    },
+    {
+      "id": "slide07-cyber",
+      "reason": "standsAlone=false。Opus 5の表記がなく、見出しの比較軸も省略されている"
+    },
+    {
+      "id": "slide08-conclusion",
+      "reason": "textDensity=highのため記事内専用"
+    }
+  ]
+}

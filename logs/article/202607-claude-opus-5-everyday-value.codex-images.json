@@ -1,0 +1,84 @@
+{
+  "slug": "202607-claude-opus-5-everyday-value",
+  "transport": "codex_exec",
+  "outputDir": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value",
+  "canonicalImages": [
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\himari-canonical.png",
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\labomaru-canonical.png"
+  ],
+  "outputs": [
+    {
+      "id": "thumbnail",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value\\thumbnail.png",
+      "width": 1600,
+      "height": 900,
+      "sha256": "5361a5b705616348bcd85ed8e6d6ca6acd08e18fc3244cdc6e234c9fc188edd7",
+      "bytes": 3118598
+    },
+    {
+      "id": "slide01",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value\\slide01.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "728efea30c9bb777e4b3867275210a0678d1868029eb047bda4f11170c9590a1",
+      "bytes": 2005757
+    },
+    {
+      "id": "slide02",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value\\slide02.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "693f6023170d496cd2c016929487cf8f77bdeb7cfc8a0ebc184d5fd48b152dab",
+      "bytes": 1822994
+    },
+    {
+      "id": "slide03",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value\\slide03.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "d3f33bf3ab73d7b7b4b0fa674cb28d58e46c4d8a936bd41c4cf97ee95faa37dc",
+      "bytes": 1940353
+    },
+    {
+      "id": "slide04",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value\\slide04.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "11d65211356d5874771f4c899822b6fae9298bcc0ded1cef011ab541c2ee1be8",
+      "bytes": 1844594
+    },
+    {
+      "id": "slide05",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value\\slide05.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "51c7ed2cf361b9b1114ba7f72bb3fd2fca73ac26915313a6acf4f4104454622a",
+      "bytes": 1975375
+    },
+    {
+      "id": "slide06",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value\\slide06.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "d91746bf763061d8256c4836b80cc298b342ad98c864ea7e215b99f4494a0330",
+      "bytes": 2025268
+    },
+    {
+      "id": "slide07",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value\\slide07.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "cf4c67ab2e8b15abccf53c9c40fcb2280b6cebc83461d591d3c46642acaec7a7",
+      "bytes": 1667021
+    },
+    {
+      "id": "slide08",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-claude-opus-5-everyday-value\\slide08.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "61c2943059b5e913cf3d982afa60904fd72abc67e72398c4b30f05c21221cb7a",
+      "bytes": 1815615
+    }
+  ],
+  "completedAt": "2026-07-25T01:56:28.831Z"
+}
