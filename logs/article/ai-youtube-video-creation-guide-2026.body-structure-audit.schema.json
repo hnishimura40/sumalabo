@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["overallPass", "images", "summary"],
+  "properties": {
+    "overallPass": { "type": "boolean" },
+    "images": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "himariArms", "himariHands", "labomaruArms", "labomaruHands", "fingerCheck", "fusionCheck", "verdict", "evidence"],
+        "properties": {
+          "id": { "type": "string" },
+          "himariArms": { "type": "integer", "minimum": 0, "maximum": 4 },
+          "himariHands": { "type": "integer", "minimum": 0, "maximum": 4 },
+          "labomaruArms": { "type": "integer", "minimum": 0, "maximum": 4 },
+          "labomaruHands": { "type": "integer", "minimum": 0, "maximum": 4 },
+          "fingerCheck": { "type": "string", "enum": ["normal", "hidden_or_stylized", "abnormal"] },
+          "fusionCheck": { "type": "string", "enum": ["none", "unclear", "present"] },
+          "verdict": { "type": "string", "enum": ["ok", "needs_revision"] },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "summary": { "type": "string" }
+  }
+}
