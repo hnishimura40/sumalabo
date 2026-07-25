@@ -1,0 +1,60 @@
+{
+  "slug": "202607-claude-opus-5-everyday-value",
+  "articleUrl": "https://sumalabo.com/articles/202607-claude-opus-5-everyday-value/",
+  "isReporting": true,
+  "linkInReply": true,
+  "reply": {
+    "text": "記事で続きと出典まで読めます👇\nhttps://sumalabo.com/articles/202607-claude-opus-5-everyday-value/",
+    "articleUrl": "https://sumalabo.com/articles/202607-claude-opus-5-everyday-value/"
+  },
+  "attachThumbnail": true,
+  "thumbnailPath": "/images/thumbnails/202607-claude-opus-5-everyday-value.webp",
+  "hashtags": [
+    "#AI",
+    "#すまラボ"
+  ],
+  "primary": {
+    "text": "Claude Opus 5登場。「また新モデル？」でも課金者は今日から自動で得する\n\nClaude Opus 5は誰に関係する？Maxではデフォルト、Proでは使える最上位モデルへ自動更新。\n#AI #すまラボ",
+    "charCount": 105,
+    "weightedLength": 170,
+    "fitsLimit": true,
+    "downshifted": true,
+    "truncated": false
+  },
+  "alternates": [
+    {
+      "label": "結論先出し",
+      "text": "結論: Claude Opus 5登場。「また新モデル？」でも課金者は今日から自動で得する\n\nClaude Opus 5は誰に関係する？Maxではデフォルト、Proでは使える最上位モデルへ自動更新。\n#AI #すまラボ",
+      "charCount": 109,
+      "weightedLength": 176,
+      "fitsLimit": true,
+      "downshifted": true,
+      "truncated": false
+    },
+    {
+      "label": "問いかけ",
+      "text": "Claude Opus 5登場。「また新モデル？」でも課金者は今日から自動で得するという噂、本当のところは？\n\nClaude Opus 5は誰に関係する？Maxではデフォルト、Proでは使える最上位モデルへ自動更新。\n#AI #すまラボ",
+      "charCount": 118,
+      "weightedLength": 196,
+      "fitsLimit": true,
+      "downshifted": true,
+      "truncated": false
+    }
+  ],
+  "warnings": [
+    "primary は280字ガードにより短い構成で生成し直しました（description全文は不使用）"
+  ],
+  "generatedAt": "2026-07-25T02:01:40.785Z",
+  "attachmentPlan": {
+    "variant": "images4+reply",
+    "attach": [
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\thumbnails\\202607-claude-opus-5-everyday-value.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-claude-opus-5-everyday-value\\slide04-price.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-claude-opus-5-everyday-value\\slide01-opus5.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-claude-opus-5-everyday-value\\slide02-plans.webp"
+    ],
+    "threadBatches": [],
+    "linkInReply": true,
+    "selectionSource": "independent_inspection"
+  }
+}
