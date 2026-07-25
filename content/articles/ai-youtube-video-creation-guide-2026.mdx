@@ -1,0 +1,252 @@
+---
+title: "AIで動画作成はどこまでできる？YouTube解説動画の現実的な作り方2026"
+slug: "ai-youtube-video-creation-guide-2026"
+type: "news"
+category: "やってみた・検証"
+description: "AIでYouTube解説動画を作る現実的な方法を、企画・台本・声・画像・字幕・組み立て・サムネの7工程に分けて解説。撮影や収録、高性能PCなしで始める構成と注意点を紹介します。"
+thumbnail: "/images/thumbnails/ai-youtube-video-creation-guide-2026.webp"
+thumbnailAlt: "AIで動画作成の現実的な方法をテーマに、白衣のひまりがクラッパーボードと編集タイムラインを示し、らぼまるが撮影ゼロ・収録ゼロで素材を組み立てる流れを案内する図解"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "AI動画"
+  - "YouTube"
+  - "動画編集"
+  - "音声合成"
+  - "VOICEVOX"
+  - "Gemini Omni"
+related:
+  - "202607-ai-pc-cloud-local-spec-guide"
+  - "ai-model-benchmark-cost-guide-2026"
+  - "202607-openai-codex-claude-code-browser-imagegen"
+pubDate: "2026-07-25"
+updated: "2026-07-25"
+publishAt: "2026-07-25T23:50:00+09:00"
+hasAffiliate: false
+---
+
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+import Summary30 from "../../src/components/article/Summary30.astro";
+
+「AIで動画を作る」と聞くと、文章を一度入れれば長い動画が丸ごと完成する姿を思い浮かべるかもしれません。
+
+2026年7月時点で、YouTubeの解説動画を安定して作る現実的な方法は少し違います。**台本・声・画像・字幕・サムネイルをAIで素材化し、決めた形へ組み立てる**方法です。撮影も自分の声の収録も必須ではなく、クラウド型のAIを使うなら高性能PCも原則いりません。
+
+## 30秒サマリー
+
+<Summary30>
+  <ol>
+    <li>台本、合成音声、画像、字幕、サムネイルは、すでにAIで実用的に作れる</li>
+    <li>長い動画の一発生成より、<strong>素材生成＋機械的な組み立て</strong>が解説動画向き</li>
+    <li>人が担う中心は、企画、事実確認、規約確認、公開前の品質チェック</li>
+    <li>無料ツールから始められ、クラウド型中心なら高性能PCは原則不要</li>
+  </ol>
+</Summary30>
+
+<CharacterBubble speaker="himari" mood="curious">動画生成AIに長い動画を全部作ってもらう話じゃないの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">解説動画では、部品をAIで作って順番に組み立てる方が、直しやすくて現実的だよ。</CharacterBubble>
+
+## 解説動画を7工程に分ける
+
+解説動画は、次の7工程へ分けると考えやすくなります。
+
+1. 企画を決める
+2. 台本を書く
+3. 声を作る
+4. 場面ごとの画像を作る
+5. 字幕を作る
+6. 音声・画像・字幕を組み立てる
+7. サムネイルを作る
+
+AIが得意なのは、たたき台や素材を速く作ることです。一方、テーマ選び、事実の正しさ、視聴者に誤解を与えない表現、完成品の違和感チェックは人が担います。「AIか人か」の二択ではなく、**AIで可の工程にも人の確認を残す**のが安全です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは、解説動画の全体像を1枚で確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-youtube-video-creation-guide-2026/slide01-workflow.webp" alt="YouTube解説動画を企画、台本、声、画像、字幕、組み立て、サムネの7工程に分け、AIでできる部分と人が確認する部分を示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：解説動画は7工程に分けると自動化しやすい</figcaption>
+  </figure>
+</section>
+
+## 「動画生成AI」と「素材生成＋組み立て」は別物
+
+SoraやVeoなどの動画生成AIは、指示文や画像から映像を生み出す技術です。短い場面、雰囲気映像、商品のイメージカットなどには便利ですが、数分以上の解説を一貫した内容・文字・タイミングで作り、あとから一部だけ正確に直す用途はまだ発展途上です。
+
+これに対し、素材生成＋組み立て方式は、ナレーション、画像、字幕を別々に用意します。数字を直したいなら該当字幕、言い回しを変えたいなら音声、絵の破綻があれば該当画像だけを交換できます。**修正単位が小さいこと**が、ニュースや手順解説で大きな強みになります。
+
+<div class="table-card article-wide-block">
+
+| 比べる点 | 動画生成AI | 素材生成＋組み立て |
+|---|---|---|
+| 得意 | 短い映像、雰囲気、動き | 解説、比較、手順、字幕 |
+| 修正 | 場面を再生成しやすい | 素材単位で差し替えやすい |
+| 長い内容 | 一貫性の確認が必要 | 台本を軸に管理しやすい |
+| 実用ライン | 短尺素材で活用 | 解説動画の本編で活用 |
+
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">同じ「AI動画」でも、役割は大きく違います。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-youtube-video-creation-guide-2026/slide02-two-methods.webp" alt="短い映像を作る動画生成AIと、台本・音声・画像・字幕を組み立てる実用的な解説動画制作を左右で比較した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：動画生成と素材の組み立てを分けて考える</figcaption>
+  </figure>
+</section>
+
+## 工程別：AIに任せられること
+
+### 台本は「構成案→人の推敲」
+
+チャットAIは、想定視聴者、結論、長さ、避けたい表現を伝えると、見出しや台本のたたき台を作れます。ただし、サービスの仕様や料金は変わります。公式情報と照合し、誇張や言い切りを直す工程は省けません。
+
+### 声は無料のVOICEVOXから試せる
+
+[VOICEVOXの公式利用規約](https://voicevox.hiroshiba.jp/term/)では、生成音声を商用・非商用で使えます。ただし、VOICEVOXを使ったことが分かるクレジット表記が必要で、各音声ライブラリの規約にも従います。動画説明欄だけでよいか、キャラクター名の表記が必要かは、使う声ごとに確認しましょう。
+
+クラウド音声では、Googleが2026年7月時点で **Gemini 3.1 Flash TTS Preview** を提供しています。Gemini APIの標準料金は入力100万テキストトークンあたり1ドル、出力100万音声トークンあたり20ドルで、音声は1秒あたり25トークン換算です。無料枠もありますが、Previewの仕様や料金は変わり得ます。
+
+<Callout type="warning" title="声の利用条件は二重に確認">
+  音声合成ソフト本体の規約だけでなく、使用する音声ライブラリやキャラクターの規約も確認します。実在人物に似せた声や、本人と誤認させる使い方は避けましょう。
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">台本と声は作れますが、推敲と規約確認は人の担当です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-youtube-video-creation-guide-2026/slide03-script-voice.webp" alt="台本はAIの構成案を人が推敲し、音声合成は規約とクレジットを確認する流れを示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：台本と声はAIで作り、人が内容と利用条件を確認</figcaption>
+  </figure>
+</section>
+
+### 画像・サムネイルは場面ごとに作る
+
+ChatGPTの現行画像機能は **ChatGPT Images 2.0** です。場面説明、画角、色、入れる文字、避けたい要素を指定すれば、解説用の図解やサムネイルを数分で作れます。
+
+一方で、文字化け、手指の本数、キャラクターの崩れ、数字の誤りは目視確認が必要です。連続した動画では、基準画像を参照させ、髪型・服装・体型・色を固定すると統一感を保ちやすくなります。
+
+OpenAIの[利用規約](https://openai.com/ja-JP/policies/row-terms-of-use/)では、OpenAIと利用者の間では、法令で認められる範囲で利用者が出力を所有します。ただし、入力素材に必要な権利を持つことや、第三者の著作権・商標・肖像などを侵害しないことは利用者の責任です。「AI画像なら無条件で商用利用できる」とは考えない方が安全です。
+
+### 字幕は台本から直接作れる
+
+台本どおりの合成音声なら、台本文を字幕へ変換できるため、音声を聞き直して文字起こしする必要がありません。字幕を読みやすい長さに分割し、音声の区切りへ合わせます。自分で収録する動画や会話形式なら、文字起こしAIを使い、固有名詞と数字だけ人が直す方法が現実的です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">画像と字幕を、交換できる素材として準備します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-youtube-video-creation-guide-2026/slide04-images-captions.webp" alt="場面ごとの生成画像と台本から作る字幕を別素材として用意し、サムネイルにも展開する方法を示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：画像と字幕は別々に作ると修正しやすい</figcaption>
+  </figure>
+</section>
+
+### ショート動画生成は正式名と提供面を確認
+
+Googleの現行APIでは、短尺動画向けに **Gemini Omni Flash Preview** とVeo系が案内されています。Geminiアプリの「Gemini Omni」はGoogle AIプランなどの対象ユーザー向けで、API版Omniは有料枠のPreviewです。
+
+Omniは画像や動画を入力した編集、複数回の修正、キャラクターの一貫性を意識した短い動画に向きます。ただし、提供地域、年齢、プラン、生成上限は変わります。申し込む前に[Gemini公式ヘルプ](https://support.google.com/gemini/answer/16126339)と[Gemini APIの動画ガイド](https://ai.google.dev/gemini-api/docs/video)で自分の利用面を確認してください。
+
+## 素材が揃えば、組み立ては機械化できる
+
+音声の長さに合わせて画像を並べ、字幕を重ね、決めたサイズで書き出す作業は、無料編集ソフトでもできます。構成が毎回同じなら、短いスクリプトに「音声ファイル、画像フォルダ、字幕ファイル」を渡し、自動で合成することも可能です。
+
+筆者の解説動画でも、台本から音声を作り、場面ごとの画像と字幕をそろえ、決めたレイアウトへ順番に配置する方法を使っています。声の生成もまとめて実行できる形にし、手作業は企画、事実確認、画像・字幕・音の最終チェックへ集約しています。
+
+重要なのは、**自動化の目的を「人の確認をなくすこと」にしない**ことです。繰り返し作業を機械へ渡し、人は内容の質と違和感の発見へ時間を使います。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">素材から完成動画までの流れを固定すると、繰り返し作業を減らせます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-youtube-video-creation-guide-2026/slide05-assembly.webp" alt="音声・画像・字幕を編集タイムラインへ自動配置し、人は企画、事実確認、最終チェックに集中する流れを示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：組み立てを機械化し、人は品質判断へ集中</figcaption>
+  </figure>
+</section>
+
+## 高性能PCは原則不要。例外はローカル動画生成
+
+クラウド型のチャットAI、音声合成、画像生成を使う場合、重い処理はサービス側で行われます。手元のPCが担うのは、ブラウザ操作、素材管理、字幕と画像の合成、動画の書き出しです。フルHD中心の一般的な解説動画なら、最上位GPUを搭載したPCを最初から買う必要はありません。
+
+例外は、動画生成モデルそのものを手元のPCで動かす場合です。大容量のGPUメモリ、保存容量、冷却、電源が必要になり、費用も設定の難しさも上がります。この境界は[AIを使うのに高いPCは必要？](/articles/202607-ai-pc-cloud-local-spec-guide/)で詳しく整理しています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">必要なPCは、AIをクラウドで使うか手元で動かすかで変わります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-youtube-video-creation-guide-2026/slide06-environment.webp" alt="クラウドAIと一般的な動画合成には高性能PCが原則不要で、ローカル動画生成だけが例外であることを示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：クラウド中心なら高性能PCは原則不要</figcaption>
+  </figure>
+</section>
+
+### 無料から始める構成例
+
+- 台本：使っているチャットAIの無料枠
+- 声：VOICEVOX
+- 画像：画像生成サービスの無料枠、または自作図解
+- 字幕・編集：無料編集ソフト
+- 組み立て：最初は編集ソフト、型が固まったらスクリプト化
+
+いきなり全自動を目指すより、まず1本を手で組み、繰り返している操作だけを自動化する方が失敗しにくいです。どのAIを使うか迷う場合は、[AIモデルのベンチマークとコスパの読み方2026](/articles/ai-model-benchmark-cost-guide-2026/)も参考にしてください。
+
+## 公開前に確認する3つの注意点
+
+### 1. 音声の規約とクレジット
+
+ソフト本体と音声ライブラリの両方を確認し、必要なクレジットを動画内または説明欄へ記載します。利用条件のページは公開時点でもう一度確認しましょう。
+
+### 2. YouTubeのAI生成コンテンツ開示
+
+YouTubeは2026年7月時点で、現実的に見える人物・場所・出来事を意味のある形で合成・改変したコンテンツについて、YouTube Studioの「AI use」から開示するよう求めています。
+
+台本の案、サムネイル、字幕、アイデア出しなど、制作補助にAIを使っただけなら原則として開示は不要です。反対に、実際には起きていない災害映像や、実在人物が言っていない発言を現実的に見せる場合は開示が必要です。開示自体で視聴範囲や収益化が制限されるわけではありません。
+
+### 3. 画像・音楽・入力素材の権利
+
+生成サービスの規約だけでなく、入力した写真、ロゴ、キャラクター、音楽、フォントの権利も確認します。実在人物や企業と誤認させる表現、他者の作品をそのまま再現する指示は避けましょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">公開ボタンを押す前に、利用条件と開示を確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-youtube-video-creation-guide-2026/slide07-rules.webp" alt="音声の規約とクレジット、YouTubeのAI開示、生成画像と入力素材の権利の3項目を確認する図解" loading="lazy" decoding="async" />
+    <figcaption>図解：公開前は規約・開示・権利を確認</figcaption>
+  </figure>
+</section>
+
+## まとめ：まずは短い1本で流れを作る
+
+AI動画の現実的な始め方は、長い映像を一発で生成することではありません。短い台本を作り、音声、画像、字幕をそろえ、決めた順番で組み立て、最後に人が確認することです。
+
+<div class="check-box">
+  <p class="box-label">最初の1本チェックリスト</p>
+  <ul>
+    <li>結論が1つの短い企画を決めた</li>
+    <li>AIの台本を公式情報と照合した</li>
+    <li>音声の利用規約とクレジットを確認した</li>
+    <li>画像の文字・人物・手指・数字を目視した</li>
+    <li>字幕をスマホで読める長さにした</li>
+    <li>音量、表示時間、権利、AI開示を公開前に確認した</li>
+  </ul>
+</div>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最初は短く作り、安定した工程だけを少しずつ自動化します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-youtube-video-creation-guide-2026/slide08-checklist.webp" alt="短い台本、音声、画像と字幕、自動合成、人の最終確認というAI解説動画の始め方を順番に示したチェックリスト図解" loading="lazy" decoding="async" />
+    <figcaption>図解：人は企画と品質チェックを担う</figcaption>
+  </figure>
+</section>
+
+「撮影できない」「自分の声を出したくない」「高いPCを買えない」は、解説動画を諦める理由ではなくなりました。無料の構成で1本作り、時間のかかる部分が見えてから、有料AIや自動化へ進むのが無理のない順番です。
+
+## 参考情報
+
+- VOICEVOX「[利用規約](https://voicevox.hiroshiba.jp/term/)」「[Q&A](https://voicevox.hiroshiba.jp/qa/)」
+- Google AI for Developers「[Speech generation](https://ai.google.dev/gemini-api/docs/speech-generation)」「[Video generation](https://ai.google.dev/gemini-api/docs/video)」「[Pricing](https://ai.google.dev/gemini-api/docs/pricing)」
+- Gemini Apps Help「[Generate videos with Gemini](https://support.google.com/gemini/answer/16126339)」
+- YouTube Help「[Disclosing use of GenAI content](https://support.google.com/youtube/answer/14328491)」
+- OpenAI「[Introducing ChatGPT Images 2.0](https://openai.com/index/introducing-chatgpt-images-2-0/)」「[Terms of Use](https://openai.com/ja-JP/policies/row-terms-of-use/)」
+
+<Note>サービス名、提供範囲、料金、規約は2026年7月25日時点。Preview機能や無料枠、利用上限は変更される場合があります。</Note>

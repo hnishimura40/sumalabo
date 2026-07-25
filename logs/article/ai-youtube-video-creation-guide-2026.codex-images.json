@@ -1,0 +1,84 @@
+{
+  "slug": "ai-youtube-video-creation-guide-2026",
+  "transport": "codex_exec",
+  "outputDir": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026",
+  "canonicalImages": [
+    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\ai-video-guide\\assets\\characters\\himari-canonical.png",
+    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\ai-video-guide\\assets\\characters\\labomaru-canonical.png"
+  ],
+  "outputs": [
+    {
+      "id": "thumbnail",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\thumbnail.png",
+      "width": 1600,
+      "height": 900,
+      "sha256": "a285e9186a4d4cf6d488dd87c5f2cc6863d0ba67a7138071c6e6dbf60731fd54",
+      "bytes": 2838598
+    },
+    {
+      "id": "slide01",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide01.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "dc5fa96206b316942c40fb7baebee5b0d8d3e4083da3f3b79eecec47c1423365",
+      "bytes": 1565355
+    },
+    {
+      "id": "slide02",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide02.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "daf87327457eb2d5da4c7fbe9df136fed1d71d77294cd2de14c8a40c26032eb6",
+      "bytes": 2419769
+    },
+    {
+      "id": "slide03",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide03.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "4538a1d5f5ba90d5dc8c86d749c388fc603f41f02098829374bdb6a25afc473d",
+      "bytes": 2408161
+    },
+    {
+      "id": "slide04",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide04.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "e1bc81996d14c6f58919040bf359dc1b19954635ea4a96ffc67b652d7c5d0631",
+      "bytes": 2046049
+    },
+    {
+      "id": "slide05",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide05.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "52bf7bb2ba31a9d1624c9d274f68d1dc9f71884c1742778d1a6f66153c9fff3f",
+      "bytes": 2021901
+    },
+    {
+      "id": "slide06",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide06.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "6413b299c7b1ba61c56ac7a660f375faea70b63c559ac114359b52fac98d25dc",
+      "bytes": 1812340
+    },
+    {
+      "id": "slide07",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide07.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "2048340830b76fe412ce6d26f4d4840dd657ebdc45151b33f376329f569df850",
+      "bytes": 1717278
+    },
+    {
+      "id": "slide08",
+      "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide08.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "efeeeb6d7a8ec7ef052dfddc6e07a16abaf2ae1b7c7a12ec8cded6b54c90c4c8",
+      "bytes": 1332451
+    }
+  ],
+  "completedAt": "2026-07-25T16:18:37.540Z"
+}

@@ -48,6 +48,26 @@
       "listStaple": true
     },
     {
+      "slug": "ai-youtube-video-creation-guide-2026",
+      "label": "AIでYouTube解説動画を作る方法",
+      "blurb": "台本・声・画像・字幕をAIで作り、現実的に組み立てる常設ガイド",
+      "categories": ["やってみた・検証", "ニュースをかみくだく", "周辺機器・ガジェット"],
+      "_kwNote": "AI動画、YouTube制作、音声合成、動画編集の記事から定番受け皿へ案内する。単独のAI一般語では表示しない。",
+      "keywords": [
+        "AI動画作成",
+        "AIで動画",
+        "YouTube動画作成",
+        "YouTube解説動画",
+        "動画生成AI",
+        "音声合成",
+        "VOICEVOX",
+        "Gemini Omni",
+        "AIサムネイル",
+        "字幕自動生成"
+      ],
+      "listStaple": true
+    },
+    {
       "slug": "202607-claude-opus-5-everyday-value",
       "label": "Claude Opus 5で何が変わる？",
       "blurb": "Max・Pro・APIの違いとFable 5との使い分け",
