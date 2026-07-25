@@ -565,7 +565,43 @@ function runAudit(patterns) {
     checkForbiddenWords(body, label, "mdx", patterns);
   }
 
-  finishAudit(files.length);
+  // 記事だけでなく「サイト側の読者向け文言」も検査する（2026-07-25）。
+  // 実際に categories.ts のカテゴリ説明・記事一覧のリード文・キャラ紹介文に
+  // 「普通の人」が残っており、記事を全部直しても一覧/カテゴリ面の HTML に
+  // 出続けていた。記事だけを見るのは死角になる。
+  const siteCopyCount = auditSiteCopy(patterns);
+
+  finishAudit(files.length + siteCopyCount);
+}
+
+// サイト側の読者向け文言（カテゴリ説明・固定ページ・収益記事カードの説明文）を検査する。
+// 対象は「読者の目に触れる日本語コピーを持つ」ファイルに限定する。ソース全体を
+// 走査すると、コメントや禁則語リスト自身まで拾って誤検知だらけになるため。
+const SITE_COPY_TARGETS = [
+  path.join("src", "lib", "categories.ts"),
+  path.join("src", "config", "site.ts"),
+  path.join("data", "related-guides.json"),
+];
+const SITE_COPY_PAGES_DIR = path.join("src", "pages");
+
+function auditSiteCopy(patterns) {
+  const targets = [...SITE_COPY_TARGETS];
+  const pagesDir = path.join(REPO_ROOT, SITE_COPY_PAGES_DIR);
+  if (existsSync(pagesDir)) {
+    for (const f of readdirSync(pagesDir)) {
+      if (f.endsWith(".astro")) targets.push(path.join(SITE_COPY_PAGES_DIR, f));
+    }
+  }
+
+  let checked = 0;
+  for (const rel of targets) {
+    const full = path.join(REPO_ROOT, rel);
+    const raw = readTextOrNull(full);
+    if (raw === null) continue;
+    checkForbiddenWords(raw, `${rel} (site copy)`, "mdx", patterns);
+    checked++;
+  }
+  return checked;
 }
 
 function finishAudit(fileCount) {

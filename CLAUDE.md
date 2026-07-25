@@ -360,7 +360,7 @@ Phase B 完了後だけ実行：
 
 - 画像生成前: `npm run sumalabo:gate -- --slug <slug> --stage draft`（final_article / review_report / slide_plan 等の存在＋禁則語のみ検査）
 - Phase A 出口: `npm run sumalabo:finalize` の先頭で自動的に `--stage full` が走る（frontmatter 必須キー / 禁則語 / 画像参照整合（WebP限定・実在）/ dist の OGP 実測）。**exit 1（violation あり）なら build・Preview URL 作成・review item 登録・通知へ一切進まない**
-- **全記事棚卸し（月1回・2026-07-25 追加）**: `npm run sumalabo:audit`（= `sumalabo-gate.mjs --audit`）。`content/articles/` の**公開 MDX を全部**走査し、**タイトルを含む frontmatter と本文**の禁則語を検査する。**stage draft/full は制作中の1記事しか見ないため、公開済み記事に禁則語が残り続ける死角があった**（実際に「普通の人」が 7 記事・57 箇所で本番に出ていた。title/description は検索結果・OGP にも表示される）。**毎月1回、月初に手動実行**し、violation が出たら記事を直してから再実行する（夜間 run には組み込まない＝記事制作を止めないため）。exit 1 = 未修正あり。
+- **全記事棚卸し（月1回・2026-07-25 追加）**: `npm run sumalabo:audit`（= `sumalabo-gate.mjs --audit`）。`content/articles/` の**公開 MDX を全部**走査し、**タイトルを含む frontmatter と本文**の禁則語を検査する。**さらにサイト側の読者向け文言**（`src/lib/categories.ts` のカテゴリ説明 / `src/config/site.ts` / `src/pages/*.astro` の固定ページ文言 / `data/related-guides.json`）も検査対象にする（記事を全部直してもカテゴリ説明に残っていて一覧面の HTML に出続けた実例があるため）。**stage draft/full は制作中の1記事しか見ないため、公開済み記事に禁則語が残り続ける死角があった**（実際に「普通の人」が 7 記事・57 箇所で本番に出ていた。title/description は検索結果・OGP にも表示される）。**毎月1回、月初に手動実行**し、violation が出たら記事を直してから再実行する（夜間 run には組み込まない＝記事制作を止めないため）。exit 1 = 未修正あり。
 - 禁則語リストは `data/qa/forbidden-words.json`。誤検知はリスト側を直す（記事を歪めない）。パターン削除・warning 化など検査を弱める変更は理由を報告してから行う。**否定形での使用は誤検知として除外する**（`excludeLineRegex`）：「全員に必要なものではありません」「誰でも使える段階ではありません」「万人向けではない」等は、むしろ過度な一般化を避ける良い書き方なので violation にしない
 - **目視で確認するのは機械判定できない項目に限る**: facts / claims / uncertain の線引きの妥当性、記事の主軸（やさしく噛み砕く）の確認、サムネの実在ロゴ・煽り絵柄の有無
 
