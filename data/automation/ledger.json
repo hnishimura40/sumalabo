@@ -1166,6 +1166,24 @@
       "xPostVariant": "images4+reply",
       "xPostText": "AIモデル、結局どれを使えばいい？\n\nベンチ1位より、用途と予算。Claude・ChatGPT・Geminiの現行モデル、API単価、サブスクを一次情報で横断整理しました。迷ったら無料枠から。\n#AI #すまラボ",
       "xReplyUrl": "https://x.com/suma_labo/status/2080981811979804854"
+    },
+    {
+      "slug": "202607-google-july-30-terms-media-settings",
+      "incidents": [],
+      "status": "x_posted",
+      "source": "user_directed",
+      "triggerKind": "user",
+      "triggeredBy": "user",
+      "productionUrl": "https://sumalabo.com/articles/202607-google-july-30-terms-media-settings/",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/212",
+      "mergeCommit": "e2dcc5518a748673fb67b4b938bc6c7144c6772e",
+      "publishedAt": "2026-07-25T22:05:00+09:00",
+      "verifyResult": "full gate 0 violations / 0 warnings; build 91 pages; post-publish verify pass; independent inspection 9/9 pass",
+      "xPostUrl": "https://x.com/suma_labo/status/2081005577946464433",
+      "xPostedAt": "2026-07-25T13:17:03.149Z",
+      "xPostVariant": "images4+reply",
+      "xPostText": "Googleの「7月30日問題」、実は2つの話が混ざっています。\n\n7月30日は規約の発効日で、設定の締切ではありません。気になる人が見るのは「メディアを保存」。対象範囲と、オフ・過去分削除・自動削除の3点を整理しました。\n\n#Google #プライバシー #すまラボ",
+      "xReplyUrl": "https://x.com/suma_labo/status/2081005742765850758"
     }
   ]
 }

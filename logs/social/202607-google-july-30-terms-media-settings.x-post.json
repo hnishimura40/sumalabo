@@ -1,0 +1,36 @@
+{
+  "slug": "202607-google-july-30-terms-media-settings",
+  "articleUrl": "https://sumalabo.com/articles/202607-google-july-30-terms-media-settings/",
+  "isReporting": true,
+  "linkInReply": true,
+  "reply": {
+    "text": "続きと公式出典は、すまラボの記事で👇\nhttps://sumalabo.com/articles/202607-google-july-30-terms-media-settings/",
+    "articleUrl": "https://sumalabo.com/articles/202607-google-july-30-terms-media-settings/"
+  },
+  "attachThumbnail": true,
+  "thumbnailPath": "/images/thumbnails/202607-google-july-30-terms-media-settings.webp",
+  "hashtags": ["#Google", "#プライバシー", "#すまラボ"],
+  "primary": {
+    "text": "Googleの「7月30日問題」、実は2つの話が混ざっています。\n\n7月30日は規約の発効日で、設定の締切ではありません。気になる人が見るのは「メディアを保存」。対象範囲と、オフ・過去分削除・自動削除の3点を整理しました。\n\n#Google #プライバシー #すまラボ",
+    "charCount": 135,
+    "weightedLength": 235,
+    "fitsLimit": true,
+    "downshifted": false,
+    "truncated": false
+  },
+  "alternates": [],
+  "warnings": [],
+  "generatedAt": "2026-07-25T13:11:57.454Z",
+  "attachmentPlan": {
+    "variant": "images4+reply",
+    "attach": [
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\thumbnails\\202607-google-july-30-terms-media-settings.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-google-july-30-terms-media-settings\\slide05-inheritance.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-google-july-30-terms-media-settings\\slide01-conclusion.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-google-july-30-terms-media-settings\\slide02-two-topics.webp"
+    ],
+    "threadBatches": [],
+    "linkInReply": true,
+    "selectionSource": "independent_inspection"
+  }
+}
