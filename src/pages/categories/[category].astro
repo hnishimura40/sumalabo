@@ -7,6 +7,7 @@ import CategoryNav from "../../components/CategoryNav.astro";
 import { categories, getCategoryBySlug } from "../../lib/categories";
 import { isListableArticle, sortArticles } from "../../lib/articles";
 import { buildStapleCards, interleaveStaples } from "../../lib/staple-cards";
+import { buildBreadcrumbSchema } from "../../lib/structured-data";
 
 export function getStaticPaths() {
   return categories.map((category) => ({
@@ -29,6 +30,9 @@ const staples = buildStapleCards(all).filter(
 const items = interleaveStaples(articles, staples);
 
 const currentCategory = getCategoryBySlug(category.slug) ?? category;
+
+// パンくず構造化データ（2026-07-25 追加）。ホーム → カテゴリ。
+const breadcrumbSchema = buildBreadcrumbSchema([{ name: currentCategory.name }]);
 ---
 
 <BaseLayout
@@ -36,6 +40,7 @@ const currentCategory = getCategoryBySlug(category.slug) ?? category;
   description={currentCategory.description}
   canonicalPath={`/categories/${currentCategory.slug}/`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <section class="page-shell">
     <header class="category-header">
       <div>
