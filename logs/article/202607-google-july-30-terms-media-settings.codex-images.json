@@ -1,0 +1,84 @@
+{
+  "slug": "202607-google-july-30-terms-media-settings",
+  "transport": "codex_exec",
+  "outputDir": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings",
+  "canonicalImages": [
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\himari-canonical.png",
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\labomaru-canonical.png"
+  ],
+  "outputs": [
+    {
+      "id": "thumbnail",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\thumbnail.png",
+      "width": 1600,
+      "height": 900,
+      "sha256": "ee91c784733522ffc976a39b5404cb0828536d7ed1cd9fd0c186fc168391dd97",
+      "bytes": 2628212
+    },
+    {
+      "id": "slide01",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide01.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "2e18602c487b61efaaefaba19ef34f94cc09137843ed95d3265bfade49d0c1d6",
+      "bytes": 1615625
+    },
+    {
+      "id": "slide02",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide02.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "a14325fc97b68739d7e99966daafe1b73ed3b9169099fcd948ee0eb932a40190",
+      "bytes": 1748562
+    },
+    {
+      "id": "slide03",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide03.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "49f2fa41478cb75c2348e0ed591eedc87fca55400f4f1f254a8ddc739225090b",
+      "bytes": 1839522
+    },
+    {
+      "id": "slide04",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide04.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "3adb4f25f498ab6b2219ec1af5fced255fc97e6f134173cf9a2a59db294bae2f",
+      "bytes": 1648073
+    },
+    {
+      "id": "slide05",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide05.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "2ffe4fbc8b7474dfd71bae78f1b25209066d6e6c6479100014b3baad3139aaeb",
+      "bytes": 1518367
+    },
+    {
+      "id": "slide06",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide06.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "1f9ed7650b9970c3c4d24538ecee13d8b041eff5373c77031a90978a5d97e538",
+      "bytes": 1789252
+    },
+    {
+      "id": "slide07",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide07.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "f50aceb6e97c18352b6b6e17f7d424f63e32e382f95e02a6eeadbe6fbf637680",
+      "bytes": 1890061
+    },
+    {
+      "id": "slide08",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide08.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "f77674178c15a40f4fb7688e9c17f8f046462820e6cc68e1a7e47366f99a25c8",
+      "bytes": 1740198
+    }
+  ],
+  "completedAt": "2026-07-25T12:56:16.819Z"
+}

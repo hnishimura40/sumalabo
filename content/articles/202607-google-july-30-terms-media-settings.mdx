@@ -1,0 +1,239 @@
+---
+title: "Googleの「7月30日問題」、本当に急ぐのはどれ？規約改定とメディア保存設定を整理"
+slug: "202607-google-july-30-terms-media-settings"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Googleの7月30日利用規約改定と、検索サービスの「メディアを保存」設定は別の話です。締切の有無、AI学習の対象・対象外、確認・削除・自動削除の3点セットを公式情報から整理します。"
+thumbnail: "/images/thumbnails/202607-google-july-30-terms-media-settings.webp"
+thumbnailAlt: "Googleの7月30日問題を2つに分ける解説。真剣な表情のひまりが7月30日のカレンダーと設定画面を照合し、らぼまるが規約は操作不要、設定は締切なしと仕分けている"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Google"
+  - "7月30日"
+  - "利用規約"
+  - "検索サービス履歴"
+  - "メディアを保存"
+  - "プライバシー"
+  - "AI学習"
+related:
+  - "202607-windows-11-gdid-privacy-explained"
+  - "password-manager-guide"
+pubDate: "2026-07-25"
+updated: "2026-07-25"
+publishAt: "2026-07-25T22:05:00+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+「Googleの設定を7月30日までに変えないと、スマホの写真がAI学習に使われる」。そんな説明がSNSや動画で広がっています。
+
+結論から言うと、**7月30日に発効する利用規約改定**と、6月から段階的に始まった**検索サービスの新しい履歴設定**という、別々の話が混ざっています。期限がある前者は利用者の操作が不要。確認する価値がある後者には、7月30日という締切はありません。
+
+<Summary30>
+  <ol>
+    <li><strong>7月30日は利用規約の発効日</strong>。同意ボタンを押したり、設定を変えたりする期限ではない</li>
+    <li>気になる人が確認するのは、検索サービス履歴の<strong>「メディアを保存」</strong>。いつ確認してもよく、7月30日締切ではない</li>
+    <li>対象はレンズ画像、音声検索の録音、検索サービスへアップロードしたファイルなど。<strong>Googleフォトに保存してあるだけの写真全部ではない</strong></li>
+    <li>見直すなら、①メディアを保存をオフ ②保存済みメディアを確認・削除 ③自動削除期間を確認、の3点セット</li>
+  </ol>
+</Summary30>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最初に「期限」と「設定」を切り分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-google-july-30-terms-media-settings/slide01-conclusion.webp" alt="7月30日は規約の発効日で操作不要、メディア保存設定には締切がなく気になる人が3点を確認するという結論" loading="lazy" decoding="async" />
+    <figcaption>「7月30日問題」の結論</figcaption>
+  </figure>
+</section>
+
+## 話題の正体——実は2つの別の話
+
+<p class="lead"><strong>日付がある話と、設定を見直す話は別です。</strong></p>
+
+| 話 | いつ | 何が起きる？ | 利用者がすること |
+|---|---|---|---|
+| A：Google利用規約の改定 | 2026年7月30日発効 | AIを含むサービスの免責やバックグラウンド通信費などを明文化 | 継続利用するなら特別な操作は不要 |
+| B：検索サービスの新設定 | 2026年6月から数か月かけて順次 | 履歴保存とパーソナライズを分け、「メディアを保存」を管理 | 気になる人はいつでも確認できる |
+
+Google公式の規約アーカイブには、2026年7月30日発効の新版が掲載されています。一方、新しい検索設定について公式ヘルプは「今後数か月かけて段階的に適用」と説明しており、7月30日を設定期限とはしていません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">混ざっている2本の線を分けて見ると、焦る必要がないと分かります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-google-july-30-terms-media-settings/slide02-two-topics.webp" alt="Aは7月30日発効の利用規約で操作不要、Bは6月から順次の検索サービス設定で締切なし、と2つの話を分けた図解" loading="lazy" decoding="async" />
+    <figcaption>規約改定と検索設定は別の話</figcaption>
+  </figure>
+</section>
+
+<CharacterBubble speaker="himari" mood="serious">7月30日までに何かをオフにしないと手遅れ、という話ではないんですね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">そう。設定は大切だけど、期限で急がせる説明は正確じゃないよ。対象を確認して、自分で選ぼう。</CharacterBubble>
+
+## A：7月30日の利用規約改定——操作は必要ない
+
+新版では、医療・法律・金融などの専門的助言としてサービスの回答だけに頼らないことや、端末を操作していない間も更新・安全性・サービス改善などのため通信する場合があり、その通信量や費用は利用者側の契約に依存することなどが明文化されています。
+
+これは「7月30日からGoogleが突然有料になる」という案内ではありません。また、同意画面で新しい設定を選び直す締切でもありません。規約に同意できない場合は利用をやめる選択になりますが、継続利用者が7月30日までに設定操作をする必要はありません。
+
+<Callout type="warning" title="AIの回答は専門家の代わりではない">
+  規約の免責は、AI回答を医療診断や法律・金融の専門助言の代わりにしない、という注意を明確にしたものです。通常の検索やAI機能が有料化するという意味ではありません。
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">規約で変わることと、変わらないことを整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-google-july-30-terms-media-settings/slide03-terms.webp" alt="7月30日の規約改定はAI回答の免責とバックグラウンド通信費を明文化し、有料化や設定変更の締切ではないという図解" loading="lazy" decoding="async" />
+    <figcaption>7月30日の規約改定で確認すること</figcaption>
+  </figure>
+</section>
+
+## B：「メディアを保存」とは——写真全部ではない
+
+<p class="lead">対象は、<strong>Googleの検索サービスで自分が操作したメディア</strong>です。</p>
+
+公式ヘルプが挙げる例は次のとおりです。
+
+- Googleレンズで検索した画像
+- 音声検索、検索Live、Google翻訳の英会話練習などの録音・録画
+- AIモードや検索サービスへアップロードした画像・ファイル
+- 検索サービスで操作したその他の画像、音声、動画
+
+反対に、検索サービスで操作していないスマホ内の写真や、Googleフォトに保存してあるだけの写真が、この設定によって一括保存・学習対象になるわけではありません。Googleフォトは公式が示す「検索サービス」の一覧に含まれておらず、この設定の対象は検索サービスでの操作に結び付いたメディアだからです。
+
+また、AIで生成・変更したメディアや、クチコミへ投稿した写真など検索サービスで一般公開したメディアも、このサブ設定の対象外です。ただし、それぞれ別の規約や履歴設定で扱われる場合があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">本記事の主役は、この境界線です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-google-july-30-terms-media-settings/slide04-boundary.webp" alt="対象はレンズ画像、音声検索録音、検索へアップロードしたファイル。対象外はGoogleフォトに保存しただけの写真、AI生成メディア、公開済み口コミ写真という境界図" loading="lazy" decoding="async" />
+    <figcaption>「メディアを保存」の対象・対象外</figcaption>
+  </figure>
+</section>
+
+### 給与明細や身分証をレンズで撮った人は確認する価値がある
+
+「スマホの写真全部」ではありませんが、だから無関係とも限りません。Googleレンズで給与明細、身分証、処方箋などを撮って検索したことがある場合、その画像は対象になり得ます。
+
+保存されたメディアは、検索体験のパーソナライズだけでなく、GoogleのAIモデルや技術の開発・改善に使われる場合があります。Googleは学習前にアカウントから切り離すなどの保護策も説明していますが、機微な情報を検索へ使った心当たりがあれば履歴を確認するのが安全です。
+
+## 「既定オン」は全員共通ではない
+
+新しい設定には、従来の「ウェブとアプリのアクティビティ」と「検索のカスタマイズ」の状態が引き継がれます。従来設定がオンなら新設定もオン、オフならオフです。
+
+そのため、報道で使われる「既定オン」は、従来設定がオンだった多くの利用者では結果として当てはまりますが、**全アカウントが新たに強制オンになる**という意味ではありません。自分の画面で状態を確かめるのが確実です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">新設定は、以前の設定状態を引き継ぎます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-google-july-30-terms-media-settings/slide05-inheritance.webp" alt="従来のウェブとアプリのアクティビティがオンなら新設定もオン、オフならオフとして引き継がれる仕組み" loading="lazy" decoding="async" />
+    <figcaption>「全員一律オン」ではなく設定を引き継ぐ</figcaption>
+  </figure>
+</section>
+
+## 正しい対処は3点セット
+
+<p class="lead"><strong>オフにするだけでは、過去に保存されたメディアは消えません。</strong></p>
+
+2026年7月25日時点の公式UI文言に沿うと、確認手順は次の3段階です。
+
+### 1．「メディアを保存」を確認する
+
+1. [Google マイ アクティビティ](https://myactivity.google.com/)を開く
+2. 「検索サービス履歴」を選ぶ
+3. 「メディアを保存」のチェックボックスを確認する
+4. 今後の保存を望まない場合はオフにする
+
+### 2．保存済みメディアを確認・削除する
+
+1. 「検索サービス履歴」で「保存した履歴の表示と削除」を選ぶ
+2. 画像、録音アイコン、アップロードを含む履歴を確認する
+3. 不要な履歴を選んで削除する
+
+公式ヘルプは、設定をオフにしても過去のメディアは削除されず、削除するまで技術改善に使われる場合があると説明しています。なお、AI学習用にすでに選ばれ、アカウントから切り離されたデータは、元の履歴を削除しても最長4年間保持される場合があります。
+
+### 3．自動削除期間を確認する
+
+「検索サービス履歴」の自動削除設定で、履歴をどれくらい残すかを確認します。履歴を使った再検索やパーソナライズの利便性もあるため、期間は自分の使い方に合わせて選びましょう。
+
+<Note>
+  新設定は数か月かけて順次反映中です。まだ「検索サービス履歴」が表示されない場合は、従来の「ウェブとアプリのアクティビティ」で管理されます。アプリを最新版にし、account.google.comから直接確認する方法もあります。
+</Note>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">確認は、この3点をひとまとまりで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-google-july-30-terms-media-settings/slide06-three-steps.webp" alt="メディアを保存をオフ、保存済みメディアを確認削除、自動削除期間を設定、という正しい対処3点セット" loading="lazy" decoding="async" />
+    <figcaption>設定変更・過去分削除・自動削除の3点セット</figcaption>
+  </figure>
+</section>
+
+## そもそもオフにすべき？判断材料は2つ
+
+全員にオフを勧めるものではありません。履歴を残すと、以前のレンズ検索へ戻ったり、過去の検索に合わせた結果やおすすめを受けたりしやすくなります。反対に、保存を減らせばプライバシー面の不安は小さくなりますが、履歴に基づく機能の精度が下がる可能性があります。
+
+- **オフを検討しやすい人**：レンズや音声検索で個人情報・仕事資料を扱うことがある／履歴による利便性より保存を減らしたい
+- **オンの利便がある人**：過去の画像検索へ戻りたい／検索やおすすめのパーソナライズを活用したい
+
+迷う場合は、まず保存済みメディアを確認してください。実際に何が入っているかを見てから決めれば、必要以上に怖がらずに済みます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">利便性と保存範囲を、自分の使い方で見比べます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-google-july-30-terms-media-settings/slide07-choice.webp" alt="オンは履歴の再利用とパーソナライズ、オフは今後のメディア保存を減らすという中立的な判断材料" loading="lazy" decoding="async" />
+    <figcaption>オン・オフは使い方で選ぶ</figcaption>
+  </figure>
+</section>
+
+## 確定・報道・未確定を分ける
+
+| 区分 | 内容 |
+|---|---|
+| 確定 | 規約は7月30日発効。新設定は順次展開で締切なし。対象メディア、AI改善への利用、オフ後も過去分は別途削除が必要 |
+| 報道 | ITmedia、WIRED日本版、Gadget Gateなどが、新設定やAI学習への利用、設定確認の必要性を報道 |
+| 未確定 | 個々のアカウントへの反映日、すでに学習用へ選ばれたメディアの有無、各利用者の保存内容 |
+
+公式ヘルプと報道で表現が違う場合、本記事は公式の対象定義とUI文言を優先しています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、焦らず確認する順番をまとめます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-google-july-30-terms-media-settings/slide08-checklist.webp" alt="規約は操作不要、設定に締切なし、対象を確認、気になる人は3点セット、公式ページから開くという最終チェックリスト" loading="lazy" decoding="async" />
+    <figcaption>7月30日前に知っておくこと</figcaption>
+  </figure>
+</section>
+
+## まとめ——急ぐより、対象を正しく見る
+
+- 7月30日の利用規約改定は実在するが、設定変更の締切ではない
+- 「メディアを保存」は検索サービスで操作した画像・音声・ファイルが対象
+- Googleフォトに置いてある写真全部が対象になるわけではない
+- 見直すなら、今後の保存停止・過去分の確認削除・自動削除期間の3点を確認する
+- オン・オフは、パーソナライズの利便性と保存範囲のどちらを重視するかで決める
+
+プライバシー設定は、怖い言葉で急かされたときほど「誰が、何を、いつから保存するのか」を分けて確認するのが大切です。Windowsの追跡識別子をめぐる別の誤解は、[Windows 11のGDIDとVPNの関係](/articles/202607-windows-11-gdid-privacy-explained/)で整理しています。
+
+また、規約変更を装った偽メールや偽ログイン画面にも注意してください。メール内のリンクからではなく、Googleアカウントやマイ アクティビティを自分で開くのが安全です。ログイン情報の使い回し対策は、[パスワード管理アプリの基本](/articles/password-manager-guide/)も参考になります。
+
+## 公式情報・参考報道
+
+- [Google公式：検索サービス履歴に保存されるメディアを管理する](https://support.google.com/websearch/answer/17028154?hl=ja)
+- [Google公式：検索サービス履歴とパーソナライズされたおすすめ表示](https://support.google.com/websearch/answer/17025248?hl=ja)
+- [Google公式：利用規約アーカイブ](https://policies.google.com/terms/archive?hl=ja)
+- [Google公式：2026年7月30日発効版との比較](https://policies.google.com/terms/archive/20240522-20260730?hl=ja)
+- [ITmedia NEWS：検索サービスのプライバシー設定刷新](https://www.itmedia.co.jp/news/articles/2606/11/news113.html)
+- [WIRED日本版：Google検索の新設定](https://wired.jp/tag/search/)
+- [Gadget Gate：検索に使ったメディアの保存設定](https://gadget.phileweb.com/post-128491/)
+
+<Note>
+  記載内容と画面名は2026年7月25日時点です。設定は段階的に反映されるため、アカウントやアプリのバージョンによって表示が異なる場合があります。
+</Note>

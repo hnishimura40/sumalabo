@@ -11,6 +11,23 @@
   },
   "targets": [
     {
+      "slug": "202607-google-july-30-terms-media-settings",
+      "label": "Googleの「7月30日問題」を整理",
+      "blurb": "規約改定とメディア保存設定の違い、対象範囲、確認手順を解説",
+      "categories": ["ニュースをかみくだく"],
+      "_kwNote": "Google規約改定・検索履歴・画像や音声のAI学習に関するニュースから、誤解解きと設定手順の定番受け皿へ案内する。",
+      "keywords": [
+        "Google 7月30日",
+        "Google利用規約",
+        "検索サービス履歴",
+        "メディアを保存",
+        "Googleレンズ AI学習",
+        "Google プライバシー設定",
+        "検索履歴 AI学習"
+      ],
+      "listStaple": true
+    },
+    {
       "slug": "ai-model-benchmark-cost-guide-2026",
       "label": "AIモデル、結局どれを使えばいい？",
       "blurb": "Claude・ChatGPT・Geminiを用途と予算で選ぶ常設ガイド",

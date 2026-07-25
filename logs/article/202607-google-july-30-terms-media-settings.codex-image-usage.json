@@ -1,0 +1,204 @@
+{
+  "slug": "202607-google-july-30-terms-media-settings",
+  "transport": "codex_exec",
+  "runs": [
+    {
+      "item": "thumbnail",
+      "startedAt": "2026-07-25T12:16:56.471Z",
+      "finishedAt": "2026-07-25T12:21:06.457Z",
+      "elapsedMs": 249985,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 689281,
+        "cached_input_tokens": 619264,
+        "output_tokens": 4424,
+        "reasoning_output_tokens": 1438
+      },
+      "failureCondition": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "ee91c784733522ffc976a39b5404cb0828536d7ed1cd9fd0c186fc168391dd97",
+      "bytes": 2628212,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\thumbnail.png"
+    },
+    {
+      "item": "slide01",
+      "startedAt": "2026-07-25T12:21:06.462Z",
+      "finishedAt": "2026-07-25T12:24:55.557Z",
+      "elapsedMs": 229095,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 581788,
+        "cached_input_tokens": 524032,
+        "output_tokens": 2988,
+        "reasoning_output_tokens": 656
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "2e18602c487b61efaaefaba19ef34f94cc09137843ed95d3265bfade49d0c1d6",
+      "bytes": 1615625,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide01.png"
+    },
+    {
+      "item": "slide02",
+      "startedAt": "2026-07-25T12:24:55.561Z",
+      "finishedAt": "2026-07-25T12:28:38.955Z",
+      "elapsedMs": 223394,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 481247,
+        "cached_input_tokens": 420864,
+        "output_tokens": 2888,
+        "reasoning_output_tokens": 1246
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "a14325fc97b68739d7e99966daafe1b73ed3b9169099fcd948ee0eb932a40190",
+      "bytes": 1748562,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide02.png"
+    },
+    {
+      "item": "slide03",
+      "startedAt": "2026-07-25T12:28:38.959Z",
+      "finishedAt": "2026-07-25T12:33:29.371Z",
+      "elapsedMs": 290411,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 949160,
+        "cached_input_tokens": 850944,
+        "output_tokens": 6294,
+        "reasoning_output_tokens": 2852
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "49f2fa41478cb75c2348e0ed591eedc87fca55400f4f1f254a8ddc739225090b",
+      "bytes": 1839522,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide03.png"
+    },
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-25T12:33:29.374Z",
+      "finishedAt": "2026-07-25T12:37:27.773Z",
+      "elapsedMs": 238399,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 505481,
+        "cached_input_tokens": 461056,
+        "output_tokens": 2939,
+        "reasoning_output_tokens": 932
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "3adb4f25f498ab6b2219ec1af5fced255fc97e6f134173cf9a2a59db294bae2f",
+      "bytes": 1648073,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide04.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-25T12:37:27.777Z",
+      "finishedAt": "2026-07-25T12:40:09.899Z",
+      "elapsedMs": 162122,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 353403,
+        "cached_input_tokens": 304384,
+        "output_tokens": 3626,
+        "reasoning_output_tokens": 1712
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "2ffe4fbc8b7474dfd71bae78f1b25209066d6e6c6479100014b3baad3139aaeb",
+      "bytes": 1518367,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide05.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-25T12:40:09.904Z",
+      "finishedAt": "2026-07-25T12:44:25.538Z",
+      "elapsedMs": 255634,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 552631,
+        "cached_input_tokens": 512256,
+        "output_tokens": 3533,
+        "reasoning_output_tokens": 1427
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "b292fd92d0703da607456c18032d5d2dbfb960c9e2ee06d60ded131b43f60f14",
+      "bytes": 1799467,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide06.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-25T12:44:25.544Z",
+      "finishedAt": "2026-07-25T12:47:52.536Z",
+      "elapsedMs": 206992,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 440744,
+        "cached_input_tokens": 395008,
+        "output_tokens": 2051,
+        "reasoning_output_tokens": 161
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "f50aceb6e97c18352b6b6e17f7d424f63e32e382f95e02a6eeadbe6fbf637680",
+      "bytes": 1890061,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide07.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-25T12:47:52.541Z",
+      "finishedAt": "2026-07-25T12:50:49.405Z",
+      "elapsedMs": 176864,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 477626,
+        "cached_input_tokens": 424960,
+        "output_tokens": 3040,
+        "reasoning_output_tokens": 993
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "f77674178c15a40f4fb7688e9c17f8f046462820e6cc68e1a7e47366f99a25c8",
+      "bytes": 1740198,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide08.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-25T12:52:35.061Z",
+      "finishedAt": "2026-07-25T12:56:16.813Z",
+      "elapsedMs": 221751,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 600948,
+        "cached_input_tokens": 543744,
+        "output_tokens": 3050,
+        "reasoning_output_tokens": 920
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "1f9ed7650b9970c3c4d24538ecee13d8b041eff5373c77031a90978a5d97e538",
+      "bytes": 1789252,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-google-july-30-terms-media-settings\\slide06.png"
+    }
+  ],
+  "updatedAt": "2026-07-25T12:56:16.817Z",
+  "totalElapsedMs": 2254647,
+  "totalUsage": {
+    "input_tokens": 5632309,
+    "cached_input_tokens": 5056512,
+    "output_tokens": 34833,
+    "reasoning_output_tokens": 12337
+  }
+}

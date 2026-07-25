@@ -1,0 +1,115 @@
+{
+  "overallPass": true,
+  "slides": [
+    {
+      "id": "slide01-conclusion",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 94
+    },
+    {
+      "id": "slide02-two-topics",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 92
+    },
+    {
+      "id": "slide03-terms",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 86
+    },
+    {
+      "id": "slide04-boundary",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 68
+    },
+    {
+      "id": "slide05-inheritance",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "low",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 98
+    },
+    {
+      "id": "slide06-three-steps",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 84
+    },
+    {
+      "id": "slide07-choice",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 82
+    },
+    {
+      "id": "slide08-checklist",
+      "verdict": "ok",
+      "issues": [],
+      "textDensity": "high",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 60
+    }
+  ],
+  "thumbnail": {
+    "verdict": "ok_with_warning",
+    "issues": [
+      "対象内・対象外のアイコンに個別項目名がなく、この1枚だけでは保存範囲の境界を判別しにくい。詳細はslide04と本文で補完されている"
+    ]
+  },
+  "xSelection": [
+    "thumbnail",
+    "slide05-inheritance",
+    "slide01-conclusion",
+    "slide02-two-topics"
+  ],
+  "excludedFromX": [
+    {
+      "id": "slide03-terms",
+      "reason": "文字密度は中程度だが、選抜3スライドより補足項目が多くX適性スコアが低い"
+    },
+    {
+      "id": "slide04-boundary",
+      "reason": "対象・対象外の6項目と注記を含むtextDensity=highのため記事内専用"
+    },
+    {
+      "id": "slide06-three-steps",
+      "reason": "3段の操作説明と補助UIを含み、選抜3スライドより文字量が多い"
+    },
+    {
+      "id": "slide07-choice",
+      "reason": "オン・オフの判断材料を複数含み、選抜3スライドより文字量が多い"
+    },
+    {
+      "id": "slide08-checklist",
+      "reason": "4段のチェック項目と補助UIを含むtextDensity=highのため記事内専用"
+    }
+  ],
+  "internalLinks": {
+    "verdict": "not_applicable",
+    "issues": []
+  }
+}
