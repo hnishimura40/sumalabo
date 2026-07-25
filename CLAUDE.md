@@ -389,6 +389,7 @@ worktree 関連の事故は、個別の禁止事項を足しても再発した�
 | 2026-07 | `drafts/refinement` 3 記事分（Meta One / Opus 4.8 / Fable 5）が**消失** | worktree を OS Temp 配下に作り、OS の自動クリーンアップで working tree ごと破壊された |
 | 2026-07-19 | `node_modules` が消え `npm run build` が「astro not recognized」で**失敗** | Codex CLI の書き込み可能領域にリポジトリ全体が入っていた（前節で対策済み） |
 | 2026-07-25 | `node_modules` が**空**になり build 不能 | worktree に node_modules の**ジャンクション／symlink を張り**、`git worktree remove --force` が**リンクを辿って本体側の実体を削除**した |
+| 2026-07-26 | `node_modules` が**空**になり build 不能（**3 回目・同じ原因**） | 「リンクあり」を**検出して表示までしたのに、同じコマンドチェーンの中で `git worktree remove` を無条件に実行**した。**検出は、撤去を止めなければ意味がない**。この教訓から、店じまいの項目 1・4 をゲート（失敗したら中止）に書き換え、撤去を `npm run worktree:remove` に一本化した |
 | （随時） | 夜間 run が記事を作れずに終了 | 本体の作業ツリーに **tracked な未コミット変更**が残ったままだった |
 
 共通する原因は「**worktree と本体作業ツリーの境界が曖昧なまま作業を終えている**」こと。個別の禁止ではなく、終了時の店じまいで塞ぐ。
@@ -405,6 +406,7 @@ git fetch origin main && git worktree add -b <branch> D:\work\sumalabo-<用途> 
 - **node_modules を持ち込まない（symlink・ジャンクション・コピーとも禁止）。** `git worktree remove --force` がリンクを辿って**本体の実体を消す**
 - したがって **worktree でやるのは「編集・commit・push・PR」まで**。`npm run build` などの依存が要る検証は**本体リポジトリで行う**
 - 依存不要のスクリプト（`node scripts/sumalabo-gate.mjs --audit` など）は worktree でも実行してよい
+- **Codex worktree（`.codex/visualizations/` 配下）では `main` をチェックアウトしない。** worktree が `main` を掴むと本体リポジトリで `git checkout main` が通らなくなり、**本体の作業を止める**（2026-07-25 に実際に発生し、夜間 run 用のブランチ切り替えができず `--skip-git-sync` で回避する羽目になった）。Codex 側には worktree の置き場所を指定する設定が見当たらないため、**「main を掴まない」を運用ルールとして守る**（作業用ブランチを切ってからチェックアウトする）
 
 ### 2. 作業中
 
@@ -416,17 +418,27 @@ git fetch origin main && git worktree add -b <branch> D:\work\sumalabo-<用途> 
 
 **worktree を使ったセッションは、必ず全項目を実行してから終える。** 1 つでも残すと次のセッションか次の夜間 run で事故になる。
 
+**撤去は `npm run worktree:remove` 経由のみ。生の `git worktree remove` を直接実行しない。**
+（`scripts/maintenance/safe-worktree-remove.mjs`。下の 1〜4 をゲートとして自動で行い、
+どれかに失敗したら撤去へ進まずに exit 1 で止まる）
+
+```bash
+npm run worktree:remove -- <worktree-path> --force
+npm run worktree:remove -- <worktree-path> --dry-run   # 判定だけ見る
 ```
-□ 1. worktree 内に node_modules が無いことを確認（リンク不在確認）
-      ls -la <worktree> | grep node_modules   → 何も出なければ OK
-      出たら、撤去より先に rm でリンクだけ外す
-□ 2. worktree を撤去
-      git worktree remove <path> --force
+
+```
+□ 1. 【ゲート】worktree 内の node_modules を検出したら撤去を中止する
+      symlink / junction を検出 → **撤去してはいけない**（本体の実体を巻き込む）
+      → リンクだけを外し、除去できたことを確認してから撤去を再開する
+      → 除去に失敗したら、そこで打ち切る（先へ進まない）
+      ※ 実体ディレクトリなら本体とは無関係なのでそのまま撤去してよい
+□ 2. worktree を撤去（上記スクリプト経由）
 □ 3. 残骸ゼロ確認
       git worktree list        → 想定外のパスが残っていないこと
       git worktree prune
-□ 4. 本体 node_modules の健全性
-      test -f node_modules/astro/package.json   → 無ければ npm ci で復旧
+□ 4. 【ゲート】本体 node_modules の健全性を撤去の前後で確認する
+      astro が解決できること   → できなければ中止し、npm ci で復旧してから再開
 □ 5. 本体作業ツリーのクリーン化（★夜間 run の可否を左右する）
       git status --porcelain --untracked-files=no   → 空にする
         ・意図した変更  → コミットして PR へ
