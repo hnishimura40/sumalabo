@@ -1,0 +1,104 @@
+{
+  "slug": "ai-youtube-video-creation-guide-2026",
+  "theme": "AIで動画作成はどこまでできる？ YouTube解説動画の現実的な作り方2026",
+  "category": {
+    "name": "ニュースをかみくだく",
+    "slug": "news"
+  },
+  "createdAt": "2026-07-25T15:10:17.997Z",
+  "updatedAt": "2026-07-25T16:01:55.106Z",
+  "halted": false,
+  "steps": {
+    "init": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:10:18.000Z",
+      "data": {
+        "autonomyLevel": 1
+      }
+    },
+    "freshness_check": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:10:18.001Z",
+      "data": {
+        "stale": false,
+        "newArticle": true
+      }
+    },
+    "chatgpt_turn1_research": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:10:26.201Z"
+    },
+    "chatgpt_turn2_selection": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:10:55.791Z"
+    },
+    "chatgpt_turn3_draft": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:11:32.598Z"
+    },
+    "chatgpt_turn4_review": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:11:38.075Z"
+    },
+    "chatgpt_turn5_final": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:11:51.271Z"
+    },
+    "chatgpt_turn6_slideplan": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:12:06.161Z"
+    },
+    "save_drafts": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:12:06.164Z"
+    },
+    "gate_draft": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T15:12:06.226Z"
+    },
+    "generate_images": {
+      "status": "done",
+      "attempts": 1,
+      "lastError": "codex_image_stage_failed_exit_1",
+      "doneAt": "2026-07-25T16:01:12.221Z"
+    },
+    "factcheck_images": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T16:01:53.221Z",
+      "data": {
+        "factcheck": {
+          "pass": true,
+          "regenerated": 3
+        }
+      }
+    },
+    "webp_convert": {
+      "status": "done",
+      "attempts": 0,
+      "doneAt": "2026-07-25T16:01:55.106Z"
+    },
+    "write_mdx": {
+      "status": "pending",
+      "attempts": 0
+    },
+    "commit_pr": {
+      "status": "pending",
+      "attempts": 0
+    },
+    "finalize": {
+      "status": "pending",
+      "attempts": 0
+    }
+  }
+}

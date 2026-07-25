@@ -1,0 +1,31 @@
+{
+  "pass": true,
+  "regenerate": [],
+  "regenerated": [
+    {"which": "slide02", "reason": "らぼまるの細長い腕を短く太いミトン形へ補正"},
+    {"which": "slide06", "reason": "札を持つ腕の不自然な伸長を補正"},
+    {"which": "slide08", "reason": "人間型の5本指を丸いミトン形へ補正"}
+  ],
+  "slides": [
+    {"src": "D:/downloads/sumalabo-codex/ai-youtube-video-creation-guide-2026/slide01.png", "name": "slide01-workflow.webp"},
+    {"src": "D:/downloads/sumalabo-codex/ai-youtube-video-creation-guide-2026/slide02.png", "name": "slide02-two-methods.webp"},
+    {"src": "D:/downloads/sumalabo-codex/ai-youtube-video-creation-guide-2026/slide03.png", "name": "slide03-script-voice.webp"},
+    {"src": "D:/downloads/sumalabo-codex/ai-youtube-video-creation-guide-2026/slide04.png", "name": "slide04-images-captions.webp"},
+    {"src": "D:/downloads/sumalabo-codex/ai-youtube-video-creation-guide-2026/slide05.png", "name": "slide05-assembly.webp"},
+    {"src": "D:/downloads/sumalabo-codex/ai-youtube-video-creation-guide-2026/slide06.png", "name": "slide06-environment.webp"},
+    {"src": "D:/downloads/sumalabo-codex/ai-youtube-video-creation-guide-2026/slide07.png", "name": "slide07-rules.webp"},
+    {"src": "D:/downloads/sumalabo-codex/ai-youtube-video-creation-guide-2026/slide08.png", "name": "slide08-checklist.webp"}
+  ],
+  "thumbnail": {"src": "D:/downloads/sumalabo-codex/ai-youtube-video-creation-guide-2026/thumbnail.png"},
+  "performanceFit": "themed",
+  "checks": {
+    "japaneseText": "pass: 全見出し・数字・主要ラベルを原寸確認。誤字・漢字化けなし",
+    "identityAnchors": "pass: ひまりの髪・リボン・青い瞳・白衣、らぼまるの卵型・アンテナ・目・ハート・首輪・左右耳ビレを全数確認",
+    "bodyStructure": "pass_after_revision: 四肢の本数、手指、付け根、物体との融合を全数確認。3枚を対象再生成後に再確認",
+    "expressionTone": "pass: 明るい解決系で統一",
+    "props": "pass: 動画編集タイムライン、クラッパーボード、原稿、ヘッドホン、ノートPCをテーマに沿って使用"
+  },
+  "warnings": [
+    "らぼまるの耳ビレは正本よりわずかに丸めの枚があるが、左右の青い耳ビレとして同一性は維持"
+  ]
+}
