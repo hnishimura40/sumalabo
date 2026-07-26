@@ -1,0 +1,38 @@
+{
+  "slug": "ai-youtube-video-creation-guide-2026",
+  "transport": "codex_exec",
+  "workshopFallback": false,
+  "generationElapsedMs": 381858,
+  "replacements": [
+    {
+      "id": "slide07",
+      "publicPath": "/images/articles/ai-youtube-video-creation-guide-2026/slide07-rules.webp",
+      "beforeSha256": "9f0ce1251df2a766c48e27b22e28c8ad82bf5d5f02e7764f7af352f9e4ca95c0",
+      "afterSha256": "90f32d65b7f2871d033210d2948077097a77f3ed424b628903e1815d6e45623d",
+      "beforeIssue": "左手と右手の接続・向きが不整合に見える",
+      "after": "チェックリストをスタンドへ移し、ひまりは片手だけで案内。反対の手は体側。独立検品ok"
+    },
+    {
+      "id": "slide08",
+      "publicPath": "/images/articles/ai-youtube-video-creation-guide-2026/slide08-checklist.webp",
+      "beforeSha256": "fe3005ed3f73742d0df89f739f549023234a2e675d08ed827e47cd1dcfe6ac9e",
+      "afterSha256": "ca1c53e76571cea941e210bf60895008335291b2c0c98144e0233dc6b9ad2ad2",
+      "beforeIssue": "親指が長すぎる比率破綻",
+      "after": "手振りと指差しをやめ、両キャラの手を体側へ。独立検品ok"
+    }
+  ],
+  "otherImages": {
+    "inspected": 7,
+    "needsRevision": 0,
+    "warnings": 0,
+    "scope": "hand_shape_connection_proportion_delta_only"
+  },
+  "incidentCorrelation": {
+    "incidentsReviewed": 4,
+    "commonFactor": "4件すべてで、手が小道具・UI・札・チェック対象に対して能動的な動作をしていた",
+    "confirmedDualAction": "動画記事の破綻サムネと今回slide07は、同じ人物に片手保持＋反対の手で指す同時別動作を明示",
+    "ambiguousMultiTarget": "ベンチマーク記事slide04は『2列を指す』で手の使い方が曖昧。複数の手を誘発し得た",
+    "notUniversal": "Google記事の長い腕と今回slide08は両手同時別動作だけでは説明できず、小道具までの距離と小さな手振りも独立リスク",
+    "conclusion": "両手同時別動作は相関ありだが単独原因ではない。既定パターンから外し、手の小型化・近距離配置・形状接続検品を併用する"
+  }
+}

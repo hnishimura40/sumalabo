@@ -210,7 +210,7 @@ export function derivePerformanceBlock({ theme = "本記事", variant = "news" }
     thumbnail: {
       wardrobe: "記事テーマの現場に合う上着・ベスト・アクセサリーを最低1点。標準衣装だけにしない",
       props: [`「${theme}」を象徴する小道具`, "判断または作業に使う道具"],
-      handUse: "主役の小道具は片手で持ち、空いている手は補助動作または体側に置く。小道具は自然に届く距離へ置き、腕を伸長させない",
+      handUse: "主役の小道具は片手で持ち、空いている手は体側に置く。手のクローズアップを避け、手は小さめで画面の主役にしない。同じ人物の両手に別々の動作を同時指定しない。小道具は自然に届く距離へ置き、腕を伸長させない",
       pose: "ひまりが小道具を実際に使い、らぼまるが別の道具で整理・補助する",
       background: "記事テーマが伝わる具体的な現場。汎用スタジオ背景にしない",
     },
@@ -222,13 +222,13 @@ export function derivePerformanceBlock({ theme = "本記事", variant = "news" }
     thumbnail: {
       ...recipe.thumbnail,
       props: [...recipe.thumbnail.props],
-      handUse: recipe.thumbnail.handUse || "主役の小道具は片手で持ち、空いている手は補助動作または体側に置く。小道具は自然に届く距離へ置き、腕を伸長させない",
+      handUse: `${recipe.thumbnail.handUse || "主役の小道具は片手で持ち、空いている手は体側に置く。小道具は自然に届く距離へ置き、腕を伸長させない"}。手のクローズアップを避け、手は小さめで画面の主役にしない。同じ人物の両手に別々の動作を同時指定しない`,
       expression: recipe.thumbnail.expression || expression.direction,
     },
     slides: {
       wardrobe: "記事内で一貫する衣装。演出ブロックに根拠があれば標準衣装以外も可",
       props: ["各スライドのpurposeに意味のある道具"],
-      handUse: "各小道具について片手持ち／両手持ちを明記し、空いている手の位置も指定する。小道具は自然に届く距離へ置き、腕を伸長させない",
+      handUse: "各小道具について片手持ち／両手持ちを明記し、空いている手は原則体側に置く。手のクローズアップを避け、手は小さめで画面の主役にしない。同じ人物の両手に別々の動作を同時指定しない。小道具は自然に届く距離へ置き、腕を伸長させない",
       expression: expression.direction,
       pose: "比較・確認・操作など、各スライドのcharacterRoleを身体の動きで表す",
       background: "情報を邪魔しない範囲でテーマ固有の場所・机・工程を反映する",

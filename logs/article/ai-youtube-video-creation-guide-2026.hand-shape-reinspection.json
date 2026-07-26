@@ -1,0 +1,24 @@
+{
+  "slug": "ai-youtube-video-creation-guide-2026",
+  "inspectedAt": "2026-07-26T00:54:00.000Z",
+  "inspectionMode": "independent_codex_session_per_visible_hand",
+  "overallPass": true,
+  "images": [
+    { "id": "thumbnail", "verdict": "ok", "visibleHandsChecked": 4, "issues": [] },
+    { "id": "slide01", "verdict": "ok", "visibleHandsChecked": 4, "issues": [] },
+    { "id": "slide02", "verdict": "ok", "visibleHandsChecked": 4, "issues": [] },
+    { "id": "slide03", "verdict": "ok", "visibleHandsChecked": 4, "issues": [] },
+    { "id": "slide04", "verdict": "ok", "visibleHandsChecked": 4, "issues": [] },
+    { "id": "slide05", "verdict": "ok", "visibleHandsChecked": 4, "issues": [] },
+    { "id": "slide06", "verdict": "ok", "visibleHandsChecked": 4, "issues": [] },
+    { "id": "slide07_after", "verdict": "ok", "visibleHandsChecked": 4, "issues": [] },
+    { "id": "slide08_after", "verdict": "ok", "visibleHandsChecked": 4, "issues": [] }
+  ],
+  "requiredChecks": [
+    "left_right_orientation",
+    "thumb_position",
+    "wrist_forearm_connection",
+    "finger_and_thumb_proportions"
+  ],
+  "summary": "9枚すべてで、手の向き、親指位置、手首接続、指比率に公開を妨げる明確な破綻なし。warningも0件。"
+}

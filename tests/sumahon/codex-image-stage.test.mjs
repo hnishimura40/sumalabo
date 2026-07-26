@@ -68,6 +68,9 @@ test("performance block is extracted and passed to every image item", () => {
   assert.match(prompt, /短く・太く・丸く/);
   assert.match(prompt, /触手状・ホース状/);
   assert.match(prompt, /自然に手が届く距離/);
+  assert.match(prompt, /手のクローズアップを避け/);
+  assert.match(prompt, /親指は手の向きと体側に対して正しい側/);
+  assert.match(prompt, /手首と前腕をねじれ・継ぎ足しなく接続/);
   assert.match(prompt, /各1人\/1体だけ/);
   assert.match(prompt, /点検用ベスト/);
   assert.match(prompt, /真剣に調べる顔/);
