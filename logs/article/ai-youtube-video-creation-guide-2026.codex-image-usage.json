@@ -324,14 +324,52 @@
       "sha256": "aecec1665970a6b7ee219476fe9a9ac7ff081a127115cdf8178e193fb5a160c4",
       "bytes": 2325748,
       "outputFile": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\thumbnail.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-26T00:44:46.249Z",
+      "finishedAt": "2026-07-26T00:47:40.218Z",
+      "elapsedMs": 173969,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 1216706,
+        "cached_input_tokens": 1139968,
+        "output_tokens": 4198,
+        "reasoning_output_tokens": 594
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "5715b9ecb22ed47de636e20b36ccc3e14da59595cdaadd8fb2bd38a84390ff3b",
+      "bytes": 2138498,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide07.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-26T00:47:40.225Z",
+      "finishedAt": "2026-07-26T00:51:08.114Z",
+      "elapsedMs": 207889,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 566360,
+        "cached_input_tokens": 514048,
+        "output_tokens": 4518,
+        "reasoning_output_tokens": 1370
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "089c4c18dd11e678cd127bde31cfcefba60f33b9404a5d175b75c49fb5041651",
+      "bytes": 1945915,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide08.png"
     }
   ],
-  "updatedAt": "2026-07-25T22:33:29.680Z",
-  "totalElapsedMs": 3482784,
+  "updatedAt": "2026-07-26T00:51:08.118Z",
+  "totalElapsedMs": 3864642,
   "totalUsage": {
-    "input_tokens": 9126909,
-    "cached_input_tokens": 8243456,
-    "output_tokens": 57013,
-    "reasoning_output_tokens": 12505
+    "input_tokens": 10909975,
+    "cached_input_tokens": 9897472,
+    "output_tokens": 65729,
+    "reasoning_output_tokens": 14469
   }
 }

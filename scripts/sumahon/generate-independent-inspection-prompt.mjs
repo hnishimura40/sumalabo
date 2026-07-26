@@ -66,11 +66,30 @@ export const INDEPENDENT_INSPECTION_SCHEMA = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["id", "verdict", "issues", "textDensity", "numbersAccurate", "standsAlone", "xPostScore"],
+        required: ["id", "verdict", "issues", "handChecks", "textDensity", "numbersAccurate", "standsAlone", "xPostScore"],
         properties: {
           id: { type: "string", description: "スライドID（例 slide06-alternatives）" },
           verdict: { type: "string", enum: ["ok", "ok_with_warning", "needs_revision"] },
           issues: { type: "array", items: { type: "string" }, description: "問題点を1行ずつ。無ければ空配列" },
+          handChecks: {
+            type: "array",
+            description: "画像で見える手を1つずつ回答する。手が見えなければ空配列。",
+            items: {
+              type: "object",
+              additionalProperties: false,
+              required: ["character", "side", "orientationNatural", "thumbPositionNatural", "wristConnectionNatural", "proportionsNatural", "severity", "note"],
+              properties: {
+                character: { type: "string", enum: ["himari", "labomaru"] },
+                side: { type: "string", enum: ["left", "right", "unclear"] },
+                orientationNatural: { type: "boolean", description: "左手/右手として自然な向きか" },
+                thumbPositionNatural: { type: "boolean", description: "親指が手の向きと体側に対して自然な側か" },
+                wristConnectionNatural: { type: "boolean", description: "手首と前腕の接続にねじれ・継ぎ足し・融合がないか" },
+                proportionsNatural: { type: "boolean", description: "指の長さ・太さ、特に親指の比率が自然か" },
+                severity: { type: "string", enum: ["ok", "warning", "needs_revision"] },
+                note: { type: "string", description: "根拠を短く。問題なしでも向き・接続・比率を確認した旨を書く" },
+              },
+            },
+          },
           textDensity: { type: "string", enum: ["low", "mid", "high"], description: "画像内の文字量。high=誤字リスク大・X非推奨" },
           numbersAccurate: { type: "boolean", description: "数値・日付・固有名詞が最終稿と一致" },
           standsAlone: { type: "boolean", description: "本文なしでもその1枚で意味が通る" },
@@ -82,10 +101,29 @@ export const INDEPENDENT_INSPECTION_SCHEMA = {
     thumbnail: {
       type: "object",
       additionalProperties: false,
-      required: ["verdict", "issues"],
+      required: ["verdict", "issues", "handChecks"],
       properties: {
         verdict: { type: "string", enum: ["ok", "ok_with_warning", "needs_revision"] },
         issues: { type: "array", items: { type: "string" } },
+        handChecks: {
+          type: "array",
+          description: "サムネで見える手を1つずつ、slides[].handChecks と同じ8項目で回答する。手が見えなければ空配列。",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            required: ["character", "side", "orientationNatural", "thumbPositionNatural", "wristConnectionNatural", "proportionsNatural", "severity", "note"],
+            properties: {
+              character: { type: "string", enum: ["himari", "labomaru"] },
+              side: { type: "string", enum: ["left", "right", "unclear"] },
+              orientationNatural: { type: "boolean" },
+              thumbPositionNatural: { type: "boolean" },
+              wristConnectionNatural: { type: "boolean" },
+              proportionsNatural: { type: "boolean" },
+              severity: { type: "string", enum: ["ok", "warning", "needs_revision"] },
+              note: { type: "string" },
+            },
+          },
+        },
         revisionHint: { type: "string" },
       },
     },
@@ -157,7 +195,7 @@ data/qa/formal-product-names.json を正本として照合する。
 8. 置物化していない
 9. 道具の使い方に意味がある
 10. **キャラの視覚的破綻（認識アンカー一致）** — ひまり=金髪サイドテール+水色/ティールのリボン・青い瞳・正本の顔立ち/頭身 / らぼまる=白い卵型ボディ+黄緑アンテナ+黒い丸い目+胸のオレンジのハートボタン+青い首輪バンド+左右の青い耳ビレ+正本の体型。逸脱・別人化・途中変化は needs_revision（blocking）。**耳ビレが正本より短い・丸い傾向だけなら warning として監視し、別キャラ化していなければ pass のまま**。**同一性の判定はこれらの認識アンカーだけに限る。衣装・小道具・ポーズ・背景が正本や別画像と違うこと自体は破綻ではなく、fallback/needs_revision の理由にしない**
-11. **身体構造破綻（公開ブロック・最重要）** — 各キャラの四肢を実際に数え、さらに形・比率・付け根を確認する。**手が描かれている画像は、最初に手の数と指を重点確認する**。ひまりは腕2本・手2つ・脚2本（見える手は原則各5本指）。らぼまるは腕・手・脚・足が左右各1つで、腕以外の突起は黄緑アンテナ1本と左右の青い耳ビレだけ。らぼまるの腕は正本同様に短く・太く・丸いこと。細長い触手状・ホース状・急なS字・にょきっと伸びる腕、腕や脚の不自然な長さ/細さ、破綻した付け根や関節、不快なシルエットも必ず needs_revision（blocking）とする。手指/腕の本数過多・重複、体から生える謎の手、小道具を持つ独立した手、顔の破綻、身体と物体の不自然な融合も warning に下げない。単に体や画面外に隠れて見えない四肢は、それだけで欠損扱いしない。判別不能な軽微な崩れだけ ok_with_warning を許容する。
+11. **身体構造破綻（公開ブロック・最重要）** — 各キャラの四肢を実際に数える。**手が描かれている画像は、見える手を1つずつ handChecks に列挙し、(a)左手/右手として自然な向きか、親指が手の向きと体側に対して自然な側か、(b)手首と腕の接続にねじれ・継ぎ足し・融合がないか、(c)指の長さ・太さ、とくに親指の比率が自然かを必ず個別回答する**。全体を眺めて一括で「手は正常」と答えてはならない。明確な左右不整合・親指位置の矛盾・接続異常は needs_revision（blocking）。指の比率だけの違和感は ok_with_warning とし、issues に画像ID・手の左右・違和感を明記してHiro判断へ回す。ひまりは腕2本・手2つ・脚2本（見える手は原則各5本指）。らぼまるは腕・手・脚・足が左右各1つで、腕以外の突起は黄緑アンテナ1本と左右の青い耳ビレだけ。らぼまるの腕は正本同様に短く・太く・丸いこと。細長い触手状・ホース状・急なS字・にょきっと伸びる腕、腕や脚の不自然な長さ/細さ、破綻した付け根や関節、不快なシルエット、手指/腕の本数過多・重複、体から生える謎の手、小道具を持つ独立した手、顔の破綻、身体と物体の不自然な融合は needs_revision。単に体や画面外に隠れて見えない四肢は、それだけで欠損扱いしない。
 12. **文字化け・レイアウト破綻** — 日本語の文字化け・意味を成さない誤字（助詞欠落「目的ことで」等）・見切れ・重なり・枠崩れは needs_revision。**漢字の類似化け（例「目的→自的」目→自・未→末・微→徴 等。docs/kanji_pitfalls.md 参照）を重点確認**
 13. **表情・トーンが記事の性質と矛盾しない** — 終了/障害/リコール等の注意・速報系は「驚き＋対処」がOK。ニコニコ/ムスッ・無表情/炎・涙・パニックは needs_revision。**朗報・喜び爆発系（継続決定「残る/使い続けられる」・無料化・復活・値下げ等、読者が確実に得する確定ニュース）は、キャラが万歳/ジャンプ/ガッツポーズ＋満面の笑みで喜びきっているのが正。案内板・分岐図（矢印→）・比較表・無表情の説明構図・控えめな指さし案内で読者の歓喜を代弁できていなければ warning（改善指摘・公開は止めない）**
 14. **演出が記事テーマと合っているか（warning観察）** — slide_plan の演出ブロックと照合し、衣装・小道具・ポーズ・背景が記事テーマを体験として伝えているか確認する。サムネが標準衣装の棒立ち・汎用背景・指さし説明だけ、または小道具を持つだけで使っていない場合は ok_with_warning とし、issues に不足した演出を具体的に書く。本文スライドも、比較・検証・操作などの役割が動作に出ていなければ warning。**表情が記事の感情トーンから乖離している場合も warning 以上で記録する。演出が弱いだけなら needs_revision/overallPass=false にしない**（事実誤認・アンカー不一致・過剰表現は別項目で判定）。
@@ -197,7 +235,7 @@ X には**上位4枚だけ**を直接添付する。次の3点が満たされる
 - **直し方は画像再生成ではなく「本文MDXの mood を有効な値に修正」**。この項目は overallPass を下げない（画像とは独立）。
 
 ## 出力（StructuredOutput ツールで返す。前置きの解説文は不要）
-INDEPENDENT_INSPECTION_SCHEMA に従い、slides[]（全スライド）・thumbnail・xSelection・excludedFromX・internalLinks・avatarFallback・overallPass を返す。
+INDEPENDENT_INSPECTION_SCHEMA に従い、slides[]（全スライド）・thumbnail・xSelection・excludedFromX・internalLinks・avatarFallback・overallPass を返す。slides[] と thumbnail の handChecks は、見える手ごとの必須回答であり省略禁止。
 overallPass は「全スライド+サムネに needs_revision が無い」ときだけ true（internalLinks・avatarFallback は overallPass に影響させない）。
 `;
 }

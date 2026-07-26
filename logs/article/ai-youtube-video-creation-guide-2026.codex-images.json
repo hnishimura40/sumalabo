@@ -3,8 +3,8 @@
   "transport": "codex_exec",
   "outputDir": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026",
   "canonicalImages": [
-    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\ai-video-thumb-hotfix\\assets\\characters\\himari-canonical.png",
-    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\ai-video-thumb-hotfix\\assets\\characters\\labomaru-canonical.png"
+    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\video-hands-shape-fix\\assets\\characters\\himari-canonical.png",
+    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\video-hands-shape-fix\\assets\\characters\\labomaru-canonical.png"
   ],
   "outputs": [
     {
@@ -68,17 +68,17 @@
       "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide07.png",
       "width": 1122,
       "height": 1402,
-      "sha256": "2048340830b76fe412ce6d26f4d4840dd657ebdc45151b33f376329f569df850",
-      "bytes": 1717278
+      "sha256": "5715b9ecb22ed47de636e20b36ccc3e14da59595cdaadd8fb2bd38a84390ff3b",
+      "bytes": 2138498
     },
     {
       "id": "slide08",
       "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\slide08.png",
       "width": 1122,
       "height": 1402,
-      "sha256": "efeeeb6d7a8ec7ef052dfddc6e07a16abaf2ae1b7c7a12ec8cded6b54c90c4c8",
-      "bytes": 1332451
+      "sha256": "089c4c18dd11e678cd127bde31cfcefba60f33b9404a5d175b75c49fb5041651",
+      "bytes": 1945915
     }
   ],
-  "completedAt": "2026-07-25T22:33:29.681Z"
+  "completedAt": "2026-07-26T00:51:08.119Z"
 }
