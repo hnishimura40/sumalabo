@@ -8,7 +8,7 @@
 //
 // パージ方式（優先順位）:
 //   1. 対象 URL の個別パージ（記事 URL + トップ + /articles/ 一覧 + sitemap +
-//      サムネイル）— 影響最小
+//      サムネイル + 記事本文で参照するスライド画像）— 影響最小
 //   2. 個別パージが失敗した場合は全体パージ (purge_everything) に自動フォール
 //      バック — rollback は頻度が低い非常時操作なのでコスト許容
 //
@@ -148,7 +148,20 @@ export function buildPurgeUrls(slug, baseUrl = `https://${DEFAULT_HOST}`) {
     `${base}/images/thumbnails/${slug}.webp`,
     `${base}/images/thumbnails/${slug}.png`,
   ];
-  return urls;
+
+  // 画像だけ差し替える修正では記事HTMLとサムネをパージしても、本文スライドの
+  // URLがCloudflareに旧バイナリのまま残る。MDXが実際に参照する画像を拾い、
+  // 同じ個別パージへ含める。存在しない記事や画像なし記事は従来どおり動く。
+  const articleFile = path.join(ROOT, "content", "articles", `${slug}.mdx`);
+  if (existsSync(articleFile)) {
+    const prefix = `/images/articles/${slug}/`;
+    const body = readFileSync(articleFile, "utf8");
+    const imagePaths = body.match(/\/images\/articles\/[^"'\s<>\)]+/g) || [];
+    for (const imagePath of imagePaths) {
+      if (imagePath.startsWith(prefix)) urls.push(`${base}${imagePath}`);
+    }
+  }
+  return [...new Set(urls)];
 }
 
 /**
