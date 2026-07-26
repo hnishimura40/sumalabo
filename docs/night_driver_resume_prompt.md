@@ -52,8 +52,9 @@ docs/night_driver_prompt.md の該当節に**そのまま従う**:
   テキストのみ。`image-workshop.json` の `generatedSinceSeed` が閾値超なら新チャット+シード文だけで
   再シード**）→ `factcheck_images`（自分の目で数値・キャラアンカーを確認）→ `webp_convert` →
   `write_mdx`（v3 コンポーネント / `publishAt` は**現在時刻より前**）→ `finalize`。
-- finalize OK なら veto 窓を待たず **Phase B**（PR merge → `deploy:production` → strict verify 8/8 →
+- finalize OK なら、一次独立検品と手の二段検品を実施し、`npm run sumalabo:inspect-hands:gate -- --slug {{SLUG}}` がPASSしてから、veto 窓を待たず **Phase B**（PR merge → `deploy:production` → strict verify 8/8 →
   ledger `published`）→ **Phase C**（X 投稿・タイムボックス 5 分/3 回・背面タブなら text_only）。
+- Phase C 前に通常の独立検品に続けて `npm run sumalabo:inspect-hands -- --slug {{SLUG}}` を実行し、手が見える画像だけをクロップして別 Codex セッションで左右・接続・指比率を二段検品する。`needs_revision` が残る間は Phase C へ進まない。
 - 各 Phase の所要時間を `test-mode.mjs --phase-timing` で記録。
 
 ## 4. 完了処理

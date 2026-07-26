@@ -16,6 +16,8 @@
     "sumalabo:finalize": "node scripts/run/phase-a-finalize.mjs",
     "sumalabo:gate": "node scripts/sumalabo-gate.mjs",
     "sumalabo:inspect": "node scripts/run/independent-inspection.mjs",
+    "sumalabo:inspect-hands": "node scripts/run/hand-crop-inspection.mjs",
+    "sumalabo:inspect-hands:gate": "node scripts/run/hand-crop-gate.mjs",
     "sumalabo:images:codex": "node scripts/automation/codex-image-stage.mjs",
     "sumalabo:images:cleanup": "node scripts/automation/image-output-lifecycle.mjs",
     "chrome:ensure": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/automation/ensure-chrome.ps1",
@@ -49,7 +51,8 @@
   "dependencies": {
     "@astrojs/mdx": "latest",
     "@astrojs/sitemap": "^3.7.2",
-    "astro": "latest"
+    "astro": "latest",
+    "sharp": "0.34.5"
   },
   "devDependencies": {
     "typescript": "latest"

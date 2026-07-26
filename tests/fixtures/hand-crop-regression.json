@@ -1,0 +1,79 @@
+{
+  "incidents": [
+    {
+      "incident": "benchmark-double-hand",
+      "images": [
+        {
+          "id": "benchmark-slide04-before",
+          "path": "D:\\downloads\\sumalabo-codex\\repairs\\20260725-body-structure\\ai-model-benchmark-cost-guide-2026-slide04-before.webp",
+          "expected": "needs_revision",
+          "hands": [
+            { "character": "himari", "side": "right", "bbox": { "x": 300, "y": 470, "width": 170, "height": 115 } },
+            { "character": "himari", "side": "left", "bbox": { "x": 190, "y": 570, "width": 180, "height": 120 } }
+          ]
+        }
+      ]
+    },
+    {
+      "incident": "google-extra-and-elongated-arm",
+      "images": [
+        {
+          "id": "google-slide01-before",
+          "path": "D:\\downloads\\sumalabo-codex\\repairs\\20260725-body-structure\\202607-google-july-30-terms-media-settings-slide01-before.webp",
+          "expected": "needs_revision",
+          "hands": [
+            { "character": "labomaru", "side": "left", "bbox": { "x": 545, "y": 555, "width": 120, "height": 160 } },
+            { "character": "labomaru", "side": "left", "bbox": { "x": 670, "y": 600, "width": 120, "height": 150 } },
+            { "character": "labomaru", "side": "right", "bbox": { "x": 840, "y": 600, "width": 110, "height": 150 } }
+          ]
+        },
+        {
+          "id": "google-slide05-before",
+          "path": "D:\\downloads\\sumalabo-codex\\repairs\\20260725-arm-proportion\\slide05-before.webp",
+          "expected": "needs_revision",
+          "hands": [
+            { "character": "labomaru", "side": "right", "bbox": { "x": 650, "y": 555, "width": 305, "height": 230 } }
+          ]
+        }
+      ]
+    },
+    {
+      "incident": "video-thumbnail-third-hand",
+      "images": [
+        {
+          "id": "video-thumbnail-before",
+          "gitRef": "00685f1",
+          "repoPath": "public/images/thumbnails/ai-youtube-video-creation-guide-2026.webp",
+          "expected": "needs_revision",
+          "hands": [
+            { "character": "himari", "side": "left", "bbox": { "x": 775, "y": 500, "width": 165, "height": 260 } },
+            { "character": "himari", "side": "right", "bbox": { "x": 650, "y": 710, "width": 180, "height": 150 } },
+            { "character": "himari", "side": "unclear", "bbox": { "x": 600, "y": 300, "width": 390, "height": 650 } }
+          ]
+        }
+      ]
+    },
+    {
+      "incident": "video-hand-shape-and-connection",
+      "images": [
+        {
+          "id": "video-slide07-before",
+          "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\before-slide07-rules.webp",
+          "expected": "needs_revision",
+          "hands": [
+            { "character": "himari", "side": "left", "bbox": { "x": 385, "y": 385, "width": 155, "height": 130 } },
+            { "character": "himari", "side": "right", "bbox": { "x": 120, "y": 590, "width": 140, "height": 115 } }
+          ]
+        },
+        {
+          "id": "video-slide08-before",
+          "path": "D:\\downloads\\sumalabo-codex\\ai-youtube-video-creation-guide-2026\\before-slide08-checklist.webp",
+          "expected": "warning",
+          "hands": [
+            { "character": "himari", "side": "left", "bbox": { "x": 530, "y": 660, "width": 105, "height": 115 } }
+          ]
+        }
+      ]
+    }
+  ]
+}

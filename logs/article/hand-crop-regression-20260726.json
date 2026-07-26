@@ -1,0 +1,282 @@
+{
+  "runAt": "2026-07-26T01:41:04.681Z",
+  "separateSession": true,
+  "imagesDetected": "6/6",
+  "incidentsDetected": "4/4",
+  "images": [
+    {
+      "id": "benchmark-slide04-before",
+      "incident": "benchmark-double-hand",
+      "expected": "needs_revision",
+      "actual": "needs_revision",
+      "detected": true,
+      "cropFile": "D:\\downloads\\sumalabo-codex\\hand-crop-regression-20260726\\benchmark-slide04-before.hand-crops.png"
+    },
+    {
+      "id": "google-slide01-before",
+      "incident": "google-extra-and-elongated-arm",
+      "expected": "needs_revision",
+      "actual": "needs_revision",
+      "detected": true,
+      "cropFile": "D:\\downloads\\sumalabo-codex\\hand-crop-regression-20260726\\google-slide01-before.hand-crops.png"
+    },
+    {
+      "id": "google-slide05-before",
+      "incident": "google-extra-and-elongated-arm",
+      "expected": "needs_revision",
+      "actual": "needs_revision",
+      "detected": true,
+      "cropFile": "D:\\downloads\\sumalabo-codex\\hand-crop-regression-20260726\\google-slide05-before.hand-crops.png"
+    },
+    {
+      "id": "video-thumbnail-before",
+      "incident": "video-thumbnail-third-hand",
+      "expected": "needs_revision",
+      "actual": "needs_revision",
+      "detected": true,
+      "cropFile": "D:\\downloads\\sumalabo-codex\\hand-crop-regression-20260726\\video-thumbnail-before.hand-crops.png"
+    },
+    {
+      "id": "video-slide07-before",
+      "incident": "video-hand-shape-and-connection",
+      "expected": "needs_revision",
+      "actual": "needs_revision",
+      "detected": true,
+      "cropFile": "D:\\downloads\\sumalabo-codex\\hand-crop-regression-20260726\\video-slide07-before.hand-crops.png"
+    },
+    {
+      "id": "video-slide08-before",
+      "incident": "video-hand-shape-and-connection",
+      "expected": "warning",
+      "actual": "needs_revision",
+      "detected": true,
+      "cropFile": "D:\\downloads\\sumalabo-codex\\hand-crop-regression-20260726\\video-slide08-before.hand-crops.png"
+    }
+  ],
+  "incidents": [
+    {
+      "incident": "benchmark-double-hand",
+      "detected": true,
+      "images": [
+        "benchmark-slide04-before"
+      ]
+    },
+    {
+      "incident": "google-extra-and-elongated-arm",
+      "detected": true,
+      "images": [
+        "google-slide01-before",
+        "google-slide05-before"
+      ]
+    },
+    {
+      "incident": "video-thumbnail-third-hand",
+      "detected": true,
+      "images": [
+        "video-thumbnail-before"
+      ]
+    },
+    {
+      "incident": "video-hand-shape-and-connection",
+      "detected": true,
+      "images": [
+        "video-slide07-before",
+        "video-slide08-before"
+      ]
+    }
+  ],
+  "agentResult": {
+    "overallPass": false,
+    "sourceImagesInspected": 6,
+    "cropsInspected": 12,
+    "verdictCounts": {
+      "ok": 0,
+      "warning": 0,
+      "needs_revision": 6
+    },
+    "images": [
+      {
+        "id": "benchmark-slide04-before",
+        "verdict": "needs_revision",
+        "cropFile": "benchmark-slide04-before.hand-crops.png",
+        "checks": [
+          {
+            "label": "benchmark-slide04-before-hand1",
+            "observedSide": "right",
+            "sideNatural": true,
+            "thumbNatural": true,
+            "connectionNatural": true,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "単体では右手として自然だが、hand2と近接して同方向を指すほぼ平行な二重指差し構図であり、見た目の手の二重化に該当する。"
+          },
+          {
+            "label": "benchmark-slide04-before-hand2",
+            "observedSide": "left",
+            "sideNatural": true,
+            "thumbNatural": true,
+            "connectionNatural": true,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "単体では左手として自然だが、hand1と近接・平行に同方向を指しており、同一人物の二重手に見える高リスク構図である。"
+          }
+        ]
+      },
+      {
+        "id": "google-slide01-before",
+        "verdict": "needs_revision",
+        "cropFile": "google-slide01-before.hand-crops.png",
+        "checks": [
+          {
+            "label": "google-slide01-before-hand1",
+            "observedSide": "right",
+            "sideNatural": false,
+            "thumbNatural": true,
+            "connectionNatural": true,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "ボード左側を抱える腕は体の画面左側から追える右腕に見え、expected:leftと反対。さらに同一らぼまるに3つの手・腕候補が存在する。"
+          },
+          {
+            "label": "google-slide01-before-hand2",
+            "observedSide": "left",
+            "sideNatural": true,
+            "thumbNatural": true,
+            "connectionNatural": true,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "左手型としては整合するが、hand1・hand3を含めると同一らぼまるの手が3つになり、左右各1つを超える手数異常がある。"
+          },
+          {
+            "label": "google-slide01-before-hand3",
+            "observedSide": "left",
+            "sideNatural": false,
+            "thumbNatural": true,
+            "connectionNatural": true,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "体の画面右側に付く左腕型に見え、expected:rightと反対。hand2と同側の手が重複し、画像全体で3本目の手・腕候補となっている。"
+          },
+          {
+            "label": "google-slide01-before-topology",
+            "observedSide": "unclear",
+            "sideNatural": false,
+            "thumbNatural": false,
+            "connectionNatural": false,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "labomaru の一次検品で独立した手が 3 件列挙され、左右各1本を超えています。明確な本数異常として公開ブロック。"
+          }
+        ]
+      },
+      {
+        "id": "google-slide05-before",
+        "verdict": "needs_revision",
+        "cropFile": "google-slide05-before.hand-crops.png",
+        "checks": [
+          {
+            "label": "google-slide05-before-hand1",
+            "observedSide": "left",
+            "sideNatural": false,
+            "thumbNatural": true,
+            "connectionNatural": false,
+            "proportionsNatural": false,
+            "severity": "needs_revision",
+            "note": "腕は胴体の画面右側から出る左腕型でexpected:rightと反対。らぼまるの腕として長すぎる細いホース状で、急に湾曲しながらペン先まで伸びており、短く太い標準形と接続・比率が一致しない。"
+          }
+        ]
+      },
+      {
+        "id": "video-thumbnail-before",
+        "verdict": "needs_revision",
+        "cropFile": "video-thumbnail-before.hand-crops.png",
+        "checks": [
+          {
+            "label": "video-thumbnail-before-hand1",
+            "observedSide": "left",
+            "sideNatural": true,
+            "thumbNatural": true,
+            "connectionNatural": true,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "カチンコを持つ左手単体の形は自然だが、hand2も同じ体側の左腕位置から出て見え、同一人物に左手が二重化している。"
+          },
+          {
+            "label": "video-thumbnail-before-hand2",
+            "observedSide": "left",
+            "sideNatural": false,
+            "thumbNatural": true,
+            "connectionNatural": false,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "指差し手は袖口と前腕を追うと左手型で、expected:rightと反対。hand1のカチンコ保持手と同じ側の腕として見えるため、左手の重複・接続矛盾がある。"
+          },
+          {
+            "label": "video-thumbnail-before-hand3",
+            "observedSide": "unclear",
+            "sideNatural": false,
+            "thumbNatural": true,
+            "connectionNatural": false,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "DETAILが単一の手を分離せず広い人物像を含むため左右判定不能。広域像ではカチンコ保持手と指差し手が同じ体側から分岐して見え、独立した左右腕として追えない。"
+          },
+          {
+            "label": "video-thumbnail-before-topology",
+            "observedSide": "unclear",
+            "sideNatural": false,
+            "thumbNatural": false,
+            "connectionNatural": false,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "himari の一次検品で独立した手が 3 件列挙され、左右各1本を超えています。明確な本数異常として公開ブロック。"
+          }
+        ]
+      },
+      {
+        "id": "video-slide07-before",
+        "verdict": "needs_revision",
+        "cropFile": "video-slide07-before.hand-crops.png",
+        "checks": [
+          {
+            "label": "video-slide07-before-hand1",
+            "observedSide": "left",
+            "sideNatural": true,
+            "thumbNatural": true,
+            "connectionNatural": true,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "左の指差し手単体は自然だが、同一人物が反対手で紙を持ちながら指差す既知の高リスク禁止構図に該当するため公開不可。"
+          },
+          {
+            "label": "video-slide07-before-hand2",
+            "observedSide": "right",
+            "sideNatural": true,
+            "thumbNatural": true,
+            "connectionNatural": true,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "紙を持つ右手単体は自然に見えるが、反対手の指差しと同時に行う「紙を持つ＋指す」構図自体が左右接合破綻の既知高リスク条件に該当する。"
+          }
+        ]
+      },
+      {
+        "id": "video-slide08-before",
+        "verdict": "needs_revision",
+        "cropFile": "video-slide08-before.hand-crops.png",
+        "checks": [
+          {
+            "label": "video-slide08-before-hand1",
+            "observedSide": "right",
+            "sideNatural": false,
+            "thumbNatural": true,
+            "connectionNatural": true,
+            "proportionsNatural": true,
+            "severity": "needs_revision",
+            "note": "掌側が見える挙手で親指が画面左側にあり、右手型と判定できる。expected:leftと反対のため左右不整合。"
+          }
+        ]
+      }
+    ]
+  }
+}
