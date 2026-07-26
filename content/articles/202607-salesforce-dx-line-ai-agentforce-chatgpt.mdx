@@ -1,0 +1,280 @@
+---
+title: "企業LINEの裏側にAIが入る。あなたの問い合わせ、AIが下書きする時代へ"
+slug: "202607-salesforce-dx-line-ai-agentforce-chatgpt"
+type: "news"
+category: "ニュースをかみくだく"
+description: "SalesforceとLINEをつなぐアプリ「DX-LINE」がAgentforce・ChatGPT・Gemini・Claude連携に対応。返信の下書きや要約・TODOの記録まで、何ができて誰に関係するのかをやさしく整理します。"
+thumbnail: "/images/thumbnails/202607-salesforce-dx-line-ai-agentforce-chatgpt.webp"
+thumbnailAlt: "「企業LINEの裏側にAI」のサムネイル。ひまりが店のLINEにスマホで問い合わせ、ヘッドセットを付けたらぼまるがAI係として会話の要約カードとTODOを示して応対する、DX-LINE×Salesforceの窓口イラスト"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Salesforce"
+  - "LINE"
+  - "DX-LINE"
+  - "Agentforce"
+  - "AIエージェント"
+  - "カスタマーサポート"
+  - "すまラボ"
+pubDate: "2026-07-27"
+updated: "2026-07-27"
+publishAt: "2026-07-27T04:45:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Chip from "../../src/components/article/Chip.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+企業がLINEでお客さんとやり取りする「裏側」に、AIが入り始めました。SalesforceとLINEをつなぐアプリ「DX-LINE」が、Agentforce・ChatGPT・Gemini・Claudeといった複数のAIと連携できるようになったからです。この記事では、何ができて、誰に関係する話なのかを、公式発表をもとにやさしく整理します。
+
+<Summary30>
+  <ol>
+    <li>SalesforceとLINE公式アカウントをつなぐアプリ「DX-LINE」が、<strong>複数AIとの連携を強化</strong>した（2026年7月26日・v2.11）</li>
+    <li>LINEの返信をAIが下書きし、<strong>会話の要約とTODOを自動でSalesforceに記録</strong>できる</li>
+    <li>使うAIは <strong>Agentforce・ChatGPT・Gemini・Claude・自社AI</strong> から選べる</li>
+    <li>これは<strong>企業向けの機能</strong>で、スマホに入れて使うアプリではない</li>
+    <li>私たちは「AIが応対する側」の<strong>受け手</strong>として関わることになる</li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "v2.11", cap: "DX-LINEの新版（2026年7月26日 提供開始）" },
+    { num: "5種類", cap: "選べるAI（Agentforce / ChatGPT / Gemini / Claude / 自社AI）" },
+    { num: "企業向け", cap: "個人が入れて使うアプリではない" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">お店のLINEに問い合わせると、AIが返事してくれるようになるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">その裏側を作る仕組みだよ。返信の下書きや会話の記録を、AIが手伝ってくれるんだ。</CharacterBubble>
+
+## 何が起きたのか
+
+<p class="lead">SalesforceとLINEをつなぐアプリ「DX-LINE」が新版<strong>v2.11</strong>になり、各種AIとの連携を大きく強化しました。</p>
+
+株式会社ベターフューチャーが、SalesforceとLINE公式アカウントを連携するアプリ「DX-LINE」の新版を、2026年7月26日に提供開始しました。目玉は、各種AIエージェント・LLM（大規模言語モデル）との連携強化です。
+
+Salesforceは、企業が顧客情報を管理する定番のツールです。そこにLINEのやり取りをつなぎ、さらにAIを挟むことで、問い合わせ対応から記録までを一続きの流れとして支援できるようにした、というのが今回のねらいです。
+
+<Callout kind="facts">
+  <ul>
+    <li>DX-LINEの新版v2.11を2026年7月26日に提供開始</li>
+    <li>SalesforceとLINE公式アカウントを連携するアプリ</li>
+    <li>各種AIエージェント・LLMとの連携を強化した</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず「何が起きたか」を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/slide01-what-happened.webp"
+         alt="「企業のLINEにAIが入る」の図解。SalesforceとLINEをつなぐアプリ『DX-LINE』が複数AI連携に対応（2026-07-26 / v2.11）と示し、ひまりがスマホのLINE画面を見て気づき、らぼまるが『AIが手伝います』と案内する構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：企業のLINEにAIが入る</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>アプリ</strong>：SalesforceとLINEをつなぐ「DX-LINE」</li>
+      <li><strong>新版</strong>：v2.11（2026年7月26日 提供開始）</li>
+      <li><strong>変化</strong>：複数のAIと連携できるようになった</li>
+      <li><strong>結論</strong>：企業サポートの裏側にAIが入り始めた</li>
+    </ul>
+  </div>
+</section>
+
+## 選べるAIは1つじゃない
+
+<p class="lead">連携先は1社のAIに限りません。<strong>5つの選択肢</strong>から、企業のセキュリティ方針に合わせて選べます。</p>
+
+今回の連携先は、SalesforceのAgentforce、OpenAIのChatGPT、GoogleのGemini、AnthropicのClaude、そして自社で用意したカスタムAIです。企業によっては「社外にデータを出せない」「特定のAIしか使えない」といった事情があります。複数から選べるのは、そうした方針に合わせやすくするため、というのが提供元の説明です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">選べるAIを、カードで見比べます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/slide02-selectable-ai.webp"
+         alt="「選べるAIは1つじゃない」の図解。Agentforce・ChatGPT・Gemini・Claude・自社AIの5つのカードが並び、らぼまるが切り替えパネルを片手で指し、ひまりがスマホを持って見る構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：選べるAIは5種類</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>Agentforce</strong>：Salesforce自身のAIエージェント</li>
+      <li><strong>ChatGPT / Gemini / Claude</strong>：大手のLLM</li>
+      <li><strong>自社AI</strong>：企業が用意したカスタムAI</li>
+      <li><strong>理由</strong>：セキュリティ方針に合わせて選べるようにするため</li>
+    </ul>
+  </div>
+</section>
+
+## 何ができるようになるのか
+
+<p class="lead">担当者が手作業でやっていた<strong>「返信」「要約」「記録」</strong>を、AIが下ごしらえします。</p>
+
+公式に挙げられている主な機能は、返信の自動下書き、会話の要約とTODOの作成・記録、顧客の満足度や興味関心の読み取り、顧客レコードの自動更新です。順番に、図で見ていきます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは「返信の下書き」から。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/slide03-ai-drafts-reply.webp"
+         alt="「返信をAIが下書き」の図解。スマホのトーク画面にAIの下書き候補が浮かび、ひまりが『はやい』と笑顔になる構図。らぼまるが横で示す"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：返信をAIが下書き</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>下書き</strong>：LINEの返信をAIが自動で作る</li>
+      <li><strong>役割</strong>：会話をサポートする下ごしらえ</li>
+      <li><strong>担当者</strong>：最終的な返信は人が確認・調整できる</li>
+    </ul>
+  </div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">次に「要約とTODO」。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/slide04-summary-todo.webp"
+         alt="「話をまとめて記録」の図解。会話の要約と次にやるTODOをAIが作りSalesforceに記録する様子。らぼまるが要約カードとチェックリストを片手で示す構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：話をまとめて記録</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>要約</strong>：会話の内容をAIがまとめる</li>
+      <li><strong>TODO</strong>：次にやることをAIが書き出す</li>
+      <li><strong>記録先</strong>：Salesforceに自動で残る</li>
+    </ul>
+  </div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">そして「顧客の記録を更新」。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/slide05-update-records.webp"
+         alt="「興味や満足度も記録」の図解。チャットから満足度・興味関心を読み取り、Salesforce風の整理棚に顧客レコードとしてデータが入っていく様子。らぼまるが指さしする構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：興味や満足度も記録</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>読み取り</strong>：チャットから満足度・興味関心を抽出</li>
+      <li><strong>更新</strong>：顧客レコードを自動で更新</li>
+      <li><strong>意味</strong>：問い合わせが「記録」として蓄積される</li>
+    </ul>
+  </div>
+</section>
+
+<Note>ここで挙げた機能は、AIが担当者の作業を下ごしらえするものです。「AIが対応を全部代わる」わけではなく、あくまで運用の自動化と支援です。</Note>
+
+## 誰に関係あるのか
+
+<p class="lead">直接の利用者は<strong>企業</strong>です。ただし私たちも、問い合わせる「受け手」として静かに関わります。</p>
+
+直接の利用者は、企業のSalesforce管理者、導入を支援するSIパートナー、LINE公式アカウントを運用する企業です。個人が使うアプリではありません。
+
+では一般の私たちには無関係かというと、そうでもありません。お店やサービスのLINEに問い合わせたとき、最初の返信や内容の要約をAIがこなす場面が、これから増えていきます。返事が速くなる一方で、込み入った相談はやはり人につなぐ必要がある——そんな使い分けが進む、と考えると分かりやすいです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「誰のための機能か」を整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/slide06-who-is-it-for.webp"
+         alt="「誰のための機能?」の図解。使うのは企業とし、直接の利用者としてSalesforce管理者・SIパートナー・LINE運用企業の3者を挙げ、『個人向けアプリではない』と示す。会社の窓口に立つらぼまるとひまりの構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：使うのは企業</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>直接の利用者</strong>：Salesforce管理者・SIパートナー・LINE運用企業</li>
+      <li><strong>個人</strong>：スマホに入れて使うアプリではない</li>
+      <li><strong>私たち</strong>：問い合わせる「受け手」として関わる</li>
+    </ul>
+  </div>
+</section>
+
+## 誤解しやすいポイント
+
+<p class="lead">ここは<strong>確定と未確定を分けて</strong>見るところです。読み違えやすい3点を押さえておきましょう。</p>
+
+<Callout kind="facts" title="確定（公式）">
+  <ul>
+    <li>これは個人向けアプリではない。スマホに入れて使うものではない</li>
+    <li>AIは運用の自動化と下ごしらえを支援する（対応を全部代わるわけではない）</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年7月時点）">
+  <ul>
+    <li>価格は公表されていない</li>
+    <li>導入の実績や精度を示す数値も、今回の発表には含まれていない</li>
+    <li>AIごとの性能差や使い分けの細部</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">「できること」と「まだ分からないこと」は分けて読むのがコツだよ。価格や精度は公表されていないんだ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">誤解しやすい3点を、カードで。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/slide07-misconceptions.webp"
+         alt="「誤解しやすい点」の図解。個人アプリではない・AIが全部やるわけではない・価格は公表なし、の3つの注意カードをらぼまるが落ち着いて示し、ひまりがうなずく構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：誤解しやすい3点</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>個人アプリではない</strong>：使うのは企業</li>
+      <li><strong>AIが全部やるわけではない</strong>：運用の支援・下ごしらえ</li>
+      <li><strong>価格は公表なし</strong>：条件は提供元への確認が必要</li>
+    </ul>
+  </div>
+</section>
+
+## まとめ：受け手として体験が変わる
+
+<p class="lead">使うのは企業ですが、その変化を体験するのは<strong>問い合わせる側の私たち</strong>でもあります。</p>
+
+LINEという身近な場所で、企業サポートの裏側にAIエージェントが入り始めました。便利さと「最後は人が対応する安心」のバランスが、これからの見どころです。すでにSalesforceとLINE公式アカウントを使っている企業なら、対応の下書き・要約・記録をAIに任せられるかは検討の価値があります。ただし、どのAIを選ぶか、費用がいくらか、実際の精度はどうかは、提供元への確認が必要です。
+
+<CharacterBubble speaker="himari" mood="aha">私たちは「受け手」なんだね。問い合わせたときに、返事が速くなるかもしれないってことか。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">そういうこと。込み入った相談は人につながるから、AIと人の使い分けが進むよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、持ち帰る一言を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/slide08-summary.webp"
+         alt="「受け手として体験が変わる」のまとめ図解。企業サポートの裏側にAIが入る流れと、便利さと『最後は人が対応』の安心のバランスが見どころと示す。ひまりとらぼまるが並んで前を向く構図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：受け手として体験が変わる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>流れ</strong>：企業サポートの裏側にAIが入る</li>
+      <li><strong>私たち</strong>：受け手として変化を体験する</li>
+      <li><strong>見どころ</strong>：便利さと「最後は人が対応」の安心のバランス</li>
+    </ul>
+  </div>
+</section>
+
+## 参考情報
+
+この記事は公式発表をもとに整理しています。価格・実績・精度は公表されておらず、今回の発表には含まれていません。最終的な提供条件は、必ず提供元の最新情報で確認してください。
+
+- [株式会社ベターフューチャー プレスリリース（PR TIMES, 2026-07-26）](https://prtimes.jp/main/html/rd/p/000000003.000186877.html)
+- [DX-LINE 製品サイト](https://dx-line.com/)
