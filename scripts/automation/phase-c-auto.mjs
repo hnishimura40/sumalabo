@@ -146,6 +146,9 @@ async function main() {
   const plan = buildAttachmentPlan(args.slug, xOpts);
   const inspectionPath = path.join(ROOT, "logs", "article", `${args.slug}.independent-inspection.json`);
   const inspectionDone = existsSync(inspectionPath);
+  const handCropPath = path.join(ROOT, "logs", "article", `${args.slug}.hand-crop-inspection.json`);
+  const handCrop = existsSync(handCropPath) ? JSON.parse(readFileSync(handCropPath, "utf-8")) : null;
+  const handCropDone = handCrop && (handCrop.verdictCounts?.needs_revision ?? 0) === 0;
 
   console.log(`\n=== PHASE C NEXT ACTION [browser post] ${args.slug} ===`);
   if (!windowCheck.postNow) {
@@ -160,7 +163,18 @@ async function main() {
       console.log(`   needs_revision は該当のみ最大2回再生成→直らなければ X から除外（記事公開は止めない）。検品後に本投稿の画像は xSelection に自動で切り替わる。`);
     } else {
       console.log(`0-検品. 独立検品済み（logs/article/${args.slug}.independent-inspection.json）。selectionSource=${plan.selectionSource}。`);
+      if (!handCrop) {
+        console.log(`0-二段検品. **【必須】未実施**: npm run sumalabo:inspect-hands -- --slug ${args.slug}（手が見える画像だけを別Codexセッションで拡大検品）。`);
+      } else {
+        const c = handCrop.verdictCounts || {};
+        console.log(`0-二段検品. 実施画像 ${handCrop.sourceImagesInspected || 0}枚 / ok ${c.ok || 0}・warning ${c.warning || 0}・needs_revision ${c.needs_revision || 0}。`);
+      }
     }
+  }
+  if (!inspectionDone || !handCropDone) {
+    console.error(`[phase-c] BLOCK: 一次独立検品と手の部位拡大二段検品が完了し、needs_revision が0件になるまで投稿できません: ${handCropPath}`);
+    process.exitCode = 1;
+    return;
   }
   console.log(`1. npm run social:generate-x-post -- --slug ${args.slug} で投稿文を生成・確認（logs/social/${args.slug}.x-post.json に本投稿文・reply・attachmentPlan が入る）`);
   if (plan.attach.length > 0) {

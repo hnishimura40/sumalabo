@@ -53,6 +53,7 @@ export function buildReport(slug) {
   const scout = latestScoutLog();
   const state = readJson(path.join(ROOT, "logs", "article", `${slug}.state.json`));
   const factcheck = readJson(path.join(ROOT, "logs", "article", `${slug}.factcheck.json`));
+  const handCropInspection = readJson(path.join(ROOT, "logs", "article", `${slug}.hand-crop-inspection.json`));
   const finalize = readJson(path.join(ROOT, "logs", "preview", `${slug}.finalize.json`));
   const verify = readJson(path.join(ROOT, "logs", "publish", `${slug}.verify.json`));
   const ledger = readLedger();
@@ -119,6 +120,9 @@ export function buildReport(slug) {
   } else {
     lines.push("- factcheck ログなし");
   }
+  const hc = handCropInspection?.verdictCounts || { ok: 0, warning: 0, needs_revision: 0 };
+  const warningCrops = (handCropInspection?.images || []).filter((image) => image.verdict === "warning").map((image) => image.cropFile).filter(Boolean);
+  lines.push(`- 二段検品: 実施画像 ${handCropInspection?.sourceImagesInspected ?? 0}枚（手クロップ ${handCropInspection?.cropsInspected ?? 0}件） / ok ${hc.ok ?? 0}・warning ${hc.warning ?? 0}・needs_revision ${hc.needs_revision ?? 0}${warningCrops.length ? ` / warning画像: ${warningCrops.join(", ")}` : ""}`);
   lines.push("");
 
   // 4. 公開（Phase B）
@@ -163,7 +167,7 @@ export function buildReport(slug) {
 
   // 6. 判定
   const clean =
-    state && !state.halted && factcheck?.pass === true && verify && verify.hardFail === false && verify.rollback?.invoked !== true && verify.incidentRecorded !== true;
+    state && !state.halted && factcheck?.pass === true && handCropInspection && (handCropInspection.verdictCounts?.needs_revision ?? 0) === 0 && verify && verify.hardFail === false && verify.rollback?.invoked !== true && verify.incidentRecorded !== true;
   lines.push("## 6. 判定");
   lines.push(`- クリーン判定: ${clean ? "✅ クリーン" : "⚠️ 要確認"}`);
   lines.push("- 10分査読チェックリスト:");
