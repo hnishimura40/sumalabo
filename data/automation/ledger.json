@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-25T11:42:18.045Z",
+  "updatedAt": "2026-07-26T20:59:40.605Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -1184,6 +1184,23 @@
       "xPostVariant": "images4+reply",
       "xPostText": "Googleの「7月30日問題」、実は2つの話が混ざっています。\n\n7月30日は規約の発効日で、設定の締切ではありません。気になる人が見るのは「メディアを保存」。対象範囲と、オフ・過去分削除・自動削除の3点を整理しました。\n\n#Google #プライバシー #すまラボ",
       "xReplyUrl": "https://x.com/suma_labo/status/2081005742765850758"
+    },
+    {
+      "slug": "202607-salesforce-dx-line-ai-agentforce-chatgpt",
+      "incidents": [],
+      "status": "x_posted",
+      "source": "test_mode",
+      "triggerKind": "night",
+      "triggeredBy": "night_driver",
+      "productionUrl": "https://sumalabo.com/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/228",
+      "mergeCommit": "d2fe79d7b5d66ba669b6d8d884f6300cc8604b74",
+      "publishedAt": "2026-07-26T20:44:13.641Z",
+      "verifyResult": "full gate 0 violations; build ok; deploy exit0; strict verify 8/8 pass (httpStatus/titleNotGeneric/slugInHtml/notHomepageFallback/hasArticleBody/hasThumbnailRef/noProhibitedCopy/indexListsArticle); independent inspection 9/9 pass; hand two-pass gate PASS (9 images / 12 crops / ok5 warning4 needs_revision0)",
+      "xPostUrl": "https://x.com/suma_labo/status/2081484383836631284",
+      "xPostedAt": "2026-07-26T20:59:22.881Z",
+      "xPostVariant": "text_only",
+      "xPostText": "企業LINEの裏側にAIが入る。あなたの問い合わせ、AIが下書きする時代へ / SalesforceとLINEをつなぐアプリ「DX-LINE」がAgentforce・ChatGPT・Gemini・Claude連携に対応。 #AI #すまラボ"
     }
   ]
 }
