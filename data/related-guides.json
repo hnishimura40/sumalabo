@@ -11,6 +11,25 @@
   },
   "targets": [
     {
+      "slug": "202607-school-ai-class-proposal-explained",
+      "label": "学校の「AI授業」案を整理",
+      "blurb": "決まったこと・検討中・未定と、開始時期を中立に解説",
+      "categories": ["ニュースをかみくだく"],
+      "_kwNote": "学校のAI教育・次期学習指導要領・情報教育のニュースから、案と決定を分ける定番解説へ案内する。AI一般語だけでは表示しない。",
+      "keywords": [
+        "学校 AI授業",
+        "小学校 AI教育",
+        "中学校 AI教育",
+        "情報の領域",
+        "情報・技術科",
+        "学習指導要領 AI",
+        "情報教育",
+        "生成AI 授業",
+        "文科省 AI教育"
+      ],
+      "listStaple": true
+    },
+    {
       "slug": "202607-google-july-30-terms-media-settings",
       "label": "Googleの「7月30日問題」を整理",
       "blurb": "規約改定とメディア保存設定の違い、対象範囲、確認手順を解説",

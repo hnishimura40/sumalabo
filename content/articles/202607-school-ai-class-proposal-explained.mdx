@@ -1,0 +1,272 @@
+---
+title: "小中学校の「AI授業」はまだ決定ではない。文科省案の確定・検討中・未定を整理"
+slug: "202607-school-ai-class-proposal-explained"
+type: "news"
+category: "ニュースをかみくだく"
+description: "小中学校にAI授業が新設されるという話は、2026年7月時点では中教審の案です。時数、2028年度以降の先行実施、他教科への影響、保護者が今することを中立に整理します。"
+thumbnail: "/images/thumbnails/202607-school-ai-class-proposal-explained.webp"
+thumbnailAlt: "AI授業はまだ案という解説。教室で真剣な表情のひまりが案と書かれた資料を両手で確認し、らぼまるが決定ではないという札を右手で持つ"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "AI教育"
+  - "文部科学省"
+  - "学習指導要領"
+  - "情報教育"
+  - "生成AI"
+  - "小学校"
+  - "中学校"
+related:
+  - "ai-model-benchmark-cost-guide-2026"
+  - "202607-ai-pc-cloud-local-spec-guide"
+pubDate: "2026-07-26"
+updated: "2026-07-26"
+publishAt: "2026-07-26T09:05:00+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+「小中学校にAI授業が新設される」と話題ですが、2026年7月時点では、文部科学省・中央教育審議会の特別部会で示された**次期学習指導要領に向けた案**です。告示済みの決定事項ではありません。
+
+しかも、検討されているのは生成AIの操作だけを学ぶ授業ではありません。小学校の「情報の領域（仮称）」と中学校の「情報・技術科（仮称）」で、情報収集、メディアリテラシー、プログラミング、データ活用、AIを含む情報技術の特徴やリスクを体系的に扱う構想です。
+
+<Summary30>
+  <ol>
+    <li><strong>まだ審議中の案</strong>。保護者が今すぐ申し込みや設定変更をする必要はない</li>
+    <li>小3・4は各学年最大30、小5・6は最大35。中1・2は最大70、中3は最大35コマ程度の案</li>
+    <li>総授業時数は増やさず、複数教科から按分する方向。ただし<strong>教科別の具体的コマ数は未定</strong></li>
+    <li>2028年度以降の段階的先行実施を検討。全面実施想定は小学校2030年度、中学校2031年度</li>
+  </ol>
+</Summary30>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最初に、今の段階と家庭への影響を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-school-ai-class-proposal-explained/slide01-conclusion.webp" alt="まだ決定ではなく中教審の案、2028年度以降の先行実施を検討、今する手続きなしという結論" loading="lazy" decoding="async" />
+    <figcaption>「AI授業」案の30秒結論</figcaption>
+  </figure>
+</section>
+
+## 何が示されたのか——AIだけの授業ではない
+
+<p class="lead"><strong>情報を集め、確かめ、使う力を体系的に学ぶ案です。</strong></p>
+
+小学校では、総合的な学習の時間に「情報の領域（仮称）」を設ける案です。中学校では、現行の技術・家庭科の技術分野を含む「情報・技術科（仮称）」を設ける案が示されています。
+
+扱う内容は、生成AIだけではありません。
+
+- 情報を集め、整理し、発信する
+- 情報源や根拠を確かめる
+- プログラミングやデータ活用を学ぶ
+- AIを含む情報技術の仕組み、利点、リスクを考える
+
+そのため、「小学生が授業中ずっと生成AIを操作する」と受け取るのは正確ではありません。実際に児童生徒が生成AIをどの範囲で直接使うかも、現時点では決まっていません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「AIだけ」と「情報教育全体」を分けて見ます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-school-ai-class-proposal-explained/slide02-scope.webp" alt="AIだけの授業ではなく、情報を集める、確かめる、プログラミング、データとAIを扱う情報教育全体という図解" loading="lazy" decoding="async" />
+    <figcaption>新しい領域・教科が扱う範囲</figcaption>
+  </figure>
+</section>
+
+## 年間最大30〜70コマ——学年で違う
+
+文科省の7月8日資料と、7月22日の特別部会取りまとめ案には、各学年で必要と考えられる授業時数の目安が示されています。
+
+<NumCards items={[
+  { num: "30", cap: "小3・4 各学年最大" },
+  { num: "35", cap: "小5・6／中3 最大" },
+  { num: "70", cap: "中1・2 各学年最大" },
+]} />
+
+いずれも「程度」「最大」という案で、最終的な標準授業時数ではありません。中学校の数字には、現行の技術分野に当たる内容も含まれます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">小学校と中学校、学年別の案を並べます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-school-ai-class-proposal-explained/slide03-hours.webp" alt="小3・4は各学年最大30、小5・6は最大35、中1・2は最大70、中3は最大35コマ程度という時数案" loading="lazy" decoding="async" />
+    <figcaption>新領域・新教科の時数案</figcaption>
+  </figure>
+</section>
+
+## 誤解1：「他教科は削られない」でも「削減数が決定」でもない
+
+<p class="lead"><strong>総授業時数は増やさず、複数教科から確保する方向です。</strong></p>
+
+大臣諮問では、年間の標準総授業時数を現在以上に増やさないことが前提です。7月22日の取りまとめ案は、小学校3年生以上で、現在35コマ以下の教科等を除いた複数の教科・領域から、既存の授業時数に応じた一定割合で確保する方向を示しています。
+
+ここは二つに分ける必要があります。
+
+- **方向として示されたこと**：特定の1教科だけではなく、対象となる複数教科から按分する
+- **まだ決まっていないこと**：国語、算数・数学など各教科が具体的に何コマになるか
+
+「他教科への影響はゼロ」とも、「国語が何コマ減ると決定した」とも言えません。教科別の実数は、今後の教育課程全体の議論を踏まえて検討するとされています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">決まった方向と、未定の数字を分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-school-ai-class-proposal-explained/slide04-total-hours.webp" alt="授業時間は増やさず複数教科から按分する案だが、教科別の具体的コマ数は未定という図解" loading="lazy" decoding="async" />
+    <figcaption>総授業時数と他教科への影響</figcaption>
+  </figure>
+</section>
+
+<CharacterBubble speaker="himari" mood="curious">「他教科が削られるか未定」ではなく、確保の方向は案にあり、具体的な数字が未定なんですね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">そう。影響なしとも、教科別の削減が決定済みとも言わず、資料の段階を分けて見よう。</CharacterBubble>
+
+## 誤解2：「来年から全国一斉」ではない
+
+<p class="lead"><strong>2028年度以降は、段階的な先行実施を検討する位置づけです。</strong></p>
+
+文科省のスケジュール資料は、2026年夏ごろの審議まとめ、冬ごろの中央教育審議会答申、年度末予定の改訂、その後の周知や教科書準備という流れを示しています。告示案にはパブリックコメントも予定されています。
+
+<Timeline>
+  <TimelineItem date="2026年夏ごろ">教育課程部会の審議まとめを予定</TimelineItem>
+  <TimelineItem date="2026年冬ごろ">中央教育審議会の答申を予定</TimelineItem>
+  <TimelineItem date="2026年度末予定">学習指導要領を改訂・告示</TimelineItem>
+  <TimelineItem date="2028年度以降" hot>新領域・新教科の段階的な先行実施を検討</TimelineItem>
+  <TimelineItem date="2030／2031年度">小学校／中学校で全面実施を想定</TimelineItem>
+</Timeline>
+
+先行実施については、具体的な時期・内容を小学校と中学校それぞれで今後検討すると明記されています。「2028年度から全国の全学年で開始」と決まったわけではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">審議から全面実施まで、間に複数の段階があります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-school-ai-class-proposal-explained/slide05-schedule.webp" alt="審議、答申、告示、2028年度以降の先行検討、小学校2030年度と中学校2031年度の全面実施想定という流れ" loading="lazy" decoding="async" />
+    <figcaption>学習指導要領改訂の流れ</figcaption>
+  </figure>
+</section>
+
+<Note>
+  2026年7月26日時点で、第10回・第11回の配付資料は公開されていますが、開催状況ページに両回の議事録は掲載されていません。本記事は公開済み資料の本文を根拠にし、個別委員の発言は扱っていません。
+</Note>
+
+## 誤解3：「決定」「来年」「AIだけ」を取り違えない
+
+報道やSNSでは、複雑な制度案が「AI授業」の一言に短縮されがちです。次の3点を分ければ、必要以上に驚かずに済みます。
+
+1. **決定した？**——まだ案。答申・告示前
+2. **来年から？**——違う。2028年度以降の先行実施を検討
+3. **AIだけ？**——違う。情報教育全体の体系化
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">広がりやすい3つの誤解を、短く修正します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-school-ai-class-proposal-explained/slide06-misunderstandings.webp" alt="決定したではなくまだ案、来年からではない、AIだけではなく情報教育全体という誤解3点" loading="lazy" decoding="async" />
+    <figcaption>「AI授業」案の誤解3つ</figcaption>
+  </figure>
+</section>
+
+## 賛否を公平に整理——期待と心配はどちらも検討材料
+
+<p class="lead"><strong>政策の狙いと、慎重に見る論点を同じ重さで確認します。</strong></p>
+
+推進側の狙いは、AIや偽情報が身近になるなか、情報を集め、確かめ、整理し、適切に使う力を体系的に育てることです。使わないことだけで守るのではなく、仕組みと限界を学ぶ必要があるという考え方です。
+
+慎重に見る側の論点は、発達段階に合う内容か、AIへ答えを任せすぎて自分で考える過程を損なわない授業設計になっているか、他教科とのバランス、教員研修・教材・端末環境を整えられるかです。
+
+文科省の現行ガイドラインも、児童生徒の生成AI利用は、発達段階や情報活用能力の育成状況に留意し、リスクへの対策を講じた上で検討するよう求めています。これは利用を全面否定するものでも、効果を保証するものでもありません。
+
+<Callout kind="claims" title="期待と懸念は、どちらも現時点の見解">
+  <ul>
+    <li><strong>期待</strong>：情報を見きわめる力、社会変化への備え</li>
+    <li><strong>懸念</strong>：発達段階、考える過程、他教科とのバランス、現場の準備</li>
+  </ul>
+</Callout>
+
+「脳が退化する」「AIを学べば将来安心」といった断定は、今回の資料からは言えません。本記事も賛成・反対の立場を取りません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">期待と心配を、左右同じ重さで並べます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-school-ai-class-proposal-explained/slide07-both-sides.webp" alt="期待は情報を見きわめる力と社会変化への備え、心配は発達段階、考える過程、他教科とのバランスという両論併記" loading="lazy" decoding="async" />
+    <figcaption>推進側の狙いと慎重側の論点</figcaption>
+  </figure>
+</section>
+
+## 保護者向けQ&A——今すぐすることはない
+
+### いつから始まる？
+
+小学校は2030年度、中学校は2031年度の全面実施が想定されています。2028年度以降の先行実施は検討中で、対象となる学校・学年・内容は未定です。
+
+### 家庭で何か準備すべき？
+
+現時点で申し込み、設定変更、専用端末の購入は必要ありません。学校や自治体から正式な案内が出る前に準備を急ぐ段階ではありません。
+
+### AIの塾へ通う必要は？
+
+このニュースを理由に塾や有料教材を急いで契約する必要はありません。授業内容と評価方法が確定していないためです。家庭で話すなら、ネットの情報は発信元や日付を確かめる、といった日常的な習慣で十分です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">家庭で必要な対応を、煽らず確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-school-ai-class-proposal-explained/slide08-parents.webp" alt="今すぐ申し込み、端末購入、塾通いは不要で、公式の続報を待つという保護者向けQ&A" loading="lazy" decoding="async" />
+    <figcaption>保護者が今すること</figcaption>
+  </figure>
+</section>
+
+## 確定・報道・未確定を仕分ける
+
+<Callout kind="facts">
+  <ul>
+    <li>新領域・新教科案と、学年ごとの最大時数の目安が公表された</li>
+    <li>標準総授業時数は現在以上に増やさない前提</li>
+    <li>小学校2030年度、中学校2031年度の全面実施を想定</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims">
+  <p>FNN、ITmedia、ReseEdなどは「情報教育の大幅拡充」「情報新設」などと報道しています。「AI授業」は内容を短く表す通称的な言い方です。</p>
+</Callout>
+
+<Callout kind="unc" title="2026年7月26日時点で未確定">
+  <ul>
+    <li>最終的な教科・領域名、内容、標準授業時数</li>
+    <li>既存教科ごとの具体的な時数</li>
+    <li>2028年度以降の先行実施校・学年・内容</li>
+    <li>教材、評価方法、教員研修、児童生徒が生成AIを直接使う範囲</li>
+  </ul>
+</Callout>
+
+## まとめ——今は「案の段階」を正しく見る
+
+- 「AI授業」は、情報活用能力全体を扱う新領域・新教科の案
+- 2026年7月時点では決定ではなく、答申・告示前
+- 2028年度以降の先行実施は検討中で、具体は未定
+- 総授業時数は増やさず複数教科から確保する方向だが、教科別の実数は未定
+- 保護者が今すぐ申し込み、端末購入、塾通いをする必要はない
+
+今は賛成・反対を急いで決めるより、審議の段階と未確定部分を分けて見る時点です。AIの種類や得意分野を整理したい場合は、[AIモデルのベンチマークとコスパの読み方](/articles/ai-model-benchmark-cost-guide-2026/)で基礎から確認できます。
+
+学校で使われるクラウド型AIは、家庭で高性能なパソコンを買わないと使えないものではありません。端末の考え方は、[AIを使うのに高いPCは必要か](/articles/202607-ai-pc-cloud-local-spec-guide/)で整理しています。
+
+## 公式情報・参考報道
+
+- [文部科学省：総則・評価特別部会（第10回）配付資料](https://www.mext.go.jp/b_menu/shingi/chukyo/chukyo3/103/siryo/mext_00054.html)
+- [文部科学省：情報活用能力の抜本的向上及び柔軟な教育課程の在り方等について](https://www.mext.go.jp/content/20260708-mxt_kyoiku01-000050888-2.pdf)
+- [文部科学省：学習指導要領等の改訂スケジュール](https://www.mext.go.jp/content/20260708-mxt_kyoiku01-000050888-6.pdf)
+- [文部科学省：総則・評価特別部会取りまとめ（案）](https://www.mext.go.jp/content/20260722-mxt_kyoiku01-000051172-2.pdf)
+- [文部科学省：学校現場における生成AIの利用について](https://www.mext.go.jp/zyoukatsu/ai/about.html)
+- [FNNプライムオンライン：小中学校の情報教育を大幅拡充へ](https://www.fnn.jp/articles/-/1073030)
+- [ITmedia NEWS：小中で「情報」新設、先行実施へ](https://www.itmedia.co.jp/news/articles/2607/08/news156.html)
+- [ReseEd：情報教育に最大70コマ、先行実施を検討](https://reseed.resemom.jp/article/2026/07/09/13648.html)
+
+<Note>
+  記載内容は2026年7月26日時点です。今後の審議、答申、告示で名称・時数・実施時期が変わる可能性があります。
+</Note>
+
