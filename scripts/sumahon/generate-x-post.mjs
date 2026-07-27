@@ -14,8 +14,8 @@
 // - 報道・噂ベース記事 (isReporting=true) は「噂」「報道ベース」「公式発表ではない」など
 //   hedge 表現を含めるよう調整。
 // - URL は production URL (https://sumalabo.com/articles/{slug}/) を使う。Preview URL は受け取らない。
-// - ハッシュタグは「カテゴリ1 + #すまラボ + 題材0〜2」の 2〜4 個に丸める。
-//   題材タグは、読者が X で検索しそうな番組名・製品名・サービス名だけを採用する。
+// - ハッシュタグは「カテゴリ1 + #すまラボ + X検索で生存確認済みの題材0〜2」の 2〜4 個。
+//   コードは候補だけを出し、投稿直前のブラウザ検索で検証された候補だけを採用する。
 //   すまほん / smhn 表記は出さない。
 // - description が空のときは title から短縮要約を作る。
 // - 文字数が溢れる場合は本文末尾の説明から削る。
@@ -117,38 +117,32 @@ const GENERIC_SUBJECT_TAGS = new Set([
   "トラブル", "カスタマーサポート", "すまラボ",
 ]);
 
-// タイトルから安全に拾える既知の固有名詞。未知語を推測して誤タグを作らないため、
-// 自動抽出はこの表と frontmatter tags の明示語に限定する。
+// 企業名単体・巨大すぎる一般ブランドは題材タグにしない。番組・イベント・
+// キャンペーンなど、その時点で人が集まる波を優先する。
+const BROAD_SUBJECT_TAGS = new Set([
+  "google", "apple", "salesforce", "anthropic", "openai", "microsoft", "meta",
+  "amazon", "sony", "samsung", "xiaomi", "huawei", "tesla", "netflix", "line",
+  "youtube", "iphone", "android",
+]);
+
+// タイトルから出すのは既に短い形で流通し得る候補だけ。複数語を連結したタグは作らない。
 const TITLE_SUBJECT_RULES = [
-  [/Claude\s+Opus\s*\d+(?:\.\d+)?/i, (m) => m[0]],
-  [/Claude\s+Fable\s*\d+(?:\.\d+)?/i, (m) => m[0]],
-  [/GPT[-\s]?\d+(?:\.\d+)?/i, (m) => m[0]],
-  [/Windows\s*11/i, () => "Windows11"],
-  [/DX[-\s]?LINE/i, () => "DXLINE"],
-  [/AIハヤト/i, () => "AIハヤト"],
+  [/VIVANT/i, () => "VIVANT"],
   [/Agentforce/i, () => "Agentforce"],
-  [/Salesforce/i, () => "Salesforce"],
   [/ChatGPT/i, () => "ChatGPT"],
   [/VOICEVOX/i, () => "VOICEVOX"],
   [/YouTube/i, () => "YouTube"],
-  [/VIVANT/i, () => "VIVANT"],
-  [/Anthropic/i, () => "Anthropic"],
   [/Claude/i, () => "Claude"],
   [/Gemini/i, () => "Gemini"],
-  [/Google/i, () => "Google"],
-  [/Netflix/i, () => "Netflix"],
   [/Poinpy|ポインピー/i, () => "Poinpy"],
-  [/iPhone(?:\s*\d+)?(?:\s*Pro)?/i, (m) => m[0]],
+  [/iPhone/i, () => "iPhone"],
   [/AirPods/i, () => "AirPods"],
-  [/Apple/i, () => "Apple"],
   [/Android/i, () => "Android"],
-  [/Pixel(?:\s*\d+)?/i, (m) => m[0]],
-  [/Galaxy(?:\s*[A-Z]?\d+)?/i, (m) => m[0]],
-  [/Tesla/i, () => "Tesla"],
+  [/Pixel/i, () => "Pixel"],
+  [/Galaxy/i, () => "Galaxy"],
   [/Grok/i, () => "Grok"],
   [/Copilot/i, () => "Copilot"],
   [/Codex/i, () => "Codex"],
-  [/(?:^|[^A-Za-z])LINE(?:[^A-Za-z]|$)/, () => "LINE"],
 ];
 
 function normalizeTagInputs(tags) {
@@ -168,9 +162,10 @@ function normalizeTagInputs(tags) {
 }
 
 function hashtagToken(value) {
-  return String(value || "")
-    .replace(/^#+/, "")
-    .replace(/[^\p{L}\p{N}_\u30FC]/gu, "");
+  const token = String(value || "").trim().replace(/^#+/, "");
+  // 空白・ハイフン・句読点を除去して新語を作るのは禁止。元から単一タグ形の語だけ通す。
+  if (!/^[\p{L}\p{N}_\u30FC]+$/u.test(token)) return "";
+  return token;
 }
 
 function isSubjectCandidate(raw, { title = "", explicitTag = false } = {}) {
@@ -178,7 +173,14 @@ function isSubjectCandidate(raw, { title = "", explicitTag = false } = {}) {
   if (!token || token.length < 2 || token.length > 30) return false;
   const key = token.toLowerCase();
   if (GENERIC_SUBJECT_TAGS.has(key)) return false;
+  if (BROAD_SUBJECT_TAGS.has(key)) return false;
   if (/^\d{1,4}(?:月|日|年|時)?$/.test(token) || /^\d+月\d+日/.test(token)) return false;
+  // AIハヤト型の機械的な混成語、DXLINE型の記号除去連結を候補にしない。
+  if (/^(?:AI|DX|GPT)[ぁ-んァ-ヶ一-龯]/.test(token) || /^DX[A-Z0-9]{2,}$/.test(token)) return false;
+  // モデル名・製品名の複数語連結は、流通実績のある短いファミリータグへ丸める。
+  for (const family of ["Claude", "ChatGPT", "Gemini", "iPhone", "Pixel", "Galaxy", "Windows"]) {
+    if (key.startsWith(family.toLowerCase()) && key.length > family.length) return false;
+  }
 
   // 固有名詞らしさ: 英字を含む、カタカナの商品名、またはタイトルにも同じ明示タグがある。
   if (/[A-Za-z]/.test(token)) return true;
@@ -186,7 +188,7 @@ function isSubjectCandidate(raw, { title = "", explicitTag = false } = {}) {
   return explicitTag && title.includes(String(raw).replace(/^#+/, "").trim()) && token.length <= 16;
 }
 
-function pickSubjectHashtags({ title = "", tags = [] } = {}) {
+export function buildSubjectHashtagCandidates({ title = "", tags = [] } = {}) {
   const candidates = [];
   // frontmatter tags は編集時に重要順で並べるため、タイトルの自動抽出より優先する。
   for (const tag of normalizeTagInputs(tags)) candidates.push({ value: tag, explicitTag: true });
@@ -209,13 +211,18 @@ function pickSubjectHashtags({ title = "", tags = [] } = {}) {
   return selected;
 }
 
-/** カテゴリ1 + #すまラボ + 題材最大2（合計最大4）を返す。 */
-export function buildHashtags({ title = "", description = "", topicCategory = "", category = "", tags = [] } = {}) {
+/** カテゴリ1 + #すまラボ + X検索で検証済みの題材最大2（合計最大4）を返す。 */
+export function buildHashtags({ title = "", description = "", topicCategory = "", category = "", tags = [], validatedSubjectTags = [] } = {}) {
   const categoryTag = pickCategoryHashtags({ title, description, topicCategory, category });
-  const subjectTags = pickSubjectHashtags({ title, tags });
+  const candidates = buildSubjectHashtagCandidates({ title, tags });
+  const candidateMap = new Map(candidates.map((tag) => [tag.toLowerCase(), tag]));
+  const validated = normalizeTagInputs(validatedSubjectTags)
+    .map((tag) => `#${hashtagToken(tag)}`)
+    .filter((tag) => tag !== "#" && candidateMap.has(tag.toLowerCase()))
+    .map((tag) => candidateMap.get(tag.toLowerCase()));
   const result = [categoryTag, "#すまラボ"];
   const seen = new Set(result.map((tag) => tag.toLowerCase()));
-  for (const tag of subjectTags) {
+  for (const tag of validated) {
     if (seen.has(tag.toLowerCase())) continue;
     result.push(tag);
     seen.add(tag.toLowerCase());
@@ -315,6 +322,7 @@ export function generateXPost({
   category = "",
   type = "",
   tags = [],
+  validatedSubjectTags = [],
   thumbnail = "",
   productionUrl = "https://sumalabo.com",
   articleBrief = null,
@@ -336,7 +344,9 @@ export function generateXPost({
     topicCategory: articleBrief?.topicCategory,
     category,
     tags,
+    validatedSubjectTags,
   });
+  const subjectHashtagCandidates = buildSubjectHashtagCandidates({ title, tags });
 
   const warnings = [];
   if (!description) warnings.push("description が空のため title から要約を生成しました");
@@ -394,6 +404,7 @@ export function generateXPost({
     thumbnailPath: thumbnail || null,
     hashtags,
     subjectHashtags: hashtags.slice(2),
+    subjectHashtagCandidates,
     primary: {
       text: primaryRes.post,
       charCount: primaryRes.charCount,

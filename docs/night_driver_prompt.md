@@ -95,12 +95,12 @@ finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待た�
 
 前提: Phase B 完了 + strict verify 8/8 + 本番 URL 200。
 
-> **投稿形式（2026-07-27 題材タグ強化）: 本投稿＝スライド画像4枚（1枚目=サムネ／2〜4枚目=slide01・02・03）＋短文＋ハッシュタグ。タグはカテゴリ1＋`#すまラボ`＋題材最大2、合計3〜4個を上限（題材なしは2個）。題材タグは「読者がXで検索しそうな固有名詞か」で判断し、番組名・製品名・サービス名だけを採用、`#スマホ`・`#ニュース`等の一般語は題材枠に入れない。記事リンクは本投稿に入れず、本投稿へのリプライに1件だけ付ける。** 設定は `autonomy.json` の `xPostOptions`。詳細: [`x_post_workflow.md`](x_post_workflow.md) / 人間側の初速: [`growth_playbook.md`](growth_playbook.md)。
+> **投稿形式（2026-07-27 題材タグ再調整）: 本投稿＝スライド画像4枚＋短文＋ハッシュタグ。タグはカテゴリ1＋`#すまラボ`＋X検索で生存確認済みの題材最大2（合計2〜4個）。題材なしの2個投稿を正常系とする。候補は投稿直前にXの「最新」で1回検索し、過去7日以内に3投稿以上・3アカウント以上を確認できたものだけ採用する。連結造語、企業名単体、巨大一般タグは禁止。記事リンクは本投稿に入れず、本投稿へのリプライに1件だけ付ける。** 設定は `autonomy.json` の `xPostOptions`。詳細: [`x_post_workflow.md`](x_post_workflow.md) / 人間側の初速: [`growth_playbook.md`](growth_playbook.md)。
 > **鉄則: 画像添付は前面タブで行う（背面では OS クリップボード貼り付け不成立）。OGP カード待ちはしない（本投稿は画像）。画像が乗らないときのみ合計 5 分 / 3 回で打ち切りサムネ1枚→text_only にフォールバック。粘らない。**
 
 0. **【必須】独立検品（生成の文脈を持たない別エージェントでの白紙再検査）**: `npm run sumalabo:inspect -- --slug <slug>` でプロンプト生成 → **生成した本人のセッションとは別の Task エージェント**を起動し、全画像（サムネ+スライド8）を1枚ずつ Read で読ませ、factcheck 12項目＋スライド本文と最終稿の突合を白紙の目で判定させる。出力（`INDEPENDENT_INSPECTION_SCHEMA`）を `logs/article/<slug>.independent-inspection.json` に保存。**本人チェック（factcheck_images）との判定差があれば独立検品を優先**。`needs_revision` は該当のみ**最大2回**再生成→直らなければそのスライドを X から除外（`excludedFromX`）して残りで投稿（**記事の公開自体は止めない**）。X 直接投稿の画像は検品の `xSelection`（文字量少・数字正確・単体で意味が通る上位4枚）を使う。
 0-bis. **【必須】手の部位拡大・二段検品**: 一次独立検品の `handChecks` で手が見えると判定された画像だけを対象に、`npm run sumalabo:inspect-hands -- --slug <slug>` を実行する。手・手首・前腕のクロップを外部出力先へ作り、元の生成セッションとは別の `codex exec --ephemeral` セッションへ渡す。左右/親指位置・手首接続・指比率を個別判定し、明確な左右不整合・接続異常は `needs_revision`、比率だけの違和感はクロップ画像付き `warning` とする。`needs_revision` は該当画像を再生成して一次・二段検品をやり直す。夜間レポートには「二段検品の実施画像数・手クロップ数・判定内訳」を1行記録する。
-1. `npm run social:generate-x-post -- --slug <slug>` — `logs/social/<slug>.x-post.json` に本投稿文(`primary`)・リプライ文(`reply`)・添付画像(`attachmentPlan.attach`＝検品の xSelection)が出る。`X加重` が 280 以内・本投稿にURLが無いこと・`subjectHashtags` が検索される固有名詞だけで最大2個になっていることを確認。
+1. `npm run social:generate-x-post -- --slug <slug>` — JSONの`subjectHashtagCandidates`を確認。候補があれば `(<候補1> OR <候補2>) since:<7日前の日付>` をXの「最新」で**1回だけ**検索し、候補ごとに3投稿以上・3アカウント以上を確認する。合格タグがあれば `npm run social:generate-x-post -- --slug <slug> --validated-subject-tags <tag1,tag2>` で再生成。合格なしは初回出力（カテゴリ＋`#すまラボ`）を使う。`X加重` 280以内・URLなし・`subjectHashtags`が検証結果と一致することを確認。
 2. Chrome で `x.com/compose/post` を**専用の新規タブ**で**前面化**して開く。アカウントが **@suma_labo** であることを DOM で確認。
 3. 本投稿の composer へ本文（URL無し）を入力し innerText を読み戻して検証。`attachmentPlan.attach` の4枚を添付（`x-post-chrome.ps1 -ImagePaths <4枚>` でまとめて CF_HDROP → Ctrl+V、または1枚ずつ）。**添付枚数=4 を DOM 検証**してから送信。
 4. **画像が乗らない場合のみフォールバック**（合計 5 分 / 3 回まで）: サムネ1枚だけの画像投稿（`images1+reply`）→それも不可なら text_only（本投稿にリンク）で即投稿。

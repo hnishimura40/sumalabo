@@ -37,7 +37,8 @@ CLAUDE.md、docs/x_post_workflow.md、logs/social/<slug>.x-post.jsonを読み、
 2. 本投稿の準備
 - `https://x.com/compose/post` を専用タブで開く。
 - `primary.text` をURLなしで入力し、composerのinnerTextを読み戻して完全一致を確認。
-- `hashtags` がカテゴリ1＋`#すまラボ`＋題材最大2（合計3〜4を上限、題材なしは2）であることを確認。題材タグは「読者がXで検索しそうな固有名詞か」を基準に、番組名・製品名・サービス名だけを採用し、`#スマホ`・`#ニュース`等の一般語は題材枠に入れない。`subjectHashtags` と本文末尾が一致しない場合は送信しない。
+- `subjectHashtagCandidates`があれば、`(<候補1> OR <候補2>) since:<7日前の日付>`をXの「最新」で1回検索する。候補ごとに過去7日以内の投稿が3件以上かつ3アカウント以上なら生存、満たさなければ不採用。生存候補だけを最大2個指定して `npm run social:generate-x-post -- --slug <slug> --validated-subject-tags <tag1,tag2>` を再実行する。合格なしは初回のカテゴリ＋`#すまラボ`だけでよく、無理に増やさない。
+- 空白・ハイフン除去で複数語を連結した造語（`#ClaudeOpus5`・`#DXLINE`型）、企業名単体、`#Google`・`#Apple`級の巨大一般タグは採用禁止。モデル名は`#Claude`等の短い既存タグへ丸めるか本文だけに置く。`subjectHashtags`と本文末尾が一致しない場合は送信しない。
 - `attachmentPlan.attach` の画像を順番どおり添付。`MEDIA_COUNT_JS` で予定枚数と一致し、`SEND_READY_JS` がreadyになるまで待つ。
 - 本文、添付順、添付枚数に不一致があれば送信しない。
 
