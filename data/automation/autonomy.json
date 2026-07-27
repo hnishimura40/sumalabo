@@ -7,7 +7,14 @@
     "toL1": 1
   },
   "cleanCount": 1,
-  "incidents": [],
+  "incidents": [
+    {
+      "at": "2026-07-27T14:08:47.250Z",
+      "slug": "202607-chatgpt-outage-july-recurring",
+      "kind": "post_publish_hard_fail",
+      "detail": "articleHttp200,slugInHtml"
+    }
+  ],
   "testMode": {
     "enabled": false,
     "articlesRemaining": 0,
