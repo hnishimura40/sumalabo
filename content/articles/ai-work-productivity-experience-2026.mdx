@@ -1,0 +1,204 @@
+---
+title: "仕事のAIが「一段階」変わった。実務で感じたGPT-5.6とFable 5の使い方"
+slug: "ai-work-productivity-experience-2026"
+type: "news"
+category: "やってみた・検証"
+description: "生成AIは相談相手から、一緒に仕事を組み立てる相手へ。資料統合、業務フロー、Excel・PowerPoint、会議準備で感じた変化と注意点を実務者目線で紹介します。"
+thumbnail: "/images/thumbnails/ai-work-productivity-experience-2026.webp"
+thumbnailAlt: "仕事のAIが一段階変わったをテーマに、オフィスでひまりが複数の書類からフロー図を組み立て、らぼまるが相談から共同作業への変化を示すサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "生成AI"
+  - "仕事効率化"
+  - "GPT-5.6"
+  - "Claude Fable 5"
+  - "PowerPoint"
+  - "Excel"
+  - "業務改善"
+related:
+  - "ai-model-benchmark-cost-guide-2026"
+  - "202607-ai-pc-cloud-local-spec-guide"
+  - "202607-chatgpt-5h-limit-lifted-max-ultra"
+  - "202607-gpt-5-6-sol-terra-luna-release"
+pubDate: "2026-07-27"
+updated: "2026-07-27"
+publishAt: "2026-07-27T23:40:00+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+## 30秒サマリー
+
+<Summary30>
+  <ol>
+    <li>生成AIは<strong>「相談相手」から「一緒に仕事を組み立てる相手」</strong>へ変わった</li>
+    <li>資料統合、フロー図、表、会議準備まで一続きに扱えると、作る速さ以上に<strong>検討回数が増える</strong></li>
+    <li>PowerPointやExcelは完成品であると同時に、<strong>自分の考えを映す鏡</strong>になる</li>
+    <li>機密を入力せず、数字・制度・最終判断は人が確認する責任は変わらない</li>
+  </ol>
+</Summary30>
+
+少し前まで、仕事で使う生成AIは、文章を整えたり長い資料を要約したりする「相談相手」でした。それでも便利でしたが、最後にWordやExcel、PowerPointへ移し、仕事の形にするのは人間の役目でした。
+
+今は違います。複数のファイルを読み、全体像を整理し、抜けを探し、表やフロー図の形にして、その成果物を見ながらさらに議論できる。私の中では、生成AIが<strong>「相談相手」から「一緒に仕事を組み立てる相手」へ</strong>変わりました。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最初に、体感の変化を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-work-productivity-experience-2026/slide01-partner.webp" alt="相談相手から一緒に仕事を組み立てる相手へという生成AIの変化を示す図解" loading="lazy" decoding="async" />
+    <figcaption>相談から、仕事を一緒に組み立てる段階へ</figcaption>
+  </figure>
+</section>
+
+## 何が変わった？ ファイルをまたいで全体を見られる
+
+私が扱うのは、<strong>複数の制度・ルール・様式・関係者が絡む事務系の仕事</strong>です。新しいサービスを立ち上げるときも、1枚の資料を作れば終わりではありません。本部のルール、過去の会議資料、既存の表、申込様式、外部パートナーとの打ち合わせ記録などが別々にあります。
+
+以前は、ファイルを一つずつ開き、メモを取り、頭の中で関係をつないでいました。今は関連資料をまとめて読ませ、次のように頼めます。
+
+- 利用する人から見た流れを、最初から最後まで並べる
+- 各段階で、誰が何をするのかを表にする
+- どの場面で、どの様式を使うのかを整理する
+- 現在の案で、決まっていない点や矛盾を洗い出す
+
+最初から正解が出るわけではありません。それでも白紙から作るのではなく、いったん見える形になった全体像へ「この確認はもっと前では」「ここは外部パートナーの役割では」「記録票は利用者の手元に置く必要がある」と修正を入れられます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">散らばった資料が、1本の流れになります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-work-productivity-experience-2026/slide02-files-to-flow.webp" alt="複数のルール、会議資料、表、様式を読み込み、全体フローへ整理する様子の図解" loading="lazy" decoding="async" />
+    <figcaption>ファイル横断で、仕事の全体像を作る</figcaption>
+  </figure>
+</section>
+
+## 実務で役立った3つの場面
+
+### 1. 様式を作る前に「なぜ必要か」を整理する
+
+申込書、確認表、記録票、報告書、管理表。様式は増やせばよいものではありません。似た内容を何度も書かせれば負担になり、減らしすぎれば後から確認できません。
+
+生成AIに複数の様式を比べさせ、「共通項目」「片方にしかない役割」「代替できる部分」「残すべき理由」を分けると、見た目ではなく、仕事の中で果たす役割を考えられます。様式を作りながら、運用そのものを理解し直す感覚です。
+
+### 2. 受け取っているデータを棚卸しする
+
+複数部門や外部パートナーから受け取るデータは、前年と同じだからという理由だけで残りがちです。名称、利用目的、使う場面、更新頻度、含まれる情報の細かさを表にすると、「実際には使っていない」「別資料と重複している」「目的に対して細かすぎる」といった問題が見えます。
+
+### 3. 会議の前に、違う立場から質問してもらう
+
+説明資料を読ませ、初めて聞く人、慎重に確認する人、現場で使う人などの立場から質問させます。「この数字の前提は」「例外時は誰が判断するのか」「成果だけを強調していないか」と返されると、本番前に説明の弱い場所を直せます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">実務の3場面を並べて確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-work-productivity-experience-2026/slide03-three-scenes.webp" alt="様式の役割整理、データの棚卸し、会議準備という生成AIの3つの使用場面を示す図解" loading="lazy" decoding="async" />
+    <figcaption>様式・データ・会議準備で使う</figcaption>
+  </figure>
+</section>
+
+## 後半の山：資料は「自分が理解する道具」になった
+
+PowerPointやExcelは、人へ見せる完成品だと思われがちです。しかし私には、<strong>完成品であると同時に、自分の考えを映す鏡</strong>です。
+
+頭の中では分かったつもりでも、関係者を横に並べ、時間の流れに沿って処理を置くと、情報が止まる場所、役割が空白の場所、記録の戻り先がない場所が見えます。Excelに項目を並べれば、目的の重複や不要な受け取りにも気づけます。
+
+生成AIに資料を作らせる目的は、見栄えのよいものを早く手に入れることだけではありません。生成された図を見て「この矢印は逆では」「内部の動きと利用者の動きを分けたい」「書類名ではなく目的を書きたい」と返す。修正版を見て、また考える。この往復に価値があります。
+
+<CharacterBubble speaker="himari" mood="aha">資料が答えじゃなくて、考えを確かめる画面になるんだね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">図や表にすると、「分かっていたつもり」の場所が見つかりやすいよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">PowerPointとExcelを「思考の鏡」として使います。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-work-productivity-experience-2026/slide04-mirror.webp" alt="PowerPointやExcelが完成品であると同時に自分の考えを映す鏡になることを示す図解" loading="lazy" decoding="async" />
+    <figcaption>資料を作ることが、理解することにつながる</figcaption>
+  </figure>
+</section>
+
+## 生産性が上がった最大の理由は、検討回数が増えたこと
+
+作業時間は短くなりました。ただ、最も大きい変化は単純な時短ではありません。<strong>生産性が上がった最大の理由は、検討回数が増えたこと</strong>です。
+
+以前は資料の形を整えるだけで時間を使い、十分に見直せないまま締切を迎えることがありました。今は早い段階で表やフロー図ができるため、体裁の前に中身の議論を始められます。
+
+<strong>考える→図にする→違和感を見つける→修正するのサイクル</strong>を、同じ時間で何度も回せる。生成AIが人間の代わりに考えるというより、人間が考える材料を次々に出してくれる感覚に近いです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">速さの正体は、検討サイクルの回数です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-work-productivity-experience-2026/slide05-iteration.webp" alt="考える、図にする、違和感を見つける、修正するという検討サイクルの図解" loading="lazy" decoding="async" />
+    <figcaption>検討回数が増えると、理解と完成度が上がる</figcaption>
+  </figure>
+</section>
+
+## GPT-5.6とFable 5は、どちらが常に上ではない
+
+2026年7月27日時点、私の体感では、GPT-5.6は資料、表、図、調査などを幅広くつなぎ、まとまった仕事として任せやすい総合力があります。OpenAIがGPT-5.6を発表したのは<strong>2026年7月9日</strong>で、公式にも複雑な知識労働や設計、成果物づくりを含む用途が説明されています。
+
+Claude Fable 5は、複雑な問題を長く考えさせたい場面で使います。Anthropicは2026年6月9日の発表で、長く複雑な仕事ほど他モデルとの差が広がり、多段階の知識労働を少ない監督で進めるモデルだと説明しています。
+
+ただし、どちらが常に上という話ではありません。ファイルをまたいで幅広く形にしたいのか、難しい論点を長く掘り下げたいのかで選びます。料金・速度・利用枠まで含む「数字編」は、姉妹記事の[AIモデル、結局どれを使えばいい？ベンチマークとコスパの読み方2026](/articles/ai-model-benchmark-cost-guide-2026/)で整理しています。
+
+<Note>モデル名、機能、提供範囲は2026年7月27日時点です。プランや利用枠は変わるため、利用画面と公式案内を確認してください。</Note>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">用途で2つのモデルを使い分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-work-productivity-experience-2026/slide06-models.webp" alt="GPT-5.6は幅広い実務、Fable 5は複雑な問題を長く考える場面という使い分けの図解" loading="lazy" decoding="async" />
+    <figcaption>どちらが常に上ではなく、仕事で選ぶ</figcaption>
+  </figure>
+</section>
+
+## 便利になっても、確認と責任は人に残る
+
+複数部門・外部と連携する仕事では、扱う情報に注意が必要です。氏名、住所、連絡先、識別番号など個人を特定できる情報は入力しません。事例を検討するときも、個人や組織が分からない形へ置き換えます。外部へ出せない資料は扱わず、組織のAI利用ルールに従います。
+
+また、生成AIが示した数字、日付、制度、関連ルールは必ず元資料で確認します。論点整理やたたき台づくりには強くても、最終判断を任せることはできません。<strong>「AIがそう言ったから」は、採用する理由になりません。</strong>
+
+- 機密・個人情報を入力しない
+- 数字やルールは一次資料へ戻って確認する
+- 最終判断と説明責任は人が持つ
+- 組織で定めた利用範囲を守る
+
+利用するAIの処理はクラウド側で行われることが多く、一般的な事務作業のためだけに高価なPCが必須とは限りません。端末選びは[AIを使うPCに高いスペックが必要かを整理した記事](/articles/202607-ai-pc-cloud-local-spec-guide/)も参考になります。利用枠が気になる場合は、[GPT-5.6の5時間制限の現況](/articles/202607-chatgpt-5h-limit-lifted-max-ultra/)も確認してください。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">任せる範囲と、人が守る線を分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-work-productivity-experience-2026/slide07-responsibility.webp" alt="機密を入れない、元資料で確認する、最終判断は人が行うという注意点の図解" loading="lazy" decoding="async" />
+    <figcaption>便利さが増えても、確認と責任は手放さない</figcaption>
+  </figure>
+</section>
+
+## 生成AIで、以前より多く考えられるようになった
+
+資料のたたき台が早くできる。図を見て疑問を出す。別の立場から質問させ、もう一度組み直す。PowerPointやExcelを鏡にして、自分の理解を深める。この使い方を始めてから、仕事は速くなっただけでなく、考える密度が上がりました。
+
+<strong>生成AIを使うことで考えなくてよくなったのではない。むしろ、以前より多く考えられるようになった。</strong>
+
+数か月前なら「これはAIには無理だろう」と最初から切り分けていた仕事が、今はまず一緒に全体像を作ってみる対象になっています。私の実感として、<strong>「これはAIには無理だろう」と思う仕事が、ここ数か月で驚くほど減りました。</strong>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、体感を1枚でまとめます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/ai-work-productivity-experience-2026/slide08-more-thinking.webp" alt="生成AIによって考えなくなるのではなく以前より多く考えられるようになったという実感の図解" loading="lazy" decoding="async" />
+    <figcaption>AIに任せることで、人の検討は増やせる</figcaption>
+  </figure>
+</section>
+
+## 参考情報
+
+- [OpenAI「GPT-5.6: Frontier intelligence that scales with your ambition」](https://openai.com/index/gpt-5-6/)
+- [OpenAI「GPT-5.6 is now the preferred model in Microsoft 365 Copilot」](https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot/)
+- [Anthropic「Claude Fable 5」](https://www.anthropic.com/claude/fable)
+- [Anthropic「Claude Fable 5 and Claude Mythos 5」](https://www.anthropic.com/news/claude-fable-5-mythos-5)

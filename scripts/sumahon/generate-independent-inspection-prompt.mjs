@@ -26,7 +26,7 @@ import { formalProductNamesChecklist } from "./formal-product-names.mjs";
 export const INDEPENDENT_INSPECTION_SCHEMA = {
   type: "object",
   additionalProperties: false,
-  required: ["overallPass", "slides", "thumbnail", "xSelection", "excludedFromX", "internalLinks", "avatarFallback"],
+  required: ["overallPass", "slides", "thumbnail", "xSelection", "excludedFromX", "internalLinks", "avatarFallback", "authorGeneralization"],
   properties: {
     overallPass: { type: "boolean", description: "全スライド+サムネに needs_revision が無ければ true（internalLinks は画像とは独立。needs_revision でも overallPass は下げず、本文リンクの削除/修正で対応する）" },
     internalLinks: {
@@ -58,6 +58,20 @@ export const INDEPENDENT_INSPECTION_SCHEMA = {
           type: "array",
           items: { type: "string" },
           description: "無効な mood を『speaker/mood（該当行の要約）』の形で1行ずつ。無ければ空配列",
+        },
+      },
+    },
+    authorGeneralization: {
+      type: "object",
+      additionalProperties: false,
+      required: ["verdict", "issues"],
+      description: "一人称の実務体験がある記事で、本文から筆者の業種・職種・組織種別を推定できないかを独立判定する。該当しない記事は not_applicable。",
+      properties: {
+        verdict: { type: "string", enum: ["ok", "needs_revision", "not_applicable"] },
+        issues: {
+          type: "array",
+          items: { type: "string" },
+          description: "推定可能なら『該当記述 → 推定できる業種・職種・組織種別』を具体的に記す。無ければ空配列。",
         },
       },
     },
@@ -259,8 +273,15 @@ X には**上位4枚だけ**を直接添付する。次の3点が満たされる
 - \`<CharacterBubble>\` が 1 つも無ければ verdict='not_applicable'。
 - **直し方は画像再生成ではなく「本文MDXの mood を有効な値に修正」**。この項目は overallPass を下げない（画像とは独立）。
 
+## (F) 筆者の業種・職種・組織種別を推定できないか（公開ブロック）
+一人称の実務体験を含む記事では、本文を白紙の目で読み、固有の制度、対象者、組織呼称、関係者、様式、権限、業務手順の組み合わせから、筆者の業種・職種・組織種別を推定できないかを単独判定する。
+- 推定できる場合は authorGeneralization.verdict='needs_revision' とし、issues に「どの記述から、何が推定できるか」を具体的に書く。
+- 「複数の制度・ルール・様式・関係者が絡む事務系の仕事」程度までしか分からなければ ok。
+- 一人称の実務体験がない記事は not_applicable。
+- needs_revision は公開ブロックであり、overallPass=false とする。画像再生成ではなく本文を一般化して直す。
+
 ## 出力（StructuredOutput ツールで返す。前置きの解説文は不要）
-INDEPENDENT_INSPECTION_SCHEMA に従い、slides[]（全スライド）・thumbnail・xSelection・excludedFromX・internalLinks・avatarFallback・overallPass を返す。slides[] と thumbnail の handChecks は、見える手ごとの必須回答であり省略禁止。
-overallPass は「全スライド+サムネに needs_revision が無い」ときだけ true（internalLinks・avatarFallback は overallPass に影響させない）。
+INDEPENDENT_INSPECTION_SCHEMA に従い、slides[]（全スライド）・thumbnail・xSelection・excludedFromX・internalLinks・avatarFallback・authorGeneralization・overallPass を返す。slides[] と thumbnail の handChecks は、見える手ごとの必須回答であり省略禁止。
+overallPass は「全スライド+サムネに needs_revision がなく、authorGeneralization が needs_revision ではない」ときだけ true（internalLinks・avatarFallback は overallPass に影響させない）。
 `;
 }

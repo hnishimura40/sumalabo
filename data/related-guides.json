@@ -20,6 +20,24 @@
       "listStaple": false
     },
     {
+      "slug": "ai-work-productivity-experience-2026",
+      "label": "仕事のAIが一段階変わった実務体験",
+      "blurb": "資料統合・フロー図・Excel・PowerPointで感じた変化を実例で紹介",
+      "categories": ["やってみた・検証", "ニュースをかみくだく"],
+      "_kwNote": "生成AIの業務活用・仕事効率化・資料作成の記事から、実務体験の定番受け皿へ案内する。AI単独語では表示しない。",
+      "keywords": [
+        "生成AI 仕事活用",
+        "AI 業務効率化",
+        "AI 資料作成",
+        "AI PowerPoint",
+        "AI Excel",
+        "AI 業務フロー",
+        "GPT-5.6 仕事",
+        "Fable 5 仕事"
+      ],
+      "listStaple": true
+    },
+    {
       "slug": "202607-school-ai-class-proposal-explained",
       "label": "学校の「AI授業」案を整理",
       "blurb": "決まったこと・検討中・未定と、開始時期を中立に解説",
