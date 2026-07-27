@@ -7,7 +7,10 @@ import {
   parsePerformanceBlock,
   parseSlidePlan,
 } from "../../scripts/automation/codex-image-stage.mjs";
-import { hasIdentityAnchorMismatch } from "../../scripts/automation/phase-a-orchestrator.mjs";
+import {
+  hasIdentityAnchorMismatch,
+  validatePerformanceBlock,
+} from "../../scripts/automation/phase-a-orchestrator.mjs";
 
 test("parseSlidePlan extracts thumbnail and slide01-08 but stops before memo headings", () => {
   const text = [
@@ -72,9 +75,46 @@ test("performance block is extracted and passed to every image item", () => {
   assert.match(prompt, /親指は手の向きと体側に対して正しい側/);
   assert.match(prompt, /手首と前腕をねじれ・継ぎ足しなく接続/);
   assert.match(prompt, /各1人\/1体だけ/);
+  assert.match(prompt, /安全制約の適用範囲/);
+  assert.match(prompt, /首かけ・肩掛け・バッジ・ヘッドセット/);
+  assert.match(prompt, /標準衣装・棒立ちへの退避は禁止/);
+  assert.match(prompt, /演出項目そのものを削除・弱化してはならない/);
   assert.match(prompt, /点検用ベスト/);
   assert.match(prompt, /真剣に調べる顔/);
   assert.doesNotMatch(prompt, /スライドでは白い標準衣装/);
+});
+
+test("performance block rejects unexplained standard-only thumbnail outfits", () => {
+  const common = [
+    "## 演出ブロック",
+    "- 小道具: モニター",
+    "- 手・小道具: 手は体側",
+    "- ポーズ・動き: 見比べる",
+    "- 背景・状況: 司令室",
+    "- 表情: 穏やか",
+    "- 演出根拠: AI判定",
+  ];
+  const weak = validatePerformanceBlock([
+    common[0],
+    "- 衣装: ひまりは正本準拠の白衣。らぼまるは正本素体。",
+    ...common.slice(1),
+  ].join("\n"));
+  assert.equal(weak.ok, false);
+  assert.ok(weak.missing.some((item) => item.includes("テーマ別衣装")));
+
+  const themed = validatePerformanceBlock([
+    common[0],
+    "- 衣装: AI判定オペレーター風ジャケットとヘッドセット",
+    ...common.slice(1),
+  ].join("\n"));
+  assert.equal(themed.ok, true);
+
+  const neutral = validatePerformanceBlock([
+    common[0],
+    "- 衣装: 中立解説系のため標準衣装。比較表を邪魔しない理由による。",
+    ...common.slice(1),
+  ].join("\n"));
+  assert.equal(neutral.ok, true);
 });
 
 test("fallback identity classifier ignores performance changes", () => {

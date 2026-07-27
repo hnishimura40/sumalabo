@@ -1,0 +1,24 @@
+{
+  "overallPass": true,
+  "thumbnail": {
+    "id": "thumbnail",
+    "verdict": "ok",
+    "performanceFit": "themed",
+    "textExact": true,
+    "handChecks": [
+      {
+        "character": "labomaru",
+        "side": "right",
+        "bbox": { "x": 700, "y": 555, "width": 60, "height": 135 },
+        "note": "画像左側の白い短腕。青い耳ビレとは別。"
+      },
+      {
+        "character": "labomaru",
+        "side": "left",
+        "bbox": { "x": 875, "y": 555, "width": 65, "height": 135 },
+        "note": "画像右側の白い短腕。青い耳ビレとは別。"
+      }
+    ],
+    "issues": []
+  }
+}

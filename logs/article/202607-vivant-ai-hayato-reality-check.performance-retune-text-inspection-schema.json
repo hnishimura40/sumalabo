@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["overallPass", "regions", "extraGibberish", "note"],
+  "properties": {
+    "overallPass": { "type": "boolean" },
+    "regions": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "observed", "exact"],
+        "properties": {
+          "id": { "type": "integer", "minimum": 1, "maximum": 7 },
+          "observed": { "type": "string" },
+          "exact": { "type": "boolean" }
+        }
+      }
+    },
+    "extraGibberish": { "type": "boolean" },
+    "note": { "type": "string" }
+  }
+}

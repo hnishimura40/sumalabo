@@ -1,0 +1,51 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["overallPass", "thumbnail"],
+  "properties": {
+    "overallPass": { "type": "boolean" },
+    "thumbnail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "verdict", "performanceFit", "textExact", "anchorChecks", "bodyChecks", "rightsSafe", "issues"],
+      "properties": {
+        "id": { "type": "string" },
+        "verdict": { "type": "string", "enum": ["ok", "warning", "needs_revision"] },
+        "performanceFit": { "type": "string", "enum": ["themed", "weak_warning"] },
+        "textExact": { "type": "boolean" },
+        "anchorChecks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["himariSideTail", "himariAquaRibbon", "himariBlueEyes", "himariSameCharacter", "labomaruWhiteEggBody", "labomaruSingleLimeAntenna", "labomaruBlackRoundEyes", "labomaruOrangeHeart", "labomaruBlueCollar", "labomaruBlueEarFins", "labomaruSameCharacter"],
+          "properties": {
+            "himariSideTail": { "type": "boolean" },
+            "himariAquaRibbon": { "type": "boolean" },
+            "himariBlueEyes": { "type": "boolean" },
+            "himariSameCharacter": { "type": "boolean" },
+            "labomaruWhiteEggBody": { "type": "boolean" },
+            "labomaruSingleLimeAntenna": { "type": "boolean" },
+            "labomaruBlackRoundEyes": { "type": "boolean" },
+            "labomaruOrangeHeart": { "type": "boolean" },
+            "labomaruBlueCollar": { "type": "boolean" },
+            "labomaruBlueEarFins": { "type": "boolean" },
+            "labomaruSameCharacter": { "type": "boolean" }
+          }
+        },
+        "bodyChecks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["himariHandsFullyOccluded", "noPhantomHands", "labomaruTwoShortArms", "connectionsNatural", "noBodyFailure"],
+          "properties": {
+            "himariHandsFullyOccluded": { "type": "boolean" },
+            "noPhantomHands": { "type": "boolean" },
+            "labomaruTwoShortArms": { "type": "boolean" },
+            "connectionsNatural": { "type": "boolean" },
+            "noBodyFailure": { "type": "boolean" }
+          }
+        },
+        "rightsSafe": { "type": "boolean" },
+        "issues": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
