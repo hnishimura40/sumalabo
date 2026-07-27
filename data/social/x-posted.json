@@ -140,7 +140,25 @@
       "charCount": 149,
       "variant": "images4+reply",
       "imagesAttached": 4,
-      "replyUrl": "https://x.com/suma_labo/status/2081705534462586995"
+      "replyUrl": "https://x.com/suma_labo/status/2081705534462586995",
+      "recoveryPosts": [
+        {
+          "reason": "missing_hashtag_vivant",
+          "postedAt": "2026-07-27T11:44:50.794Z",
+          "postText": "#VIVANT の「AIハヤト」、現実ならどこまで作れる？\n\n劇中の能力を技術目線で分解し、「もうできる／条件付き／まだフィクション」の3段階で検証しました。音声対話は現実、映像の横断解析は制度が壁、確率判断は鵜呑み厳禁です。\n#AI #すまラボ",
+          "postUrl": "https://x.com/suma_labo/status/2081707073398861988",
+          "replyText": "3段ジャッジの詳しい根拠と出典はこちら👇\nhttps://sumalabo.com/articles/202607-vivant-ai-hayato-reality-check/",
+          "replyUrl": "https://x.com/suma_labo/status/2081707172615135658",
+          "route": "codex",
+          "variant": "images4+reply",
+          "imagesAttached": 4,
+          "hashtags": ["#VIVANT", "#AI", "#すまラボ"],
+          "mainExistenceCount": 1,
+          "replyCountBefore": 0,
+          "replyCountAfter": 1,
+          "replyExistenceCount": 1
+        }
+      ]
     }
   ]
 }
