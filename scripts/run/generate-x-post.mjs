@@ -4,6 +4,7 @@
 // 使い方:
 //   node scripts/run/generate-x-post.mjs --slug 202605-iphone-18-pro-dynamic-island-top-left-rumor
 //   [--productionUrl https://sumalabo.com]
+//   [--validated-subject-tags VIVANT,Claude]  # Xの最新検索で生存確認済みの候補だけ
 //
 // 入力:
 //   content/articles/{slug}.mdx (frontmatter)
@@ -75,6 +76,10 @@ async function main() {
   const sourceMeta = await loadJsonIfExists(`logs/source/${slug}.json`);
 
   const productionUrl = args.productionUrl || "https://sumalabo.com";
+  const validatedArg = args.validatedSubjectTags ?? args["validated-subject-tags"] ?? "";
+  const validatedSubjectTags = /^(?:none|なし)$/i.test(String(validatedArg).trim())
+    ? []
+    : String(validatedArg).split(",").map((tag) => tag.trim()).filter(Boolean);
 
   // Phase C 投稿形式（autonomy.json の xPostOptions）を読み、画像添付計画とリンク運用を決める。
   const xPostOptions = loadXPostOptions();
@@ -87,6 +92,7 @@ async function main() {
     category: fm.category || "",
     type: fm.type || "",
     tags: fm.tags || [],
+    validatedSubjectTags,
     thumbnail: fm.thumbnail || "",
     productionUrl,
     articleBrief,
@@ -114,7 +120,8 @@ async function main() {
     `- 記事リンクの置き場所: ${plan.linkInReply ? "リプライ（本投稿には入れない）" : "本投稿に含める"}`,
     `- 生成日時: ${result.generatedAt}`,
     `- ハッシュタグ: ${result.hashtags.join(" ")}`,
-    `- 題材タグ: ${result.subjectHashtags.length ? result.subjectHashtags.join(" ") : "なし"}`,
+    `- 題材タグ候補（投稿直前にX検索必須）: ${result.subjectHashtagCandidates.length ? result.subjectHashtagCandidates.join(" ") : "なし"}`,
+    `- X検索で検証済みの題材タグ: ${result.subjectHashtags.length ? result.subjectHashtags.join(" ") : "なし"}`,
     "",
     "## primary（本投稿）",
     "",
@@ -151,6 +158,7 @@ async function main() {
     "- primary を採用する場合: `node scripts/run/post-to-x.mjs --slug " + slug + "`",
     "- 代替案を使う場合: `--variant 結論先出し` または `--variant 問いかけ` を付けて呼ぶ",
     "- 投稿前に必ず本ファイルを目視で確認してください（特に hedge 表現と URL）",
+    "- 題材タグ候補はXの最新検索（過去7日・3投稿・3アカウント）で確認後、`--validated-subject-tags` を付けて再生成してください。合格なしは初回出力を使います",
     "",
   );
 
