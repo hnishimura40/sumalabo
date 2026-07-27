@@ -14,7 +14,9 @@
 // - 報道・噂ベース記事 (isReporting=true) は「噂」「報道ベース」「公式発表ではない」など
 //   hedge 表現を含めるよう調整。
 // - URL は production URL (https://sumalabo.com/articles/{slug}/) を使う。Preview URL は受け取らない。
-// - ハッシュタグは 2〜4 個に丸める。すまほん / smhn 表記は出さない。
+// - ハッシュタグは「カテゴリ1 + #すまラボ + 題材0〜2」の 2〜4 個に丸める。
+//   題材タグは、読者が X で検索しそうな番組名・製品名・サービス名だけを採用する。
+//   すまほん / smhn 表記は出さない。
 // - description が空のときは title から短縮要約を作る。
 // - 文字数が溢れる場合は本文末尾の説明から削る。
 //
@@ -77,16 +79,6 @@ const BAN_WORDS = [
 
 const HEDGE_PHRASES = ["噂", "報道", "可能性", "見方", "現時点", "公式発表ではない"];
 
-const HASHTAG_CATEGORIES = {
-  iphone: ["#iPhone", "#Apple", "#iPhone18Pro"],
-  android: ["#Android", "#Pixel", "#Galaxy"],
-  ai: ["#AI", "#生成AI", "#ChatGPT"],
-  gadget: ["#ガジェット", "#スマホ"],
-  mobile_plan: ["#格安SIM", "#通信費", "#eSIM"],
-  news: ["#ITニュース"],
-  base: ["#すまラボ"],
-};
-
 function pickCategoryHashtags({ title, description, topicCategory, category }) {
   const text = `${title} ${description} ${topicCategory || ""} ${category || ""}`.toLowerCase();
   const picked = new Set();
@@ -110,11 +102,126 @@ function pickCategoryHashtags({ title, description, topicCategory, category }) {
   if (/ガジェット|スマホ|スマートフォン|タブレット/.test(text)) {
     picked.add("#ガジェット");
   }
-  // 上限2個（2026-07-05 変更・現行3〜4個から削減）。#すまラボ は必ず含める。
-  // 話題タグは最も関連の強い1個だけ残す（タグ過多はリーチを下げるため）。
+  // カテゴリタグは最も関連の強い1個だけ残す。
   const topical = Array.from(picked).filter((t) => t !== "#すまラボ");
-  const first = topical[0] || "#ガジェット";
-  return [first, "#すまラボ"];
+  return topical[0] || "#ガジェット";
+}
+
+// 題材タグとして扱わない一般語。カテゴリタグとして使う語もここでは除外する。
+const GENERIC_SUBJECT_TAGS = new Set([
+  "ai", "生成ai", "aiモデル", "aiエージェント", "スマホ", "ニュース", "itニュース",
+  "ガジェット", "テクノロジー", "アプリ", "サービス", "プライバシー", "セキュリティ",
+  "利用規約", "検索サービス履歴", "メディアを保存", "ai学習", "映像解析", "顔認識",
+  "音声ai", "aiセキュリティ", "ベンチマーク", "aiサブスク", "api料金", "通信費",
+  "格安sim", "仕事", "教育", "学校", "動画", "画像", "比較", "料金", "リコール",
+  "トラブル", "カスタマーサポート", "すまラボ",
+]);
+
+// タイトルから安全に拾える既知の固有名詞。未知語を推測して誤タグを作らないため、
+// 自動抽出はこの表と frontmatter tags の明示語に限定する。
+const TITLE_SUBJECT_RULES = [
+  [/Claude\s+Opus\s*\d+(?:\.\d+)?/i, (m) => m[0]],
+  [/Claude\s+Fable\s*\d+(?:\.\d+)?/i, (m) => m[0]],
+  [/GPT[-\s]?\d+(?:\.\d+)?/i, (m) => m[0]],
+  [/Windows\s*11/i, () => "Windows11"],
+  [/DX[-\s]?LINE/i, () => "DXLINE"],
+  [/AIハヤト/i, () => "AIハヤト"],
+  [/Agentforce/i, () => "Agentforce"],
+  [/Salesforce/i, () => "Salesforce"],
+  [/ChatGPT/i, () => "ChatGPT"],
+  [/VOICEVOX/i, () => "VOICEVOX"],
+  [/YouTube/i, () => "YouTube"],
+  [/VIVANT/i, () => "VIVANT"],
+  [/Anthropic/i, () => "Anthropic"],
+  [/Claude/i, () => "Claude"],
+  [/Gemini/i, () => "Gemini"],
+  [/Google/i, () => "Google"],
+  [/Netflix/i, () => "Netflix"],
+  [/Poinpy|ポインピー/i, () => "Poinpy"],
+  [/iPhone(?:\s*\d+)?(?:\s*Pro)?/i, (m) => m[0]],
+  [/AirPods/i, () => "AirPods"],
+  [/Apple/i, () => "Apple"],
+  [/Android/i, () => "Android"],
+  [/Pixel(?:\s*\d+)?/i, (m) => m[0]],
+  [/Galaxy(?:\s*[A-Z]?\d+)?/i, (m) => m[0]],
+  [/Tesla/i, () => "Tesla"],
+  [/Grok/i, () => "Grok"],
+  [/Copilot/i, () => "Copilot"],
+  [/Codex/i, () => "Codex"],
+  [/(?:^|[^A-Za-z])LINE(?:[^A-Za-z]|$)/, () => "LINE"],
+];
+
+function normalizeTagInputs(tags) {
+  if (Array.isArray(tags)) return tags.flatMap((tag) => normalizeTagInputs(tag));
+  if (tags == null) return [];
+  const text = String(tags).trim();
+  if (!text) return [];
+  if (text.startsWith("[") && text.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(text.replace(/'/g, '"'));
+      if (Array.isArray(parsed)) return parsed.flatMap((tag) => normalizeTagInputs(tag));
+    } catch {
+      // JSON でなければ下の区切り文字処理へ進む。
+    }
+  }
+  return text.split(/[,、]/).map((tag) => tag.trim()).filter(Boolean);
+}
+
+function hashtagToken(value) {
+  return String(value || "")
+    .replace(/^#+/, "")
+    .replace(/[^\p{L}\p{N}_\u30FC]/gu, "");
+}
+
+function isSubjectCandidate(raw, { title = "", explicitTag = false } = {}) {
+  const token = hashtagToken(raw);
+  if (!token || token.length < 2 || token.length > 30) return false;
+  const key = token.toLowerCase();
+  if (GENERIC_SUBJECT_TAGS.has(key)) return false;
+  if (/^\d{1,4}(?:月|日|年|時)?$/.test(token) || /^\d+月\d+日/.test(token)) return false;
+
+  // 固有名詞らしさ: 英字を含む、カタカナの商品名、またはタイトルにも同じ明示タグがある。
+  if (/[A-Za-z]/.test(token)) return true;
+  if (/^[ァ-ヶー]{3,20}$/.test(token)) return true;
+  return explicitTag && title.includes(String(raw).replace(/^#+/, "").trim()) && token.length <= 16;
+}
+
+function pickSubjectHashtags({ title = "", tags = [] } = {}) {
+  const candidates = [];
+  // frontmatter tags は編集時に重要順で並べるため、タイトルの自動抽出より優先する。
+  for (const tag of normalizeTagInputs(tags)) candidates.push({ value: tag, explicitTag: true });
+  for (const [pattern, canonicalize] of TITLE_SUBJECT_RULES) {
+    const match = title.match(pattern);
+    if (match) candidates.push({ value: canonicalize(match), explicitTag: false });
+  }
+
+  const selected = [];
+  const seen = new Set();
+  for (const candidate of candidates) {
+    if (!isSubjectCandidate(candidate.value, { title, explicitTag: candidate.explicitTag })) continue;
+    const token = hashtagToken(candidate.value);
+    const key = token.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    selected.push(`#${token}`);
+    if (selected.length === 2) break;
+  }
+  return selected;
+}
+
+/** カテゴリ1 + #すまラボ + 題材最大2（合計最大4）を返す。 */
+export function buildHashtags({ title = "", description = "", topicCategory = "", category = "", tags = [] } = {}) {
+  const categoryTag = pickCategoryHashtags({ title, description, topicCategory, category });
+  const subjectTags = pickSubjectHashtags({ title, tags });
+  const result = [categoryTag, "#すまラボ"];
+  const seen = new Set(result.map((tag) => tag.toLowerCase()));
+  for (const tag of subjectTags) {
+    if (seen.has(tag.toLowerCase())) continue;
+    result.push(tag);
+    seen.add(tag.toLowerCase());
+    if (result.length === 4) break;
+  }
+  return result;
 }
 
 function sanitizeText(text) {
@@ -207,6 +314,7 @@ export function generateXPost({
   description = "",
   category = "",
   type = "",
+  tags = [],
   thumbnail = "",
   productionUrl = "https://sumalabo.com",
   articleBrief = null,
@@ -222,11 +330,12 @@ export function generateXPost({
   const isReporting = isReportingTopic({ title, description, type, articleBrief });
   const cleanTitle = sanitizeText(stripQuestionMark(title));
   const cleanDescription = sanitizeText(description);
-  const hashtags = pickCategoryHashtags({
+  const hashtags = buildHashtags({
     title,
     description,
     topicCategory: articleBrief?.topicCategory,
     category,
+    tags,
   });
 
   const warnings = [];
@@ -284,6 +393,7 @@ export function generateXPost({
     attachThumbnail: Boolean(thumbnail),
     thumbnailPath: thumbnail || null,
     hashtags,
+    subjectHashtags: hashtags.slice(2),
     primary: {
       text: primaryRes.post,
       charCount: primaryRes.charCount,

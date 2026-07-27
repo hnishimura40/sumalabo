@@ -39,7 +39,8 @@ const HARDENING = `
  2. 入力後に composer を読み戻して一致検証。不一致は selectAll→delete→再入力
  3. 送信は tweetButton の DOM 特定→click→composer 空読み戻しで確認
  4. accountIdentityJs("@suma_labo") で投稿前にアカウントDOMを確認（目視だけで済ませない）
- 5. 投稿後 /suma_labo/status/ リンクから URL を取得し --posted で記録`;
+ 5. ハッシュタグはカテゴリ1 + #すまラボ + 題材最大2（合計3〜4を上限）。題材タグは「読者がXで検索しそうな固有名詞か」で判定し、#スマホ・#ニュース等の一般語は追加しない
+ 6. 投稿後 /suma_labo/status/ リンクから URL を取得し --posted で記録`;
 
 async function main() {
   const argv = process.argv.slice(2);

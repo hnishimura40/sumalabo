@@ -81,11 +81,37 @@ test("6. variantName の命名", () => {
   assert.equal(variantName({ attachSlides: true, linkInReply: true, threadAllSlides: false }, 4), "images4+reply");
 });
 
-test("7. ハッシュタグ上限2個（#すまラボ必須）", async () => {
+test("7. ハッシュタグはカテゴリ＋ブランド＋題材最大2（合計4個まで）", async () => {
   const { generateXPost } = await import("../../scripts/sumahon/generate-x-post.mjs");
-  const r = generateXPost({ slug: "x", title: "ChatGPTとiPhoneとAndroidと格安SIMのニュース", description: "発表", type: "news" });
-  assert.equal(r.hashtags.length, 2, `タグは2個まで: ${r.hashtags.join(" ")}`);
+  const r = generateXPost({
+    slug: "x",
+    title: "VIVANTの「AIハヤト」は現実に作れる？",
+    description: "AIの現実を検証",
+    type: "news",
+    tags: ["VIVANT", "AIハヤト", "ニュース"],
+  });
+  assert.deepEqual(r.hashtags, ["#AI", "#すまラボ", "#VIVANT", "#AIハヤト"]);
+  assert.deepEqual(r.subjectHashtags, ["#VIVANT", "#AIハヤト"]);
   assert.ok(r.hashtags.includes("#すまラボ"), "#すまラボ が必ず含まれる");
+});
+
+test("7-b. 一般語は題材タグにせず、題材タグは最大2個", async () => {
+  const { buildHashtags } = await import("../../scripts/sumahon/generate-x-post.mjs");
+  const generic = buildHashtags({ title: "スマホニュース", tags: ["スマホ", "ニュース", "AI"] });
+  assert.deepEqual(generic, ["#ITニュース", "#すまラボ"]);
+
+  const products = buildHashtags({
+    title: "企業LINEの裏側にAIが入る",
+    tags: ["Salesforce", "LINE", "DX-LINE", "Agentforce"],
+  });
+  assert.deepEqual(products, ["#AI", "#すまラボ", "#Salesforce", "#LINE"]);
+});
+
+test("7-c. CLI frontmatter parser が複数行 tags を配列で渡せる", async () => {
+  const { extractFrontmatter } = await import("../../scripts/sumahon/frontmatter-lite.mjs");
+  const raw = `---\ntitle: "VIVANTのAIハヤト"\ntags:\n  - "VIVANT"\n  - "AIハヤト"\n---\n本文`;
+  const { fm } = extractFrontmatter(raw);
+  assert.deepEqual(fm.tags, ["VIVANT", "AIハヤト"]);
 });
 
 test("8. listSlideImages: fig*.webp のみ昇順", () => {

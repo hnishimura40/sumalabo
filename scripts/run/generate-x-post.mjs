@@ -24,6 +24,7 @@ import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { generateXPost } from "../sumahon/generate-x-post.mjs";
+import { extractFrontmatter } from "../sumahon/frontmatter-lite.mjs";
 import { loadXPostOptions, buildAttachmentPlan } from "../automation/x-post-options.mjs";
 
 function parseArgs(argv) {
@@ -42,23 +43,6 @@ function parseArgs(argv) {
     }
   }
   return args;
-}
-
-function extractFrontmatter(raw) {
-  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  if (!m) return { fm: {}, body: raw };
-  const fmText = m[1];
-  const body = m[2];
-  const fm = {};
-  for (const line of fmText.split(/\r?\n/)) {
-    const kv = line.match(/^([a-zA-Z_][\w]*)\s*:\s*(.+)$/);
-    if (!kv) continue;
-    const [, key, valRaw] = kv;
-    let val = valRaw.trim();
-    if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-    fm[key] = val;
-  }
-  return { fm, body };
 }
 
 async function loadJsonIfExists(p) {
@@ -102,6 +86,7 @@ async function main() {
     description: fm.description || "",
     category: fm.category || "",
     type: fm.type || "",
+    tags: fm.tags || [],
     thumbnail: fm.thumbnail || "",
     productionUrl,
     articleBrief,
@@ -129,6 +114,7 @@ async function main() {
     `- 記事リンクの置き場所: ${plan.linkInReply ? "リプライ（本投稿には入れない）" : "本投稿に含める"}`,
     `- 生成日時: ${result.generatedAt}`,
     `- ハッシュタグ: ${result.hashtags.join(" ")}`,
+    `- 題材タグ: ${result.subjectHashtags.length ? result.subjectHashtags.join(" ") : "なし"}`,
     "",
     "## primary（本投稿）",
     "",
