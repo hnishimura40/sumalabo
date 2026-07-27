@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-27T15:08:15.343Z",
+  "updatedAt": "2026-07-27T21:40:31.637Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -1387,6 +1387,27 @@
       "autonomyLevel": 0,
       "trigger": "manual",
       "hasAffiliate": true
+    },
+    {
+      "slug": "202607-uq-ymobile-no-bundle-discount-compare",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "night_driver",
+      "trigger": "manual",
+      "articleUrl": "https://sumalabo.com/articles/202607-uq-ymobile-no-bundle-discount-compare/",
+      "productionUrl": "https://sumalabo.com/articles/202607-uq-ymobile-no-bundle-discount-compare/",
+      "publishedAt": "2026-07-28T05:00:00+09:00",
+      "autonomyLevel": 1,
+      "hasAffiliate": false,
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/238",
+      "mergeCommit": "7145fa7ef8a06a48d45b286be8140bd9460d9895",
+      "status": "x_posted",
+      "xPostUrl": "https://x.com/suma_labo/status/2081856672662962535",
+      "xPostedAt": "2026-07-27T21:38:40Z",
+      "xPostVariant": "images4+reply",
+      "xRoute": "claude-in-chrome",
+      "xReplyUrl": "https://x.com/suma_labo/status/2081857071319040403",
+      "previewUrl": "https://sumalabo.com/articles/202607-uq-ymobile-no-bundle-discount-compare/"
     }
   ]
 }
