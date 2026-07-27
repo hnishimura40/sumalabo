@@ -152,6 +152,10 @@ test("derivePerformanceBlock: specific verification staging wins over generic pr
   assert.match(performance.thumbnail.handUse, /手のクローズアップを避け/);
   assert.match(performance.slides.handUse, /画面の主役にしない/);
   assert.match(performance.slides.handUse, /両手に別々の動作を同時指定しない/);
+  assert.match(performance.thumbnail.handUse, /標準衣装・棒立ちへ退避しない/);
+  assert.ok(performance.thumbnail.handsFreeAlternatives.includes("テーマ別衣装"));
+  assert.ok(performance.thumbnail.handsFreeAlternatives.some((item) => /首かけ|肩掛け/.test(item)));
+  assert.ok(performance.thumbnail.handsFreeAlternatives.some((item) => /姿勢と視線/.test(item)));
 });
 
 test("deriveExpression follows article emotion instead of defaulting to a smile", () => {

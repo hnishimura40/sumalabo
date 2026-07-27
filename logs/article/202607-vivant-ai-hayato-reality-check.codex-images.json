@@ -3,8 +3,8 @@
   "transport": "codex_exec",
   "outputDir": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check",
   "canonicalImages": [
-    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\vivant-ai-hayato\\assets\\characters\\himari-canonical.png",
-    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\vivant-ai-hayato\\assets\\characters\\labomaru-canonical.png"
+    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\vivant-deploy-clean\\assets\\characters\\himari-canonical.png",
+    "C:\\Users\\hnish\\.codex\\visualizations\\2026\\07\\19\\019f786f-19d2-7341-bdd4-1cd0571adb59\\vivant-deploy-clean\\assets\\characters\\labomaru-canonical.png"
   ],
   "outputs": [
     {
@@ -12,8 +12,8 @@
       "path": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\thumbnail.png",
       "width": 1600,
       "height": 900,
-      "sha256": "a195bb4db38e74c95a8ceec8c405ab7e66c612339e95b529131fb77c23b21e6e",
-      "bytes": 2467284
+      "sha256": "991d30494967c71ab37d422c07dea1e3a1ffde89b236cedfaedae24959c9fa85",
+      "bytes": 3041888
     },
     {
       "id": "slide01",
@@ -80,5 +80,5 @@
       "bytes": 1861052
     }
   ],
-  "completedAt": "2026-07-27T05:37:33.784Z"
+  "completedAt": "2026-07-27T08:10:19.086Z"
 }

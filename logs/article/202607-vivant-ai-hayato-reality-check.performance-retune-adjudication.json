@@ -1,0 +1,15 @@
+{
+  "overallPass": true,
+  "thumbnail": "public/images/thumbnails/202607-vivant-ai-hayato-reality-check.webp",
+  "performance": "themed",
+  "anchors": "pass",
+  "bodyStructure": "pass",
+  "text": {
+    "status": "pass_after_glyph_recheck",
+    "initialWholeImageReading": "VIVANNT",
+    "enlargedIndependentGlyphReading": ["V", "I", "V", "A", "N", "T"],
+    "combined": "VIVANT",
+    "reason": "Whole-image OCR false positive was resolved by a separate model/session on a 2x crop with one-glyph-at-a-time transcription."
+  },
+  "note": "The themed outfit is intentionally outside the immutable identity anchors. Mirrored side-tail placement is accepted as the same side-tail hairstyle."
+}

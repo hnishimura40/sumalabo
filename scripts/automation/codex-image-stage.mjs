@@ -49,6 +49,10 @@ function fallbackPath(slug) {
   return path.join(ROOT, "logs", "article", `${slug}.image-fallback.json`);
 }
 
+function promptPath(slug, itemId) {
+  return path.join(ROOT, "logs", "article", `${slug}.${itemId}.codex-image-prompt.md`);
+}
+
 function readJson(file, fallback) {
   if (!existsSync(file)) return fallback;
   try { return JSON.parse(readFileSync(file, "utf8").replace(/^\uFEFF/, "")); }
@@ -115,11 +119,11 @@ function resolveCodexCli() {
 
 export function buildPrompt({ item, outputFile, planPath, correction = "" }) {
   const performanceBlock = item.performanceBlock || `## 演出ブロック（互換補完）
-- 衣装: 対象セクションのテーマから連想し、サムネは標準衣装だけにしない
-- 小道具: 対象セクションで意味のある道具を最低1点使う
+- 衣装: 記事テーマから導いた衣装・アクセサリーを必ず使う。標準衣装を許すのは中立解説系で、標準にする理由を明記した場合だけ
+- 小道具: 対象セクションで意味のある道具を最低1点使う。手で持たせなくても、傍らに置く・首かけ・肩掛け・バッジ・ヘッドセット・机上装置で演出してよい
 - 手・小道具: 小道具を片手または両手のどちらで持つかを明記し、空いている手は原則体側に置く。手のクローズアップを避け、同じ人物の両手に別々の動作を同時指定しない
-- ポーズ・動き: 道具を実際に使う、見比べる、確認するなど動作で主題を表す
-- 背景・状況: テーマ固有の現場を描く
+- ポーズ・動き: 覗き込む・見上げる・振り返る・身を乗り出す・画面外へ視線を送る等、手を主役にしない姿勢と視線で主題を表す
+- 背景・状況: テーマ固有の現場を、奥行き・照明・机上機器・環境小物まで作り込む
 - 演出根拠: 対象セクションの中心名詞から導出する`;
   return `画像生成ジョブを1件だけ実行してください。必ず imagegen スキルと built-in imagegen を使います。
 
@@ -140,13 +144,20 @@ export function buildPrompt({ item, outputFile, planPath, correction = "" }) {
   - 対象セクションで複数パネルへの登場を明示していない限り、ひまり・らぼまるは各1人/1体だけ。構図の穴埋めとして複製・分身を追加しない。
   - 描画後に人物ごとに腕・手・脚を数え、腕・脚の長さと太さ、付け根と関節、顔、手指、身体と物体の融合、不快な触手状シルエットがないことを確認してから保存する。
 
+【安全制約の適用範囲】
+- 上の身体構造ルールは、手足の本数・形・接続・比率と、手を使う動作だけを制約する。衣装、身につけるアクセサリー、手で持たない小道具、姿勢・視線、背景の作り込みを弱める理由にしてはならない。
+- 手のリスクを下げるときは、道具を傍らや机上に置く、首かけ・肩掛け・バッジ・ヘッドセットとして身につける、手が役割を持たない構図では前景の机や操作卓で手首から先を完全に隠す、覗き込む・見上げる・振り返る、背景を作り込む、の順で演出を代替する。標準衣装・棒立ちへの退避は禁止する。
+
 【演出（記事テーマに合わせて積極的に変える）】
 - 衣装・小道具・ポーズ・背景はキャラ同一性の判定対象ではない。下の演出ブロックを優先し、記事テーマ固有の体験を描く。
-- サムネは標準衣装で棒立ち・指さし説明だけにしない。道具を手に持つ、操作する、見比べる、調べるなど動作を主役にする。
+- サムネの衣装は必ずテーマ別にする。標準衣装を許すのは中立解説系で、演出ブロックに理由が明記されている場合だけ。標準衣装・棒立ち・指さし説明を既定にしない。
+- 手を使わずに絵を豊かにできる要素（衣装差分、首かけ・肩掛け・バッジ、傍らや机上の小道具、姿勢・視線、テーマ固有の背景）を最低2種類使う。
 - 本文スライドも、小道具・ポーズ・背景は各スライドの役割に合わせて変えてよい。衣装を変える場合は演出ブロックに従い、記事内で一貫させる。
 - 露出の多い衣装、記事と無関係なコスプレ、実在ロゴは不可。
 
 ${performanceBlock}
+
+演出ブロックと身体構造ルールが競合して見える場合は、身体構造を守りつつ、手を使わない演出へ置き換えて演出密度を維持する。演出項目そのものを削除・弱化してはならない。
 
 対象: ${item.id}
 出力: PNG ${item.width}×${item.height}px
@@ -316,6 +327,7 @@ export async function runImageStage(options) {
     const outputFile = path.join(outputDir, `${item.id}.png`);
     const beforeSha = existsSync(outputFile) ? sha256(outputFile) : null;
     const prompt = buildPrompt({ item, outputFile, planPath, correction: options.correction });
+    writeFileSync(promptPath(slug, item.id), `${prompt}\n`, "utf8");
     const result = await runCodex({ prompt, outputDir, timeoutMs: options.timeoutMs || DEFAULT_TIMEOUT_MS });
     const runEntry = {
       item: item.id,
