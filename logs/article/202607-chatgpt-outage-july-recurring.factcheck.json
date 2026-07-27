@@ -1,0 +1,40 @@
+{
+  "pass": true,
+  "regenerate": [],
+  "performanceFit": "themed",
+  "checkedAt": "2026-07-27T22:50:00+09:00",
+  "checks": {
+    "textAndNumbers": "pass",
+    "articleConsistency": "pass",
+    "characterIdentityAnchors": "pass",
+    "performanceBlock": "pass",
+    "fearMongering": "pass",
+    "bodyStructure": "pass"
+  },
+  "notes": [
+    "サムネ: ビフォーアフター2分割。左=絶望顔でノートPCに突っ伏す、右=安堵顔でスマホを持ちチェックマーク。コピー『ChatGPTが落ちた日、私を救ったのは』+『予備の\"備え\"があった』とも一致。実在ロゴ描写なし。",
+    "slide01: ノートPC画面がフリーズ表示。ひまりが両手で頭を抱える白目の絶望顔。両手は同一動作（頭を抱える）で左右別動作の同時指定には該当せず、手はクローズアップされず小さめ。5指・接続とも自然。",
+    "slide02: 進捗バー54%で停止する画面と、机に突っ伏すひまり。頭上に魂が抜けるコミカルな演出。手は袖・机に隠れておりクローズアップなし。",
+    "slide03: 椅子にもたれ脱力するひまり、スマホ画面に『障害』の文字。らぼまるがチェックリストボードで補強。手の露出は最小限で安全。",
+    "slide04（新規・Claude復活シーン）: 姿勢を立て直しノートPCで作業再開する構図。特定AIサービスのロゴ・アイコンは描写せず、抽象的なダッシュボード画面のみ。演出根拠と一致。",
+    "slide05: チェックリストボードに『7/23・7/24・7/25』の3日付＋『月平均18件』。最終稿のCallout facts・NumCardsの数字・日付と完全一致。事実パートにつき表情も落ち着いた通常運用に戻っている。",
+    "slide06: 2コマ構成（左=スマホでステータス確認、右=ブラウザで試す）。最終稿の切り分け手順ステップ1・2に対応。",
+    "slide07: チェックリストボードに『迂回路・分割保存・こまめな保存・予備のAI』の4項目。最終稿の4つの備えと対応（表現は短縮パラフレーズだが意味は一致）。",
+    "slide08: ひまり・らぼまるが並ぶ安心の構図。帯『止まる日も織り込む』はまとめの結論と一致。",
+    "全編を通じ、認識アンカー（ひまり=金髪サイドテール・水色リボン・青い瞳／らぼまる=卵型ボディ・黄緑アンテナ・青い耳ビレ・オレンジのハート型ボタン・青い首カラー）は維持。デフォルメは表情・ポーズの誇張の範囲に留まり、キャラデザ変更には該当しない。",
+    "身体構造: 全画像で手指の本数異常・融合・関節破綻・触手状シルエットは確認されず。両腕を上げる『お手上げ』的ポーズ（slide01のみ該当）も手を小さめ・簡略化した安全設計で描写。"
+  ],
+  "slides": [
+    { "src": "D:/downloads/sumalabo-codex/202607-chatgpt-outage-july-recurring/slide01.png", "name": "slide01.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-chatgpt-outage-july-recurring/slide02.png", "name": "slide02.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-chatgpt-outage-july-recurring/slide03.png", "name": "slide03.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-chatgpt-outage-july-recurring/slide04.png", "name": "slide04.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-chatgpt-outage-july-recurring/slide05.png", "name": "slide05.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-chatgpt-outage-july-recurring/slide06.png", "name": "slide06.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-chatgpt-outage-july-recurring/slide07.png", "name": "slide07.webp" },
+    { "src": "D:/downloads/sumalabo-codex/202607-chatgpt-outage-july-recurring/slide08.png", "name": "slide08.webp" }
+  ],
+  "thumbnail": {
+    "src": "D:/downloads/sumalabo-codex/202607-chatgpt-outage-july-recurring/thumbnail.png"
+  }
+}

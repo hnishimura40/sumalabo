@@ -1,0 +1,281 @@
+---
+title: "「PCが壊れた」と絶望した日、実はChatGPTの障害だった話"
+slug: "202607-chatgpt-outage-july-recurring"
+type: "news"
+category: "ニュースをかみくだく"
+description: "突然ChatGPTが落ちて、PCの故障を疑ってアンインストール→再インストールも進まないという空回り。実は7月、障害が実際に連発していました。予備のAIがあったから乗り越えられた体験と、次に同じことが起きたときの備えを正直に書きます。"
+thumbnail: "/images/thumbnails/202607-chatgpt-outage-july-recurring.webp"
+thumbnailAlt: "ChatGPTが落ちた日をテーマにしたビフォーアフター2分割のサムネイル。左側でひまりがノートPCに突っ伏して絶望し、右側で椅子にもたれてスマホを持ちながら安堵する。上部に「ChatGPTが落ちた日、私を救ったのは」の文字、右下に「予備の備えがあった」の文字"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "ChatGPT"
+  - "障害"
+  - "AI"
+  - "Claude"
+related:
+  - "202605-100-dollar-ai-monthly-plan-comparison"
+  - "ai-work-productivity-experience-2026"
+  - "ai-model-benchmark-cost-guide-2026"
+pubDate: "2026-07-27"
+updated: "2026-07-27"
+publishAt: "2026-07-27T22:30:00+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+
+<Summary30>
+<ol>
+<li>ChatGPTが突然落ちて、本気で「PCが壊れた」と思ってつらかった</li>
+<li>でも、あなたのPCのせいじゃないかもしれない</li>
+<li>予備のAIが一つあるだけで、絶望が「ちょっと不便」に変わった</li>
+</ol>
+</Summary30>
+
+## 【物語】ある日突然、ChatGPTが落ちた
+
+<CharacterBubble speaker="himari" mood="curious">
+デスクトップ版のChatGPTが、いきなり落ちたの。そのまま再起動もできなくて……。
+</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="worried">
+それは、つらいね。
+</CharacterBubble>
+
+正直に言います。つらかったです。仕事の途中で画面が固まり、再起動しても直らない。「PCが壊れたのかもしれない」という考えが頭を占めた瞬間、やってはいけない禁じ手に手を伸ばしました。アンインストールです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">その瞬間の空気を、そのまま絵にしました。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-outage-july-recurring/slide01.webp" alt="ノートPCの画面がフリーズし、ひまりが両手で頭を抱えて白目になる絶望の図解" loading="lazy" decoding="async" />
+    <figcaption>図解：急に落ちた瞬間</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>症状</strong>：デスクトップ版が突然フリーズし、再起動もできない</li>
+      <li><strong>反応</strong>：反射的に「PCが壊れたのかも」と思ってしまう</li>
+      <li><strong>結論</strong>：この時点ではまだ、故障か障害かの区別がついていない</li>
+    </ul>
+  </div>
+</section>
+
+そして再インストールしようとした瞬間——進捗バーが54%でぴたりと止まりました。何度試しても、そこから動きません。
+
+<CharacterBubble speaker="himari" mood="explain">
+「え、なんてこった……」って、キーボードの前で固まったの。直そうとしたはずが、何もない状態になっただけだった。
+</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">直そうとして、逆に詰んだ瞬間。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-outage-july-recurring/slide02.webp" alt="再インストールの進捗バーが54%で止まり、ひまりが机に突っ伏して魂が抜けるコミカルな燃え尽きの図解" loading="lazy" decoding="async" />
+    <figcaption>図解：直そうとして詰んだ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>禁じ手</strong>：アンインストール→再インストールという後戻りできない対処</li>
+      <li><strong>結果</strong>：再インストールの進捗が途中で止まり、直らないどころか何もない状態に</li>
+    </ul>
+  </div>
+</section>
+
+半分あきらめて「ChatGPT 起動しない」で検索した瞬間、目に飛び込んできたのは「障害」の文字でした。
+
+<CharacterBubble speaker="labo" mood="point">
+——つまり、最初から壊れていたのはPCじゃなくて、サービス側だったってこと。
+</CharacterBubble>
+
+安堵と、脱力と、少しの気恥ずかしさ。「私のせいじゃなかった……」その場にへたり込みそうになったのを覚えています。この記事は、その空回りから生まれました。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">安堵の瞬間も、そのまま絵にしました。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-outage-july-recurring/slide03.webp" alt="椅子にもたれて脱力するひまりが、スマホの画面で「障害」の文字を見て安堵する図解" loading="lazy" decoding="async" />
+    <figcaption>図解：私のせいじゃなかった</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>気づき</strong>：検索して初めて「障害」の情報にたどり着いた</li>
+      <li><strong>感情</strong>：安堵と、少しの脱力・気恥ずかしさ</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p><strong>先に伝えたいこと</strong></p>
+<p>デスクトップアプリが突然動かなくなったとき、症状だけでは「自分のPCの故障」と「サービス側の障害」の区別がつきません。そして厄介なことに、障害の最中はアプリの再インストールそのものが失敗することがあります（後述）。「再インストールが進まない＝PCが壊れている」ではありません。</p>
+</div>
+
+## 【物語】仕事が止まらなかった理由
+
+障害だと分かってからも、正直「困った」という気持ちは消えませんでした。でも、完全には止まりませんでした。理由は一つだけです。普段からClaudeも使っていたから。
+
+<CharacterBubble speaker="himari" mood="aha">
+ChatGPTが使えないと分かった瞬間、Claudeに切り替えて作業を続けたの。
+</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">
+「予備がある」だけで、絶望が「ちょっと不便」に変わったんだね。
+</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">気を取り直して、作業を再開した瞬間。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-outage-july-recurring/slide04.webp" alt="姿勢を立て直したひまりが、別のノートPC画面に向かって作業を再開する復活の図解" loading="lazy" decoding="async" />
+    <figcaption>図解：予備があった</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>行動</strong>：ChatGPTが使えないと分かった時点でClaudeに切り替えた</li>
+      <li><strong>効果</strong>：仕事を完全に止めずに済んだ</li>
+    </ul>
+  </div>
+</section>
+
+同じ質を出せたかと言えば、多少の勝手の違いはありました。でも、仕事を止めずに済んだのは事実です。これはClaudeが優れているという話ではありません。たまたま私の予備がClaudeだったというだけで、逆の日——Claudeが落ちて、ChatGPTに助けられる日だって普通にあり得ます。大事なのは「どっちが上か」ではなく、「一つ止まっても、もう一つがある」状態を普段から作っておくことでした。
+
+## 【事実】実は7月、障害が連発していた
+
+<p class="lead">感情的な体験談だけでは終わらせません。7月下旬、ChatGPT・API・Codexの障害が実際に連発していたのは確認できる事実です。</p>
+
+<Callout kind="facts">
+<ul>
+<li>OpenAI公式ステータスページ（status.openai.com）に、7/23〜7/25の3日間で複数回のインシデントが記録されている</li>
+<li>7/23（木）にChatGPTのエラー率上昇、7/24（金）にAPI（画像生成モデル）とCodex Reviewのエラー率上昇、7/25（土）にChatGPT関連の大きめのインシデントが、それぞれ公式ページ上に記録されている</li>
+<li>7/25のインシデントは当日中に緩和・解消の記載がある</li>
+</ul>
+</Callout>
+
+<Callout kind="claims">
+<ul>
+<li>報道によれば、7/25の障害はChatGPT・API・Codexの3つに同時に影響し、「too many concurrent requests（同時リクエストが多すぎます）」というエラーが表示された</li>
+<li>日本時間に換算すると、7/25（土）18時台〜19時台ごろに発生していたとみられる（米国東部時間の朝5時台〜6時台という報道から換算）</li>
+<li>ステータスページの時刻表示は環境によって見え方に差があり、報道側の表現と細部が一致しない場合がある。この記事では公式ページで直接確認できた日付を基準にしている</li>
+</ul>
+</Callout>
+
+<NumCards items={[
+  { num: "約166件", cap: "2025年秋以降・約9ヶ月の累計インシデント数（報道集計）" },
+  { num: "月平均18件", cap: "同期間の1ヶ月あたりの平均" },
+]} />
+
+この数字は海外メディアがOpenAI公式のステータス履歴を集計して報じたものです。多い・少ないの評価はここではしません。「7月下旬に実際に連発していた」という事実と、「日常的に一定数のインシデントが起きている」という背景を、まず知っておくための数字として示します。
+
+<Timeline>
+<TimelineItem date="7/23（木）">ChatGPTでエラー率上昇のインシデントが記録される（公式ステータスページ確認）</TimelineItem>
+<TimelineItem date="7/24（金）">APIの画像生成モデルとCodex Reviewでエラー率上昇（公式ステータスページ確認）</TimelineItem>
+<TimelineItem date="7/25（土）" hot>ChatGPT・API・Codexに同時に影響する障害。日本時間18時台〜19時台ごろとみられる（報道ベース）。当日中に緩和・解消</TimelineItem>
+</Timeline>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">7月に何が起きていたかを、数字と日付でまとめました。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-outage-july-recurring/slide05.webp" alt="7月23日・24日・25日の3日間のインシデントと月平均18件という数字を示すチェックリストの図解" loading="lazy" decoding="async" />
+    <figcaption>図解：7月は連発していた</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>日付</strong>：7/23・7/24・7/25の3日間で公式ステータスページに記録あり</li>
+      <li><strong>頻度</strong>：報道集計では月平均18件（約9ヶ月で166件）</li>
+    </ul>
+  </div>
+</section>
+
+つらかったのは、突然の障害そのものです。OpenAIという会社そのものを責めたいわけではありません。同じことは、AI各社・クラウドサービス全般で起こり得ます。筆者自身、こうした障害を経験しながらも、日常的にChatGPTを使い続けています。使い続けているからこそ、不調も含めて正直に書く、という立場です。
+
+## 【実用】次に落ちた時のために
+
+<p class="lead">感情が落ち着いたら、ここからは実用パート。確認する順番はこの3段階、ローカルを疑うのは最後でいい。</p>
+
+1. **まずステータスページとDownDetector・Xを見る**（スマホで30秒、PCをいじる前に）
+   - `status.openai.com` にアクセスし、ChatGPT・API・Codexの状態を確認する
+   - 赤や黄色の表示が出ていれば、サービス側の障害の可能性が高い
+   - DownDetectorやXで「ChatGPT」と検索し、同じ症状の報告が急増していないかも見る
+2. **ブラウザ版・スマホ版を試す**
+   - デスクトップ版だけが動かず、ブラウザ版やスマホ版は普通に使えるなら、デスクトップ版固有の問題か部分的な障害
+   - どちらも同じように固まる・落ちるなら、広範囲の障害の可能性が高い
+3. **ここまで確認して、初めてローカル対処**
+   - アプリの再起動 → それでもダメならアンインストール・再インストール
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">確認する順番を、2コマで整理しました。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-outage-july-recurring/slide06.webp" alt="左でスマホのステータスページを確認し、右でブラウザ版を試すひまりの2コマ図解" loading="lazy" decoding="async" />
+    <figcaption>図解：まず確認、から</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>順番①</strong>：スマホでステータスページを30秒確認</li>
+      <li><strong>順番②</strong>：ブラウザ版を試して部分障害か広範囲かを見分ける</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p><strong>見落としやすい盲点</strong></p>
+<p>障害の最中は、アプリの再インストールそのものが失敗することがあります。インストーラーの取得や初回ログインがサービス側の状態に依存しているためです。むしろ再インストールが進まないこと自体が、サービス側の障害を疑う材料になります。</p>
+</div>
+
+止まった日に困らない備えは、この4つだけです。
+
+1. **迂回路を知っておく** — ブラウザ版・スマホ版のログイン情報を、デスクトップ版が使えないときのために確認しておく
+2. **長い作業を一つの会話に依存させない** — 重要なやり取りは、こまめに区切っておくと、障害時の影響を小さくできる
+3. **重要な成果物はその都度手元に保存** — 生成した文章やコードは、その場でコピー・保存する習慣をつけておく
+4. **予備のAIを持っておく** — ChatGPT以外の選択肢を一つ知っておくと、止まった日の選択肢が増える（[月100ドル級のAI課金比較記事](/articles/202605-100-dollar-ai-monthly-plan-comparison/)で、Claude MaxやGoogle AI Ultraとの違いを整理しています）
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">止まった日に困らない備えは、この4つだけです。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-outage-july-recurring/slide07.webp" alt="迂回路・分割保存・こまめな保存・予備のAIの4項目を示すチェックリストの図解" loading="lazy" decoding="async" />
+    <figcaption>図解：4つの備えでOK</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>迂回路</strong>：ブラウザ版・スマホ版のログイン情報を確認しておく</li>
+      <li><strong>分割・保存</strong>：長い作業を一つの会話に依存させず、成果物はその都度保存</li>
+      <li><strong>予備のAI</strong>：ChatGPT以外の選択肢を一つ持っておく</li>
+    </ul>
+  </div>
+</section>
+
+## まとめ
+
+AIに頼る時代は、AIが止まる日も織り込む時代です。仕事の一部を任せられるようになったからこそ、「止まる前提」で付き合い方を設計しておく。実際に仕事でAIを使うようになった変化については、[こちらの記事](/articles/ai-work-productivity-experience-2026/)でも書きました。任せられる範囲が広がるほど、止まったときの備えも一緒に育てていく必要があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、この記事の結論を1枚でまとめます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-chatgpt-outage-july-recurring/slide08.webp" alt="ひまりとらぼまるが並んで落ち着いた笑顔を見せる、まとめの図解" loading="lazy" decoding="async" />
+    <figcaption>図解：止まる日も織り込む</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>結論</strong>：AIに頼る時代は、AIが止まる日も織り込む時代</li>
+    </ul>
+  </div>
+</section>
+
+## 参考情報
+
+- [OpenAI Status](https://status.openai.com/history) — 公式インシデント履歴
+- BleepingComputer「OpenAI confirms ChatGPT is down worldwide」
+- TheNextWeb「OpenAI hit by another outage as ChatGPT, Codex, and APIs go down together」

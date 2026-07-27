@@ -1,0 +1,299 @@
+{
+  "slug": "202607-chatgpt-outage-july-recurring",
+  "transport": "codex_exec",
+  "runs": [
+    {
+      "item": "thumbnail",
+      "startedAt": "2026-07-27T12:41:43.695Z",
+      "finishedAt": "2026-07-27T12:44:42.157Z",
+      "elapsedMs": 178461,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 150045,
+        "cached_input_tokens": 111616,
+        "output_tokens": 2707,
+        "reasoning_output_tokens": 404
+      },
+      "failureCondition": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "6276f65fa953cba2957eb6d8dd17befd83ec80ee496824586fbd107abd18c7fa",
+      "bytes": 2667196,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\thumbnail.png"
+    },
+    {
+      "item": "slide01",
+      "startedAt": "2026-07-27T12:44:42.164Z",
+      "finishedAt": "2026-07-27T12:49:35.051Z",
+      "elapsedMs": 292887,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 249409,
+        "cached_input_tokens": 205056,
+        "output_tokens": 3323,
+        "reasoning_output_tokens": 949
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "dafaafb22ae0e34e29cafcb513a46de33a7a85971090aef964d186d4e342a756",
+      "bytes": 2554029,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide01.png"
+    },
+    {
+      "item": "slide02",
+      "startedAt": "2026-07-27T12:49:35.057Z",
+      "finishedAt": "2026-07-27T12:53:03.371Z",
+      "elapsedMs": 208314,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 211831,
+        "cached_input_tokens": 164608,
+        "output_tokens": 3039,
+        "reasoning_output_tokens": 1004
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "92556150dda35f329f90323629e12a3faffefc351d40e10eb7c3827901863111",
+      "bytes": 2470381,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide02.png"
+    },
+    {
+      "item": "slide03",
+      "startedAt": "2026-07-27T12:53:03.376Z",
+      "finishedAt": "2026-07-27T12:57:06.299Z",
+      "elapsedMs": 242923,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 148526,
+        "cached_input_tokens": 110592,
+        "output_tokens": 2476,
+        "reasoning_output_tokens": 740
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "4a5e049bef769143db4feb52aa9bc401703d5fd55a9ac325eda83197e52d88a9",
+      "bytes": 2364394,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide03.png"
+    },
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-27T12:57:06.305Z",
+      "finishedAt": "2026-07-27T12:59:34.225Z",
+      "elapsedMs": 147920,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 161447,
+        "cached_input_tokens": 117760,
+        "output_tokens": 2126,
+        "reasoning_output_tokens": 429
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "ce68b6fe264684ea31c477adb7dda4315d411389f5a6088137bf4e55defb62af",
+      "bytes": 1663554,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide04.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-27T12:59:34.229Z",
+      "finishedAt": "2026-07-27T13:03:30.909Z",
+      "elapsedMs": 236680,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 144847,
+        "cached_input_tokens": 106496,
+        "output_tokens": 2855,
+        "reasoning_output_tokens": 662
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "35a1495adc07115330ffaa7621cff6721743895b4b234693acf7c99e578df3a8",
+      "bytes": 2200772,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide05.png"
+    },
+    {
+      "item": "thumbnail",
+      "startedAt": "2026-07-27T13:12:20.664Z",
+      "finishedAt": "2026-07-27T13:15:51.771Z",
+      "elapsedMs": 211106,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 119457,
+        "cached_input_tokens": 82176,
+        "output_tokens": 1878,
+        "reasoning_output_tokens": 142
+      },
+      "failureCondition": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "9f8c4c381ad5533f33dd525d8ff903ee422ca436b05ed9bdfa1ac508907e9345",
+      "bytes": 3063712,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\thumbnail.png"
+    },
+    {
+      "item": "slide01",
+      "startedAt": "2026-07-27T13:15:51.778Z",
+      "finishedAt": "2026-07-27T13:20:03.371Z",
+      "elapsedMs": 251593,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 150674,
+        "cached_input_tokens": 111616,
+        "output_tokens": 2196,
+        "reasoning_output_tokens": 304
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "1e0a2a881df89a27f2edd4782936efc2f604dbf8abffd10778bf8c4f74712a0b",
+      "bytes": 2000531,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide01.png"
+    },
+    {
+      "item": "slide02",
+      "startedAt": "2026-07-27T13:20:03.377Z",
+      "finishedAt": "2026-07-27T13:22:13.258Z",
+      "elapsedMs": 129881,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 149740,
+        "cached_input_tokens": 110592,
+        "output_tokens": 1752,
+        "reasoning_output_tokens": 240
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "35401413e2314ad9a911e9713756f581b8c829eff94220bd963ca7a3e092f224",
+      "bytes": 2258325,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide02.png"
+    },
+    {
+      "item": "slide03",
+      "startedAt": "2026-07-27T13:22:13.264Z",
+      "finishedAt": "2026-07-27T13:24:42.059Z",
+      "elapsedMs": 148795,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 113032,
+        "cached_input_tokens": 77056,
+        "output_tokens": 2076,
+        "reasoning_output_tokens": 255
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "4f5fccfe3731b6e076a6382b2e5f56c6ce8f6fec3a0282aa754f08161e467f7a",
+      "bytes": 2151388,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide03.png"
+    },
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-27T13:24:42.065Z",
+      "finishedAt": "2026-07-27T13:27:32.383Z",
+      "elapsedMs": 170318,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 340637,
+        "cached_input_tokens": 281856,
+        "output_tokens": 2936,
+        "reasoning_output_tokens": 617
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "28ed4ed32218002ca96b60ad08a246bef75abbeaad0251f26fd4134d564b396f",
+      "bytes": 1956362,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide04.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-27T13:27:32.387Z",
+      "finishedAt": "2026-07-27T13:31:18.832Z",
+      "elapsedMs": 226445,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 117000,
+        "cached_input_tokens": 80128,
+        "output_tokens": 1632,
+        "reasoning_output_tokens": 178
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "27a61295e5ac37c5c10b0b96a93b753a0f96b3e2636feb312cb30fc6aa0390ae",
+      "bytes": 1663337,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide05.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-27T13:31:18.839Z",
+      "finishedAt": "2026-07-27T13:35:56.275Z",
+      "elapsedMs": 277436,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 186405,
+        "cached_input_tokens": 143104,
+        "output_tokens": 2680,
+        "reasoning_output_tokens": 486
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "cdbd52f15e08e87c48a5d9b3fa79c28c2efd8de30b8221869d172dba7b7a2ad1",
+      "bytes": 2079635,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide06.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-27T13:35:56.281Z",
+      "finishedAt": "2026-07-27T13:38:29.359Z",
+      "elapsedMs": 153078,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 117100,
+        "cached_input_tokens": 102400,
+        "output_tokens": 1728,
+        "reasoning_output_tokens": 193
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "7a46ccc04a079880bd6c5ce7939973f482fb3d8ee825dd207c50d1e3a3c21015",
+      "bytes": 1919435,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide07.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-27T13:38:29.364Z",
+      "finishedAt": "2026-07-27T13:42:42.183Z",
+      "elapsedMs": 252819,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 225899,
+        "cached_input_tokens": 178688,
+        "output_tokens": 2168,
+        "reasoning_output_tokens": 447
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "b2e5c1b3b55a5a3ea4d35166887335c7f73d462725358e3f2bf081b95fca8526",
+      "bytes": 1866866,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide08.png"
+    }
+  ],
+  "updatedAt": "2026-07-27T13:42:42.187Z",
+  "totalElapsedMs": 3128656,
+  "totalUsage": {
+    "input_tokens": 2586049,
+    "cached_input_tokens": 1983744,
+    "output_tokens": 35572,
+    "reasoning_output_tokens": 7050
+  }
+}

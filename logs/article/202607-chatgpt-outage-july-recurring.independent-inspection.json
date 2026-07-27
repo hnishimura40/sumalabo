@@ -1,0 +1,166 @@
+{
+  "overallPass": true,
+  "slides": [
+    {
+      "id": "slide01",
+      "verdict": "ok",
+      "issues": [],
+      "handChecks": [
+        {
+          "character": "himari",
+          "side": "right",
+          "bbox": { "x": 300, "y": 100, "width": 120, "height": 150 },
+          "orientationNatural": true,
+          "thumbPositionNatural": true,
+          "wristConnectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "向かって左側の手（キャラの右手）。頭髪を軽く掴む形で指は簡略化されているが、親指位置・手首の接続とも自然で破綻や余分な指は見えない。"
+        },
+        {
+          "character": "himari",
+          "side": "left",
+          "bbox": { "x": 600, "y": 70, "width": 120, "height": 150 },
+          "orientationNatural": true,
+          "thumbPositionNatural": true,
+          "wristConnectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "向かって右側の手（キャラの左手）。左手と左右対称の同一動作（頭を抱える）で、親指位置・手首接続とも自然。両手に別々の動作は指定されていない。"
+        }
+      ],
+      "textDensity": "low",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 90
+    },
+    {
+      "id": "slide02",
+      "verdict": "ok",
+      "issues": [],
+      "handChecks": [],
+      "textDensity": "low",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 93
+    },
+    {
+      "id": "slide03",
+      "verdict": "ok",
+      "issues": [],
+      "handChecks": [],
+      "textDensity": "low",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 91
+    },
+    {
+      "id": "slide04",
+      "verdict": "ok",
+      "issues": [],
+      "handChecks": [],
+      "textDensity": "low",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 84
+    },
+    {
+      "id": "slide05",
+      "verdict": "ok",
+      "issues": [],
+      "handChecks": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 72
+    },
+    {
+      "id": "slide06",
+      "verdict": "ok",
+      "issues": [],
+      "handChecks": [
+        {
+          "character": "himari",
+          "side": "unclear",
+          "bbox": { "x": 230, "y": 430, "width": 110, "height": 150 },
+          "orientationNatural": true,
+          "thumbPositionNatural": true,
+          "wristConnectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "左パネル、スマホを持つ手。指の巻きつき・親指の位置は自然で、手首と前腕の接続にねじれや融合は見えない。"
+        }
+      ],
+      "textDensity": "low",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 63
+    },
+    {
+      "id": "slide07",
+      "verdict": "ok_with_warning",
+      "issues": [
+        "チェックリスト2項目目のラベル「分割保存」は、最終稿の該当項目（長い作業を一つの会話に依存させない/こまめに区切る）の要約としてはやや不正確で、3項目目「こまめな保存」と紛らわしい。ただし数字・日付・固有名詞の誤りではないため blocking にはしない。"
+      ],
+      "handChecks": [],
+      "textDensity": "mid",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 60
+    },
+    {
+      "id": "slide08",
+      "verdict": "ok",
+      "issues": [],
+      "handChecks": [],
+      "textDensity": "low",
+      "numbersAccurate": true,
+      "standsAlone": true,
+      "xPostScore": 82
+    }
+  ],
+  "thumbnail": {
+    "verdict": "ok",
+    "issues": [],
+    "handChecks": [
+      {
+        "character": "himari",
+        "side": "unclear",
+        "bbox": { "x": 230, "y": 530, "width": 180, "height": 120 },
+        "orientationNatural": true,
+        "thumbPositionNatural": true,
+        "wristConnectionNatural": true,
+        "proportionsNatural": true,
+        "severity": "ok",
+        "note": "左パネル、突っ伏した頭の下で両腕を組み手は小さく隠れ気味だが、破綻や不自然なねじれは見えない。"
+      },
+      {
+        "character": "himari",
+        "side": "right",
+        "bbox": { "x": 735, "y": 335, "width": 95, "height": 130 },
+        "orientationNatural": true,
+        "thumbPositionNatural": true,
+        "wristConnectionNatural": true,
+        "proportionsNatural": true,
+        "severity": "ok",
+        "note": "右パネル、スマホを持つ手。指はスマホ側面を自然に握り、親指は画面側で位置も自然、手首の接続にも違和感はない。"
+      }
+    ]
+  },
+  "xSelection": ["thumbnail", "slide02", "slide03", "slide01"],
+  "excludedFromX": [
+    { "id": "slide04", "reason": "スコアが上位4枠(サムネ含む)にわずかに届かず。standsAloneだが、サムネ右パネルの「復活」ビートと内容が重複するため優先度を下げた。" },
+    { "id": "slide05", "reason": "日付3件+数字カードで文字要素が多く textDensity=mid のため、本文で文脈を添えて読ませる方が伝わりやすい。" },
+    { "id": "slide06", "reason": "2コマ構成で手順の連続性が前提となり、本文なしでは意図がやや伝わりにくいため本文専用に回す。" },
+    { "id": "slide07", "reason": "チェック項目4つで textDensity=mid、かつ2項目目のラベルがやや紛らわしいため本文専用に回す。" },
+    { "id": "slide08", "reason": "落ち着いたまとめカットで単体フックとしての訴求力が他スライドより弱く、上位4枠には届かない。" }
+  ],
+  "internalLinks": { "verdict": "not_applicable", "issues": [] },
+  "avatarFallback": {
+    "verdict": "needs_revision",
+    "issues": [
+      "labo/aha（「——つまり、最初から壊れていたのはPCじゃなくて、サービス側だったってこと。」の吹き出し）: labo の有効な mood は smile/point/worried のみで、aha は himari 専用のため文字だけの丸（「ら」）にフォールバックする恐れがある。"
+    ]
+  },
+  "authorGeneralization": { "verdict": "ok", "issues": [] }
+}
