@@ -127,6 +127,20 @@
       "variant": "text_only",
       "imagesAttached": 4,
       "replyUrl": null
+    },
+    {
+      "slug": "202607-vivant-ai-hayato-reality-check",
+      "articleUrl": "https://sumalabo.com/articles/202607-vivant-ai-hayato-reality-check/",
+      "postedAt": "2026-07-27T11:36:45.689Z",
+      "postText": "VIVANTの「AIハヤト」は現実に作れる？ 2026年の技術で実在チェック\n\nVIVANT続編に登場したAIハヤトの能力を、もうできる・条件付き・まだフィクションの3段階で判定。音声対話、映像解析、確率判断、サイバー防御の現実を整理します（報道ベース・公式発表ではありません）\n#AI #すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2081705266832453756",
+      "method": "chrome",
+      "route": "codex",
+      "thumbnailAttached": true,
+      "charCount": 149,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2081705534462586995"
     }
   ]
 }
