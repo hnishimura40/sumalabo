@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-27T11:44:50.794Z",
+  "updatedAt": "2026-07-27T15:08:15.343Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -1034,7 +1034,8 @@
       "hasAffiliate": false,
       "xPostUrl": "https://x.com/suma_labo/status/2079309685782614073",
       "xPostedAt": "2026-07-21T05:57:54.944+09:00",
-      "xPostVariant": "text_only"
+      "xPostVariant": "text_only",
+      "previewUrl": "https://sumalabo.com/articles/202607-docomo-mirai-summer-fes/"
     },
     {
       "slug": "202607-openai-codex-claude-code-browser-imagegen",
@@ -1055,45 +1056,53 @@
       "slug": "202607-yahoo-flea-auction-selling-fee-free-tcg",
       "incidents": [],
       "status": "x_posted",
-      "source": "test_mode",
+      "source": "user_directed",
       "triggerKind": "night_driver",
       "triggeredBy": "night_driver",
       "productionUrl": "https://sumalabo.com/articles/202607-yahoo-flea-auction-selling-fee-free-tcg/",
-      "previewUrl": "https://6395f05f.sumalabo.pages.dev/articles/202607-yahoo-flea-auction-selling-fee-free-tcg/",
+      "previewUrl": "https://sumalabo.com/articles/202607-yahoo-flea-auction-selling-fee-free-tcg/",
       "prUrl": "https://github.com/hnishimura40/sumalabo/pull/189",
       "mergeCommit": "a5f56dd",
-      "publishedAt": "2026-07-22T05:42:00+09:00",
+      "publishedAt": "2026-07-22T04:30:00+09:00",
       "verifyResult": "8/8 pass",
       "xPostUrl": "https://x.com/suma_labo/status/2079671427041735039",
       "xPostedAt": "2026-07-21T20:57:12.889Z",
       "xPostText": "トレカ手数料が実質無料に。Yahoo!フリマ・オークションの新キャンペーンは『最初から0円』じゃなく、手数料ぶんを後日ポイント還元する仕組み。対象は人気5ブランド、8月9日まで。仕組みと条件をやさしく整理しました。 #ITニュース #すまラボ",
       "xVariant": "images4+reply",
-      "xReplyUrl": "https://x.com/suma_labo/status/2079671941364076607"
+      "xReplyUrl": "https://x.com/suma_labo/status/2079671941364076607",
+      "articleUrl": "https://sumalabo.com/articles/202607-yahoo-flea-auction-selling-fee-free-tcg/",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-carriers-iphone-price-hike",
       "incidents": [],
       "status": "x_posted",
-      "source": "test_mode",
+      "source": "user_directed",
       "triggerKind": "night_driver",
       "triggeredBy": "night_driver",
       "productionUrl": "https://sumalabo.com/articles/202607-carriers-iphone-price-hike/",
-      "previewUrl": "https://ab069ca7.sumalabo.pages.dev/articles/202607-carriers-iphone-price-hike/",
+      "previewUrl": "https://sumalabo.com/articles/202607-carriers-iphone-price-hike/",
       "prUrl": "https://github.com/hnishimura40/sumalabo/pull/193",
       "mergeCommit": "f418c19",
-      "publishedAt": "2026-07-23T05:25:00+09:00",
+      "publishedAt": "2026-07-23T05:00:00+09:00",
       "verifyResult": "8/8 pass",
       "xPostUrl": "https://x.com/suma_labo/status/2080028607611867475",
       "xPostedAt": "2026-07-22T20:36:57.964Z",
       "xPostVariant": "images4+reply",
       "xPostText": "4キャリアのiPhoneも値上げ？ ドコモ・au・ソフトバンク・楽天の答えは「まだ未定」\n\nAppleが日本限定でiPhoneを値上げしたのを受け、4キャリアの本体価格も上がるのか。\n#iPhone #すまラボ",
-      "xReplyUrl": "https://x.com/suma_labo/status/2080029064602267837"
+      "xReplyUrl": "https://x.com/suma_labo/status/2080029064602267837",
+      "articleUrl": "https://sumalabo.com/articles/202607-carriers-iphone-price-hike/",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-apple-klarna-iphone-lease-rumor",
       "incidents": [],
       "status": "x_posted",
-      "source": "night_run",
+      "source": "user_directed",
       "triggerKind": "night_driver",
       "triggeredBy": "night_driver",
       "productionUrl": "https://sumalabo.com/articles/202607-apple-klarna-iphone-lease-rumor/",
@@ -1106,33 +1115,50 @@
       "xPostedAt": "2026-07-23T20:44:16.011Z",
       "xPostVariant": "images4+reply",
       "xPostText": "iPhoneを月額で借りる？Apple×Klarnaの「リース計画」を、確定と未確定に分けて整理\n\nAppleがKlarnaと組み、iPhoneやMacを月額で使える『Apple Upgrade』を米国で始めると報じられています。\n#iPhone #すまラボ",
-      "xReplyUrl": "https://x.com/suma_labo/status/2080393848308818329"
+      "xReplyUrl": "https://x.com/suma_labo/status/2080393848308818329",
+      "articleUrl": "https://sumalabo.com/articles/202607-apple-klarna-iphone-lease-rumor/",
+      "previewUrl": "https://a8d2d6fc.sumalabo.pages.dev/articles/202607-apple-klarna-iphone-lease-rumor/",
+      "autonomyLevel": 1,
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-windows-11-gdid-privacy-explained",
       "incidents": [],
       "xPostUrl": "https://x.com/suma_labo/status/2080626909365600457",
-      "xPostedAt": "2026-07-24T12:14:31.461Z",
-      "xReplyUrl": "https://x.com/suma_labo/status/2080627397926514974"
+      "xPostedAt": "2026-07-24T12:12:36.405Z",
+      "xReplyUrl": "https://x.com/suma_labo/status/2080627397926514974",
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-windows-11-gdid-privacy-explained/",
+      "productionUrl": "https://sumalabo.com/articles/202607-windows-11-gdid-privacy-explained/",
+      "publishedAt": "2026-07-24T19:00:00+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-netflix-poinpy-ios-android-free",
       "incidents": [],
       "status": "x_posted",
-      "source": "night_run",
+      "source": "user_directed",
       "triggerKind": "night_driver",
       "triggeredBy": "night_driver",
       "productionUrl": "https://sumalabo.com/articles/202607-netflix-poinpy-ios-android-free/",
-      "previewUrl": "https://d9608ccf.sumalabo.pages.dev/articles/202607-netflix-poinpy-ios-android-free/",
+      "previewUrl": "https://sumalabo.com/articles/202607-netflix-poinpy-ios-android-free/",
       "prUrl": "https://github.com/hnishimura40/sumalabo/pull/201",
       "mergeCommit": "1d29432",
       "publishedAt": "2026-07-25T05:30:00+09:00",
       "verifyResult": "8/8 pass",
       "xPostUrl": "https://x.com/suma_labo/status/2080759876725494062",
-      "xPostedAt": "2026-07-24T21:00:21.667Z",
+      "xPostedAt": "2026-07-24T21:00:21.751Z",
       "xPostVariant": "images4+reply",
       "xPostText": "Netflix限定だった「Poinpy」が無料配信。契約なし・広告なしで遊べるように\n\nNetflix Games限定だったスマホゲーム「Poinpy（ポインピー）」が、Netflix契約なしで遊べる独立アプリとしてApp Store・Google Playで無料配信。\n#ITニュース #すまラボ",
-      "xReplyUrl": "https://x.com/suma_labo/status/2080760231613878756"
+      "xReplyUrl": "https://x.com/suma_labo/status/2080760231613878756",
+      "articleUrl": "https://sumalabo.com/articles/202607-netflix-poinpy-ios-android-free/",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-claude-opus-5-everyday-value",
@@ -1147,7 +1173,11 @@
       "xPostedAt": "2026-07-25T02:06:21.719Z",
       "xPostVariant": "images4+reply",
       "xPostText": "Claude Opus 5登場。「また新モデル？」でも課金者は今日から自動で得する\n\nClaude Opus 5は誰に関係する？Maxではデフォルト、Proでは使える最上位モデルへ自動更新。\n#AI #すまラボ",
-      "xReplyUrl": "https://x.com/suma_labo/status/2080837281511084386"
+      "xReplyUrl": "https://x.com/suma_labo/status/2080837281511084386",
+      "articleUrl": "https://sumalabo.com/articles/202607-claude-opus-5-everyday-value/",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "ai-model-benchmark-cost-guide-2026",
@@ -1159,13 +1189,17 @@
       "productionUrl": "https://sumalabo.com/articles/ai-model-benchmark-cost-guide-2026/",
       "prUrl": "https://github.com/hnishimura40/sumalabo/pull/206",
       "mergeCommit": "16433a71b6d61e1cd0c6deb3f7c78f271814987e",
-      "publishedAt": "2026-07-25T20:32:25+09:00",
+      "publishedAt": "2026-07-25T18:30:00+09:00",
       "verifyResult": "full gate pass; build 90 pages; strict verify 8/8; independent inspection 9/9 pass",
       "xPostUrl": "https://x.com/suma_labo/status/2080981382596309210",
       "xPostedAt": "2026-07-25T11:40:27.868Z",
       "xPostVariant": "images4+reply",
       "xPostText": "AIモデル、結局どれを使えばいい？\n\nベンチ1位より、用途と予算。Claude・ChatGPT・Geminiの現行モデル、API単価、サブスクを一次情報で横断整理しました。迷ったら無料枠から。\n#AI #すまラボ",
-      "xReplyUrl": "https://x.com/suma_labo/status/2080981811979804854"
+      "xReplyUrl": "https://x.com/suma_labo/status/2080981811979804854",
+      "articleUrl": "https://sumalabo.com/articles/ai-model-benchmark-cost-guide-2026/",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-google-july-30-terms-media-settings",
@@ -1183,24 +1217,33 @@
       "xPostedAt": "2026-07-25T13:17:03.149Z",
       "xPostVariant": "images4+reply",
       "xPostText": "Googleの「7月30日問題」、実は2つの話が混ざっています。\n\n7月30日は規約の発効日で、設定の締切ではありません。気になる人が見るのは「メディアを保存」。対象範囲と、オフ・過去分削除・自動削除の3点を整理しました。\n\n#Google #プライバシー #すまラボ",
-      "xReplyUrl": "https://x.com/suma_labo/status/2081005742765850758"
+      "xReplyUrl": "https://x.com/suma_labo/status/2081005742765850758",
+      "articleUrl": "https://sumalabo.com/articles/202607-google-july-30-terms-media-settings/",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "202607-salesforce-dx-line-ai-agentforce-chatgpt",
       "incidents": [],
       "status": "x_posted",
       "source": "test_mode",
-      "triggerKind": "night",
+      "triggerKind": "user",
       "triggeredBy": "night_driver",
       "productionUrl": "https://sumalabo.com/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/",
       "prUrl": "https://github.com/hnishimura40/sumalabo/pull/228",
       "mergeCommit": "d2fe79d7b5d66ba669b6d8d884f6300cc8604b74",
-      "publishedAt": "2026-07-26T20:44:13.641Z",
+      "publishedAt": "2026-07-26T20:44:33.603Z",
       "verifyResult": "full gate 0 violations; build ok; deploy exit0; strict verify 8/8 pass (httpStatus/titleNotGeneric/slugInHtml/notHomepageFallback/hasArticleBody/hasThumbnailRef/noProhibitedCopy/indexListsArticle); independent inspection 9/9 pass; hand two-pass gate PASS (9 images / 12 crops / ok5 warning4 needs_revision0)",
       "xPostUrl": "https://x.com/suma_labo/status/2081484383836631284",
-      "xPostedAt": "2026-07-26T20:59:22.881Z",
+      "xPostedAt": "2026-07-26T20:59:22.874Z",
       "xPostVariant": "text_only",
-      "xPostText": "企業LINEの裏側にAIが入る。あなたの問い合わせ、AIが下書きする時代へ / SalesforceとLINEをつなぐアプリ「DX-LINE」がAgentforce・ChatGPT・Gemini・Claude連携に対応。 #AI #すまラボ"
+      "xPostText": "企業LINEの裏側にAIが入る。あなたの問い合わせ、AIが下書きする時代へ / SalesforceとLINEをつなぐアプリ「DX-LINE」がAgentforce・ChatGPT・Gemini・Claude連携に対応。 #AI #すまラボ",
+      "articleUrl": "https://sumalabo.com/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/",
+      "previewUrl": "https://sumalabo.com/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
     },
     {
       "slug": "ai-work-productivity-experience-2026",
@@ -1213,7 +1256,7 @@
       "productionUrl": "https://sumalabo.com/articles/ai-work-productivity-experience-2026/",
       "prUrl": "https://github.com/hnishimura40/sumalabo/pull/231",
       "mergeCommit": "b39d9253a5df3500cb2e111db0a4225294294ea3",
-      "publishedAt": "2026-07-27T11:22:19.462Z",
+      "publishedAt": "2026-07-27T20:00:00+09:00",
       "verifyResult": "full gate 0 violations / 0 warnings; build 96 pages; production deploy succeeded; strict post-publish verify hard+soft pass; independent inspection 9/9 pass; author generalization ok; hand two-pass 9 images / 30 crops / ok6 warning3 needs_revision0",
       "autonomyLevel": 1,
       "trigger": "manual",
@@ -1237,7 +1280,12 @@
       "xReplyUrl": "https://x.com/suma_labo/status/2081705534462586995",
       "xPostedAt": "2026-07-27T11:36:45.689Z",
       "xPostVariant": "images4+reply",
-      "xPostImages": ["thumbnail", "slide01", "slide05", "slide08"],
+      "xPostImages": [
+        "thumbnail",
+        "slide01",
+        "slide05",
+        "slide08"
+      ],
       "xPostText": "VIVANTの「AIハヤト」は現実に作れる？ 2026年の技術で実在チェック\n\nVIVANT続編に登場したAIハヤトの能力を、もうできる・条件付き・まだフィクションの3段階で判定。音声対話、映像解析、確率判断、サイバー防御の現実を整理します（報道ベース・公式発表ではありません）\n#AI #すまラボ",
       "xReplyText": "続きと出典は すまラボ の記事で👇\nhttps://sumalabo.com/articles/202607-vivant-ai-hayato-reality-check/",
       "route": "codex",
@@ -1252,7 +1300,11 @@
           "route": "codex",
           "variant": "images4+reply",
           "imagesAttached": 4,
-          "hashtags": ["#VIVANT", "#AI", "#すまラボ"],
+          "hashtags": [
+            "#VIVANT",
+            "#AI",
+            "#すまラボ"
+          ],
           "mainExistenceCount": 1,
           "replyCountBefore": 0,
           "replyCountAfter": 1,
@@ -1262,6 +1314,79 @@
       "autonomyLevel": 1,
       "trigger": "manual",
       "hasAffiliate": false
+    },
+    {
+      "slug": "202607-chatgpt-outage-july-recurring",
+      "incidents": [
+        {
+          "at": "2026-07-27T14:08:47.250Z",
+          "slug": "202607-chatgpt-outage-july-recurring",
+          "kind": "post_publish_hard_fail",
+          "detail": "articleHttp200,slugInHtml"
+        }
+      ],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-chatgpt-outage-july-recurring/",
+      "previewUrl": "https://sumalabo.com/articles/202607-chatgpt-outage-july-recurring/",
+      "productionUrl": "https://sumalabo.com/articles/202607-chatgpt-outage-july-recurring/",
+      "publishedAt": "2026-07-27T22:30:00+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false,
+      "xPostUrl": "https://x.com/suma_labo/status/2081757423166185711",
+      "xPostedAt": "2026-07-27T15:04:21.649Z"
+    },
+    {
+      "slug": "202607-openai-model-hugging-face-security-incident",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-openai-model-hugging-face-security-incident/",
+      "previewUrl": "https://sumalabo.com/articles/202607-openai-model-hugging-face-security-incident/",
+      "productionUrl": "https://sumalabo.com/articles/202607-openai-model-hugging-face-security-incident/",
+      "publishedAt": "2026-07-23T11:56:24+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
+    },
+    {
+      "slug": "202607-school-ai-class-proposal-explained",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/202607-school-ai-class-proposal-explained/",
+      "previewUrl": "https://sumalabo.com/articles/202607-school-ai-class-proposal-explained/",
+      "productionUrl": "https://sumalabo.com/articles/202607-school-ai-class-proposal-explained/",
+      "publishedAt": "2026-07-26T09:05:00+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
+    },
+    {
+      "slug": "ai-youtube-video-creation-guide-2026",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/ai-youtube-video-creation-guide-2026/",
+      "previewUrl": "https://sumalabo.com/articles/ai-youtube-video-creation-guide-2026/",
+      "productionUrl": "https://sumalabo.com/articles/ai-youtube-video-creation-guide-2026/",
+      "publishedAt": "2026-07-25T23:50:00+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": false
+    },
+    {
+      "slug": "password-manager-guide",
+      "incidents": [],
+      "source": "user_directed",
+      "triggerKind": "user",
+      "articleUrl": "https://sumalabo.com/articles/password-manager-guide/",
+      "productionUrl": "https://sumalabo.com/articles/password-manager-guide/",
+      "publishedAt": "2026-07-22T20:10:00+09:00",
+      "autonomyLevel": 0,
+      "trigger": "manual",
+      "hasAffiliate": true
     }
   ]
 }
