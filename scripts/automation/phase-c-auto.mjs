@@ -7,9 +7,9 @@
 //   3. 二重投稿ガード（台帳未投稿）
 //
 // 投稿手段は autonomy.json の xPostMethod に従う（既定 browser・変更しない）:
-//   - browser: ブラウザ操作は Claude Code のローカルセッションが必要。CI/無人環境では
+//   - browser: 昼は Codex 対話モードを基本とする。CI/無人環境では
 //     "phase_c_pending_local" を通知してキュー化し、ローカルセッションで NEXT ACTION
-//     （頑丈化チェックリスト付き）を出力する
+//     （頑丈化チェックリスト付き）を出力する。夜間runは承認済み変更まで claude-in-chrome を維持する
 //   - api: post-to-x-api.mjs へ委譲（休眠中。有効化はユーザーが xPostMethod を変更したときのみ）
 //
 // 投稿後: x-card-check（syndication 照会）でカード確認。失敗/カード不成立は
@@ -38,23 +38,25 @@ const HARDENING = `
  1. 自動化専用タブ/ウィンドウを使う。ChatGPT 等の他作業タブと分離（下書き同期の混線対策）
  2. 入力後に composer を読み戻して一致検証。不一致は selectAll→delete→再入力
  3. 送信は tweetButton の DOM 特定→click→composer 空読み戻しで確認
- 4. アカウントが @suma_labo であることを投稿前に画面で確認
+ 4. accountIdentityJs("@suma_labo") で投稿前にアカウントDOMを確認（目視だけで済ませない）
  5. 投稿後 /suma_labo/status/ リンクから URL を取得し --posted で記録`;
 
 async function main() {
   const argv = process.argv.slice(2);
-  const args = { slug: null, trigger: "auto_after_veto", posted: null, variant: null, replyUrl: null };
+  const args = { slug: null, trigger: "auto_after_veto", posted: null, variant: null, replyUrl: null, route: null };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === "--slug") args.slug = argv[++i];
     else if (argv[i] === "--trigger") args.trigger = argv[++i];
     else if (argv[i] === "--posted") args.posted = argv[++i];
     else if (argv[i] === "--variant") args.variant = argv[++i];
     else if (argv[i] === "--reply-url") args.replyUrl = argv[++i];
+    else if (argv[i] === "--route") args.route = argv[++i];
     else if (argv[i].startsWith("--slug=")) args.slug = argv[i].slice(7);
     else if (argv[i].startsWith("--trigger=")) args.trigger = argv[i].slice(10);
     else if (argv[i].startsWith("--posted=")) args.posted = argv[i].slice(9);
     else if (argv[i].startsWith("--variant=")) args.variant = argv[i].slice(10);
     else if (argv[i].startsWith("--reply-url=")) args.replyUrl = argv[i].slice(12);
+    else if (argv[i].startsWith("--route=")) args.route = argv[i].slice(8);
   }
   if (!args.slug) {
     console.error("usage: --slug <slug> [--trigger auto_after_veto|manual] [--posted <tweetUrl>]");
@@ -71,7 +73,7 @@ async function main() {
     const variant = args.variant || plan.variant;
     const isImagePost = /^images\d+/.test(String(variant)) || plan.attach.length > 0;
     if (!(await hasPosted(args.slug))) {
-      await recordPost({ slug: args.slug, postUrl: args.posted, postText: "(recorded via phase-c-auto)", method: loadAutonomy().xPostMethod || "chrome", variant, replyUrl: args.replyUrl || null, imagesAttached: plan.attach.length });
+      await recordPost({ slug: args.slug, postUrl: args.posted, postText: "(recorded via phase-c-auto)", method: loadAutonomy().xPostMethod || "chrome", route: args.route || "codex", variant, replyUrl: args.replyUrl || null, imagesAttached: plan.attach.length });
     }
     upsertEntry(args.slug, { xPostUrl: args.posted, xPostedAt: new Date().toISOString(), xReplyUrl: args.replyUrl || null });
 
@@ -134,12 +136,12 @@ async function main() {
   // browser: CI/無人環境ではローカルセッション待ちとして通知
   if (process.env.CI || process.env.GITHUB_ACTIONS) {
     await notifyAutonomyEvent({ slug: args.slug, status: "phase_c_pending_local", title: `[autonomy] Phase C待ち: ${args.slug}（ブラウザ投稿はローカルセッションで実行）` }).catch(() => {});
-    console.log("[phase-c] pending_local: ブラウザ投稿はローカルの Claude セッションで実行してください");
+    console.log("[phase-c] pending_local: ブラウザ投稿はローカルの Codex 対話セッションで実行してください");
     process.exitCode = 0;
     return;
   }
 
-  // ローカル: Claude Code への NEXT ACTION（頑丈化チェックリスト付き）
+  // ローカル: Codex 対話モードへの NEXT ACTION（頑丈化チェックリスト付き）
   // xPostOptions（全OFF時は従来と完全に同一の出力・挙動になる）
   const xOpts = loadXPostOptions();
   const windowCheck = resolvePostWindow(new Date(), xOpts);
@@ -151,6 +153,7 @@ async function main() {
   const handCropDone = handCrop && (handCrop.verdictCounts?.needs_revision ?? 0) === 0;
 
   console.log(`\n=== PHASE C NEXT ACTION [browser post] ${args.slug} ===`);
+  console.log("実行経路: Codex 対話モード（docs/x-post-codex-procedure.md を貼り付けて実行）");
   if (!windowCheck.postNow) {
     console.log(`0. 投稿時間帯(postWindow ${xOpts.postWindow.start}-${xOpts.postWindow.end})より前のため、` +
       `${windowCheck.waitUntil.toISOString()} まで投稿を保留してから以下を実行（約${windowCheck.waitMinutes}分待機）`);
@@ -192,7 +195,7 @@ async function main() {
   } else {
     console.log("2. Chrome で x.com/compose/post を開き、投稿文を入力（下記チェックリスト厳守）");
   }
-  console.log(`3. 投稿後: node scripts/automation/phase-c-auto.mjs --slug ${args.slug} --posted <tweetUrl> --variant ${plan.variant}${plan.linkInReply ? " --reply-url <replyTweetUrl>" : ""}`);
+  console.log(`3. 投稿後: node scripts/automation/phase-c-auto.mjs --slug ${args.slug} --posted <tweetUrl> --variant ${plan.variant}${plan.linkInReply ? " --reply-url <replyTweetUrl>" : ""} --route codex`);
   console.log(HARDENING);
   process.exitCode = 10;
 }

@@ -6,10 +6,10 @@
 //   - data/social/x-posted.json 台帳と照合し、二重投稿を防止
 //   - --mode chrome (デフォルト): scripts/automation/x-post-chrome.ps1 を呼び、
 //       Chrome を前面化 + クリップボードに投稿文をセット
-//       （最終クリックは Claude in Chrome MCP が DOM で実行する想定）
+//       （最終クリックは Codex 対話モードの Browser / Chrome が DOM を確認して実行する想定）
 //   - --mode api (将来): X API Create Post を直接叩く（環境変数が揃っていれば）
 //   - --check のみで台帳照合
-//   - --record で投稿成功後の台帳追記
+//   - --record で本投稿成功後の台帳追記、--record-reply で同じレコードへリプライ URL を追記
 //   - --error で失敗ログ保存
 //
 // 使い方:
@@ -20,7 +20,8 @@
 //     node scripts/run/post-to-x.mjs --check --slug XXX
 //
 //   投稿成功記録:
-//     node scripts/run/post-to-x.mjs --record --slug XXX --postUrl https://x.com/suma_labo/status/...
+//     node scripts/run/post-to-x.mjs --record --slug XXX --postUrl https://x.com/suma_labo/status/... --route codex
+//     node scripts/run/post-to-x.mjs --record-reply --slug XXX --replyUrl https://x.com/suma_labo/status/... --route codex
 //
 //   失敗記録:
 //     node scripts/run/post-to-x.mjs --error --slug XXX --reason "ログインが必要"
@@ -40,7 +41,7 @@ import { existsSync, mkdirSync } from "node:fs";
 import { readFile, writeFile } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import path from "node:path";
-import { hasPosted, getPostRecord, recordPost } from "../sumahon/x-posted-ledger.mjs";
+import { hasPosted, getPostRecord, recordPost, recordReply } from "../sumahon/x-posted-ledger.mjs";
 import { VERIFY_LOOP_STEPS } from "../sumahon/x-post-verify.mjs";
 import { gate } from "../automation/autonomy.mjs";
 import { notifyAutonomyEvent } from "../automation/autonomy-notify.mjs";
@@ -123,6 +124,7 @@ async function modeRecord(args) {
   const slug = args.slug;
   const postUrl = args.postUrl || "";
   const method = args.method || "chrome";
+  const route = args.route || "codex";
   const postJson = await loadPostJson(slug);
   const variantName = args.variant || "primary";
   const v = pickVariant(postJson, variantName);
@@ -136,10 +138,23 @@ async function modeRecord(args) {
     postText: v.text,
     postUrl,
     method,
+    route,
     thumbnailAttached: Boolean(postJson.attachThumbnail),
     charCount: v.charCount,
   });
   console.log("recorded:", JSON.stringify(rec, null, 2));
+  process.exit(0);
+}
+
+async function modeRecordReply(args) {
+  const slug = args.slug;
+  const replyUrl = args.replyUrl || args["reply-url"] || "";
+  if (!slug || !replyUrl) {
+    console.error("usage: --record-reply --slug X --replyUrl https://x.com/suma_labo/status/... [--route codex]");
+    process.exit(1);
+  }
+  const rec = await recordReply({ slug, replyUrl, route: args.route || "codex" });
+  console.log("reply recorded:", JSON.stringify(rec, null, 2));
   process.exit(0);
 }
 
@@ -218,23 +233,26 @@ async function modeChrome(args) {
   }
 
   console.log("");
-  console.log("=== NEXT STEPS (Claude in Chrome MCP が実行する想定) ===");
-  console.log("1. Chrome MCP で x.com の compose textarea を取得しフォーカス");
+  console.log("=== NEXT STEPS (Codex 対話モードの Browser / Chrome が実行する想定) ===");
+  console.log("1. Codex の Browser / Chrome で x.com の compose textarea を取得しフォーカス");
   console.log("2. PowerShell SendKeys ^v でテキストを貼り付け（または直接 type）");
   console.log("3. サムネ/スライドがある場合は -ImagePaths でクリップボード切替 → 前面タブで Ctrl+V");
   console.log("4. DOM 上で投稿文と添付件数を確認（MEDIA_COUNT_JS で枚数一致を検証）");
-  console.log("5. 「ポストする」ボタンを MCP click で押す（投稿）");
+  console.log("5. 「ポストする」ボタンを Codex の DOM 操作で押す（投稿）");
   console.log("");
   console.log("★ 6. 【投稿確定の検証ループ（必須・2026-07-19 恒久対策）】");
   console.log("     『クリックした＝投稿できた』は禁止。DOM で実在を確認するまで完了としない。");
   for (const s of VERIFY_LOOP_STEPS) console.log("     - " + s);
-  console.log("     検証スニペットは scripts/sumahon/x-post-verify.mjs（postExistsJs / REPLY_COUNT_JS /");
+  console.log("     検証スニペットは scripts/sumahon/x-post-verify.mjs（accountIdentityJs / postExistsJs / replyExistsJs /");
+  console.log("     REPLY_COUNT_JS /");
   console.log("     MEDIA_COUNT_JS / SEND_READY_JS）。手順は docs/x_post_workflow.md『投稿確定の検証ループ』。");
   console.log("");
   console.log("★ 7. 【台帳は投稿確定の直後に書く】確定を確認したら“その場で”記録する（作業の最後にまとめない）:");
-  console.log("     node scripts/run/post-to-x.mjs --record --slug " + slug + " --postUrl <本投稿URL>");
+  console.log("     node scripts/run/post-to-x.mjs --record --slug " + slug + " --postUrl <本投稿URL> --route codex");
   console.log("     さらに data/automation/ledger.json も本投稿確定直後に status=x_posted / xPostUrl を書く。");
-  console.log("     リプライも確定を確認した直後に xReplyUrl を書く（本投稿とリプライを別々に記録）。");
+  console.log("     リプライも確定を確認した直後に次を実行し、同じレコードへ replyUrl を追記する:");
+  console.log("     node scripts/run/post-to-x.mjs --record-reply --slug " + slug + " --replyUrl <リプライURL> --route codex");
+  console.log("     data/automation/ledger.json にも xReplyUrl を追記する（本投稿とリプライを別々に記録）。");
   console.log("");
   console.log("未確定で終える場合: 本投稿とリプライの実在状態を明記して『未投稿』と報告し、");
   console.log("     node scripts/run/post-to-x.mjs --error --slug " + slug + " --reason '...(実在状態)' を残す。");
@@ -258,6 +276,7 @@ async function main() {
 
   if (args.check) return modeCheck(args.slug);
   if (args.record) return modeRecord(args);
+  if (args["record-reply"] || args.recordReply) return modeRecordReply(args);
   if (args.error) return modeError(args);
 
   // デフォルト: Chrome 投稿準備

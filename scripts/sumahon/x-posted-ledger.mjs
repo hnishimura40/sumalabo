@@ -12,6 +12,7 @@
 //         "postText": "...",
 //         "postUrl": "https://x.com/suma_labo/status/...",
 //         "method": "chrome" | "api",
+//         "route": "codex" | "claude-in-chrome",
 //         "thumbnailAttached": true,
 //         "charCount": 178
 //       },
@@ -27,14 +28,15 @@ import path from "node:path";
 
 const LEDGER_PATH = "data/social/x-posted.json";
 const EMPTY_LEDGER = { version: 1, posts: [] };
+const createEmptyLedger = () => ({ version: EMPTY_LEDGER.version, posts: [] });
 
 async function readLedger(ledgerPath = LEDGER_PATH) {
-  if (!existsSync(ledgerPath)) return { ...EMPTY_LEDGER };
+  if (!existsSync(ledgerPath)) return createEmptyLedger();
   try {
     const raw = await readFile(ledgerPath, "utf-8");
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.posts)) {
-      return { ...EMPTY_LEDGER };
+      return createEmptyLedger();
     }
     return parsed;
   } catch (e) {
@@ -65,6 +67,7 @@ export async function recordPost({
   postText,
   postUrl = "",
   method = "chrome",
+  route = null,
   thumbnailAttached = false,
   charCount = 0,
   variant = "text_only",
@@ -85,6 +88,9 @@ export async function recordPost({
     postText,
     postUrl,
     method,
+    // 操作主体の経路。method（UI/API）とは別に、Codex対話モードか非常用Claude経路かを記録する。
+    // 既存レコードは route を持たなくても有効。新規記録だけに追加する。
+    route,
     thumbnailAttached: Boolean(thumbnailAttached),
     charCount,
     // 投稿の型（計測用）: text_only / images{N} / images{N}+reply / slides{N}+thread など。
@@ -96,6 +102,29 @@ export async function recordPost({
   });
   await writeLedger(ledger, ledgerPath);
   return ledger.posts[ledger.posts.length - 1];
+}
+
+/**
+ * 本投稿の記録後に、同じレコードへリプライ URL を追記する。
+ * x-posted.json の schema/version は変えず、既存の replyUrl フィールドだけを段階更新する。
+ */
+export async function recordReply({ slug, replyUrl, route = null, ledgerPath = LEDGER_PATH }) {
+  if (!slug) throw new Error("recordReply: slug is required");
+  if (!replyUrl) throw new Error("recordReply: replyUrl is required");
+
+  const ledger = await readLedger(ledgerPath);
+  const record = ledger.posts.find((p) => p.slug === slug);
+  if (!record) {
+    throw new Error(`recordReply: slug "${slug}" の本投稿レコードがありません`);
+  }
+  if (record.replyUrl && record.replyUrl !== replyUrl) {
+    throw new Error(`recordReply: slug "${slug}" には別の replyUrl が記録済みです`);
+  }
+
+  record.replyUrl = replyUrl;
+  if (route && !record.route) record.route = route;
+  await writeLedger(ledger, ledgerPath);
+  return record;
 }
 
 export async function listPosts(ledgerPath = LEDGER_PATH) {

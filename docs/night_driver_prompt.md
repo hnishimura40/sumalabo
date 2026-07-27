@@ -89,6 +89,8 @@ finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待た�
 
 ## 4. Phase C（X 投稿・ブラウザ）— **画像4枚＋リプライにリンク・粘らない**
 
+> **夜間経路の現状（2026-07-27）**: runnerは無人のClaudeプロセス＋`claude-in-chrome`で実装されている。昼のCodex対話モード優先決定とは分け、夜間の実装変更はHiro承認まで行わない。夜間の新規台帳レコードは必ず `route: "claude-in-chrome"` とし、完了報告に「工房退避」ではなくX投稿経路として明記する。
+
 以下の0/0-bisはPhase B前の2-bisで完了済みであることを再確認する項目であり、公開後に初めて実施してはならない。
 
 前提: Phase B 完了 + strict verify 8/8 + 本番 URL 200。
@@ -104,7 +106,7 @@ finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待た�
 4. **画像が乗らない場合のみフォールバック**（合計 5 分 / 3 回まで）: サムネ1枚だけの画像投稿（`images1+reply`）→それも不可なら text_only（本投稿にリンク）で即投稿。
 5. tweetButton の DOM click → composer 空読み戻しで本投稿の送信確認。**本投稿は 1 回だけ**（二重投稿禁止）。
 6. 本投稿の直後に、その投稿への**リプライで記事リンク**（`reply.text`）を1件だけ付けて送信。
-7. プロフィール（x.com/suma_labo）から本投稿 URL（＋リプライURL）を取得 → 台帳に `variant`（`images4+reply` / `images1+reply` / `text_only`）と URL・`replyUrl` を記録。`node scripts/automation/phase-c-auto.mjs --slug <slug> --posted <本投稿URL> --variant <variant> --reply-url <リプライURL>` で記録できる。
+7. プロフィール（x.com/suma_labo）から本投稿 URL（＋リプライURL）を取得 → 台帳に `variant`（`images4+reply` / `images1+reply` / `text_only`）と URL・`replyUrl`・`route: "claude-in-chrome"` を記録。`node scripts/automation/phase-c-auto.mjs --slug <slug> --posted <本投稿URL> --variant <variant> --reply-url <リプライURL> --route claude-in-chrome` で記録できる。
 8. **Phase C 所要時間を記録**: `node scripts/automation/test-mode.mjs --phase-timing --slug <slug> --phase "Phase C" --seconds <経過秒>`
 
 ## 5. 監査レポートと消し込み（必ず最後に実行）
