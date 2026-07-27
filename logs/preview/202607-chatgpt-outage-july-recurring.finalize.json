@@ -1,0 +1,45 @@
+{
+  "slug": "202607-chatgpt-outage-july-recurring",
+  "branch": "preview/202607-chatgpt-outage-july-recurring",
+  "steps": {
+    "autonomyGate": {
+      "ok": true,
+      "level": 1,
+      "reason": null
+    },
+    "gate": {
+      "ok": true
+    },
+    "draftsPreservation": {
+      "ok": true,
+      "entries": []
+    },
+    "build": {
+      "ok": true
+    },
+    "deploy": {
+      "ok": true,
+      "previewUrl": "https://e36a8d6c.sumalabo.pages.dev",
+      "branchAliasUrl": "https://preview-202607-chatgpt-outag.sumalabo.pages.dev"
+    },
+    "urlPolicy": {
+      "ok": true
+    },
+    "verify": {
+      "ok": true,
+      "status": 200
+    },
+    "notify": {
+      "ok": true,
+      "sent": 1,
+      "subscribers": 1
+    }
+  },
+  "finishedAt": "2026-07-27T14:04:38.781Z",
+  "autonomyLevel": 1,
+  "trigger": "manual",
+  "previewUrl": "https://e36a8d6c.sumalabo.pages.dev/articles/202607-chatgpt-outage-july-recurring/",
+  "branchAliasUrl": "https://preview-202607-chatgpt-outag.sumalabo.pages.dev",
+  "previewReadyAt": "2026-07-27T14:04:32.166Z",
+  "vetoDeadline": "2026-07-27T14:34:32.166Z"
+}

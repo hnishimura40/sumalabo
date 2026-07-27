@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-27T14:47:15.904Z",
+  "updatedAt": "2026-07-27T15:08:15.343Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -1333,7 +1333,9 @@
       "publishedAt": "2026-07-27T22:30:00+09:00",
       "autonomyLevel": 0,
       "trigger": "manual",
-      "hasAffiliate": false
+      "hasAffiliate": false,
+      "xPostUrl": "https://x.com/suma_labo/status/2081757423166185711",
+      "xPostedAt": "2026-07-27T15:04:21.649Z"
     },
     {
       "slug": "202607-openai-model-hugging-face-security-incident",

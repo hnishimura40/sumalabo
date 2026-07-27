@@ -1,0 +1,78 @@
+{
+  "slug": "202607-chatgpt-outage-july-recurring",
+  "articleUrl": "https://sumalabo.com/articles/202607-chatgpt-outage-july-recurring/",
+  "isReporting": true,
+  "linkInReply": true,
+  "reply": {
+    "text": "続きと出典は すまラボ の記事で👇\nhttps://sumalabo.com/articles/202607-chatgpt-outage-july-recurring/",
+    "articleUrl": "https://sumalabo.com/articles/202607-chatgpt-outage-july-recurring/"
+  },
+  "attachThumbnail": true,
+  "thumbnailPath": "/images/thumbnails/202607-chatgpt-outage-july-recurring.webp",
+  "hashtags": [
+    "#AI",
+    "#すまラボ"
+  ],
+  "subjectHashtags": [
+    "#ChatGPT",
+    "#障害"
+  ],
+  "subjectHashtagCandidates": [
+    "#ChatGPT",
+    "#障害"
+  ],
+  "subjectHashtagValidation": {
+    "checkedAt": "2026-07-27T15:05:00+09:00",
+    "method": "x_live_search",
+    "results": {
+      "#ChatGPT": { "survived": true, "note": "直近5分以内に4アカウントが投稿（Ky7HhGtywMxCthM / studio_nekonote / hugolovefreedom / SpeakInCOAD）" },
+      "#障害": { "survived": true, "note": "直近5時間以内に3アカウントが投稿（studio_nekonote / XBOXDAISUKIch / キャリカク浜松駅前オフィス）" }
+    }
+  },
+  "primary": {
+    "text": "今日ChatGPTが落ちて、涙目になった人、私もです。\nPCが壊れた！？と焦って、アンインストール→再インストールも54%で止まって「なんてこった…」ってなりました。\n実は7月、障害が本当に連発してたらしいです。\n#ChatGPT #障害 #AI #すまラボ",
+    "charCount": 129,
+    "weightedLength": 226,
+    "fitsLimit": true,
+    "downshifted": false,
+    "truncated": false,
+    "tone": "emotional_remake_2026-07-27",
+    "note": "Hiro指示によるバズ狙い人格転換リメイクの投稿文。感情表現解禁・OpenAI批判なし・Claude礼賛なし。"
+  },
+  "alternates": [
+    {
+      "label": "結論先出し",
+      "text": "結論: 「PCが壊れた」とした日、実はChatGPTの障害だった話\n\n突然ChatGPTが落ちて、PCの故障を疑ってアンインストール→再インストールも進まないという空回り。実は7月、障害が実際に連発していました。\n#AI #すまラボ",
+      "charCount": 116,
+      "weightedLength": 203,
+      "fitsLimit": true,
+      "downshifted": true,
+      "truncated": false
+    },
+    {
+      "label": "問いかけ",
+      "text": "「PCが壊れた」とした日という噂、本当のところは？\n\n突然ChatGPTが落ちて、PCの故障を疑ってアンインストール→再インストールも進まないという空回り。実は7月、障害が実際に連発していました。\n#AI #すまラボ",
+      "charCount": 108,
+      "weightedLength": 196,
+      "fitsLimit": true,
+      "downshifted": true,
+      "truncated": false
+    }
+  ],
+  "warnings": [
+    "primary は280字ガードにより短い構成で生成し直しました（description全文は不使用）"
+  ],
+  "generatedAt": "2026-07-27T14:53:04.973Z",
+  "attachmentPlan": {
+    "variant": "images4+reply",
+    "attach": [
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\thumbnails\\202607-chatgpt-outage-july-recurring.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-chatgpt-outage-july-recurring\\slide02.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-chatgpt-outage-july-recurring\\slide03.webp",
+      "D:\\documents\\動画作成関連\\すまラボ\\public\\images\\articles\\202607-chatgpt-outage-july-recurring\\slide01.webp"
+    ],
+    "threadBatches": [],
+    "linkInReply": true,
+    "selectionSource": "independent_inspection"
+  }
+}
