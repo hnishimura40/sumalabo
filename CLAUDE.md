@@ -1,6 +1,6 @@
 # CLAUDE.md — すまラボ自動化の役割分担と運用ポリシー
 
-このドキュメントは、すまラボ記事作成・公開ワークフローにおける **Claude Code / Claude in Chrome がやること** と **人間（運営者）がやること** の境界を固定するためのものです。今後のセッションでもこのポリシーを **既定** として動きます。
+このドキュメントは、すまラボ記事作成・公開ワークフローにおける **Codex / Claude Code / ブラウザ操作経路がやること** と **人間（運営者）がやること** の境界を固定するためのものです。今後のセッションでもこのポリシーを **既定** として動きます。
 
 ## 運用モード（2026-05-23 以降）
 
@@ -19,6 +19,8 @@
 **画像の「同一性」と「演出」を分離する（2026-07-20）**: キャラ同一性のblocking判定は、ひまりの顔・体型・髪型／らぼまるの耳ビレ・首輪・アンテナ・ハート・卵型体型など、`assets/characters/character-sheet.md` の認識アンカーに限る。衣装・小道具・ポーズ・背景は記事テーマを伝えるために積極的に変え、これらの差をキャラ不一致や工房fallbackの理由にしない。新規記事の `slide_plan.md` は `## 演出ブロック` を必須とし、衣装・小道具・ポーズ・背景・演出根拠・スライド演出方針をPhase Aで自動生成する。独立検品はアンカー不一致をblocking、演出の弱さをwarningとして分ける。サムネは標準衣装の棒立ち・汎用背景・指さし説明だけを避け、道具を実際に使う体験図にする。本文スライドも小道具・動き・背景をテーマに合わせ、衣装を変える場合は記事内で一貫させる。次の立ち会い記事では、機械検品後にHiroが演出の質を実物レビューして採否を決める。
 
 **身体構造と画像経路の公開ブロック（2026-07-26更新）**: 認識アンカーとは別に、四肢・手指・顔・物体との融合を全画像で検査する。明確な手/腕/脚の本数異常に加え、各手が左手/右手として自然な向きか（親指位置）、手首と腕の接続、指の長さ・太さ（特に親指）を手ごとに必須回答する。明確な左右不整合・接続異常、腕・脚の不自然な長さ/細さ、触手状・ホース状・急なS字、付け根・関節の破綻、不快なシルエットは `needs_revision`。比率だけの違和感は warning とし画像を報告へ添付する。らぼまるは腕・手・脚・足が左右各1つで、それ以外の突起はアンテナ1本と左右の耳ビレだけ。生成では手を小さめにしクローズアップと両手の同時別動作を原則避ける。画像生成の標準経路は `codex exec` とし、工房チャットは既定のfallback条件が記録された場合だけ使う。**工房fallbackが1回でも発動した完了報告には「工房退避あり（条件名）」を必須記載**し、発動しなかった場合も「工房退避なし（Codex exec）」と明記する。無記載のまま経路を変更してはならない。
+
+**X投稿の標準経路（Hiro決定・2026-07-27）**: 昼のPhase Cは **Codex対話モードの内蔵BrowserまたはChrome拡張**を基本とし、`claude-in-chrome` は非常用フォールバックへ降格する。投稿前の `@suma_labo` DOM確認、本投稿・リプライ各 `count===1`、親の返信数 `N→N+1`、`x-posted.json` への本投稿直後／リプライ直後の2段階記録を省略しない。新規台帳レコードには `route: "codex"` を加える。**これは7/23の「Codexへ移行する価値なし」判定を、対話モードでは安定したというHiro実測により上書きする決定**。定型指示: [`docs/x-post-codex-procedure.md`](docs/x-post-codex-procedure.md)。夜間runは実装変更の承認まで現行の `claude-in-chrome` を維持する。
 
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
@@ -45,7 +47,7 @@
   strict verify（全記事 8/8 pass）→ queue を published に更新
                             ↓
 [Phase C: X 投稿]
-  本番URL確認 → Chrome で X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証 →
+  本番URL確認 → Codex対話モードで X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証 →
   投稿アカウント @suma_labo 確認 → 本投稿(リンク無し) → リプライに記事リンク →
   投稿URL取得 → queue を x_posted に更新
                             ↓
@@ -310,7 +312,7 @@ Phase B 完了後だけ実行：
 15. **Phase A 最終報告**: 完了サマリ（生成ファイル一覧、検証結果、PR URL、Preview URL、人間が承認時に見る観点）を 1 メッセージで提示 → **ここで必ず停止する**（Human Review Checkpoint）
 16. **ユーザー明示了承を待つ**: 「記事OK / 公開へ / 承認」等のトリガーが来るまで Phase B / C に進まない
 17. **Phase B（公開）**: PR merge → main 同期 → wrangler 本番 deploy（正規手順）→ strict verify 8/8 → queue を `published` に更新
-18. **Phase C（X 投稿）**: 本番URL確認 → Chrome で X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証/アカウント (@suma_labo) 確認 → 本投稿(リンク無し) → リプライに記事リンク → 投稿URL取得 → queue を `x_posted` に更新
+18. **Phase C（X 投稿）**: 本番URL確認 → Codex対話モード（Chrome拡張を基本、内蔵Browserを補助）で X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証/アカウント (@suma_labo) 確認 → 本投稿(リンク無し) → リプライに記事リンク → 投稿URL取得 → queue を `x_posted` に更新。`claude-in-chrome` は非常用フォールバック
 19. **Phase B / C 完了報告**: 本番URL / 投稿URL / queue 更新内容を 1 メッセージで提示
 
 ## 禁止事項（Claude Code 側）

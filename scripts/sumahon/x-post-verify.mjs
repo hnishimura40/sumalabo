@@ -6,10 +6,10 @@
 //   クリックしても投稿が確定していないことがある（Kimi K3 記事で発生）。
 //   そこで「クリック後に DOM で実在を確認する検証ループ」を必須化する。
 //
-// この .mjs は Node 実行用ではなく、**Claude in Chrome MCP の
-// javascript_tool にそのまま貼る検証スニペット（文字列）を集約**するもの。
-//   import { POST_EXISTS_JS, REPLY_COUNT_JS } from './x-post-verify.mjs'
-//   → console.log で取り出して javascript_tool に貼る、
+// この .mjs は、**Codex 対話モードの Browser / Chrome で
+// DOM 検証として実行するスニペット（文字列）を集約**するもの。
+//   import { postExistsJs, replyExistsJs, REPLY_COUNT_JS } from './x-post-verify.mjs'
+//   → console.log で取り出して Browser / Chrome の DOM 実行へ渡す、
 //     もしくは post-to-x.mjs が NEXT STEPS で印字する。
 //
 // 検証の考え方:
@@ -19,10 +19,28 @@
 //     クリック前 N → クリック後 N+1 に増えたら確定（これが最も確実な信号。
 //     Kimi K3 では「0 件の返信」→「1 件の返信」で確定を判定できた）。
 
+/** 投稿前のアカウントDOM検証。全ページ本文ではなくアカウント切替領域だけを読む。 */
+export function accountIdentityJs(expectedHandle = "@suma_labo") {
+  const safe = JSON.stringify(String(expectedHandle));
+  return `(() => {
+    const expected = ${safe};
+    const selectors = [
+      '[data-testid="SideNav_AccountSwitcher_Button"]',
+      '[data-testid="AppTabBar_Profile_Link"]',
+      'a[aria-label*="プロフィール"]',
+      'a[aria-label*="Profile"]'
+    ];
+    const nodes = [...new Set(selectors.flatMap(s => [...document.querySelectorAll(s)]))];
+    const evidence = nodes.map(n => [n.innerText || '', n.getAttribute('aria-label') || '', n.getAttribute('href') || ''].join(' '));
+    const confirmed = evidence.some(t => t.includes(expected));
+    return JSON.stringify({ expected, confirmed, evidence });
+  })()`;
+}
+
 /**
  * 本投稿の実在チェック（プロフィール /suma_labo を開いた状態で実行）。
  * @param {string} uniqueText 本文の一意な部分文字列（例: 先頭 12〜20 文字）
- * @returns {string} javascript_tool に貼る式。返り値 JSON:
+ * @returns {string} Browser / Chrome の DOM 実行へ貼る式。返り値 JSON:
  *   { count, hrefs:[...], verdict:'confirmed'|'not_posted'|'duplicate' }
  */
 export function postExistsJs(uniqueText) {
@@ -38,6 +56,31 @@ export function postExistsJs(uniqueText) {
           .find(h=>h && /^\\/suma_labo\\/status\\/\\d+$/.test(h));
         if (href) hits.push(href);
       }
+    }
+    const uniq = [...new Set(hits)];
+    const verdict = uniq.length === 1 ? 'confirmed' : (uniq.length === 0 ? 'not_posted' : 'duplicate');
+    return JSON.stringify({ count: uniq.length, hrefs: uniq, verdict });
+  })()`;
+}
+
+/**
+ * リプライの実在チェック（プロフィールの「返信」タブを開いた状態で実行）。
+ * 親投稿 ID を除外し、リプライ本文の一意な部分文字列に一致する status URL を数える。
+ */
+export function replyExistsJs(uniqueText, parentStatusId = "") {
+  const safeText = JSON.stringify(String(uniqueText));
+  const safeParent = JSON.stringify(String(parentStatusId));
+  return `(() => {
+    const needle = ${safeText};
+    const parentId = ${safeParent};
+    const arts = [...document.querySelectorAll('article')];
+    const hits = [];
+    for (const a of arts) {
+      const t = a.innerText || '';
+      if (!t.includes(needle)) continue;
+      const href = [...a.querySelectorAll('a')].map(x=>x.getAttribute('href'))
+        .find(h=>h && /^\\/suma_labo\\/status\\/\\d+$/.test(h) && (!parentId || !h.endsWith('/' + parentId)));
+      if (href) hits.push(href);
     }
     const uniq = [...new Set(hits)];
     const verdict = uniq.length === 1 ? 'confirmed' : (uniq.length === 0 ? 'not_posted' : 'duplicate');
@@ -93,7 +136,8 @@ export const VERIFY_LOOP_STEPS = [
   '  verdict=not_posted(count===0) → SEND_READY_JS が ready になるまで待って再クリック（本投稿クリックは最大2回）',
   '  verdict=duplicate(count>=2) → 停止・二重投稿として手当て（追加投稿しない）',
   'リプライ: ①クリック前に REPLY_COUNT_JS で親の返信数 N を控える → ②返信/tweetButtonInline をクリック → ③5秒待機 → ④REPLY_COUNT_JS 再取得',
-  '  N→N+1 かつ composerCleared=true → 確定 → 即 --record(reply) + 台帳更新',
+  '  N→N+1 かつ composerCleared=true → /suma_labo/with_replies で replyExistsJs(一意文字列, 親ID) を実行',
+  '  count===1 → 確定 → 即 --record-reply + 台帳更新',
   '  増えていない → SEND_READY_JS が ready になるまで待って再クリック（最大2回）',
   '  2回試しても増えない → リプライは「未投稿」と明確に報告（本投稿は投稿済みのまま維持）',
 ];

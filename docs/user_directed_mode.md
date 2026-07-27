@@ -1,6 +1,6 @@
 # すまラボ user-directed mode + human review checkpoint 運用ガイド
 
-最終更新: 2026-05-27
+最終更新: 2026-07-27
 
 ## このドキュメントの位置づけ
 
@@ -44,7 +44,7 @@
   strict verify 8/8 pass → queue を published に更新
                             ↓
 [Phase C — X 投稿]
-  本番URL確認 → Chrome で X 投稿画面 → OGPカード / サムネ表示確認 →
+  本番URL確認 → Codex対話モード（Chrome拡張基本）で X 投稿画面 → 画像添付をDOM確認 →
   投稿アカウント @suma_labo 確認 → 投稿 → 投稿URL取得 → queue を x_posted に
                             ↓
                           完了報告
@@ -67,7 +67,7 @@
 4. **Checkpoint**: Claude が PR URL / Preview URL / 検証結果を提示して停止
 5. ユーザーが Preview を確認し、「**記事OK、公開へ**」など明示返答
 6. **Phase B**: Claude が PR merge → wrangler 本番 deploy（正規手順）→ strict verify → queue 更新
-7. **Phase C**: Claude が Chrome で X 投稿画面を開き、OGPカード確認 → 投稿 → 投稿URL取得
+7. **Phase C**: Codex対話モードがChrome拡張で X 投稿画面を開き、DOM検証 → 投稿 → 実在確認 → 投稿URL取得（`claude-in-chrome` は非常用）
 8. **完了報告**: 本番URL / 投稿URL / queue 状態を 1 メッセージで提示
 
 > **複数本まとめて処理してよい場合**：ユーザーが「inbox を一気に処理」など明示したときだけ。URL 指定記事は原則 1 本ずつ。複数記事の Phase B は wrangler deploy 1 回でよい（main 全体が反映されるため）。
@@ -204,12 +204,14 @@ Phase A 完了時点で **必ず停止する**。
 
 詳細: [`docs/x_post_workflow.md`](x_post_workflow.md)
 
+> **経路決定（Hiro・2026-07-27）**: 昼のPhase CはCodex対話モードを基本とし、`claude-in-chrome` は非常用フォールバック。7/23の「移行価値なし」判定は、対話モードで安定したHiro実測により上書きされた。貼り付け用指示は [`docs/x-post-codex-procedure.md`](x-post-codex-procedure.md)。
+
 要点:
 
 - **前提条件すべて満たしたときだけ**: ユーザー了承 / PR merge / deploy 成功 / strict verify 8/8 / 本番URLが開ける / 投稿アカウント @suma_labo / Chrome 使用
-- **投稿前**: OGPカード / サムネ / タイトル / URL含む / 禁則・誤字なし — 全部チェック
-- **投稿後**: 投稿URL 取得 → queue に `xPostUrl` / `xPostedAt` / `xPostText` を記録、status を `x_posted` に
-- 投稿文: 短め / URL含む / ハッシュタグ 2〜3 個 / 「普通の人」表現禁止 / 煽らない
+- **投稿前**: `@suma_labo` をDOM確認 / 画像枚数 / サムネ / 本文 / 禁則・誤字なし — 全部チェック
+- **投稿後**: メイン・リプライ各 `count===1`、親返信数 `N→N+1` を確認。各確定直後に `x-posted.json` を2段階記録し、`route: "codex"` を残す
+- 投稿文: 短め / 本投稿はURLなし / リプライに記事リンク1件 / ハッシュタグ2個 / 「普通の人」表現禁止 / 煽らない
 
 ## 8. Queue 状態設計
 

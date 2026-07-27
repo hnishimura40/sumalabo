@@ -1,20 +1,20 @@
 # X 投稿自動化（@suma_labo）
 
-すまラボ記事が **本番公開 (main マージ + 本番URL確認後)** に、Claude Code が **@suma_labo** から自動で新記事告知ポストを投稿するための仕組みとフロー。
+すまラボ記事が **本番公開 (main マージ + 本番URL確認後)** に、Codex対話モードが **@suma_labo** から新記事告知ポストを投稿するための仕組みとフロー。`claude-in-chrome` は非常用フォールバックとする。
 
 ## 役割分担
 
-`CLAUDE.md` の運用ポリシーに従う。**人間は投稿しない / パスワードを入れない / 認証コードを入れない**。Claude が以下を自律で実行する:
+`CLAUDE.md` の運用ポリシーに従う。**人間は投稿しない / パスワードを入れない / 認証コードを入れない**。Codex対話モードが以下を実行する:
 
 1. 記事公開後、`scripts/run/generate-x-post.mjs` で投稿文 (primary + 代替 2 案) を生成
 2. `scripts/run/post-to-x.mjs --check --slug X` で台帳（`data/social/x-posted.json`）と照合 → 既投稿なら停止
 3. Chrome で `https://x.com/` を開き、`@suma_labo` がログイン済みであることを確認（ログインしていない場合は失敗として停止、ユーザーへ「Chrome で @suma_labo ログインが必要」とだけ報告）
 4. `scripts/automation/x-post-chrome.ps1` で **Chrome を前面化 + 投稿文をクリップボードへセット**
-5. Claude in Chrome MCP で compose textarea へフォーカス → Ctrl+V で貼り付け
+5. CodexのChrome拡張で compose textarea へフォーカス → Ctrl+V で貼り付け
 6. サムネ画像が `frontmatter.thumbnail` にあれば、PowerShell で `-ImagePath` 付きで再呼び出し → CF_HDROP クリップボード → Ctrl+V で添付
 7. DOM 上で投稿文と添付件数を確認
-8. 「ポストする」ボタンを Chrome MCP click で押す
-9. 投稿完了後、`scripts/run/post-to-x.mjs --record --slug X --postUrl <URL>` で台帳追記
+8. 「ポストする」ボタンをCodexのDOM操作で押し、メイン・リプライ各 `count===1` と親返信数 `N→N+1` を確認
+9. 本投稿確認直後に `--record ... --route codex`、リプライ確認直後に `--record-reply ... --route codex` を実行して台帳を2段階更新
 10. 失敗時は `--error --slug X --reason '...'` で `logs/social/{slug}.x-post-error.json` に保存し、最終報告で「X投稿のみ失敗」と明示。記事公開自体は取り消さない
 
 ## 投稿文生成ルール
@@ -58,6 +58,7 @@
       "postText": "...",
       "postUrl": "https://x.com/suma_labo/status/...",
       "method": "chrome",
+      "route": "codex",
       "thumbnailAttached": true,
       "charCount": 178
     }
@@ -84,10 +85,11 @@ API ルートが使えるようになった場合、`scripts/run/post-to-x.mjs -
 | コマンド | 動作 |
 |---|---|
 | `npm run social:generate-x-post -- --slug X` | 投稿文生成（primary + 代替 2 案）→ `drafts/social/{slug}.x-post.md` + `logs/social/{slug}.x-post.json` |
-| `npm run social:post-to-x -- --slug X` | Chrome ルート: 台帳照合 → PowerShell helper 呼び出し → Claude MCP で投稿 |
+| `npm run social:post-to-x -- --slug X` | Chrome ルート: 台帳照合 → PowerShell helper 呼び出し → Codex対話モードで投稿 |
 | `npm run social:post-to-x -- --slug X --dry-run` | PowerShell を呼ばず、何が投稿されるかだけ表示 |
 | `npm run social:post-to-x -- --check --slug X` | 台帳照合のみ。posted=true なら exit 3 |
-| `npm run social:post-to-x -- --record --slug X --postUrl <URL>` | 投稿成功後の台帳追記 |
+| `npm run social:post-to-x -- --record --slug X --postUrl <URL> --route codex` | 本投稿の実在確認直後に台帳追記 |
+| `npm run social:post-to-x -- --record-reply --slug X --replyUrl <URL> --route codex` | リプライの実在確認直後に同じ台帳レコードを更新 |
 | `npm run social:post-to-x -- --error --slug X --reason '...' [--stage <stage>]` | 失敗ログ保存 |
 
 ## 失敗時の取り扱い
@@ -95,9 +97,9 @@ API ルートが使えるようになった場合、`scripts/run/post-to-x.mjs -
 | 症状 | 自動対処 | 最終報告での扱い |
 |---|---|---|
 | Chrome に X ウィンドウが見つからない | ヘルパー exit 2 で停止 | 「Chrome で x.com を開いてください」とだけ報告 |
-| @suma_labo がログインしていない | Claude MCP で compose textarea を見つけられない / ログインボタンが見える → 停止 | 「Chrome で @suma_labo ログインが必要」とだけ報告 |
+| @suma_labo がログインしていない | CodexのDOM検証で `@suma_labo` を確認できない / ログインボタンが見える → 停止 | 「Chrome で @suma_labo ログインが必要」とだけ報告 |
 | クリップボード設定失敗 | ヘルパー exit 5 | 失敗ログ保存、最終報告に「X投稿のみ失敗」 |
-| 投稿ボタン押下後にエラートースト | Claude MCP で検出 → `--error` で記録 | 失敗ログ保存、人間にパスワード入力等は求めない |
+| 投稿ボタン押下後にエラートースト | CodexのDOM検証で検出 → `--error` で記録 | 失敗ログ保存、人間にパスワード入力等は求めない |
 | 重複投稿台帳ヒット | exit 3 で停止 | 再投稿しない（仕様どおり） |
 
 **いずれの場合も、記事公開（main マージ）自体は取り消さない**。X 投稿は best-effort。
@@ -114,6 +116,7 @@ API ルートが使えるようになった場合、`scripts/run/post-to-x.mjs -
 ## 関連ファイル
 
 - `scripts/sumahon/generate-x-post.mjs` — 投稿文生成ライブラリ（純関数）
+- `docs/x-post-codex-procedure.md` — Codexセッションへ貼る4点検証の定型指示
 - `scripts/sumahon/x-posted-ledger.mjs` — 重複投稿台帳のヘルパー
 - `scripts/run/generate-x-post.mjs` — 生成 CLI
 - `scripts/run/post-to-x.mjs` — 投稿オーケストレータ CLI

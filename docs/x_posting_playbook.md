@@ -1,5 +1,11 @@
 # X投稿プレイブック（Phase C強化・xPostOptions）
 
+## 実行経路（2026-07-27）
+
+昼のPhase Cは **Codex対話モード＋Chrome拡張**を標準とし、内蔵BrowserはDOM確認等の補助に使う。`claude-in-chrome` は非常用フォールバックで、使った場合は理由を報告し台帳に `route: "claude-in-chrome"` を残す。通常のCodex経路は `route: "codex"`。検証4点セットと貼り付け用指示は [`x-post-codex-procedure.md`](x-post-codex-procedure.md) を参照。
+
+これは7/23の「Codexへ移行する価値なし」判定を、Codex対話モードでは安定したというHiro実測により上書きする運用決定である。
+
 すまラボの X（@suma_labo）投稿の「型」を管理するフラグと、計測・改善の回し方。
 実装: `scripts/automation/x-post-options.mjs` ／ 状態: `data/automation/autonomy.json` の `xPostOptions`。
 

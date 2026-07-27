@@ -1,4 +1,4 @@
-// tests/sumahon/x-post-options.test.mjs — Phase C強化フラグ（全OFFで現状維持）のテスト。
+// tests/sumahon/x-post-options.test.mjs — Phase C投稿形式とフォールバックのテスト。
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
@@ -15,9 +15,16 @@ import {
 
 const TMP = mkdtempSync(join(tmpdir(), "xpostopts-"));
 
-test("1. 既定値はすべてOFF（現状維持）", () => {
+test("1. 設定欠落時は互換用の既定値で補完", () => {
   const opts = loadXPostOptions({}); // xPostOptions欠落のstate
-  assert.deepEqual(opts, { attachSlides: false, attachSlidesCount: 3, threadAllSlides: false, postWindow: null });
+  assert.deepEqual(opts, {
+    attachSlides: false,
+    attachSlidesCount: 4,
+    leadWithThumbnail: false,
+    linkInReply: false,
+    threadAllSlides: false,
+    postWindow: null,
+  });
 });
 
 test("2. postWindow=null なら即投稿（現状どおり）", () => {
@@ -43,7 +50,7 @@ test("3. postWindow: 窓より前→保留 / 窓内→即 / 窓後→即（放�
 
 test("4. attachSlides OFF → 添付なし・variant=text_only（現状どおり）", () => {
   const plan = buildAttachmentPlan("any-slug", X_POST_OPTIONS_DEFAULT, TMP);
-  assert.deepEqual(plan, { variant: "text_only", attach: [], threadBatches: [] });
+  assert.deepEqual(plan, { variant: "text_only", attach: [], threadBatches: [], linkInReply: false, selectionSource: "none" });
 });
 
 test("5. attachSlides ON → 先頭N枚 + threadAllSlides ONで残りを4枚ずつ", () => {
@@ -57,20 +64,21 @@ test("5. attachSlides ON → 先頭N枚 + threadAllSlides ONで残りを4枚ず�
   const plan = buildAttachmentPlan(slug, on, TMP);
   assert.equal(plan.attach.length, 3);
   assert.ok(plan.attach[0].endsWith("fig01-x.webp"));
-  assert.equal(plan.variant, "slides3");
+  assert.equal(plan.variant, "images3");
   assert.equal(plan.threadBatches.length, 0);
 
   const thread = buildAttachmentPlan(slug, { ...on, threadAllSlides: true }, TMP);
   assert.equal(thread.attach.length, 3);
   assert.equal(thread.threadBatches.length, 1); // 残り4枚 → 1返信
   assert.equal(thread.threadBatches[0].length, 4);
-  assert.equal(thread.variant, "slides3+thread");
+  assert.equal(thread.variant, "images3+thread");
 });
 
 test("6. variantName の命名", () => {
   assert.equal(variantName(X_POST_OPTIONS_DEFAULT, 0), "text_only");
-  assert.equal(variantName({ attachSlides: true, threadAllSlides: false }, 3), "slides3");
-  assert.equal(variantName({ attachSlides: true, threadAllSlides: true }, 2), "slides2+thread");
+  assert.equal(variantName({ attachSlides: true, threadAllSlides: false }, 3), "images3");
+  assert.equal(variantName({ attachSlides: true, threadAllSlides: true }, 2), "images2+thread");
+  assert.equal(variantName({ attachSlides: true, linkInReply: true, threadAllSlides: false }, 4), "images4+reply");
 });
 
 test("7. ハッシュタグ上限2個（#すまラボ必須）", async () => {
