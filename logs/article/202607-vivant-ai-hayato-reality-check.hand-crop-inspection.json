@@ -1,0 +1,428 @@
+{
+  "overallPass": true,
+  "sourceImagesInspected": 9,
+  "cropsInspected": 35,
+  "verdictCounts": {
+    "ok": 7,
+    "warning": 2,
+    "needs_revision": 0
+  },
+  "images": [
+    {
+      "id": "thumbnail",
+      "verdict": "ok",
+      "cropFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\hand-inspection-crops\\thumbnail.hand-crops.png",
+      "checks": [
+        {
+          "label": "thumbnail-hand1",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指側と指列から右手と判断。expectedSideと一致し、手首接続・指比率・本数に異常なし。"
+        },
+        {
+          "label": "thumbnail-hand2",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指側と手の輪郭から左手と判断。expectedSideと一致し、前腕から自然に接続している。"
+        },
+        {
+          "label": "thumbnail-hand3",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体右側から出る短い丸型の腕。左右配置、太さ、長さ、胴体との接続はいずれも自然。"
+        },
+        {
+          "label": "thumbnail-hand4",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体左側から出る短い丸型の腕。対側の腕と区別でき、重複や独立した手はない。"
+        }
+      ]
+    },
+    {
+      "id": "slide01-verdict",
+      "verdict": "ok",
+      "cropFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\hand-inspection-crops\\slide01-verdict.hand-crops.png",
+      "checks": [
+        {
+          "label": "slide01-verdict-hand1",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "指の曲がりと親指側から右手と判断。expectedSideと一致し、袖口からの接続も自然。"
+        },
+        {
+          "label": "slide01-verdict-hand2",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "手の甲側の見え方と親指位置から左手。指の本数と長さに明確な破綻なし。"
+        },
+        {
+          "label": "slide01-verdict-hand3",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体右側の短い丸型腕として自然。細長化、急な屈曲、二重化は見られない。"
+        },
+        {
+          "label": "slide01-verdict-hand4",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体左側へ自然に付く丸型腕。反対側の腕と別の起点を持ち、本数も正常。"
+        }
+      ]
+    },
+    {
+      "id": "slide02-five-powers",
+      "verdict": "ok",
+      "cropFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\hand-inspection-crops\\slide02-five-powers.hand-crops.png",
+      "checks": [
+        {
+          "label": "slide02-five-powers-hand1",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "握り気味の指列と親指位置から右手。expectedSideと一致し、関節位置も自然。"
+        },
+        {
+          "label": "slide02-five-powers-hand2",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指側と指の屈曲から左手と判断。前腕から手首へのねじれや継ぎ足しなし。"
+        },
+        {
+          "label": "slide02-five-powers-hand3",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体右側の短い腕として自然。胴体幅に対して過長ではなく、輪郭も滑らか。"
+        },
+        {
+          "label": "slide02-five-powers-hand4",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体左側の丸型腕。右腕と近接・平行せず、第三の腕や融合もない。"
+        }
+      ]
+    },
+    {
+      "id": "slide03-dialogue",
+      "verdict": "warning",
+      "cropFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\hand-inspection-crops\\slide03-dialogue.hand-crops.png",
+      "checks": [
+        {
+          "label": "slide03-dialogue-hand1",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指側と指列から右手。expectedSideと一致し、手首と前腕の接続も自然。"
+        },
+        {
+          "label": "slide03-dialogue-hand2",
+          "observedSide": "unclear",
+          "sideNatural": false,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "warning",
+          "note": "手先の大半が衣服に隠れ、親指側・手の甲と掌・指列を独立に確認できないため、expected:leftとの照合を確定できない。腕の接続や重複には明確な破綻なし。"
+        },
+        {
+          "label": "slide03-dialogue-hand3",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体右側に付く短い丸型腕。胴体からの起点が明確で、過長やホース状変形なし。"
+        },
+        {
+          "label": "slide03-dialogue-hand4",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体左側の丸型腕として自然。対側腕と独立しており、手数は左右各1つ。"
+        }
+      ]
+    },
+    {
+      "id": "slide04-video-analysis",
+      "verdict": "ok",
+      "cropFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\hand-inspection-crops\\slide04-video-analysis.hand-crops.png",
+      "checks": [
+        {
+          "label": "slide04-video-analysis-hand1",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指位置と指列から右手。expectedSideと一致し、親指の長さと太さも自然。"
+        },
+        {
+          "label": "slide04-video-analysis-hand2",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指側から左手と判断。袖口、手首、手の連続性にねじれや融合なし。"
+        },
+        {
+          "label": "slide04-video-analysis-hand3",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体右側の短い丸型腕。太さと長さはキャラクター形状として自然。"
+        },
+        {
+          "label": "slide04-video-analysis-hand4",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体左側の丸型腕として自然。左右の腕は別の起点から追え、二重手ではない。"
+        }
+      ]
+    },
+    {
+      "id": "slide05-probability",
+      "verdict": "ok",
+      "cropFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\hand-inspection-crops\\slide05-probability.hand-crops.png",
+      "checks": [
+        {
+          "label": "slide05-probability-hand1",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指位置と手の甲側の見え方から左手。expectedSideと一致し、指比率も許容範囲。"
+        },
+        {
+          "label": "slide05-probability-hand2",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体右側から出る短い丸型腕。輪郭と胴体への接続は自然。"
+        },
+        {
+          "label": "slide05-probability-hand3",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体左側から出る丸型腕。対側腕と近接・平行せず、本数超過もない。"
+        }
+      ]
+    },
+    {
+      "id": "slide06-cyber",
+      "verdict": "ok",
+      "cropFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\hand-inspection-crops\\slide06-cyber.hand-crops.png",
+      "checks": [
+        {
+          "label": "slide06-cyber-hand1",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指側と指列から右手。expectedSideと一致し、指と親指の比率も自然。"
+        },
+        {
+          "label": "slide06-cyber-hand2",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指位置から左手と判断。前腕から手首への連続性に破綻なし。"
+        },
+        {
+          "label": "slide06-cyber-hand3",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体右側の短く太い丸型腕。急なS字や過剰な伸長はない。"
+        },
+        {
+          "label": "slide06-cyber-hand4",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体左側の丸型腕。左右各1本として追跡でき、融合や第三の腕なし。"
+        }
+      ]
+    },
+    {
+      "id": "slide07-voice",
+      "verdict": "warning",
+      "cropFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\hand-inspection-crops\\slide07-voice.hand-crops.png",
+      "checks": [
+        {
+          "label": "slide07-voice-hand1",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指側と指の曲がりから右手。expectedSideと一致し、接続と比率も自然。"
+        },
+        {
+          "label": "slide07-voice-hand2",
+          "observedSide": "unclear",
+          "sideNatural": false,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "warning",
+          "note": "手先が衣服の背後にほぼ隠れ、親指側および手の甲・掌を判別できないため、expected:leftを形態から確定できない。見える範囲の前腕接続と本数は正常。"
+        },
+        {
+          "label": "slide07-voice-hand3",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体右側に付く短い丸型腕。細長化や不自然な屈曲なし。"
+        },
+        {
+          "label": "slide07-voice-hand4",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体左側の丸型腕。胴体幅に対する長さは許容範囲で、重複もない。"
+        }
+      ]
+    },
+    {
+      "id": "slide08-summary",
+      "verdict": "ok",
+      "cropFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\hand-inspection-crops\\slide08-summary.hand-crops.png",
+      "checks": [
+        {
+          "label": "slide08-summary-hand1",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指側と手の輪郭から右手。expectedSideと一致し、袖口から自然に接続している。"
+        },
+        {
+          "label": "slide08-summary-hand2",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "親指位置と指列から左手。指の長さ、太さ、手首位置に明確な異常なし。"
+        },
+        {
+          "label": "slide08-summary-hand3",
+          "observedSide": "right",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体右側の短い丸型腕。輪郭と胴体への接続は自然で、過長ではない。"
+        },
+        {
+          "label": "slide08-summary-hand4",
+          "observedSide": "left",
+          "sideNatural": true,
+          "thumbNatural": true,
+          "connectionNatural": true,
+          "proportionsNatural": true,
+          "severity": "ok",
+          "note": "体左側の丸型腕。対側腕と独立しており、左右各1本を超える手数異常なし。"
+        }
+      ]
+    }
+  ],
+  "startedAt": "2026-07-27T05:44:08.675Z",
+  "finishedAt": "2026-07-27T05:45:57.173Z",
+  "separateSession": true
+}

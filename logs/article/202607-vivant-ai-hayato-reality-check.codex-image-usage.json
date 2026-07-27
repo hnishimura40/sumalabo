@@ -1,0 +1,432 @@
+{
+  "slug": "202607-vivant-ai-hayato-reality-check",
+  "transport": "codex_exec",
+  "runs": [
+    {
+      "item": "thumbnail",
+      "startedAt": "2026-07-27T04:18:39.545Z",
+      "finishedAt": "2026-07-27T04:21:05.057Z",
+      "elapsedMs": 145502,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 341103,
+        "cached_input_tokens": 291328,
+        "output_tokens": 3030,
+        "reasoning_output_tokens": 572
+      },
+      "failureCondition": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "30e26da9a3769bd9068db24bf102bf7eeb563ea99dc7664a4f5c52d134cba14f",
+      "bytes": 2412586,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\thumbnail.png"
+    },
+    {
+      "item": "slide01",
+      "startedAt": "2026-07-27T04:21:05.068Z",
+      "finishedAt": "2026-07-27T04:25:09.001Z",
+      "elapsedMs": 243933,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 698570,
+        "cached_input_tokens": 625152,
+        "output_tokens": 2858,
+        "reasoning_output_tokens": 452
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "8d4f214483bd8ae2a2b2f1bdeccf046bc7b55178d2f99e82049918c562772e6c",
+      "bytes": 1730500,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide01.png"
+    },
+    {
+      "item": "slide02",
+      "startedAt": "2026-07-27T04:25:09.006Z",
+      "finishedAt": "2026-07-27T04:29:16.662Z",
+      "elapsedMs": 247656,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 618316,
+        "cached_input_tokens": 561920,
+        "output_tokens": 2983,
+        "reasoning_output_tokens": 779
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "246712cbe9b35fb42ee4e60011cb7fb73ca6334a1f76ffc94df49b479a2c4302",
+      "bytes": 1765294,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide02.png"
+    },
+    {
+      "item": "slide03",
+      "startedAt": "2026-07-27T04:29:16.666Z",
+      "finishedAt": "2026-07-27T04:33:14.470Z",
+      "elapsedMs": 237804,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 664717,
+        "cached_input_tokens": 602368,
+        "output_tokens": 2511,
+        "reasoning_output_tokens": 361
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "9fa9d163e8f3e5214181323804c668fe9d36080e94c9a130994bc28cdeca9e1c",
+      "bytes": 1780743,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide03.png"
+    },
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-27T04:33:14.474Z",
+      "finishedAt": "2026-07-27T04:36:56.568Z",
+      "elapsedMs": 222094,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 454841,
+        "cached_input_tokens": 377088,
+        "output_tokens": 2069,
+        "reasoning_output_tokens": 188
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "342c98baa973d45641a93dd00e3d47c24f6fc03bfc8832ab93371e1b0ac11a74",
+      "bytes": 1646816,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide04.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-27T04:36:56.572Z",
+      "finishedAt": "2026-07-27T04:40:52.718Z",
+      "elapsedMs": 236146,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 483446,
+        "cached_input_tokens": 412672,
+        "output_tokens": 2635,
+        "reasoning_output_tokens": 382
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "afe6b1cb3fbd39b39c871f4dfa6d7c1c32014eee30ed5a899c2a8dc28efff3de",
+      "bytes": 1823130,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide05.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-27T04:39:08.423Z",
+      "finishedAt": "2026-07-27T04:43:12.631Z",
+      "elapsedMs": 244207,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 1515268,
+        "cached_input_tokens": 1416704,
+        "output_tokens": 3883,
+        "reasoning_output_tokens": 712
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "d2704e8dbc9313434a950f4418ee5573f2e5514255015cc1f8c56c5e5e4316ad",
+      "bytes": 1667157,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide05.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-27T04:40:52.722Z",
+      "finishedAt": "2026-07-27T04:45:02.063Z",
+      "elapsedMs": 249341,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 494740,
+        "cached_input_tokens": 440320,
+        "output_tokens": 2826,
+        "reasoning_output_tokens": 426
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "0d4aa1771a2282aa506762d9cc0770ab3deffbee5507be09722eb59c5058b565",
+      "bytes": 1890272,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide06.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-27T04:43:12.635Z",
+      "finishedAt": "2026-07-27T04:47:14.190Z",
+      "elapsedMs": 241555,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 638117,
+        "cached_input_tokens": 577024,
+        "output_tokens": 3231,
+        "reasoning_output_tokens": 542
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "3d4b1507c6a68c8e470dec8066304edcfaa3ff9ab6396fa85af7e76946ac04df",
+      "bytes": 1426530,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide06.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-27T04:45:02.067Z",
+      "finishedAt": "2026-07-27T04:48:18.888Z",
+      "elapsedMs": 196821,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 399310,
+        "cached_input_tokens": 349696,
+        "output_tokens": 2455,
+        "reasoning_output_tokens": 424
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "6544b0f41e216678556e198e4423ea5bedff9c3d8c33bd5a3517863a032d5123",
+      "bytes": 2224989,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide07.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-27T04:48:18.894Z",
+      "finishedAt": "2026-07-27T04:50:23.821Z",
+      "elapsedMs": 124927,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 238765,
+        "cached_input_tokens": 169216,
+        "output_tokens": 2275,
+        "reasoning_output_tokens": 393
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "a707f21e1ca666f7ec7a4c8cfafd27fd88a6d057da077ac1cd81c22539622673",
+      "bytes": 1828240,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide08.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-27T04:47:14.194Z",
+      "finishedAt": "2026-07-27T04:51:18.372Z",
+      "elapsedMs": 244178,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 322094,
+        "cached_input_tokens": 270336,
+        "output_tokens": 2901,
+        "reasoning_output_tokens": 728
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "70f12891e6f9d21ec90c485ba7b9ada01ab953f82adfbaf19f7af9638e4c5548",
+      "bytes": 1698186,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide07.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-27T04:51:18.377Z",
+      "finishedAt": "2026-07-27T04:54:58.317Z",
+      "elapsedMs": 219940,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 1517046,
+        "cached_input_tokens": 1416704,
+        "output_tokens": 4026,
+        "reasoning_output_tokens": 625
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "06745b4b153dd142f0cb92f5b5fbc0525d0d59f8d3be978dd65a3182f8408ab3",
+      "bytes": 2088617,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide08.png"
+    },
+    {
+      "item": "thumbnail",
+      "startedAt": "2026-07-27T05:07:18.765Z",
+      "finishedAt": "2026-07-27T05:09:25.064Z",
+      "elapsedMs": 126298,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 490713,
+        "cached_input_tokens": 426240,
+        "output_tokens": 3082,
+        "reasoning_output_tokens": 569
+      },
+      "failureCondition": null,
+      "width": 1600,
+      "height": 900,
+      "sha256": "a195bb4db38e74c95a8ceec8c405ab7e66c612339e95b529131fb77c23b21e6e",
+      "bytes": 2467284,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\thumbnail.png"
+    },
+    {
+      "item": "slide01",
+      "startedAt": "2026-07-27T05:09:25.074Z",
+      "finishedAt": "2026-07-27T05:11:30.540Z",
+      "elapsedMs": 125466,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 277705,
+        "cached_input_tokens": 242432,
+        "output_tokens": 2295,
+        "reasoning_output_tokens": 260
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "65008221626067e7aba0471a225fc37b687b9078a3aadc386d1e8438b3ddec30",
+      "bytes": 1652251,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide01.png"
+    },
+    {
+      "item": "slide02",
+      "startedAt": "2026-07-27T05:11:30.549Z",
+      "finishedAt": "2026-07-27T05:15:40.996Z",
+      "elapsedMs": 250447,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 698274,
+        "cached_input_tokens": 634112,
+        "output_tokens": 3644,
+        "reasoning_output_tokens": 938
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "9f6a03961c9642f9cf204e70e14f1be26ccdf131c10f8005ef75fd20fe72e172",
+      "bytes": 1943037,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide02.png"
+    },
+    {
+      "item": "slide03",
+      "startedAt": "2026-07-27T05:15:41.002Z",
+      "finishedAt": "2026-07-27T05:17:40.989Z",
+      "elapsedMs": 119987,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 238954,
+        "cached_input_tokens": 214784,
+        "output_tokens": 1972,
+        "reasoning_output_tokens": 164
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "aad4bea95ce85d4f679b75e0253eff49ab51e31a6b6d012cf590f1ac1fed145a",
+      "bytes": 1609642,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide03.png"
+    },
+    {
+      "item": "slide04",
+      "startedAt": "2026-07-27T05:17:40.994Z",
+      "finishedAt": "2026-07-27T05:21:08.738Z",
+      "elapsedMs": 207744,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 1141761,
+        "cached_input_tokens": 1058816,
+        "output_tokens": 3160,
+        "reasoning_output_tokens": 151
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "79175bec30ef58b52524bf7a0249ac49062d45fdd59cd3bb2878d831213bfbf4",
+      "bytes": 2106607,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide04.png"
+    },
+    {
+      "item": "slide05",
+      "startedAt": "2026-07-27T05:21:08.744Z",
+      "finishedAt": "2026-07-27T05:24:43.888Z",
+      "elapsedMs": 215144,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 563343,
+        "cached_input_tokens": 507648,
+        "output_tokens": 2017,
+        "reasoning_output_tokens": 132
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "c011d22bb46435d9de69006b1d3a1eb7419f667d3acfa7f1988787209edfe3b6",
+      "bytes": 1652666,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide05.png"
+    },
+    {
+      "item": "slide06",
+      "startedAt": "2026-07-27T05:24:43.893Z",
+      "finishedAt": "2026-07-27T05:29:12.091Z",
+      "elapsedMs": 268198,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 532654,
+        "cached_input_tokens": 477440,
+        "output_tokens": 2928,
+        "reasoning_output_tokens": 626
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "71e86a15b9024d2e5ec5dfadf9da3114ed6d6bb578b53e6b8236174fdf238a15",
+      "bytes": 1704600,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide06.png"
+    },
+    {
+      "item": "slide07",
+      "startedAt": "2026-07-27T05:29:12.096Z",
+      "finishedAt": "2026-07-27T05:33:51.398Z",
+      "elapsedMs": 279302,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 1460583,
+        "cached_input_tokens": 1379072,
+        "output_tokens": 3459,
+        "reasoning_output_tokens": 492
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "59598b8a779686ac51c87741c95ecb6a3f108ebbebde4418ee8c9cebc781fbc7",
+      "bytes": 1671606,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide07.png"
+    },
+    {
+      "item": "slide08",
+      "startedAt": "2026-07-27T05:33:51.403Z",
+      "finishedAt": "2026-07-27T05:37:33.777Z",
+      "elapsedMs": 222374,
+      "exitCode": 0,
+      "usage": {
+        "input_tokens": 409288,
+        "cached_input_tokens": 378112,
+        "output_tokens": 3234,
+        "reasoning_output_tokens": 743
+      },
+      "failureCondition": null,
+      "width": 1122,
+      "height": 1402,
+      "sha256": "dcedbfb85fbc409946ed499e64810f13bc384055a0518511fd571e4fdc3b11e1",
+      "bytes": 1861052,
+      "outputFile": "D:\\downloads\\sumalabo-codex\\202607-vivant-ai-hayato-reality-check\\slide08.png"
+    }
+  ],
+  "updatedAt": "2026-07-27T05:37:33.780Z",
+  "totalElapsedMs": 4669064,
+  "totalUsage": {
+    "input_tokens": 14199608,
+    "cached_input_tokens": 12829184,
+    "output_tokens": 63474,
+    "reasoning_output_tokens": 10659
+  }
+}
