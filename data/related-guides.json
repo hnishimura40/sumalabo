@@ -11,6 +11,15 @@
   },
   "targets": [
     {
+      "slug": "202607-vivant-ai-hayato-reality-check",
+      "label": "VIVANTのAIハヤトを実在チェック",
+      "blurb": "音声・映像解析・確率判断を、できる・条件付き・まだ無理で判定",
+      "categories": ["ニュースをかみくだく"],
+      "_kwNote": "ドラマや映画に登場するAIの実在性、AIハヤト、監視映像解析の話題から、フィクションと現実を分ける記事へ案内する。AI一般語だけでは表示しない。",
+      "keywords": ["VIVANT AIハヤト", "AIハヤト", "ドラマ AI", "映画 AI", "フィクション AI", "AI 実在チェック", "監視カメラ AI解析", "映像解析 顔認識"],
+      "listStaple": false
+    },
+    {
       "slug": "202607-school-ai-class-proposal-explained",
       "label": "学校の「AI授業」案を整理",
       "blurb": "決まったこと・検討中・未定と、開始時期を中立に解説",
