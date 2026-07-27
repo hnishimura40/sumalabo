@@ -1,0 +1,84 @@
+{
+  "slug": "202607-chatgpt-outage-july-recurring",
+  "transport": "codex_exec",
+  "outputDir": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring",
+  "canonicalImages": [
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\himari-canonical.png",
+    "D:\\documents\\動画作成関連\\すまラボ\\assets\\characters\\labomaru-canonical.png"
+  ],
+  "outputs": [
+    {
+      "id": "thumbnail",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\thumbnail.png",
+      "width": 1600,
+      "height": 900,
+      "sha256": "9f8c4c381ad5533f33dd525d8ff903ee422ca436b05ed9bdfa1ac508907e9345",
+      "bytes": 3063712
+    },
+    {
+      "id": "slide01",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide01.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "1e0a2a881df89a27f2edd4782936efc2f604dbf8abffd10778bf8c4f74712a0b",
+      "bytes": 2000531
+    },
+    {
+      "id": "slide02",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide02.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "35401413e2314ad9a911e9713756f581b8c829eff94220bd963ca7a3e092f224",
+      "bytes": 2258325
+    },
+    {
+      "id": "slide03",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide03.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "4f5fccfe3731b6e076a6382b2e5f56c6ce8f6fec3a0282aa754f08161e467f7a",
+      "bytes": 2151388
+    },
+    {
+      "id": "slide04",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide04.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "28ed4ed32218002ca96b60ad08a246bef75abbeaad0251f26fd4134d564b396f",
+      "bytes": 1956362
+    },
+    {
+      "id": "slide05",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide05.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "27a61295e5ac37c5c10b0b96a93b753a0f96b3e2636feb312cb30fc6aa0390ae",
+      "bytes": 1663337
+    },
+    {
+      "id": "slide06",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide06.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "cdbd52f15e08e87c48a5d9b3fa79c28c2efd8de30b8221869d172dba7b7a2ad1",
+      "bytes": 2079635
+    },
+    {
+      "id": "slide07",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide07.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "7a46ccc04a079880bd6c5ce7939973f482fb3d8ee825dd207c50d1e3a3c21015",
+      "bytes": 1919435
+    },
+    {
+      "id": "slide08",
+      "path": "D:\\downloads\\sumalabo-codex\\202607-chatgpt-outage-july-recurring\\slide08.png",
+      "width": 1122,
+      "height": 1402,
+      "sha256": "b2e5c1b3b55a5a3ea4d35166887335c7f73d462725358e3f2bf081b95fca8526",
+      "bytes": 1866866
+    }
+  ],
+  "completedAt": "2026-07-27T13:42:42.188Z"
+}

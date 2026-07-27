@@ -187,6 +187,25 @@
       "listStaple": true
     },
     {
+      "slug": "202607-chatgpt-outage-july-recurring",
+      "label": "ChatGPT障害、PCが壊れた？と思ったら",
+      "blurb": "サービス障害か故障かの切り分け手順と、止まった日の4つの備え",
+      "categories": ["ニュースをかみくだく"],
+      "_kwNote": "ChatGPT・API・Codex等の障害・エラー・使えない・落ちるといった不調の話題から、切り分け手順の定番受け皿へ案内する。今後の障害系ニュースの受け皿として機能させる。AI一般語だけでは表示しない。",
+      "keywords": [
+        "ChatGPT 障害",
+        "ChatGPT 使えない",
+        "ChatGPT 落ちる",
+        "ChatGPT エラー",
+        "AI 障害",
+        "API 障害",
+        "サービス障害",
+        "status.openai.com",
+        "ステータスページ"
+      ],
+      "listStaple": true
+    },
+    {
       "slug": "202607-ai-pc-cloud-local-spec-guide",
       "label": "AIを使うPCの選び方",
       "blurb": "クラウド型AIとローカル型AIで必要スペックを整理",
