@@ -19,6 +19,7 @@ import process from "node:process";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const TASK_NAME = "Sumalabo Night Driver";
+const WATCHDOG_TASK_NAME = "Sumalabo Night Watchdog";
 
 function main() {
   const argv = process.argv.slice(2);
@@ -27,9 +28,13 @@ function main() {
   const remove = argv.includes("--remove");
 
   if (remove) {
-    const r = spawnSync("schtasks", ["/delete", "/tn", TASK_NAME, "/f"], { encoding: "utf-8" });
-    console.log(r.stdout || r.stderr);
-    process.exitCode = r.status ?? 1;
+    let status = 0;
+    for (const taskName of [TASK_NAME, WATCHDOG_TASK_NAME]) {
+      const r = spawnSync("schtasks", ["/delete", "/tn", taskName, "/f"], { encoding: "utf-8" });
+      console.log(r.stdout || r.stderr);
+      if (r.status !== 0) status = r.status ?? 1;
+    }
+    process.exitCode = status;
     return;
   }
 
@@ -46,7 +51,17 @@ function main() {
   });
   console.log(r.stdout || r.stderr);
   if (r.status === 0) {
-    console.log(`登録完了: "${TASK_NAME}" 毎日 ${time}（ログ: logs/night/{date}.log）`);
+    const watchdog = path.join(ROOT, "scripts", "automation", "night-watchdog.ps1");
+    const watchdogTr = `powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"${watchdog}\"`;
+    const w = spawnSync("schtasks", ["/create", "/tn", WATCHDOG_TASK_NAME, "/tr", watchdogTr, "/sc", "daily", "/st", "05:30", "/f"], { encoding: "utf-8" });
+    console.log(w.stdout || w.stderr);
+    if (w.status !== 0) { process.exitCode = w.status ?? 1; return; }
+    const harden = spawnSync("powershell.exe", ["-NoProfile", "-Command", [
+      `$names=@('${TASK_NAME}','${WATCHDOG_TASK_NAME}')`,
+      "foreach($name in $names){$settings=New-ScheduledTaskSettingsSet -WakeToRun -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Hours 12); Set-ScheduledTask -TaskName $name -Settings $settings | Out-Null}",
+    ].join("; ")], { encoding: "utf-8" });
+    if (harden.status !== 0) console.warn(`警告: 復帰・取りこぼし設定の反映に失敗: ${harden.stderr || harden.stdout}`);
+    console.log(`登録完了: "${TASK_NAME}" 毎日 ${time} / "${WATCHDOG_TASK_NAME}" 毎日 05:30`);
     const q = spawnSync("schtasks", ["/query", "/tn", TASK_NAME, "/fo", "list"], { encoding: "utf-8" });
     console.log(q.stdout);
   }
@@ -55,3 +70,5 @@ function main() {
 
 const isDirectRun = process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
 if (isDirectRun) main();
+
+
