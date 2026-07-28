@@ -81,7 +81,7 @@ test("6. variantName の命名", () => {
   assert.equal(variantName({ attachSlides: true, linkInReply: true, threadAllSlides: false }, 4), "images4+reply");
 });
 
-test("7. 題材タグは候補のままでは付かず、X検索で検証済みの候補だけ採用", async () => {
+test("7. ブランドタグは常時1個、流入タグはX話題検索で発見したものだけ採用", async () => {
   const { generateXPost } = await import("../../scripts/sumahon/generate-x-post.mjs");
   const base = {
     slug: "x",
@@ -91,42 +91,33 @@ test("7. 題材タグは候補のままでは付かず、X検索で検証済み�
     tags: ["VIVANT", "AIハヤト", "ニュース"],
   };
   const beforeSearch = generateXPost(base);
-  assert.deepEqual(beforeSearch.subjectHashtagCandidates, ["#VIVANT"]);
-  assert.deepEqual(beforeSearch.hashtags, ["#AI", "#すまラボ"]);
+  assert.deepEqual(beforeSearch.hashtags, ["#すまラボ"]);
+  assert.equal(beforeSearch.searchPhraseNeedsReview, true);
 
-  const verified = generateXPost({ ...base, validatedSubjectTags: ["VIVANT", "AIハヤト"] });
-  assert.deepEqual(verified.hashtags, ["#AI", "#すまラボ", "#VIVANT"]);
-  assert.deepEqual(verified.subjectHashtags, ["#VIVANT"]);
-});
-
-test("7-b. 一般語・企業名・巨大タグ・連結造語を候補から除外", async () => {
-  const { buildHashtags, buildSubjectHashtagCandidates } = await import("../../scripts/sumahon/generate-x-post.mjs");
-  const generic = buildHashtags({ title: "スマホニュース", tags: ["スマホ", "ニュース", "AI"] });
-  assert.deepEqual(generic, ["#ITニュース", "#すまラボ"]);
-
-  const candidates = buildSubjectHashtagCandidates({
-    title: "企業LINEの裏側にAIが入る",
-    tags: ["Google", "Apple", "Salesforce", "LINE", "DX-LINE", "Agentforce", "AIハヤト"],
+  const discovered = generateXPost({
+    ...base,
+    discoveredTrafficTags: ["VIVANT", "AI", "VIVANT"],
+    searchPhrase: "VIVANT AI",
   });
-  assert.deepEqual(candidates, ["#Agentforce"]);
-  assert.deepEqual(buildHashtags({
-    title: "企業LINEの裏側にAIが入る",
-    tags: ["Agentforce"],
-    validatedSubjectTags: ["DXLINE", "Agentforce"],
-  }), ["#AI", "#すまラボ", "#Agentforce"]);
+  assert.deepEqual(discovered.hashtags, ["#すまラボ", "#VIVANT"]);
+  assert.deepEqual(discovered.brandHashtags, ["#すまラボ"]);
+  assert.deepEqual(discovered.trafficHashtags, ["#VIVANT"]);
+  assert.equal(discovered.primary.text.split("\n")[0].startsWith("VIVANT AI"), true);
+  assert.equal(discovered.alternates.every((alt) => alt.text.split("\n")[0].startsWith("VIVANT AI")), true);
 });
 
-test("7-c. 複数語を連結せず短い既存タグ候補へ丸め、採用は最大2個", async () => {
-  const { buildHashtags, buildSubjectHashtagCandidates } = await import("../../scripts/sumahon/generate-x-post.mjs");
-  assert.deepEqual(buildSubjectHashtagCandidates({
-    title: "Claude Opus 5とChatGPTをVIVANTで比較",
-    tags: ["Claude Opus 5", "ClaudeOpus5", "DX-LINE", "Claude", "ChatGPT", "VIVANT"],
-  }), ["#Claude", "#ChatGPT"]);
+test("7-b. 廃止カテゴリタグは検索結果にあっても除外し、合計最大3個", async () => {
+  const { buildHashtags } = await import("../../scripts/sumahon/generate-x-post.mjs");
   assert.deepEqual(buildHashtags({
-    title: "ClaudeとChatGPTとVIVANT",
-    tags: ["Claude", "ChatGPT", "VIVANT"],
-    validatedSubjectTags: ["Claude", "ChatGPT", "VIVANT"],
-  }), ["#AI", "#すまラボ", "#Claude", "#ChatGPT"]);
+    discoveredTrafficTags: ["AI", "ガジェット", "すまラボ", "VIVANT", "Agentforce", "VOICEVOX"],
+  }), ["#すまラボ", "#VIVANT", "#Agentforce"]);
+});
+
+test("7-c. 流入タグは検索結果の単一タグ形だけを受け入れ、コードで連結しない", async () => {
+  const { buildHashtags } = await import("../../scripts/sumahon/generate-x-post.mjs");
+  assert.deepEqual(buildHashtags({
+    discoveredTrafficTags: ["DX-LINE", "Claude Opus 5", "#VIVANT"],
+  }), ["#すまラボ", "#VIVANT"]);
 });
 
 test("7-d. CLI frontmatter parser が複数行 tags を配列で渡せる", async () => {
