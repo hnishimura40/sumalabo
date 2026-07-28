@@ -4,7 +4,8 @@
 // 使い方:
 //   node scripts/run/generate-x-post.mjs --slug 202605-iphone-18-pro-dynamic-island-top-left-rumor
 //   [--productionUrl https://sumalabo.com]
-//   [--validated-subject-tags VIVANT,Claude]  # Xの最新検索で生存確認済みの候補だけ
+//   [--search-phrase "VIVANT AI"]            # 読者が使う自然検索語
+//   [--discovered-traffic-tags VIVANT]        # 話題検索結果で実際に最多だったタグ
 //
 // 入力:
 //   content/articles/{slug}.mdx (frontmatter)
@@ -59,7 +60,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   const slug = args.slug;
   if (!slug) {
-    console.error("usage: node scripts/run/generate-x-post.mjs --slug <slug> [--productionUrl <url>]");
+    console.error("usage: node scripts/run/generate-x-post.mjs --slug <slug> [--search-phrase <phrase>] [--discovered-traffic-tags <tag1,tag2>]");
     process.exit(1);
   }
 
@@ -76,10 +77,11 @@ async function main() {
   const sourceMeta = await loadJsonIfExists(`logs/source/${slug}.json`);
 
   const productionUrl = args.productionUrl || "https://sumalabo.com";
-  const validatedArg = args.validatedSubjectTags ?? args["validated-subject-tags"] ?? "";
-  const validatedSubjectTags = /^(?:none|なし)$/i.test(String(validatedArg).trim())
+  const discoveredArg = args.discoveredTrafficTags ?? args["discovered-traffic-tags"] ?? "";
+  const discoveredTrafficTags = /^(?:none|なし)$/i.test(String(discoveredArg).trim())
     ? []
-    : String(validatedArg).split(",").map((tag) => tag.trim()).filter(Boolean);
+    : String(discoveredArg).split(",").map((tag) => tag.trim()).filter(Boolean);
+  const searchPhrase = String(args.searchPhrase ?? args["search-phrase"] ?? "").trim();
 
   // Phase C 投稿形式（autonomy.json の xPostOptions）を読み、画像添付計画とリンク運用を決める。
   const xPostOptions = loadXPostOptions();
@@ -92,7 +94,8 @@ async function main() {
     category: fm.category || "",
     type: fm.type || "",
     tags: fm.tags || [],
-    validatedSubjectTags,
+    discoveredTrafficTags,
+    searchPhrase,
     thumbnail: fm.thumbnail || "",
     productionUrl,
     articleBrief,
@@ -120,8 +123,9 @@ async function main() {
     `- 記事リンクの置き場所: ${plan.linkInReply ? "リプライ（本投稿には入れない）" : "本投稿に含める"}`,
     `- 生成日時: ${result.generatedAt}`,
     `- ハッシュタグ: ${result.hashtags.join(" ")}`,
-    `- 題材タグ候補（投稿直前にX検索必須）: ${result.subjectHashtagCandidates.length ? result.subjectHashtagCandidates.join(" ") : "なし"}`,
-    `- X検索で検証済みの題材タグ: ${result.subjectHashtags.length ? result.subjectHashtags.join(" ") : "なし"}`,
+    `- ブランドタグ: ${result.brandHashtags.join(" ")}`,
+    `- 話題検索で発見した流入タグ: ${result.trafficHashtags.length ? result.trafficHashtags.join(" ") : "なし"}`,
+    `- 本文1行目の自然検索語: ${result.searchPhrase || "未指定（投稿前に必須）"}`,
     "",
     "## primary（本投稿）",
     "",
@@ -158,7 +162,7 @@ async function main() {
     "- primary を採用する場合: `node scripts/run/post-to-x.mjs --slug " + slug + "`",
     "- 代替案を使う場合: `--variant 結論先出し` または `--variant 問いかけ` を付けて呼ぶ",
     "- 投稿前に必ず本ファイルを目視で確認してください（特に hedge 表現と URL）",
-    "- 題材タグ候補はXの最新検索（過去7日・3投稿・3アカウント）で確認後、`--validated-subject-tags` を付けて再生成してください。合格なしは初回出力を使います",
+    "- 投稿直前に自然検索語でXを1回検索し、結果内で実際に使われているタグを集計してください。最多の流入タグ（0〜2個）と自然検索語を指定して再生成します",
     "",
   );
 

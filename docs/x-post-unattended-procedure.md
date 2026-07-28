@@ -16,7 +16,7 @@
 2. `data/automation/ledger.json` と `data/social/x-posted.json` のslugも確認し、重複の疑いがあれば止める。
 3. Xの現在アカウントをDOMで検証し、`@suma_labo` の `innerText / aria-label / href` を取得して一致を確認する。目視だけで進めない。
 4. 本文入力後はcomposerの文字列を読み戻し、投稿JSONの `primary.text` と完全一致させる。
-5. `subjectHashtagCandidates`があれば、候補をOR指定してXの「最新」で1回検索する。過去7日以内に3投稿以上・3アカウント以上ある候補だけ`--validated-subject-tags`で採用する。合格なしはカテゴリ＋`#すまラボ`のみ。連結造語・企業名単体・巨大一般タグは禁止。
+5. 読者が使う自然検索語でXを1回検索し、結果内で実際に使われているタグを収集・集計する。最多の流入タグを0〜2個選び、--search-phrase と --discovered-traffic-tags で再生成する。#すまラボ は常時1個、カテゴリタグは廃止。1行目に自然検索語があることを確認する。
 6. `attachmentPlan.attach` の画像を順番どおり添付し、DOMのメディア数が予定枚数と一致するまで送信しない。
 7. パスワード、認証コード、Cookieを読んだり記録したりしない。ログイン切れ・別アカウントなら停止する。
 

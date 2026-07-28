@@ -39,7 +39,7 @@ const HARDENING = `
  2. 入力後に composer を読み戻して一致検証。不一致は selectAll→delete→再入力
  3. 送信は tweetButton の DOM 特定→click→composer 空読み戻しで確認
  4. accountIdentityJs("@suma_labo") で投稿前にアカウントDOMを確認（目視だけで済ませない）
- 5. subjectHashtagCandidates があればXの「最新」でOR検索を1回行い、過去7日・3投稿・3アカウント基準を満たす候補だけ --validated-subject-tags で再生成。合格なしはカテゴリ + #すまラボのみ
+ 5. 読者が使う自然検索語でXを1回検索し、結果内で実際に使われているタグを収集・集計。最多の流入タグ0〜2個を --discovered-traffic-tags、自然検索語を --search-phrase で再生成する。#すまラボは常時1個、カテゴリタグは廃止
  6. 連結造語・企業名単体・#Google/#Apple級の巨大一般タグは禁止
  7. 投稿後 /suma_labo/status/ リンクから URL を取得し --posted で記録`;
 
