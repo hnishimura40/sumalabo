@@ -27,11 +27,11 @@ export const HAND_CROP_RESULT_SCHEMA = {
             type: "array",
             items: {
               type: "object",
-              required: ["label", "observedSide", "sideNatural", "thumbNatural", "connectionNatural", "proportionsNatural", "severity", "note"],
+              required: ["label", "handVisible", "observedSide", "sideNatural", "thumbNatural", "connectionNatural", "proportionsNatural", "severity", "note"],
               properties: {
-                label: { type: "string" }, observedSide: { type: "string", enum: ["left", "right", "unclear"] }, sideNatural: { type: "boolean" }, thumbNatural: { type: "boolean" },
+                label: { type: "string" }, handVisible: { type: "boolean" }, observedSide: { type: "string", enum: ["left", "right", "unclear"] }, sideNatural: { type: "boolean" }, thumbNatural: { type: "boolean" },
                 connectionNatural: { type: "boolean" }, proportionsNatural: { type: "boolean" },
-                severity: { type: "string", enum: ["ok", "warning", "needs_revision"] }, note: { type: "string" },
+                severity: { type: "string", enum: ["ok", "warning", "needs_revision", "no_hand_in_crop"] }, note: { type: "string" },
               },
             },
           },
@@ -43,8 +43,8 @@ export const HAND_CROP_RESULT_SCHEMA = {
 
 export function collectVisibleHands(inspection, sourceById) {
   const entries = [
-    ...(inspection.slides || []).map((item) => ({ id: item.id, handChecks: item.handChecks || [] })),
-    ...(inspection.thumbnail ? [{ id: "thumbnail", handChecks: inspection.thumbnail.handChecks || [] }] : []),
+    ...(inspection.slides || []).map((item) => ({ id: item.id, handChecks: (item.handChecks || []).filter((hand) => hand.visible !== false) })),
+    ...(inspection.thumbnail ? [{ id: "thumbnail", handChecks: (inspection.thumbnail.handChecks || []).filter((hand) => hand.visible !== false) }] : []),
   ];
   return entries.filter((item) => item.handChecks.length > 0).map((item) => {
     const source = sourceById[item.id];
@@ -78,38 +78,65 @@ export function paddedPixelBox(bbox, imageWidth, imageHeight, padding = 0.45) {
 }
 
 export function buildHandCropPrompt(items) {
-  const manifest = items.map((item) => ({ id: item.id, cropFile: path.basename(item.cropFile), hands: item.handChecks.map((h, i) => ({ label: `${item.id}-hand${i + 1}`, character: h.character, expectedSide: h.side })) }));
-  return `あなたは画像生成とは別セッションの、手の身体構造だけを検品する担当です。添付画像は手・手首・前腕を拡大したコンタクトシートです。元画像や生成文脈は参照せず、拡大部位だけを白紙で判定してください。
+  const manifest = items.map((item) => ({
+    id: item.id,
+    cropFile: path.basename(item.cropFile),
+    hands: item.handChecks.map((h, i) => ({
+      label: item.id + "-hand" + (i + 1),
+      character: h.character,
+    })),
+  }));
+  return [
+    "あなたは画像生成とは別セッションの、手の身体構造だけを検品する担当です。",
+    "添付タイルは同じ部位の CONTEXT（周辺を含む）と DETAIL（bbox拡大）です。",
+    "",
+    "各ラベルを次の順で必ず個別判定してください。",
+    "1. CONTEXTまたはDETAILに、対象キャラクターの「手・手首・前腕」が実際に確認できるか。",
+    "2. 見えない、別部位、背景、小道具だけ、または手と断定できない場合は handVisible=false、severity=no_hand_in_crop とする。これは判定対象外であり warning/needs_revision にしてはいけない。",
+    "3. handVisible=true の場合だけ、同一の手の内部で、親指位置と手の甲/掌の関係に解剖学的矛盾がないか、手首と腕の接続が自然か、指の長さ・太さ（特に親指）が自然かを確認する。",
+    "4. 一次検品の left/right 予測や構図上の期待とは比較しない。observedSide は見える範囲で回答するだけで、left/right/unclear のどれでも単独では異常理由にしない。",
+    "5. 明確な解剖学的左右矛盾・接続異常は needs_revision。比率だけの違和感は warning。問題がなければ ok。",
+    "6. 同一キャラクターに実在する手が3つ以上見える場合は needs_revision。bboxが手を捉えていないタイルは本数に数えない。",
+    "7. 二重手: 2つの手が近接・平行して同じ方向を指すほぼ同形の手に見える場合は、総数が2でも needs_revision。肩・腕を別々に追えそうでも、画面上で二重手に見えること自体を構造破綻として扱う。",
+    "8. 手首内の型切替: 前腕から手首、掌、親指へ連続して追い、途中で掌/手の甲が反転する、親指が反対側へ切り替わる、別の手を継ぎ足したような境界がある場合は needs_revision。構図予測との比較ではなく、同一の手の内部だけで判断する。",
+    "9. 比率: 親指は通常ほかの指より短く、手のひら幅と同程度以下。親指が伸ばした人差し指並みに長い、手のひら幅を明確に超える、付け根が指列側へずれる場合は最低 warning。",
+    "10. らぼまる: 腕は正本どおり短く・太く・丸い。体側から手先までが胴体幅のおおむね4分の1を超える、細いホース状、急なS字、にょきっと伸びる場合は needs_revision。",
+    "11. 同じ人物が片手で紙・札・端末を持ち、反対手で指すという別動作を同時に行う構図は、左右接合破綻を繰り返し見逃した既知の禁止構図なので needs_revision。各手が単体で自然に見えても公開しない。",
+    "12. 人差し指を立てた手では、親指の見かけの長さを人差し指・掌幅と明示比較する。親指が長い可能性を否定できない、付け根や先端が隠れて比較不能、または比率判断に迷う場合は最低 warning とし、安易にokへ倒さない。",
+    "",
+    "画像verdictは handVisible=true のcheckだけの最大severityとする。全checkが no_hand_in_crop の画像は verdict=ok。overallPass は needs_revision が0件のときだけtrue。",
+    "",
+    "対象:",
+    JSON.stringify(manifest, null, 2),
+    "",
+    "JSONだけを返してください。",
+    JSON.stringify(HAND_CROP_RESULT_SCHEMA, null, 2),
+  ].join("\n");
+}
 
-各タイルについて必ず順番に確認:
-1. 左手/右手として自然な向きか。親指が手の向きと体側に対して矛盾しないか。
-2. 手首と前腕が自然につながるか。別の手の継ぎ足し、ねじれ、融合、関節位置の破綻がないか。
-3. 指の長さ・太さの比率が自然か。特に親指が異常に長い/太い/細い形でないか。
-4. 同じ画像のタイルを横断して、ひまり/らぼまるの手が左右各1つを超えていないか。同じ腕から手が二重化して見える、体から独立した手がある、3本目の手がある場合は needs_revision。
-
-曖昧さを残さない具体基準:
-- タイル名の expectedSide は一次検品が全身像から割り当てた左右である。まず expectedSide を見ずに、親指側・手の甲/掌・指の曲がりから observedSide を left/right/unclear のどれかで必ず回答し、その後に expectedSide と照合する。反対側なら needs_revision。expectedSide を拡大像に合わせて読み替えない。判断不能を安易に自然扱いしない。
-- 親指は通常、他の指より短く、手のひら幅と同程度以下である。親指が伸ばした人差し指と同程度に長い、手のひら幅を明らかに超える、付け根が指列側へ移動している場合は最低 warning。
-- 2本でも、同方向を指すほぼ同形の手が近接・平行に重なり、別々の肩から出た左右の腕として追えず「手が二重」に見える場合は needs_revision。単に総数が2なら正常とはしない。
-- 同じキャラの両手が同時に、近い位置から同じ方向へ指を伸ばす構図は、別々の腕を追えても「二重手」に見える高リスク構図である。2つの手が画面上で近接・平行なら needs_revision とし、見た目の二重化を優先する。
-- 片手で紙やボードを持ち、反対の手で指差す構図では、指差し手を指先の向きだけで左右判定しない。袖口側の前腕の左右と、手の甲/掌・親指側が途中で反対の手型へ切り替わっていないかを重点確認する。前腕は左手位置なのに手首から先が右手型（または逆）なら needs_revision。
-- 同じ人物が「片手で紙・札・端末を持つ＋反対手で指す」のように、両手で別々の動作を同時にしている構図は、左右接合の破綻を繰り返し見逃した既知の高リスク構図であり、生成側でも禁止している。見た目が一見自然でも needs_revision として再生成へ回す（この構図自体を公開しない）。
-- らぼまるの腕は短く・太く・丸い。体側から手先までが胴体幅のおおむね4分の1を超える、細いホース状、急なS字、にょきっと伸びる腕は needs_revision。
-- 各タイルには同じ部位の CONTEXT（肩側まで広い）と DETAIL（手首・指の拡大）が並ぶ。DETAILで左右・指比率、CONTEXTで腕の起点・接続・重複を別々に確認する。
-- タイルが袖・腕の付け根を示し、手先が隠れていても、同じキャラに3本目の袖/腕が存在する証拠なら手数異常として needs_revision。
-
-判定:
-- 明確な左右不整合、親指位置の矛盾、手首接続異常、継ぎ足し・融合は needs_revision（公開ブロック）。
-- 本数は正常でも、指・親指の長さや太さの比率だけに違和感がある場合は warning。判断に迷う比率は ok に倒さず warning とし、画像ID・タイル名と根拠を note に書く。
-- 問題がなければ ok。
-- 画像ごとの verdict は最も重い手の severity。overallPass は needs_revision が0件のときだけ true。
-- sourceImagesInspected は添付画像数、cropsInspected はタイル総数。verdictCounts は画像単位で集計。
-
-対象:
-${JSON.stringify(manifest, null, 2)}
-
-次のJSONスキーマに完全準拠したJSONだけを返してください。Markdownや前置きは禁止です。
-${JSON.stringify(HAND_CROP_RESULT_SCHEMA, null, 2)}`;
+export function normalizeNoHandInCrop(result) {
+  const rank = { ok: 0, warning: 1, needs_revision: 2 };
+  for (const image of result.images || []) {
+    for (const check of image.checks || []) {
+      if (check.handVisible === false || check.severity === "no_hand_in_crop") {
+        check.handVisible = false;
+        check.observedSide = "unclear";
+        check.sideNatural = true;
+        check.thumbNatural = true;
+        check.connectionNatural = true;
+        check.proportionsNatural = true;
+        check.severity = "no_hand_in_crop";
+      } else {
+        check.handVisible = true;
+      }
+    }
+    const visible = (image.checks || []).filter((check) => check.handVisible);
+    image.verdict = visible.reduce(
+      (worst, check) => (rank[check.severity] > rank[worst] ? check.severity : worst),
+      "ok",
+    );
+  }
+  return result;
 }
 
 export function summarizeVerdicts(images) {
@@ -124,7 +151,10 @@ export function applyStructuralOverrides(result, items) {
     const item = byId.get(image.id);
     if (!item) continue;
     const counts = {};
-    for (const hand of item.handChecks || []) counts[hand.character] = (counts[hand.character] || 0) + 1;
+    for (const [index, hand] of (item.handChecks || []).entries()) {
+      if (image.checks?.[index]?.handVisible === false) continue;
+      counts[hand.character] = (counts[hand.character] || 0) + 1;
+    }
     for (const [character, count] of Object.entries(counts)) {
       if (count <= 2) continue;
       image.verdict = "needs_revision";
@@ -150,5 +180,5 @@ export function validateAgentResult(result, items) {
     }
     if (!["ok", "warning", "needs_revision"].includes(image.verdict)) throw new Error(`不正な二段検品判定: ${item.id}`);
   }
-  return result;
+  return normalizeNoHandInCrop(result);
 }

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { applyStructuralOverrides, collectVisibleHands, paddedPixelBox, summarizeVerdicts, validateAgentResult, validateBbox } from "../../scripts/sumahon/hand-crop-inspection.mjs";
+import { applyStructuralOverrides, buildHandCropPrompt, collectVisibleHands, normalizeNoHandInCrop, paddedPixelBox, summarizeVerdicts, validateAgentResult, validateBbox } from "../../scripts/sumahon/hand-crop-inspection.mjs";
 import { evaluateHandCropGate } from "../../scripts/run/hand-crop-gate.mjs";
 
 test("手が見える画像だけを二段検品対象にする", () => {
@@ -44,4 +44,60 @@ test("公開前ゲートはneeds_revisionをブロックしwarningは通す", ()
   assert.equal(evaluateHandCropGate({ verdictCounts: { warning: 1, needs_revision: 0 }, sourceImagesInspected: 2 }).pass, true);
   assert.equal(evaluateHandCropGate({ verdictCounts: { warning: 0, needs_revision: 1 } }).pass, false);
   assert.equal(evaluateHandCropGate({}).pass, false);
+});
+
+
+test("no_hand_in_crop is non-blocking", () => {
+  const result = normalizeNoHandInCrop({
+    images: [{
+      id: "slide01",
+      verdict: "needs_revision",
+      checks: [{
+        label: "slide01-hand1",
+        handVisible: false,
+        observedSide: "left",
+        sideNatural: false,
+        thumbNatural: false,
+        connectionNatural: false,
+        proportionsNatural: false,
+        severity: "needs_revision",
+        note: "crop contains background only",
+      }],
+    }],
+  });
+  assert.equal(result.images[0].verdict, "ok");
+  assert.equal(result.images[0].checks[0].severity, "no_hand_in_crop");
+  assert.equal(result.images[0].checks[0].observedSide, "unclear");
+});
+
+test("invisible first-pass hands do not advance to crop generation", () => {
+  const inspection = {
+    slides: [{ id: "slide01", handChecks: [{ character: "himari", visible: false, bbox: { x: 1, y: 1, width: 10, height: 10 } }] }],
+    thumbnail: { handChecks: [{ character: "labomaru", visible: false, bbox: { x: 1, y: 1, width: 10, height: 10 } }] },
+  };
+  assert.deepEqual(collectVisibleHands(inspection, { slide01: "a.webp", thumbnail: "t.webp" }), []);
+});
+
+test("no_hand_in_crop checks are excluded from topology counts", () => {
+  const hands = Array.from({ length: 3 }, () => ({ character: "himari" }));
+  const checks = hands.map((_, index) => ({
+    label: "thumbnail-hand" + (index + 1),
+    handVisible: false,
+    observedSide: "unclear",
+    sideNatural: true,
+    thumbNatural: true,
+    connectionNatural: true,
+    proportionsNatural: true,
+    severity: "no_hand_in_crop",
+    note: "no hand",
+  }));
+  const result = applyStructuralOverrides({ images: [{ id: "thumbnail", verdict: "ok", checks }] }, [{ id: "thumbnail", handChecks: hands }]);
+  assert.equal(result.images[0].verdict, "ok");
+});
+
+test("second-pass prompt does not expose expectedSide", () => {
+  const prompt = buildHandCropPrompt([{ id: "slide01", cropFile: "crop.png", handChecks: [{ character: "himari", side: "left" }] }]);
+  assert.equal(prompt.includes("expectedSide"), false);
+  assert.match(prompt, /no_hand_in_crop/);
+  assert.match(prompt, /同一の手の内部/);
 });

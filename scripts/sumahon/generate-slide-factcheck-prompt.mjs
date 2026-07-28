@@ -135,7 +135,7 @@ ${formalNames}
       "id": "<slide id e.g. fig01-overview>",
       "verdict": "ok" | "needs_revision" | "ok_with_warning",
       "issues": ["問題点を 1 行ずつ", "..."],
-      "handChecks": [{"character":"himari|labomaru","side":"left|right|unclear","orientationNatural":true,"thumbPositionNatural":true,"wristConnectionNatural":true,"proportionsNatural":true,"severity":"ok|warning|needs_revision","note":"手ごとの根拠"}],
+      "handChecks": [{"character":"himari|labomaru","visible":true,"side":"left|right|unclear","orientationNatural":true,"thumbPositionNatural":true,"wristConnectionNatural":true,"proportionsNatural":true,"severity":"ok|warning|needs_revision","note":"手ごとの根拠"}],
       "revisionHint": "<needs_revision の場合だけ、修正版で直してほしい点を 1 文で>"
     },
     ...
@@ -147,7 +147,7 @@ ${formalNames}
 
 - verdict=ok: 全項目に問題なし
 - verdict=ok_with_warning: blocking ではないが軽微な改善余地あり (例: 補助コピーが 3 個)
-- handChecks: 見える手を1つずつ必ず回答。手が見えない画像だけ空配列可。比率だけの違和感は warning、明確な左右不整合・接続異常は needs_revision
+- handChecks: 画像内で実際に見える手だけを1つずつ回答し visible=true とする。画面外の手を推測して追加しない。bbox中心が手に重なり、手首・前腕を含むことを出力前に確認する。手が見えない画像は必ず空配列。比率だけの違和感は warning、明確な左右不整合・接続異常は needs_revision
 - verdict=needs_revision: 1 項目でも事実誤認 / 置物化 / 文字過密 / 噂段階明示なし /
   **キャラの視覚的破綻（項目10）/ 身体構造破綻（項目10B）/ 文字化け・レイアウト破綻（項目11）** などの
   blocking 級の問題がある場合
