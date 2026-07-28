@@ -46,7 +46,7 @@ export async function makeContactSheet(item, outputFile) {
       { input: Buffer.from('<svg width="120" height="34"><rect width="120" height="34" fill="#334155"/><text x="8" y="23" fill="white" font-size="17" font-family="Arial">CONTEXT</text></svg>'), left: 4, top: 4 },
       { input: Buffer.from('<svg width="100" height="34"><rect width="100" height="34" fill="#334155"/><text x="8" y="23" fill="white" font-size="17" font-family="Arial">DETAIL</text></svg>'), left: 384, top: 4 },
     ]).png().toBuffer();
-    tiles.push({ crop, label: `${item.id}-hand${i + 1} / ${hand.character} / expected:${hand.side}` });
+    tiles.push({ crop, label: `${item.id}-hand${i + 1} / ${hand.character}` });
   }
   const columns = Math.min(2, tiles.length);
   const rows = Math.ceil(tiles.length / columns);
@@ -120,6 +120,7 @@ async function main() {
   result.verdictCounts = summarizeVerdicts(result.images);
   result.sourceImagesInspected = items.length;
   result.cropsInspected = items.reduce((n, x) => n + x.handChecks.length, 0);
+  result.noHandInCropChecks = result.images.reduce((count, image) => count + image.checks.filter((check) => check.severity === "no_hand_in_crop").length, 0);
   result.overallPass = result.verdictCounts.needs_revision === 0;
   writeFileSync(resultPath, JSON.stringify(result, null, 2) + "\n", "utf-8");
   console.log(JSON.stringify(result));

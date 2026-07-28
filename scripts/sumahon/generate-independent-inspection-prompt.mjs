@@ -91,9 +91,10 @@ export const INDEPENDENT_INSPECTION_SCHEMA = {
             items: {
               type: "object",
               additionalProperties: false,
-              required: ["character", "side", "bbox", "orientationNatural", "thumbPositionNatural", "wristConnectionNatural", "proportionsNatural", "severity", "note"],
+              required: ["character", "visible", "side", "bbox", "orientationNatural", "thumbPositionNatural", "wristConnectionNatural", "proportionsNatural", "severity", "note"],
               properties: {
                 character: { type: "string", enum: ["himari", "labomaru"] },
+                visible: { type: "boolean", description: "bbox内に対象の手・手首・前腕が実際に見える場合だけtrue。falseの項目は返さず配列から除外する" },
                 side: { type: "string", enum: ["left", "right", "unclear"] },
                 bbox: {
                   type: "object",
@@ -137,9 +138,10 @@ export const INDEPENDENT_INSPECTION_SCHEMA = {
           items: {
             type: "object",
             additionalProperties: false,
-            required: ["character", "side", "bbox", "orientationNatural", "thumbPositionNatural", "wristConnectionNatural", "proportionsNatural", "severity", "note"],
+            required: ["character", "visible", "side", "bbox", "orientationNatural", "thumbPositionNatural", "wristConnectionNatural", "proportionsNatural", "severity", "note"],
             properties: {
               character: { type: "string", enum: ["himari", "labomaru"] },
+                visible: { type: "boolean", description: "bbox内に対象の手・手首・前腕が実際に見える場合だけtrue。falseの項目は返さず配列から除外する" },
               side: { type: "string", enum: ["left", "right", "unclear"] },
               bbox: {
                 type: "object",
@@ -237,7 +239,7 @@ data/qa/formal-product-names.json を正本として照合する。
 13. **表情・トーンが記事の性質と矛盾しない** — 終了/障害/リコール等の注意・速報系は「驚き＋対処」がOK。ニコニコ/ムスッ・無表情/炎・涙・パニックは needs_revision。**朗報・喜び爆発系（継続決定「残る/使い続けられる」・無料化・復活・値下げ等、読者が確実に得する確定ニュース）は、キャラが万歳/ジャンプ/ガッツポーズ＋満面の笑みで喜びきっているのが正。案内板・分岐図（矢印→）・比較表・無表情の説明構図・控えめな指さし案内で読者の歓喜を代弁できていなければ warning（改善指摘・公開は止めない）**
 14. **演出が記事テーマと合っているか（warning観察）** — slide_plan の演出ブロックと照合し、衣装・小道具・ポーズ・背景が記事テーマを体験として伝えているか確認する。サムネが標準衣装の棒立ち・汎用背景・指さし説明だけ、または小道具を持つだけで使っていない場合は ok_with_warning とし、issues に不足した演出を具体的に書く。本文スライドも、比較・検証・操作などの役割が動作に出ていなければ warning。**表情が記事の感情トーンから乖離している場合も warning 以上で記録する。演出が弱いだけなら needs_revision/overallPass=false にしない**（事実誤認・アンカー不一致・過剰表現は別項目で判定）。
 
-**二段検品用座標**: handChecks の各手には、手だけでなく手首と前腕の接続部を含む bbox を必ず付ける。座標は画像左上を (0,0)、右下を (1000,1000) とした正規化整数で記録する。
+**二段検品用座標**: handChecks には、画像内で実際に見える手だけを列挙し visible=true とする。画面外の手を推測して追加してはならない。bbox の中心が手そのものに重なり、手だけでなく手首と前腕の接続部を含むことを出力前に再確認する。手が見えない画像は必ず空配列にする。座標は画像左上を (0,0)、右下を (1000,1000) とした正規化整数で記録する。
 
 ## (B) スライド本文と最終稿の突合
 - 画像内の全テキストを読み取り、数値・日付・固有名詞・鉤括弧を**1つずつ**最終稿と照合（numbersAccurate）。
