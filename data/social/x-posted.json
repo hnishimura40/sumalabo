@@ -184,6 +184,20 @@
       ],
       "mainExistenceCount": 1,
       "replyUrl": "https://x.com/suma_labo/status/2081758038462242911"
+    },
+    {
+      "slug": "ai-work-productivity-experience-2026",
+      "articleUrl": "https://sumalabo.com/articles/ai-work-productivity-experience-2026/",
+      "postedAt": "2026-07-27T22:48:59.056Z",
+      "postText": "仕事のAIが「一段階」変わった。\n\n生成AIは「相談相手」から「一緒に仕事を組み立てる相手」へ。資料統合、フロー図、Excel・PowerPoint、会議準備で感じた変化を、実務者の体感としてまとめました。\n#AI #仕事効率化 #すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2081874350060531989",
+      "method": "chrome",
+      "route": "claude-in-chrome",
+      "thumbnailAttached": true,
+      "charCount": 120,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2081874903125680178"
     }
   ]
 }
