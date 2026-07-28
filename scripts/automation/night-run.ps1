@@ -13,7 +13,9 @@
 param(
   # ブラウザ経路だけドライラン実測（Chrome起動→DevTools→chrome-preflight）。
   # testMode を消費せず、claude 本体も起動しない。修正の実測確認用。
-  [switch]$BrowserCheckOnly
+  [switch]$BrowserCheckOnly,
+  # 記事を作らず独立起動・直接ログ・PID/heartbeat・終了回収を実測する。
+  [switch]$RunnerSelfTest
 )
 $ErrorActionPreference = 'Continue'
 $RepoRoot = "D:\documents\動画作成関連\すまラボ"
@@ -24,6 +26,13 @@ New-Item -ItemType Directory -Force $NightDir | Out-Null
 $DateStr = (Get-Date).ToString("yyyy-MM-dd")
 $LogFile = Join-Path $NightDir "$DateStr.log"
 $LockFile = Join-Path $NightDir "run.lock"
+$HeartbeatFile = Join-Path $NightDir "$DateStr.heartbeat.json"
+$CompletionFile = Join-Path $NightDir "$DateStr.completion.json"
+if ($BrowserCheckOnly -and $RunnerSelfTest) { throw 'BrowserCheckOnly と RunnerSelfTest は同時指定できません。' }
+if ($RunnerSelfTest) {
+  $LockFile = Join-Path $NightDir "runner-selftest.lock"
+  $HeartbeatFile = Join-Path $NightDir "$DateStr.runner-selftest.heartbeat.json"
+}
 
 function Log($msg) {
   $line = "[{0}] {1}" -f (Get-Date).ToString("yyyy-MM-dd HH:mm:ss"), $msg
@@ -36,27 +45,51 @@ if (-not $BrowserCheckOnly) {
   if (Test-Path $LockFile) {
     try {
       $lock = Get-Content $LockFile -Raw | ConvertFrom-Json
-      $proc = Get-Process -Id $lock.pid -ErrorAction SilentlyContinue
-      if ($proc) {
-        Log "SKIP: 前回の run (pid=$($lock.pid), started=$($lock.startedAt)) がまだ生きています。多重起動しません。"
+      $livePids = @(@($lock.pid, $lock.parentPid, $lock.supervisorPid, $lock.childPid) |
+        Where-Object { $_ } | Select-Object -Unique | Where-Object { Get-Process -Id $_ -ErrorAction SilentlyContinue })
+      $heartbeatFresh = $false
+      if ($lock.heartbeatAt) {
+        try { $heartbeatFresh = (((Get-Date) - [datetime]$lock.heartbeatAt).TotalMinutes -le 3) } catch {}
+      }
+      if ($livePids.Count -gt 0 -or $heartbeatFresh) {
+        Log "SKIP: 前回の run が生存中（pids=$($livePids -join ','), heartbeat=$($lock.heartbeatAt)）。多重起動しません。"
         exit 0
       }
-      Log "古い lock (pid=$($lock.pid) は終了済み) を回収します。"
+      Log "古い lock（全PID終了・heartbeat期限切れ）を回収します。"
     } catch {
       Log "lock ファイルが壊れています。回収します。"
     }
     Remove-Item $LockFile -Force -Confirm:$false
   }
-  @{ pid = $PID; startedAt = (Get-Date).ToString("o") } | ConvertTo-Json | Set-Content $LockFile -Encoding utf8
+  @{ pid=$PID; parentPid=$PID; startedAt=(Get-Date).ToString("o"); heartbeatAt=(Get-Date).ToString("o"); status="starting"; selfTest=[bool]$RunnerSelfTest } |
+    ConvertTo-Json | Set-Content $LockFile -Encoding utf8
+}
+
+function Invoke-ClaudeIsolated([string]$PromptText, [string[]]$ClaudeArgs, [string]$OutputFile, [string]$Label) {
+  $PromptPath = Join-Path $NightDir "$DateStr.$Label.prompt.md"
+  $ArgsPath = Join-Path $NightDir "$DateStr.$Label.args.json"
+  $RunnerOut = Join-Path $NightDir "$DateStr.$Label.runner.log"
+  $RunnerErr = Join-Path $NightDir "$DateStr.$Label.runner.err.log"
+  Remove-Item -LiteralPath $RunnerOut,$RunnerErr -Force -ErrorAction SilentlyContinue
+  Set-Content -LiteralPath $PromptPath -Value $PromptText -Encoding utf8
+  $ClaudeArgs | ConvertTo-Json | Set-Content -LiteralPath $ArgsPath -Encoding utf8
+  $nodeExe = (Get-Command node -ErrorAction Stop).Source
+  $launcher = Join-Path $RepoRoot "scripts\automation\night-process-runner.mjs"
+  $launcherArgs = @($launcher, "--prompt-file", $PromptPath, "--args-file", $ArgsPath, "--output-file", $OutputFile, "--state-file", $LockFile, "--claude-exe", "C:\Users\hnish\.local\bin\claude.exe", "--heartbeat-ms", "15000")
+  $proc = Start-Process -FilePath $nodeExe -ArgumentList $launcherArgs -RedirectStandardOutput $RunnerOut -RedirectStandardError $RunnerErr -WindowStyle Hidden -Wait -PassThru
+  if (Test-Path $RunnerErr) { Get-Content $RunnerErr -ErrorAction SilentlyContinue | Add-Content $RunnerOut -Encoding utf8 }
+  Copy-Item -LiteralPath $LockFile -Destination $HeartbeatFile -Force -ErrorAction SilentlyContinue
+  return $proc.ExitCode
 }
 
 try {
   if ($BrowserCheckOnly) { Log "=== BrowserCheckOnly ドライラン（testMode未消費・claude未起動） ===" }
+  if ($RunnerSelfTest) { Log "=== RunnerSelfTest（testMode未消費・記事生成なし） ===" }
 
   # ---- 1-bis. Codex画像archiveの期限整理 ----
   # 本番採用済み原本だけが対象。archive移動から30日を超えた記事フォルダを削除し、
   # D:\downloads\sumalabo-codex\cleanup-ledger.jsonl に監査記録を残す。
-  if (-not $BrowserCheckOnly) {
+  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) {
     Log "image cleanup: archive 30日経過分を確認"
     $cleanup = node scripts/automation/image-output-lifecycle.mjs --prune 2>&1
     $cleanupExit = $LASTEXITCODE
@@ -68,7 +101,7 @@ try {
 
   # ---- 2. 軽量プリフライト（Claude を起動する前に node だけで判定） ----
   # ドライランでは testMode ゲートをスキップ（ブラウザ経路だけ確かめたいため）。
-  if (-not $BrowserCheckOnly) {
+  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) {
     Log "preflight: test-mode --status"
     $preflight = node scripts/automation/test-mode.mjs --status 2>&1
     $preflightExit = $LASTEXITCODE
@@ -121,6 +154,21 @@ try {
     exit 0
   }
 
+  if ($RunnerSelfTest) {
+    $SelfTestLog = Join-Path $NightDir "$DateStr.runner-selftest.claude.log"
+    Remove-Item -LiteralPath $SelfTestLog -Force -ErrorAction SilentlyContinue
+    $selfArgs = @("-p", "--model", "claude-opus-4-8", "--chrome", "--max-turns", "1")
+    $selfExit = Invoke-ClaudeIsolated "Reply with exactly RUNNER_SELFTEST_OK and nothing else." $selfArgs $SelfTestLog "runner-selftest"
+    $selfState = Get-Content $HeartbeatFile -Raw -Encoding utf8 | ConvertFrom-Json
+    $selfOutput = Get-Content $SelfTestLog -Raw -Encoding utf8
+    if ($selfExit -ne 0 -or $selfState.status -ne "completed" -or -not $selfState.childPid -or -not $selfState.heartbeatAt -or $selfOutput -notmatch "RUNNER_SELFTEST_OK") {
+      Log "RunnerSelfTest FAILED: exit=$selfExit status=$($selfState.status) child=$($selfState.childPid)"
+      exit 3
+    }
+    Log "RunnerSelfTest OK: isolated exit=0 child=$($selfState.childPid) heartbeat=$($selfState.heartbeatAt) directOutput=OK"
+    exit 0
+  }
+
   # ---- 3. ヘッドレス Claude Code 起動 ----
   $PromptFile = Join-Path $RepoRoot "docs\night_driver_prompt.md"
   $Prompt = Get-Content $PromptFile -Raw -Encoding utf8
@@ -133,13 +181,8 @@ try {
   $ClaudeLog = Join-Path $NightDir "$DateStr.claude.log"
   Log "launch: claude -p (model=claude-opus-4-8, --chrome) -> $ClaudeLog"
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
-  & claude -p $Prompt `
-      --model claude-opus-4-8 `
-      --chrome `
-      --allowedTools $AllowedTools `
-      --max-turns 1200 `
-      2>&1 | Out-File -FilePath $ClaudeLog -Encoding utf8 -Append
-  $claudeExit = $LASTEXITCODE
+  $claudeArgs = @("-p", "--model", "claude-opus-4-8", "--chrome", "--allowedTools", $AllowedTools, "--max-turns", "1200")
+  $claudeExit = Invoke-ClaudeIsolated $Prompt $claudeArgs $ClaudeLog "claude"
   $sw.Stop()
   Log "claude exited: code=$claudeExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"
 
@@ -156,13 +199,8 @@ try {
       $ResumeTemplate = Get-Content (Join-Path $RepoRoot "docs\night_driver_resume_prompt.md") -Raw -Encoding utf8
       $ResumePrompt = $ResumeTemplate.Replace("{{SLUG}}", $resumeSlug)
       $swR = [System.Diagnostics.Stopwatch]::StartNew()
-      & claude -p $ResumePrompt `
-          --model claude-opus-4-8 `
-          --chrome `
-          --allowedTools $AllowedTools `
-          --max-turns 1200 `
-          2>&1 | Out-File -FilePath $ClaudeLog -Encoding utf8 -Append
-      $resumeExit = $LASTEXITCODE
+      $resumeArgs = @("-p", "--model", "claude-opus-4-8", "--chrome", "--allowedTools", $AllowedTools, "--max-turns", "1200")
+      $resumeExit = Invoke-ClaudeIsolated $ResumePrompt $resumeArgs $ClaudeLog "resume"
       $swR.Stop()
       Log "claude resume exited: code=$resumeExit elapsed=$([Math]::Round($swR.Elapsed.TotalMinutes,1))min (slug=$resumeSlug)"
       if ($resumeExit -ne 0) {
@@ -213,5 +251,10 @@ try {
 
   exit $claudeExit
 } finally {
+  if (Test-Path $LockFile) { Copy-Item -LiteralPath $LockFile -Destination $HeartbeatFile -Force -ErrorAction SilentlyContinue }
+  if (-not $RunnerSelfTest -and -not $BrowserCheckOnly) {
+    @{ finishedAt=(Get-Date).ToString("o"); status="wrapper_exited" } | ConvertTo-Json | Set-Content $CompletionFile -Encoding utf8
+  }
   Remove-Item $LockFile -Force -Confirm:$false -ErrorAction SilentlyContinue
 }
+
