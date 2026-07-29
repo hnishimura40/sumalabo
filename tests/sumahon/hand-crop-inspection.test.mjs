@@ -100,4 +100,7 @@ test("second-pass prompt does not expose expectedSide", () => {
   assert.equal(prompt.includes("expectedSide"), false);
   assert.match(prompt, /no_hand_in_crop/);
   assert.match(prompt, /同一の手の内部/);
+  assert.match(prompt, /gripOppositionNatural/);
+  assert.match(prompt, /親指と4本指が同じ側・同じ面/);
+  assert.match(prompt, /約70%以上/);
 });

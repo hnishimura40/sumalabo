@@ -1,8 +1,8 @@
 {
-  "runAt": "2026-07-28T23:53:10.530Z",
+  "runAt": "2026-07-29T03:53:57.724Z",
   "separateSession": true,
-  "imagesDetected": "6/6",
-  "incidentsDetected": "4/4",
+  "imagesDetected": "7/7",
+  "incidentsDetected": "5/5",
   "images": [
     {
       "id": "benchmark-slide04-before",
@@ -51,6 +51,14 @@
       "actual": "warning",
       "detected": true,
       "cropFile": "D:\\downloads\\sumalabo-codex\\hand-crop-regression-20260726\\video-slide08-before.hand-crops.png"
+    },
+    {
+      "id": "ios-slide01-before",
+      "incident": "ios-left-wrist-right-hand",
+      "expected": "needs_revision",
+      "actual": "needs_revision",
+      "detected": true,
+      "cropFile": "D:\\downloads\\sumalabo-codex\\hand-crop-regression-20260726\\ios-slide01-before.hand-crops.png"
     }
   ],
   "incidents": [
@@ -83,16 +91,23 @@
         "video-slide07-before",
         "video-slide08-before"
       ]
+    },
+    {
+      "incident": "ios-left-wrist-right-hand",
+      "detected": true,
+      "images": [
+        "ios-slide01-before"
+      ]
     }
   ],
   "agentResult": {
     "overallPass": false,
-    "sourceImagesInspected": 6,
-    "cropsInspected": 12,
+    "sourceImagesInspected": 7,
+    "cropsInspected": 13,
     "verdictCounts": {
       "ok": 0,
       "warning": 1,
-      "needs_revision": 5
+      "needs_revision": 6
     },
     "images": [
       {
@@ -103,24 +118,26 @@
           {
             "label": "benchmark-slide04-before-hand1",
             "handVisible": true,
-            "observedSide": "left",
+            "observedSide": "unclear",
             "sideNatural": true,
             "thumbNatural": true,
             "connectionNatural": true,
+            "gripOppositionNatural": true,
             "proportionsNatural": true,
             "severity": "needs_revision",
-            "note": "上側の指差し手は単体では自然だが、直下の手と近接・平行し、ほぼ同形で同方向を指す二重手に見える。"
+            "note": "上側の指差し手を確認。単体の手首接続と指比率に明確な矛盾はないが、hand2と近接・平行し、ほぼ同形の手が同方向を指す二重手に見える。"
           },
           {
             "label": "benchmark-slide04-before-hand2",
             "handVisible": true,
-            "observedSide": "right",
+            "observedSide": "unclear",
             "sideNatural": true,
             "thumbNatural": true,
             "connectionNatural": true,
+            "gripOppositionNatural": true,
             "proportionsNatural": true,
             "severity": "needs_revision",
-            "note": "下側の指差し手は単体では自然だが、上側の手と近接・平行した同方向の二重手を形成している。"
+            "note": "下側の指差し手を確認。単体では前腕から手首、掌、指を連続して追えるが、hand1と近接・平行した同形の指差し手であり、画面上の二重手として構造破綻に該当する。"
           }
         ]
       },
@@ -132,35 +149,38 @@
           {
             "label": "google-slide01-before-hand1",
             "handVisible": true,
-            "observedSide": "right",
+            "observedSide": "unclear",
             "sideNatural": true,
             "thumbNatural": true,
             "connectionNatural": true,
+            "gripOppositionNatural": false,
             "proportionsNatural": true,
-            "severity": "ok",
-            "note": "チェック表の左側に短く丸い腕先を確認できる。らぼまるの正本形状として自然。"
+            "severity": "needs_revision",
+            "note": "チェックボード左縁に回る、らぼまるの丸い手先を確認。指の分化がなく握りの対向関係は確認できない。さらにボード右側の手と体側の手も同時に実在し、同一キャラクターに3本の手が見える。"
           },
           {
             "label": "google-slide01-before-hand2",
             "handVisible": true,
-            "observedSide": "left",
+            "observedSide": "unclear",
             "sideNatural": true,
             "thumbNatural": true,
             "connectionNatural": true,
+            "gripOppositionNatural": false,
             "proportionsNatural": true,
-            "severity": "ok",
-            "note": "体側につながる丸い腕先が確認でき、長さ、太さ、接続に明確な異常はない。"
+            "severity": "needs_revision",
+            "note": "チェックボード脇の丸い腕・手先を確認。滑らかな無指形状のため、親指と残りの指による把持対向は確認できない。hand1およびhand3と合わせて実在する手が3本見える。"
           },
           {
             "label": "google-slide01-before-hand3",
             "handVisible": true,
-            "observedSide": "left",
+            "observedSide": "unclear",
             "sideNatural": true,
             "thumbNatural": true,
             "connectionNatural": true,
+            "gripOppositionNatural": true,
             "proportionsNatural": true,
-            "severity": "ok",
-            "note": "右側のタイルと同じ側の腕を含む重複的なクロップ。実在する腕先は短く丸く、構造は自然。"
+            "severity": "needs_revision",
+            "note": "胴体側面から出る短く太い丸形の腕・手先を確認。この手単体の形状はらぼまるとして自然だが、ボード周辺のhand1、hand2とは別の3本目の手として同時に見える。"
           },
           {
             "label": "google-slide01-before-topology",
@@ -168,6 +188,7 @@
             "sideNatural": false,
             "thumbNatural": false,
             "connectionNatural": false,
+            "gripOppositionNatural": true,
             "proportionsNatural": true,
             "severity": "needs_revision",
             "note": "labomaru の一次検品で独立した手が 3 件列挙され、左右各1本を超えています。明確な本数異常として公開ブロック。"
@@ -182,13 +203,14 @@
           {
             "label": "google-slide05-before-hand1",
             "handVisible": true,
-            "observedSide": "left",
+            "observedSide": "unclear",
             "sideNatural": true,
-            "thumbNatural": true,
+            "thumbNatural": false,
             "connectionNatural": false,
+            "gripOppositionNatural": false,
             "proportionsNatural": false,
             "severity": "needs_revision",
-            "note": "筆記具を持つ腕が体側から細いホース状に長く伸び、急な湾曲を伴う。らぼまるの短く太い正本形状を逸脱している。"
+            "note": "ペンを持つ手先と腕を確認。腕が胴体側面から細いホース状に長く伸び、急な湾曲を経て手先へ達しており、らぼまるの短く太い正規形状から大きく逸脱する。指が分化せず、ペンを挟む親指と残りの指の対向も確認できない。"
           }
         ]
       },
@@ -201,12 +223,13 @@
             "label": "video-thumbnail-before-hand1",
             "handVisible": true,
             "observedSide": "left",
-            "sideNatural": true,
-            "thumbNatural": true,
-            "connectionNatural": true,
+            "sideNatural": false,
+            "thumbNatural": false,
+            "connectionNatural": false,
+            "gripOppositionNatural": false,
             "proportionsNatural": true,
             "severity": "needs_revision",
-            "note": "カチンコ状の札を片手で保持し、反対手で指す禁止構図。保持手単体の解剖は自然でも公開不可。"
+            "note": "カチンコを握る手を確認。複数の長い指がカチンコ前面の同じ側へ並ぶ一方、反対側から対向する親指を追えず、把持途中で手型が切り替わったように見える。さらに反対手で指す禁止構図が同時成立している。"
           },
           {
             "label": "video-thumbnail-before-hand2",
@@ -215,20 +238,22 @@
             "sideNatural": true,
             "thumbNatural": true,
             "connectionNatural": true,
+            "gripOppositionNatural": true,
             "proportionsNatural": true,
             "severity": "needs_revision",
-            "note": "反対手がカチンコ状の札を保持した状態で指差しを行う既知の禁止構図に該当する。"
+            "note": "横向きに指す手を確認。手単体の指比率と手首接続には明確な矛盾がないが、同じ人物の反対手がカチンコを握る『片手で小道具を持ち、反対手で指す』禁止構図に該当する。"
           },
           {
             "label": "video-thumbnail-before-hand3",
             "handVisible": true,
             "observedSide": "unclear",
-            "sideNatural": true,
-            "thumbNatural": true,
-            "connectionNatural": true,
+            "sideNatural": false,
+            "thumbNatural": false,
+            "connectionNatural": false,
+            "gripOppositionNatural": false,
             "proportionsNatural": true,
             "severity": "needs_revision",
-            "note": "広いクロップ内に保持手と指差し手が確認できる。同一人物による札の保持と反対手の指差しを併用した禁止構図。"
+            "note": "DETAIL内にカチンコを持つ手と指差す反対手の両方を確認。把持手では親指と残り4本の対向を確認できず、加えて小道具保持と反対手の指差しを同時に行う既知の禁止構図である。"
           },
           {
             "label": "video-thumbnail-before-topology",
@@ -236,6 +261,7 @@
             "sideNatural": false,
             "thumbNatural": false,
             "connectionNatural": false,
+            "gripOppositionNatural": true,
             "proportionsNatural": true,
             "severity": "needs_revision",
             "note": "himari の一次検品で独立した手が 3 件列挙され、左右各1本を超えています。明確な本数異常として公開ブロック。"
@@ -254,9 +280,10 @@
             "sideNatural": true,
             "thumbNatural": true,
             "connectionNatural": true,
+            "gripOppositionNatural": true,
             "proportionsNatural": true,
             "severity": "needs_revision",
-            "note": "反対手で紙を持ちながら指差す既知の禁止構図。指差し手単体に明確な解剖異常はないが公開不可。"
+            "note": "右方向を指す手を確認。人差し指は親指より明確に長く、親指は人差し指の約半分程度で掌幅も超えず、単体比率は自然。ただし反対手で紙を持つ禁止構図が同時成立している。"
           },
           {
             "label": "video-slide07-before-hand2",
@@ -265,9 +292,10 @@
             "sideNatural": true,
             "thumbNatural": true,
             "connectionNatural": true,
+            "gripOppositionNatural": true,
             "proportionsNatural": true,
             "severity": "needs_revision",
-            "note": "片手で紙を保持し、反対手で指す禁止構図に該当する。保持手単体の接続と比率は自然。"
+            "note": "紙の左下を持つ手を確認。掌側が見え、上側の横長の指を親指と判断でき、残りの曲げた指は紙の下縁から反対側へ回り、親指側の手首も袖口へ連続する。ただし同じ人物が反対手で指す禁止構図のため公開不可。"
           }
         ]
       },
@@ -283,9 +311,29 @@
             "sideNatural": true,
             "thumbNatural": false,
             "connectionNatural": true,
+            "gripOppositionNatural": true,
             "proportionsNatural": false,
             "severity": "warning",
-            "note": "立てた人差し指に対して親指が長く、掌幅に近いか超えるように見える。接続反転はないが、親指比率を自然と断定できない。"
+            "note": "人差し指を立てた手を確認。人差し指と親指を各付け根から追えるが、親指が太く長く、人差し指の約70%未満であると明確に確認できない。親指先端も人差し指の先端側へ近く、比率上の違和感がある。"
+          }
+        ]
+      },
+      {
+        "id": "ios-slide01-before",
+        "verdict": "needs_revision",
+        "cropFile": "ios-slide01-before.hand-crops.png",
+        "checks": [
+          {
+            "label": "ios-slide01-before-hand1",
+            "handVisible": true,
+            "observedSide": "unclear",
+            "sideNatural": false,
+            "thumbNatural": false,
+            "connectionNatural": false,
+            "gripOppositionNatural": false,
+            "proportionsNatural": false,
+            "severity": "needs_revision",
+            "note": "端末を握る手を確認。複数の長い指が端末前面の同じ側・同じ縁から横並びに伸び、反対側から向かい合う親指を特定できない。指列と手首の間で右手型と左手型を継ぎ足したような把持接続になっている。"
           }
         ]
       }
