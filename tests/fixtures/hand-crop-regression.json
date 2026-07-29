@@ -74,6 +74,19 @@
           ]
         }
       ]
+    },
+    {
+      "incident": "ios-left-wrist-right-hand",
+      "images": [
+        {
+          "id": "ios-slide01-before",
+          "path": "D:\\downloads\\sumalabo-codex\\repairs\\20260729-ios-hand-connection\\slide01-before.webp",
+          "expected": "needs_revision",
+          "hands": [
+            { "character": "himari", "side": "unclear", "bbox": { "x": 540, "y": 380, "width": 130, "height": 150 } }
+          ]
+        }
+      ]
     }
   ]
 }
