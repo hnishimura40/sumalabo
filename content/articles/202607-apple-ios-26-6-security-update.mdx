@@ -1,0 +1,282 @@
+---
+title: "iOS 26.6・iPadOS 26.6配信、87件のCVEに対応　更新内容をやさしく整理"
+slug: "202607-apple-ios-26-6-security-update"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Appleが iOS 26.6 / iPadOS 26.6 を配信しました。「87件」の正確な数え方、修正された機能の広さ、ゼロデイ・悪用状況の慎重な線引き、そして対応端末で早めに更新しておきたい理由を、あわてず読めるように整理します。"
+thumbnail: "/images/thumbnails/202607-apple-ios-26-6-security-update.webp"
+thumbnailAlt: "iOS 26.6のソフトウェアアップデート画面を真剣に確認するひまりと、78項目・87CVE・悪用は未確認の3枚をチェックするらぼまる。左上に「87件、どう見る？」、下に「iOS 26.6は安全性の更新」の文字"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "iOS"
+  - "iPhone"
+  - "Apple"
+  - "セキュリティ"
+related:
+  - "202605-ios-27-apple-intelligence-external-ai-chatgpt-choice"
+  - "202607-openai-model-hugging-face-security-incident"
+  - "202605-apple-airtag-size-ai-pendant-iphone-siri"
+pubDate: "2026-07-29"
+updated: "2026-07-29"
+publishAt: "2026-07-29T05:40:00+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Note from "../../src/components/article/Note.astro";
+
+<Summary30>
+<ol>
+<li>iOS 26.6 / iPadOS 26.6は、目立つ新機能よりもセキュリティ修正を重視した更新</li>
+<li>Apple公式のセキュリティ情報を集計すると、78個の修正項目に87個のCVE番号が掲載されている</li>
+<li>Appleは既知の悪用に言及しておらず、対応端末なら早めに更新しておくのが無難</li>
+</ol>
+</Summary30>
+
+## AppleがiOS 26.6・iPadOS 26.6を配信
+
+<p class="lead">今回の更新は、大きな新機能の追加ではなく<strong>セキュリティと不具合の修正が中心</strong>です。</p>
+
+Appleは2026年7月27日（米国時間）、iPhone向けの「iOS 26.6」とiPad向けの「iPadOS 26.6」を公開しました。日本では時差の関係から、7月28日ごろからアップデートが表示された人が多いとみられます。
+
+見た目が大きく変わる更新ではありませんが、端末を安全に使ううえでは重要なアップデートです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは、今回のアップデートの位置づけを一枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-apple-ios-26-6-security-update/slide01-ios26-6-release.webp" alt="iOS 26.6の配信を伝える図解。7月27日に公開、安全性の修正が中心、対応端末は早めに更新、78項目・87CVEといった要点を、ひまりとらぼまるが確認している" loading="lazy" decoding="async" />
+    <figcaption>図解：iOS 26.6 配信の要点</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>公開日</strong>：米国時間7月27日。日本では7月28日ごろから表示</li>
+      <li><strong>中身</strong>：新機能より、安全性の修正が中心</li>
+      <li><strong>対応</strong>：対応端末なら早めに更新しておくのが無難</li>
+    </ul>
+  </div>
+</section>
+
+## 「87件」という数字は何を数えたもの？
+
+<p class="lead">「87件の脆弱性を修正」と報じられていますが、正確には<strong>78個の修正項目に87個のCVE番号</strong>という整理です。</p>
+
+Apple公式ページに掲載された内容を集計すると、78個の修正項目に対して、87個のCVE番号が確認できます。CVEは、セキュリティ上の問題を区別するための共通の管理番号です。
+
+1つの修正項目に複数のCVEが含まれる場合があるため、修正項目数とCVE数は一致しません。この記事では「87個の機能を直した」という意味ではなく、**87件のCVEに対応したアップデート**として扱います。
+
+<NumCards>
+<div>
+<strong>78項目</strong>
+<span>Appleのページで分けて掲載されている修正内容</span>
+</div>
+<div>
+<strong>87件</strong>
+<span>脆弱性を識別するために割り振られたCVE番号</span>
+</div>
+</NumCards>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「78項目」と「87CVE」の関係を図で整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-apple-ios-26-6-security-update/slide02-count-78-87.webp" alt="87件の数え方を説明する図解。修正は78項目、CVE番号は87件、87個の機能ではない。1項目に複数CVEが含まれることを、ひまりとらぼまるが数字カードで見比べている" loading="lazy" decoding="async" />
+    <figcaption>図解：87件の数え方</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>修正は78項目</strong>：Appleが分けて掲載している修正内容の数</li>
+      <li><strong>CVE番号は87件</strong>：問題を識別する管理番号の数</li>
+      <li><strong>注意</strong>：87個の機能を直した、という意味ではない</li>
+    </ul>
+  </div>
+</section>
+
+## どのような問題が修正された？
+
+<p class="lead">修正対象は、iPhoneやiPadの<strong>普段使う機能の広い範囲</strong>に及びます。</p>
+
+Appleのセキュリティ情報には、App Store、連絡先、Siri、Webページを表示するWebKit、OSの中核部分であるカーネル、Wi-Fi、画像・音声・動画の処理、アプリの権限管理など、幅広い機能に関する修正が掲載されています。
+
+少し難しく見えますが、Webサイトを開く・画像や動画を見る・アプリを使う・Wi-Fiへ接続する・Siriや連絡先を使う、といった日常の場面に関係します。つまり、特定の機能だけを直す小規模な更新ではなく、**広い範囲をまとめて修正したアップデート**です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">どのあたりが修正対象なのかを、身近な言葉で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-apple-ios-26-6-security-update/slide03-wide-fix-range.webp" alt="広い範囲を修正したことを示す図解。Web・画像・動画、アプリ・Wi-Fi、Siri・連絡先、OSの深い部分も対象。ひまりが虫めがねで確認し、らぼまるが盾でスマホを守る" loading="lazy" decoding="async" />
+    <figcaption>図解：広い範囲を修正</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>身近な機能</strong>：Web・画像・動画、アプリ・Wi-Fi、Siri・連絡先</li>
+      <li><strong>深い部分</strong>：OSの中核（カーネル）に関わる修正も含む</li>
+      <li><strong>まとめ</strong>：一部だけでなく、広い範囲をまとめて修正</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p><strong>修正しないと何が起きる可能性がある？</strong></p>
+<p>Appleは、問題が悪用された場合の影響として「アプリが本来見られない情報へアクセスする」「悪意のあるファイルを開いた際に端末が停止する」「本来許可されていない処理が実行される」などを挙げています。ただしこれらは<strong>悪用された場合に起こり得る影響</strong>であり、更新していない端末がすぐに攻撃を受けるという意味ではありません。件数だけを見て怖がるのではなく、幅広い問題をまとめて修正する更新だと理解するのがよいでしょう。</p>
+</div>
+
+## 「ゼロデイが修正された」は確認できない
+
+<p class="lead">今回の更新について、Appleは<strong>既知の悪用に言及していません</strong>。ゼロデイの断定は避けるのが安全です。</p>
+
+Appleは、悪用が確認されている脆弱性について、セキュリティ情報の中で「悪用された可能性を認識している」といった説明を付けることがあります。しかし、今回のiOS 26.6 / iPadOS 26.6については、そうした記載は確認できません。
+
+<Callout kind="unc" title="確認できること / 確認できないこと">
+<ul>
+<li><strong>確認できる</strong>：87件のCVEに対応／幅広い機能の問題を修正／任意の処理を実行される可能性がある問題を含む</li>
+<li><strong>確認できない</strong>：実際の攻撃で悪用されている／悪用確認済みのゼロデイを修正</li>
+</ul>
+</Callout>
+
+Appleが悪用について書いていないからといって、世界中で一度も悪用されていないと証明されたわけではありません。一方で、根拠がないまま「すでに攻撃が広がっている」と判断することもできません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「確認できること」と「確認できないこと」を分けて置きます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-apple-ios-26-6-security-update/slide04-confirmed-or-not.webp" alt="確認できることと確認できないことを仕分ける図解。確認できる欄に87件のCVEに対応・広い機能を修正、悪用の確認は不明のカードを保留トレーに置く。らぼまるがチェックする" loading="lazy" decoding="async" />
+    <figcaption>図解：確認できること／できないこと</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>確認できる</strong>：87件のCVE対応、広い機能の修正</li>
+      <li><strong>不明</strong>：実際に悪用されているかどうか</li>
+      <li><strong>姿勢</strong>：分からないことは「保留」にして断定しない</li>
+    </ul>
+  </div>
+</section>
+
+<p class="lead">「Zero Day Initiative」という名称が出てきても、それだけで<strong>悪用確認済みのゼロデイ</strong>という意味にはなりません。</p>
+
+Appleのセキュリティ情報には、脆弱性を報告した研究者や組織の名前も掲載されます。その中に「Zero Day Initiative」があっても、これは脆弱性の調査や報告に関わるプログラムの名称です。組織名に「Zero Day」と入っていることと、今回の問題が実際の攻撃で使われていたかは、分けて考える必要があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">名称に惑わされないための整理です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-apple-ios-26-6-security-update/slide05-no-zeroday-claim.webp" alt="ゼロデイは断定しないことを示す図解。Appleは既知の悪用に言及なし、攻撃中とは確認できない、組織名だけで判断しない。ひまりがゼロデイ？のカードを保留に置く" loading="lazy" decoding="async" />
+    <figcaption>図解：ゼロデイは断定しない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>公式の記載</strong>：Appleは既知の悪用に言及していない</li>
+      <li><strong>判断</strong>：攻撃中とは確認できない</li>
+      <li><strong>名称</strong>：組織名に「Zero Day」とあっても悪用確認の意味ではない</li>
+    </ul>
+  </div>
+</section>
+
+## 今回のニュースをどう見ればよい？
+
+<p class="lead">ポイントは「87件も見つかったから危険」ではなく、<strong>修正版がもう配信されている</strong>ことです。</p>
+
+OSは多くの機能やプログラムで構成されているため、定期的な調査によって複数の問題がまとめて修正されることがあります。大切なのは件数だけではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">件数ではなく、今できることに目を向けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-apple-ios-26-6-security-update/slide06-how-to-view.webp" alt="今回の見方を整理する図解。身近な機能を修正、OSの深い部分も対象、修正版は配信ずみ。ひまりが順に確認し、らぼまるが最後の項目にチェックを入れる" loading="lazy" decoding="async" />
+    <figcaption>図解：今回の見方</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>この場面のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>身近な機能</strong>：画像やWeb、アプリなどが修正対象</li>
+      <li><strong>深い部分</strong>：OSの中核に関わる問題も含む</li>
+      <li><strong>結論</strong>：修正版はすでに配信済み。更新が最も分かりやすい対策</li>
+    </ul>
+  </div>
+</section>
+
+問題の詳細を利用者が一つずつ確認する必要はありません。対応端末では、Appleが提供した修正版へ更新しておくことが、最も分かりやすい対策です。
+
+## iPhoneやiPadは更新した方がいい？　更新方法もあわせて
+
+<p class="lead">対応機種で更新が表示されているなら、<strong>特別な事情がなければ早めに更新</strong>しておくのが無難です。</p>
+
+今すぐ更新しなければ危険だと慌てる必要はありませんが、今回の更新は修正範囲が広く、長期間保留するメリットもあまりありません。更新は「設定」→「一般」→「ソフトウェアアップデート」から行えます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">更新手順は3ステップです。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-apple-ios-26-6-security-update/slide07-update-3-steps.webp" alt="更新は3ステップの図解。設定、一般、ソフトウェアアップデートの順に画面を進み、表示された更新を確認する。ひまりが画面をタップし、らぼまるが最後の画面を指す" loading="lazy" decoding="async" />
+    <figcaption>図解：更新は3ステップ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>更新の手順（コピー可能）</strong></p>
+    <ul>
+      <li><strong>1</strong>：「設定」を開く</li>
+      <li><strong>2</strong>：「一般」を選ぶ</li>
+      <li><strong>3</strong>：「ソフトウェアアップデート」で更新を確認し、ダウンロードしてインストール</li>
+    </ul>
+  </div>
+</section>
+
+自動アップデートを有効にしている場合でも、更新がまだ適用されていないことがあります。気になる場合は、「ソフトウェアアップデート」の画面を開いて現在のバージョンを確認してみてください。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">更新前に確認しておくと安心なポイントです。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202607-apple-ios-26-6-security-update/slide08-update-checklist.webp" alt="あわてず早めに更新するための図解。充電を確認、Wi-Fiを確認、必要ならバックアップ、時間がある時に更新。ひまりがスマホを充電しながら確認し、らぼまるが項目にチェックを入れる" loading="lazy" decoding="async" />
+    <figcaption>図解：更新前チェック</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>更新前チェック（コピー可能）</strong></p>
+    <ul>
+      <li><strong>充電</strong>：バッテリー残量が十分にあるか</li>
+      <li><strong>通信</strong>：安定したWi-Fiへ接続しているか</li>
+      <li><strong>備え</strong>：必要ならデータをバックアップ</li>
+      <li><strong>時間</strong>：しばらく端末を使わなくても困らない時間帯に</li>
+    </ul>
+  </div>
+</section>
+
+<div class="check-box">
+<p><strong>対応機種はどこまで？</strong></p>
+<p>iOS 26.6は、iPhone 11以降を中心としたiOS 26対応機種へ提供されています（iPhone SEは第2世代・第3世代も対象）。iPadOS 26.6も、近年発売された主要なiPad、iPad Air、iPad mini、iPad Proが対象です。対応機種の一覧は長いため、自分の端末で更新できるかは「設定」→「一般」→「ソフトウェアアップデート」を開き、iOS 26.6またはiPadOS 26.6が表示されるかで確認するのが確実です。</p>
+</div>
+
+## まとめ
+
+<p class="lead">iOS 26.6 / iPadOS 26.6は、新機能を楽しむためというより、<strong>端末を安全かつ安定して使い続けるための更新</strong>です。</p>
+
+<NumCards>
+<div>
+<strong>78項目 / 87CVE</strong>
+<span>修正項目とCVE番号の数。件数だけで危険度は決まらない</span>
+</div>
+<div>
+<strong>悪用は未確認</strong>
+<span>Appleは既知の悪用に言及していない。ゼロデイの断定は避ける</span>
+</div>
+<div>
+<strong>早めに更新</strong>
+<span>対応端末なら、準備を整えて早めに適用しておくのが無難</span>
+</div>
+</NumCards>
+
+「87件」という数字だけで不安になる必要はありません。今回のニュースは、Appleが幅広い問題の修正版を配信したので、利用者側でもアップデートを適用しておこう、という内容として捉えるのがよいでしょう。
+
+<Note>
+この記事は2026年7月28日時点のApple公式情報と各社の報道をもとに整理しています。悪用状況や対応機種などの詳細は、今後変わる可能性があります。最新の内容はApple公式のセキュリティ情報をご確認ください。
+</Note>
+
+## 参考情報
+
+- [Apple セキュリティリリース（Apple公式）](https://support.apple.com/en-us/100100)
+- [ITmedia Mobile：Apple、「iOS 26.6」「iPadOS 26.6」配信　計87件の脆弱性を修正](https://www.itmedia.co.jp/mobile/articles/2607/28/news086.html)

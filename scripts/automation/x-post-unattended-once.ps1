@@ -56,8 +56,10 @@ try {
   Log "launch claude -p --chrome mode=$Mode"
   $ClaudeOutput = & claude -p $Prompt --model claude-opus-4-8 --chrome --allowedTools $AllowedTools --max-turns 220 2>&1
   $ClaudeExit = $LASTEXITCODE
-  $ClaudeOutput | Out-File -Encoding UTF8 -Append -LiteralPath $LogFile
   $OutputText = $ClaudeOutput | Out-String
+  $FilteredOutput = $OutputText | node scripts/sumahon/filter-report-output.mjs
+  $FilteredOutput | Out-File -Encoding UTF8 -Append -LiteralPath $LogFile
+  $OutputText = $FilteredOutput | Out-String
   if ($DryRun) {
     $SuccessMarker = ($OutputText -match '@suma_labo') -and ($OutputText -match 'mediaCount["'']?\s*:\s*4') -and ($OutputText -match 'posted["'']?\s*:\s*false')
   } else {

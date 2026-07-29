@@ -93,3 +93,7 @@ DOM検証用の最新版は `scripts/sumahon/x-post-verify.mjs` を正本とす�
 ## 台帳の互換性
 
 `data/social/x-posted.json` の `version` は1のまま。既存レコードは `route` がなくても有効で、新規レコードだけ `route: "codex"` を追加する。本投稿直後は既存の `replyUrl: null`、リプライ確認直後に同じレコードの `replyUrl` を更新するため、レコード形式や重複防止単位は変えない。
+
+
+## 報告出力フィルタ（必須）
+完了報告は送信直前に `npm run report:filter` を通し、行頭（空白を含む）が `::` の行を機械的に除去する。記事URL・投稿URL・検証結果など通常行は保持する。Codex対話、夜間run、無人Xのいずれも未フィルタの報告を直接送らない。
