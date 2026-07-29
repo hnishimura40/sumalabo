@@ -198,6 +198,20 @@
       "variant": "images4+reply",
       "imagesAttached": 4,
       "replyUrl": "https://x.com/suma_labo/status/2081874903125680178"
+    },
+    {
+      "slug": "202607-apple-ios-26-6-security-update",
+      "articleUrl": "https://sumalabo.com/articles/202607-apple-ios-26-6-security-update/",
+      "postedAt": "2026-07-29T00:42:56.519Z",
+      "postText": "iOS 26.6・iPadOS 26.6配信、87件のCVEに対応 更新内容をやさしく整理\n\nAppleが iOS 26.6 / iPadOS 26.6 を配信しました。\n#すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2082265416685220248",
+      "method": "chrome",
+      "route": "codex",
+      "thumbnailAttached": true,
+      "charCount": 91,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2082266006152794187"
     }
   ]
 }

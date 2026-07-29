@@ -128,6 +128,9 @@ async function modeRecord(args) {
   const postJson = await loadPostJson(slug);
   const variantName = args.variant || "primary";
   const v = pickVariant(postJson, variantName);
+  const attachmentPaths = Array.isArray(postJson.attachmentPlan?.attach)
+    ? postJson.attachmentPlan.attach
+    : [];
   if (await hasPosted(slug)) {
     console.error(`error: slug "${slug}" は既に投稿済みです（台帳ヒット）。再投稿しません。`);
     process.exit(3);
@@ -141,6 +144,10 @@ async function modeRecord(args) {
     route,
     thumbnailAttached: Boolean(postJson.attachThumbnail),
     charCount: v.charCount,
+    variant:
+      postJson.attachmentPlan?.variant ||
+      (attachmentPaths.length ? `images${attachmentPaths.length}` : "text_only"),
+    imagesAttached: attachmentPaths.length,
   });
   console.log("recorded:", JSON.stringify(rec, null, 2));
   process.exit(0);
