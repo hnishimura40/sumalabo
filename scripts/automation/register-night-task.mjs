@@ -27,7 +27,7 @@ export function validateNightTaskXml(xml, root = ROOT) {
 }
 
 function queryAndValidateRegistration() {
-  const query = spawnSync("schtasks", ["/query", "/tn", TASK_NAME, "/xml"], { encoding: "utf-16le" });
+  const query = spawnSync("schtasks", ["/query", "/tn", TASK_NAME, "/xml"], { encoding: "utf-8" });
   if (query.status !== 0) return { ok: false, problems: ["task_query_failed"], detail: query.stderr || query.stdout };
   return { ...validateNightTaskXml(query.stdout), xml: query.stdout };
 }
