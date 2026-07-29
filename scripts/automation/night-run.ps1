@@ -28,6 +28,8 @@ $LogFile = Join-Path $NightDir "$DateStr.log"
 $LockFile = Join-Path $NightDir "run.lock"
 $HeartbeatFile = Join-Path $NightDir "$DateStr.heartbeat.json"
 $CompletionFile = Join-Path $NightDir "$DateStr.completion.json"
+$AcceptanceRequestFile = Join-Path $NightDir "scheduled-acceptance.request.json"
+$AcceptanceResultFile = Join-Path $NightDir "scheduled-acceptance.result.json"
 if ($BrowserCheckOnly -and $RunnerSelfTest) { throw 'BrowserCheckOnly と RunnerSelfTest は同時指定できません。' }
 if ($RunnerSelfTest) {
   $LockFile = Join-Path $NightDir "runner-selftest.lock"
@@ -107,8 +109,8 @@ try {
     $preflightExit = $LASTEXITCODE
     Log ($preflight | Out-String).Trim()
     if ($preflightExit -ne 0) {
-      Log "SKIP: testMode 非アクティブ（exit $preflightExit）。Claude を起動しません。"
-      node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'skipped',title:'[testMode] 夜間運転スキップ（testMode非アクティブ/実行済み）'}))" 2>&1 | Out-Null
+      Log "SKIP: 恒久夜間運転が非アクティブ（exit $preflightExit）。Claude を起動しません。"
+      node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'skipped',title:'[夜間run] 夜間運転スキップ（恒久運転非アクティブ/実行済み）'}))" 2>&1 | Out-Null
       exit 0
     }
   }
@@ -125,8 +127,8 @@ try {
   if (-not (Test-Path $ChromeExe)) { $ChromeExe = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" }
 
   if (-not (Test-Path $ChromeExe)) {
-    Log "SKIP: Chrome 実行ファイルが見つからない。ブラウザ経路なしのため停止（testMode 未消費）。"
-    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: Chrome実行ファイル不明'}))" 2>&1 | Out-Null
+    Log "SKIP: Chrome 実行ファイルが見つからない。ブラウザ経路なしのため停止。"
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[夜間run] 夜間運転停止: Chrome実行ファイル不明'}))" 2>&1 | Out-Null
     exit 0
   }
 
@@ -143,8 +145,8 @@ try {
     ) | Out-Null
     Start-Sleep -Seconds 12   # 拡張が MCP リレーへ接続する猶予
     if (@(Get-Process chrome -ErrorAction SilentlyContinue).Count -eq 0) {
-      Log "SKIP: Chrome 起動に失敗（プロセスが立ち上がらない）。停止（testMode 未消費）。"
-      node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[testMode] 夜間運転停止: Chrome起動失敗'}))" 2>&1 | Out-Null
+      Log "SKIP: Chrome 起動に失敗（プロセスが立ち上がらない）。停止。"
+      node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[夜間run] 夜間運転停止: Chrome起動失敗'}))" 2>&1 | Out-Null
       exit 0
     }
   }
@@ -169,6 +171,27 @@ try {
     exit 0
   }
 
+  # 実タスクの通常コマンドラインを schtasks /Run で通す一回限りの受入。
+  # フラグを登録へ混ぜず、本番と同じ経路を記事生成直前まで通して安全終了する。
+  if (Test-Path $AcceptanceRequestFile) {
+    $acceptance = $null
+    try { $acceptance = Get-Content $AcceptanceRequestFile -Raw -Encoding utf8 | ConvertFrom-Json } catch {}
+    $fresh = $false
+    if ($acceptance -and $acceptance.requestedAt) {
+      try {
+        $age = ((Get-Date) - [datetime]$acceptance.requestedAt).TotalMinutes
+        $fresh = ($age -ge 0 -and $age -le 15)
+      } catch {}
+    }
+    Remove-Item -LiteralPath $AcceptanceRequestFile -Force -ErrorAction SilentlyContinue
+    if ($fresh) {
+      @{ ok=$true; mode="scheduled_production_path_without_article"; taskName="Sumalabo Night Driver"; completedAt=(Get-Date).ToString("o"); pid=$PID; preflight="passed"; chromeProcessCount=@(Get-Process chrome -ErrorAction SilentlyContinue).Count; commandLineFlags="none" } |
+        ConvertTo-Json | Set-Content -LiteralPath $AcceptanceResultFile -Encoding utf8
+      Log "SCHEDULED ACCEPTANCE OK: 実タスクの通常コマンドで起動し、記事生成直前まで本番同等パスを通過。"
+      exit 0
+    }
+    Log "WARN: 期限切れまたは不正な scheduled acceptance request を破棄し、本番運転を継続。"
+  }
   # ---- 3. ヘッドレス Claude Code 起動 ----
   $PromptFile = Join-Path $RepoRoot "docs\night_driver_prompt.md"
   $Prompt = Get-Content $PromptFile -Raw -Encoding utf8
@@ -204,14 +227,14 @@ try {
       $swR.Stop()
       Log "claude resume exited: code=$resumeExit elapsed=$([Math]::Round($swR.Elapsed.TotalMinutes,1))min (slug=$resumeSlug)"
       if ($resumeExit -ne 0) {
-        node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[testMode] 夜間運転: 再開も失敗（exit $resumeExit / slug=$resumeSlug）。logs/night/$DateStr.log を確認'}))" 2>&1 | Out-Null
+        node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[夜間run] 夜間運転: 再開も失敗（exit $resumeExit / slug=$resumeSlug）。logs/night/$DateStr.log を確認'}))" 2>&1 | Out-Null
       } else {
         Log "resume 成功: '$resumeSlug' を完走。"
       }
       exit $resumeExit
     }
     Log "resume: 再開対象の未完了記事なし（60分以内の in-progress state が無い）。"
-    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[testMode] 夜間運転が異常終了（exit $claudeExit）。logs/night/$DateStr.log を確認'}))" 2>&1 | Out-Null
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[夜間run] 夜間運転が異常終了（exit $claudeExit）。logs/night/$DateStr.log を確認'}))" 2>&1 | Out-Null
   }
 
   # ---- 4. Phase B/C 未完の救済 + 無音防止（2026-07-18 追加） ----

@@ -126,3 +126,9 @@ wevtutil gl Microsoft-Windows-TaskScheduler/Operational | Select-String 'enabled
 
 `enabled: true` が出れば完了。以後、イベントビューアーの
 `Applications and Services Logs > Microsoft > Windows > TaskScheduler > Operational` で開始・終了・外部停止を追跡できる。
+
+## 本番タスク受入と起動層の凍結
+
+自己診断exit 0だけでは合格にしない。`npm run schedule:auto-run -- --validate-registration`で実登録XMLにテスト系フラグがないことを確認する。続いて`logs/night/scheduled-acceptance.request.json`へ15分以内の`requestedAt`を置き、実タスクを`schtasks /Run /TN "Sumalabo Night Driver"`で起動する。`scheduled-acceptance.result.json`の`ok: true`は、通常の本番コマンドでlock・cleanup・恒久運転preflight・Chrome確認まで通り、記事生成直前で安全終了した証拠とする。
+
+起動層は2026-07-30から凍結中。障害対応以外の変更は禁止し、障害修正時だけ上記の実登録XML確認と実タスク受入を再実施する。
