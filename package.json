@@ -20,6 +20,7 @@
     "sumalabo:inspect-hands:gate": "node scripts/run/hand-crop-gate.mjs",
     "sumalabo:images:codex": "node scripts/automation/codex-image-stage.mjs",
     "sumalabo:images:cleanup": "node scripts/automation/image-output-lifecycle.mjs",
+    "sumalabo:review-images": "node scripts/automation/attended-image-review.mjs",
     "chrome:ensure": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/automation/ensure-chrome.ps1",
     "sumahon:watch": "node scripts/run/sumahon-watch.mjs",
     "sumahon:regenerate-next": "node scripts/run/regenerate-from-queue.mjs",

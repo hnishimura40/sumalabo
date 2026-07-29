@@ -75,14 +75,14 @@ npm run article -- --theme "<pickedのタイトルを元にした記事テーマ
 
 ## 2-bis. 公開前の手・腕二段検品ゲート
 
-Phase Bへ進む前に、Phase Cの0/0-bisに記載した一次独立検品と手の部位拡大二段検品を先に完了する。`npm run sumalabo:inspect-hands:gate -- --slug <slug>` がPASSになることを必須とする。`needs_revision` は該当画像を1回再生成して両検品を再実行し、残る場合は**公開せず停止・通知**する。比率だけの `warning` はクロップ画像を報告に添えて公開可。
+Phase Bへ進む前に、Phase Cの0/0-bisに記載した一次独立検品と手の部位拡大二段検品を先に完了する。夜間runはHiroの公開前30秒確認を待たず、公開後の完了報告で全9枚の事後確認を依頼する。`npm run sumalabo:inspect-hands:gate -- --slug <slug>` がPASSになることを必須とする。`needs_revision` は該当画像を1回再生成して両検品を再実行し、残る場合は**公開せず停止・通知**する。比率だけの `warning` はクロップ画像を報告に添えて公開可。
 
 ## 3. Phase B（公開）— veto 窓なしで即実行
 
 finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待たずに進む（恒久無人運転の承認済み挙動）:
 
 1. PR merge: `gh pr view <N> --json mergeable,mergeStateStatus` で MERGEABLE/CLEAN を確認 → `gh pr merge <N> --merge --delete-branch=false`
-2. deploy: `npm run deploy:production -- --slug=<slug> --skip-git-sync`
+2. deploy: `npm run deploy:production -- --slug=<slug> --skip-git-sync --run-mode=night`
 3. 結果 JSON の `verify.status: ok` / `postPublishVerify.status: ok` を確認。hard fail なら自動 rollback が走る — その場合は **ここで中止**し、incident を確認して通知 → 終了（Phase C に進まない）。
 4. strict verify: `https://sumalabo.com/api/verify-publication?slug=<slug>` で `failedChecks: []` を確認。
 5. queue / ledger 更新（published。source: test_mode / triggeredBy: night_driver を記録）。
