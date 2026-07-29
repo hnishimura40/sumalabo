@@ -152,6 +152,8 @@ testMode（3 本限定の実弾テスト）は 3 本完走（Claude Science / ai
 
 夜間の無人 run（§6）と同様に、**ユーザーが対話セッションで記事制作を指示したら、Phase A → B → C（公開・X 投稿）まで確認なしで完走してよい**。Human Review Checkpoint（Phase A 完了時の停止）は昼の立ち会い制作でも**廃止**する。
 
+**2026-07-29限定上書き**: 立ち会い記事だけは、一次独立検品＋手の二段検品後、本番公開前に「全9枚をHiroが30秒見る」画像専用チェックを正式ステップとして設ける。本文・構成の逐一確認は復活させない。9枚のSHA付き承認証跡がない、または承認後に画像が変わった場合は `run-mode=attended` のdeployをブロックする。夜間runは `run-mode=night` で公開前停止を設けず、従来どおり事後確認する。手順は [`attended-image-review.md`](attended-image-review.md)。
+
 - **既定の挙動**: 「◯◯のテーマで記事を書いて」等の記事制作指示を受けたら、記事化 → PR → merge → 本番 deploy → strict verify → queue/ledger 更新 → X 投稿までを止めずに実行する。途中で「公開してよいか」を聞き返さない。
 - **停止してよい例外は 2 つだけ**:
   1. **除外カテゴリ該当**（訴訟 / 事故 / 人事 / 買収 / 政治 等。`watch-sources.json` の `excludeCategories` 相当）と判断したテーマ → 着手前に 1 度だけ確認

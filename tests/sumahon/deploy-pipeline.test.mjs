@@ -61,6 +61,7 @@ test("verify成功 → last-good退避 → 事後検査 → result JSON まで1�
         "--skip-build",
         "--skip-git-sync",
         "--skip-wrangler",
+        "--run-mode=maintenance",
         `--verify-url=${base}/verify?slug=${SLUG}`,
         "--verify-timeout-ms=30000",
       ],

@@ -59,6 +59,7 @@ import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 import http from "node:http";
 import https from "node:https";
 import { archiveAfterSuccessfulDeploy } from "./image-output-lifecycle.mjs";
+import { verifyAttendedReview } from "./attended-image-review.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -96,6 +97,7 @@ function parseArgs(argv) {
     verifyTimeoutMs: 6 * 60 * 1000,
     output: null,
     trigger: "manual",
+    runMode: null,
     skipPostVerify: false,
     skipWrangler: false,
   };
@@ -107,6 +109,7 @@ function parseArgs(argv) {
     else if (a === "--skip-post-verify") out.skipPostVerify = true;
     else if (a === "--skip-wrangler") out.skipWrangler = true; // テスト専用: deploy を行わず後続工程の完走を検証する
     else if (a.startsWith("--trigger=")) out.trigger = a.slice("--trigger=".length).trim() || "manual";
+    else if (a.startsWith("--run-mode=")) out.runMode = a.slice("--run-mode=".length).trim();
     else if (a.startsWith("--slug=")) out.slug = a.slice("--slug=".length).trim();
     else if (a.startsWith("--verify-url=")) out.verifyUrl = a.slice("--verify-url=".length).trim();
     else if (a.startsWith("--verify-timeout-ms=")) {
@@ -114,6 +117,7 @@ function parseArgs(argv) {
       if (Number.isFinite(n) && n > 0) out.verifyTimeoutMs = Math.min(Math.max(n, 30_000), 30 * 60_000);
     } else if (a.startsWith("--output=")) out.output = a.slice("--output=".length).trim();
   }
+  out.runMode ||= out.trigger === "manual" ? "attended" : "automation";
   return out;
 }
 
@@ -128,11 +132,13 @@ function makeResult() {
     slug: null,
     dryRun: false,
     trigger: "manual",
+    runMode: null,
     autonomyLevel: null,
     startedAt: new Date().toISOString(),
     finishedAt: null,
     steps: {
       autonomyGate: { status: "skipped" },
+      attendedImageReview: { status: "skipped" },
       gitSync: { status: "skipped" },
       build: { status: "skipped" },
       distCheck: { status: "skipped" },
@@ -458,10 +464,11 @@ async function main() {
   result.dryRun = args.dryRun;
   result.slug = args.slug;
   result.trigger = args.trigger;
+  result.runMode = args.runMode;
 
-  if (!isValidSlug(args.slug)) {
+  if (!isValidSlug(args.slug) || !["attended", "night", "automation", "maintenance"].includes(args.runMode)) {
     result.errorReason = "missing_or_invalid_slug";
-    console.error("usage: node scripts/automation/deploy-production-from-main.mjs --slug=<slug> [--dry-run] [--skip-build] [--no-verify] [--trigger=manual|auto_after_veto]");
+    console.error("usage: node scripts/automation/deploy-production-from-main.mjs --slug=<slug> [--dry-run] [--skip-build] [--no-verify] [--trigger=manual|auto_after_veto] [--run-mode=attended|night|automation|maintenance]");
     finalize(result, args, /*exitCode*/ 2);
     return;
   }
@@ -481,6 +488,21 @@ async function main() {
     }
     finalize(result, args, 1);
     return;
+  }
+
+  if (args.runMode === "attended" && !args.dryRun) {
+    const review = verifyAttendedReview(args.slug);
+    result.steps.attendedImageReview = review.ok
+      ? { status: "ok", ...review }
+      : { status: "blocked", ...review };
+    if (!review.ok) {
+      result.errorReason = review.reason;
+      console.error(`[attended-image-review] BLOCK: ${review.reason} (${review.path || "review evidence unavailable"})`);
+      finalize(result, args, 1);
+      return;
+    }
+  } else {
+    result.steps.attendedImageReview = { status: "skipped", runMode: args.runMode, reason: args.dryRun ? "dry_run" : "not_attended" };
   }
 
   console.log(`Wrangler production deploy for slug=${args.slug}${args.dryRun ? " (DRY RUN)" : ""} (trigger=${args.trigger}, autonomyLevel=${g.level})`);
