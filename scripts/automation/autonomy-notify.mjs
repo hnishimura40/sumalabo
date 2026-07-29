@@ -7,6 +7,7 @@
 // 例外を投げない（通知失敗で本処理を壊さない）。secret の値は出力しない。
 
 import { notifyReviewReady } from "../sumahon/notify-review-ready.mjs";
+import { sanitizeReportText } from "../sumahon/filter-report-output.mjs";
 
 /**
  * @param {object} opts
@@ -22,7 +23,7 @@ export async function notifyAutonomyEvent({ slug, status, title, previewUrl }) {
       item: {
         slug,
         status,
-        title: title || `[autonomy] ${status}: ${slug}`,
+        title: sanitizeReportText(title || `[autonomy] ${status}: ${slug}`).trim() || "[filtered report]",
         // notifyReviewReady は https の previewUrl 必須（ローカルURL事故ガード）。
         // autonomy イベントは記事本番 URL か review 一覧を参照先にする。
         previewUrl: previewUrl || `https://sumalabo.com/review/`,

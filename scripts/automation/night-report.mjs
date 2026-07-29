@@ -24,6 +24,7 @@ import { loadAutonomy } from "./autonomy.mjs";
 import { readLedger } from "./ledger.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 import { readPhaseTimings } from "./test-mode.mjs";
+import { sanitizeReportText } from "../sumahon/filter-report-output.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -194,12 +195,13 @@ async function main() {
     return;
   }
   const { markdown, clean } = buildReport(slug);
+  const filteredMarkdown = sanitizeReportText(markdown);
   const dir = path.join(ROOT, "logs", "night");
   mkdirSync(dir, { recursive: true });
   const p = path.join(dir, `${slug}.report.md`);
-  writeFileSync(p, markdown + "\n", "utf-8");
+  writeFileSync(p, filteredMarkdown + "\n", "utf-8");
   console.log(`report: ${path.relative(ROOT, p)}`);
-  console.log(markdown);
+  console.log(filteredMarkdown);
   if (!noNotify) {
     const n = await notifyAutonomyEvent({
       slug,

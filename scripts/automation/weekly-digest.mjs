@@ -14,6 +14,7 @@ import process from "node:process";
 import { readLedger } from "./ledger.mjs";
 import { loadAutonomy } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
+import { sanitizeReportText } from "../sumahon/filter-report-output.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -51,7 +52,7 @@ export function buildDigest({ days = 7, now = Date.now() } = {}) {
     `事後検査soft残留: ${softIssues.length}件`,
     `autonomy: level ${autonomy.level} / paused ${autonomy.paused} / L1昇格カウント ${autonomy.promotionCount?.toL1 ?? 0}/3`,
   ];
-  return { summary: lines.join("\n"), published, xPosted, incidents, softIssues, level: autonomy.level };
+  return { summary: sanitizeReportText(lines.join("\n")), published, xPosted, incidents, softIssues, level: autonomy.level };
 }
 
 async function main() {

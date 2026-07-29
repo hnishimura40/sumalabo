@@ -147,3 +147,7 @@ node scripts/automation/night-report.mjs --slug <slug>
 - 検査の緩和（gate / factcheck / verify をスキップ・弱体化しない）
 - secret / token 値の表示・ログ出力
 - autonomy level / xPostMethod / nightRun 設定の変更（--consume と --stop 以外。enabled の再有効化はユーザー宣言のみ）
+
+
+## 報告出力フィルタ（必須）
+完了報告は送信直前に `npm run report:filter` を通し、行頭（空白を含む）が `::` の行を機械的に除去する。記事URL・投稿URL・検証結果など通常行は保持する。Codex対話、夜間run、無人Xのいずれも未フィルタの報告を直接送らない。

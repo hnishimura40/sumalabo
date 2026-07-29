@@ -722,3 +722,7 @@ PC 表示では **横スクロールを原則使わない**。スマホでも基
 ## 改訂
 
 このポリシーが変わるのは、人間が **明示的に** 「役割分担を変えたい」と言ったときだけ。それ以外はこのまま固定。
+
+
+## Final report output filter (mandatory)
+All user-facing completion reports, including Codex interactive, night run, attended runs, and unattended X posting, must pass through `npm run report:filter` immediately before delivery. Remove every line whose first non-whitespace characters are `::`. Never send an unfiltered completion report.
