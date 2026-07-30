@@ -32,4 +32,7 @@ test("恒久運転の通知タイトルに旧[testMode]ラベルを残さない"
   const wrapper = readFileSync(join(repoRoot, "scripts", "automation", "night-run.ps1"), "utf8");
   assert.doesNotMatch(wrapper, /title:'\[testMode\]/);
   assert.match(wrapper, /title:'\[夜間run\]/);
+  const report = readFileSync(join(repoRoot, "scripts", "automation", "night-report.mjs"), "utf8");
+  assert.doesNotMatch(report, /\[testMode\]/);
+  assert.match(report, /\[夜間run\]/);
 });
