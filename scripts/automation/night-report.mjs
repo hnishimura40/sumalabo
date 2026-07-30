@@ -206,7 +206,7 @@ async function main() {
     const n = await notifyAutonomyEvent({
       slug,
       status: "night_report",
-      title: `[testMode] 自動運転レポート: ${slug}（${clean ? "クリーン" : "要確認"}）`,
+      title: `[夜間run] 自動運転レポート: ${slug}（${clean ? "クリーン" : "要確認"}）`,
       previewUrl: `https://sumalabo.com/articles/${slug}/`,
     }).catch((e) => ({ ok: false, reason: e && e.message }));
     console.log(`notify: ${n.ok ? "sent" : `skipped (${n.reason})`}`);
