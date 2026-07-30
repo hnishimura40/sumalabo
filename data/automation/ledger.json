@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-30T00:17:58.753Z",
+  "updatedAt": "2026-07-30T21:43:58.655Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -1445,6 +1445,21 @@
       "autonomyLevel": 0,
       "trigger": "manual",
       "hasAffiliate": false
+    },
+    {
+      "slug": "202607-lumines-remaster-smartphone-release",
+      "incidents": [],
+      "status": "published",
+      "productionUrl": "https://sumalabo.com/articles/202607-lumines-remaster-smartphone-release/",
+      "publishedAt": "2026-07-30T21:23:38.711Z",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/242",
+      "mergeCommit": "a768714ce5768f0a5f8d6b5620c2c1906a069fde",
+      "source": "test_mode",
+      "triggeredBy": "night_driver",
+      "verifyResult": "8/8",
+      "xPostUrl": "https://x.com/suma_labo/status/2082941830753333668",
+      "xPostedAt": "2026-07-30T21:43:58.653Z",
+      "xReplyUrl": "https://x.com/suma_labo/status/2082945125165289745"
     }
   ]
 }

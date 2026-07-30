@@ -225,6 +225,19 @@
       "variant": "images4+reply",
       "imagesAttached": 4,
       "replyUrl": "https://x.com/suma_labo/status/2082620882795844026"
+    },
+    {
+      "slug": "202607-lumines-remaster-smartphone-release",
+      "postedAt": "2026-07-30T21:30:40.549Z",
+      "postText": "(recorded via phase-c-auto)",
+      "postUrl": "https://x.com/suma_labo/status/2082941830753333668",
+      "method": "browser",
+      "route": "claude-in-chrome",
+      "thumbnailAttached": false,
+      "charCount": 0,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": null
     }
   ]
 }
