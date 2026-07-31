@@ -11,19 +11,53 @@
   },
   "targets": [
     {
+      "slug": "202607-gemini-spark-pro-us-japan-ultra",
+      "label": "Gemini Sparkの日本提供条件を整理",
+      "blurb": "米国Proと日本Ultraの地域差、24時間AIの使いどころと権限管理を解説",
+      "categories": [
+        "ニュースをかみくだく",
+        "やってみた・検証"
+      ],
+      "_kwNote": "Gemini Spark、常駐型AIエージェント、Google AIプランの記事から、地域差と権限管理の定番解説へ案内する。Gemini単独では表示しない。",
+      "keywords": [
+        "Gemini Spark",
+        "24時間 AIエージェント",
+        "Google AI Pro Spark",
+        "Google AI Ultra Spark",
+        "常駐 AIエージェント",
+        "AIエージェント Gmail",
+        "AIエージェント 自動化"
+      ],
+      "listStaple": true
+    },
+    {
       "slug": "202607-vivant-ai-hayato-reality-check",
       "label": "VIVANTのAIハヤトを実在チェック",
       "blurb": "音声・映像解析・確率判断を、できる・条件付き・まだ無理で判定",
-      "categories": ["ニュースをかみくだく"],
+      "categories": [
+        "ニュースをかみくだく"
+      ],
       "_kwNote": "ドラマや映画に登場するAIの実在性、AIハヤト、監視映像解析の話題から、フィクションと現実を分ける記事へ案内する。AI一般語だけでは表示しない。",
-      "keywords": ["VIVANT AIハヤト", "AIハヤト", "ドラマ AI", "映画 AI", "フィクション AI", "AI 実在チェック", "監視カメラ AI解析", "映像解析 顔認識"],
+      "keywords": [
+        "VIVANT AIハヤト",
+        "AIハヤト",
+        "ドラマ AI",
+        "映画 AI",
+        "フィクション AI",
+        "AI 実在チェック",
+        "監視カメラ AI解析",
+        "映像解析 顔認識"
+      ],
       "listStaple": false
     },
     {
       "slug": "ai-work-productivity-experience-2026",
       "label": "仕事のAIが一段階変わった実務体験",
       "blurb": "資料統合・フロー図・Excel・PowerPointで感じた変化を実例で紹介",
-      "categories": ["やってみた・検証", "ニュースをかみくだく"],
+      "categories": [
+        "やってみた・検証",
+        "ニュースをかみくだく"
+      ],
       "_kwNote": "生成AIの業務活用・仕事効率化・資料作成の記事から、実務体験の定番受け皿へ案内する。AI単独語では表示しない。",
       "keywords": [
         "生成AI 仕事活用",
@@ -41,7 +75,9 @@
       "slug": "202607-school-ai-class-proposal-explained",
       "label": "学校の「AI授業」案を整理",
       "blurb": "決まったこと・検討中・未定と、開始時期を中立に解説",
-      "categories": ["ニュースをかみくだく"],
+      "categories": [
+        "ニュースをかみくだく"
+      ],
       "_kwNote": "学校のAI教育・次期学習指導要領・情報教育のニュースから、案と決定を分ける定番解説へ案内する。AI一般語だけでは表示しない。",
       "keywords": [
         "学校 AI授業",
@@ -60,7 +96,9 @@
       "slug": "202607-google-july-30-terms-media-settings",
       "label": "Googleの「7月30日問題」を整理",
       "blurb": "規約改定とメディア保存設定の違い、対象範囲、確認手順を解説",
-      "categories": ["ニュースをかみくだく"],
+      "categories": [
+        "ニュースをかみくだく"
+      ],
       "_kwNote": "Google規約改定・検索履歴・画像や音声のAI学習に関するニュースから、誤解解きと設定手順の定番受け皿へ案内する。",
       "keywords": [
         "Google 7月30日",
@@ -77,7 +115,9 @@
       "slug": "ai-model-benchmark-cost-guide-2026",
       "label": "AIモデル、結局どれを使えばいい？",
       "blurb": "Claude・ChatGPT・Geminiを用途と予算で選ぶ常設ガイド",
-      "categories": ["ニュースをかみくだく"],
+      "categories": [
+        "ニュースをかみくだく"
+      ],
       "_kwNote": "AIモデルの比較・料金・ベンチマーク・新モデル記事から定番受け皿へ案内する。単独のAI一般語ではなく複合語を使う。",
       "keywords": [
         "AIモデル比較",
@@ -97,7 +137,11 @@
       "slug": "ai-youtube-video-creation-guide-2026",
       "label": "AIでYouTube解説動画を作る方法",
       "blurb": "台本・声・画像・字幕をAIで作り、現実的に組み立てる常設ガイド",
-      "categories": ["やってみた・検証", "ニュースをかみくだく", "周辺機器・ガジェット"],
+      "categories": [
+        "やってみた・検証",
+        "ニュースをかみくだく",
+        "周辺機器・ガジェット"
+      ],
       "_kwNote": "AI動画、YouTube制作、音声合成、動画編集の記事から定番受け皿へ案内する。単独のAI一般語では表示しない。",
       "keywords": [
         "AI動画作成",
@@ -117,7 +161,9 @@
       "slug": "202607-claude-opus-5-everyday-value",
       "label": "Claude Opus 5で何が変わる？",
       "blurb": "Max・Pro・APIの違いとFable 5との使い分け",
-      "categories": ["ニュースをかみくだく"],
+      "categories": [
+        "ニュースをかみくだく"
+      ],
       "_kwNote": "Claudeのモデル更新・有料プラン・Opus/Fable比較に限定して案内する。AI一般では表示しない。",
       "keywords": [
         "Claude Opus 5",
@@ -134,7 +180,9 @@
       "slug": "power-bank-comparison",
       "label": "モバイルバッテリーおすすめ比較",
       "blurb": "容量・重さ・メーカーで選ぶ",
-      "categories": ["周辺機器・ガジェット"],
+      "categories": [
+        "周辺機器・ガジェット"
+      ],
       "_kwNote": "誤爆回避: 汎用語(容量/持ち運び/安全)や短い部分一致語(PD/GaN/mAh)は入れない。話題を一意に示す語だけ。",
       "keywords": [
         "モバイルバッテリー",
@@ -152,7 +200,9 @@
       "slug": "usb-c-charger-comparison",
       "label": "USB-C充電器おすすめ比較",
       "blurb": "PD対応・W数・サイズで選ぶ",
-      "categories": ["周辺機器・ガジェット"],
+      "categories": [
+        "周辺機器・ガジェット"
+      ],
       "_kwNote": "誤爆回避: 単独の 'PD'(update等に部分一致)や 'GaN'(organ等に部分一致)は使わず、句で持つ。",
       "keywords": [
         "USB-C充電器",
@@ -173,7 +223,9 @@
       "slug": "power-bank-recall-check",
       "label": "モバイルバッテリーのリコール確認方法",
       "blurb": "型番でリコール対象かを確認",
-      "categories": ["周辺機器・ガジェット"],
+      "categories": [
+        "周辺機器・ガジェット"
+      ],
       "_kwNote": "誤爆回避: 汎用の '安全'/'発熱' は入れない(AI安全性・CPU発熱に誤爆)。リコール文脈語のみ。",
       "keywords": [
         "リコール",
@@ -190,7 +242,9 @@
       "slug": "202607-chatgpt-outage-july-recurring",
       "label": "ChatGPT障害、PCが壊れた？と思ったら",
       "blurb": "サービス障害か故障かの切り分け手順と、止まった日の4つの備え",
-      "categories": ["ニュースをかみくだく"],
+      "categories": [
+        "ニュースをかみくだく"
+      ],
       "_kwNote": "ChatGPT・API・Codex等の障害・エラー・使えない・落ちるといった不調の話題から、切り分け手順の定番受け皿へ案内する。今後の障害系ニュースの受け皿として機能させる。AI一般語だけでは表示しない。",
       "keywords": [
         "ChatGPT 障害",
@@ -209,7 +263,10 @@
       "slug": "202607-ai-pc-cloud-local-spec-guide",
       "label": "AIを使うPCの選び方",
       "blurb": "クラウド型AIとローカル型AIで必要スペックを整理",
-      "categories": ["周辺機器・ガジェット", "ニュースをかみくだく"],
+      "categories": [
+        "周辺機器・ガジェット",
+        "ニュースをかみくだく"
+      ],
       "_kwNote": "AI一般への誤爆を避け、PC選び・部材相場・ローカル生成を示す句を中心にする。GPUはユーザー指定の橋渡し語として単独も登録。",
       "keywords": [
         "AI PC",
