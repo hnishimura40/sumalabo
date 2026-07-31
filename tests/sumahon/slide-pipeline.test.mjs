@@ -145,21 +145,21 @@ test("derivePerformanceBlock: specific verification staging wins over generic pr
   assert.match(performance.thumbnail.props.join(" "), /虫眼鏡|チェックリスト/);
   assert.match(performance.thumbnail.pose, /確認|虫眼鏡/);
   assert.match(performance.thumbnail.expression, /真剣|心配|調べ顔/);
-  assert.match(performance.thumbnail.handUse, /片手|両手/);
-  assert.match(performance.slides.handUse, /片手持ち.*両手持ち/);
-  assert.match(performance.thumbnail.handUse, /自然に届く距離.*腕を伸長させない/);
-  assert.match(performance.slides.handUse, /自然に届く距離.*腕を伸長させない/);
-  assert.match(performance.thumbnail.handUse, /手のクローズアップを避け/);
-  assert.match(performance.slides.handUse, /画面の主役にしない/);
-  assert.match(performance.slides.handUse, /両手に別々の動作を同時指定しない/);
+  assert.match(performance.thumbnail.handUse, /開いた手・軽く添える手/);
+  assert.match(performance.slides.handUse, /開いた手・軽く添える手/);
+  assert.match(performance.thumbnail.handUse, /小さめ・遠め/);
+  assert.match(performance.slides.handUse, /動作する手は片手だけ/);
+  assert.match(performance.thumbnail.handUse, /強く握る/);
+  assert.match(performance.slides.handUse, /指を複雑に組む・数える/);
+  assert.match(performance.slides.handUse, /両手で別々の動作/);
   assert.match(performance.thumbnail.handUse, /標準衣装・棒立ちへ退避しない/);
-  assert.ok(performance.thumbnail.handsFreeAlternatives.includes("テーマ別衣装"));
-  assert.ok(performance.thumbnail.handsFreeAlternatives.some((item) => /首かけ|肩掛け/.test(item)));
+  assert.ok(performance.thumbnail.handsFreeAlternatives.some((item) => /開いた手/.test(item)));
+  assert.ok(performance.thumbnail.handsFreeAlternatives.some((item) => /軽く添え/.test(item)));
   assert.ok(performance.thumbnail.handsFreeAlternatives.some((item) => /姿勢と視線/.test(item)));
-  assert.match(performance.thumbnail.handUse, /手は原則描かない/);
-  assert.match(performance.thumbnail.handUse, /卓上スタンド.*ポケット.*長い袖.*後ろ手.*フレームアウト/);
-  assert.match(performance.slides.handUse, /手は原則描かない/);
-  assert.match(performance.thumbnail.pose, /手はポケット・長い袖・後ろ手・前景・フレーム外/);
+  assert.match(performance.thumbnail.handUse, /手を隠すことを既定にしない/);
+  assert.match(performance.thumbnail.handUse, /手を消すためだけの後ろ手・机の陰・フレームアウトは使わない/);
+  assert.match(performance.slides.handUse, /手を隠すことを既定にしない/);
+  assert.match(performance.thumbnail.pose, /片手だけを開くか小道具へ軽く添え/);
 });
 
 test("deriveExpression follows article emotion instead of defaulting to a smile", () => {

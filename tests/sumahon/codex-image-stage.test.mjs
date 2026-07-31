@@ -76,12 +76,12 @@ test("performance block is extracted and passed to every image item", () => {
   assert.match(prompt, /手首と前腕をねじれ・継ぎ足しなく接続/);
   assert.match(prompt, /各1人\/1体だけ/);
   assert.match(prompt, /安全制約の適用範囲/);
-  assert.match(prompt, /生成の既定は「手を原則描かない」/);
-  assert.match(prompt, /卓上スタンド、机上配置、ポケット、長い袖、後ろ手/);
+  assert.match(prompt, /生成の既定は「壊れにくい手を自然に描く」/);
+  assert.match(prompt, /開いた手・軽く添える手/);
   assert.match(prompt, /「安全のため演出を減らす」は不可/);
   assert.match(prompt, /首かけ・肩掛け・バッジ・ヘッドセット/);
   assert.match(prompt, /標準衣装・棒立ちへの退避は禁止/);
-  assert.match(prompt, /演出項目そのものを削除・弱化してはならない/);
+  assert.match(prompt, /手を隠す構図や演出項目の削除へ退避してはならない/);
   assert.match(prompt, /点検用ベスト/);
   assert.match(prompt, /真剣に調べる顔/);
   assert.doesNotMatch(prompt, /スライドでは白い標準衣装/);
@@ -91,7 +91,7 @@ test("performance block rejects unexplained standard-only thumbnail outfits", ()
   const common = [
     "## 演出ブロック",
     "- 小道具: モニター",
-    "- 手・小道具: 手は原則描かない。卓上スタンドで小道具を机上配置し、手首から先はフレームアウト",
+    "- 手・小道具: 自然な構図で壊れにくい手を描く。開いた手・軽く添える手を小さめ・遠めにし、動作は片手だけ",
     "- ポーズ・動き: 見比べる",
     "- 背景・状況: 司令室",
     "- 表情: 穏やか",
@@ -108,7 +108,7 @@ test("performance block rejects unexplained standard-only thumbnail outfits", ()
     ...common.slice(1).map((line) => line.startsWith("- 手・小道具:") ? "- 手・小道具: 手は体側" : line),
   ].join("\n"));
   assert.equal(missingHandDefault.ok, false);
-  assert.ok(missingHandDefault.missing.some((item) => item.includes("手を原則描かない")));
+  assert.ok(missingHandDefault.missing.some((item) => item.includes("壊れにくい手を自然に描く")));
   assert.equal(weak.ok, false);
   assert.ok(weak.missing.some((item) => item.includes("テーマ別衣装")));
 
