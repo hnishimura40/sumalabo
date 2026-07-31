@@ -156,7 +156,7 @@ function stripQuestionMark(text) {
 
 function isReportingTopic({ title, description, type, articleBrief }) {
   const all = `${title} ${description} ${type} ${articleBrief?.topicCategory || ""}`;
-  return /噂|報道|リーク|未確定|可能性/.test(all) || type === "news";
+  return /噂|報道|リーク|未確定|可能性/.test(all);
 }
 
 function ensureHedge(text, isReporting) {
