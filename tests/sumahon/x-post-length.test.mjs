@@ -67,3 +67,23 @@ test("5. 禁則語「普通の人」がフォールバック文言に含まれ�
   const all = [r.primary.text, ...r.alternates.map((a) => a.text)].join("\n");
   assert.ok(!all.includes("普通の人"), "禁則語がフォールバックに残っている");
 });
+
+test("6. 公式一次情報のnews記事へ『公式発表ではありません』を付けない", () => {
+  const official = generateXPost({
+    slug: "official-news",
+    title: "Gemini Spark、日本のProはまだ対象外",
+    description: "Google公式の更新履歴と料金ページを確認して整理します。",
+    type: "news",
+  });
+  assert.equal(official.isReporting, false);
+  assert.ok(!official.primary.text.includes("公式発表ではありません"));
+
+  const rumor = generateXPost({
+    slug: "rumor-news",
+    title: "次期モデルの噂を整理",
+    description: "未確定情報を報道ベースで確認します。",
+    type: "news",
+  });
+  assert.equal(rumor.isReporting, true);
+  assert.match(rumor.primary.text, /未確定|報道ベース|公式発表ではありません/);
+});
