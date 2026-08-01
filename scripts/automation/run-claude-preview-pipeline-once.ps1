@@ -1,4 +1,4 @@
-﻿# ⚠️ DEPRECATED (2026-05-23 〜): user-directed mode 移行により無人実行は停止しました。
+# ⚠️ DEPRECATED (2026-05-23 〜): user-directed mode 移行により無人実行は停止しました。
 #   - タスクスケジューラー "Sumalabo Claude Pipeline Runner Test" は Disabled 化済み。
 #   - 手動起動用として残してありますが、原則使わないでください。
 #   - 詳細: docs/user_directed_mode.md
@@ -1775,6 +1775,8 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
     & git -c "safe.directory=$SafeProjectRoot" add -- $ThumbnailPath 2>&1 | ForEach-Object { Write-RunLog ("  git: " + $_) }
     & git -c "safe.directory=$SafeProjectRoot" commit -m ("auto: add thumbnail for $TargetSlug") 2>&1 | ForEach-Object { Write-RunLog ("  git: " + $_) }
     if ($LASTEXITCODE -ne 0) { $ErrorActionPreference = $PrevErrB; Fail-Stage "preview_branch_push" "git commit failed" }
+    & node scripts/automation/secret-scan.mjs 2>&1 | ForEach-Object { Write-RunLog ("  secret-scan: " + $_) }
+    if ($LASTEXITCODE -ne 0) { $ErrorActionPreference = $PrevErrB; Fail-Stage "preview_branch_push" "secret scan failed" }
     & git -c "safe.directory=$SafeProjectRoot" push origin $PreviewBranch 2>&1 | ForEach-Object { Write-RunLog ("  git: " + $_) }
     if ($LASTEXITCODE -ne 0) { $ErrorActionPreference = $PrevErrB; Fail-Stage "preview_branch_push" "git push failed" }
     $ErrorActionPreference = $PrevErrB

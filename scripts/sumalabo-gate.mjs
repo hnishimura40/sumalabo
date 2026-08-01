@@ -35,6 +35,7 @@ import { execSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { findProductNameVariants, FORMAL_PRODUCT_NAMES_PATH, loadFormalProductNames } from "./sumahon/formal-product-names.mjs";
+import { scanRepositoryForSecrets } from "./automation/secret-scan.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
@@ -664,6 +665,11 @@ function main() {
     console.error("Usage: sumalabo-gate --slug <slug> [--stage draft|full]");
     console.error("       sumalabo-gate --audit   # 全記事棚卸し（slug 不要）");
     process.exit(1);
+  }
+
+  const secretScan = scanRepositoryForSecrets(REPO_ROOT);
+  for (const finding of secretScan.findings) {
+    report("violation", "secret-scan", path.join(REPO_ROOT, finding.file), "秘密情報の疑い: " + finding.kind + "（値は非表示）");
   }
 
   const patterns = loadForbiddenWords();

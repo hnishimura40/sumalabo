@@ -25,6 +25,7 @@ import { readLedger } from "./ledger.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 import { readPhaseTimings } from "./test-mode.mjs";
 import { sanitizeReportText } from "../sumahon/filter-report-output.mjs";
+import { recordMeasurementRun } from "./unattended-measurement.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -67,6 +68,12 @@ export function buildReport(slug) {
   lines.push("");
   lines.push(`- 生成日時: ${new Date().toISOString()}`);
   lines.push(`- autonomy: level ${autonomy.level} / paused ${autonomy.paused} / testMode 残数 ${tm.articlesRemaining ?? "-"}（enabled: ${tm.enabled === true}）`);
+  const unattendedCompleted = Boolean(state && !state.halted && verify?.hardFail === false && entry.productionUrl && entry.xPostUrl);
+  const humanIntervention = Boolean(state?.humanIntervention || state?.manualIntervention || entry?.humanIntervention);
+  const interventionReason = humanIntervention
+    ? (state?.humanInterventionReason || entry?.humanInterventionReason || "manual_intervention")
+    : (unattendedCompleted ? "なし" : state?.haltReason || (!entry.productionUrl ? "未公開" : !entry.xPostUrl ? "X未投稿" : "未完走"));
+  lines.push("- 無人完走できたか: " + (unattendedCompleted ? "はい" : "いいえ") + " / 人の介入: " + (humanIntervention ? "あり" : "なし") + " / 理由: " + interventionReason);
   lines.push("");
 
   // 1. 選定
@@ -178,7 +185,7 @@ export function buildReport(slug) {
   lines.push("  - [ ] X投稿文とカード表示を確認");
   lines.push(`  - [ ] 問題があれば: npm run retract -- --slug ${slug}`);
 
-  return { markdown: lines.join("\n"), clean, entry, picked };
+  return { markdown: lines.join("\n"), clean, entry, picked, unattendedCompleted, humanIntervention, interventionReason };
 }
 
 async function main() {
@@ -194,8 +201,9 @@ async function main() {
     process.exitCode = 2;
     return;
   }
-  const { markdown, clean } = buildReport(slug);
+  const { markdown, clean, unattendedCompleted, humanIntervention, interventionReason } = buildReport(slug);
   const filteredMarkdown = sanitizeReportText(markdown);
+  recordMeasurementRun({ slug, recordedAt: new Date().toISOString(), unattendedCompleted, humanIntervention, reason: interventionReason, postPublishBreakages: 0 });
   const dir = path.join(ROOT, "logs", "night");
   mkdirSync(dir, { recursive: true });
   const p = path.join(dir, `${slug}.report.md`);

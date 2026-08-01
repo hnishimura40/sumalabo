@@ -551,8 +551,8 @@ async function main() {
     const step = currentStep(state);
     if (!step) {
       console.log(`\n=== PHASE A COMPLETE: ${state.slug} ===`);
-      console.log("立ち会い記事: 機械検品後に npm run sumalabo:review-images -- --slug=" + state.slug + " --prepare を実行し、全9枚の30秒確認とHiro承認後に公開します。");
-      console.log("夜間run: 公開前の人間待ちは設けず、run-mode=night で公開し、全9枚は事後確認へ回します。");
+      console.log("立ち会い・夜間共通: 機械検品合格後は人の応答を待たず公開へ進みます。画像は公開後に事後確認し、問題時は再生成→差し替え→キャッシュパージで即時修正します。");
+
       return;
     }
     if (step.type === "assisted") {

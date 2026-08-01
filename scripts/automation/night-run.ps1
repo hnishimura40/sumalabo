@@ -1,4 +1,4 @@
-﻿# scripts/automation/night-run.ps1 — 夜間自動運転の起動エントリ（タスクスケジューラから呼ばれる）
+# scripts/automation/night-run.ps1 — 夜間自動運転の起動エントリ（タスクスケジューラから呼ばれる）
 #
 # 役割:
 #   1. 多重起動ガード（前夜/当夜の run が生きていたら新規起動しない）
@@ -209,34 +209,14 @@ try {
   $sw.Stop()
   Log "claude exited: code=$claudeExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"
 
-  # ---- 3-bis. transient クラッシュからの1回だけ resume ----
-  # claude -p は稀に "tool call could not be parsed" 等の transient エラーで exit != 0 になる
-  # （2026-07-14 の atlas run: turn5 で発生し 21 分の作業を放棄）。orchestrator の状態は
-  # ステップ単位で保存されているので、**未完了の記事が直近に存在すれば1回だけ再開**する。
-  # 検出は find-resumable-run.mjs（halted=false / finalize未完 / research done / 60分以内）。
-  # 新規 scout はせず、resume 専用プロンプトで当該 slug を仕上げるだけ。
+  # ---- 3-bis. 一過性エラーの再試行 ----
+  # night-process-runner が overloaded / rate limit / timeout / temporary unavailable
+  # だけを30分後に1回再試行する。ここでは二重再試行を行わない。
   if ($claudeExit -ne 0) {
-    $resumeSlug = (node scripts/automation/find-resumable-run.mjs --window-min 60 2>$null | Out-String).Trim()
-    if ($resumeSlug) {
-      Log "resume: 未完了の記事 '$resumeSlug' を検出。transient クラッシュとみなし1回だけ再開する。"
-      $ResumeTemplate = Get-Content (Join-Path $RepoRoot "docs\night_driver_resume_prompt.md") -Raw -Encoding utf8
-      $ResumePrompt = $ResumeTemplate.Replace("{{SLUG}}", $resumeSlug)
-      $swR = [System.Diagnostics.Stopwatch]::StartNew()
-      $resumeArgs = @("-p", "--model", "claude-opus-4-8", "--chrome", "--allowedTools", $AllowedTools, "--max-turns", "1200")
-      $resumeExit = Invoke-ClaudeIsolated $ResumePrompt $resumeArgs $ClaudeLog "resume"
-      $swR.Stop()
-      Log "claude resume exited: code=$resumeExit elapsed=$([Math]::Round($swR.Elapsed.TotalMinutes,1))min (slug=$resumeSlug)"
-      if ($resumeExit -ne 0) {
-        node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[夜間run] 夜間運転: 再開も失敗（exit $resumeExit / slug=$resumeSlug）。logs/night/$DateStr.log を確認'}))" 2>&1 | Out-Null
-      } else {
-        Log "resume 成功: '$resumeSlug' を完走。"
-      }
-      exit $resumeExit
-    }
-    Log "resume: 再開対象の未完了記事なし（60分以内の in-progress state が無い）。"
-    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[夜間run] 夜間運転が異常終了（exit $claudeExit）。logs/night/$DateStr.log を確認'}))" 2>&1 | Out-Null
+    Log "runner最終失敗: 1回の一過性再試行後または恒久エラー（exit $claudeExit）。追加再試行せず停止。"
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[夜間run] 夜間運転が最終失敗（exit $claudeExit）。一過性再試行は最大1回'}))" 2>&1 | Out-Null
+    exit $claudeExit
   }
-
   # ---- 4. Phase B/C 未完の救済 + 無音防止（2026-07-18 追加） ----
   # claude が exit 0 でも Phase A(review_waiting)止まりで終えることがある（2026-07-18 の
   # claude-for-teachers 記事が該当）。本来は GitHub Actions の auto-phase-b が veto 窓経過後に

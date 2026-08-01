@@ -97,7 +97,7 @@ test("5. 残りを進めると COMPLETE（exit 0）に到達する", async () =>
   const r = await orch(["--slug", SLUG, "--advance", "write_mdx"]);
   assert.equal(r.status, 0, `stderr=${r.stderr}`);
   assert.match(r.stdout, /PHASE A COMPLETE/);
-  assert.match(r.stdout, /全9枚の30秒確認とHiro承認後/);
+  assert.match(r.stdout, /機械検品合格後は人の応答を待たず公開へ進みます/);
   const state = JSON.parse(readFileSync(STATE, "utf-8"));
   for (const [name, s] of Object.entries(state.steps)) assert.equal(s.status, "done", `${name} が done`);
 });

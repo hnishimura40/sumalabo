@@ -59,7 +59,7 @@ import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 import http from "node:http";
 import https from "node:https";
 import { archiveAfterSuccessfulDeploy } from "./image-output-lifecycle.mjs";
-import { verifyAttendedReview } from "./attended-image-review.mjs";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -138,7 +138,7 @@ function makeResult() {
     finishedAt: null,
     steps: {
       autonomyGate: { status: "skipped" },
-      attendedImageReview: { status: "skipped" },
+      prepublishHumanReview: { status: "removed", policy: "machine_qa_only" },
       gitSync: { status: "skipped" },
       build: { status: "skipped" },
       distCheck: { status: "skipped" },
@@ -490,20 +490,8 @@ async function main() {
     return;
   }
 
-  if (args.runMode === "attended" && !args.dryRun) {
-    const review = verifyAttendedReview(args.slug);
-    result.steps.attendedImageReview = review.ok
-      ? { status: "ok", ...review }
-      : { status: "blocked", ...review };
-    if (!review.ok) {
-      result.errorReason = review.reason;
-      console.error(`[attended-image-review] BLOCK: ${review.reason} (${review.path || "review evidence unavailable"})`);
-      finalize(result, args, 1);
-      return;
-    }
-  } else {
-    result.steps.attendedImageReview = { status: "skipped", runMode: args.runMode, reason: args.dryRun ? "dry_run" : "not_attended" };
-  }
+  // 2026-08-01: 公開前に人の応答を待つゲートを全廃。runMode は監査用の経路名として残すが、公開可否は機械検品だけで決める。
+  result.steps.prepublishHumanReview = { status: "removed", runMode: args.runMode, policy: "machine_qa_only" };
 
   console.log(`Wrangler production deploy for slug=${args.slug}${args.dryRun ? " (DRY RUN)" : ""} (trigger=${args.trigger}, autonomyLevel=${g.level})`);
 

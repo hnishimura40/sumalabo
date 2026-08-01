@@ -238,6 +238,34 @@
       "variant": "images4+reply",
       "imagesAttached": 4,
       "replyUrl": null
+    },
+    {
+      "slug": "202607-gemini-spark-pro-us-japan-ultra",
+      "articleUrl": "https://sumalabo.com/articles/202607-gemini-spark-pro-us-japan-ultra/",
+      "postedAt": "2026-07-31T22:51:51.461Z",
+      "postText": "Gemini Spark、日本のProはまだ対象外。24時間AIはUltra月14,500円から\n\nGemini SparkのPro拡大は米国・英語のみ。日本はUltra月14,500円からです。7月14日と16日の違い、24時間AIでできること、Gmail連携の注意を整理します。\n#すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2083324663753805930",
+      "method": "chrome",
+      "route": "claude-in-chrome",
+      "thumbnailAttached": true,
+      "charCount": 147,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2083325294082244727"
+    },
+    {
+      "slug": "202608-openai-top-model-free-researchers-japan",
+      "articleUrl": "https://sumalabo.com/articles/202608-openai-top-model-free-researchers-japan/",
+      "postedAt": "2026-08-01T04:05:12.025Z",
+      "postText": "ChatGPT 研究者 無料｜最上位AI、研究者なら12カ月無料。日本15大学も対象、ただし誰でもではない\n\nOpenAIが学術研究者向けに最上位AIを12カ月無料提供。日本15大学も対象ですが、学生・教職員全員向けではありません。\n#すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2083403415733092464",
+      "method": "chrome",
+      "route": "codex",
+      "thumbnailAttached": true,
+      "charCount": 122,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2083403785775579364"
     }
   ]
 }

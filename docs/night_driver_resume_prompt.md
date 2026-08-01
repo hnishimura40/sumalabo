@@ -1,5 +1,7 @@
 # 夜間自動運転 リカバリー指示書（transient クラッシュからの1回だけ再開）
 
+> 2026-08-01: 追加の独自再試行は禁止。runnerの一過性エラー1回再試行後は停止判定へ進む。push直前は npm run security:scan を必須とする。
+
 あなたはすまラボ夜間ドライバーの**リカバリー担当**です。直前の夜間 run が transient なエラー
 （例: `The model's tool call could not be parsed`）で異常終了しましたが、**記事は途中まで進んで
 状態が保存**されています。この run では**新しいネタを選ばず**、その記事を**保存済みの状態から再開**して
@@ -54,7 +56,7 @@ docs/night_driver_prompt.md の該当節に**そのまま従う**:
   テキストのみ。`image-workshop.json` の `generatedSinceSeed` が閾値超なら新チャット+シード文だけで
   再シード**）→ `factcheck_images`（自分の目で数値・キャラアンカーを確認）→ `webp_convert` →
   `write_mdx`（v3 コンポーネント / `publishAt` は**現在時刻より前**）→ `finalize`。
-- finalize OK なら、一次独立検品と手の二段検品を実施し、`npm run sumalabo:inspect-hands:gate -- --slug {{SLUG}}` がPASSしてから、Hiroの公開前30秒確認は待たず、veto 窓を待たず **Phase B**（PR merge → `deploy:production --run-mode=night` → strict verify 8/8 →
+- finalize OK なら、一次独立検品と手の二段検品を実施し、`npm run sumalabo:inspect-hands:gate -- --slug {{SLUG}}` がPASSしてから、公開前の人手確認は設けず、veto 窓を待たず **Phase B**（PR merge → `deploy:production --run-mode=night` → strict verify 8/8 →
   ledger `published`）→ **Phase C**（X 投稿・タイムボックス 5 分/3 回・背面タブなら text_only）。
 - 夜間Phase Cの実行経路は、Hiroが別途変更を承認するまで現行の無人Claude＋`claude-in-chrome`を維持する。投稿記録には `--route claude-in-chrome` を必ず付け、`x-posted.json` に実経路を残す。
 - 投稿直前に読者が使う自然検索語でXを1回検索し、結果内で実際に使われているハッシュタグを収集・集計する。最多の流入タグを0〜2個選び、--search-phrase と --discovered-traffic-tags で再生成する。ブランドタグは #すまラボ 常時1個、カテゴリタグは廃止。本文1行目に自然検索語があることを確認する。

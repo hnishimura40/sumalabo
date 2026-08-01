@@ -1,5 +1,7 @@
 # Windows Task Scheduler operation
 
+> 2026-08-01: この文書内の公開前Human Review Checkpoint・Hiro承認待ち・9枚30秒確認の記載は廃止済み。公開前は機械検品だけで判定し、人の応答を待つゲートの新設は禁止する。
+
 This document describes the Windows Task Scheduler wrapper for Sumalabo's Sumahon monitoring workflow.
 
 ## What is automated
