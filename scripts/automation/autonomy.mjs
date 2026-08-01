@@ -41,6 +41,71 @@ export const PHASE_MIN_AUTO_LEVEL = Object.freeze({
   phase_c: 2,
 });
 
+export const ERROR_BUDGET_EXCLUDED_CLASSIFICATIONS = Object.freeze([
+  "external_propagation_delay",
+  "external_api_overload",
+  "verification_false_positive",
+]);
+
+const TRANSIENT_CHECKS_BY_CLASSIFICATION = Object.freeze({
+  external_propagation_delay: new Set(["articleHttp200", "slugInHtml", "notHomepageFallback", "homepageImagesServed", "ogImageResponsive", "indexListsArticle"]),
+  verification_false_positive: new Set(["articleHttp200", "slugInHtml", "notHomepageFallback", "homepageImagesServed", "ogImageResponsive", "indexListsArticle"]),
+  external_api_overload: new Set(["externalApi", "providerApi", "rateLimit", "serviceUnavailable"]),
+});
+
+export function incidentConsumesErrorBudget(incident) {
+  return Boolean(incident && incident.slug && incident.kind !== "auto_demotion" && incident.errorBudget?.consumes !== false);
+}
+
+function validateExclusionEvidence(classification, evidence = {}) {
+  if (!ERROR_BUDGET_EXCLUDED_CLASSIFICATIONS.includes(classification)) return "unsupported_classification";
+  if (!evidence.recoveredAt || !evidence.evidenceReport) return "recovery_evidence_required";
+  if (evidence.sameContent !== true) return "same_content_not_proven";
+  if (evidence.rollbackInvoked !== false) return "rollback_or_unknown";
+  if (evidence.retractRequired !== false) return "retract_or_unknown";
+  if (evidence.xDeletionRequired !== false) return "x_deletion_or_unknown";
+  if (!Number.isFinite(evidence.recoveryMinutes) || evidence.recoveryMinutes < 0 || evidence.recoveryMinutes > 30) return "recovery_window_exceeded";
+  if (!Array.isArray(evidence.failedChecks) || evidence.failedChecks.length === 0) return "failed_checks_required";
+  const allowed = TRANSIENT_CHECKS_BY_CLASSIFICATION[classification];
+  if (evidence.failedChecks.some((check) => !allowed.has(check))) return "non_transient_check_present";
+  return null;
+}
+
+export function reclassifyIncidentForErrorBudget({ slug, classification, evidence, filePath = autonomyPath(), now = new Date().toISOString() }) {
+  const invalid = validateExclusionEvidence(classification, evidence);
+  if (invalid) return { ok: false, reason: invalid };
+  const state = loadAutonomy(filePath);
+  const incident = [...state.incidents].reverse().find((item) => item?.slug === slug && incidentConsumesErrorBudget(item));
+  if (!incident) return { ok: false, reason: "counted_incident_not_found" };
+  incident.classification = classification;
+  incident.errorBudget = {
+    consumes: false,
+    excludedAt: now,
+    reason: classification,
+    evidence: {
+      recoveredAt: evidence.recoveredAt,
+      evidenceReport: evidence.evidenceReport,
+      failedChecks: evidence.failedChecks,
+      recoveryMinutes: evidence.recoveryMinutes,
+      sameContent: true,
+      rollbackInvoked: false,
+      retractRequired: false,
+      xDeletionRequired: false,
+    },
+  };
+  saveAutonomy(state, filePath);
+  return { ok: true, incident, budget: getErrorBudgetStatus({ state }) };
+}
+
+export function getErrorBudgetStatus({ state = null, recentSlugs = null, queuePath = QUEUE_PATH } = {}) {
+  const current = state || loadAutonomy();
+  const recent = recentSlugs ?? getRecentArticleSlugs(10, queuePath);
+  const counted = current.incidents.filter((incident) => incidentConsumesErrorBudget(incident) && (!recent || recent.includes(incident.slug)));
+  const excluded = current.incidents.filter((incident) => incident?.slug && incident.errorBudget?.consumes === false && (!recent || recent.includes(incident.slug)));
+  const count = new Set(counted.map((incident) => incident.slug)).size;
+  return { windowArticles: recent?.length ?? null, consumed: count, limit: 2, remaining: Math.max(0, 2 - count), counted, excluded };
+}
+
 export function autonomyPath() {
   const override = (process.env.AUTONOMY_FILE || "").trim();
   return override || DEFAULT_AUTONOMY_PATH;
@@ -173,7 +238,7 @@ export function maybeAutoDemote({ recentSlugs = null, queuePath = QUEUE_PATH, fi
   const recent = recentSlugs ?? getRecentArticleSlugs(10, queuePath);
   if (!recent) return { demoted: false, reason: "queue_unavailable" };
   const incidentSlugs = new Set(
-    state.incidents.filter((i) => i && i.slug && recent.includes(i.slug)).map((i) => i.slug),
+    state.incidents.filter((i) => incidentConsumesErrorBudget(i) && recent.includes(i.slug)).map((i) => i.slug),
   );
   if (incidentSlugs.size < 2) return { demoted: false, reason: "below_threshold", incidentSlugs: [...incidentSlugs] };
   const from = state.level;

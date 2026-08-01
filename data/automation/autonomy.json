@@ -12,7 +12,26 @@
       "at": "2026-07-27T14:08:47.250Z",
       "slug": "202607-chatgpt-outage-july-recurring",
       "kind": "post_publish_hard_fail",
-      "detail": "articleHttp200,slugInHtml"
+      "detail": "articleHttp200,slugInHtml",
+      "classification": "external_propagation_delay",
+      "errorBudget": {
+        "consumes": false,
+        "excludedAt": "2026-08-01T02:02:46.883Z",
+        "reason": "external_propagation_delay",
+        "evidence": {
+          "recoveredAt": "2026-07-27T14:31:04.420Z",
+          "evidenceReport": "logs/publish/202607-chatgpt-outage-july-recurring.verify.json",
+          "failedChecks": [
+            "articleHttp200",
+            "slugInHtml"
+          ],
+          "recoveryMinutes": 22.29,
+          "sameContent": true,
+          "rollbackInvoked": false,
+          "retractRequired": false,
+          "xDeletionRequired": false
+        }
+      }
     }
   ],
   "testMode": {

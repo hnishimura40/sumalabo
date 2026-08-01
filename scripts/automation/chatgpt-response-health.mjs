@@ -62,6 +62,9 @@ function assistantCandidate(node) {
 export function extractLatestAssistant(raw) {
   if (typeof raw === "string") return { text: raw, source: "plain_text", messageId: null };
   if (!raw || typeof raw !== "object") return { text: "", source: "empty", messageId: null };
+  if (typeof raw.outputMarkdown === "string") {
+    return { text: raw.outputMarkdown, source: "rendered_markdown_capture", messageId: raw.conversationId || null, externalMetrics: raw.metrics || null };
+  }
   if (typeof raw.output === "string") {
     return { text: raw.output, source: "rendered_capture", messageId: raw.conversationId || null, externalMetrics: raw.metrics || null };
   }

@@ -72,6 +72,12 @@ test("本文のある調査出力は引用数が多くても healthy", () => {
   assert.ok(result.proseChars >= 600);
 });
 
+test("構造復元済みDOM Markdownをプレーン本文より優先する", () => {
+  const extracted = extractLatestAssistant({ output: "見出しなし", outputMarkdown: completeReport, metrics: { h1: 1, h2: 4 } });
+  assert.equal(extracted.source, "rendered_markdown_capture");
+  assert.match(extracted.text, /## 確定事項/);
+});
+
 test("DOM救済は画面側の見出し数を使い、Markdown記号消失を空本文と誤判定しない", () => {
   const rendered = completeReport.replace(/^#{1,6}\s+/gm, "");
   const raw = { output: `${rendered}\n${rendered}\n${rendered}`, metrics: { h1: 1, h2: 7, paragraphs: 12 } };

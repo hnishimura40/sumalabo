@@ -59,7 +59,7 @@ npm run article -- --theme "<pickedのタイトルを元にした記事テーマ
 - 以後、オーケストレータの NEXT ACTION に従って各 assisted ステップを実行し、`--advance` で進める。**ステップを飛ばさない**。
 - ChatGPT ブラウザ操作は NEXT ACTION 出力の頑丈化チェックリスト（タブ分離 / 送信二段構え / 貼り付け検証 / ポーリング / リトライ 2 回）を厳守。
 - ChatGPT の応答は backend-api（`/api/auth/session` → `/backend-api/conversation/{id}`）の生 JSON を無加工で `logs/article/{slug}.{step}.attempt{N}.raw.json` に保存し、`node scripts/automation/chatgpt-response-health.mjs` で抽出・健全性判定する。会話の `mapping` は配列末尾ではなく `current_node` から `parent` をたどった正規ブランチだけを採用し、`healthy: true` の health report がなければ `--advance` しない。
-- API 抽出が空でも画面上の assistant 本文が存在する場合は DOM 本文を `--dom-fallback` で救済する。本当に本文が空または極端に少ない場合だけ、全調査結果・引用・要件を構造化した retry prompt を同じ会話へ 1 回だけ送る。調査サイト・調査量・画像枚数は減らさず、既存画像は再利用する。2 回目も不健全なら公開工程へ進めず停止・報告する。
+- API 抽出が空でも画面上の assistant 本文が存在する場合は、DOMから見出し・箇条書き・リンクをMarkdownへ復元した `outputMarkdown` を保存し、`--dom-fallback` で救済する（`innerText` だけの保存は禁止。構造ゲートが見出しを認識できなくなるため）。本当に本文が空または極端に少ない場合だけ、全調査結果・引用・要件を構造化した retry prompt を同じ会話へ 1 回だけ送る。調査サイト・調査量・画像枚数は減らさず、既存画像は再利用する。2 回目も不健全なら公開工程へ進めず停止・報告する。
 - **画像生成は「常設キャラ工房チャット」の続きで行う（正本の添付は不要）**：`data/automation/image-workshop.json` の `conversationUrl` に navigate し、その会話の**続き**として slide_plan 順に生成する。毎回「正本2枚のキャラクター参照を厳守」と指示する。
   - **再シードは無人で実施できる（2026-07-13 恒久修正・案A採用）**: キャラ正本2枚は **ChatGPT プロジェクト「すまラボ台本」のプロジェクトファイル（情報源）に常設アップロード済み**（`himari-canonical*.png` / `labomaru-canonical*.png`）。再シード＝**プロジェクト内に新チャットを作成し、次のテキストを送るだけ**（画像貼り付け不要・前面化不要・ヘッドレス可）:
     > このチャットは「すまラボ画像工房」常設チャットです。このプロジェクトの情報源（プロジェクトファイル）にある正本2枚 himari-canonical*.png（ひまり=金髪サイドテール・水色〜ティールのリボン/ヘアピン・大きな青い瞳・白ワンピ+白パーカー）と labomaru-canonical*.png（らぼまる=白い卵型ボディ・頭頂の黄緑アンテナ・黒い丸い目・首の青カラー・胸のオレンジのハート型ボタン・腹部の虫めがね+グラフパネル）の見た目を厳守してください。以後このチャットで記事用のスライド・サムネイルを依頼します。準備ができたら「準備OK」とだけ返してください。
