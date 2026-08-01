@@ -1,0 +1,158 @@
+---
+title: "ChatGPTアプリでGPT-5.6が選べない？既存チャットが5.5のままになる時の対処法【実体験】"
+slug: "202608-chatgpt-gpt-5-6-not-selectable-ios-fix"
+type: "news"
+category: "やってみた・検証"
+description: "iPhone版ChatGPTで、既存チャットがGPT-5.5のままになりGPT-5.6を選べなかった実体験を紹介。ログアウトと再ログインで解決した手順、公式案内で確認できたことも整理します。"
+thumbnail: "/images/thumbnails/202608-chatgpt-gpt-5-6-not-selectable-ios-fix.webp"
+thumbnailAlt: "ChatGPTアプリでGPT-5.6が選べない症状と、ログアウトから再ログインで解決した手順を示す実機画面ベースのサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 1
+  primary: "himari_question_icon.webp"
+  secondary: ""
+tags:
+  - "ChatGPT"
+  - "GPT-5.6"
+  - "iPhone"
+  - "iOSアプリ"
+  - "モデル選択"
+  - "不具合対処"
+related:
+  - "202607-gpt-5-6-sol-terra-luna-release"
+  - "202607-openai-gpt-5-6-chatgpt-work"
+  - "202607-chatgpt-5h-limit-lifted-max-ultra"
+pubDate: "2026-08-02"
+updated: "2026-08-02"
+publishAt: "2026-08-02T06:48:46+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+ChatGPTのiPhoneアプリで、GPT-5.6を使いたいのに、以前から使っていたチャットだけGPT-5.5のままになることがありました。
+
+画面上部から「応答性能」を開いても、スライダーの最上位表示は「5.5 Pro」のまま。何度か切り替えを試してもGPT-5.6を選べませんでした。
+
+私の環境では、**ChatGPTアプリから一度ログアウトし、同じアカウントへ再ログインすると表示が更新され、GPT-5.6を選べるようになりました。**
+
+<Summary30>
+  <ul>
+    <li>症状は、以前からGPT-5.5で使っていた既存チャットで発生しました。</li>
+    <li>「応答性能」の最上位が「5.5 Pro」のままで、GPT-5.6へ切り替えられませんでした。</li>
+    <li>私のiPhoneでは、ログアウト後に再ログインするとGPT-5.6が選べる状態へ更新されました。</li>
+    <li>全員に同じ対処が有効とは限りません。アプリ更新、再起動、プランや展開状況も確認してください。</li>
+  </ul>
+</Summary30>
+
+## 起きた症状：既存チャットだけ5.5のまま
+
+今回の症状が出たのは、以前からGPT-5.5で会話していた既存チャットです。
+
+新しいモデルが使える状態になっているはずなのに、そのチャットを開くとモデル表示が5.5のままになり、GPT-5.6へ切り替えられませんでした。
+
+画面上部のメニューから「応答性能」を選び、設定を確認しました。
+
+<figure class="article-slide-figure">
+  <img src="/images/articles/202608-chatgpt-gpt-5-6-not-selectable-ios-fix/response-performance-menu.webp" alt="iPhone版ChatGPTのメニューで応答性能が選択されている部分だけを切り出した実機画面" loading="lazy" decoding="async" />
+  <figcaption>実機画面：「応答性能」を開いて設定を確認</figcaption>
+</figure>
+
+ところが、スライダーを一番右まで動かしても表示は「5.5 Pro」です。GPT-5.6へ変わる選択肢は表示されませんでした。
+
+<figure class="article-slide-figure">
+  <img src="/images/articles/202608-chatgpt-gpt-5-6-not-selectable-ios-fix/performance-slider-55pro.webp" alt="応答性能スライダーを一番右まで動かしても5.5 Proと表示されているiPhone版ChatGPTの実機画面" loading="lazy" decoding="async" />
+  <figcaption>実機画面：最上位が「5.5 Pro」のままだった</figcaption>
+</figure>
+
+<Note>掲載画像は編集部のiPhone実機画面です。チャット履歴のタイトル、会話内容、入力欄はすべて画像領域から除外してあります。</Note>
+
+<CharacterBubble speaker="himari" mood="curious">GPT-5.6が使えるはずなのに5.5のままなら、まずアプリ側の表示更新を疑ってよさそうだね。</CharacterBubble>
+
+## 試行錯誤しても切り替わらなかった
+
+応答性能の設定を開き直すなど、画面上で何度か試しましたが、状況は変わりませんでした。
+
+ここで大切なのは、「既存チャットは必ず旧モデルに固定される」という仕様だと決めつけないことです。今回確認できたのは、あくまで私のiPhoneとアカウントで起きた事実です。
+
+OpenAIの公式ヘルプには、GPT-5.6が段階的に展開されていることや、利用できる選択肢がプラン、アカウント、管理ワークスペースの設定によって異なることは書かれています。一方、**GPT-5.5で始めた既存チャットが5.5表示のまま残ることや、再ログインで更新されることを説明した記載は、2026年8月2日時点では確認できませんでした。**
+
+## 解決した手順：ログアウトして再ログイン
+
+私の環境で解決した手順は、次のとおりです。
+
+1. ChatGPTアプリの設定を開く
+2. 現在のアカウントからログアウトする
+3. ChatGPTアプリを開き直す
+4. これまで使っていたものと同じアカウントへ再ログインする
+5. 既存チャットを開き、「応答性能」を確認する
+
+再ログイン後はアプリ側の表示が更新され、GPT-5.6を選択できるようになりました。
+
+<Callout kind="facts" title="今回の実機で確認できたこと">
+  <ul>
+    <li>ログアウト前：応答性能の最上位が「5.5 Pro」</li>
+    <li>ログアウトして同じアカウントへ再ログイン</li>
+    <li>再ログイン後：GPT-5.6を選択可能</li>
+  </ul>
+</Callout>
+
+ログイン方法を変えると別アカウントへ入ってしまう場合があります。Apple、Google、Microsoft、メールアドレスなど、最初に登録した時と同じ方法でログインしてください。
+
+## 直らない時に確認したいこと
+
+再ログインは今回有効でしたが、すべての環境で同じ結果になるとは限りません。次の順で確認するのが安全です。
+
+### 1. App Storeで最新版か確認する
+
+ChatGPTアプリに更新がある場合は、先に最新版へアップデートします。OpenAIの案内でも、モバイルアプリ固有の問題では最新版への更新を試すよう案内される場合があります。
+
+### 2. アプリを完全に終了して開き直す
+
+一時的に画面表示が更新されていない可能性もあるため、アプリを終了して再起動します。
+
+### 3. 利用プランとアカウントを確認する
+
+OpenAI公式によると、GPT-5.6の選択肢はプランによって異なります。また、段階的な展開中のため、対象プランでも同時に全アカウントへ表示されるとは限りません。
+
+複数アカウントを使っている場合は、GPT-5.6の対象となるアカウントへログインしているかも確認してください。BusinessやEnterpriseでは、管理者側のモデル利用設定が影響する場合があります。
+
+### 4. それでも表示されなければ時間を置く
+
+対象プランでも段階展開が完了していない可能性があります。少し時間を置いてから再確認し、長く解消しない場合はOpenAIサポートへ、端末、OS、アプリ版、発生時刻、試した手順を添えて問い合わせるのが確実です。
+
+<Callout kind="unc" title="この対処法の注意点">
+  <p>ログアウトと再ログインは、今回の実機では有効でしたが、OpenAIがこの症状の公式な解決手順として案内しているわけではありません。アカウントのプラン、段階展開、ワークスペース設定など、別の理由で表示されない場合もあります。</p>
+</Callout>
+
+## 公式情報で分かったこと、分からなかったこと
+
+OpenAI公式ヘルプで確認できたのは、次の範囲です。
+
+- GPT-5.6は対象となるChatGPTプランへ段階的に展開されている
+- 表示されるモデルはプランや管理ワークスペースの設定で異なる
+- iOSとAndroidでは、会話画面上部にモデル選択がある
+- GPT-5.5 Instantは高速な日常応答の標準モデルとして残り、GPT-5.6は対象の推論設定やProで使われる
+
+一方で、今回のような「以前から使っていた既存チャットだけ5.5のままになる」現象について、公式の説明は見当たりませんでした。そのため、本記事ではキャッシュや同期の仕組みなどを推測で断定していません。
+
+GPT-5.6のモデル構成や対象範囲そのものは、[GPT-5.6のSol・Terra・Lunaを整理した記事](/articles/202607-gpt-5-6-sol-terra-luna-release/)もあわせて確認してください。
+
+## まとめ
+
+ChatGPTアプリで既存チャットがGPT-5.5のままになり、GPT-5.6を選べなかった時、私のiPhoneでは**一度ログアウトし、同じアカウントへ再ログインすることで解決**しました。
+
+ただし、GPT-5.6は段階展開中で、プランやワークスペースによって選べるモデルも異なります。まずアプリのアップデートと再起動を確認し、それでも直らなければ再ログインを試す、という順番がよさそうです。
+
+## 参考情報
+
+- [OpenAI Help Center「GPT-5.6 in ChatGPT」](https://help.openai.com/en/articles/20001354-gpt-5-6-in-chatgpt)
+- [OpenAI Help Center「ChatGPT Release Notes」](https://help.openai.com/en/articles/6825453-chatgpt-release-notes)
+- [OpenAI Help Center「Troubleshooting authentication」](https://help.openai.com/en/articles/10489721-authentication-troubleshooting-faq)
+
+<Note>本記事は2026年8月2日時点のiPhone版ChatGPTでの実体験と公式案内をもとにしています。アプリの画面、モデル名、提供範囲は今後変わる可能性があります。</Note>
