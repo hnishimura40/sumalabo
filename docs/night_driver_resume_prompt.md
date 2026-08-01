@@ -43,6 +43,8 @@ node -e "const s=require('./logs/article/{{SLUG}}.state.json'); for(const[k,v]of
 - turn6（slide_plan）が pending: final_article を基に slide_plan を作り `slide_plan.md` に保存 →
   `--advance chatgpt_turn6_slideplan`。
 - 禁則語チェック（0 件）を必ず通す。
+- ChatGPT の各応答は backend-api の生 JSON を保存し、`node scripts/automation/chatgpt-response-health.mjs` で `current_node` から正規ブランチを抽出して健全性を確認する。画面に本文がある場合は `--dom-fallback` で救済する。
+- 本文が空または極端に少ない場合だけ、調査結果・引用・要件を減らさず構造化した入力で同じ会話へ 1 回だけ再生成する。画像は既存分を再利用し、2 回目も不健全なら停止・報告する。
 
 ## 3. それ以降（画像 → MDX → finalize → Phase B/C）
 
