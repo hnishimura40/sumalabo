@@ -1,0 +1,3 @@
+Turn2: Editorial Selectionを実行してください。直前の改訂済みresearch_reportを基に、すまラボの記事として採用/限定採用/不採用を仕分け、editorial_selection.mdだけをMarkdownで出力してください。
+
+記事の中心は「最上位AIが研究者へ無料提供されるが、誰でも無料ではない。日本では対象15大学の条件付き」という誤解解きです。2026年7月29日のChatGPT for Academic Researchers（1万人→10万人）と、7月22日の米国DOE Genesis Mission関連支援（約2,000人・400万ドル相当のCodex）は別制度として明確に分離してください。Axiosは10万人制度の主要報道、OpenAI公式は制度条件とGenesisの一次情報として扱います。カテゴリは「ニュースをかみくだく」。誇大表現、対象者の混同、一般向け無料化との混同を不採用にしてください。

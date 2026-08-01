@@ -1,0 +1,8 @@
+Research Passの訂正です。前回の調査内容・参照サイト・引用を一切減らさず、次の重要な制度区分を追加して、research_report全文をMarkdownで再出力してください。
+
+【公開上の必須区分】
+- 2026年7月29日発表の「ChatGPT for Academic Researchers」: 対象大学の学術研究者向け。2026年夏に1万人から始め、2027年にかけて10万人規模へ拡大する制度。Axiosの10万人報道およびOpenAI公式ページ・FAQを根拠にする。
+- 2026年7月22日発表の米国DOE「Genesis Mission」関連支援: National Laboratoriesと大学のGenesis研究者約2,000人へ400万ドル相当のCodexアクセスを提供する別制度。OpenAI公式「Advancing the next era of national science」を根拠にする。
+- 両者は対象、発表日、規模、提供内容が異なる別制度であり、「10万人の内訳がGenesis約2,000人」などと混同しない。
+
+「誤解されやすい点」にも、この2制度は別であることを明記してください。前回の情報は維持し、追加調査はこの区分確認に必要な一次情報だけで構いません。まず改訂済みresearch_reportだけを出力してください。

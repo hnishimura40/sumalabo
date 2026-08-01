@@ -50,6 +50,9 @@ test("1. 新規開始: script ステップを自動実行し、最初の assiste
   assert.match(r.stdout, /freshness_check ✓/);
   assert.match(r.stdout, /NEXT ACTION \[chatgpt_turn1_research\]/);
   assert.match(r.stdout, /頑丈化チェックリスト/, "頑丈化チェックリストが指示に含まれる");
+  assert.match(r.stdout, /chatgpt-response-health\.mjs/, "本文健全性ゲートが指示に含まれる");
+  assert.match(r.stdout, /current_node/, "会話グラフの正規ブランチ抽出が指示に含まれる");
+  assert.match(r.stdout, /--result logs\/article\/orch-test-slug-not-real\.chatgpt_turn1_research\.health\.json/, "health report が advance の必須結果になっている");
   const state = JSON.parse(readFileSync(STATE, "utf-8"));
   assert.equal(state.steps.init.status, "done");
   assert.equal(state.steps.chatgpt_turn1_research.status, "pending");
@@ -94,7 +97,7 @@ test("5. 残りを進めると COMPLETE（exit 0）に到達する", async () =>
   const r = await orch(["--slug", SLUG, "--advance", "write_mdx"]);
   assert.equal(r.status, 0, `stderr=${r.stderr}`);
   assert.match(r.stdout, /PHASE A COMPLETE/);
-  assert.match(r.stdout, /Human Review Checkpoint/);
+  assert.match(r.stdout, /全9枚の30秒確認とHiro承認後/);
   const state = JSON.parse(readFileSync(STATE, "utf-8"));
   for (const [name, s] of Object.entries(state.steps)) assert.equal(s.status, "done", `${name} が done`);
 });

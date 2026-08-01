@@ -92,6 +92,15 @@ const REQUIRED_DRAFTS = [
   "review_report.md", "final_article.md", "slide_plan.md",
 ];
 
+const CHATGPT_OUTPUTS = {
+  chatgpt_turn1_research: "research_report.md",
+  chatgpt_turn2_selection: "editorial_selection.md",
+  chatgpt_turn3_draft: "draft_article.md",
+  chatgpt_turn4_review: "review_report.md",
+  chatgpt_turn5_final: "final_article.md",
+  chatgpt_turn6_slideplan: "slide_plan.md",
+};
+
 // ---------- 頑丈化チェックリスト（この数日の 4 障害への対策。assisted 出力に毎回添付） ----------
 const HARDENING = `
 【ChatGPT ブラウザ操作の頑丈化チェックリスト（必須）】
@@ -104,6 +113,14 @@ const HARDENING = `
  4. 応答待ち: ポーリング（10 秒間隔）+ 最大待ち時間（テキスト 5 分 / 画像 4 分）。
     タブ無応答（スクリプト実行がタイムアウト）なら新規タブを作成し会話 URL で復帰（タブ死亡対策）
  5. リトライは 2 回まで。ダメなら --fail で記録し停止（オーケストレータが通知する）`;
+
+const RESPONSE_HEALTH = `
+【ChatGPT 応答の保存・健全性ゲート（必須）】
+ 1. /backend-api/conversation/{id} の JSON は加工前のまま logs/article/{slug}.{step}.attempt{N}.raw.json に保存する。
+ 2. mapping の Object.values() 順や「最後に追加された assistant」を使わない。current_node から parent をたどる正規ブランチ抽出は chatgpt-response-health.mjs に任せる。
+ 3. 画面に本文があるのに API 抽出が空なら、最後の [data-message-author-role="assistant"] の innerText を rendered.txt に保存し --dom-fallback へ渡す。これは取得修復であり再生成回数に数えない。
+ 4. chatgpt-response-health.mjs を実行し、healthy:true の report だけを --advance --result へ渡す。
+ 5. 本文が本当に空/極端に少ない場合は生成された構造化 retry-prompt を同じ会話へ1回だけ送る。調査サイト・調査結果・引用は減らさず、画像は再生成しない。attempt2 も unhealthy なら report を --advance に渡して即停止する。`;
 
 // ---------- state I/O ----------
 function statePath(slug) {
@@ -306,7 +323,8 @@ const jobs = ${JSON.stringify(jobs)};
 function assistedInstruction(state, step) {
   const slug = state.slug;
   const dir = `drafts/refinement/${slug}`;
-  const common = `\n完了したら:\n  node scripts/automation/phase-a-orchestrator.mjs --slug ${slug} --advance ${step.name}${step.name === "factcheck_images" ? " --result logs/article/" + slug + ".factcheck.json" : ""}\n失敗したら:\n  node scripts/automation/phase-a-orchestrator.mjs --slug ${slug} --fail ${step.name} --reason "..."\n${HARDENING}`;
+  const chatgptResult = CHATGPT_OUTPUTS[step.name] ? ` --result logs/article/${slug}.${step.name}.health.json` : "";
+  const common = `\n完了したら:\n  node scripts/automation/phase-a-orchestrator.mjs --slug ${slug} --advance ${step.name}${step.name === "factcheck_images" ? " --result logs/article/" + slug + ".factcheck.json" : chatgptResult}\n失敗したら:\n  node scripts/automation/phase-a-orchestrator.mjs --slug ${slug} --fail ${step.name} --reason "..."\n${HARDENING}${CHATGPT_OUTPUTS[step.name] ? RESPONSE_HEALTH : ""}`;
   const map = {
     chatgpt_turn1_research: `ChatGPT「すまラボ台本」プロジェクトで新規チャットを開き、テーマ「${state.theme}」の Research Pass を実行。公式一次情報を根拠に facts/claims/uncertain を区分した research_report を作らせ、${dir}/research_report.md に保存（出所ヘッダ付き）。`,
     chatgpt_turn2_selection: `同チャットで Editorial Selection（採用/限定採用/不採用）→ ${dir}/editorial_selection.md に保存。カテゴリ候補は「${state.category?.name || "ニュースをかみくだく"}」。当サイトの実体験・検証が記事の核なら hands-on を選ぶ。`,
@@ -348,6 +366,21 @@ function assistedInstruction(state, step) {
 
 // ---------- advance/fail 時の付随処理 ----------
 function onAdvance(state, stepName, resultPath) {
+  if (CHATGPT_OUTPUTS[stepName]) {
+    if (STUB && !resultPath) return { ok: true };
+    if (!resultPath || !existsSync(resultPath)) return { ok: false, reason: "chatgpt_health_report_required" };
+    let report;
+    try { report = JSON.parse(readFileSync(resultPath, "utf8")); }
+    catch (error) { return { ok: false, reason: `chatgpt_health_report_invalid:${error.message}` }; }
+    if (report.step !== stepName) return { ok: false, reason: `chatgpt_health_step_mismatch:${report.step || "missing"}` };
+    if (report.healthy !== true) {
+      if (Number(report.attempt || 1) >= 2) return { ok: false, fatal: true, reason: `chatgpt_response_unhealthy_after_structured_retry:${(report.reasons || []).join(",")}` };
+      return { ok: false, reason: `chatgpt_response_unhealthy_retry_required:${report.retryPromptPath || "retry_prompt_missing"}` };
+    }
+    const artifact = path.join(ROOT, "drafts", "refinement", state.slug, CHATGPT_OUTPUTS[stepName]);
+    if (!existsSync(artifact)) return { ok: false, reason: `chatgpt_output_missing:${CHATGPT_OUTPUTS[stepName]}` };
+    return { ok: true, data: { responseHealth: report.metrics || null, extractionSource: report.extraction?.source || null, responseAttempt: Number(report.attempt || 1) } };
+  }
   if (stepName === "factcheck_images" && resultPath) {
     const fc = JSON.parse(readFileSync(resultPath, "utf-8"));
     if (!fc.pass) {
@@ -478,6 +511,11 @@ async function main() {
     if (!st) { console.error(`unknown step: ${args.advance}`); process.exitCode = 2; return; }
     const r = onAdvance(state, args.advance, args.result);
     if (!r.ok) {
+      if (r.fatal) {
+        st.attempts = MAX_ATTEMPTS;
+        st.lastError = r.reason;
+        return halt(state, STEPS.find((s) => s.name === args.advance), r.reason);
+      }
       if (r.fallback) {
         state.steps[args.advance].data = {
           ...(state.steps[args.advance].data || {}),
