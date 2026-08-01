@@ -1,5 +1,7 @@
 # Preview承認ボタン（preview/* ブランチ → main マージ）
 
+> 2026-08-01: この文書内の公開前Human Review Checkpoint・Hiro承認待ち・9枚30秒確認の記載は廃止済み。公開前は機械検品だけで判定し、人の応答を待つゲートの新設は禁止する。
+
 すまラボの記事ページに表示される「この記事を承認して公開」ボタンの仕組みと運用メモ。
 
 > **2026-05-27 update — user-directed mode + Human Review Checkpoint：** 現在の標準フローでは、**Phase A 完了時点で Claude が必ず停止し、ユーザーの明示了承（チャット返答）後に Claude 側から `gh pr merge` → `wrangler 本番 deploy（正規手順）` → strict verify → X 投稿まで自動実行する** 流れになっています。承認ボタン経由のフローは **既存記事の補助手段** として残しますが、新規記事の標準フローではありません。詳細: [`docs/user_directed_mode.md`](user_directed_mode.md) / [`docs/x_post_workflow.md`](x_post_workflow.md) / [`docs/queue_states.md`](queue_states.md)
@@ -49,11 +51,17 @@ Cloudflare Pages Preview の記事ページに置いたボタンを押すと、C
 
 ```sh
 # 事前検査のみ (git sync / build / dist 検査だけ、wrangler は走らせない)
+
+> 2026-08-01: この文書内の公開前Human Review Checkpoint・Hiro承認待ち・9枚30秒確認の記載は廃止済み。公開前は機械検品だけで判定し、人の応答を待つゲートの新設は禁止する。
 node scripts/automation/deploy-production-from-main.mjs --slug=<slug> --dry-run
 
 # 本番反映
+
+> 2026-08-01: この文書内の公開前Human Review Checkpoint・Hiro承認待ち・9枚30秒確認の記載は廃止済み。公開前は機械検品だけで判定し、人の応答を待つゲートの新設は禁止する。
 node scripts/automation/deploy-production-from-main.mjs --slug=<slug>
 # = npm run deploy:production -- --slug=<slug>
+
+> 2026-08-01: この文書内の公開前Human Review Checkpoint・Hiro承認待ち・9枚30秒確認の記載は廃止済み。公開前は機械検品だけで判定し、人の応答を待つゲートの新設は禁止する。
 ```
 
 ### 処理ステップ

@@ -1,4 +1,4 @@
-﻿param([switch]$DryRun, [string]$NightDirOverride, [datetime]$Now = (Get-Date))
+param([switch]$DryRun, [string]$NightDirOverride, [datetime]$Now = (Get-Date))
 $ErrorActionPreference = 'Continue'
 $RepoRoot = "D:\documents\動画作成関連\すまラボ"
 Set-Location $RepoRoot
@@ -21,7 +21,7 @@ foreach ($candidate in @($LockFile, $HeartbeatFile)) {
 $now = $Now
 $heartbeatAgeMinutes = $null
 if ($state -and $state.heartbeatAt) { try { $heartbeatAgeMinutes=[Math]::Round(($now-[datetime]$state.heartbeatAt).TotalMinutes,1) } catch {} }
-$healthy = $state -and $state.status -eq 'running' -and $heartbeatAgeMinutes -ne $null -and $heartbeatAgeMinutes -le 3
+$healthy = $state -and @('running','retry_wait') -contains $state.status -and $heartbeatAgeMinutes -ne $null -and $heartbeatAgeMinutes -le 3
 if ($healthy) {
   $kind='running_healthy'; $title="[夜間見張り] 5:30時点で未完了（実行中・heartbeat正常 / child=$($state.childPid)）"
 } elseif ($state) {

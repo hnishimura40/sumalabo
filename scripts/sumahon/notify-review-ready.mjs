@@ -14,11 +14,12 @@
 //   - REVIEW_NOTIFY_API_URL（任意、既定 https://sumalabo.com/api/push/notify-review-ready）
 
 import { validateMainPreviewUrl } from "./preview-url-policy.mjs";
+import { sanitizeReportText } from "./filter-report-output.mjs";
 
 const DEFAULT_API_URL = "https://sumalabo.com/api/push/notify-review-ready";
 const DEFAULT_TIMEOUT_MS = 15000;
 
-function sanitizeItem(item) {
+export function sanitizeNotificationItem(item) {
   if (!item || typeof item !== "object") return null;
   const out = {};
   const passthrough = [
@@ -27,7 +28,7 @@ function sanitizeItem(item) {
     "previewReadyAt", "vetoDeadline", "trigger",
   ];
   for (const key of passthrough) {
-    if (typeof item[key] === "string" && item[key].length > 0) out[key] = item[key];
+    if (typeof item[key] === "string" && item[key].length > 0) out[key] = sanitizeReportText(item[key]).trim();
   }
   out.status = typeof item.status === "string" && item.status.length > 0 ? item.status : "review";
   if (typeof item.sourceCheckPassed === "boolean") out.sourceCheckPassed = item.sourceCheckPassed;
@@ -41,7 +42,7 @@ export async function notifyReviewReady({ item, apiUrl, secret, timeoutMs } = {}
   const effectiveApi = (apiUrl || process.env.REVIEW_NOTIFY_API_URL || DEFAULT_API_URL).trim();
   const effectiveSecret = (secret || process.env.REVIEW_NOTIFY_SECRET || "").trim();
   const effectiveTimeout = Number.isFinite(timeoutMs) ? timeoutMs : DEFAULT_TIMEOUT_MS;
-  const cleanItem = sanitizeItem(item);
+  const cleanItem = sanitizeNotificationItem(item);
 
   const meta = {
     requestedAt: new Date().toISOString(),

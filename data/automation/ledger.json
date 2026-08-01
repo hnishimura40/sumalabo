@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-30T21:43:58.655Z",
+  "updatedAt": "2026-07-31T22:55:23.359Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -1460,6 +1460,19 @@
       "xPostUrl": "https://x.com/suma_labo/status/2082941830753333668",
       "xPostedAt": "2026-07-30T21:43:58.653Z",
       "xReplyUrl": "https://x.com/suma_labo/status/2082945125165289745"
+    },
+    {
+      "slug": "202607-gemini-spark-pro-us-japan-ultra",
+      "incidents": [],
+      "status": "x_posted",
+      "productionUrl": "https://sumalabo.com/articles/202607-gemini-spark-pro-us-japan-ultra/",
+      "publishedAt": "2026-07-31T22:52:33.334Z",
+      "source": "scheduled",
+      "triggeredBy": "user",
+      "xPostUrl": "https://x.com/suma_labo/status/2083324663753805930",
+      "xPostedAt": "2026-07-31T22:52:33.334Z",
+      "xPostRoute": "claude-in-chrome",
+      "xReplyUrl": "https://x.com/suma_labo/status/2083325294082244727"
     }
   ]
 }
