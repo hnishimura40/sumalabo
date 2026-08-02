@@ -1569,6 +1569,38 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     background: var(--bg-elev);
   }
 
+  /* --- article-video-figure: article-wide-block 内の動画を安全に収める ---
+   * figure の UA 既定 margin-inline: 40px が狭い画面で右寄り・はみ出しを
+   * 生まないようリセットし、横・縦どちらの動画も本文幅内で中央配置する。 */
+  .article-content :global(.article-video-figure) {
+    width: 100%;
+    max-width: 100%;
+    margin: 32px 0 36px;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .article-content :global(.article-video-figure video) {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: min(80vh, 1280px);
+    margin-inline: auto;
+    border-radius: 16px;
+    background: #0b1020;
+    object-fit: contain;
+  }
+
+  .article-content :global(.article-video-figure figcaption) {
+    max-width: 720px;
+    margin: 10px auto 0;
+    color: var(--fg-soft);
+    font-size: 13px;
+    line-height: 1.65;
+    text-align: center;
+  }
+
   /* --- checkpoint-list: チェック項目を3列カード化 --- */
   .article-content :global(.checkpoint-list) {
     display: grid;
