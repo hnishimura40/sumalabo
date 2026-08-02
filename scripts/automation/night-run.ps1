@@ -1,4 +1,4 @@
-# scripts/automation/night-run.ps1 — 夜間自動運転の起動エントリ（タスクスケジューラから呼ばれる）
+﻿# scripts/automation/night-run.ps1 — 夜間自動運転の起動エントリ（タスクスケジューラから呼ばれる）
 #
 # 役割:
 #   1. 多重起動ガード（前夜/当夜の run が生きていたら新規起動しない）
