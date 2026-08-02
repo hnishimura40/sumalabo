@@ -1,4 +1,4 @@
-# scripts/automation/night-run.ps1 — 夜間自動運転の起動エントリ（タスクスケジューラから呼ばれる）
+﻿# scripts/automation/night-run.ps1 — 夜間自動運転の起動エントリ（タスクスケジューラから呼ばれる）
 #
 # 役割:
 #   1. 多重起動ガード（前夜/当夜の run が生きていたら新規起動しない）
@@ -185,12 +185,15 @@ try {
     }
     Remove-Item -LiteralPath $AcceptanceRequestFile -Force -ErrorAction SilentlyContinue
     if ($fresh) {
-      @{ ok=$true; mode="scheduled_production_path_without_article"; taskName="Sumalabo Night Driver"; completedAt=(Get-Date).ToString("o"); pid=$PID; preflight="passed"; chromeProcessCount=@(Get-Process chrome -ErrorAction SilentlyContinue).Count; commandLineFlags="none" } |
+      @{ ok=$true; mode="scheduled_production_path_without_article"; taskName="Sumalabo Night Driver"; completedAt=(Get-Date).ToString("o"); pid=$PID; preflight="passed"; chromeProcessCount=@(Get-Process chrome -ErrorAction SilentlyContinue).Count; commandLineFlags="none"; articlePipelineStarted=$false } |
         ConvertTo-Json | Set-Content -LiteralPath $AcceptanceResultFile -Encoding utf8
       Log "SCHEDULED ACCEPTANCE OK: 実タスクの通常コマンドで起動し、記事生成直前まで本番同等パスを通過。"
       exit 0
     }
-    Log "WARN: 期限切れまたは不正な scheduled acceptance request を破棄し、本番運転を継続。"
+    @{ ok=$false; mode="scheduled_production_path_without_article"; taskName="Sumalabo Night Driver"; completedAt=(Get-Date).ToString("o"); pid=$PID; reason="invalid_or_expired_acceptance_request"; articlePipelineStarted=$false } |
+      ConvertTo-Json | Set-Content -LiteralPath $AcceptanceResultFile -Encoding utf8
+    Log "SCHEDULED ACCEPTANCE REJECTED: 期限切れまたは不正な request。記事工程を開始せず停止。"
+    exit 4
   }
   # ---- 3. ヘッドレス Claude Code 起動 ----
   $PromptFile = Join-Path $RepoRoot "docs\night_driver_prompt.md"
