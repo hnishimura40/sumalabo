@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-31T22:55:23.359Z",
+  "updatedAt": "2026-08-02T02:11:13.660Z",
   "entries": [
     {
       "slug": "202605-100-dollar-ai-monthly-plan-comparison",
@@ -1473,6 +1473,22 @@
       "xPostedAt": "2026-07-31T22:52:33.334Z",
       "xPostRoute": "claude-in-chrome",
       "xReplyUrl": "https://x.com/suma_labo/status/2083325294082244727"
+    },
+    {
+      "slug": "202608-google-vids-ai-video-guide",
+      "incidents": [],
+      "status": "x_posted",
+      "productionUrl": "https://sumalabo.com/articles/202608-google-vids-ai-video-guide/",
+      "publishedAt": "2026-08-02T02:10:08.212Z",
+      "prUrl": "https://github.com/hnishimura40/sumalabo/pull/252",
+      "mergeCommit": "29ee954644a4948533584fd03a81eb1f35347bb2",
+      "source": "user_directed",
+      "triggeredBy": "user",
+      "verifyResult": "8/8",
+      "xPostUrl": "https://x.com/suma_labo/status/2083736852205555973",
+      "xPostedAt": "2026-08-02T02:10:08.213Z",
+      "xPostRoute": "codex",
+      "xReplyUrl": "https://x.com/suma_labo/status/2083737191373844676"
     }
   ]
 }

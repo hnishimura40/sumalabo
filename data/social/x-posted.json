@@ -280,6 +280,20 @@
       "variant": "images1+reply",
       "imagesAttached": 1,
       "replyUrl": "https://x.com/suma_labo/status/2083695480534626338"
+    },
+    {
+      "slug": "202608-google-vids-ai-video-guide",
+      "articleUrl": "https://sumalabo.com/articles/202608-google-vids-ai-video-guide/",
+      "postedAt": "2026-08-02T02:09:36.843Z",
+      "postText": "Google Vidsで何ができる？AI動画生成から編集・ナレーションまで完全整理\n\nGoogle VidsでできるAI動画生成、静止画のアニメーション化、編集、ナレーション、字幕、BGM、共同作業まで、実機画面と動画付きで整理します。\n#すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2083736852205555973",
+      "method": "chrome",
+      "route": "codex",
+      "thumbnailAttached": true,
+      "charCount": 124,
+      "variant": "images1+reply",
+      "imagesAttached": 1,
+      "replyUrl": "https://x.com/suma_labo/status/2083737191373844676"
     }
   ]
 }
