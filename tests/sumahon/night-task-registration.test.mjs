@@ -39,3 +39,12 @@ test("恒久運転の通知タイトルに旧[testMode]ラベルを残さない"
   assert.doesNotMatch(report, /\[testMode\]/);
   assert.match(report, /\[夜間run\]/);
 });
+test("invalid scheduled acceptance fails closed before the article pipeline", () => {
+  const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+  const wrapperPath = join(repoRoot, "scripts", "automation", "night-run.ps1");
+  const source = readFileSync(wrapperPath, "utf-8");
+  assert.match(source, /invalid_or_expired_acceptance_request/);
+  assert.equal((source.match(/articlePipelineStarted=\$false/g) ?? []).length, 2);
+  assert.match(source, /SCHEDULED ACCEPTANCE REJECTED[\s\S]*exit 4[\s\S]*# ---- 3\. ヘッドレス Claude Code 起動 ----/);
+  assert.doesNotMatch(source, /不正な scheduled acceptance request[^\r\n]*本番運転を継続/);
+});
