@@ -20,14 +20,14 @@ export const mobileCarrierLinks: Record<MobileCarrierKey, MobileCarrierLink> = {
   ahamo: {
     label: "ahamo",
     officialHref: "https://ahamo.com/",
-    affiliateHref: "", // A8: 提携済み画面からテキストリンクを取得後に設定
+    affiliateHref: "https://px.a8.net/svt/ejp?a8mat=4B8B4X+1RPG1U+4TIO+5YJRM", // A8 s00000022488001 / すまラボ 003
     network: "A8",
   },
   ymobile: {
     label: "Y!mobile",
     officialHref: "https://www.ymobile.jp/",
-    affiliateHref: "", // VC公式: 提携待ち予約枠
-    network: "VC",
+    affiliateHref: "https://px.a8.net/svt/ejp?a8mat=4B8B4X+ZQ2MA+424K+BY642", // A8 Yステーション s00000018938002 / すまラボ 003（VC公式承認後に差し替え）
+    network: "A8",
   },
   iijmio: {
     label: "IIJmio",
@@ -42,4 +42,3 @@ export const mobileCarrierLinks: Record<MobileCarrierKey, MobileCarrierLink> = {
     network: "A8",
   },
 };
-
