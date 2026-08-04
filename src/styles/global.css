@@ -1028,6 +1028,49 @@ html.dark .tbl-toggle button[aria-pressed="true"] {
   display: none;
 }
 
+/* opt-in: PCは比較表、768px以下は事業者ごとのカードへ自動切替。 */
+.cmp-wrap--responsive .cmp-responsive-cards {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .cmp-wrap--responsive .tbl-scroll {
+    display: none;
+  }
+
+  .cmp-wrap--responsive .cmp-responsive-cards {
+    display: grid;
+    gap: 16px;
+  }
+
+  .cmp-wrap--responsive .cmp-card {
+    padding: 16px 18px;
+  }
+
+  .cmp-wrap--responsive .cmp-card .cc-title {
+    margin-bottom: 12px;
+    font-size: 17px;
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+  }
+
+  .cmp-wrap--responsive .cmp-card dl {
+    grid-template-columns: minmax(7.5em, auto) minmax(0, 1fr);
+    gap: 8px 12px;
+  }
+
+  .cmp-wrap--responsive .cmp-card dt {
+    font-weight: 700;
+  }
+
+  .cmp-wrap--responsive .cmp-card dd.cmp-value--nowrap {
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+  }
+}
+
 /* ---- 注意ボックス ---- */
 .note {
   background: var(--surface2);

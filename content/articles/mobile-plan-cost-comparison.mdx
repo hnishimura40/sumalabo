@@ -35,6 +35,7 @@ import Callout from "../../src/components/article/Callout.astro";
 import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
 import MobileCarrierCTA from "../../src/components/article/MobileCarrierCTA.astro";
+import ComparisonTable from "../../src/components/article/ComparisonTable.astro";
 
 スマホの通信費に、毎月いくら払っていますか。
 
@@ -146,15 +147,19 @@ povoは基本料0円ですが、0GB時は最大128kbpsで、180日間以上有�
 
 <p class="lead">以下は<strong>2026年8月4日時点</strong>に各社公式サイトで確認した税込の通常料金です。期間限定キャンペーンや家族・固定回線・カードの割引は入れていません。</p>
 
-| 回線 | 少量の代表例 | 中量の代表例 | 大容量の代表例 | 向いている人 |
-|---|---:|---:|---:|---|
-| IIJmio | 2GB 850円 | 15GB 1,600円 | 35GB 2,400円 | 容量を細かく合わせたい |
-| 日本通信SIM | 1GB 290円 | 20GB 1,390円 | 50GB 2,178円 | 通話込みでも固定費を抑えたい |
-| Y!mobile | 5GB 3,278円 | 30GB 4,378円 | 35GB 5,478円 | 店舗サポートと割引条件を重視 |
-| UQ mobile | — | 35GB 3,828円 | — | 10分通話込みと店舗を重視 |
-| ahamo | — | 30GB 2,970円 | 110GB 4,950円 | 分かりやすいオンラインプランがよい |
-| 楽天モバイル | 3GBまで 1,078円 | 20GBまで 2,178円 | 20GB超 3,278円 | 使用量が月ごとに変わる・無制限重視 |
-| povo | 3GB/30日 990円 | 30GB/月 2,780円 | 必要量を都度追加 | 使う時期と容量を自分で管理できる |
+<ComparisonTable
+  responsive
+  headers={["回線", "少量の代表例", "中量の代表例", "大容量の代表例", "向いている人"]}
+  rows={[
+    ["IIJmio", "2GB 850円", "15GB 1,600円", "35GB 2,400円", "容量を細かく合わせたい"],
+    ["日本通信SIM", "1GB 290円", "20GB 1,390円", "50GB 2,178円", "通話込みでも固定費を抑えたい"],
+    ["Y!mobile", "5GB 3,278円", "30GB 4,378円", "35GB 5,478円", "店舗サポートと割引条件を重視"],
+    ["UQ mobile", "—", "35GB 3,828円", "—", "10分通話込みと店舗を重視"],
+    ["ahamo", "—", "30GB 2,970円", "110GB 4,950円", "分かりやすいオンラインプランがよい"],
+    ["楽天モバイル", "3GBまで 1,078円", "20GBまで 2,178円", "20GB超 3,278円", "使用量が月ごとに変わる・無制限重視"],
+    ["povo", "3GB/30日 990円", "30GB/月 2,780円", "必要量を都度追加", "使う時期と容量を自分で管理できる"],
+  ]}
+/>
 
 <Callout kind="unc" title="月額だけで決めない">
   <p>「通常料金が安い順」だけで決めないでください。通話込みか、店舗があるか、昼休みに使いやすいか、固定回線などの割引条件を満たせるかで、実際の満足度は変わります。</p>
