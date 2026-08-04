@@ -11,6 +11,33 @@
   },
   "targets": [
     {
+      "slug": "mobile-plan-cost-comparison",
+      "label": "3問で分かるスマホ通信費比較",
+      "blurb": "データ量・通信品質・店舗サポートから、自分に合う回線を絞り込む常設ガイド",
+      "categories": [
+        "通信費を下げる",
+        "ニュースをかみくだく",
+        "スマホの選び方"
+      ],
+      "_kwNote": "料金改定・MNP・格安SIM・携帯料金の記事から、回線選びの常設ハブへ案内する。スマホ一般語だけでは表示しない。",
+      "keywords": [
+        "通信費",
+        "スマホ料金",
+        "携帯料金",
+        "料金プラン比較",
+        "格安SIM 比較",
+        "MNP 乗り換え",
+        "UQ mobile 料金",
+        "Y!mobile 料金",
+        "ahamo 料金",
+        "楽天モバイル 料金",
+        "povo 料金",
+        "IIJmio 料金",
+        "日本通信SIM 料金"
+      ],
+      "listStaple": true
+    },
+    {
       "slug": "202607-gemini-spark-pro-us-japan-ultra",
       "label": "Gemini Sparkの日本提供条件を整理",
       "blurb": "米国Proと日本Ultraの地域差、24時間AIの使いどころと権限管理を解説",

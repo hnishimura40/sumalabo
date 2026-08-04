@@ -1,0 +1,52 @@
+---
+import { mobileCarrierLinks, type MobileCarrierKey } from "../../data/mobileCarrierLinks";
+
+interface Props {
+  carrier: MobileCarrierKey;
+  description: string;
+}
+
+const { carrier, description } = Astro.props;
+const entry = mobileCarrierLinks[carrier];
+const href = entry.affiliateHref || entry.officialHref;
+const sponsored = Boolean(entry.affiliateHref);
+---
+
+<aside class="mobile-carrier-cta article-wide-block">
+  <p class="mobile-carrier-cta__title">{entry.label}の最新料金を確認</p>
+  <p class="mobile-carrier-cta__description">{description}</p>
+  <a
+    class="mobile-carrier-cta__button"
+    href={href}
+    target="_blank"
+    rel={sponsored ? "nofollow sponsored noopener" : "noopener"}
+    data-affiliate-network={sponsored ? entry.network : undefined}
+  >
+    公式サイトで料金を見る
+  </a>
+  <p class="mobile-carrier-cta__note">※料金・提供条件は変わることがあります。申し込み前に公式の最新表示をご確認ください。</p>
+</aside>
+
+<style>
+  .mobile-carrier-cta {
+    margin: 20px 0;
+    border: 1px solid color-mix(in srgb, var(--teal) 30%, var(--line));
+    border-radius: var(--radius-lg);
+    background: var(--teal-tint);
+    box-shadow: var(--shadow-sm);
+    padding: 18px;
+    text-align: center;
+  }
+  .mobile-carrier-cta__title { margin: 0 0 6px; font-size: 16px; font-weight: 800; color: var(--fg); }
+  .mobile-carrier-cta__description { margin: 0 0 12px; font-size: 13.5px; line-height: 1.7; color: var(--fg-mid); }
+  .mobile-carrier-cta__button {
+    display: inline-flex; min-height: 44px; align-items: center; justify-content: center;
+    border-radius: 999px; padding: 10px 26px; font-size: 14.5px; font-weight: 800;
+    line-height: 1.35; color: #fff; text-decoration: none; background: #0f766e;
+    border: 1px solid rgba(0, 0, 0, 0.14); box-shadow: var(--shadow-sm);
+  }
+  .mobile-carrier-cta a.mobile-carrier-cta__button { color: #fff; }
+  .mobile-carrier-cta__note { margin: 10px 0 0; font-size: 12px; line-height: 1.6; color: var(--fg-faint); }
+  @media (max-width: 560px) { .mobile-carrier-cta__button { width: 100%; } }
+</style>
+
