@@ -109,6 +109,8 @@ SIM 系など高単価案件用。**登録時サイト審査が実質なし**で
 
 ## 6. 運用ルール（再掲・gate が機械的に強制するもの）
 
+- 回線案件を含め、リスティング広告には出稿しない。ASPが一部許可としている場合でも、すまラボの運用方針として不使用とする。
+
 - アフィリエイトリンク / ProductCard / CTABox / AffiliateLinks を含む記事は **`hasAffiliate: true` 必須**（無いと gate 不合格）→ 記事冒頭に「本記事は広告（アフィリエイトリンク）を含みます」が自動表示
 - **type: news または category: やってみた・検証 の記事にアフィリエイトは当面不可**（リンク・コンポーネント・hasAffiliate すべて gate 不合格）。将来解禁する場合も `hasAffiliate: true` と広告表示を必須にする。
 - 台帳（ledger.json）に `hasAffiliate` が写像される（`ledger.mjs --sync`）。広告あり記事の流入・成果分析の下地
