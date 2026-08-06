@@ -42,9 +42,16 @@ project/
 logs/visual-review/
 
 # automation runtime state (queue / locks / processed URL ledger) — never committed
+data/automation/autonomy.json
+data/automation/ledger.json
+data/automation/scout-picked.json
 data/automation/sumahon-queue.json
 data/automation/processed-urls.json
 data/automation/locks/
+
+# night-run runtime audit state — private/local only
+logs/night/last-run.json
+logs/night/run-history.jsonl
 
 # automation logs (per-run files) — never committed; .gitkeep stays
 logs/automation/*.log
