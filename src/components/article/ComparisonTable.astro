@@ -19,9 +19,11 @@ interface Props {
   rows: string[][];
   /** 表の下に出す注記（任意） */
   caption?: string;
+  /** PCは表、768px以下はカードへ自動切替する */
+  responsive?: boolean;
 }
 
-const { headers, rows, caption } = Astro.props;
+const { headers, rows, caption, responsive = false } = Astro.props;
 const uid = `cmp-${Math.random().toString(36).slice(2, 8)}`;
 
 function cellParts(cell: string): { cls: "ok" | "ng" | null; text: string } {
@@ -31,11 +33,13 @@ function cellParts(cell: string): { cls: "ok" | "ng" | null; text: string } {
 }
 ---
 
-<div class="cmp-wrap" id={uid}>
-  <div class="tbl-toggle" role="group" aria-label="表示切り替え">
-    <button type="button" data-view="table" aria-pressed="true">表で見る</button>
-    <button type="button" data-view="cards" aria-pressed="false">カードで見る</button>
-  </div>
+<div class:list={["cmp-wrap", { "cmp-wrap--responsive": responsive }]} id={uid}>
+  {!responsive && (
+    <div class="tbl-toggle" role="group" aria-label="表示切り替え">
+      <button type="button" data-view="table" aria-pressed="true">表で見る</button>
+      <button type="button" data-view="cards" aria-pressed="false">カードで見る</button>
+    </div>
+  )}
   <div class="tbl-scroll" data-cmp-view="table">
     <table>
       <thead>
@@ -55,7 +59,7 @@ function cellParts(cell: string): { cls: "ok" | "ng" | null; text: string } {
       </tbody>
     </table>
   </div>
-  <div class="cardstack cmp-hidden" data-cmp-view="cards">
+  <div class:list={["cardstack", { "cmp-hidden": !responsive, "cmp-responsive-cards": responsive }]} data-cmp-view="cards">
     {
       rows.map((row) => (
         <div class="cmp-card">
@@ -66,7 +70,7 @@ function cellParts(cell: string): { cls: "ok" | "ng" | null; text: string } {
               return (
                 <>
                   <dt>{headers[i + 1]}</dt>
-                  <dd>{cls ? <span class={cls}>{text}</span> : text}</dd>
+                  <dd class:list={{ "cmp-value--nowrap": responsive && i < row.length - 2 }}>{cls ? <span class={cls}>{text}</span> : text}</dd>
                 </>
               );
             })}

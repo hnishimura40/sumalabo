@@ -22,7 +22,7 @@ const sponsored = Boolean(entry.affiliateHref);
     rel={sponsored ? "nofollow sponsored noopener" : "noopener"}
     data-affiliate-network={sponsored ? entry.network : undefined}
   >
-    公式サイトで料金を見る
+    {sponsored ? "料金・申込条件を見る（広告）" : "公式サイトで料金を見る"}
   </a>
   <p class="mobile-carrier-cta__note">※料金・提供条件は変わることがあります。申し込み前に公式の最新表示をご確認ください。</p>
 </aside>
@@ -49,4 +49,3 @@ const sponsored = Boolean(entry.affiliateHref);
   .mobile-carrier-cta__note { margin: 10px 0 0; font-size: 12px; line-height: 1.6; color: var(--fg-faint); }
   @media (max-width: 560px) { .mobile-carrier-cta__button { width: 100%; } }
 </style>
-
