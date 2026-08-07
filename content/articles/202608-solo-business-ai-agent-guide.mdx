@@ -1,0 +1,245 @@
+---
+title: "1人で年商16億円級。AIを従業員代わりにする人が使う「エージェント型」とは"
+slug: "202608-solo-business-ai-agent-guide"
+type: "news"
+category: "ニュースをかみくだく"
+description: "年間売上1,000万ドルを超える1人事業者が約3倍に増えたというStripeの分析を起点に、チャット型AIとエージェント型AIの違い、個人が今使える機能、任せる際の注意点を解説します。"
+thumbnail: "/images/thumbnails/202608-solo-business-ai-agent-guide.webp"
+thumbnailAlt: "1人で仕事を進めるひまりが複数工程を動かすAIエージェントを確認し、らぼまるが横で進行状況を整理する場面"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "AIエージェント"
+  - "1人事業"
+  - "Stripe"
+  - "ChatGPT Work"
+  - "Codex"
+  - "Claude Code"
+related:
+  - "202607-openai-gpt-5-6-chatgpt-work"
+  - "202607-gemini-spark-pro-us-japan-ultra"
+  - "202608-china-ai-three-models-qwen38-personal-guide"
+  - "202608-google-vids-ai-video-guide"
+pubDate: "2026-08-07"
+updated: "2026-08-07"
+publishAt: "2026-08-07T17:30:00+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+「1人で年商1,000万ドル」。1ドル160円で単純換算すると、約16億円です。従業員を抱えない事業としては、にわかに信じにくい規模でしょう。
+
+Stripe Economicsが2026年6月に公開した分析では、年間売上1,000万ドルを超えた1人事業者の数が、2023年から2025年にかけて**約3倍**になりました。1人で回せる仕事の範囲が広がっている背景として、StripeはAIが人を雇わなければ埋められなかった能力の穴を補い始めたと見ています。
+
+ただし、これは「AIに任せれば誰でも稼げる」という話ではありません。注目したいのは金額より、AIの使い方が**答えをもらうチャット型から、工程を任せるエージェント型へ変わっていること**です。
+
+<Summary30>
+  <ul>
+    <li>Stripeの代理指標では、年商1,000万ドル超の1人事業者が2023年から2025年で約3倍になった</li>
+    <li>チャット型は「答えるAI」、エージェント型は「複数工程を進めるAI」</li>
+    <li>AIが補っているのは、市場調査、開発、価格設定、販促、顧客対応などの能力</li>
+    <li>個人でもChatGPT Work、Codex、Claude Code、Gemini Sparkなどから試せる</li>
+    <li>売上は利益ではなく、代理指標にも限界がある。指示と最終確認は人に残る</li>
+  </ul>
+</Summary30>
+
+<NumCards items={[
+  { num: "約3倍", cap: "年商1,000万ドル超の数" },
+  { num: "2023→25", cap: "Stripeが比較した期間" },
+  { num: "115", cap: "代理指標に含む主な基盤" },
+]} />
+
+<CharacterBubble speaker="himari" mood="curious">1人なのに、どうやってチーム分の作業を回すの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">AIに答えだけを聞くのではなく、調べる・作る・確かめる工程をまとめて渡すのがポイントだよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-solo-business-ai-agent-guide/slide01-stripe-data.webp" alt="年間売上100万ドル超が2倍、500万ドルと1000万ドル超が約3倍になったStripeの代理指標を示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：増えたのは1人事業者の数だけではなく、高売上層の割合</figcaption>
+  </figure>
+</section>
+
+## Stripeの分析で何が分かった？
+
+Stripe Economicsは、約115の1人事業者向けプラットフォームと、Stripe Atlasで設立された1人事業を使って独自の代理指標を作りました。その結果、2023年から2025年にかけて、年間売上100万ドル超は2倍以上、500万ドル超と1,000万ドル超は約3倍になったとしています。
+
+しかも、高い売上水準へ到達した事業者の**割合**も2年間で2倍になりました。一部の大当たりだけでなく、高売上層へ届く頻度も上がっている可能性があります。
+
+<Callout type="warning" title="「年商16億円の1人会社」が確定した名簿ではない">
+  この数字はStripeが作った代理指標です。対象サービスに1人ではない事業が混じる可能性や、当初は1人でも途中で従業員を雇った事業が含まれる可能性を、Stripe自身が明記しています。また、1,000万ドルは売上であり、利益や本人の収入ではありません。
+</Callout>
+
+別のStripe Atlas分析では、2026年第2四半期に設立されたC Corporationの63％が共同創業者のいない会社でした。一方、1人会社の上位10％と中央値の差は広がっています。**1人でも大きく伸ばせる例が増えたことと、同じ結果が広く再現できることは別**です。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-solo-business-ai-agent-guide/slide02-proxy-caution.webp" alt="Stripeの数字が115のプラットフォームとAtlas事業による代理指標であり、売上と利益は違うことを示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：驚く前に、数字の範囲を確認</figcaption>
+  </figure>
+</section>
+
+## 「チャット型」と「エージェント型」は何が違う？
+
+<p class="lead"><strong>チャット型は答えを返し、エージェント型は作業の途中まで進みます。</strong></p>
+
+たとえば、競合サービスを調べて比較表を作る仕事を考えてみましょう。
+
+### チャット型：人が工程をつなぐ
+
+1. 人が検索結果や資料を集める
+2. AIへ「要約して」と頼む
+3. 出てきた文章を人が表計算ソフトへ移す
+4. 抜けを見つけたら、人がもう一度質問する
+5. 最後に人が体裁を整える
+
+AIは各場面で助けてくれますが、次に何をするかを決め、別の道具へ結果を運ぶのは人です。
+
+### エージェント型：目標から工程を分けて進める
+
+1. 「対象10社を公式情報で比較し、根拠付きの表にして」と目標を渡す
+2. AIが調査、整理、表の作成、抜けの確認へ分解する
+3. 必要なWebページやファイルを読み、成果物を作る
+4. 条件を満たすまで見直し、確認が必要な場面で人へ戻す
+
+OpenAIは、チャットを短い会話や日常的な質問向け、Workを長い複数工程と完成物向けと説明しています。違いはモデルの点数より、**AIに道具と作業場所を渡せるか**にあります。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-solo-business-ai-agent-guide/slide03-chat-vs-agent.webp" alt="人が工程をつなぐチャット型と、AIが複数工程を進めるエージェント型を比較した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：答えをもらうか、工程を任せるか</figcaption>
+  </figure>
+</section>
+
+## 1人でチーム分の仕事ができる理由
+
+Stripeは、1人で事業を始めるときに不足しやすい能力として、次の仕事を挙げています。
+
+- 市場の大きさや競合を調べる
+- アプリやWebサービスを作る
+- 商品・サービスの価格を決める
+- 販促の文章や施策を作り、実行する
+- 顧客へ提案し、販売につなげる
+- 公開後に顧客を支援し、改善を続ける
+
+以前は、得意分野が違う共同創業者や従業員へ渡していた仕事です。現在は、コーディングエージェントが複数ファイルを直してテストし、調査エージェントが複数の資料を読み、制作ツールが素材の生成から編集までをつなげられます。
+
+実際、Stripe Atlasの分析では、上位層の1人創業者はAIを中核にした製品を作る割合が中央値の層の約2倍でした。AIを中核にした1人会社は、2年時点の売上も他の1人会社の約2倍でした。ただし、これはAIだけが原因だと証明した数字ではなく、成長が速い人ほど新しい道具を使っている可能性もあります。
+
+顧客対応では、[企業LINEの裏側でAIが下書き・要約・記録を支援する事例](/articles/202607-salesforce-dx-line-ai-agentforce-chatgpt/)も出ています。ここでもAIが担当者を丸ごと置き換えるのではなく、繰り返しの下ごしらえを受け持ち、最後の対応を人へ戻す形です。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-solo-business-ai-agent-guide/slide04-capability-gaps.webp" alt="調査、開発、価格設定、販促、顧客対応の能力をAIエージェントが補う様子を示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：AIは「もう1人の万能社員」ではなく、足りない工程を補う道具</figcaption>
+  </figure>
+</section>
+
+## 個人でも使える「エージェント型」はある？
+
+2026年8月時点では、専門の開発会社でなくても試せる入口があります。
+
+### 文書・表・調査をまとめて頼む：ChatGPT Work
+
+[ChatGPT Workの解説](/articles/202607-openai-gpt-5-6-chatgpt-work/)で整理した通り、Workはアプリやファイルをまたぎ、資料、表、スライドなどの完成物を目標に進める機能です。OpenAIは、Chatを会話向け、Workを長い複数工程向けと分けています。利用量はCodexと同じクレジット体系で、課題の長さや入力・出力の量によって変わります。
+
+### Webやソフト開発を任せる：Codex・Claude Code
+
+[CodexとClaude Codeの使い分け](/articles/202607-openai-codex-claude-code-browser-imagegen/)で紹介している2つは、ファイルを読み、複数箇所を直し、テストまで進めるコーディングエージェントです。CodexはChatGPTの対象プランや追加クレジット、Claude CodeはClaude Pro／MaxまたはAPI課金から利用できます。料金は使い方で変わるため、契約画面の現行条件を確認してください。
+
+候補を横並びにしたい場合は[AIエージェント型ツールの比較](/articles/202605-ai-agent-tools-comparison-2026/)、Googleの開発環境まで含めて見るなら[Antigravity 2.0の解説](/articles/202605-google-antigravity-2-0-ai-agent-developer-tool/)が入口になります。Claude Codeを継続利用するときの枠は[利用上限変更の記事](/articles/claude-code-usage-limits-doubled/)で整理しています。
+
+スマホから作業を引き継ぐ入口は[Claude Coworkのモバイル対応](/articles/202607-claude-cowork-mobile-ios-android/)、Web操作の違いは[Atlas終了後のクラウドブラウザ整理](/articles/202607-openai-chatgpt-atlas-browser-end/)も参考になります。
+
+### 決まった作業を継続させる：Gemini Spark
+
+[Gemini Sparkの日本提供条件](/articles/202607-gemini-spark-pro-us-japan-ultra/)で扱ったSparkは、端末を閉じてもクラウド上で監視・追跡・実行を続けるエージェントです。ただし日本では2026年8月時点でGoogle AI Ultraの一部対象者向けで、Proでは使えません。誰でもすぐ使える入口ではない点に注意が必要です。
+
+発表当初からの仕組みやGmail連携の考え方は、[Gemini Sparkの基礎解説](/articles/202605-google-gemini-spark-personal-ai-agent-gmail/)で確認できます。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-solo-business-ai-agent-guide/slide05-entry-points.webp" alt="ChatGPT Work、CodexとClaude Code、Gemini Sparkを、完成物、開発、継続作業の用途別に整理した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：まずは自分の作業に合う入口を1つ選ぶ</figcaption>
+  </figure>
+</section>
+
+## 副業や個人利用なら、何から任せる？
+
+大きな事業を始めなくても、考え方は同じです。最初は失敗しても戻せる、小さな仕事を1つの流れとして渡します。
+
+- 公開情報を調べ、比較表と出典一覧を作る
+- 手元のメモを分類し、抜けを指摘した下書きを作る
+- 簡単なWebページを作り、表示崩れまで確認する
+- 動画の台本、素材、字幕をそろえ、編集の下地を作る
+- 定期的に見る公開ページを確認し、変化があったときだけ知らせる
+
+[Google Vidsの実機ガイド](/articles/202608-google-vids-ai-video-guide/)は、短いAI動画クリップ、編集、ナレーションを1つの制作画面でつなぐ例です。[AIでYouTube解説動画を作る方法](/articles/ai-youtube-video-creation-guide-2026/)では、台本・声・画像・字幕・組み立てを工程に分ける考え方を紹介しています。
+
+文書や表を行き来しながら検討を重ねる変化は、[仕事のAIが一段階変わった体感記事](/articles/ai-work-productivity-experience-2026/)でも扱っています。単発の回答より、作る→違和感を見つける→直すという往復が増える点は、エージェント型と共通します。
+
+ここでのコツは「記事を書いて」「動画を作って」のように丸投げするのではなく、**目的、使ってよい情報、完成条件、確認してほしい点**を一緒に渡すことです。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-solo-business-ai-agent-guide/slide06-small-start.webp" alt="公開情報の調査から比較表と出典確認まで、小さな一連の仕事をAIへ任せる手順を示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：小さく任せ、完成条件で受け取る</figcaption>
+  </figure>
+</section>
+
+## 「任せれば自動で儲かる」は誤解
+
+AIエージェントが増えても、事業の課題そのものが消えるわけではありません。
+
+まず、何を作るか、誰のどんな困りごとを解くか、いくらで提供するかは人が決めます。次に、AIが作った調査結果、文章、コード、画像に誤りがないか確かめる必要があります。顧客や外部サービスへ影響する操作は、実行前の確認も欠かせません。
+
+さらに、エージェントへメール、ファイル、パスワードなどの権限を渡すほど、事故時の影響も大きくなります。[1Password for Claudeの解説](/articles/202607-1password-for-claude-agentic-login/)で扱ったように、必要な範囲だけ許可し、重要操作は人が確認する設計が基本です。
+
+中国勢を含むモデル側も、[Qwen3.8-Maxなど3モデルの整理](/articles/202608-china-ai-three-models-qwen38-personal-guide/)で見た通り、エージェント利用を意識した提供を広げています。ただし、高性能なモデルを選ぶだけで、良い工程や安全な権限設定まで自動的に決まるわけではありません。
+
+<Note>AIへ渡してよい情報は、契約するサービスの規約と所属組織のルールで確認してください。顧客情報、未公開情報、認証情報を無条件に入力しないことが前提です。</Note>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-solo-business-ai-agent-guide/slide07-human-check.webp" alt="目的、権限、完成条件、最終確認の4点を人が受け持つことを示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：任せる範囲が広いほど、人の確認点を先に決める</figcaption>
+  </figure>
+</section>
+
+## まとめ：変わったのは、AIの点数より仕事の渡し方
+
+年商1,000万ドル超の1人事業者が約3倍になったというStripeの分析は、1人でできる仕事の上限が動いていることを示します。ただし、数字は代理指標であり、売上は利益ではありません。成功を約束する材料でもありません。
+
+それでも、チャット型とエージェント型の違いは、個人にも関係があります。
+
+- チャット型：質問ごとに答えを受け取り、人が工程をつなぐ
+- エージェント型：目標を受け取り、複数工程を道具で進める
+- 人の役割：目的、権限、完成条件を決め、結果を確認する
+
+最初から「AI社員」を作ろうとせず、公開情報の調査から表を作る、といった小さな一連の仕事を1つ渡してみる。その違いを体験するのが、個人にとって現実的な第一歩です。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-solo-business-ai-agent-guide/slide08-summary.webp" alt="答えるAIから工程を進めるAIへという変化と、人が目的、権限、確認を担う結論を示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：AIに仕事を渡すなら、目的・権限・確認をセットに</figcaption>
+  </figure>
+</section>
+
+## 一次情報・公式情報
+
+- [Stripe Economics：The age of the solopreneur](https://www.stripeeconomics.com/p/the-age-of-the-solopreneur)
+- [Stripe：Solo founding is at an all-time high](https://stripe.com/blog/top-solo-founder-traits)
+- [OpenAI：ChatGPT is now a partner for your most ambitious work](https://openai.com/index/chatgpt-for-your-most-ambitious-work/)
+- [OpenAI Help Center：ChatGPT Work and Codex](https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex)
+- [Anthropic：Set up Claude Code](https://docs.anthropic.com/en/docs/claude-code/getting-started)
+- [Google：Gemini app becomes more agentic](https://blog.google/innovation-and-ai/products/gemini-app/next-evolution-gemini-app/)
