@@ -336,6 +336,20 @@
       "variant": "images4+reply",
       "imagesAttached": 4,
       "replyUrl": "https://x.com/suma_labo/status/2085534585153335366"
+    },
+    {
+      "slug": "202608-company-ai-banned-personal-learning-gap",
+      "articleUrl": "https://sumalabo.com/articles/202608-company-ai-banned-personal-learning-gap/",
+      "postedAt": "2026-08-07T04:28:43.500Z",
+      "postText": "会社でAI禁止でも、個人でできることはあります。\n\n勤務先で「AIの導入は許可されていない」と答えた会社員は20.6％。規定を破らず、公開情報や架空データで何を練習できるのかを整理しました。\n\n#AI活用 #すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2085583816304050321",
+      "method": "chrome",
+      "route": "codex",
+      "thumbnailAttached": true,
+      "charCount": 108,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2085584000077439010"
     }
   ]
 }
