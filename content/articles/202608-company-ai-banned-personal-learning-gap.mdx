@@ -1,0 +1,219 @@
+---
+title: "会社ではAI禁止。でも個人で使える人との差は開いていく"
+slug: "202608-company-ai-banned-personal-learning-gap"
+type: "news"
+category: "ニュースをかみくだく"
+description: "勤務先でAIを使えない人は、規定を破らず何を学べる？ MMD研究所×アイスマイリーの調査をもとに、業務情報を入れない練習と会社利用との線引きを整理します。"
+thumbnail: "/images/thumbnails/202608-company-ai-banned-personal-learning-gap.webp"
+thumbnailAlt: "会社のAI禁止表示に戸惑うひまりが、帰宅後に私用スマホで公開情報を使ったAI練習を始め、らぼまるが安全確認する場面"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "生成AI"
+  - "AI活用"
+  - "情報漏洩"
+  - "会社員"
+  - "AIリテラシー"
+related:
+  - "202607-gpt-5-6-sol-terra-luna-release"
+  - "202608-china-ai-three-models-qwen38-personal-guide"
+pubDate: "2026-08-07"
+updated: "2026-08-07"
+publishAt: "2026-08-07T13:00:00+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+「AIを仕事で使ってみたい。でも勤務先では許可されていない」。そんな人は、決して珍しくありません。
+
+MMD研究所とアイスマイリーが2026年8月7日に発表した調査では、20〜69歳の会社員15,161人のうち、勤務先で「AIの導入は許可されていない」と答えた人は**20.6％**でした。組織として導入できている企業に勤める人は26.8％です。
+
+会社の規定を破って仕事へ持ち込むのは避けるべきです。一方で、業務情報を使わず、私生活の範囲でAIの特徴や確かめ方を学ぶことはできます。この記事では、その安全な線引きを具体的に整理します。
+
+<Summary30>
+  <ul>
+    <li>勤務先でAIが「許可されていない」と答えた会社員は<strong>20.6％</strong></li>
+    <li>会社が慎重になるのは、情報漏洩・契約・誤回答時の責任を整理する必要があるため</li>
+    <li>練習には公開情報、自作の文章、架空データを使い、業務資料や顧客情報は入力しない</li>
+    <li>私物端末でも、会社の情報を扱えば安全になるわけではない</li>
+    <li>差がつくのは秘密の業務利用ではなく、質問・検証・修正を繰り返した経験</li>
+  </ul>
+</Summary30>
+
+<NumCards items={[
+  { num: "26.8％", cap: "AIを組織として導入できている勤務先" },
+  { num: "20.6％", cap: "AIの導入は許可されていない" },
+  { num: "31.0％", cap: "勤務先の導入範囲がわからない" },
+]} />
+
+<CharacterBubble speaker="himari" mood="curious">会社で使えないなら、私は何も覚えられないのかな。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">規定は守ろう。そのうえで、仕事の情報を使わない練習はできるよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-company-ai-banned-personal-learning-gap/slide01-survey.webp" alt="会社員のAI導入状況として、組織導入26.8％、導入禁止20.6％、わからない31.0％を整理した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：会社員から見たAI導入の現在地</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>図のポイント（コピー可能）</strong></p>
+    <ul>
+      <li><strong>組織導入</strong>：一部の部署以上で導入できている人は26.8％</li>
+      <li><strong>禁止</strong>：「AIの導入は許可されていない」は20.6％</li>
+      <li><strong>不明</strong>：勤務先の導入範囲が「わからない」は31.0％</li>
+    </ul>
+  </div>
+</section>
+
+## 調査で分かったこと：全社導入は18.1％
+
+<p class="lead">「AIを導入した会社」と「社員が自由に使える会社」は、同じ意味ではありません。</p>
+
+公式調査で「全社的に導入・活用している」は18.1％でした。「半数以上の部署」「半数未満の部署」での導入を加えた**組織導入は26.8％**です。
+
+一方、「AIの導入は許可されていない」は20.6％、「わからない」は31.0％でした。ここから分かるのは、組織としてAIを使える環境が、会社員全体へ均等に届いているわけではないということです。
+
+<Callout type="info" title="調査の対象と読み方">
+  予備調査は20〜69歳の会社員15,161人を対象に、2026年7月10日〜14日に実施されました。26.8％は回答者が勤める会社の厳密な企業数比率ではなく、会社員本人から見た勤務先の導入範囲です。
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-company-ai-banned-personal-learning-gap/slide02-three-groups.webp" alt="会社員を組織導入、導入禁止、導入状況不明の3つの立場に分けて示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：同じ会社員でもAIとの距離は違う</figcaption>
+  </figure>
+</section>
+
+## 会社がAIを禁止するのには理由がある
+
+<p class="lead">禁止を「時代遅れ」と片づけず、会社が管理しなければならないリスクを分けて考えます。</p>
+
+会社でAIを使うと、個人の趣味利用にはない問題が生まれます。入力した文章に顧客名や未公開の数字が含まれていれば、外部サービスへ情報を送ることになります。AIの回答に誤りがあり、それを見積書や制度案内へ使った場合、誰が確認し責任を持つのかも決めなければなりません。
+
+- 顧客情報、個人情報、機密資料が外部へ送信される可能性
+- 契約中のAIサービスが入力をどう保存・利用するか
+- 誤回答や古い情報を誰が確認するか
+- 著作権やライセンス上、入力・出力を利用できるか
+- 利用履歴、権限、費用を誰が管理するか
+
+これらを整理する前に利用を止める判断には、合理的な面があります。会社を批判するより、まず自社の規定が「全面禁止」なのか、「未承認サービスは禁止」なのか、「個人情報を入れなければ利用可」なのかを確認することが先です。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-company-ai-banned-personal-learning-gap/slide03-why-company-cautious.webp" alt="企業がAI導入で確認する情報漏洩、規約、正確性、責任の4項目を示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：会社が慎重になる4つの理由</figcaption>
+  </figure>
+</section>
+
+## 禁止されている中で、個人にできる練習
+
+<p class="lead">仕事をAIへ持ち出すのではなく、公開情報と自分で作った題材で「使い方」を練習します。</p>
+
+最初は、正解を自分で確かめられる小さな題材が向いています。
+
+1. 公開されているニュースを3行で要約させ、原文と照合する
+2. 自分で書いた日記やメール案を、意味を変えずに読みやすく直させる
+3. 架空の旅行日程や買い物リストを条件付きで整理させる
+4. 表計算用のダミーデータを自分で作り、集計方法を質問する
+5. 同じ質問を言い換え、回答の違いと根拠を比べる
+
+ここで身につくのは、派手な命令文ではありません。目的を小さく分ける、足りない条件を加える、数字や出典を確かめる、違えば直させるという反復です。
+
+<Note>公開情報でも、第三者の個人情報や有料資料を丸ごと入力しないよう注意してください。利用するAIサービスの規約とデータ設定も確認します。</Note>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-company-ai-banned-personal-learning-gap/slide04-safe-practice.webp" alt="公開ニュース、自作文、架空データを使って安全にAIを練習する方法を示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：仕事の情報を使わない練習メニュー</figcaption>
+  </figure>
+</section>
+
+## 私物スマホなら何でも入力してよい、ではない
+
+<p class="lead">端末とアカウントを分けても、入力する情報の性質は変わりません。</p>
+
+個人のスマホと私用アカウントでAIを使うことは、会社端末との混同を避けるうえで大切です。ただし、会社の会議メモ、顧客情報、社内メールを私物端末から入力すれば、規定違反や情報漏洩の問題は残ります。
+
+安全な線引きは、次のように考えると分かりやすくなります。
+
+| 確認項目 | 個人練習での基準 |
+|---|---|
+| 端末 | 私物を使い、会社端末へ無断導入しない |
+| アカウント | 私用アカウント。会社メールで勝手に登録しない |
+| 入力 | 公開情報、自作文章、架空データだけ |
+| 時間 | 私生活の範囲。勤務として行わない |
+| 成果物 | 会社へ無断で持ち込まず、規定が整ってから使う |
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-company-ai-banned-personal-learning-gap/slide05-device-boundary.webp" alt="私物端末と会社端末を分けても、会社情報はAIへ入力しないという境界線を示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：私物端末でも会社情報は持ち出さない</figcaption>
+  </figure>
+</section>
+
+## 会社の規定で確認したい5項目
+
+<p class="lead">「AI禁止」の一言だけで判断せず、対象サービス・端末・情報・用途・申請方法を確認します。</p>
+
+- 禁止対象はすべてのAIか、会社が承認していないサービスだけか
+- 会社端末、私物端末、会社アカウントのどこまでが対象か
+- 入力禁止の情報は何か
+- 要約、翻訳、アイデア出しなど用途別の許可範囲はあるか
+- 承認済みツールや利用申請の窓口があるか
+
+規定が見つからなければ、上司や情報システム部門へ「どのサービスを、どの情報で、何の目的に使いたいか」を具体的に伝える方が確認しやすくなります。許可が出るまでは、業務利用を始めないのが安全です。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-company-ai-banned-personal-learning-gap/slide06-policy-check.webp" alt="AI利用規定でサービス、端末、情報、用途、申請方法を確認するチェックリスト図解" loading="lazy" decoding="async" />
+    <figcaption>図解：AI利用規定で見る5項目</figcaption>
+  </figure>
+</section>
+
+## 会社が使い始めたとき、経験の差が出る
+
+<p class="lead">差になるのはモデル名の暗記ではなく、回答を疑い、直し、使える形へ整える経験です。</p>
+
+会社が承認ツールを導入したとき、初めてAIへ触れる人は「何を頼めるか」を探すところから始まります。個人で安全に試した人は、作業を分ける、条件を伝える、出力を検証するという基本動作をすでに経験しています。
+
+ただし、個人で使っている人が必ず仕事でも優れているとは限りません。業務では、社内ルール、専門知識、説明責任、同僚との確認が加わります。個人練習は近道ではなく、会社で正式に使える日へ向けた基礎体力と考えるのが適切です。
+
+利用できるモデルの違いは[GPT-5.6の3モデル解説](/articles/202607-gpt-5-6-sol-terra-luna-release/)、新しいAIを試すときの料金・日本語・データの見方は[Qwen3.8-Maxを含む中国AI3モデルの整理](/articles/202608-china-ai-three-models-qwen38-personal-guide/)で紹介しています。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-company-ai-banned-personal-learning-gap/slide07-skill-gap.webp" alt="AI導入時に、質問、分解、検証、修正の経験が仕事での立ち上がりにつながる様子を示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：差になるのは質問・検証・修正の経験</figcaption>
+  </figure>
+</section>
+
+## まとめ：規定は守る。学ぶ機会まで止めない
+
+会社でAIが禁止されているなら、業務情報を入力したり、会社端末へ無断導入したりしてはいけません。企業側には、情報・契約・責任を整理する必要があります。
+
+それでも、公開情報、自作文、架空データを使って、AIへ頼む・確かめる・直す練習はできます。大切なのは、会社の境界線を越えずに経験を積むことです。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-company-ai-banned-personal-learning-gap/slide08-summary.webp" alt="規定を守る、公開情報で練習する、回答を検証するという3つの結論をまとめた図解" loading="lazy" decoding="async" />
+    <figcaption>図解：禁止中でも守れる3つの行動</figcaption>
+  </figure>
+</section>
+
+<CharacterBubble speaker="himari" mood="aha">仕事の資料を使わなくても、質問と確認の練習はできるんだね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">規定を守りながら基礎を作れば、正式導入されたときに落ち着いて始められるよ。</CharacterBubble>
+
+---
+
+**出典**：[MMD研究所「2026年企業のAI導入・活用に関する調査」](https://mmdlabo.jp/investigation/detail_2547.html)（2026年8月7日発表、2026年8月7日確認）
