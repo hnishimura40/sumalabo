@@ -350,6 +350,20 @@
       "variant": "images4+reply",
       "imagesAttached": 4,
       "replyUrl": "https://x.com/suma_labo/status/2085584000077439010"
+    },
+    {
+      "slug": "202608-solo-business-ai-agent-guide",
+      "articleUrl": "https://sumalabo.com/articles/202608-solo-business-ai-agent-guide/",
+      "postedAt": "2026-08-07T05:16:36.570Z",
+      "postText": "AIエージェント 1人事業｜1人で年商16億円級。AIを従業員代わりにする人が使う「エージェント型」とは\n\n年間売上1,000万ドルを超える1人事業者が約3倍に増えたというStripeの分析を起点に、チャット型AIとエージェント型AIの違い、個人が今使える機能、任せる際の注意点を解説します。\n#すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2085595777293078557",
+      "method": "chrome",
+      "route": "codex",
+      "thumbnailAttached": true,
+      "charCount": 152,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2085596083808522398"
     }
   ]
 }
