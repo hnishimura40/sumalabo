@@ -1,0 +1,243 @@
+---
+title: "中国AIが約1か月で3連発。Qwen3.8-Max、日本の個人は使うべき？"
+slug: "202608-china-ai-three-models-qwen38-personal-guide"
+type: "news"
+category: "ニュースをかみくだく"
+description: "GLM-5.2、Kimi K3、Qwen3.8-Max-Previewが33日間で相次ぎ登場。日本語で使えるのか、月額はいくらか、入力データはどう扱われるのかを一次情報で整理します。"
+thumbnail: "/images/thumbnails/202608-china-ai-three-models-qwen38-personal-guide.webp"
+thumbnailAlt: "中国発のAIモデル3種を前に、日本の個人ユーザーが試す価値を見比べるひまりとらぼまる"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Qwen3.8-Max"
+  - "Kimi K3"
+  - "GLM-5.2"
+  - "中国AI"
+  - "AIモデル比較"
+  - "Alibaba Cloud"
+related:
+  - "ai-model-benchmark-cost-guide-2026"
+  - "202607-openai-gpt-5-6-chatgpt-work"
+  - "202608-google-vids-ai-video-guide"
+pubDate: "2026-08-07"
+updated: "2026-08-07"
+publishAt: "2026-08-07T09:45:00+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+2000年、ソフトバンクグループはまだ売上のなかったアリババへ出資しました。孫正義氏は後年のインタビューで、創業者のジャック・マー氏と会った後に最初の2,000万ドルを投じたと振り返っています。ソフトバンクグループの公式資料では、2000年からの投資総額は74億円とされています。
+
+そのアリババが2026年7月、最新AI「Qwen3.8-Max-Preview」を公開しました。ただし、この記事は投資の成功物語を語るものではありません。日本の個人ユーザーにとって、ChatGPTやClaude、Geminiに加える選択肢になるのかを、**日本語・料金・使い方・データの扱い**から見ます。
+
+<Summary30>
+  <ul>
+    <li>GLM-5.2、Kimi K3、Qwen3.8-Max-Previewは<strong>33日間</strong>で相次いで登場した</li>
+    <li>Qwen3.8は国際向けToken Planで月6ドルから試せるが、一般向けチャットアプリの気軽さとは違う</li>
+    <li>日本語専用の第三者評価は確認できず、普段の作業を同じ条件で試すのが確実</li>
+    <li>Alibaba Cloud Model Studioは、別途同意がない限り顧客データを学習へ使わないと明記している</li>
+    <li>すでにChatGPT・Claude・Geminiで困っていない人が、急いで乗り換える必要はない</li>
+  </ul>
+</Summary30>
+
+<NumCards items={[
+  { num: "33日", cap: "3モデルが登場した期間" },
+  { num: "2.4兆", cap: "Qwen3.8の総パラメータ数" },
+  { num: "$6〜", cap: "国際向けToken Planの月額" },
+]} />
+
+<CharacterBubble speaker="himari" mood="curious">また大きなモデル？ 日本で普通に使う人にも関係あるのかな。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">数字より、入口の分かりやすさ、日本語、料金、入力データの条件を順番に見よう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-china-ai-three-models-qwen38-personal-guide/slide01-conclusion.webp" alt="中国AIの3モデルを、日本語、料金、使い方、データの4項目で確認するという結論を示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：見るべきはスコアより4つの実用条件</figcaption>
+  </figure>
+</section>
+
+## 約1か月で3モデル。何が起きている？
+
+2026年6月16日にZ.aiが「GLM-5.2」、7月16日にMoonshot AIが「Kimi K3」、7月19日にAlibaba Cloudが「Qwen3.8-Max-Preview」を発表しました。最初と最後の間は33日です。
+
+<Timeline>
+  <TimelineItem date="6/16">Z.aiがGLM-5.2を公開。100万トークンの文脈長とオープンウェイトを案内</TimelineItem>
+  <TimelineItem date="7/16">Kimi K3を公開。2.8兆パラメータ、画像理解、100万トークンを案内</TimelineItem>
+  <TimelineItem date="7/19" hot>Qwen3.8-Max-Previewを国際向けToken Planで公開</TimelineItem>
+</Timeline>
+
+3社とも、巨大なモデルを研究発表だけで終わらせず、Webサービス、開発者向けAPI、コーディングツールなどへつなげています。モデルの大きさだけでなく、個人が払える月額プランまで同時に競っているのが今回の特徴です。
+
+ただし、3モデルの数字は同じ条件で並べられません。各社が公開するベンチマークは基本的に**開発元による自己評価**です。Kimi K3には公開後の第三者ランキングに関する報道がありますが、Qwen3.8-Max-Previewは2026年8月7日時点で、一般ユーザーが横並びに判断できる独立検証が十分にそろっていません。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-china-ai-three-models-qwen38-personal-guide/slide02-three-releases.webp" alt="GLM-5.2、Kimi K3、Qwen3.8-Max-Previewが33日間で発表された時系列の図解" loading="lazy" decoding="async" />
+    <figcaption>図解：33日間で3つの大型モデル</figcaption>
+  </figure>
+</section>
+
+## Qwen3.8-Max-Previewとは？ 2.4兆でも全部を毎回動かさない
+
+Alibaba Cloudの公式資料は、Qwen3.8-Max-Previewを**2.4兆パラメータ**のモデルと説明しています。パラメータは、AIが学習で得た調整値のようなものです。数が大きいほど必ず使いやすい、という意味ではありませんが、モデル規模を知る目安にはなります。
+
+Qwen系では、たくさんの「専門チーム」を用意し、質問に合う一部だけを働かせるMoE（Mixture of Experts）方式が使われてきました。会社全員を毎回会議へ呼ぶのではなく、案件に合う担当者だけを集めるイメージです。巨大モデルでも、毎回すべてを同時に動かさず、計算量を抑えられます。
+
+<Callout type="info" title="約950億稼働・100万トークン・動画入力は断定しません">
+  2.4兆という総パラメータ数と、推論・画像理解・テキスト生成への対応は公式資料で確認できました。一方、Qwen3.8-Max-Previewについて「毎回約950億を動かす」「100万トークン」「動画入力対応」という数字・仕様は、2026年8月7日時点で確認できた公式製品資料には明記されていません。旧モデルや別シリーズの仕様と混ぜず、本記事では確定情報として扱いません。
+</Callout>
+
+名前に「Preview」とある通り、正式な固定版ではありません。Alibaba Cloudも、予告なく機能変更、提供終了、別モデルへの置き換えがあり得ると案内しています。重要な定型業務へすぐ固定するより、まず試用する段階のモデルです。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-china-ai-three-models-qwen38-personal-guide/slide03-moe.webp" alt="多数の専門家から必要な一部だけが働くMoE方式を会社のチームに例えた図解" loading="lazy" decoding="async" />
+    <figcaption>図解：2.4兆を毎回全部動かす、という意味ではない</figcaption>
+  </figure>
+</section>
+
+## 日本語で使える？ 「入力できる」と「自然に使える」は別
+
+Qwen3.8-Max-Previewは国際向けAlibaba Cloud Model Studioで提供され、テキスト生成と画像理解に対応しています。日本からアクセスできるWeb上の管理画面や、開発者向けの接続手段も用意されています。
+
+ただし、公式発表には日本語専用の品質評価が見当たりません。日本語を入力できても、敬語、固有名詞、長文のニュアンス、国内制度の説明がどこまで自然かは別問題です。
+
+個人で試すなら、次のような**自分が普段する作業**を、現在使っているAIと同じ条件で比べるのが現実的です。
+
+- 日本語のメールを、意味を変えずに短くする
+- 長いPDFから指定した項目だけを抜き出す
+- 国内サービスの説明文を読み、分からない点を質問する
+- 自分が内容を把握している文章を校正させる
+
+回答の自然さだけでなく、固有名詞、数字、出典が保たれているかも見てください。日本語ベンチマークの数字が見つからない以上、1回の派手な回答より、同じ作業を数回繰り返したときの安定性が判断材料になります。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-china-ai-three-models-qwen38-personal-guide/slide04-japanese-test.webp" alt="日本語メール、PDF、固有名詞、数字を同じ条件で試す方法を示した図解" loading="lazy" decoding="async" />
+    <figcaption>図解：日本語は普段の作業で確かめる</figcaption>
+  </figure>
+</section>
+
+## どうやって使う？ 料金はいくら？
+
+2026年8月7日時点で、個人がQwen3.8-Max-Previewへ触れる現実的な入口は、Alibaba Cloud Model Studioの国際向けToken Planです。
+
+| プラン | 月額 | 位置づけ |
+|---|---:|---|
+| Lite | 6ドル | 少量から試したい個人向け |
+| Standard | 18ドル | 日常的なコーディングや長めの作業向け |
+| Pro | 68ドル | 高頻度・複数作業向け |
+
+これは期間限定の開始価格です。税、為替、利用条件、含まれるトークン量は申込画面で確認してください。ChatGPTのように月額を払えば誰でも同じアプリ画面ですぐ使える、というより、Model StudioやQwen Codeなど開発・制作寄りの入口です。
+
+公式資料で確認できる主な手段は次の通りです。
+
+- Alibaba Cloud Model Studioの管理画面
+- Token Planの専用APIキー
+- Qwen Codeなど対応するコーディングツール
+- 対応するHarnessツールからの呼び出し
+
+オープンウェイトについては、GLM-5.2とKimi K3が公式に公開方針を示しています。一方、Qwen3.8-Max-Previewの同一モデルを個人PCへダウンロードして動かせるとする公式案内は、確認できた製品資料にはありません。2.4兆級モデルを手元で動かすこと自体も、一般的な個人PCの用途ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-china-ai-three-models-qwen38-personal-guide/slide05-access-price.webp" alt="Qwen3.8-Max-Previewの月6ドル、18ドル、68ドルのプランと、Model StudioやQwen Codeから使う入口を示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：月6ドルから。ただし入口は開発・制作寄り</figcaption>
+  </figure>
+</section>
+
+## 入力したデータはどう扱われる？
+
+Alibaba Cloud Model Studioのプライバシー通知と利用規約では、顧客データをモデル学習へ使わず、別途の同意がなければモデルの開発・改善にも使わないと説明しています。入力と出力は利用者側のコンテンツとして扱われ、Alibaba Cloudはサービス提供のために処理します。
+
+同時に、入力するデータについて必要な権利や同意を得る責任は利用者側にあります。AI側が「学習に使わない」と案内していても、勤務先の機密、顧客情報、健康情報、未公開資料を自由に入力してよいという意味ではありません。
+
+<Note>まずは公開情報や自作のダミーデータで試し、仕事で使う場合は所属組織のAI利用ルールを優先してください。</Note>
+
+この説明は**Alibaba Cloud Model Studio**の公式規約に基づくものです。別のQwenアプリや第三者サービス経由で使う場合は、そのサービスの規約と保存設定を別に確認する必要があります。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-china-ai-three-models-qwen38-personal-guide/slide06-data-rules.webp" alt="公開情報、個人データ、業務機密を分け、Model Studioの規約と組織ルールを確認する図解" loading="lazy" decoding="async" />
+    <figcaption>図解：学習不使用と、入力してよい情報は別</figcaption>
+  </figure>
+</section>
+
+## ChatGPT・Claude・Geminiから乗り換える意味はある？
+
+結論から言うと、**今のAIで困っていない人が急いで全面移行する必要はありません**。
+
+ChatGPT、Claude、Geminiは、日本語での案内、スマホアプリ、決済、検索やファイル連携などを含め、一般ユーザー向けの入口が整っています。モデル単体の価格や規模だけで、普段の使いやすさが逆転するわけではありません。
+
+一方、次の人には試す意味があります。
+
+- コーディングエージェントで複数モデルを比較したい
+- APIや開発ツールの設定に抵抗がない
+- 月6ドルから新しい選択肢を検証したい
+- 画像を含む資料理解や長い作業を、自分の課題で比較したい
+- オープンモデルを含む中国発AIの進化を継続的に追いたい
+
+向かないのは、「設定なしですぐ日本語相談を始めたい」「一つのアプリですべて済ませたい」「Previewの変更に付き合いたくない」という人です。
+
+ChatGPTの機能全体は[GPT-5.6とChatGPT Workの整理](/articles/202607-openai-gpt-5-6-chatgpt-work/)、動画制作でAIを使う流れは[Google Vidsの実機ガイド](/articles/202608-google-vids-ai-video-guide/)で紹介しています。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-china-ai-three-models-qwen38-personal-guide/slide07-switch-or-test.webp" alt="現在のAIを継続する人と、Qwen3.8を追加で試す人の判断軸を示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：乗り換えより、まず追加で試す</figcaption>
+  </figure>
+</section>
+
+## まとめ：一般ユーザーは急がない。比較したい人は低リスクで試す
+
+中国発の大型AIが33日間で3つ登場したことは、モデル開発と価格競争が速くなっている証拠です。ただし、日本の個人ユーザーにとって重要なのは、最大スコアではありません。
+
+1. 日本語で普段の作業が安定するか
+2. 自分が使える入口と料金か
+3. Previewの変更を許容できるか
+4. 入力データの規約を理解できるか
+
+この4点で判断すれば十分です。Qwen3.8-Max-Previewは、APIやコーディングツールを使う人には面白い比較対象です。一方、一般的な相談や調べ物が中心なら、現在のChatGPT・Claude・Geminiを続け、独立評価と日本語での実績が増えてから見直しても遅くありません。
+
+モデル名が増えるたびに迷う人は、常設の[AIモデル、結局どれを使えばいい？ ベンチマークとコスパの読み方2026](/articles/ai-model-benchmark-cost-guide-2026/)もあわせて確認してください。
+
+<CharacterBubble speaker="himari" mood="smile">すぐ乗り換えなくても、公開情報で同じ作業を試せば、自分に合うか分かるね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">大きな数字は入口。最後は日本語、料金、使いやすさ、データの条件で決めよう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-china-ai-three-models-qwen38-personal-guide/slide08-checklist.webp" alt="日本語、入口と料金、Preview、データ規約の4項目で試す価値を判断するチェックリスト" loading="lazy" decoding="async" />
+    <figcaption>図解：試す前の4点チェック</figcaption>
+  </figure>
+</section>
+
+## 参考情報
+
+- [SoftBank Group Report 2026「Who We Are」](https://group.softbank/en/ir/financials/annual_reports/2026/who_we_are)
+- [SoftBank Group Report 2023「CFO Message」](https://group.softbank/en/ir/financials/annual_reports/2023/message/goto)
+- [Bloomberg「Masayoshi Son on the $20 Million Alibaba Investment」](https://www.youtube.com/watch?v=vPt1PG-Kznk)
+- [Z.ai「GLM-5.2: From Idea to Execution」](https://z.ai/blog/glm-5.2)
+- [Kimi「Kimi K3 Tech Blog」](https://www.kimi.com/blog/kimi-k3)
+- [Kimi Code Docs「Kimi K3 — July 16, 2026」](https://www.kimi.com/code/docs/en/kimi-code/whats-new.html)
+- [Kimi K3 Technical Report](https://arxiv.org/abs/2607.24653)
+- [Alibaba Cloud Model Studio「Token Plan for Individual Developers」](https://modelstudio.alibabacloud.com/intl/blog/model-studio-token-plan-individual/)
+- [Alibaba Cloud「Qwen3.8-Max-Preview」](https://help.aliyun.com/zh/lingma/qwen3-8-max-preview-limited-time-offer)
+- [Alibaba Cloud「Token Plan」](https://www.alibabacloud.com/help/ja/model-studio/token-plan-team-overview)
+- [Alibaba Cloud Model Studio Privacy Notice](https://www.alibabacloud.com/help/en/model-studio/privacy-notice)
+- [Alibaba Cloud Model Studio Terms of Service](https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0)
+- [Alibaba Cloud「Qwen and Wan Training Data Disclosure」](https://www.alibabacloud.com/help/en/model-studio/qwen-and-wan-training-data-disclosure)
+- [AP「Kimi K3 and China’s open-model push」](https://apnews.com/article/4c66a2e0f557ce79d3cc2d769c9a6226)
