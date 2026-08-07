@@ -322,6 +322,20 @@
       "variant": "images4+reply",
       "imagesAttached": 4,
       "replyUrl": "https://x.com/suma_labo/status/2085516569392947453"
+    },
+    {
+      "slug": "202608-china-ai-three-models-qwen38-personal-guide",
+      "articleUrl": "https://sumalabo.com/articles/202608-china-ai-three-models-qwen38-personal-guide/",
+      "postedAt": "2026-08-07T01:11:32.596Z",
+      "postText": "中国AIが約1か月で3連発。Qwen3.8-Max、日本の個人は使うべき\n\nGLM-5.2、Kimi K3、Qwen3.8-Max-Previewが33日間で相次ぎ登場。日本語で使えるのか、月額はいくらか、入力データはどう扱われるのかを一次情報で整理します。\n#すまラボ",
+      "postUrl": "https://x.com/suma_labo/status/2085534178259689721",
+      "method": "chrome",
+      "route": "codex",
+      "thumbnailAttached": true,
+      "charCount": 135,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2085534585153335366"
     }
   ]
 }
