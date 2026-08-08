@@ -33,7 +33,7 @@ Phase A完了後に停止 → Preview承認 → Phase B → 停止 → X投稿�
 
 **動作:** 本番公開の事後検査合格後、自動でX投稿する。投稿後にカード確認・投稿URL取得・台帳記録まで自動。
 
-> **2026-07-27 経路注記**: 昼の立ち会いPhase CはCodex対話モード＋Chrome拡張を標準とする決定で、7/23の移行見送り判断を上書きした。ただしL2/夜間の無人経路は別問題であり、現在はClaude＋`claude-in-chrome`のまま。Codexへ切り替える実装はHiroの追加承認後に行う。
+> **2026-08-08 経路注記**: 昼夜とも親実行主体とPhase CをCodexへ統一した。夜間は非対話`codex exec`とCodex Browserを使い、台帳は`route: codex`とする。Claude Codeと`claude-in-chrome`は使用しない。
 
 **前提条件:**
 

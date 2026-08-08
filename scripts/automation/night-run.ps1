@@ -2,8 +2,8 @@
 #
 # 役割:
 #   1. 多重起動ガード（前夜/当夜の run が生きていたら新規起動しない）
-#   2. testMode の軽量プリフライト（非アクティブなら Claude を起動すらしない）
-#   3. ヘッドレス Claude Code（claude -p / モデル claude-opus-4-8 / 最小 allowlist）で
+#   2. testMode の軽量プリフライト（非アクティブなら Codex を起動すらしない）
+#   3. 非対話 Codex（codex exec）で
 #      docs/night_driver_prompt.md を実行
 #   4. ログ全量を logs/night/{date}.log に保存
 #
@@ -12,7 +12,7 @@
 
 param(
   # ブラウザ経路だけドライラン実測（Chrome起動→DevTools→chrome-preflight）。
-  # testMode を消費せず、claude 本体も起動しない。修正の実測確認用。
+  # testMode を消費せず、Codex 本体も起動しない。修正の実測確認用。
   [switch]$BrowserCheckOnly,
   # 記事を作らず独立起動・直接ログ・PID/heartbeat・終了回収を実測する。
   [switch]$RunnerSelfTest
@@ -80,21 +80,22 @@ if (-not $BrowserCheckOnly) {
     }
     Remove-Item $LockFile -Force -Confirm:$false
   }
-  @{ pid=$PID; parentPid=$PID; startedAt=(Get-Date).ToString("o"); heartbeatAt=(Get-Date).ToString("o"); status="starting"; selfTest=[bool]$RunnerSelfTest } |
+  @{ runId=$RunId; pid=$PID; parentPid=$PID; startedAt=$RunStartedAt; heartbeatAt=(Get-Date).ToString("o"); status="starting"; selfTest=[bool]$RunnerSelfTest } |
     ConvertTo-Json | Set-Content $LockFile -Encoding utf8
 }
 
-function Invoke-ClaudeIsolated([string]$PromptText, [string[]]$ClaudeArgs, [string]$OutputFile, [string]$Label) {
+function Invoke-CodexIsolated([string]$PromptText, [string[]]$CodexArgs, [string]$OutputFile, [string]$Label) {
   $PromptPath = Join-Path $NightDir "$DateStr.$Label.prompt.md"
   $ArgsPath = Join-Path $NightDir "$DateStr.$Label.args.json"
   $RunnerOut = Join-Path $NightDir "$DateStr.$Label.runner.log"
   $RunnerErr = Join-Path $NightDir "$DateStr.$Label.runner.err.log"
   Remove-Item -LiteralPath $RunnerOut,$RunnerErr -Force -ErrorAction SilentlyContinue
   Set-Content -LiteralPath $PromptPath -Value $PromptText -Encoding utf8
-  $ClaudeArgs | ConvertTo-Json | Set-Content -LiteralPath $ArgsPath -Encoding utf8
+  $CodexArgs | ConvertTo-Json | Set-Content -LiteralPath $ArgsPath -Encoding utf8
   $nodeExe = (Get-Command node -ErrorAction Stop).Source
   $launcher = Join-Path $RepoRoot "scripts\automation\night-process-runner.mjs"
-  $launcherArgs = @($launcher, "--prompt-file", $PromptPath, "--args-file", $ArgsPath, "--output-file", $OutputFile, "--state-file", $LockFile, "--claude-exe", "C:\Users\hnish\.local\bin\claude.exe", "--heartbeat-ms", "15000")
+  $CodexExe = "C:\Users\hnish\AppData\Roaming\npm\node_modules\@openai\codex\node_modules\@openai\codex-win32-x64\vendor\x86_64-pc-windows-msvc\bin\codex.exe"
+  $launcherArgs = @($launcher, "--prompt-file", $PromptPath, "--args-file", $ArgsPath, "--output-file", $OutputFile, "--state-file", $LockFile, "--agent-exe", $CodexExe, "--heartbeat-ms", "15000")
   $proc = Start-Process -FilePath $nodeExe -ArgumentList $launcherArgs -RedirectStandardOutput $RunnerOut -RedirectStandardError $RunnerErr -WindowStyle Hidden -Wait -PassThru
   if (Test-Path $RunnerErr) { Get-Content $RunnerErr -ErrorAction SilentlyContinue | Add-Content $RunnerOut -Encoding utf8 }
   Copy-Item -LiteralPath $LockFile -Destination $HeartbeatFile -Force -ErrorAction SilentlyContinue
@@ -102,7 +103,7 @@ function Invoke-ClaudeIsolated([string]$PromptText, [string[]]$ClaudeArgs, [stri
 }
 
 try {
-  if ($BrowserCheckOnly) { Log "=== BrowserCheckOnly ドライラン（testMode未消費・claude未起動） ===" }
+  if ($BrowserCheckOnly) { Log "=== BrowserCheckOnly ドライラン（testMode未消費・Codex未起動） ===" }
   if ($RunnerSelfTest) { Log "=== RunnerSelfTest（testMode未消費・記事生成なし） ===" }
 
   # ---- 1-bis. Codex画像archiveの期限整理 ----
@@ -118,7 +119,7 @@ try {
     }
   }
 
-  # ---- 2. 軽量プリフライト（Claude を起動する前に node だけで判定） ----
+  # ---- 2. 軽量プリフライト（Codex を起動する前に node だけで判定） ----
   # ドライランでは testMode ゲートをスキップ（ブラウザ経路だけ確かめたいため）。
   if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) {
     Log "preflight: test-mode --status"
@@ -126,7 +127,7 @@ try {
     $preflightExit = $LASTEXITCODE
     Log ($preflight | Out-String).Trim()
     if ($preflightExit -ne 0) {
-      Log "SKIP: 恒久夜間運転が非アクティブ（exit $preflightExit）。Claude を起動しません。"
+      Log "SKIP: 恒久夜間運転が非アクティブ（exit $preflightExit）。Codex を起動しません。"
       node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'skipped',title:'[夜間run] 夜間運転スキップ（恒久運転非アクティブ/実行済み）'}))" 2>&1 | Out-Null
       $exitCode = Record-ContractOutcome "fail" "preflight_inactive" "test-mode --status exit=$preflightExit"
       exit $exitCode
@@ -134,13 +135,13 @@ try {
   }
 
   # ---- 2-bis. Chrome 起動確認（デフォルトプロファイル・拡張経路） ----
-  # 夜間ドライバー（claude）は claude-in-chrome 拡張で **デフォルトプロファイルの Chrome** を
+  # 夜間ドライバー（Codex）はCodex BrowserのChrome連携で **デフォルトプロファイルの Chrome** を
   # 操作する（ここが ChatGPT/X ログイン済み・拡張ペアリング済みの本番環境）。
   # 【Chrome 136+ 対応】Chrome 136 以降、デフォルトプロファイルでの --remote-debugging-port は
   # 無効化される（実測 2026-07-09 / Chrome 150：デフォルトではポート bind せず、専用 user-data-dir
   # なら bind）。そのため **debug-port ベースのプリフライトは使わない**。実操作は拡張が担うので、
   # ここでは「Chrome が起動していて拡張が接続できる状態」だけ保証する。**ChatGPT/X ログイン生存の
-  # 検査は claude 側（拡張）で行う**（docs/night_driver_prompt.md 0-bis）。
+  # 検査は Codex Browser 側で行う（docs/night_driver_prompt.md 0-bis）。
   $ChromeExe = "C:\Program Files\Google\Chrome\Application\chrome.exe"
   if (-not (Test-Path $ChromeExe)) { $ChromeExe = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" }
 
@@ -172,15 +173,15 @@ try {
   }
 
   if ($BrowserCheckOnly) {
-    Log "=== BrowserCheckOnly OK: Chrome起動を確認。ChatGPT/Xログイン生存と拡張接続はdriver側（拡張）で検査する設計。claudeは起動せず終了（testMode未消費） ==="
+    Log "=== BrowserCheckOnly OK: Chrome起動を確認。Xログイン生存と拡張接続はCodex Browserで検査する設計。Codexは起動せず終了（testMode未消費） ==="
     exit 0
   }
 
   if ($RunnerSelfTest) {
-    $SelfTestLog = Join-Path $NightDir "$DateStr.runner-selftest.claude.log"
+    $SelfTestLog = Join-Path $NightDir "$DateStr.runner-selftest.codex.log"
     Remove-Item -LiteralPath $SelfTestLog -Force -ErrorAction SilentlyContinue
-    $selfArgs = @("-p", "--model", "claude-opus-4-8", "--chrome", "--max-turns", "1")
-    $selfExit = Invoke-ClaudeIsolated "Reply with exactly RUNNER_SELFTEST_OK and nothing else." $selfArgs $SelfTestLog "runner-selftest"
+    $selfArgs = @("exec", "--ephemeral", "--sandbox", "read-only", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
+    $selfExit = Invoke-CodexIsolated "Reply with exactly RUNNER_SELFTEST_OK and nothing else. Do not use tools." $selfArgs $SelfTestLog "runner-selftest"
     $selfState = Get-Content $HeartbeatFile -Raw -Encoding utf8 | ConvertFrom-Json
     $selfOutput = Get-Content $SelfTestLog -Raw -Encoding utf8
     if ($selfExit -ne 0 -or $selfState.status -ne "completed" -or -not $selfState.childPid -or -not $selfState.heartbeatAt -or $selfOutput -notmatch "RUNNER_SELFTEST_OK") {
@@ -218,27 +219,25 @@ try {
     $exitCode = Record-ContractOutcome "fail" "invalid_or_expired_acceptance_request" "articlePipelineStarted=false"
     exit $exitCode
   }
-  # ---- 3. ヘッドレス Claude Code 起動 ----
+  # ---- 3. 非対話 Codex 起動 ----
   $PromptFile = Join-Path $RepoRoot "docs\night_driver_prompt.md"
   $Prompt = Get-Content $PromptFile -Raw -Encoding utf8
   # 最小 allowlist: 開発ツール一式 + Chrome MCP（ChatGPT 画像生成 / X 投稿に必須）。
   # 破壊的操作（git push -f 等）は allowlist に含めない。
-  $AllowedTools = "Bash Read Write Edit Glob Grep ToolSearch TaskCreate TaskUpdate mcp__claude-in-chrome__*"
-
-  # claude の出力は専用ファイルへ（runner 本体ログや tail との Add-Content ロック競合を避ける。
+  # Codex の出力は専用ファイルへ（runner 本体ログや tail との Add-Content ロック競合を避ける。
   # 2026-07-05 の初回実走で Add-Content が sharing violation で全損した対策）
-  $ClaudeLog = Join-Path $NightDir "$DateStr.claude.log"
-  Log "launch: claude -p (model=claude-opus-4-8, --chrome) -> $ClaudeLog"
+  $CodexLog = Join-Path $NightDir "$DateStr.codex.log"
+  Log "launch: codex exec (ephemeral, workspace-write) -> $CodexLog"
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
-  $claudeArgs = @("-p", "--model", "claude-opus-4-8", "--chrome", "--allowedTools", $AllowedTools, "--max-turns", "1200")
-  $claudeExit = Invoke-ClaudeIsolated $Prompt $claudeArgs $ClaudeLog "claude"
+  $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
+  $codexExit = Invoke-CodexIsolated $Prompt $codexArgs $CodexLog "codex"
   $sw.Stop()
-  Log "claude exited: code=$claudeExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"
+  Log "codex exited: code=$codexExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"
 
   # ---- 3-bis. 一過性エラーの再試行 ----
   # night-process-runner が overloaded / rate limit / timeout / temporary unavailable
   # だけを30分後に1回再試行する。ここでは二重再試行を行わない。
-  if ($claudeExit -ne 0) {
+  if ($codexExit -ne 0) {
     # An intentional stop command returns a nonzero scheduler code by design.
     # Preserve an already-recorded stopped outcome instead of overwriting it.
     if (Test-Path $ContractFile) {
@@ -247,26 +246,26 @@ try {
       Log (($audit | Out-String).Trim())
       exit $contractExit
     }
-    Log "runner最終失敗: 1回の一過性再試行後または恒久エラー（exit $claudeExit）。追加再試行せず停止。"
-    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[夜間run] 夜間運転が最終失敗（exit $claudeExit）。一過性再試行は最大1回'}))" 2>&1 | Out-Null
-    $exitCode = Record-ContractOutcome "fail" "claude_final_failure" "claude exit=$claudeExit"
+    Log "runner最終失敗: 1回の一過性再試行後または恒久エラー（exit $codexExit）。追加再試行せず停止。"
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[夜間run] Codexが最終失敗（exit $codexExit）。一過性再試行は最大1回'}))" 2>&1 | Out-Null
+    $exitCode = Record-ContractOutcome "fail" "codex_final_failure" "codex exit=$codexExit"
     exit $exitCode
   }
   # ---- 4. Phase B/C 未完の即時救済 ----
-  # Claudeがexit 0でもPhase Aで終わった場合、承認や時刻待ちには入らない。
+  # Codexがexit 0でもPhase Aで終わった場合、承認や時刻待ちには入らない。
   # veto済みでないreview_waitingを1回だけ即時Phase Bへ進める。
   try {
     $pending = (node scripts/automation/auto-phase-b.mjs --decide 2>$null | Out-String)
     if ($pending -match '対象:') {
       Log "Phase B fallback: review_waitingを即時公開する。"
-      node scripts/automation/auto-phase-b.mjs 2>&1 | Out-File -FilePath $ClaudeLog -Encoding utf8 -Append
+      node scripts/automation/auto-phase-b.mjs 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
       if ($LASTEXITCODE -ne 0) { Log "Phase B fallback failed: exit=$LASTEXITCODE" }
     }
   } catch {
     Log "Phase B fallback error: $($_.Exception.Message)"
   }
 
-  # Claudeや補助ファイルの終了状態はsuccessの根拠にしない。記事URL、PR、
+  # Codexや補助ファイルの終了状態はsuccessの根拠にしない。記事URL、PR、
   # strict verify、X二段階台帳をここで実物照合し、4点が揃った場合だけ0を返す。
   if (Test-Path $ContractFile) {
     $audit = & node $ContractScript audit --run-id $RunId 2>&1

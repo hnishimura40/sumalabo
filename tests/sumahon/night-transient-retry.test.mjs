@@ -32,7 +32,7 @@ test("一過性失敗は待機後1回だけ再試行して成功する", async (
   ].join("\n"));
   const code = await runIsolated({
     "prompt-file": prompt, "args-file": args, "output-file": output,
-    "state-file": state, "claude-exe": process.execPath,
+    "state-file": state, "agent-exe": process.execPath,
     "heartbeat-ms": "5", "retry-delay-ms": "0",
   });
   assert.equal(code, 0);
@@ -55,7 +55,7 @@ test("恒久エラーは再試行しない", async () => {
   writeFileSync(helper, 'import fs from "node:fs";const p=process.argv[2];fs.writeFileSync(p,"1");console.error("quality gate failed");process.exit(1)');
   const code = await runIsolated({
     "prompt-file": prompt, "args-file": args, "output-file": output,
-    "state-file": state, "claude-exe": process.execPath,
+    "state-file": state, "agent-exe": process.execPath,
     "heartbeat-ms": "5", "retry-delay-ms": "0",
   });
   assert.equal(code, 1);

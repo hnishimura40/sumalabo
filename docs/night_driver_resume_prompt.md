@@ -58,7 +58,7 @@ docs/night_driver_prompt.md の該当節に**そのまま従う**:
   `write_mdx`（v3 コンポーネント / `publishAt` は**現在時刻より前**）→ `finalize`。
 - finalize OK なら、一次独立検品と手の二段検品を実施し、`npm run sumalabo:inspect-hands:gate -- --slug {{SLUG}}` がPASSしてから、承認・待機分岐を挟まず **Phase B**（PR merge → `deploy:production --run-mode=night` → strict verify 8/8 →
   ledger `published`）→ **Phase C**（X 投稿・タイムボックス 5 分/3 回・背面タブなら text_only）。
-- 夜間Phase Cの実行経路は、Hiroが別途変更を承認するまで現行の無人Claude＋`claude-in-chrome`を維持する。投稿記録には `--route claude-in-chrome` を必ず付け、`x-posted.json` に実経路を残す。
+- 夜間Phase CはCodex Browserで実行する。CLIからアプリ内ブラウザが提供されない場合はCodexのChrome連携を使い、投稿記録には `--route codex` を必ず付ける。Claude Codeと`claude-in-chrome`は使用しない。
 - 投稿直前に読者が使う自然検索語でXを1回検索し、結果内で実際に使われているハッシュタグを収集・集計する。最多の流入タグを0〜2個選び、--search-phrase と --discovered-traffic-tags で再生成する。ブランドタグは #すまラボ 常時1個、カテゴリタグは廃止。本文1行目に自然検索語があることを確認する。
 - Phase C 前に通常の独立検品に続けて `npm run sumalabo:inspect-hands -- --slug {{SLUG}}` を実行し、手が見える画像だけをクロップして別 Codex セッションで左右・接続・指比率を二段検品する。`needs_revision` が残る間は Phase C へ進まない。
 - 各 Phase の所要時間を `test-mode.mjs --phase-timing` で記録。
