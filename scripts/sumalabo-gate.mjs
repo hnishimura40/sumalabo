@@ -36,6 +36,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { findProductNameVariants, FORMAL_PRODUCT_NAMES_PATH, loadFormalProductNames } from "./sumahon/formal-product-names.mjs";
 import { scanRepositoryForSecrets } from "./automation/secret-scan.mjs";
+import { scanRenderedArticleHtml } from "./sumahon/rendered-markdown-scan.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
@@ -532,39 +533,30 @@ function checkDistOgp(slug) {
   }
 }
 
-// dist の rendered HTML に「生の Markdown 記法」が残っていないか検査する
-// （2026-07-19 追加）。CJK の intra-word で **bold** が未変換のまま出る等を検出。
-// 記法掃除は dist ベースで判定する（source の ** は正常にレンダされる場合もあるため）。
-function checkDistRawMarkdown(slug) {
-  const htmlPath = path.join(CONFIG.distDir, "articles", slug, "index.html");
-  const html = readTextOrNull(htmlPath);
-  if (html === null) {
-    report("warning", "dist-raw-markdown", htmlPath, "dist が未 build のため記法掃除の実測をスキップ");
-    return;
-  }
-  // <script>（JSON-LD 等）を除いた本文領域だけを対象にする。
-  const body = html.replace(/<script[\s\S]*?<\/script>/gi, "");
-  const checks = [
-    { re: /\*\*/g, label: "未変換の太字記法 **（<strong> を使うか、CJK 語中では ** を避ける）" },
-    { re: /(^|[^!])\]\(https?:\/\//g, label: "未変換のリンク記法 ](http…（Markdown リンクが素で出ている）" },
-  ];
-  for (const { re, label } of checks) {
-    const m = body.match(re);
-    if (m && m.length > 0) {
-      // 文脈を1つ添える
-      const idx = body.search(re);
-      const ctx = body.slice(Math.max(0, idx - 20), idx + 30).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-      report("violation", "dist-raw-markdown", htmlPath, `${label} が ${m.length} 箇所（例: …${ctx}…）`);
-    }
-  }
-}
-
 // ---- 全記事棚卸し（--audit・2026-07-25 追加）----
 // stage draft/full は制作中の 1 記事しか見ないため、公開済み記事に禁則語が残り
 // 続ける死角があった。ここでは content/articles/ の MDX を全部走査し、
 // frontmatter（title / description を含む）と本文の両方を検査する。
 // 通常の stage full は本文のみを "mdx" スコープで見るが、棚卸しでは
 // タイトルにも同じパターンを効かせたいので frontmatter も同スコープで検査する。
+// dist の本文HTMLは、コード・数式を除外して生のMarkdown記法を検出する。
+function checkDistRawMarkdown(slug) {
+  const htmlPath = path.join(CONFIG.distDir, "articles", slug, "index.html");
+  const html = readTextOrNull(htmlPath);
+  if (html === null) {
+    report("warning", "dist-raw-markdown", htmlPath, "dist is not built; rendered Markdown scan skipped");
+    return;
+  }
+  const scan = scanRenderedArticleHtml(html);
+  if (!scan.articleFound) {
+    report("violation", "dist-raw-markdown", htmlPath, "article-content was not found");
+    return;
+  }
+  for (const finding of scan.findings) {
+    report("violation", "dist-raw-markdown", htmlPath, `${finding.kind}: ${finding.match} (...${finding.context}...)`);
+  }
+}
+
 function runAudit(patterns) {
   const dir = CONFIG.articlesDir;
   if (!existsSync(dir)) {
