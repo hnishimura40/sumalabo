@@ -250,6 +250,21 @@ export function recordRunOutcome(result, { root = ROOT, startedAt = null, finish
 
 export async function auditRecordedOutcome(record, options = {}) {
   if (!record) return { outcome: OUTCOMES.FAILED, reason: "outcome_record_missing", mismatch: true };
+  // A one-off scheduled acceptance is intentionally recorded as stopped.  It
+  // must never mask a later production attempt that has not written a contract
+  // record yet (for example, when the runner is externally terminated).
+  const activeAttemptMs = Date.parse(options.activeAttemptAt || "");
+  const recordedFinishedMs = Date.parse(record.finishedAt || record.startedAt || "");
+  if (Number.isFinite(activeAttemptMs) && (!Number.isFinite(recordedFinishedMs) || activeAttemptMs > recordedFinishedMs)) {
+    return {
+      outcome: OUTCOMES.FAILED,
+      reason: "current_attempt_missing_contract",
+      mismatch: true,
+      recordedOutcome: record.outcome,
+      recordedRunId: record.runId,
+      activeAttemptAt: options.activeAttemptAt,
+    };
+  }
   if (record.outcome === OUTCOMES.STOPPED) {
     const valid = ALLOWED_STOP_REASONS.has(record.reason);
     return { ...record, outcome: valid ? OUTCOMES.STOPPED : OUTCOMES.FAILED, mismatch: !valid };
@@ -369,7 +384,7 @@ async function main() {
   }
   if (command === "audit") {
     const record = args["run-id"] ? readJson(outcomeFile(args["run-id"], root)) : latestOutcomeForDate(args.date, root);
-    printAndExit(await auditRecordedOutcome(record, { root }));
+    printAndExit(await auditRecordedOutcome(record, { root, activeAttemptAt: args["active-at"] || null }));
     return;
   }
   if (command === "intervene" || command === "correction") {

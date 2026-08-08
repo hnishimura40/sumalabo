@@ -115,6 +115,20 @@ test("8/8-type preflight stop without a permitted stop record is detected", asyn
   assert.match(actual.reason, /slug_not_resolved/);
 });
 
+test("a scheduled-acceptance stop cannot mask a later run without a contract", async () => {
+  const root = fixture();
+  const stopped = recordRunOutcome({ runId: RUN_ID, outcome: OUTCOMES.STOPPED, reason: "scheduled_acceptance" }, {
+    root,
+    startedAt: "2026-08-08T01:01:30.000Z",
+    finishedAt: "2026-08-08T01:01:32.000Z",
+  });
+  const audit = await auditRecordedOutcome(stopped, { root, activeAttemptAt: "2026-08-08T01:25:28.000Z" });
+  assert.equal(audit.outcome, OUTCOMES.FAILED);
+  assert.equal(audit.reason, "current_attempt_missing_contract");
+  assert.equal(audit.mismatch, true);
+  assert.equal(EXIT_CODES[audit.outcome], 30);
+});
+
 test("watchdog audit rejects a recorded success when the actual contract disagrees", async () => {
   const root = fixture();
   const claimed = recordRunOutcome({ runId: RUN_ID, outcome: OUTCOMES.SUCCESS, reason: "four_point_contract_satisfied", slug: SLUG }, { root, startedAt: STARTED_AT });

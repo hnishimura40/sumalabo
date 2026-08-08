@@ -13,9 +13,35 @@ $LockFile = Join-Path $NightDir 'run.lock'
 $WatchFile = Join-Path $NightDir "$DateStr.watchdog.json"
 $ContractScript = Join-Path $RepoRoot 'scripts\automation\night-run-contract.mjs'
 
+# Read the current-run state before auditing old outcomes.  A prior scheduled
+# acceptance stop is not a result for a later production attempt.
+$state = $null
+foreach ($candidate in @($LockFile, $HeartbeatFile)) {
+  if (Test-Path $candidate) {
+    try {
+      $state = Get-Content $candidate -Raw -Encoding utf8 | ConvertFrom-Json
+      break
+    } catch {}
+  }
+}
+$activeAttemptAt = $null
+if ($state) {
+  foreach ($field in @('childStartedAt', 'startedAt')) {
+    if ($state.$field) {
+      try {
+        [void][datetime]$state.$field
+        $activeAttemptAt = [string]$state.$field
+        break
+      } catch {}
+    }
+  }
+}
+
 # Completion and heartbeat files are not proof of success. The contract audit
 # independently checks the production URL, merged PR, strict QA, and X ledger.
-$audit = & node $ContractScript audit --date $DateStr 2>&1
+$auditArgs = @($ContractScript, 'audit', '--date', $DateStr)
+if ($activeAttemptAt) { $auditArgs += @('--active-at', $activeAttemptAt) }
+$audit = & node @auditArgs 2>&1
 $auditExit = $LASTEXITCODE
 $auditText = ($audit | Out-String).Trim()
 $auditJson = $null
@@ -45,16 +71,6 @@ if ($auditExit -eq 20 -and $auditJson.outcome -eq 'stopped') {
     mismatch = [bool]$auditJson.mismatch
   } | ConvertTo-Json -Depth 8 | Set-Content $WatchFile -Encoding utf8
   exit 20
-}
-
-$state = $null
-foreach ($candidate in @($LockFile, $HeartbeatFile)) {
-  if (Test-Path $candidate) {
-    try {
-      $state = Get-Content $candidate -Raw -Encoding utf8 | ConvertFrom-Json
-      break
-    } catch {}
-  }
 }
 
 $heartbeatAgeMinutes = $null
