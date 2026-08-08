@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { copyFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
@@ -40,6 +41,11 @@ export function prepareRunner() {
   run("git", ["fetch", "origin", "main", "--prune"], RUNNER_ROOT);
   run("git", ["checkout", "--detach", "origin/main"], RUNNER_ROOT);
   if (!existsSync(path.join(RUNNER_ROOT, "node_modules"))) run("npm.cmd", ["ci", "--no-audit", "--no-fund"], RUNNER_ROOT);
+  const lockFile = path.join(RUNNER_ROOT, "package-lock.json");
+  const lockHash = existsSync(lockFile) ? crypto.createHash("sha256").update(readFileSync(lockFile)).digest("hex") : "no-lockfile";
+  const lockMarker = path.join(RUNNER_ROOT, "logs", "night", "runner-package-lock.sha256");
+  mkdirSync(path.dirname(lockMarker), { recursive: true });
+  writeFileSync(lockMarker, `${lockHash}\n`, "utf8");
 
   // Runtime ledgers are intentionally excluded from the public repository.
   // Seed the isolated runner from the local private state during registration;

@@ -48,6 +48,8 @@ test("scheduler entry wrappers are ASCII-only and point only to dedicated clone"
   const prepare = read("scripts/automation/prepare-night-runner.mjs");
   assert.match(prepare, /PRIVATE_RUNTIME_FILES/);
   assert.match(prepare, /data\/automation\/autonomy\.json/);
+  assert.match(prepare, /runner-package-lock\.sha256/);
+  assert.match(prepare, /createHash\("sha256"\)/);
 });
 
 test("OAuth probe is non-interactive and never uses auth status", () => {
