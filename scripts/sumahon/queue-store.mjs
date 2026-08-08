@@ -10,7 +10,7 @@
 // - queued: 新規検知済み、未処理
 // - processing: 取り出して処理中
 // - preview_created: Preview ブランチ push + PR 作成完了
-// - human_review_waiting: Preview 完了、人間の承認待ち（preview_created と同義の別ラベル）
+// - human_review_waiting: 旧互換ラベル（新規フローでは承認待ちに使わない）
 // - failed: 処理失敗。errorReason に理由
 //
 // 注意:

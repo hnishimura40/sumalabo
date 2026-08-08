@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
 import ArticleNavigation from "../components/ArticleNavigation.astro";
-import PreviewApprovalButton from "../components/PreviewApprovalButton.astro";
+import PreviewVetoButton from "../components/PreviewVetoButton.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
 
 import { siteConfig } from "../config/site";
@@ -177,7 +177,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       </div>
     </div>
 
-    <PreviewApprovalButton slug={article.slug} />
+    <PreviewVetoButton slug={article.slug} />
 
     <ArticleNavigation previousArticle={previousArticle} nextArticle={nextArticle} />
   </article>

@@ -1,7 +1,6 @@
 # Auto Phase B (L1: Autonomy Ladder)
 #
-# veto 期限（既定 30 分）を過ぎても停止されなかった review_waiting 記事を
-# 自動で本番公開する（PR merge → wrangler deploy → strict verify → 事後検査）。
+# vetoされていないreview_waiting記事を待機せず本番公開する。
 #
 # 安全装置:
 #   - data/automation/autonomy.json の level < 1 または paused: true なら
@@ -17,7 +16,7 @@ name: Auto Phase B (L1)
 
 on:
   schedule:
-    # 5 分間隔（Actions の cron は遅延しうるが veto 窓 30 分に対し許容）
+    # 5分間隔の救済経路。通常は夜間driverがPhase A直後に実行する。
     - cron: "*/5 * * * *"
   workflow_dispatch:
 

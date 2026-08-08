@@ -4,8 +4,7 @@
 //   veto 窓内の「停止」操作。review item に vetoedAt / status="vetoed" を記録し、
 //   auto-phase-b（veto 期限経過後の自動公開）の対象から外す。
 //
-// 承認ボタン（/api/approve-preview）の対になる操作で、こちらは PR merge も
-// deploy も行わない「自動公開を止める」だけの安全側アクション。
+// PR merge も deploy も行わない「自動公開を止める」だけの安全側アクション。
 //
 // veto 手段はもう 1 つある: data/automation/autonomy.json の paused: true
 // （全体 kill switch。こちらは記事単位ではなく自動運転そのものを止める）。
@@ -60,6 +59,6 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     ok: true,
     slug,
     vetoedAt: now,
-    message: "自動公開を停止しました（veto）。公開する場合は従来どおり明示承認してください。",
+    message: "このプレビューの自動公開を停止しました（veto）。",
   });
 };

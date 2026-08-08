@@ -182,17 +182,12 @@ JSON
 
 API はレスポンスとして `{ ok, sent, failed, subscribers, item, title, previewUrl, prUrl, failuresSample }` を返す。`failed` が 0 でない場合は `failuresSample` を見て購読切れ（404/410 はKVから自動削除）等を確認する。
 
-## Preview 承認ボタンとの関係
+## Previewの停止操作
 
-- 通知 → `/review/` または Preview 記事URLへ遷移
-- 承認は Preview 記事ページ末尾の「この記事を承認して公開」ボタンから（既存実装）
-- そのボタンが `/api/approve-preview` を叩いて PR を main にマージ
-- マージ後、本番ビルドが走り、本番反映
-
-PWA 側で承認操作そのものを行わないのは、
-
-1. Preview 記事ページで実際の見た目を確認してから承認したいため
-2. 承認 API（`/api/approve-preview`）がブランチ名チェックを行うため、Preview記事ページ側に寄せたほうが自然
+- 通知から`/review/`またはPreview記事URLへ遷移する
+- Preview記事末尾には停止専用のvetoボタンだけを表示する
+- vetoは`/api/veto-preview`へ記録され、PR mergeやdeployは実行しない
+- 承認・公開実行ボタンは設けない
 
 ## セキュリティ
 
@@ -254,5 +249,5 @@ Invoke-RestMethod -Method Post -Uri "https://sumalabo.com/api/push/check-secret"
 
 ## 関連ドキュメント
 
-- `docs/preview_approval_button.md` — Preview記事ページ末尾の承認ボタン
+- `functions/api/veto-preview.ts` — Previewの停止専用API
 - `docs/uwsc_chatgpt_file_attach_test.md` — 自動化サムネ生成フロー

@@ -1,0 +1,59 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const read = (relative) => readFileSync(path.join(ROOT, relative), "utf8");
+
+test("approval endpoint and component are removed while veto remains", () => {
+  assert.equal(existsSync(path.join(ROOT, "functions/api/approve-preview.ts")), false);
+  assert.equal(existsSync(path.join(ROOT, "src/components/PreviewApprovalButton.astro")), false);
+  assert.equal(existsSync(path.join(ROOT, "functions/api/veto-preview.ts")), true);
+  const vetoUi = read("src/components/PreviewVetoButton.astro");
+  assert.match(vetoUi, /\/api\/veto-preview/);
+  assert.doesNotMatch(vetoUi, /approve-preview|GITHUB_TOKEN/);
+});
+
+test("Cloudflare Functions no longer reference the retired GITHUB_TOKEN", () => {
+  const functionDir = path.join(ROOT, "functions/api");
+  const files = readdirSync(functionDir, { recursive: true }).filter((name) => /\.(?:ts|js)$/i.test(name));
+  const matches = files.filter((name) => readFileSync(path.join(functionDir, name), "utf8").includes("GITHUB_TOKEN"));
+  assert.deepEqual(matches, []);
+});
+
+test("night prompts and wrapper have no approval or veto-wait branch", () => {
+  const text = [
+    read("docs/night_driver_prompt.md"),
+    read("docs/night_driver_resume_prompt.md"),
+    read("scripts/automation/night-run.ps1"),
+  ].join("\n");
+  assert.doesNotMatch(text, /承認待ち|veto待ち|veto\s*窓内|Start-Sleep\s+-Seconds\s+300/);
+  assert.match(text, /Phase B fallback: review_waitingを即時公開/);
+});
+
+test("scheduler entry wrappers are ASCII-only and point only to dedicated clone", () => {
+  for (const name of ["night-entry.cmd", "night-watchdog-entry.cmd", "night-auth-probe-entry.cmd"]) {
+    const bytes = readFileSync(path.join(ROOT, "scripts/automation", name));
+    assert.ok([...bytes].every((value) => value <= 0x7f), `${name} is not ASCII-only`);
+    const text = bytes.toString("ascii");
+    assert.match(text, /D:\\work\\sumalabo-night-runner/);
+    assert.doesNotMatch(text, /documents|\.ps1"?\s*$.*動画/u);
+  }
+  const entry = read("scripts/automation/night-run-entry.mjs");
+  assert.match(entry, /runner_clone_dirty/);
+  assert.match(entry, /git", \["fetch", "origin", "main"/);
+  assert.match(entry, /git", \["checkout", "--detach", "origin\/main"/);
+  const prepare = read("scripts/automation/prepare-night-runner.mjs");
+  assert.match(prepare, /PRIVATE_RUNTIME_FILES/);
+  assert.match(prepare, /data\/automation\/autonomy\.json/);
+});
+
+test("OAuth probe is non-interactive and never uses auth status", () => {
+  const source = read("scripts/automation/claude-auth-probe.mjs");
+  assert.match(source, /"-p"/);
+  assert.match(source, /AUTH_PROBE_OK/);
+  assert.match(source, /\b401\b/);
+  assert.doesNotMatch(source, /auth\s+status/i);
+});

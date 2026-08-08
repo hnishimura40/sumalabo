@@ -44,6 +44,8 @@
     "scout:calibrate": "node scripts/automation/scout-calibration.mjs",
     "retract": "node scripts/automation/retract.mjs",
     "schedule:auto-run": "node scripts/automation/register-night-task.mjs",
+    "night:prepare-runner": "node scripts/automation/prepare-night-runner.mjs",
+    "night:auth-probe": "node scripts/automation/claude-auth-probe.mjs",
     "night:report": "node scripts/automation/night-report.mjs",
     "night:contract": "node scripts/automation/night-run-contract.mjs",
     "night:record-intervention": "node scripts/automation/night-run-contract.mjs intervene",
@@ -55,7 +57,7 @@
     "article:check-response": "node scripts/automation/chatgpt-response-health.mjs",
     "incident:reclassify": "node scripts/automation/incident-reclassify.mjs",
     "measurement:summary": "node scripts/automation/unattended-measurement.mjs",
-    "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/unattended-measurement.test.mjs"
+    "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/unattended-measurement.test.mjs tests/sumahon/night-phase2.test.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",

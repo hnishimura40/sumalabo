@@ -9,6 +9,7 @@ import {
   consumeTestModeArticle,
   stopTestMode,
   checkTestModeIncidentStop,
+  isNightRunActive,
 } from "../../scripts/automation/test-mode.mjs";
 import { recordIncident, loadAutonomy } from "../../scripts/automation/autonomy.mjs";
 
@@ -42,6 +43,13 @@ const ACTIVE_TM = {
   maxPerNight: 1,
   expiresAt: "2099-01-01T00:00:00+09:00",
   enabledAt: "2026-07-05T00:00:00Z",
+};
+
+const ACTIVE_NIGHT = {
+  enabled: true,
+  mode: "permanent",
+  weeklyCap: 7,
+  enabledAt: "2026-08-01T00:00:00Z",
 };
 
 test("1. アクティブ判定: enabled+残数+期限内 → active", () => {
@@ -96,6 +104,19 @@ test("6. stopTestMode: 即時停止と理由記録", () => {
   const tm = stopTestMode({ reason: "retract(x)", filePath: FILE });
   assert.equal(tm.enabled, false);
   assert.equal(tm.disabledReason, "retract(x)");
+});
+
+test("7. consumes=false incidentが2件あってもnightRunはactive", () => {
+  writeState({ enabled: false }, {
+    nightRun: ACTIVE_NIGHT,
+    incidents: [
+      { at: "2026-08-02T00:00:00Z", slug: "excluded-a", kind: "post_publish_hard_fail", errorBudget: { consumes: false } },
+      { at: "2026-08-03T00:00:00Z", slug: "excluded-b", kind: "post_publish_hard_fail", errorBudget: { consumes: false } },
+    ],
+  });
+  const result = isNightRunActive({ filePath: FILE, root: TMP, now: new Date("2026-08-04T00:00:00Z") });
+  assert.equal(result.active, true);
+  assert.equal(result.incidentCount, 0);
 });
 
 test.after(() => {

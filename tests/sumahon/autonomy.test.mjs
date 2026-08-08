@@ -121,17 +121,17 @@ test("2b. deploy:production も trigger=auto_after_veto は L0 で拒否 (manual
   assert.match(manual.stdout, /"autonomyGate":\s*\{\s*"status":\s*"ok"/);
 });
 
-// ---------- 要件3: L1 では期限前は起動せず、期限後に起動する ----------
+// ---------- 要件3: L1では承認・時刻待ちを置かず、未vetoだけを即時対象にする ----------
 
-test("3. level: 1 — veto 期限前は対象外、期限後は対象になる (selectEligible + CLI)", () => {
+test("3. level: 1 — review_waitingは即時対象、veto済みは対象外", () => {
   const items = [
-    { slug: "future-article", status: "review_waiting", vetoDeadline: "2099-01-01T00:00:00.000Z", prUrl: "https://github.com/x/y/pull/2" },
-    { slug: "expired-article", status: "review_waiting", vetoDeadline: "2026-01-01T00:00:00.000Z", prUrl: "https://github.com/x/y/pull/3" },
+    { slug: "first-ready", status: "review_waiting", previewReadyAt: "2026-01-01T00:00:00.000Z", vetoDeadline: "2099-01-01T00:00:00.000Z", prUrl: "https://github.com/x/y/pull/2" },
+    { slug: "second-ready", status: "review_waiting", previewReadyAt: "2026-01-02T00:00:00.000Z", vetoDeadline: "2026-01-01T00:00:00.000Z", prUrl: "https://github.com/x/y/pull/3" },
     { slug: "vetoed-article", status: "review_waiting", vetoDeadline: "2026-01-01T00:00:00.000Z", vetoedAt: "2026-01-01T00:10:00.000Z", prUrl: "https://github.com/x/y/pull/4" },
     { slug: "already-approved", status: "approved", vetoDeadline: "2026-01-01T00:00:00.000Z", prUrl: "https://github.com/x/y/pull/5" },
   ];
   const eligible = autoPhaseB.selectEligible(items, Date.parse("2026-07-04T00:00:00.000Z"));
-  assert.deepEqual(eligible.map((e) => e.slug), ["expired-article"], "期限超過・未veto・review_waiting だけが対象");
+  assert.deepEqual(eligible.map((e) => e.slug), ["first-ready", "second-ready"], "未vetoのreview_waitingは時刻を待たず対象");
 
   // CLI 経由（L1 状態ファイル + items-file 注入 + --decide）
   const stateFile = writeState("l1-auto.json", L1);
@@ -143,9 +143,9 @@ test("3. level: 1 — veto 期限前は対象外、期限後は対象になる (
     { encoding: "utf-8", cwd: ROOT, env: { ...process.env, AUTONOMY_FILE: stateFile, REVIEW_NOTIFY_SECRET: "" } },
   );
   assert.equal(r.status, 0);
-  assert.match(r.stdout, /対象: expired-article/);
+  assert.match(r.stdout, /対象: first-ready/);
 
-  // 期限前だけの items なら対象なし
+  // 将来の旧vetoDeadlineが残っていても即時対象
   const itemsFile2 = join(TMP, "items-l1-future.json");
   writeFileSync(itemsFile2, JSON.stringify({ items: [items[0]] }), "utf-8");
   const r2 = spawnSync(
@@ -154,7 +154,7 @@ test("3. level: 1 — veto 期限前は対象外、期限後は対象になる (
     { encoding: "utf-8", cwd: ROOT, env: { ...process.env, AUTONOMY_FILE: stateFile, REVIEW_NOTIFY_SECRET: "" } },
   );
   assert.equal(r2.status, 0);
-  assert.match(r2.stdout, /対象なし/);
+  assert.match(r2.stdout, /対象: first-ready/);
 });
 
 // ---------- 要件4: hard fail で rollback が呼ばれる（本番非破壊） ----------
@@ -258,9 +258,9 @@ test("5. 直近10記事で incidents 2件 → level 1 → 0 に自動降格", ()
   const stateFile = writeState("demote.json", {
     ...L1,
     incidents: [
-      { at: "2026-07-01T00:00:00.000Z", slug: "article-a", kind: "post_publish_hard_fail" },
-      { at: "2026-07-02T00:00:00.000Z", slug: "article-b", kind: "rollback_failed" },
-      { at: "2026-06-01T00:00:00.000Z", slug: "old-article-out-of-window", kind: "post_publish_hard_fail" },
+      { at: "2026-07-01T00:00:00.000Z", slug: "article-a", kind: "post_publish_hard_fail", errorBudget: { consumes: true } },
+      { at: "2026-07-02T00:00:00.000Z", slug: "article-b", kind: "rollback_failed", errorBudget: { consumes: true } },
+      { at: "2026-06-01T00:00:00.000Z", slug: "old-article-out-of-window", kind: "post_publish_hard_fail", errorBudget: { consumes: true } },
     ],
   });
   const recentSlugs = ["article-a", "article-b", "article-c", "article-d"]; // 直近10記事(のうち4)
@@ -276,7 +276,7 @@ test("5. 直近10記事で incidents 2件 → level 1 → 0 に自動降格", ()
 test("5b. 直近10記事に incident 1件だけなら降格しない", () => {
   const stateFile = writeState("no-demote.json", {
     ...L1,
-    incidents: [{ at: "2026-07-01T00:00:00.000Z", slug: "article-a", kind: "post_publish_hard_fail" }],
+    incidents: [{ at: "2026-07-01T00:00:00.000Z", slug: "article-a", kind: "post_publish_hard_fail", errorBudget: { consumes: true } }],
   });
   const result = autonomyLib.maybeAutoDemote({ recentSlugs: ["article-a", "article-b"], filePath: stateFile });
   assert.equal(result.demoted, false);

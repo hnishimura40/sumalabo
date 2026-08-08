@@ -9,25 +9,26 @@ import {
 } from "../../scripts/automation/register-night-task.mjs";
 
 const root = "D:\\documents\\動画作成関連\\すまラボ";
-const taskXml = (argumentsText) => `<Task><Actions><Exec><Command>powershell.exe</Command><Arguments>${argumentsText}</Arguments></Exec></Actions></Task>`;
+const taskXml = (argumentsText) => `<Task><Actions><Exec><Command>cmd.exe</Command><Arguments>${argumentsText}</Arguments></Exec></Actions></Task>`;
 
 test("本番タスクコマンドにtestMode・dryRun・自己診断フラグを含めない", () => {
   const command = buildNightTaskCommand(root);
   assert.doesNotMatch(command, /-(?:RunnerSelfTest|BrowserCheckOnly|DryRun|TestMode)\b/i);
-  assert.match(command, /night-run\.ps1"$/);
-  const args = command.replace(/^powershell\.exe\s+/i, "");
+  assert.equal(command, "cmd.exe /d /c D:\\work\\sumalabo-night-entry.cmd");
+  assert.doesNotMatch(command, /動画作成関連|すまラボ/);
+  const args = command.replace(/^cmd\.exe\s+/i, "");
   assert.deepEqual(validateNightTaskXml(taskXml(args), root).problems, []);
 });
 
 for (const flag of ["-RunnerSelfTest", "-BrowserCheckOnly", "-DryRun", "-TestMode"]) {
   test(`実登録XMLは${flag}を拒否する`, () => {
-    const args = buildNightTaskCommand(root).replace(/^powershell\.exe\s+/i, "") + ` ${flag}`;
+    const args = buildNightTaskCommand(root).replace(/^cmd\.exe\s+/i, "") + ` ${flag}`;
     const result = validateNightTaskXml(taskXml(args), root);
     assert.equal(result.ok, false);
     assert.ok(result.problems.includes("test_flag_present"));
   });
 }
-test("恒久運転の通知タイトルに旧[testMode]ラベルを残さない", () => {
+test("内部PowerShellはBOMを維持し、スケジューラ入口cmdはASCII only", () => {
   const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
   const wrapperPath = join(repoRoot, "scripts", "automation", "night-run.ps1");
   const wrapperBytes = readFileSync(wrapperPath);
@@ -38,6 +39,10 @@ test("恒久運転の通知タイトルに旧[testMode]ラベルを残さない"
   const report = readFileSync(join(repoRoot, "scripts", "automation", "night-report.mjs"), "utf8");
   assert.doesNotMatch(report, /\[testMode\]/);
   assert.match(report, /\[夜間run\]/);
+  for (const name of ["night-entry.cmd", "night-watchdog-entry.cmd", "night-auth-probe-entry.cmd"]) {
+    const bytes = readFileSync(join(repoRoot, "scripts", "automation", name));
+    assert.ok([...bytes].every((value) => value <= 0x7f), `${name} must be ASCII-only`);
+  }
 });
 test("invalid scheduled acceptance fails closed before the article pipeline", () => {
   const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");

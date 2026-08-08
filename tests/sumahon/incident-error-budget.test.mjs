@@ -18,8 +18,8 @@ function fixture() {
     vetoWindowMinutes: 30,
     promotionCount: { toL1: 1 },
     incidents: [
-      { at: "2026-07-27T14:08:47.250Z", slug: "propagation", kind: "post_publish_hard_fail", detail: "articleHttp200,slugInHtml" },
-      { at: "2026-07-28T10:00:00.000Z", slug: "real-failure", kind: "post_publish_hard_fail", detail: "hasArticleBody" },
+      { at: "2026-07-27T14:08:47.250Z", slug: "propagation", kind: "post_publish_hard_fail", detail: "articleHttp200,slugInHtml", errorBudget: { consumes: true } },
+      { at: "2026-07-28T10:00:00.000Z", slug: "real-failure", kind: "post_publish_hard_fail", detail: "hasArticleBody", errorBudget: { consumes: true } },
     ],
   }), "utf8");
   return { dir, file };
@@ -49,7 +49,7 @@ test("後続pass・同一内容・無rollback等を全て満たす伝播遅延�
     assert.equal(result.ok, true);
     assert.equal(result.incident.errorBudget.consumes, false);
     assert.equal(incidentConsumesErrorBudget(result.incident), false);
-    assert.equal(incidentConsumesErrorBudget({ slug: "real", kind: "post_publish_hard_fail" }), true);
+    assert.equal(incidentConsumesErrorBudget({ slug: "legacy", kind: "post_publish_hard_fail" }), false);
     const state = JSON.parse(readFileSync(file, "utf8"));
     assert.equal(state.incidents.length, 2, "監査履歴は削除しない");
   } finally { rmSync(dir, { recursive: true, force: true }); }
@@ -65,7 +65,7 @@ test("証跡不足、恒久チェック、30分超の復旧は除外を拒否す
     try {
       const result = reclassifyIncidentForErrorBudget({ slug: "propagation", classification: "external_propagation_delay", evidence, filePath: file });
       assert.equal(result.ok, false);
-      assert.equal(JSON.parse(readFileSync(file, "utf8")).incidents[0].errorBudget, undefined);
+      assert.deepEqual(JSON.parse(readFileSync(file, "utf8")).incidents[0].errorBudget, { consumes: true });
     } finally { rmSync(dir, { recursive: true, force: true }); }
   }
 });

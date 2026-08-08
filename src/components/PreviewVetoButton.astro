@@ -1,0 +1,74 @@
+---
+type Props = { slug?: string };
+const { slug } = Astro.props;
+const cfBranch = String(import.meta.env.CF_PAGES_BRANCH || "");
+const isMainBuild = cfBranch === "main" || cfBranch === "master";
+---
+
+{!isMainBuild && (
+  <aside class="preview-veto" data-preview-veto data-slug={slug || ""} hidden>
+    <p>この記事の自動公開を止める必要がある場合だけ使用してください。</p>
+    <button type="button" data-veto-button disabled>⛔ 自動公開を停止（veto）</button>
+    <p role="status" aria-live="polite" data-veto-status></p>
+  </aside>
+)}
+
+<script>
+  const wrapper = document.querySelector<HTMLElement>("[data-preview-veto]");
+  if (wrapper && !new Set(["sumalabo.com", "www.sumalabo.com"]).has(location.host)) {
+    const button = wrapper.querySelector<HTMLButtonElement>("[data-veto-button]");
+    const status = wrapper.querySelector<HTMLParagraphElement>("[data-veto-status]");
+    const slug = (wrapper.dataset.slug || "").trim();
+    if (slug && button && status) {
+      wrapper.hidden = false;
+      button.disabled = false;
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        status.textContent = "自動公開を停止しています…";
+        try {
+          const response = await fetch("/api/veto-preview", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ slug }),
+          });
+          const body = (await response.json().catch(() => ({}))) as { ok?: boolean; message?: string };
+          if (response.ok && body.ok) {
+            button.textContent = "停止済み（veto）";
+            status.textContent = "このプレビューの自動公開を停止しました。";
+          } else {
+            status.textContent = body.message || `vetoに失敗しました（HTTP ${response.status}）`;
+            button.disabled = false;
+          }
+        } catch {
+          status.textContent = "通信エラーでvetoできませんでした。";
+          button.disabled = false;
+        }
+      });
+    }
+  }
+</script>
+
+<style>
+  .preview-veto {
+    margin: 28px 0 32px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--teal);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+  }
+  .preview-veto[hidden] { display: none; }
+  .preview-veto p { margin: 0 0 12px; color: var(--fg-mid); font-size: 14px; }
+  .preview-veto p:last-child { margin: 10px 0 0; }
+  .preview-veto button {
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--fg-mid);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .preview-veto button:disabled { opacity: .55; cursor: not-allowed; }
+</style>

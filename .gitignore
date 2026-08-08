@@ -56,6 +56,10 @@ logs/night/run-contract/
 logs/night/*.completion.json
 logs/night/*.heartbeat.json
 logs/night/*.watchdog.json
+logs/night/auth-probe/
+logs/night/runner-package-lock.sha256
+logs/night/scheduled-acceptance.request.json
+logs/night/scheduled-acceptance.result.json
 
 # automation logs (per-run files) — never committed; .gitkeep stays
 logs/automation/*.log

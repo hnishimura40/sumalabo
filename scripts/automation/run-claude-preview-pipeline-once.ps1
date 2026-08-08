@@ -757,11 +757,11 @@ You have NO tool that should be used for any of:
 - git push origin main
 - posting to X / Twitter / social media
 - clicking approve / publish / post buttons
-- hitting /api/approve-preview or /api/publish
-- editing queue status such as preview_created / completedForUserApproval
+- calling any production publish endpoint directly
+- editing queue status such as preview_created / completedForPhaseB
 - processing any article other than the specified slug
 
-The orchestrator owns production deploy, main merge, queue final state, preview_created, and user approval.
+The orchestrator owns production deploy, main merge, queue final state, and preview_created.
 You are only a worker for the current stage.
 
 If you find yourself about to do any of the above, return:
@@ -1445,11 +1445,11 @@ You have NO tool that should be used for any of:
 - git push origin main
 - posting to X / Twitter / social media
 - clicking approve / publish / post buttons
-- hitting /api/approve-preview or /api/publish
-- editing queue status such as preview_created / completedForUserApproval
+- calling any production publish endpoint directly
+- editing queue status such as preview_created / completedForPhaseB
 - processing any article other than the specified slug
 
-The orchestrator owns production deploy, main merge, queue final state, preview_created, and user approval.
+The orchestrator owns production deploy, main merge, queue final state, and preview_created.
 You are only a worker for the current stage.
 
 If you find yourself about to do any of the above, return:
@@ -2011,7 +2011,7 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
 
   # ============================================================
   # Machine completion gates. The pipeline only reports
-  # completedForUserApproval=true when ALL 13 gates are true. Each gate
+  # completedForPhaseB=true when ALL 13 gates are true. Each gate
   # is measured by the script - we do NOT rely on the natural-language
   # prompt or self-report from a sub-claude session.
   # ============================================================
@@ -2540,7 +2540,7 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
   $script:Report.prOk = $prOk
   $script:Report.previewUrl = $previewArticleUrl
   $script:Report.prUrl = $prUrl
-  $script:Report.completedForUserApproval = $requiredReady
+  $script:Report.completedForPhaseB = $requiredReady
   if ($failedGate) {
     $script:Report.reason = "gate_failed:" + $failedGate
     $script:Report.nextAction = "review failed gate in report.gates and re-run after fix"
@@ -2548,7 +2548,7 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
 
   # ============================================================
   # Stage 13: queue update. preview_created only when requiredReady.
-  # Otherwise preview_deployed (intermediate, not ready for approval).
+  # Otherwise preview_deployed (intermediate, not ready for Phase B).
   # ============================================================
   $script:Report.stage = "queue_update_final"
   $finalQueueStatus = if ($requiredReady) { "preview_created" } else { "preview_deployed" }
@@ -2571,7 +2571,7 @@ Budget cap: ~$ThumbnailMaxBudgetUsd USD.
       verifyOk = [bool]$verifyOk
       notifyOk = [bool]$notifyOk
       prOk = [bool]$prOk
-      completedForUserApproval = [bool]$requiredReady
+      completedForPhaseB = [bool]$requiredReady
     }
     $patchJsonPath = Join-Path $LogDir ("queue-step13-patch-" + $Stamp + ".json")
     # PS 5.1 Set-Content -Encoding UTF8 writes a BOM, which Node JSON.parse
@@ -2598,8 +2598,8 @@ import('$QueueStoreImportUrl').then(async m => {
   }
 
   if (-not $requiredReady) {
-    # Pipeline did not reach the user-approval-ready state.
-    Fail-Stage "completion_gate" ("not ready for approval: previewDeployOk=" + $previewDeployOk + " verifyOk=" + $verifyOk + " notifyOk=" + $notifyOk + " prOk=" + $prOk)
+    # Pipeline did not reach the Phase B-ready state.
+    Fail-Stage "completion_gate" ("not ready for Phase B: previewDeployOk=" + $previewDeployOk + " verifyOk=" + $verifyOk + " notifyOk=" + $notifyOk + " prOk=" + $prOk)
   }
 
   # ============================================================

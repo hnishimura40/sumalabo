@@ -1,7 +1,9 @@
 # 夜間自動運転 環境手順書（night_run_setup）
 
 testMode の夜間無人運転（既定 4:30 JST）を成立させるための PC 側セットアップ。
-運転本体は `scripts/automation/night-run.ps1` → ヘッドレス Claude Code（claude-opus-4-8）→
+タスクスケジューラはASCII-onlyの`D:\work\sumalabo-night-entry.cmd`だけを直接起動する。入口は
+昼作業と分離した専用clone `D:\work\sumalabo-night-runner` を`origin/main`へ同期してから、
+`scripts/automation/night-run.ps1` → ヘッドレスClaude Code（claude-opus-4-8）→
 `docs/night_driver_prompt.md`。
 
 ## 1. スケジューラ登録
@@ -12,7 +14,10 @@ npm run schedule:auto-run -- --time 03:00   # 時刻変更
 npm run schedule:auto-run -- --remove       # 解除
 ```
 
-- タスク名: `Sumalabo Night Driver`（旧 `Sumalabo Sumahon Queue Runner` 群とは別物。旧タスクは全て Disabled の残骸）
+- タスク名: `Sumalabo Night Driver`（04:30）/ `Sumalabo Night Watchdog`（05:30）/ `Sumalabo Claude Auth Probe`（03:30）
+- 03:30の認証プローブは`auth status`を使わず、軽量な`claude -p`を実行する。401時は共通Web Pushで通知する
+- 専用cloneがdirty、fetch失敗、origin/main checkout失敗の場合は記事工程へ入らずfailed契約を記録する
+- `autonomy.json`等の運用台帳は公開Gitに含めず、タスク登録時に昼環境のprivate stateから専用cloneのignored領域へ初期同期する。以後の夜間更新は専用clone側に保持する
 - 多重起動ガード: `logs/night/run.lock`（PID 生存確認つき）。前夜の run が生きていれば新規起動しない
 - Claude は独立プロセスグループで起動し、出力を `logs/night/{date}.claude.log` へ直接保存する。`run.lock` は親PID・監督PID・子PID・15秒heartbeatを保持するため、親だけが落ちても重複起動しない
 - 05:30 の `Sumalabo Night Watchdog` は完了痕跡を信用せず、本番URL HTTP 200・PR merged・strict verify全合格・X二段階台帳の4点を独立に再取得する。期限時点で4点が揃わない場合は、heartbeatが正常でも`failed`としてHiroへPush通知する

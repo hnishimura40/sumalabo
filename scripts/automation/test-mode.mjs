@@ -210,7 +210,7 @@ export function isNightRunActive({ now = new Date(), filePath = autonomyPath(), 
   const since = nr.enabledAt ? Date.parse(nr.enabledAt) : 0;
   const incidentCount = nr._incidents.filter((i) => {
     const at = Date.parse(i.at || "");
-    return Number.isFinite(at) && at >= since;
+    return Number.isFinite(at) && at >= since && i.errorBudget?.consumes === true;
   }).length;
   if (incidentCount >= 2) {
     stopNightRun({ reason: `incident_threshold(${incidentCount})`, filePath });

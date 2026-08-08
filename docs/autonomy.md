@@ -108,8 +108,8 @@ Phase A完了後に停止 → Preview承認 → Phase B → 停止 → X投稿�
 
 ## 4. 実装ノート(PR #92 / #93 の実態)
 
-- veto窓: finalizeがKV/review itemに previewReadyAt / vetoDeadline を記録し、通知にJST期限を明記。veto手段は承認UIのvetoボタンと functions/api/veto-preview.ts
-- 自動起動: .github/workflows/auto-phase-b.yml が5分間隔cronで稼働。npm ciより前の軽量decideステップがautonomyゲートを検査するため、L0/paused中は毎回そこで終了(コスト最小・現行動作の保護)。Actionsはmainのautonomy.jsonを読むため、L1運用中のpaused化はmainへのpushが必要
+- veto: Previewの停止専用ボタンと`functions/api/veto-preview.ts`を残す。承認ボタンは廃止し、未vetoのPhase A完了記事は待機せずPhase Bへ進む
+- 自動起動: 夜間driverがPhase A直後にPhase Bを実行し、`.github/workflows/auto-phase-b.yml`の5分間隔cronは未完了時の救済経路とする。paused中はdecideで終了する
 - rollback: npm run rollback:production。CF Pages APIのdeployment rollbackを第1候補、builds/last-good/dist のwrangler再デプロイを第2候補とする2段構成。本番往復訓練実測: 往路3.8秒 / 復路15.1秒(strict verify込み)。rollback失敗時は paused: true を自動設定
 - キャッシュパージ: 個別8URL(記事・トップ・一覧・sitemap2種・サムネ2種)→失敗時purge_everythingフォールバック。rollback成功後・hard fail経路・deploy:production成功直後の3箇所で発火。hard fail経路は --expect-gone で「旧内容が返らないこと」まで実フェッチ確認し、残留時は stale_cache_still_serving で通知+exit 1
 - パージ用トークン: 現行 CLOUDFLARE_API_TOKEN はzone不可視のためパージ不可。環境変数 CLOUDFLARE_ZONE_PURGE_TOKEN(必要権限: Zone→Cache Purge→Purge、対象zone限定。CLOUDFLARE_ZONE_ID を直接設定すればZone Read不要)。未設定時は zone_not_visible でgraceful skip(rollback自体は成立)
@@ -123,8 +123,7 @@ Phase A完了後に停止 → Preview承認 → Phase B → 停止 → X投稿�
 - L1昇格の根拠: 前提条件全達成(P1/P2/P7/rollback実測2回/post-publish verify/パージトークン+パージ実測)+ usage credits記事(202607)の Phase B/C クリーン完了(rollback 0 / incident 0 / 修正 0)を確認してユーザーが宣言
 - Actions secrets: CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID / CLOUDFLARE_ZONE_PURGE_TOKEN / CLOUDFLARE_ZONE_ID / REVIEW_NOTIFY_SECRET すべて登録済み(2026-07-05)
 - クリーンカウント: **1/3**(クリーン1本目 = 202607-claude-fable-5-usage-credits-switch。Fable 5復活記事(202606)は公開前に修正指示があったため対象外)
-- veto窓短縮の規定: L1でクリーン3本 → veto窓 30分→10分。さらにクリーン3本 → 0分(即時公開)。短縮の適用はユーザーが宣言する
-- L1の動作: Phase A完了通知のveto窓(30分)内に停止操作(PWAのvetoボタン or autonomy.json paused: true)が無ければ、GitHub Actions(auto-phase-b.yml)がPhase Bを自動実行。公開直後にpost-publish verifyが走り、hard failなら自動rollback+incident記録
+- L1の動作: Phase A完了後、記事単位vetoまたは`autonomy.json paused: true`が既に記録されていなければPhase Bを即時実行。公開直後にpost-publish verifyが走り、hard failなら自動rollback+incident記録
 
 ## 6. 恒久無人運転モード（nightRun・2026-07-11 ユーザー承認）
 
@@ -133,7 +132,7 @@ testMode（3 本限定の実弾テスト）は 3 本完走（Claude Science / ai
 - **設定**: `nightRun: { enabled, mode: "permanent", scoutMode: "auto", scheduleTime: "04:30", maxPerNight: 1, weeklyCap: 7 }`（毎日 4:30 / 1 晩 1 本 / 週 7 本まで＝毎日 1 本ペース許容）
 - **判定**: `test-mode.mjs --status` は nightRun キーがあれば恒久モードを優先判定（CLI 互換維持。night-run.ps1 / night_driver_prompt は無変更で動く）
 - **本数制限に代わる恒久ガード**:
-  - incident 2 件（`enabledAt` 以降）→ `enabled: false` に自動停止（再開はユーザーが宣言し enabledAt を更新）
+  - `errorBudget.consumes: true`のincident 2件（`enabledAt`以降）→ `enabled: false`に自動停止。`consumes: false`は件数に含めない
   - kill switch（`paused: true`）→ 即 inactive
   - 1 晩 1 本（`logs/night/last-run.json`）
   - weeklyCap（`logs/night/run-history.jsonl` の直近 7 日 completed 数）

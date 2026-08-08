@@ -2,16 +2,16 @@
 // scripts/automation/deploy-production-from-main.mjs
 //
 // 役割:
-//   Phase B（ユーザー承認後）の **本番反映の正規手順**（P1 で一本化）。
-//   承認ボタン → /api/approve-preview で PR merge 後、本スクリプトで
-//   ローカルの main HEAD から `npm run build` → `wrangler pages deploy` を実行して
+//   Phase Bの **本番反映の正規手順**（P1で一本化）。
+//   PR merge後、本スクリプトでローカルのmain HEADから
+//   `npm run build` → `wrangler pages deploy` を実行して
 //   本番反映する。呼び出しは `npm run deploy:production -- --slug=<slug>`。
 //
 //   経緯: Cloudflare Pages の Git 連携 auto-deploy は GitHub App の clone 失敗
 //   （Repository not found）が常態化しており、Deploy Hook も同じ Git ビルドを起動する
 //   ため機能しない。実績のある wrangler(Direct Upload) を正規ルートに昇格した（P1）。
 //
-//   - main への直接 push はしない (main は既に approve-preview で merge 済み)
+//   - main への直接 push はしない
 //   - 記事生成は行わない
 //   - X 投稿はしない
 //   - queue.json は触らない (verify-publication が published 更新する想定)

@@ -59,7 +59,7 @@ Preview deploy できただけでは未完了です。
 
 ### 完了条件 (Hard gate) — 視覚構造関連
 
-以下が **すべて true でない限り** `preview_created` / `completedForUserApproval=true` にしない:
+以下が **すべて true でない限り** `preview_created` / `completedForPhaseB=true` にしない:
 
 - `hasThreeLineSummary` — Zone 1 に `summary-box` + 「3行でわかるまとめ」
 - `hasArticleRoadmap` — Zone 1 に `check-box` + 「この記事で整理すること」
@@ -126,7 +126,7 @@ Preview deploy できただけでは未完了です。
 | 11 | `verify_notify` | notify result | 200 fetch + non-fallback + notify ok=true + sent>=1 (or idempotent skip) |
 | 12 | `pr_create` | PR URL | gh / API で取得 + state=OPEN |
 | 13 | `completion_gates` | (20 gates) | すべて true |
-| 14 | `queue_update_final` | queue | `preview_created` + completedForUserApproval=true |
+| 14 | `queue_update_final` | queue | `preview_created` + completedForPhaseB=true |
 
 ### Resume point (artifact-based, queue status 依存ではない)
 orchestrator は **実ファイル** を見て resume 地点を決定:
@@ -331,7 +331,7 @@ build 直前に MDX 本文を機械検査し、次が **すべて NG である�
 
 ## 完了条件 (13 ゲート)
 
-orchestrator は build / verify / notify / PR の各段階を実測し、次の 13 ゲートを全部 true にできた場合のみ `completedForUserApproval=true` と `queue=preview_created` を許可する。
+orchestrator は build / verify / notify / PR の各段階を実測し、次の 13 ゲートを全部 true にできた場合のみ `completedForPhaseB=true` と `queue=preview_created` を許可する。
 
 1. `previewDeployOk` — wrangler が成功し deploy URL を返した
 2. `verifyOk` — Preview URL が 200 + slug 含有 + 実 title (SPA fallback でない)

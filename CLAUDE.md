@@ -2,7 +2,7 @@
 
 ## 2026-08-01 公開前人手ゲート全廃（最優先・旧記載を上書き）
 
-**夜間run成否契約（2026-08-08 Hiro承認・系全体の最上位）**: 夜間runの `success` は、(a) 本番記事URL HTTP 200、(b) GitHub API上でPRがmerged、(c) strict verifyのhard/soft全項目合格、(d) `data/social/x-posted.json` に本投稿URLとリンク返信URLが二段階記録済み、の4点を終了時と見張り番がそれぞれ実物確認した場合だけ。プロセスexit 0、completion、heartbeat、`recordNightRun({result:'completed'})` はsuccessの根拠にしてはならない。完了は `success` / `stopped`（候補なし・計測外・veto等の意図した停止で理由必須）/ `failed` の三値とし、`stopped=20`、`failed=30` の非0終了でタスクスケジューラから区別する。SKIP・論理停止・想定外分岐を0へ丸めない。記録の主キーはslugでなくrun日時由来の `runId`。人の介入と公開後修正は `npm run night:record-intervention -- --run-id <id> --reason <理由>` / `npm run night:record-correction -- --run-id <id> --slug <slug> --reason <理由>` で記録する。見張り番は完了記録を信用せず4点を独立照合し、不一致をfailedとして残す。夜間運転は第2段完了までdisabledのまま維持する。
+**夜間run成否契約（2026-08-08 Hiro承認・系全体の最上位）**: 夜間runの `success` は、(a) 本番記事URL HTTP 200、(b) GitHub API上でPRがmerged、(c) strict verifyのhard/soft全項目合格、(d) `data/social/x-posted.json` に本投稿URLとリンク返信URLが二段階記録済み、の4点を終了時と見張り番がそれぞれ実物確認した場合だけ。プロセスexit 0、completion、heartbeat、`recordNightRun({result:'completed'})` はsuccessの根拠にしてはならない。完了は `success` / `stopped`（候補なし・計測外・veto等の意図した停止で理由必須）/ `failed` の三値とし、`stopped=20`、`failed=30` の非0終了でタスクスケジューラから区別する。SKIP・論理停止・想定外分岐を0へ丸めない。記録の主キーはslugでなくrun日時由来の `runId`。人の介入と公開後修正は `npm run night:record-intervention -- --run-id <id> --reason <理由>` / `npm run night:record-correction -- --run-id <id> --slug <slug> --reason <理由>` で記録する。見張り番は完了記録を信用せず4点を独立照合し、不一致をfailedとして残す。第2段の受入完了後、2026-08-08にDriver/Watchdog/Auth Probeを再有効化した。
 
 **画像内文字の一体生成（2026-08-07 Hiro決定）**: 文字を含むサムネイル・本文図解は、文字まで含めた一枚絵として生成する。「文字なしベース画像＋固定座標の文字帯・ラベル・パネル後乗せ」は禁止する。例外は、実機スクリーンショット上の実際のUI位置へ番号・説明を付ける専用注釈（`tmp/google-vids/annotate-screenshot.mjs`型）だけ。`tmp/qwen38-compose.mjs` は使い捨てであり、他記事・再生成・自動工程へ流用しない。
 
@@ -24,7 +24,7 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 
 **Autonomy Level: 1 (L1)** — 状態は `data/automation/autonomy.json`、定義は [`docs/autonomy.md`](docs/autonomy.md)。この表記は autonomy.json の `level` と連動させる（変更時は両方更新）。**Claude が level を勝手に変更するのは禁止**（昇格・veto窓短縮はクリーン実績を根拠にユーザーが宣言する。自動降格だけは error budget 規定＝直近10記事で incident 2件以上→level -1 が適用される）。`paused: true`（kill switch）のときは finalize / Phase B / Phase C とも即停止する。
 
-**恒久無人運転（nightRun・2026-07-11 ユーザー承認）**: testMode（3本限定）完走を受け、夜間の無人 run は `autonomy.json` の `nightRun` による恒久運転（毎日 4:30 / scout 自動選定 / 1 晩 1 本 / weeklyCap 7）。恒久ガード＝incident 2 件で自動停止・kill switch・gate/factcheck/verify/rollback 従来どおり。scout 候補が閾値 50 未満の日は安全スキップ。scout の選定は criticality（自分ごと度）＋**日本自分ごと度 4 軸（a:日本影響 / b:価格・制度 / c:公式か噂か / d:日本の類似で書ける）**で採点し、海外限定・「日本は対象外」で日本を書けない候補は自動的に不適格にする（「日本は未定」で終わる記事を選ばない）。定義: [`docs/autonomy.md`](docs/autonomy.md) §6。**この無人 run は「ユーザー指定なしの自動収集をしない」原則の承認済み例外**。`nightRun.enabled` の再有効化はユーザー宣言のみ。
+**恒久無人運転（nightRun・2026-07-11 ユーザー承認）**: testMode（3本限定）完走を受け、夜間の無人 run は `autonomy.json` の `nightRun` による恒久運転（毎日 4:30 / scout 自動選定 / 1 晩 1 本 / weeklyCap 7）。恒久ガード＝`errorBudget.consumes: true` のincident 2件で自動停止（非消費incidentは除外）・kill switch・gate/factcheck/verify/rollback従来どおり。scout候補が閾値50未満の日は安全スキップ。scoutの選定はcriticality（自分ごと度）＋**日本自分ごと度4軸（a:日本影響 / b:価格・制度 / c:公式か噂か / d:日本の類似で書ける）**で採点し、海外限定・「日本は対象外」で日本を書けない候補は自動的に不適格にする（「日本は未定」で終わる記事を選ばない）。定義: [`docs/autonomy.md`](docs/autonomy.md) §6。**この無人runは「ユーザー指定なしの自動収集をしない」原則の承認済み例外**。`nightRun.enabled`の再有効化はユーザー宣言のみ。
 
 **夜間run起動層の凍結（2026-07-30 Hiro決定）**: `scripts/automation/night-run.ps1`、`night-process-runner.mjs`、`register-night-task.mjs`、`night-watchdog.ps1` およびタスクスケジューラ登録内容は、当面**障害対応以外の改修禁止**。4日で3回、起動層の変更直後に障害が発生したため、機能追加・リファクタ・自己診断拡張を理由に触らない。障害対応時も、実登録XMLの本番引数確認、禁止テストフラグ検査、`schtasks /Run`による本番同等パス受入を必須とする。
 **昼の立ち会い制作も完走型（2026-07-12 ユーザー承認）**: ユーザーが対話セッションで**記事制作を明示指示**したら、**Human Review Checkpoint を廃止し、Phase A → B → C（公開・X 投稿）まで確認なしで完走**する。停止してよい例外は「除外カテゴリ該当（訴訟/事故/人事/買収/政治）」と「品質・安全のブロック（事実未確認・gate 不合格・build/deploy/verify 失敗・画像生成経路不可）」の 2 つだけ。**事後の取り消しは `npm run retract`**。詳細: [`docs/autonomy.md`](docs/autonomy.md) §7。ユーザーが「下書きだけ」「確認したい」等と明示したときのみ従来どおり途中停止する。
@@ -105,7 +105,7 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 9. **最終稿をもとにスライド構成を作る**（1 枚 1 テーマ / 6〜8 枚目安 / ひまり=読者目線、らぼまる=整理・比較・チェック役）
 10. **ひまり・らぼまる素材でスライド・サムネを作る**（同一 ChatGPT「すまラボ台本」プロジェクト内。4:5 縦長 1280×1600、サムネは 16:9。置物にしない）
 11. **画像もファクトチェックし、必要なら再生成する**（文字・数値・固有名詞・未確定表現を確認。架空価格・誤情報があれば再生成）
-12. **MDX化・WebP化・build・PR・Preview通知まで進む**（WebP 1枚200KB前後・上限500KB / `npm run build` / `gh pr create` / **Phase A 出口 `npm run sumalabo:finalize`** で CF preview deploy→preview URL検証→review item登録+プレビュー確認待ち通知→queue `review_waiting`）
+12. **MDX化・WebP化・build・PR・Preview通知まで進む**（WebP 1枚200KB前後・上限500KB / `npm run build` / `gh pr create` / **Phase A 出口 `npm run sumalabo:finalize`** で CF preview deploy→preview URL検証→review item登録+通知→queue `review_waiting`。直後にPhase Bへ進む）
 
 > ステップ 1〜8 は ChatGPT「すまラボ台本」プロジェクト内で本文を練り上げる工程（Research Pass → Editorial Selection → Sumarabo Translation → Draft → Review×2〜3 → Final Draft）。詳細: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)。**この手動フローを省略して、いきなり画像生成や本文の機械生成に進まない。**
 
@@ -135,7 +135,7 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 > **Phase A 出口の鉄則（共通化・ステップ 12）**
 > - 記事URL / サムネ / スライド画像が **https の Cloudflare Pages Preview で 200** であることを確認してから通知する。
 > - **`127.0.0.1` / `localhost` / `0.0.0.0` / `file://` / `chrome://` / 非https を review item のメイン `previewUrl` にしない。** 渡された場合は通知せず `local_preview_url_rejected`（または `failed_preview_url_invalid`）で停止。`scripts/sumahon/preview-url-policy.mjs` のガードが verify と notify の二層で弾く。
-> - **チャットで PR URL を報告するだけ」を Human Review Checkpoint としない。** プレビュー確認待ち通知 + Preview/PWA 確認導線 + 承認導線まで到達して初めて Checkpoint。
+> - Preview/PWAには停止用のveto導線だけを置く。承認・公開実行ボタンは設けない。
 
 ### 公開前Human Review Checkpoint（廃止）
 
@@ -143,12 +143,7 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 
 ### Phase B: 公開フェーズ
 
-**実行条件は Autonomy Level で変わる（[`docs/autonomy.md`](docs/autonomy.md)）：**
-
-- **L0**: 従来どおり **ユーザー明示了承後だけ** 実行する。veto 期限が通知に出ていても、期限経過で自動公開はされない。
-- **L1（現在）以降**: Phase A 完了通知の veto 窓（現在 30 分）内に停止（PWA の veto ボタン or `autonomy.json` の `paused: true`）が無ければ、GitHub Actions（`auto-phase-b.yml`）が Phase B を自動実行する。公開直後に post-publish verify が走り、hard fail なら自動 rollback（`npm run rollback:production`）+ incident 記録で是正する。ユーザー承認（PWA 承認ボタン / 「記事OK、公開へ」）が veto 窓内に来た場合は従来どおり即時に手動実行してよい。
-
-以下の手順は L0 の手動実行・L1 の自動実行で共通：
+Phase Aの機械検品完了後は、記事単位vetoまたは全体kill switchが既に発動していない限り、待機分岐を挟まずPhase Bを実行する。公開直後にpost-publish verifyを行い、hard failなら自動rollbackとincident記録で是正する。
 
 1. **PR merge**：`mergeable: MERGEABLE` / `mergeStateStatus: CLEAN` / `isDraft: false` を確認 → `gh pr merge <N> --merge --delete-branch=false`。main への直接 push 禁止。merge commit を記録。
 2. **main 最新化**：`git fetch origin main && git pull origin main`。merge commit が含まれていることを確認。
@@ -159,7 +154,6 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 
 **失敗時：** published 扱いにしない。X 投稿しない。失敗 check と原因を報告して停止。
 
-**承認ボタン経由のとき（P1 で正規化・2026-07）：** PWA の承認ボタンは `/api/approve-preview` で PR を自動 merge する（担当はそこまで）。**本番反映は Deploy Hook や Git 連携 auto-deploy に依存せず、承認確認後に wrangler 本番 deploy（`npm run deploy:production -- --slug=<slug>`。main 未同期環境では `--skip-git-sync` を付けて main HEAD checkout から実行）へそのまま進む**のが正規手順。完了後に `/api/verify-publication` で `status: published` を確認する。
 背景（P1 調査 2026-07）: Cloudflare Pages の Git 連携 auto-deploy は GitHub App の clone 失敗（Repository not found）が常態化し、Deploy Hook も同じ Git ビルドを起動するため機能しなかった（Meta One・Opus 4.8 の 2 件連続不発の根本原因）。実績 100% の wrangler(Direct Upload) に一本化し、Git 連携の自動ビルドは無効化した。
 
 ### Phase C: X 投稿フェーズ
@@ -167,7 +161,6 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 Phase B 完了後だけ実行：
 
 **前提条件（**すべて満たすこと**）：**
-- ユーザーが記事内容を了承済み
 - PR merge 済み
 - production deploy（wrangler 正規手順）成功
 - strict verify 8/8 pass
@@ -227,9 +220,7 @@ Phase B 完了後だけ実行：
 - すまほん新着の自動巡回（`sumahon-watch.mjs` の cron / スケジュールタスク起動）
 - Google ニュースなどの自動収集
 - 未指定記事の自動キュー投入
-- タスクスケジューラーで無人起動 → 勝手に処理開始
 - ユーザー未確認のまま新しいテーマを処理すること
-- **ユーザー記事確認前の merge / deploy / X 投稿**
 
 ### user-directed mode で **残したこと**
 
@@ -239,31 +230,31 @@ Phase B 完了後だけ実行：
 - 禁則チェック
 - `npm run build`
 - PR 作成（`gh pr create`）
-- **ユーザー明示了承後の** PR merge / wrangler 本番 deploy / strict verify / queue 更新 / X 投稿
+- 機械検品後のPR merge / wrangler本番deploy / strict verify / queue更新 / X投稿
 - X 投稿案の下書き作成（`drafts/social/{slug}.x.md`）
 
 ## 結論
 
-**人間に求めるのは「対象の指定」と「記事確認後の明示了承」の 2 点だけ。**
+昼の手動企画では人間が対象を指定する。承認応答は公開の前提にしない。
 
 - 対象指定までは人間が行う（自動収集なし）
 - 記事化〜 PR 作成までは Claude が自動で進める
 - **記事化と機械検品が終わったら停止せず公開工程へ進む**
-- 了承後だけ、merge → deploy → verify → queue 更新 → X 投稿までを一気に自動化する
+- vetoが無ければ、merge → deploy → verify → queue更新 → X投稿までを一気に自動化する
 
 ## 人間（運営者）の役割
 
 | やること | やらないこと |
 |---|---|
-| PWA または Cloudflare Preview で記事を確認する | PR の作成 / マージ操作 |
-| 問題がなければ承認ボタンを押す（`/api/approve-preview`） | Preview URL の探索・コピー |
+| 公開後の記事を確認し、必要時に修正・取り下げを指示する | PR の作成 / マージ操作 |
+| 必要時にPreviewのvetoで自動公開を停止する | Preview URL の探索・コピー |
 | ファクトチェックの最終目視（記事の核となる主張・サムネのロゴ混入有無・参考URLの到達確認など） | secret の同期 / Cloudflare 設定確認 |
 | 中止・修正方針の判断（必要時のみ） | スクリーンショット取得 |
 | | ChatGPT への画像添付・コピペ |
 | | `npm run build` などの手動実行 |
 | | `git push` / branch 切替 |
 
-人間が手を動かすのは **PWA の承認ボタンを押す瞬間** だけが理想形。それ以外は Claude が自分で進めてダメなら自動診断・自動リトライ・最終報告までやる。
+通常は人の応答を待たず完走し、問題がある場合だけvetoまたは公開後修正で是正する。
 
 ## Claude Code / Claude in Chrome の役割
 
@@ -293,11 +284,10 @@ Phase B 完了後だけ実行：
     - secret ミスマッチ → `/api/push/check-secret` で照合、ミスマッチなら通知をスキップして警告ログ
     - スクショ添付失敗 → クリップボード経路 → UWSC フォールバック → ヘッドレスレンダリング、の順で自動切替
     - ChatGPT 応答エラー → 同プロンプトで再送 2 回、3 回目は簡略化版で再送、それでもダメなら最終報告に「未生成」として記録
-15. **Phase A 最終報告**: 完了サマリ（生成ファイル一覧、検証結果、PR URL、Preview URL、人間が承認時に見る観点）を 1 メッセージで提示 → **停止せずPhase Bへ進む**
-16. **ユーザー明示了承を待つ**: 「記事OK / 公開へ / 承認」等のトリガーが来るまで Phase B / C に進まない
-17. **Phase B（公開）**: PR merge → main 同期 → wrangler 本番 deploy（正規手順）→ strict verify 8/8 → queue を `published` に更新
-18. **Phase C（X 投稿）**: 本番URL確認 → Codex対話モード（Chrome拡張を基本、内蔵Browserを補助）で X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証/アカウント (@suma_labo) 確認 → 本投稿(リンク無し) → リプライに記事リンク → 投稿URL取得 → queue を `x_posted` に更新。`claude-in-chrome` は非常用フォールバック
-19. **Phase B / C 完了報告**: 本番URL / 投稿URL / queue 更新内容を 1 メッセージで提示
+15. **Phase A 最終記録**: 完了サマリ（生成ファイル一覧、検証結果、PR URL、Preview URL）を記録し、veto済みでなければ停止せずPhase Bへ進む
+16. **Phase B（公開）**: PR merge → main 同期 → wrangler 本番 deploy（正規手順）→ strict verify 8/8 → queue を `published` に更新
+17. **Phase C（X 投稿）**: 本番URL確認 → Codex対話モード（Chrome拡張を基本、内蔵Browserを補助）で X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証/アカウント (@suma_labo) 確認 → 本投稿(リンク無し) → リプライに記事リンク → 投稿URL取得 → queue を `x_posted` に更新。`claude-in-chrome` は非常用フォールバック
+18. **Phase B / C 完了報告**: 本番URL / 投稿URL / queue 更新内容を 1 メッセージで提示
 
 ## 禁止事項（Claude Code 側）
 
@@ -316,7 +306,7 @@ Phase B 完了後だけ実行：
 - ❌ hidden file input の直接クリック / `file_upload` API の使用
 - ❌ **ユーザー未指定の記事を自動巡回・自動収集・自動キュー投入する**（user-directed mode）
 - ❌ **`sumahon-watch.mjs` / `run-sumahon-queue.ps1` をユーザー指示なしで起動する**
-- ❌ **Windows タスクスケジューラーでの無人定期起動を有効化する**（再有効化したいときは必ず事前にユーザー確認）
+- ❌ **登録済みの夜間タスク設定を、障害対応またはユーザーの明示指示なしに変更する**
 - ❌ **Cloudflare Deploy Hook / Git 連携 auto-deploy に依存する**（P1 で廃止。本番反映は wrangler 正規手順のみ）
 - ❌ **secret / token / Deploy Hook URL を表示する**（チャット・ログ・コミットメッセージ全部 NG）
 - ❌ **画像元ファイルを削除する**（素材は `_published_articles/` 配下に保管）
@@ -328,15 +318,6 @@ Phase B 完了後だけ実行：
 - ❌ **本文ドラフトなしでスライド・サムネを先に作る**
 - ❌ **記事の議論と画像生成を別の ChatGPT チャットに分ける**（同一チャットで論点 → スライド → サムネをつなげる）
 - ❌ **「すまラボっぽい絵」を汎用的にだけ作る**（記事固有の論点と切り離した画像は禁止）
-
-### ユーザー記事確認・了承前は特に禁止
-
-- ❌ **PR merge**（`gh pr merge`）
-- ❌ **production deploy**（`npm run deploy:production`）
-- ❌ **strict verify による queue published 化**
-- ❌ **X への投稿実行**（Chrome で X を開いて POST する操作）
-- ❌ **承認ボタンを押す**（`/api/approve-preview` / `/api/push/notify-review-ready` 自動発火）
-- ❌ **queue を `published` / `x_posted` に書き換える**
 
 ## 画像生成前ゲートの扱い（停止ポイントではない）
 
@@ -699,7 +680,6 @@ PC 表示では **横スクロールを原則使わない**。スマホでも基
 - `docs/chatgpt_file_attach_clipboard.md` — クリップボード添付（標準）
 - `docs/uwsc_chatgpt_file_attach_test.md` — UWSC フォールバック
 - `docs/pwa_review_notification.md` — PWA 通知の仕組み
-- `docs/preview_approval_button.md` — 承認ボタンの動作
 - `scripts/sumahon/generate-handoff.mjs` — handoff / chrome-steps の生成元
 - `scripts/sumahon/validate-generated-article.mjs` — sourceCheck / articleQualityCheck
 

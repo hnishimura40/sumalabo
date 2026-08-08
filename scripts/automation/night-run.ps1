@@ -18,7 +18,7 @@ param(
   [switch]$RunnerSelfTest
 )
 $ErrorActionPreference = 'Continue'
-$RepoRoot = "D:\documents\動画作成関連\すまラボ"
+$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Set-Location $RepoRoot
 
 $NightDir = Join-Path $RepoRoot "logs\night"
@@ -30,8 +30,8 @@ $HeartbeatFile = Join-Path $NightDir "$DateStr.heartbeat.json"
 $CompletionFile = Join-Path $NightDir "$DateStr.completion.json"
 $AcceptanceRequestFile = Join-Path $NightDir "scheduled-acceptance.request.json"
 $AcceptanceResultFile = Join-Path $NightDir "scheduled-acceptance.result.json"
-$RunStartedAt = (Get-Date).ToString("o")
-$RunId = (Get-Date).ToString("yyyyMMddTHHmmss.fff")
+$RunStartedAt = if ($env:SUMALABO_NIGHT_RUN_STARTED_AT) { $env:SUMALABO_NIGHT_RUN_STARTED_AT } else { (Get-Date).ToString("o") }
+$RunId = if ($env:SUMALABO_NIGHT_RUN_ID) { $env:SUMALABO_NIGHT_RUN_ID } else { (Get-Date).ToString("yyyyMMddTHHmmss.fff") }
 $ContractScript = Join-Path $RepoRoot "scripts\automation\night-run-contract.mjs"
 $ContractFile = Join-Path $NightDir "run-contract\$RunId.json"
 $env:SUMALABO_NIGHT_RUN_ID = $RunId
@@ -250,36 +250,15 @@ try {
     $exitCode = Record-ContractOutcome "fail" "claude_final_failure" "claude exit=$claudeExit"
     exit $exitCode
   }
-  # ---- 4. Phase B/C 未完の救済 + 無音防止（2026-07-18 追加） ----
-  # claude が exit 0 でも Phase A(review_waiting)止まりで終えることがある（2026-07-18 の
-  # claude-for-teachers 記事が該当）。本来は GitHub Actions の auto-phase-b が veto 窓経過後に
-  # 公開するが、当リポジトリでは Actions の schedule が一切発火しない（全 workflow の runs=0）。
-  # そこで **ローカルで auto-phase-b をポーリング実行**し、veto 窓経過後に Phase B を完了させる。
-  # それでも未公開が残れば通知する（無音防止）。auto-phase-b.mjs は autonomy ゲート + veto 期限 +
-  # 1件ずつ + post-publish verify / 自動 rollback を内包（安全）。
+  # ---- 4. Phase B/C 未完の即時救済 ----
+  # Claudeがexit 0でもPhase Aで終わった場合、承認や時刻待ちには入らない。
+  # veto済みでないreview_waitingを1回だけ即時Phase Bへ進める。
   try {
-    $swB = [System.Diagnostics.Stopwatch]::StartNew()
-    while ($swB.Elapsed.TotalMinutes -lt 45) {
-      # 将来時刻でも「対象:」が出なければ review_waiting 自体が無い（＝完走済み or そもそも記事なし）→ 抜ける
-      $anyPending = (node scripts/automation/auto-phase-b.mjs --decide --now 9999-01-01T00:00:00Z 2>$null | Out-String)
-      if ($anyPending -notmatch '対象:') { break }
-      # 実 now で veto 経過している対象があれば公開する
-      $nowDecide = (node scripts/automation/auto-phase-b.mjs --decide 2>$null | Out-String)
-      if ($nowDecide -match '対象:') {
-        Log "Phase B fallback: veto 窓経過の review_waiting をローカル auto-phase-b で公開する。"
-        node scripts/automation/auto-phase-b.mjs 2>&1 | Out-File -FilePath $ClaudeLog -Encoding utf8 -Append
-        Start-Sleep -Seconds 20
-        continue
-      }
-      # review_waiting はあるが veto 窓内 → 待って再試行
-      Log "Phase B fallback: review_waiting あり・veto 窓内。5 分待機して再判定。"
-      Start-Sleep -Seconds 300
-    }
-    # 無音防止: veto 経過後も未公開の review_waiting が残っていれば通知する
-    $leftover = (node scripts/automation/auto-phase-b.mjs --decide 2>$null | Out-String)
-    if ($leftover -match '対象:') {
-      Log "無音防止通知: veto 経過後も未公開の review_waiting が残存。"
-      node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[夜間] Phase B未完: veto経過後も未公開のreview_waitingが残っています。auto-phase-b要確認'}))" 2>&1 | Out-Null
+    $pending = (node scripts/automation/auto-phase-b.mjs --decide 2>$null | Out-String)
+    if ($pending -match '対象:') {
+      Log "Phase B fallback: review_waitingを即時公開する。"
+      node scripts/automation/auto-phase-b.mjs 2>&1 | Out-File -FilePath $ClaudeLog -Encoding utf8 -Append
+      if ($LASTEXITCODE -ne 0) { Log "Phase B fallback failed: exit=$LASTEXITCODE" }
     }
   } catch {
     Log "Phase B fallback error: $($_.Exception.Message)"

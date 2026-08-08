@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// scripts/automation/auto-phase-b.mjs — veto 期限経過後の Phase B 自動実行 (L1)。
+// scripts/automation/auto-phase-b.mjs — Phase A完了後のPhase B自動実行。
 //
 // 実行主体: GitHub Actions（.github/workflows/auto-phase-b.yml、5 分間隔 schedule）。
 //   Actions は自前トークンで自リポジトリを clone できるため、P1 で特定した
@@ -8,7 +8,7 @@
 // 流れ:
 //   1. autonomy ゲート（paused / level<1 なら何もせず exit 0 = L0 の現行動作を壊さない）
 //   2. /api/review-items から確認待ち一覧を取得
-//   3. 対象条件: status=review_waiting かつ vetoDeadline 経過 かつ 未veto かつ prUrl あり
+//   3. 対象条件: status=review_waiting かつ未vetoかつprUrlあり
 //   4. 1 実行につき 1 slug だけ処理（安全側）
 //   5. PR merge（gh CLI。MERGEABLE/CLEAN/非Draft を確認）→ git pull main
 //   6. npm run deploy:production -- --slug=<slug> --trigger=auto_after_veto
@@ -52,8 +52,7 @@ export function parseArgs(argv) {
 
 /**
  * 自動 Phase B の対象を選ぶ（純関数・テスト可能）。
- * 条件: review_waiting / vetoDeadline 経過 / 未veto / prUrl あり。
- * 複数該当時は vetoDeadline が古い順。
+ * 条件: review_waiting / 未veto / prUrlあり。承認・時刻待ちは設けない。
  */
 export function selectEligible(items, nowMs = Date.now()) {
   if (!Array.isArray(items)) return [];
@@ -63,12 +62,9 @@ export function selectEligible(items, nowMs = Date.now()) {
       if (it.status !== "review_waiting") return false;
       if (it.vetoedAt) return false;
       if (typeof it.prUrl !== "string" || !it.prUrl) return false;
-      if (typeof it.vetoDeadline !== "string") return false;
-      const deadline = Date.parse(it.vetoDeadline);
-      if (!Number.isFinite(deadline)) return false;
-      return deadline < nowMs;
+      return true;
     })
-    .sort((a, b) => Date.parse(a.vetoDeadline) - Date.parse(b.vetoDeadline));
+    .sort((a, b) => Date.parse(a.previewReadyAt || a.createdAt || 0) - Date.parse(b.previewReadyAt || b.createdAt || 0));
 }
 
 async function loadItems(args) {
@@ -148,14 +144,14 @@ async function main() {
   }
   const eligible = selectEligible(items, nowMs);
   if (eligible.length === 0) {
-    console.log("[auto-phase-b] veto期限超過の対象なし");
+    console.log("[auto-phase-b] Phase B対象なし");
     writeGithubOutput("eligible", "none");
     process.exitCode = 0;
     return;
   }
 
   const target = eligible[0]; // 4. 1 実行 1 slug
-  console.log(`[auto-phase-b] 対象: ${target.slug} (vetoDeadline=${target.vetoDeadline}, PR=${target.prUrl})`);
+  console.log(`[auto-phase-b] 対象: ${target.slug} (PR=${target.prUrl})`);
   writeGithubOutput("eligible", target.slug);
   if (args.decide) {
     process.exitCode = 0;
@@ -188,9 +184,10 @@ async function main() {
   }
   console.log(`[auto-phase-b] PR #${prNumber} merge ${merged.alreadyMerged ? "済み（スキップ）" : "OK"}`);
 
-  const pull = run("git", ["pull", "origin", "main"]);
-  if (pull.code !== 0) {
-    console.error("[auto-phase-b] git pull origin main 失敗");
+  const fetch = run("git", ["fetch", "origin", "main"]);
+  const checkout = fetch.code === 0 ? run("git", ["checkout", "--detach", "origin/main"]) : { code: 1 };
+  if (fetch.code !== 0 || checkout.code !== 0) {
+    console.error("[auto-phase-b] origin/main同期またはdetached checkout失敗");
     process.exitCode = 1;
     return;
   }

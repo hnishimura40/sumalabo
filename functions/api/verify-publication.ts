@@ -1,8 +1,8 @@
 // Cloudflare Pages Function: GET /api/verify-publication?slug={slug}
 //
 // 役割:
-//   承認ボタン → /api/approve-preview で PR merge 後、本番反映は
-//   wrangler(Direct Upload) が正規手順 (P1 で一本化。Git 連携 auto-deploy /
+//   PR merge後の本番反映はwrangler(Direct Upload)が正規手順
+//   (P1で一本化。Git連携auto-deploy /
 //   Deploy Hook は GitHub App の clone 失敗が常態化していたため廃止)。
 //   フロント側・CLI 側はこの endpoint を polling して本番反映を厳格に検証する。
 //   HTTP 200 だけでなく、title / slug / body / thumbnail / homepage誤配信判定 /

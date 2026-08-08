@@ -1,6 +1,6 @@
 // tests/sumahon/production-deploy.test.mjs
 //
-// approve-preview / verify-publication / deploy-production-from-main の
+// verify-publication / deploy-production-from-main の
 // 本番反映ロジック (P1: wrangler 正規手順) を node:test で検証する。
 //
 // verify-publication.ts は Cloudflare Pages Functions の TypeScript なので
@@ -153,7 +153,7 @@ test("5. deploy script dry-run (--skip-build --skip-git-sync --no-verify) は ex
 });
 
 test("6. 本番反映コマンド hint には secret / token / URL を含まない", () => {
-  // verify-publication / approve-preview / フロント全てで使う共通定数
+  // verify-publication / deploy処理で使う共通定数
   const hint = PRODUCTION_DEPLOY_COMMAND_HINT;
   assert.ok(!/https?:\/\//.test(hint), "hint に URL を含めないこと");
   assert.ok(!/bearer/i.test(hint), "hint に Bearer token を含めないこと");

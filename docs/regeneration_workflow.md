@@ -26,7 +26,7 @@ rule-based generator (`generateExplainer`) が元記事の事実を本文に反�
            │  Phase C: article:import-generated
            ▼
 ┌──────────────────────┐
-│ preview_created      │  (Preview branch push + PR + 通知 完了、人間承認待ち)
+│ preview_created      │  (Preview branch push + PR + 通知完了、未vetoなら即Phase B)
 └──────────────────────┘
 ```
 

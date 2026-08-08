@@ -54,7 +54,7 @@ const TRANSIENT_CHECKS_BY_CLASSIFICATION = Object.freeze({
 });
 
 export function incidentConsumesErrorBudget(incident) {
-  return Boolean(incident && incident.slug && incident.kind !== "auto_demotion" && incident.errorBudget?.consumes !== false);
+  return Boolean(incident && incident.slug && incident.kind !== "auto_demotion" && incident.errorBudget?.consumes === true);
 }
 
 function validateExclusionEvidence(classification, evidence = {}) {
@@ -196,6 +196,7 @@ export function recordIncident(incident, filePath = autonomyPath()) {
     at: incident.at || new Date().toISOString(),
     slug: incident.slug || null,
     kind: incident.kind || "unknown",
+    errorBudget: { consumes: true },
     ...(incident.detail ? { detail: incident.detail } : {}),
   };
   state.incidents.push(entry);

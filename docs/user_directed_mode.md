@@ -146,27 +146,16 @@ Phase A 完了時点で **必ず停止する**。
 - 禁則チェック結果の報告
 - **X 投稿案の下書き作成のみ可**（`drafts/social/{slug}.x.md` に保存。投稿はしない）
 
-> チャットで PR URL を報告するだけは Checkpoint ではない。**通知 + Preview/PWA 確認導線 + 承認導線まで到達**して初めて Checkpoint 成立。
+> Phase A完了後は承認応答を待たずPhase Bへ進む。Preview/PWAには停止専用のveto導線だけを置く。
 
 ### Claude がやらないこと（NG）
 
 - ❌ ローカルURL（127.0.0.1 等）を review item のメイン previewUrl にする / それで通知する
-- ❌ PR merge
-- ❌ production deploy（wrangler 本番 deploy を含む）
-- ❌ strict verify による queue published 化
-- ❌ X 投稿
-- ❌ queue を `published` / `x_posted` に書き換え
-- ❌ 承認ボタンを押す
+- ❌ 公開前の人手承認待ちを新設する
 
-### 停止メッセージ例
+### 停止条件
 
-> 記事化と PR 作成まで完了しました。以下の URL で記事内容を確認してください。公開へ進める場合は「**記事OK、公開へ**」と指示してください。
-
-### ユーザー了承トリガー
-
-- 「記事OK」「公開へ」「承認」「merge して公開」「この内容で進めて」「本番反映して」
-
-曖昧な返答（「あとで」「ちょっと待って」「うーん…」など）の場合は **勝手に公開しない**。判断に迷う場合は確認する。
+記事単位veto、全体kill switch、または品質・安全ゲート不合格の場合だけ停止する。
 
 ## 6. Phase B: 公開フェーズの内訳
 
@@ -302,13 +291,12 @@ Enable-ScheduledTask -TaskName 'Sumalabo Claude Pipeline Runner Test'
 
 | ルール | 詳細 |
 |---|---|
-| production deploy | ユーザー明示了承後にだけ実行 |
-| X 投稿 | ユーザー明示了承 + Phase B 成功後にだけ実行 |
-| 承認ボタン | Claude は押さない（`/api/approve-preview` は人間が叩く） |
+| production deploy | Phase A機械検品合格かつ未vetoの場合に実行 |
+| X 投稿 | Phase B成功後にだけ実行 |
 | Cloudflare Deploy Hook / Git 連携 auto-deploy | 廃止済み（P1）。本番反映は wrangler 正規手順だけ使う |
 | secret / token 類 | 表示しない（チャットにもログにもコミットメッセージにも書かない） |
 | main ブランチ | 直接 push 禁止。必ず PR 経由 |
-| PR merge | ユーザー明示承認後にだけ `gh pr merge` を実行 |
+| PR merge | Phase A機械検品合格かつ未vetoの場合に実行 |
 | 自動巡回 | `sumahon-watch.mjs` 等は **ユーザーが手動でコマンドを叩いた場合だけ** 起動 |
 | 画像元ファイル | 削除しない（`_published_articles/` 配下に保管） |
 | Edge | 使わない（Chrome のみ） |
@@ -335,7 +323,6 @@ Enable-ScheduledTask -TaskName 'Sumalabo Claude Pipeline Runner Test'
 - `docs/x_post_workflow.md` — X 投稿の安全条件と手順
 - `docs/queue_states.md` — queue 状態の遷移
 - `docs/pwa_review_notification.md` — PWA 通知の仕組み
-- `docs/preview_approval_button.md` — 承認ボタンの動作
 - `docs/visual_preview_review.md` — Preview スクショ 2 パスレビュー
 - `docs/chatgpt_file_attach_clipboard.md` — クリップボード添付
 - `inbox/README.md` — inbox / `_published_articles/` のフォルダ運用

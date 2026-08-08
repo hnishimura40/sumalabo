@@ -21,9 +21,9 @@
 | `user_directed_queued` | ユーザー指定で queue に投入された（処理待ち） | ユーザーが URL / フォルダ / テーマ / queue slug を指定 |
 | `article_generated` | 本文ドラフト作成済み（自己レビュー前） | `drafts/generated/{slug}.md` 等の本文初版完了 |
 | `article_ready_for_images` | Article Refinement Loop 通過。画像生成に進める | 自己レビュー 2 回（必要なら 3 回）通過 + 6 条件クリア（[`article_refinement_loop.md`](article_refinement_loop.md)） |
-| `review_waiting` | スライド・サムネ含めて PR 作成完了。ユーザー記事確認待ち（Checkpoint）。L1 以降は review item の `vetoDeadline` 経過で自動 Phase B の対象になる（[`autonomy.md`](autonomy.md)） | `gh pr create` 成功 |
-| `vetoed` | veto ボタンで自動公開を停止（L1）。公開する場合は従来どおり明示承認する | `/api/veto-preview`（PWA/Preview の「⛔ 自動公開を停止」ボタン） |
-| `user_approved_for_publish` | ユーザー了承済み。Phase B 開始可 | ユーザーが「記事OK」「公開へ」等を明示 |
+| `review_waiting` | スライド・サムネを含むPR作成完了。未vetoなら待機せずPhase Bの対象になる | `gh pr create` 成功 |
+| `vetoed` | vetoボタンで自動公開を停止 | `/api/veto-preview`（PWA/Previewの停止ボタン） |
+| `user_approved_for_publish` | 旧互換状態。新規フローでは使用しない | 既存台帳の読み取り互換のみ |
 | `merged` | PR merge 済み | `gh pr merge` 成功 |
 | `deployed` | wrangler 本番 deploy（正規手順）成功 | `deploy-production-from-main.mjs` の `wrangler.status: ok` |
 | `published` | strict verify 8/8 pass | `/api/verify-publication` で `failedChecks: []` |
@@ -45,9 +45,7 @@
         ↓  （Article Refinement Loop: 自己レビュー × 2〜3 / 6 条件クリア）
 [article_ready_for_images]       ← 画像生成 OK サイン
         ↓  （スライド構成案 → 画像生成 → ファクトチェック → 再生成）
-[review_waiting]                 ← Checkpoint（必ず停止）
-        ↓  （ユーザー明示了承）
-[user_approved_for_publish]
+[review_waiting]                 ← 未vetoなら待機せず続行
         ↓
 [merged]
         ↓

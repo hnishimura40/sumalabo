@@ -6,7 +6,7 @@
 
 あなたは すまラボ の夜間自動運転ドライバーです。この指示書に従い、**1 本だけ**記事を全自動で制作・公開・X 投稿し、監査レポートを出して終了してください。CLAUDE.md の全ルール（禁則語 / 記事方針 / 画像ルール / secret 非表示）に従います。**品質・安全の問題**（事実確認が取れない / gate 不合格 / 環境ブロック等）で判断に迷う場合は安全側（中止して通知）に倒します。ただし**ネタ選定は §1 の自動繰り下げ規則に従い、人間へ判断を投げて止まらない**（完全自動モードの設計）。
 
-> **恒久無人運転モード（2026-07-11〜）**: testMode（3本限定）は完走して終了し、`autonomy.json` の `nightRun` による恒久運転に切り替わった。毎日 4:30 / 1 晩 1 本 / weeklyCap 7。恒久ガード＝incident 2 件（enabledAt 以降）で自動停止・kill switch（paused）・gate/factcheck/post-publish verify/自動rollback は従来どおり。scout 候補が閾値 50 未満の日は無理に書かず安全スキップ（質を守る）。以下の手順・コマンドは testMode 時代と互換（`test-mode.mjs` CLI が nightRun を優先判定する）。
+> **恒久無人運転モード（2026-07-11〜）**: testMode（3本限定）は完走して終了し、`autonomy.json` の `nightRun` による恒久運転に切り替わった。毎日 4:30 / 1 晩 1 本 / weeklyCap 7。恒久ガード＝`errorBudget.consumes: true`のincident 2件（enabledAt以降）で自動停止・非消費incidentは除外・kill switch（paused）・gate/factcheck/post-publish verify/自動rollbackは従来どおり。scout候補が閾値50未満の日は無理に書かず安全スキップ（質を守る）。以下の手順・コマンドはtestMode時代と互換（`test-mode.mjs` CLIがnightRunを優先判定する）。
 
 ## 0. 前提チェック（必ず最初に実行）
 
@@ -82,9 +82,9 @@ npm run article -- --theme "<pickedのタイトルを元にした記事テーマ
 
 Phase Bへ進む前に、Phase Cの0/0-bisに記載した一次独立検品と手の部位拡大二段検品を先に完了する。立ち会い・夜間とも公開前の人手確認は行わず、公開後の事後確認と即時差し替えで運用する。`npm run sumalabo:inspect-hands:gate -- --slug <slug>` がPASSになることを必須とする。`needs_revision` は該当画像を1回再生成して両検品を再実行し、残る場合は**公開せず停止・通知**する。比率だけの `warning` はクロップ画像を報告に添えて公開可。
 
-## 3. Phase B（公開）— veto 窓なしで即実行
+## 3. Phase B（公開）— Phase A完了後に直ちに実行
 
-finalize 成功（PHASE A FINALIZE OK）を確認したら、veto 窓を待たずに進む（恒久無人運転の承認済み挙動）:
+finalize成功（PHASE A FINALIZE OK）を確認したら、承認・待機分岐を挟まず直ちに進む。記事単位vetoが既に記録されている場合だけ`stopped`として終了する:
 
 1. PR merge: `gh pr view <N> --json mergeable,mergeStateStatus` で MERGEABLE/CLEAN を確認 → `gh pr merge <N> --merge --delete-branch=false`
 2. deploy: `npm run deploy:production -- --slug=<slug> --skip-git-sync --run-mode=night`
