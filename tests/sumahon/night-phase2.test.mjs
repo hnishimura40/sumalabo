@@ -57,3 +57,11 @@ test("OAuth probe is non-interactive and never uses auth status", () => {
   assert.match(source, /\b401\b/);
   assert.doesNotMatch(source, /auth\s+status/i);
 });
+
+test("scheduled acceptance is an explicit stopped outcome, never success", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  const contract = read("scripts/automation/night-run-contract.mjs");
+  assert.match(wrapper, /Record-ContractOutcome "stop" "scheduled_acceptance"/);
+  assert.doesNotMatch(wrapper, /SCHEDULED ACCEPTANCE OK[\s\S]{0,300}exit 0/);
+  assert.match(contract, /"scheduled_acceptance"/);
+});

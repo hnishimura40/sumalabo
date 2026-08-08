@@ -21,6 +21,7 @@ export const ALLOWED_STOP_REASONS = new Set([
   "measurement_outside_window",
   "veto_triggered",
   "duplicate_run_guard",
+  "scheduled_acceptance",
 ]);
 
 function readJson(file, fallback = null) {

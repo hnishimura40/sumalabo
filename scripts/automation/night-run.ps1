@@ -209,12 +209,14 @@ try {
       @{ ok=$true; mode="scheduled_production_path_without_article"; taskName="Sumalabo Night Driver"; completedAt=(Get-Date).ToString("o"); pid=$PID; preflight="passed"; chromeProcessCount=@(Get-Process chrome -ErrorAction SilentlyContinue).Count; commandLineFlags="none"; articlePipelineStarted=$false } |
         ConvertTo-Json | Set-Content -LiteralPath $AcceptanceResultFile -Encoding utf8
       Log "SCHEDULED ACCEPTANCE OK: 実タスクの通常コマンドで起動し、記事生成直前まで本番同等パスを通過。"
-      exit 0
+      $exitCode = Record-ContractOutcome "stop" "scheduled_acceptance" "articlePipelineStarted=false"
+      exit $exitCode
     }
     @{ ok=$false; mode="scheduled_production_path_without_article"; taskName="Sumalabo Night Driver"; completedAt=(Get-Date).ToString("o"); pid=$PID; reason="invalid_or_expired_acceptance_request"; articlePipelineStarted=$false } |
       ConvertTo-Json | Set-Content -LiteralPath $AcceptanceResultFile -Encoding utf8
     Log "SCHEDULED ACCEPTANCE REJECTED: 期限切れまたは不正な request。記事工程を開始せず停止。"
-    exit 4
+    $exitCode = Record-ContractOutcome "fail" "invalid_or_expired_acceptance_request" "articlePipelineStarted=false"
+    exit $exitCode
   }
   # ---- 3. ヘッドレス Claude Code 起動 ----
   $PromptFile = Join-Path $RepoRoot "docs\night_driver_prompt.md"

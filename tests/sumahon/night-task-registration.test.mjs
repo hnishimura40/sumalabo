@@ -50,6 +50,6 @@ test("invalid scheduled acceptance fails closed before the article pipeline", ()
   const source = readFileSync(wrapperPath, "utf-8");
   assert.match(source, /invalid_or_expired_acceptance_request/);
   assert.equal((source.match(/articlePipelineStarted=\$false/g) ?? []).length, 2);
-  assert.match(source, /SCHEDULED ACCEPTANCE REJECTED[\s\S]*exit 4[\s\S]*# ---- 3\. ヘッドレス Claude Code 起動 ----/);
+  assert.match(source, /SCHEDULED ACCEPTANCE REJECTED[\s\S]*Record-ContractOutcome "fail" "invalid_or_expired_acceptance_request"[\s\S]*# ---- 3\. ヘッドレス Claude Code 起動 ----/);
   assert.doesNotMatch(source, /不正な scheduled acceptance request[^\r\n]*本番運転を継続/);
 });
