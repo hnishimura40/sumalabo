@@ -53,6 +53,7 @@
     "report:filter": "node scripts/sumahon/filter-report-output.mjs",
     "test-mode": "node scripts/automation/test-mode.mjs",
     "sumalabo:audit": "node scripts/sumalabo-gate.mjs --audit",
+    "sumalabo:scan-rendered-markdown": "node scripts/scan-rendered-markdown.mjs",
     "worktree:remove": "node scripts/maintenance/safe-worktree-remove.mjs",
     "article:check-response": "node scripts/automation/chatgpt-response-health.mjs",
     "incident:reclassify": "node scripts/automation/incident-reclassify.mjs",
