@@ -52,6 +52,10 @@ data/automation/locks/
 # night-run runtime audit state — private/local only
 logs/night/last-run.json
 logs/night/run-history.jsonl
+logs/night/run-contract/
+logs/night/*.completion.json
+logs/night/*.heartbeat.json
+logs/night/*.watchdog.json
 
 # automation logs (per-run files) — never committed; .gitkeep stays
 logs/automation/*.log

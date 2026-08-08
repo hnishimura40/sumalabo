@@ -2,6 +2,8 @@
 
 > 2026-08-01: API一過性エラーはrunnerが30分後に1回だけ再試行する。push直前は npm run security:scan を必須とし、公開前の人手確認は行わない。
 
+> **成否契約（2026-08-08・全工程最上位）**: success は、①本番記事URL HTTP 200、②PR merged、③strict verify全項目合格、④X本投稿とリンク返信が `x-posted.json` に二段階記録済み、の4点をラッパーが実物確認した場合だけ。Claudeのexit 0、completion、heartbeatはsuccessの根拠にしない。意図した停止は `node scripts/automation/night-run-contract.mjs stop --run-id "$SUMALABO_NIGHT_RUN_ID" --started-at "$SUMALABO_NIGHT_RUN_STARTED_AT" --reason <理由>` で記録し、それ以外の未完はfailedになる。
+
 あなたは すまラボ の夜間自動運転ドライバーです。この指示書に従い、**1 本だけ**記事を全自動で制作・公開・X 投稿し、監査レポートを出して終了してください。CLAUDE.md の全ルール（禁則語 / 記事方針 / 画像ルール / secret 非表示）に従います。**品質・安全の問題**（事実確認が取れない / gate 不合格 / 環境ブロック等）で判断に迷う場合は安全側（中止して通知）に倒します。ただし**ネタ選定は §1 の自動繰り下げ規則に従い、人間へ判断を投げて止まらない**（完全自動モードの設計）。
 
 > **恒久無人運転モード（2026-07-11〜）**: testMode（3本限定）は完走して終了し、`autonomy.json` の `nightRun` による恒久運転に切り替わった。毎日 4:30 / 1 晩 1 本 / weeklyCap 7。恒久ガード＝incident 2 件（enabledAt 以降）で自動停止・kill switch（paused）・gate/factcheck/post-publish verify/自動rollback は従来どおり。scout 候補が閾値 50 未満の日は無理に書かず安全スキップ（質を守る）。以下の手順・コマンドは testMode 時代と互換（`test-mode.mjs` CLI が nightRun を優先判定する）。
@@ -44,9 +46,9 @@ npm run scout -- --auto-pick
 
 > **鉄則（2026-07-12 改訂）: 完全自動モードでは、夜間に人間へ判断を投げて止まるのは設計違反。**「要立会い判断」での停止は禁止。夜間の停止が許されるのは「適格候補ゼロ（候補なしスキップ）」と「環境ブロック（blocked）」だけ。
 
-- `picked` が null（閾値以上なし）なら「候補なし」を通知して終了（記事は作らない。無理に書かない）。
+- `picked` が null（閾値以上なし）なら「候補なし」を通知し、`node scripts/automation/night-run-contract.mjs stop --run-id "$SUMALABO_NIGHT_RUN_ID" --started-at "$SUMALABO_NIGHT_RUN_STARTED_AT" --reason no_scout_target` を実行して終了（記事は作らない。無理に書かない）。
 - `picked` があれば**必ず着手する**。通常のテック製品ニュース（発表 / 提供開始 / 提供終了 / 料金改定 / アップデート / 日本展開 等）は無人で書いてよい。人間の判断を待つ対象ではない。
-- **重複時の自動繰り下げ**: scout は既報テーマ（公開済み slug / 採用済み候補とのエンティティ照合）に -40 ペナルティを掛けて選定するが、それでも `picked` が既存記事と同一トピックだと判明した場合は、**停止せず** `npm run scout -- --auto-pick` を再実行して次点の適格候補へ自動で繰り下げる（直前の picked は scout-picked.json に記録済みで、再実行時に dedupe される）。**最大 3 回**。3 回とも重複なら「候補なし（重複続き）」としてスキップ通知。「1位がダメだから全部やめる」は禁止。
+- **重複時の自動繰り下げ**: scout は既報テーマ（公開済み slug / 採用済み候補とのエンティティ照合）に -40 ペナルティを掛けて選定するが、それでも `picked` が既存記事と同一トピックだと判明した場合は、**停止せず** `npm run scout -- --auto-pick` を再実行して次点の適格候補へ自動で繰り下げる（直前の picked は scout-picked.json に記録済みで、再実行時に dedupe される）。**最大 3 回**。3 回とも重複なら上記 `no_scout_target` を記録して停止する。「1位がダメだから全部やめる」は禁止。
 - **候補を飛ばしてよい唯一の基準は除外カテゴリ相当**（訴訟 / 事故 / 人事 / 買収 / 政治 等。scout の excludeCategories が一次フィルタ）。すり抜けてきた候補がこれに該当すると判断したら、その候補だけ飛ばして再実行で次点へ。**該当しない候補を「判断に迷う」を理由に人間へ回さない。**
 - `picked.title` / `picked.link` / `picked.suggestedSlug` を控える。
 - **slug は自分で整える**: suggestedSlug が日本語つぶれ等で不自然なら、`{YYYYMM}-{英語ケバブケース}` 形式で意味の通る slug に直してよい（既存 slug と重複しないこと）。
@@ -131,6 +133,7 @@ node scripts/automation/night-report.mjs --slug <slug>
 - night-report の「クリーン判定」が「要確認」の場合、通知タイトルにその旨が入る（そのままでよい。判断はユーザー）。
 - incident が今夜 2 件以上出た場合は `node scripts/automation/test-mode.mjs --stop --reason "incident_threshold"` を実行して終了。
 - `--consume` は恒久モードでは本数減算なし（監査用に nightRun.consumed へ追記のみ）。`recordNightRun` が weeklyCap 判定用の `logs/night/run-history.jsonl` にも追記する。
+- この監査レポートや `recordNightRun({result:'completed'})` はsuccess証明ではない。最終成否はラッパーが4点を再取得して決める。
 
 ## 中止条件（どれかに該当したら、その時点で通知して終了）
 

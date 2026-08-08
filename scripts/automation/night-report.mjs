@@ -25,7 +25,7 @@ import { readLedger } from "./ledger.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 import { readPhaseTimings } from "./test-mode.mjs";
 import { sanitizeReportText } from "../sumahon/filter-report-output.mjs";
-import { recordMeasurementRun } from "./unattended-measurement.mjs";
+import { readRunOutcomes } from "./unattended-measurement.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -68,11 +68,14 @@ export function buildReport(slug) {
   lines.push("");
   lines.push(`- 生成日時: ${new Date().toISOString()}`);
   lines.push(`- autonomy: level ${autonomy.level} / paused ${autonomy.paused} / testMode 残数 ${tm.articlesRemaining ?? "-"}（enabled: ${tm.enabled === true}）`);
-  const unattendedCompleted = Boolean(state && !state.halted && verify?.hardFail === false && entry.productionUrl && entry.xPostUrl);
+  const contractOutcome = readRunOutcomes(ROOT)
+    .filter((row) => row.slug === slug)
+    .sort((a, b) => Date.parse(b.finishedAt) - Date.parse(a.finishedAt))[0] || null;
+  const unattendedCompleted = contractOutcome?.outcome === "success";
   const humanIntervention = Boolean(state?.humanIntervention || state?.manualIntervention || entry?.humanIntervention);
   const interventionReason = humanIntervention
     ? (state?.humanInterventionReason || entry?.humanInterventionReason || "manual_intervention")
-    : (unattendedCompleted ? "なし" : state?.haltReason || (!entry.productionUrl ? "未公開" : !entry.xPostUrl ? "X未投稿" : "未完走"));
+    : (unattendedCompleted ? "なし" : contractOutcome?.reason || state?.haltReason || "成否契約未達");
   lines.push("- 無人完走できたか: " + (unattendedCompleted ? "はい" : "いいえ") + " / 人の介入: " + (humanIntervention ? "あり" : "なし") + " / 理由: " + interventionReason);
   lines.push("");
 
@@ -203,7 +206,6 @@ async function main() {
   }
   const { markdown, clean, unattendedCompleted, humanIntervention, interventionReason } = buildReport(slug);
   const filteredMarkdown = sanitizeReportText(markdown);
-  recordMeasurementRun({ slug, recordedAt: new Date().toISOString(), unattendedCompleted, humanIntervention, reason: interventionReason, postPublishBreakages: 0 });
   const dir = path.join(ROOT, "logs", "night");
   mkdirSync(dir, { recursive: true });
   const p = path.join(dir, `${slug}.report.md`);

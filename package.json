@@ -45,13 +45,17 @@
     "retract": "node scripts/automation/retract.mjs",
     "schedule:auto-run": "node scripts/automation/register-night-task.mjs",
     "night:report": "node scripts/automation/night-report.mjs",
+    "night:contract": "node scripts/automation/night-run-contract.mjs",
+    "night:record-intervention": "node scripts/automation/night-run-contract.mjs intervene",
+    "night:record-correction": "node scripts/automation/night-run-contract.mjs correction",
     "report:filter": "node scripts/sumahon/filter-report-output.mjs",
     "test-mode": "node scripts/automation/test-mode.mjs",
     "sumalabo:audit": "node scripts/sumalabo-gate.mjs --audit",
     "worktree:remove": "node scripts/maintenance/safe-worktree-remove.mjs",
     "article:check-response": "node scripts/automation/chatgpt-response-health.mjs",
     "incident:reclassify": "node scripts/automation/incident-reclassify.mjs",
-    "measurement:summary": "node scripts/automation/unattended-measurement.mjs"
+    "measurement:summary": "node scripts/automation/unattended-measurement.mjs",
+    "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/unattended-measurement.test.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",

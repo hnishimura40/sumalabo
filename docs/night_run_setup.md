@@ -15,7 +15,7 @@ npm run schedule:auto-run -- --remove       # 解除
 - タスク名: `Sumalabo Night Driver`（旧 `Sumalabo Sumahon Queue Runner` 群とは別物。旧タスクは全て Disabled の残骸）
 - 多重起動ガード: `logs/night/run.lock`（PID 生存確認つき）。前夜の run が生きていれば新規起動しない
 - Claude は独立プロセスグループで起動し、出力を `logs/night/{date}.claude.log` へ直接保存する。`run.lock` は親PID・監督PID・子PID・15秒heartbeatを保持するため、親だけが落ちても重複起動しない
-- 05:30 の `Sumalabo Night Watchdog` が完了痕跡を確認する。未完了なら、heartbeat正常の「実行中」と、停止・未起動を区別してHiroへPush通知する
+- 05:30 の `Sumalabo Night Watchdog` は完了痕跡を信用せず、本番URL HTTP 200・PR merged・strict verify全合格・X二段階台帳の4点を独立に再取得する。期限時点で4点が揃わない場合は、heartbeatが正常でも`failed`としてHiroへPush通知する
 - 1 晩 1 本ガード: `logs/night/last-run.json`（JST 日付で判定）
 
 ## 2. スリープ解除（wake timers）

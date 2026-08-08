@@ -30,6 +30,13 @@ $HeartbeatFile = Join-Path $NightDir "$DateStr.heartbeat.json"
 $CompletionFile = Join-Path $NightDir "$DateStr.completion.json"
 $AcceptanceRequestFile = Join-Path $NightDir "scheduled-acceptance.request.json"
 $AcceptanceResultFile = Join-Path $NightDir "scheduled-acceptance.result.json"
+$RunStartedAt = (Get-Date).ToString("o")
+$RunId = (Get-Date).ToString("yyyyMMddTHHmmss.fff")
+$ContractScript = Join-Path $RepoRoot "scripts\automation\night-run-contract.mjs"
+$ContractFile = Join-Path $NightDir "run-contract\$RunId.json"
+$env:SUMALABO_NIGHT_RUN_ID = $RunId
+$env:SUMALABO_NIGHT_RUN_STARTED_AT = $RunStartedAt
+$script:SkipContractFinalizer = [bool]($BrowserCheckOnly -or $RunnerSelfTest)
 if ($BrowserCheckOnly -and $RunnerSelfTest) { throw 'BrowserCheckOnly と RunnerSelfTest は同時指定できません。' }
 if ($RunnerSelfTest) {
   $LockFile = Join-Path $NightDir "runner-selftest.lock"
@@ -40,6 +47,15 @@ function Log($msg) {
   $line = "[{0}] {1}" -f (Get-Date).ToString("yyyy-MM-dd HH:mm:ss"), $msg
   Add-Content -Path $LogFile -Value $line -Encoding utf8
   Write-Host $line
+}
+
+function Record-ContractOutcome([string]$Mode, [string]$Reason, [string]$Detail = "") {
+  $args = @($ContractScript, $Mode, "--run-id", $RunId, "--started-at", $RunStartedAt, "--reason", $Reason)
+  if ($Detail) { $args += @("--detail", $Detail) }
+  $result = & node @args 2>&1
+  $code = $LASTEXITCODE
+  Log (($result | Out-String).Trim())
+  return $code
 }
 
 # ---- 1. 多重起動ガード ----（ドライランでは lock を取らない）
@@ -55,7 +71,8 @@ if (-not $BrowserCheckOnly) {
       }
       if ($livePids.Count -gt 0 -or $heartbeatFresh) {
         Log "SKIP: 前回の run が生存中（pids=$($livePids -join ','), heartbeat=$($lock.heartbeatAt)）。多重起動しません。"
-        exit 0
+        $exitCode = Record-ContractOutcome "stop" "duplicate_run_guard" "既存runのPIDまたはheartbeatが有効"
+        exit $exitCode
       }
       Log "古い lock（全PID終了・heartbeat期限切れ）を回収します。"
     } catch {
@@ -111,7 +128,8 @@ try {
     if ($preflightExit -ne 0) {
       Log "SKIP: 恒久夜間運転が非アクティブ（exit $preflightExit）。Claude を起動しません。"
       node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'skipped',title:'[夜間run] 夜間運転スキップ（恒久運転非アクティブ/実行済み）'}))" 2>&1 | Out-Null
-      exit 0
+      $exitCode = Record-ContractOutcome "fail" "preflight_inactive" "test-mode --status exit=$preflightExit"
+      exit $exitCode
     }
   }
 
@@ -129,7 +147,8 @@ try {
   if (-not (Test-Path $ChromeExe)) {
     Log "SKIP: Chrome 実行ファイルが見つからない。ブラウザ経路なしのため停止。"
     node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[夜間run] 夜間運転停止: Chrome実行ファイル不明'}))" 2>&1 | Out-Null
-    exit 0
+    $exitCode = Record-ContractOutcome "fail" "chrome_executable_missing"
+    exit $exitCode
   }
 
   $chromeCount = @(Get-Process chrome -ErrorAction SilentlyContinue).Count
@@ -147,7 +166,8 @@ try {
     if (@(Get-Process chrome -ErrorAction SilentlyContinue).Count -eq 0) {
       Log "SKIP: Chrome 起動に失敗（プロセスが立ち上がらない）。停止。"
       node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[夜間run] 夜間運転停止: Chrome起動失敗'}))" 2>&1 | Out-Null
-      exit 0
+      $exitCode = Record-ContractOutcome "fail" "chrome_start_failed"
+      exit $exitCode
     }
   }
 
@@ -174,6 +194,7 @@ try {
   # 実タスクの通常コマンドラインを schtasks /Run で通す一回限りの受入。
   # フラグを登録へ混ぜず、本番と同じ経路を記事生成直前まで通して安全終了する。
   if (Test-Path $AcceptanceRequestFile) {
+    $script:SkipContractFinalizer = $true
     $acceptance = $null
     try { $acceptance = Get-Content $AcceptanceRequestFile -Raw -Encoding utf8 | ConvertFrom-Json } catch {}
     $fresh = $false
@@ -216,9 +237,18 @@ try {
   # night-process-runner が overloaded / rate limit / timeout / temporary unavailable
   # だけを30分後に1回再試行する。ここでは二重再試行を行わない。
   if ($claudeExit -ne 0) {
+    # An intentional stop command returns a nonzero scheduler code by design.
+    # Preserve an already-recorded stopped outcome instead of overwriting it.
+    if (Test-Path $ContractFile) {
+      $audit = & node $ContractScript audit --run-id $RunId 2>&1
+      $contractExit = $LASTEXITCODE
+      Log (($audit | Out-String).Trim())
+      exit $contractExit
+    }
     Log "runner最終失敗: 1回の一過性再試行後または恒久エラー（exit $claudeExit）。追加再試行せず停止。"
     node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'failed',title:'[夜間run] 夜間運転が最終失敗（exit $claudeExit）。一過性再試行は最大1回'}))" 2>&1 | Out-Null
-    exit $claudeExit
+    $exitCode = Record-ContractOutcome "fail" "claude_final_failure" "claude exit=$claudeExit"
+    exit $exitCode
   }
   # ---- 4. Phase B/C 未完の救済 + 無音防止（2026-07-18 追加） ----
   # claude が exit 0 でも Phase A(review_waiting)止まりで終えることがある（2026-07-18 の
@@ -255,11 +285,33 @@ try {
     Log "Phase B fallback error: $($_.Exception.Message)"
   }
 
-  exit $claudeExit
+  # Claudeや補助ファイルの終了状態はsuccessの根拠にしない。記事URL、PR、
+  # strict verify、X二段階台帳をここで実物照合し、4点が揃った場合だけ0を返す。
+  if (Test-Path $ContractFile) {
+    $audit = & node $ContractScript audit --run-id $RunId 2>&1
+    $contractExit = $LASTEXITCODE
+    Log (($audit | Out-String).Trim())
+    exit $contractExit
+  }
+  $contract = & node $ContractScript evaluate --run-id $RunId --started-at $RunStartedAt 2>&1
+  $contractExit = $LASTEXITCODE
+  Log (($contract | Out-String).Trim())
+  exit $contractExit
 } finally {
   if (Test-Path $LockFile) { Copy-Item -LiteralPath $LockFile -Destination $HeartbeatFile -Force -ErrorAction SilentlyContinue }
-  if (-not $RunnerSelfTest -and -not $BrowserCheckOnly) {
-    @{ finishedAt=(Get-Date).ToString("o"); status="wrapper_exited" } | ConvertTo-Json | Set-Content $CompletionFile -Encoding utf8
+  if (-not $script:SkipContractFinalizer) {
+    if (-not (Test-Path $ContractFile)) {
+      Record-ContractOutcome "fail" "wrapper_terminated_without_contract" | Out-Null
+    }
+    $outcome = $null
+    try { $outcome = Get-Content $ContractFile -Raw -Encoding utf8 | ConvertFrom-Json } catch {}
+    @{
+      runId=$RunId
+      finishedAt=(Get-Date).ToString("o")
+      status=if($outcome){$outcome.outcome}else{"failed"}
+      reason=if($outcome){$outcome.reason}else{"outcome_record_unreadable"}
+      slug=if($outcome){$outcome.slug}else{$null}
+    } | ConvertTo-Json | Set-Content $CompletionFile -Encoding utf8
   }
   Remove-Item $LockFile -Force -Confirm:$false -ErrorAction SilentlyContinue
 }
