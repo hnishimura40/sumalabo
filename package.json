@@ -45,7 +45,7 @@
     "retract": "node scripts/automation/retract.mjs",
     "schedule:auto-run": "node scripts/automation/register-night-task.mjs",
     "night:prepare-runner": "node scripts/automation/prepare-night-runner.mjs",
-    "night:auth-probe": "node scripts/automation/claude-auth-probe.mjs",
+    "night:auth-probe": "node scripts/automation/codex-auth-probe.mjs",
     "night:report": "node scripts/automation/night-report.mjs",
     "night:contract": "node scripts/automation/night-run-contract.mjs",
     "night:record-intervention": "node scripts/automation/night-run-contract.mjs intervene",

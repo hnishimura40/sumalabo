@@ -9,7 +9,8 @@ import process from "node:process";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const TASK_NAME = "Sumalabo Night Driver";
 export const WATCHDOG_TASK_NAME = "Sumalabo Night Watchdog";
-export const AUTH_PROBE_TASK_NAME = "Sumalabo Claude Auth Probe";
+export const AUTH_PROBE_TASK_NAME = "Sumalabo Codex Auth Probe";
+export const LEGACY_AUTH_PROBE_TASK_NAME = "Sumalabo Claude Auth Probe";
 export const FORBIDDEN_PRODUCTION_FLAGS = /-(?:RunnerSelfTest|BrowserCheckOnly|DryRun|TestMode)\b/i;
 export const DRIVER_ENTRY = "D:\\work\\sumalabo-night-entry.cmd";
 export const WATCHDOG_ENTRY = "D:\\work\\sumalabo-night-watchdog-entry.cmd";
@@ -50,7 +51,7 @@ function main() {
   }
   if (remove) {
     let status = 0;
-    for (const taskName of [TASK_NAME, WATCHDOG_TASK_NAME, AUTH_PROBE_TASK_NAME]) {
+    for (const taskName of [TASK_NAME, WATCHDOG_TASK_NAME, AUTH_PROBE_TASK_NAME, LEGACY_AUTH_PROBE_TASK_NAME]) {
       const r = spawnSync("schtasks", ["/delete", "/tn", taskName, "/f"], { encoding: "utf-8" });
       console.log(r.stdout || r.stderr);
       if (r.status !== 0) status = r.status ?? 1;
@@ -72,6 +73,7 @@ function main() {
   const r = spawnSync("schtasks", ["/create", "/tn", TASK_NAME, "/tr", taskCommand, "/sc", "daily", "/st", time, "/f"], { encoding: "utf-8" });
   console.log(r.stdout || r.stderr);
   if (r.status === 0) {
+    spawnSync("schtasks", ["/delete", "/tn", LEGACY_AUTH_PROBE_TASK_NAME, "/f"], { encoding: "utf-8" });
     const watchdogTr = `cmd.exe /d /c ${WATCHDOG_ENTRY}`;
     const w = spawnSync("schtasks", ["/create", "/tn", WATCHDOG_TASK_NAME, "/tr", watchdogTr, "/sc", "daily", "/st", "05:30", "/f"], { encoding: "utf-8" });
     console.log(w.stdout || w.stderr);

@@ -39,7 +39,7 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 
 **身体構造と画像経路の公開ブロック（2026-07-31更新）**: 認識アンカーとは別に、四肢・手指・顔・物体との融合を全画像で検査する。明確な手/腕/脚の本数異常に加え、各手が左手/右手として自然な向きか（親指位置）、手首と腕の接続、指の長さ・太さ（特に親指）を手ごとに必須回答する。明確な左右不整合・接続異常、腕・脚の不自然な長さ/細さ、触手状・ホース状・急なS字、付け根・関節の破綻、不快なシルエットは `needs_revision`。比率だけの違和感は warning とし画像を報告へ添付する。らぼまるは腕・手・脚・足が左右各1つで、それ以外の突起はアンテナ1本と左右の耳ビレだけ。生成では自然な構図を優先し、手を隠すことを既定にしない。壊れにくい手として、開いた手・軽く添える手を優先する。手は小さめ・遠めに描き、クローズアップを避ける。動作する手は片手だけにし、もう片方は体側で自然に休ませる。物を強く握る、両手で別々の動作をする、指を複雑に組む・数えるポーズは避ける。小道具の把持が不可欠な場合だけ、片手で軽く持つ。手を消すためにフレームアウト・後ろ手・机の陰へ不自然に退避させない。テーマ衣装・小道具配置・姿勢と視線・背景の演出密度は維持する。画像生成の標準経路は `codex exec` とし、工房チャットは既定のfallback条件が記録された場合だけ使う。**工房fallbackが1回でも発動した完了報告には「工房退避あり（条件名）」を必須記載**し、発動しなかった場合も「工房退避なし（Codex exec）」と明記する。無記載のまま経路を変更してはならない。
 
-**X投稿の標準経路（Hiro決定・2026-07-27）**: 昼のPhase Cは **Codex対話モードの内蔵BrowserまたはChrome拡張**を基本とし、`claude-in-chrome` は非常用フォールバックへ降格する。投稿前の `@suma_labo` DOM確認、本投稿・リプライ各 `count===1`、親の返信数 `N→N+1`、`x-posted.json` への本投稿直後／リプライ直後の2段階記録を省略しない。新規台帳レコードには `route: "codex"` を加える。**これは7/23の「Codexへ移行する価値なし」判定を、対話モードでは安定したというHiro実測により上書きする決定**。定型指示: [`docs/x-post-codex-procedure.md`](docs/x-post-codex-procedure.md)。夜間runは実装変更の承認まで現行の `claude-in-chrome` を維持する。
+**X投稿の標準経路（Hiro決定・2026-08-08更新）**: 昼夜とも **Codex Browser**を基本とする。対話モードは内蔵BrowserまたはChrome連携、非対話CLIは利用可能なCodex Chrome連携を使う。`claude-in-chrome` は使用しない。投稿前の `@suma_labo` DOM確認、本投稿・リプライ各 `count===1`、親の返信数 `N→N+1`、`x-posted.json` への本投稿直後／リプライ直後の2段階記録を省略しない。新規台帳レコードには `route: "codex"` を加える。**これは7/23の移行見送りを7/27のHiro実測で上書きし、夜間親主体もCodexへ統一した決定**。定型指示: [`docs/x-post-codex-procedure.md`](docs/x-post-codex-procedure.md)。
 
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
@@ -118,9 +118,9 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 
 > **画像生成必須時の事前チェック**（Refinement Loop 通過後）：ユーザー指示で **スライド・サムネの新規生成が必須** の場合（指示文に「ChatGPT を使い画像生成」「スライド」「サムネ」等の記述あり、または素材フォルダに既存画像がない場合）、画像生成に入る前に **画像生成経路の事前チェック** を行う：
 >
-> - `mcp__claude-in-chrome__*` がロードされているか
-> - Chrome 拡張がペアリングされているか（**Edge ペアリングは経路なし扱い**）
-> - ChatGPT セッションが開ける状態か
+> - Codex ImageGen経路が利用可能か
+> - 正本画像を`--image`で参照できるか
+> - `D:\downloads\sumalabo-codex`へ出力できるか
 >
 > **拡張未接続を検知したら、まず自己復旧を試みる（2026-07-14・人間に頼む前に）**:
 > 1. `npm run chrome:ensure`（= `scripts/automation/ensure-chrome.ps1`。night-run と同等の Chrome 起動＝プロセス確認→無ければ `--restore-last-session` で起動→安定待ち）を実行。
@@ -286,7 +286,7 @@ Phase B 完了後だけ実行：
     - ChatGPT 応答エラー → 同プロンプトで再送 2 回、3 回目は簡略化版で再送、それでもダメなら最終報告に「未生成」として記録
 15. **Phase A 最終記録**: 完了サマリ（生成ファイル一覧、検証結果、PR URL、Preview URL）を記録し、veto済みでなければ停止せずPhase Bへ進む
 16. **Phase B（公開）**: PR merge → main 同期 → wrangler 本番 deploy（正規手順）→ strict verify 8/8 → queue を `published` に更新
-17. **Phase C（X 投稿）**: 本番URL確認 → Codex対話モード（Chrome拡張を基本、内蔵Browserを補助）で X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証/アカウント (@suma_labo) 確認 → 本投稿(リンク無し) → リプライに記事リンク → 投稿URL取得 → queue を `x_posted` に更新。`claude-in-chrome` は非常用フォールバック
+17. **Phase C（X 投稿）**: 本番URL確認 → Codex Browser（対話は内蔵Browser/Chrome連携、夜間CLIはCodex Chrome連携）で X 投稿画面 → 画像4枚添付(1枚目=サムネ)を DOM 検証/アカウント (@suma_labo) 確認 → 本投稿(リンク無し) → リプライに記事リンク → 投稿URL取得 → queue を `x_posted` に更新。台帳は `route: codex`
 18. **Phase B / C 完了報告**: 本番URL / 投稿URL / queue 更新内容を 1 メッセージで提示
 
 ## 禁止事項（Claude Code 側）
@@ -417,7 +417,7 @@ npm run worktree:remove -- <worktree-path> --dry-run   # 判定だけ見る
 
 ### 4. 夜間 run との関係
 
-- 夜間 run は 4:30 に `scripts/automation/night-run.ps1` → ヘッドレス `claude -p`（`docs/night_driver_prompt.md`）で走る
+- 夜間 run は 4:30 に `scripts/automation/night-run.ps1` → 非対話 `codex exec`（`docs/night_driver_prompt.md`）で走る
 - 記事化の入口（`scripts/run/prepare-from-sumahon.mjs` / `import-generated.mjs` / `create-from-sumahon.mjs`）で **`assertNoTrackedChanges()`**（`scripts/sumahon/push-preview.mjs`）が実行され、**tracked な未コミット変更が 1 つでもあれば例外で停止**する（`regenerate-from-queue.mjs` の exit 2）。**untracked は対象外**（`--untracked-files=no`）
 - `scripts/automation/run-sumahon-queue.ps1` も、main 以外のブランチにいて tracked dirty があると reset を拒否して安全終了する
 - つまり **本体作業ツリーが tracked dirty のまま朝を迎えると、その晩の記事は作られない**

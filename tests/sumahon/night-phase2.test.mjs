@@ -29,7 +29,8 @@ test("night prompts and wrapper have no approval or veto-wait branch", () => {
     read("docs/night_driver_resume_prompt.md"),
     read("scripts/automation/night-run.ps1"),
   ].join("\n");
-  assert.doesNotMatch(text, /承認待ち|veto待ち|veto\s*窓内|Start-Sleep\s+-Seconds\s+300/);
+  assert.doesNotMatch(text, /Start-Sleep\s+-Seconds\s+300|AskUserQuestion|request_user_input/);
+  assert.match(text, /承認待ち・veto待ち・時刻待ちは禁止/);
   assert.match(text, /Phase B fallback: review_waitingを即時公開/);
 });
 
@@ -52,12 +53,29 @@ test("scheduler entry wrappers are ASCII-only and point only to dedicated clone"
   assert.match(prepare, /createHash\("sha256"\)/);
 });
 
-test("OAuth probe is non-interactive and never uses auth status", () => {
-  const source = read("scripts/automation/claude-auth-probe.mjs");
-  assert.match(source, /"-p"/);
-  assert.match(source, /AUTH_PROBE_OK/);
+test("Codex auth probe is non-interactive and never uses auth status", () => {
+  const source = read("scripts/automation/codex-auth-probe.mjs");
+  assert.match(source, /"exec"/);
+  assert.match(source, /CODEX_AUTH_PROBE_OK/);
   assert.match(source, /\b401\b/);
   assert.doesNotMatch(source, /auth\s+status/i);
+});
+
+test("night parent actor is Codex and no Claude browser route remains", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  const prompt = read("docs/night_driver_prompt.md");
+  assert.match(wrapper, /codex\.exe/);
+  assert.match(wrapper, /"--agent-exe"/);
+  assert.doesNotMatch(wrapper, /claude\.exe|--claude-exe|claude-opus/);
+  assert.doesNotMatch(prompt, /mcp__claude-in-chrome__/);
+  assert.match(prompt, /--route codex/);
+});
+
+test("watchdog audits the exact run id instead of a same-day record", () => {
+  const watchdog = read("scripts/automation/night-watchdog.ps1");
+  assert.match(watchdog, /\$activeRunId/);
+  assert.match(watchdog, /'--run-id', \$activeRunId/);
+  assert.doesNotMatch(watchdog, /'audit', '--date'/);
 });
 
 test("scheduled acceptance is an explicit stopped outcome, never success", () => {

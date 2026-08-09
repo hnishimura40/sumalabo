@@ -7,23 +7,25 @@ import { fileURLToPath } from "node:url";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-const CLAUDE_EXE = process.env.CLAUDE_EXE || "C:\\Users\\hnish\\.local\\bin\\claude.exe";
+const CODEX_EXE = process.env.CODEX_EXE || "C:\\Users\\hnish\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex.exe";
 const startedAt = new Date().toISOString();
-const result = spawnSync(CLAUDE_EXE, [
-  "-p", "--model", "claude-opus-4-8", "--no-chrome", "--max-turns", "1", "--output-format", "text",
+const result = spawnSync(CODEX_EXE, [
+  "exec", "--ephemeral", "--sandbox", "read-only", "--skip-git-repo-check",
+  "--color", "never", "-C", ROOT, "-",
 ], {
   cwd: ROOT,
-  input: "Reply with exactly AUTH_PROBE_OK and nothing else.",
+  input: "Reply with exactly CODEX_AUTH_PROBE_OK and nothing else. Do not use any tools.",
   encoding: "utf8",
   windowsHide: true,
   timeout: 120000,
 });
 const output = `${result.stdout || ""}\n${result.stderr || ""}`.trim();
-const authFailure = /(?:\b401\b|unauthorized|oauth[^\n]*expired|authentication required|not logged in)/i.test(output);
-const ok = result.status === 0 && /(?:^|\s)AUTH_PROBE_OK(?:\s|$)/.test(output);
+const authFailure = /(?:\b401\b|unauthorized|oauth[^\n]*expired|authentication required|not logged in|login required)/i.test(output);
+const ok = result.status === 0 && /(?:^|\s)CODEX_AUTH_PROBE_OK(?:\s|$)/.test(output);
 const kind = ok ? "ok" : authFailure ? "oauth_401" : result.error?.code === "ETIMEDOUT" ? "timeout" : "probe_failed";
 const record = {
-  schemaVersion: 1,
+  schemaVersion: 2,
+  actor: "codex",
   startedAt,
   finishedAt: new Date().toISOString(),
   outcome: ok ? "success" : "failed",
@@ -35,11 +37,11 @@ mkdirSync(dir, { recursive: true });
 writeFileSync(path.join(dir, `${startedAt.slice(0, 10)}.json`), `${JSON.stringify(record, null, 2)}\n`, "utf8");
 if (!ok) {
   await notifyAutonomyEvent({
-    slug: "night-claude-auth-probe",
+    slug: "night-codex-auth-probe",
     status: "failed",
     title: authFailure
-      ? "[night-auth] Claude CLI non-interactive probe returned 401; sign-in required"
-      : `[night-auth] Claude CLI non-interactive probe failed (${kind})`,
+      ? "[night-auth] Codex non-interactive probe returned 401; sign-in required"
+      : `[night-auth] Codex non-interactive probe failed (${kind})`,
   });
 }
 console.log(JSON.stringify(record));

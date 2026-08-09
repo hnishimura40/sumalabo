@@ -25,7 +25,9 @@ foreach ($candidate in @($LockFile, $HeartbeatFile)) {
   }
 }
 $activeAttemptAt = $null
+$activeRunId = $null
 if ($state) {
+  if ($state.runId) { $activeRunId = [string]$state.runId }
   foreach ($field in @('childStartedAt', 'startedAt')) {
     if ($state.$field) {
       try {
@@ -39,7 +41,13 @@ if ($state) {
 
 # Completion and heartbeat files are not proof of success. The contract audit
 # independently checks the production URL, merged PR, strict QA, and X ledger.
-$auditArgs = @($ContractScript, 'audit', '--date', $DateStr)
+$auditArgs = @($ContractScript, 'audit')
+if ($activeRunId) {
+  $auditArgs += @('--run-id', $activeRunId)
+} else {
+  # A missing run ID must never fall back to a same-day acceptance/self-test record.
+  $auditArgs += @('--run-id', "missing-$DateStr")
+}
 if ($activeAttemptAt) { $auditArgs += @('--active-at', $activeAttemptAt) }
 $audit = & node @auditArgs 2>&1
 $auditExit = $LASTEXITCODE

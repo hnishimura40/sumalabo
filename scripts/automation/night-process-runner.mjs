@@ -57,9 +57,9 @@ function readOutputTail(outputFile) {
   catch { return ""; }
 }
 
-async function runChild({ claudeExe, claudeArgs, prompt, outputFd, stateFile, attempt }) {
+async function runChild({ agentExe, agentArgs, prompt, outputFd, stateFile, attempt }) {
   const startedAt = new Date().toISOString();
-  const child = spawn(claudeExe, claudeArgs, {
+  const child = spawn(agentExe, agentArgs, {
     cwd: process.cwd(), detached: true, windowsHide: true,
     stdio: ["pipe", outputFd, outputFd],
   });
@@ -79,12 +79,12 @@ export async function runIsolated(options) {
   const argsFile = path.resolve(options["args-file"]);
   const outputFile = path.resolve(options["output-file"]);
   const stateFile = path.resolve(options["state-file"]);
-  const claudeExe = options["claude-exe"] || "claude";
+  const agentExe = options["agent-exe"] || options["claude-exe"] || "codex.cmd";
   const heartbeatMs = Number(options["heartbeat-ms"] || 15000);
   const retryDelayMs = Math.max(0, Number(options["retry-delay-ms"] ?? DEFAULT_RETRY_DELAY_MS));
   const prompt = fs.readFileSync(promptFile, "utf8").replace(/^\uFEFF/, "");
-  const claudeArgs = JSON.parse(fs.readFileSync(argsFile, "utf8").replace(/^\uFEFF/, ""));
-  if (!Array.isArray(claudeArgs) || claudeArgs.some((arg) => typeof arg !== "string")) {
+  const agentArgs = JSON.parse(fs.readFileSync(argsFile, "utf8").replace(/^\uFEFF/, ""));
+  if (!Array.isArray(agentArgs) || agentArgs.some((arg) => typeof arg !== "string")) {
     throw new Error("args-file must contain a JSON string array");
   }
 
@@ -102,7 +102,7 @@ export async function runIsolated(options) {
     }, heartbeatMs);
     heartbeat.unref();
 
-    let result = await runChild({ claudeExe, claudeArgs, prompt, outputFd, stateFile, attempt: 1 });
+    let result = await runChild({ agentExe, agentArgs, prompt, outputFd, stateFile, attempt: 1 });
     let retriesUsed = 0;
     const classification = result.code === 0
       ? { transient: false, kind: null }
@@ -120,7 +120,7 @@ export async function runIsolated(options) {
       await delay(retryDelayMs);
       heartbeatStatus = "running";
       fs.writeSync(outputFd, "\n[night-runner] transient retry 1/1 reason=" + classification.kind + "\n", null, "utf8");
-      result = await runChild({ claudeExe, claudeArgs, prompt, outputFd, stateFile, attempt: 2 });
+      result = await runChild({ agentExe, agentArgs, prompt, outputFd, stateFile, attempt: 2 });
     }
 
     heartbeatStatus = result.code === 0 ? "completed" : "failed";
