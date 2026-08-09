@@ -68,6 +68,8 @@ test("night parent actor is Codex and no Claude browser route remains", () => {
   assert.match(wrapper, /"--agent-exe"/);
   assert.doesNotMatch(wrapper, /claude\.exe|--claude-exe|claude-opus/);
   assert.doesNotMatch(prompt, /mcp__claude-in-chrome__/);
+  assert.match(prompt, /control-chrome/);
+  assert.match(prompt, /control-in-app-browser.+使いません/);
   assert.match(prompt, /--route codex/);
 });
 

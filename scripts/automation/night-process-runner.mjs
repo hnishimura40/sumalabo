@@ -38,7 +38,7 @@ export function classifyTransientFailure(output) {
 }
 
 function readState(stateFile) {
-  try { return JSON.parse(fs.readFileSync(stateFile, "utf8")); } catch { return {}; }
+  try { return JSON.parse(fs.readFileSync(stateFile, "utf8").replace(/^\uFEFF/, "")); } catch { return {}; }
 }
 
 function writeState(stateFile, patch) {

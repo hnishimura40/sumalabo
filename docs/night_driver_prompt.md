@@ -32,7 +32,7 @@ Codex自身の終了コード、completion、heartbeat、自己申告は成功�
 
 ## 0-bis. Codex Browserの確認
 
-X投稿はCodexのBrowserスキルで実行します。ブラウザスキルの手順に従い、対象URL `https://x.com/` に適したブラウザへ接続してください。夜間CLIでアプリ内ブラウザが提供されない場合は、CodexのChrome連携を使用して構いません。これはClaude経路への退避ではなく `route: codex` です。
+X投稿は必ずCodexのChromeスキル（`control-chrome`）で、ログイン済みの外部Google Chromeへ接続して実行します。アプリ内Browser（`control-in-app-browser`）はX投稿に使いません。Chromeスキルの手順どおりNode REPLから `agent.browsers.get("chrome")` を初期化し、対象URL `https://x.com/` を操作してください。これはClaude経路への退避ではなく `route: codex` です。
 
 投稿前に次を実物確認します。
 
@@ -66,6 +66,7 @@ Phase Aが終わったら、そのままPhase Bへ進みます。承認待ち・
 ## 3. Phase C: Codex BrowserでX投稿
 
 `docs/x-post-codex-procedure.md`の検証4点セットと新タグ基準を適用します。
+このPhaseでも外部Google Chromeの `control-chrome` だけを使い、アプリ内Browserへ切り替えません。
 
 1. `npm run social:generate-x-post -- --slug <slug>`で下書きを作る。
 2. 本文1行目に自然な検索語を入れる。ブランドタグは `#すまラボ`。話題検索結果で実際に使われている流入タグだけ最大1個採用し、なければ追加しない。
