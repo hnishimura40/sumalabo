@@ -96,6 +96,16 @@ test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentia
   assert.match(prompt, /GH_TOKEN.*読まない/);
 });
 
+test("night run removes only the exact Chrome parent process that it started", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  assert.match(wrapper, /\$script:ChromeRunPid = \$null/);
+  assert.match(wrapper, /Start-Process[\s\S]*-PassThru[\s\S]*\$script:ChromeRunPid = \$chromeProcess\.Id/);
+  assert.match(wrapper, /Get-Process -Id \$script:ChromeRunPid/);
+  assert.match(wrapper, /\$ownedChrome\.Path -eq \$script:ChromeRunExe/);
+  assert.match(wrapper, /Stop-Process -Id \$script:ChromeRunPid/);
+  assert.doesNotMatch(wrapper, /Get-Process chrome[^\r\n]*\| Stop-Process/);
+});
+
 test("runner keeps generated evidence private and preserves the live X ledger outside Git status", () => {
   const ignore = read(".gitignore");
   const prepare = read("scripts/automation/prepare-night-runner.mjs");

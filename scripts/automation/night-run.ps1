@@ -37,6 +37,8 @@ $ContractFile = Join-Path $NightDir "run-contract\$RunId.json"
 $env:SUMALABO_NIGHT_RUN_ID = $RunId
 $env:SUMALABO_NIGHT_RUN_STARTED_AT = $RunStartedAt
 $script:SkipContractFinalizer = [bool]($BrowserCheckOnly -or $RunnerSelfTest)
+$script:ChromeRunPid = $null
+$script:ChromeRunExe = $null
 if ($BrowserCheckOnly -and $RunnerSelfTest) { throw 'BrowserCheckOnly と RunnerSelfTest は同時指定できません。' }
 if ($RunnerSelfTest) {
   $LockFile = Join-Path $NightDir "runner-selftest.lock"
@@ -171,12 +173,14 @@ try {
     Log "Chrome は既に起動中（$chromeCount プロセス）。拡張経路を利用（デフォルトプロファイル）。"
   } else {
     Log "Chrome 未起動。デフォルトプロファイルで起動する（--restore-last-session で ChatGPT/X タブ・ログイン復元）。"
-    Start-Process -FilePath $ChromeExe -ArgumentList @(
+    $chromeProcess = Start-Process -FilePath $ChromeExe -ArgumentList @(
       "--restore-last-session",
       "--no-first-run",
       "--no-default-browser-check",
       "--start-maximized"
-    ) | Out-Null
+    ) -PassThru
+    $script:ChromeRunPid = $chromeProcess.Id
+    $script:ChromeRunExe = $ChromeExe
     Start-Sleep -Seconds 12   # 拡張が MCP リレーへ接続する猶予
     if (@(Get-Process chrome -ErrorAction SilentlyContinue).Count -eq 0) {
       Log "SKIP: Chrome 起動に失敗（プロセスが立ち上がらない）。停止。"
@@ -359,6 +363,13 @@ try {
       reason=if($outcome){$outcome.reason}else{"outcome_record_unreadable"}
       slug=if($outcome){$outcome.slug}else{$null}
     } | ConvertTo-Json | Set-Content $CompletionFile -Encoding utf8
+  }
+  if ($script:ChromeRunPid) {
+    $ownedChrome = Get-Process -Id $script:ChromeRunPid -ErrorAction SilentlyContinue
+    if ($ownedChrome -and $ownedChrome.Path -eq $script:ChromeRunExe) {
+      Log "cleanup: runが起動したChrome親プロセスを終了します。"
+      Stop-Process -Id $script:ChromeRunPid -ErrorAction SilentlyContinue
+    }
   }
   Remove-Item $LockFile -Force -Confirm:$false -ErrorAction SilentlyContinue
 }
