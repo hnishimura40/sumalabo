@@ -3,7 +3,7 @@
 testMode の夜間無人運転（既定 4:30 JST）を成立させるための PC 側セットアップ。
 タスクスケジューラはASCII-onlyの`D:\work\sumalabo-night-entry.cmd`だけを直接起動する。入口は
 昼作業と分離した専用clone `D:\work\sumalabo-night-runner` を`origin/main`へ同期してから、
-`scripts/automation/night-run.ps1` → ヘッドレスClaude Code（claude-opus-4-8）→
+`scripts/automation/night-run.ps1` → 非対話Codex（`codex exec`）→
 `docs/night_driver_prompt.md`。
 
 ## 1. スケジューラ登録
@@ -14,12 +14,12 @@ npm run schedule:auto-run -- --time 03:00   # 時刻変更
 npm run schedule:auto-run -- --remove       # 解除
 ```
 
-- タスク名: `Sumalabo Night Driver`（04:30）/ `Sumalabo Night Watchdog`（05:30）/ `Sumalabo Claude Auth Probe`（03:30）
-- 03:30の認証プローブは`auth status`を使わず、軽量な`claude -p`を実行する。401時は共通Web Pushで通知する
+- タスク名: `Sumalabo Night Driver`（04:30）/ `Sumalabo Night Watchdog`（05:30）/ `Sumalabo Codex Auth Probe`（03:30）
+- 03:30の認証プローブは`auth status`を使わず、軽量な非対話`codex exec`を実行する。認証失敗時は共通Web Pushで通知する
 - 専用cloneがdirty、fetch失敗、origin/main checkout失敗の場合は記事工程へ入らずfailed契約を記録する
 - `autonomy.json`等の運用台帳は公開Gitに含めず、タスク登録時に昼環境のprivate stateから専用cloneのignored領域へ初期同期する。以後の夜間更新は専用clone側に保持する
 - 多重起動ガード: `logs/night/run.lock`（PID 生存確認つき）。前夜の run が生きていれば新規起動しない
-- Claude は独立プロセスグループで起動し、出力を `logs/night/{date}.claude.log` へ直接保存する。`run.lock` は親PID・監督PID・子PID・15秒heartbeatを保持するため、親だけが落ちても重複起動しない
+- Codexは独立プロセスグループで起動し、出力を `logs/night/{date}.codex.log` へ直接保存する。`run.lock` は親PID・監督PID・子PID・15秒heartbeatを保持するため、親だけが落ちても重複起動しない
 - 05:30 の `Sumalabo Night Watchdog` は完了痕跡を信用せず、本番URL HTTP 200・PR merged・strict verify全合格・X二段階台帳の4点を独立に再取得する。期限時点で4点が揃わない場合は、heartbeatが正常でも`failed`としてHiroへPush通知する
 - 1 晩 1 本ガード: `logs/night/last-run.json`（JST 日付で判定）
 
@@ -53,12 +53,12 @@ SendKeys）を併用する。ロック画面での挙動は次のとおり:
 
 ### ⚠️ 既知の重大制約（2026-07-05 立ち会い実走で確定）— 無人運転の最大ブロッカー
 
-**ヘッドレス `claude -p` からは画像正本の添付が成立しない**（ロック有無に関わらず）。
+**旧ヘッドレス親実装では画像正本の添付が成立しなかった**（ロック有無に関わらず）。
 Claude Science 記事の立ち会い実走（Opus 4.8 ヘッドレス）で、Chrome ペアリング・ChatGPT
 チャット到達まで正常に進んだが、**画像生成の直前で正本 2 枚の添付が 3 回・2 方式とも失敗**した:
 
 1. `chatgpt-attach-files-clipboard.ps1`（CF_HDROP + SendKeys Ctrl+V）:
-   `foreground lost before Ctrl+V` — `claude -p` はバックグラウンドプロセスのため
+   `foreground lost before Ctrl+V` — 旧親プロセスはバックグラウンド実行だったため
    SetForegroundWindow が安定して勝てず、勝てた回でも Ctrl+V が web content に届かず composer は空。
 2. CDP 経由の Ctrl+V（MCP computer key）: ブラウザのセキュリティでファイルのクリップボード
    貼り付けが発火せず 0 枚。

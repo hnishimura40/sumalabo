@@ -71,6 +71,18 @@ test("night parent actor is Codex and no Claude browser route remains", () => {
   assert.match(prompt, /--route codex/);
 });
 
+test("runner keeps generated evidence private and preserves the live X ledger outside Git status", () => {
+  const ignore = read(".gitignore");
+  const prepare = read("scripts/automation/prepare-night-runner.mjs");
+  const setup = read("docs/night_run_setup.md");
+  for (const pattern of ["logs/night/", "logs/article/", "logs/preview/", "logs/scout/", "logs/social/", "drafts/social/"]) {
+    assert.match(ignore, new RegExp(pattern.replace("/", "\\/")));
+  }
+  assert.match(prepare, /PRIVATE_TRACKED_RUNTIME_FILES/);
+  assert.match(prepare, /update-index[\s\S]*--skip-worktree/);
+  assert.doesNotMatch(setup, /ヘッドレスClaude Code|claude-opus-4-8|Sumalabo Claude Auth Probe|軽量な`claude -p`/);
+});
+
 test("watchdog audits the exact run id instead of a same-day record", () => {
   const watchdog = read("scripts/automation/night-watchdog.ps1");
   assert.match(watchdog, /\$activeRunId/);

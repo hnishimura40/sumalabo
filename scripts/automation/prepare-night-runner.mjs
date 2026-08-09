@@ -18,6 +18,9 @@ const PRIVATE_RUNTIME_FILES = [
   "logs/night/last-run.json",
   "logs/night/run-history.jsonl",
 ];
+const PRIVATE_TRACKED_RUNTIME_FILES = [
+  "data/social/x-posted.json",
+];
 
 function run(command, args, cwd = SOURCE_ROOT) {
   const result = spawnSync(command, args, { cwd, encoding: "utf8", windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
@@ -36,10 +39,25 @@ export function prepareRunner() {
     const remote = run("git", ["remote", "get-url", "origin"]);
     run("git", ["clone", remote, RUNNER_ROOT], path.dirname(RUNNER_ROOT));
   }
+  // x-posted.json is historically tracked, but the dedicated runner owns the
+  // live two-stage X ledger. Preserve it across main syncs and keep runtime
+  // writes out of Git status and public article branches.
+  const privateTracked = new Map();
+  for (const relative of PRIVATE_TRACKED_RUNTIME_FILES) {
+    const target = path.join(RUNNER_ROOT, relative);
+    if (existsSync(target)) privateTracked.set(relative, readFileSync(target));
+    run("git", ["update-index", "--skip-worktree", "--", relative], RUNNER_ROOT);
+  }
   const dirty = run("git", ["status", "--porcelain", "--untracked-files=normal"], RUNNER_ROOT);
   if (dirty) throw new Error(`dedicated runner clone is dirty:\n${dirty}`);
   run("git", ["fetch", "origin", "main", "--prune"], RUNNER_ROOT);
   run("git", ["checkout", "--detach", "origin/main"], RUNNER_ROOT);
+  for (const relative of PRIVATE_TRACKED_RUNTIME_FILES) {
+    const target = path.join(RUNNER_ROOT, relative);
+    const preserved = privateTracked.get(relative);
+    if (preserved) writeFileSync(target, preserved);
+    run("git", ["update-index", "--skip-worktree", "--", relative], RUNNER_ROOT);
+  }
   if (!existsSync(path.join(RUNNER_ROOT, "node_modules"))) run("npm.cmd", ["ci", "--no-audit", "--no-fund"], RUNNER_ROOT);
   const lockFile = path.join(RUNNER_ROOT, "package-lock.json");
   const lockHash = existsSync(lockFile) ? crypto.createHash("sha256").update(readFileSync(lockFile)).digest("hex") : "no-lockfile";
