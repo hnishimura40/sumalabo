@@ -50,6 +50,8 @@ data/automation/processed-urls.json
 data/automation/locks/
 
 # night-run runtime audit state — private/local only
+logs/night/
+logs/night/
 logs/night/last-run.json
 logs/night/run-history.jsonl
 logs/night/run-contract/
@@ -60,6 +62,22 @@ logs/night/auth-probe/
 logs/night/runner-package-lock.sha256
 logs/night/scheduled-acceptance.request.json
 logs/night/scheduled-acceptance.result.json
+
+# Night-run generated evidence and social drafts are runtime-private. Files
+# already tracked from older runs remain tracked; new run artifacts stay local.
+logs/article/
+logs/preview/
+logs/scout/
+logs/social/
+drafts/social/
+
+# Night-run generated evidence and social drafts are runtime-private. Files
+# already tracked from older runs remain tracked; new run artifacts stay local.
+logs/article/
+logs/preview/
+logs/scout/
+logs/social/
+drafts/social/
 
 # automation logs (per-run files) — never committed; .gitkeep stays
 logs/automation/*.log
