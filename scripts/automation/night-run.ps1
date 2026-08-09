@@ -222,14 +222,16 @@ try {
   # ---- 3. 非対話 Codex 起動 ----
   $PromptFile = Join-Path $RepoRoot "docs\night_driver_prompt.md"
   $Prompt = Get-Content $PromptFile -Raw -Encoding utf8
-  # 最小 allowlist: 開発ツール一式 + Chrome MCP（ChatGPT 画像生成 / X 投稿に必須）。
-  # 破壊的操作（git push -f 等）は allowlist に含めない。
+  # workspace-writeを維持し、本番公開に必要なrunnerのGit管理領域と
+  # GitHub CLI設定だけを追加する。ユーザープロファイル全体は許可しない。
   # Codex の出力は専用ファイルへ（runner 本体ログや tail との Add-Content ロック競合を避ける。
   # 2026-07-05 の初回実走で Add-Content が sharing violation で全損した対策）
   $CodexLog = Join-Path $NightDir "$DateStr.codex.log"
   Log "launch: codex exec (ephemeral, workspace-write) -> $CodexLog"
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
-  $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
+  $GitMetadataDir = Join-Path $RepoRoot ".git"
+  $GitHubCliConfigDir = Join-Path $env:APPDATA "GitHub CLI"
+  $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--add-dir", $GitMetadataDir, "--add-dir", $GitHubCliConfigDir, "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
   $codexExit = Invoke-CodexIsolated $Prompt $codexArgs $CodexLog "codex"
   $sw.Stop()
   Log "codex exited: code=$codexExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"

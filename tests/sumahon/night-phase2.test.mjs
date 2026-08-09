@@ -66,6 +66,9 @@ test("night parent actor is Codex and no Claude browser route remains", () => {
   const prompt = read("docs/night_driver_prompt.md");
   assert.match(wrapper, /codex\.exe/);
   assert.match(wrapper, /"--agent-exe"/);
+  assert.match(wrapper, /\$GitMetadataDir = Join-Path \$RepoRoot "\.git"/);
+  assert.match(wrapper, /\$GitHubCliConfigDir = Join-Path \$env:APPDATA "GitHub CLI"/);
+  assert.match(wrapper, /"--add-dir", \$GitMetadataDir, "--add-dir", \$GitHubCliConfigDir/);
   assert.doesNotMatch(wrapper, /claude\.exe|--claude-exe|claude-opus/);
   assert.doesNotMatch(prompt, /mcp__claude-in-chrome__/);
   assert.match(prompt, /control-chrome/);
