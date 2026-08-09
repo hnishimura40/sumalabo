@@ -71,6 +71,8 @@ test("night parent actor is Codex while Git and X stay outside its sandbox", () 
   assert.match(wrapper, /"--agent-exe"/);
   assert.doesNotMatch(wrapper, /\$GitMetadataDir|\$GitHubCliConfigDir|"--add-dir", \$GitMetadataDir/);
   assert.match(wrapper, /phase-a-outer-publish\.mjs/);
+  assert.match(wrapper, /Remove-Item Env:GH_TOKEN/);
+  assert.match(wrapper, /\$env:GH_TOKEN = \$publisherToken/);
   assert.match(outer, /process\.env\.GH_TOKEN/);
   assert.match(outer, /gh_token_missing/);
   assert.doesNotMatch(wrapper, /claude\.exe|--claude-exe|claude-opus/);

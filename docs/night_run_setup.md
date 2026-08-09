@@ -150,3 +150,26 @@ wevtutil gl Microsoft-Windows-TaskScheduler/Operational | Select-String 'enabled
 自己診断exit 0だけでは合格にしない。`npm run schedule:auto-run -- --validate-registration`で実登録XMLにテスト系フラグがないことを確認する。続いて`logs/night/scheduled-acceptance.request.json`へ15分以内の`requestedAt`を置き、実タスクを`schtasks /Run /TN "Sumalabo Night Driver"`で起動する。`scheduled-acceptance.result.json`の`ok: true`は、通常の本番コマンドでlock・cleanup・恒久運転preflight・Chrome確認まで通り、記事生成直前で安全終了した証拠とする。
 
 起動層は2026-07-30から凍結中。障害対応以外の変更は禁止し、障害修正時だけ上記の実登録XML確認と実タスク受入を再実施する。
+## GitHub PAT の安全な配置と期限監視
+
+夜間publisher専用の fine-grained PAT は、チャット、コマンドライン引数、設定ファイルへ貼り付けない。
+夜間タスクを所有する Windows ユーザー本人が、専用runnerで次を対話実行する。
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "D:\work\sumalabo-night-runner\scripts\automation\set-night-github-token.ps1"
+```
+
+PATの入力は非表示で、コマンド履歴やスクリプトの出力には残らない。発行画面に表示された有効期限は
+`YYYY-MM-DD`で続けて入力し、非秘密の`GH_TOKEN_EXPIRES_AT`として同じユーザー環境へ保存する。
+`GH_TOKEN`はWindowsユーザー環境変数なので同一ユーザーのプロセスからは参照可能である一方、
+リポジトリ、タスクXML、夜間ログ、Codex子プロセスには渡さない。
+
+外側publisherの認証だけを確認する場合は、同じユーザーの新しいプロセスで次を実行する。
+
+```powershell
+node scripts/automation/phase-a-outer-publish.mjs --auth-probe
+```
+
+Auth Probeはトークン値を出力せず、GitHub本人確認、対象repositoryへの到達、有効期限と残り日数を記録する。
+既定では残り14日以下を`gh_token_expiring`（exit 45）、期限切れを`gh_token_expired`（exit 44）、
+未配置を`gh_token_missing`（exit 41）としてfail-closedする。警告日数は`GH_TOKEN_WARN_DAYS`で変更できる。
