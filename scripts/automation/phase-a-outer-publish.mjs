@@ -113,6 +113,14 @@ async function main() {
     process.exitCode = result.exitCode;
     return;
   }
+  if (argv.includes("--decide-json")) {
+    const slugs = readySlugs();
+    // This crosses PowerShell's native-output decoding boundary, so keep the
+    // decision handoff ASCII and machine-readable.
+    console.log(JSON.stringify({ slug: slugs[0] || null }));
+    process.exitCode = 0;
+    return;
+  }
   if (argv.includes("--decide")) {
     const slugs = readySlugs();
     console.log(slugs.length ? `対象: ${slugs[0]}` : "対象なし");

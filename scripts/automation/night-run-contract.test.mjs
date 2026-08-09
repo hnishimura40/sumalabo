@@ -14,6 +14,7 @@ import {
 } from "./night-run-contract.mjs";
 
 const RUN_ID = "20260808T043000.000";
+const REGRESSION_RUN_ID = "20260810T043002.254";
 const STARTED_AT = "2026-08-08T04:30:00+09:00";
 const SLUG = "202608-contract-test";
 
@@ -50,6 +51,17 @@ test("stale evidence from a prior run cannot satisfy success", async () => {
   });
   assert.equal(result.outcome, OUTCOMES.FAILED);
   assert.equal(result.evidence.xTwoStage.reason, "x_ledger_not_from_current_run");
+});
+
+test("8/10 regression ID is preserved when no slug can be resolved", async () => {
+  const root = fixture();
+  const result = await evaluateSuccessContract({ root, runId: REGRESSION_RUN_ID, startedAt: STARTED_AT, probes: probes() });
+  assert.equal(result.outcome, OUTCOMES.FAILED);
+  assert.equal(result.reason, "slug_not_resolved");
+  assert.equal(result.runId, REGRESSION_RUN_ID);
+  const recorded = recordRunOutcome(result, { root, startedAt: STARTED_AT });
+  assert.equal(recorded.runId, REGRESSION_RUN_ID);
+  assert.equal(recorded.reason, "slug_not_resolved");
 });
 
 for (const [name, override] of [

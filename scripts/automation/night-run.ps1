@@ -281,9 +281,11 @@ try {
   }
   # ---- 4. Codex外側で Git/PR/Preview を実行 ----
   try {
-    $handoff = (node scripts/automation/phase-a-outer-publish.mjs --decide 2>$null | Out-String)
-    if ($handoff -match '対象:\s*(\S+)') {
-      $publishSlug = $Matches[1]
+    $handoffText = (node scripts/automation/phase-a-outer-publish.mjs --decide-json 2>$null | Out-String)
+    $handoff = $null
+    try { $handoff = $handoffText | ConvertFrom-Json } catch { throw "outer_publish_decision_invalid_json: $handoffText" }
+    if ($handoff.slug) {
+      $publishSlug = [string]$handoff.slug
       Log "Outer publish: $publishSlug を専用GH_TOKEN経路でcommit/push/PR/finalizeする。"
       node scripts/automation/phase-a-outer-publish.mjs --slug $publishSlug 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
       if ($LASTEXITCODE -ne 0) {

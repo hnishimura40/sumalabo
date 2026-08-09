@@ -83,7 +83,7 @@ export function prepareRunner() {
   }
 
   mkdirSync(ENTRY_ROOT, { recursive: true });
-  for (const name of ["night-entry.cmd", "night-watchdog-entry.cmd", "night-auth-probe-entry.cmd"]) {
+  for (const name of ["night-entry.cmd", "night-watchdog-entry.cmd", "night-auth-probe-entry.cmd", "vivant-reannounce-entry.cmd"]) {
     const source = path.join(SOURCE_ROOT, "scripts", "automation", name);
     assertAscii(source);
     copyFileSync(source, path.join(ENTRY_ROOT, `sumalabo-${name}`));

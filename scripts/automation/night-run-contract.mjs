@@ -184,7 +184,7 @@ export async function evaluateSuccessContract({
 }) {
   const resolvedSlug = slug || discoverSlugSince({ root, startedAt });
   if (!resolvedSlug) {
-    return { outcome: OUTCOMES.FAILED, reason: "slug_not_resolved", slug: null, evidence: null };
+    return { runId, outcome: OUTCOMES.FAILED, reason: "slug_not_resolved", slug: null, evidence: null };
   }
   const ledger = findLedgerEntry(resolvedSlug, root);
   const articleUrl = ledger.productionUrl || ledger.articleUrl || `https://sumalabo.com/articles/${resolvedSlug}/`;

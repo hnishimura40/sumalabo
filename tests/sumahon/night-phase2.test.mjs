@@ -37,7 +37,7 @@ test("night prompts and wrapper have no approval or veto-wait branch", () => {
 });
 
 test("scheduler entry wrappers are ASCII-only and point only to dedicated clone", () => {
-  for (const name of ["night-entry.cmd", "night-watchdog-entry.cmd", "night-auth-probe-entry.cmd"]) {
+  for (const name of ["night-entry.cmd", "night-watchdog-entry.cmd", "night-auth-probe-entry.cmd", "vivant-reannounce-entry.cmd"]) {
     const bytes = readFileSync(path.join(ROOT, "scripts/automation", name));
     assert.ok([...bytes].every((value) => value <= 0x7f), `${name} is not ASCII-only`);
     const text = bytes.toString("ascii");
@@ -53,6 +53,15 @@ test("scheduler entry wrappers are ASCII-only and point only to dedicated clone"
   assert.match(prepare, /data\/automation\/autonomy\.json/);
   assert.match(prepare, /runner-package-lock\.sha256/);
   assert.match(prepare, /createHash\("sha256"\)/);
+});
+
+test("VIVANT reannouncement registration uses the weekly ASCII task entry", async () => {
+  const registration = await import("../../scripts/automation/register-vivant-reannounce-task.mjs");
+  const runner = await import("../../scripts/automation/vivant-reannounce-runner.mjs");
+  assert.equal(registration.taskCommand(), "cmd.exe /d /c D:\\work\\sumalabo-vivant-reannounce-entry.cmd");
+  assert.deepEqual(registration.validateTaskXml("<Command>cmd.exe</Command>D:\\work\\sumalabo-vivant-reannounce-entry.cmd<DaysOfWeek><Sunday/></DaysOfWeek>"), { ok: true, problems: [] });
+  const existing = runner.existingReannouncement([{ slug: "202607-vivant-ai-hayato-reality-check", recoveryPosts: [{ postUrl: "https://x.com/suma_labo/status/2081707073398861988", replyUrl: "https://x.com/suma_labo/status/2081707172615135658" }] }]);
+  assert.equal(existing.postUrl, "https://x.com/suma_labo/status/2081707073398861988");
 });
 
 test("Codex auth probe is non-interactive and never uses auth status", () => {
@@ -75,6 +84,8 @@ test("night parent actor is Codex while Git and X stay outside its sandbox", () 
   assert.match(wrapper, /\$env:GH_TOKEN = \$publisherToken/);
   assert.match(outer, /process\.env\.GH_TOKEN/);
   assert.match(outer, /gh_token_missing/);
+  assert.match(outer, /--decide-json/);
+  assert.match(wrapper, /phase-a-outer-publish\.mjs --decide-json/);
   assert.doesNotMatch(wrapper, /claude\.exe|--claude-exe|claude-opus/);
   assert.doesNotMatch(prompt, /mcp__claude-in-chrome__/);
   assert.match(prompt, /Xを操作・投稿しない/);
