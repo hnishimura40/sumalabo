@@ -42,6 +42,7 @@ function main() {
   const time = timeIdx >= 0 ? argv[timeIdx + 1] : "04:30";
   const remove = argv.includes("--remove");
   const validateOnly = argv.includes("--validate-registration");
+  const leaveDisabled = argv.includes("--disabled");
 
   if (validateOnly) {
     const result = queryAndValidateRegistration();
@@ -87,6 +88,17 @@ function main() {
       "foreach($name in $names){$settings=New-ScheduledTaskSettingsSet -WakeToRun -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Hours 12); Set-ScheduledTask -TaskName $name -Settings $settings | Out-Null}",
     ].join("; ")], { encoding: "utf-8" });
     if (harden.status !== 0) console.warn(`警告: 復帰・取りこぼし設定の反映に失敗: ${harden.stderr || harden.stdout}`);
+    if (leaveDisabled) {
+      const disable = spawnSync("powershell.exe", ["-NoProfile", "-Command", [
+        `$names=@('${TASK_NAME}','${WATCHDOG_TASK_NAME}','${AUTH_PROBE_TASK_NAME}')`,
+        "foreach($name in $names){Disable-ScheduledTask -TaskName $name | Out-Null}",
+      ].join("; ")], { encoding: "utf-8" });
+      if (disable.status !== 0) {
+        console.error(`failed to leave scheduled tasks disabled: ${disable.stderr || disable.stdout}`);
+        process.exitCode = disable.status ?? 1;
+        return;
+      }
+    }
     const registration = queryAndValidateRegistration();
     if (!registration.ok) {
       console.error(`本番タスク登録検査に失敗: ${registration.problems.join(", ")}`);

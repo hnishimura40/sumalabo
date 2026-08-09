@@ -20,6 +20,13 @@ test("本番タスクコマンドにtestMode・dryRun・自己診断フラグを
   assert.deepEqual(validateNightTaskXml(taskXml(args), root).problems, []);
 });
 
+test("登録直後に3タスクを無効のまま保持できる", () => {
+  const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+  const source = readFileSync(join(repoRoot, "scripts", "automation", "register-night-task.mjs"), "utf8");
+  assert.match(source, /argv\.includes\("--disabled"\)/);
+  assert.match(source, /Disable-ScheduledTask/);
+});
+
 for (const flag of ["-RunnerSelfTest", "-BrowserCheckOnly", "-DryRun", "-TestMode"]) {
   test(`実登録XMLは${flag}を拒否する`, () => {
     const args = buildNightTaskCommand(root).replace(/^cmd\.exe\s+/i, "") + ` ${flag}`;
