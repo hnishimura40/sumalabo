@@ -32,6 +32,8 @@ test("night prompts and wrapper have no approval or veto-wait branch", () => {
   assert.doesNotMatch(text, /Start-Sleep\s+-Seconds\s+300|AskUserQuestion|request_user_input/);
   assert.match(text, /承認待ち・veto待ち・時刻待ちは禁止/);
   assert.match(text, /Phase B fallback: review_waitingを即時公開/);
+  assert.match(text, /outer scout --auto-pick/);
+  assert.match(text, /Record-ContractOutcome "stop" "no_scout_target"/);
 });
 
 test("scheduler entry wrappers are ASCII-only and point only to dedicated clone", () => {
@@ -61,19 +63,21 @@ test("Codex auth probe is non-interactive and never uses auth status", () => {
   assert.doesNotMatch(source, /auth\s+status/i);
 });
 
-test("night parent actor is Codex and no Claude browser route remains", () => {
+test("night parent actor is Codex while Git and X stay outside its sandbox", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
   const prompt = read("docs/night_driver_prompt.md");
+  const outer = read("scripts/automation/phase-a-outer-publish.mjs");
   assert.match(wrapper, /codex\.exe/);
   assert.match(wrapper, /"--agent-exe"/);
-  assert.match(wrapper, /\$GitMetadataDir = Join-Path \$RepoRoot "\.git"/);
-  assert.match(wrapper, /\$GitHubCliConfigDir = Join-Path \$env:APPDATA "GitHub CLI"/);
-  assert.match(wrapper, /"--add-dir", \$GitMetadataDir, "--add-dir", \$GitHubCliConfigDir/);
+  assert.doesNotMatch(wrapper, /\$GitMetadataDir|\$GitHubCliConfigDir|"--add-dir", \$GitMetadataDir/);
+  assert.match(wrapper, /phase-a-outer-publish\.mjs/);
+  assert.match(outer, /process\.env\.GH_TOKEN/);
+  assert.match(outer, /gh_token_missing/);
   assert.doesNotMatch(wrapper, /claude\.exe|--claude-exe|claude-opus/);
   assert.doesNotMatch(prompt, /mcp__claude-in-chrome__/);
-  assert.match(prompt, /control-chrome/);
-  assert.match(prompt, /control-in-app-browser.+使いません/);
-  assert.match(prompt, /--route codex/);
+  assert.match(prompt, /Xを操作・投稿しない/);
+  assert.match(prompt, /GitHub CLI設定やGitHub\/Xの資格情報を読まない/);
+  assert.match(prompt, /Codex内からRSS取得やスカウト再実行をしない/);
 });
 
 test("runner keeps generated evidence private and preserves the live X ledger outside Git status", () => {

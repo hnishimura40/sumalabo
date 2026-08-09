@@ -3,8 +3,8 @@
 testMode の夜間無人運転（既定 4:30 JST）を成立させるための PC 側セットアップ。
 タスクスケジューラはASCII-onlyの`D:\work\sumalabo-night-entry.cmd`だけを直接起動する。入口は
 昼作業と分離した専用clone `D:\work\sumalabo-night-runner` を`origin/main`へ同期してから、
-`scripts/automation/night-run.ps1` → 非対話Codex（`codex exec`）→
-`docs/night_driver_prompt.md`。
+`scripts/automation/night-run.ps1` → 外側RSSスカウト → 非対話Codex（workspace内の生成・検証のみ）→
+外側publisher（Git/PR/Preview）→ Phase B。Codexへ`.git`、GitHub CLI設定、GitHub/X資格情報は渡さない。
 
 ## 1. スケジューラ登録
 
@@ -20,8 +20,21 @@ npm run schedule:auto-run -- --remove       # 解除
 - `autonomy.json`等の運用台帳は公開Gitに含めず、タスク登録時に昼環境のprivate stateから専用cloneのignored領域へ初期同期する。以後の夜間更新は専用clone側に保持する
 - 多重起動ガード: `logs/night/run.lock`（PID 生存確認つき）。前夜の run が生きていれば新規起動しない
 - Codexは独立プロセスグループで起動し、出力を `logs/night/{date}.codex.log` へ直接保存する。`run.lock` は親PID・監督PID・子PID・15秒heartbeatを保持するため、親だけが落ちても重複起動しない
+- RSS取得は`night-run.ps1`がCodex起動前に`scripts/automation/scout.mjs --auto-pick --json`で行う。Codexには選定済みJSONだけを渡し、任意ネットワークは開けない
+- Git commit/push/PR/PreviewはCodex終了後に`scripts/automation/phase-a-outer-publish.mjs`が固定4パスだけを対象に実行する。`GH_TOKEN`未設定ならexit 41でfail-closedする
 - 05:30 の `Sumalabo Night Watchdog` は完了痕跡を信用せず、本番URL HTTP 200・PR merged・strict verify全合格・X二段階台帳の4点を独立に再取得する。期限時点で4点が揃わない場合は、heartbeatが正常でも`failed`としてHiroへPush通知する
 - 1 晩 1 本ガード: `logs/night/last-run.json`（JST 日付で判定）
+
+### 専用GitHub PAT（必須・未配置なら有効化禁止）
+
+- 夜間タスクの実行ユーザーへ、夜間publisher専用の最小権限PATを`GH_TOKEN`として注入する。値をリポジトリ、XML、ログ、Codex環境へ保存しない
+- 発行主体と対象リポジトリを専用化し、Contents/PRに必要な最小権限だけを与える
+- 受入時は外側publisherが`gh api user`で主体を確認し、push/PR実行後もトークン値を出力しない
+- Process/User/Machineのいずれにも`GH_TOKEN`が無い状態では、タスクを有効化しない
+
+### 現在のX無人投稿ブロッカー
+
+非対話Codexはhandoff済みXタブをclaimできるが、ChromeからDOM読取を拒否される。外側の`post-to-x.mjs`はクリップボード準備までで、最終投稿と実在確認は行わない。X API実装と資格情報も未配置のため、X二段階台帳を含む完全放置受入は未合格。権限拡大ではなく、最小権限のX API経路または外側DOM実行主体を確立するまで3タスクは無効のままとする。
 
 ## 2. スリープ解除（wake timers）
 
@@ -103,7 +116,7 @@ Claude Science 記事の立ち会い実走（Opus 4.8 ヘッドレス）で、Ch
 - ノート PC の場合: AC 接続 + カバーを閉じてもスリープしない設定
   （電源オプション → カバーを閉じたときの動作 → 何もしない）
 - Windows Update の夜間再起動に注意（アクティブ時間を 4:00-6:00 を含まない設定に）
-- claude CLI が PATH にあること（`claude --version` で確認）
+- Codex CLI が PATH にあること（`codex --version` で確認）
 
 ## 7. 動作確認（登録後に 1 回やる）
 
