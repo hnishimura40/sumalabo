@@ -132,6 +132,20 @@ try {
       $exitCode = Record-ContractOutcome "fail" "preflight_inactive" "test-mode --status exit=$preflightExit"
       exit $exitCode
     }
+
+    # RSS候補の取得はサンドボックス外の決定論的スクリプトが担当する。
+    # Codexへ任意ネットワークを与えず、選定結果JSONだけをworkspaceで引き渡す。
+    Log "preflight: outer scout --auto-pick"
+    node scripts/automation/scout.mjs --auto-pick --json 2>&1 | Out-File -FilePath $LogFile -Encoding utf8 -Append
+    $scoutExit = $LASTEXITCODE
+    if ($scoutExit -eq 10) {
+      $exitCode = Record-ContractOutcome "stop" "no_scout_target" "outer scout found no eligible target"
+      exit $exitCode
+    }
+    if ($scoutExit -ne 0) {
+      $exitCode = Record-ContractOutcome "fail" "outer_scout_failed" "outer scout exit=$scoutExit"
+      exit $exitCode
+    }
   }
 
   # ---- 2-bis. Chrome 起動確認（デフォルトプロファイル・拡張経路） ----
@@ -222,16 +236,14 @@ try {
   # ---- 3. 非対話 Codex 起動 ----
   $PromptFile = Join-Path $RepoRoot "docs\night_driver_prompt.md"
   $Prompt = Get-Content $PromptFile -Raw -Encoding utf8
-  # workspace-writeを維持し、本番公開に必要なrunnerのGit管理領域と
-  # GitHub CLI設定だけを追加する。ユーザープロファイル全体は許可しない。
+  # Codexはworkspace内の生成と検証だけを担当する。Git/PR/公開は終了後に
+  # このラッパーが専用GH_TOKENで実行し、.gitやCLI資格情報をCodexへ渡さない。
   # Codex の出力は専用ファイルへ（runner 本体ログや tail との Add-Content ロック競合を避ける。
   # 2026-07-05 の初回実走で Add-Content が sharing violation で全損した対策）
   $CodexLog = Join-Path $NightDir "$DateStr.codex.log"
   Log "launch: codex exec (ephemeral, workspace-write) -> $CodexLog"
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
-  $GitMetadataDir = Join-Path $RepoRoot ".git"
-  $GitHubCliConfigDir = Join-Path $env:APPDATA "GitHub CLI"
-  $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--add-dir", $GitMetadataDir, "--add-dir", $GitHubCliConfigDir, "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
+  $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
   $codexExit = Invoke-CodexIsolated $Prompt $codexArgs $CodexLog "codex"
   $sw.Stop()
   Log "codex exited: code=$codexExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"
@@ -253,7 +265,24 @@ try {
     $exitCode = Record-ContractOutcome "fail" "codex_final_failure" "codex exit=$codexExit"
     exit $exitCode
   }
-  # ---- 4. Phase B/C 未完の即時救済 ----
+  # ---- 4. Codex外側で Git/PR/Preview を実行 ----
+  try {
+    $handoff = (node scripts/automation/phase-a-outer-publish.mjs --decide 2>$null | Out-String)
+    if ($handoff -match '対象:\s*(\S+)') {
+      $publishSlug = $Matches[1]
+      Log "Outer publish: $publishSlug を専用GH_TOKEN経路でcommit/push/PR/finalizeする。"
+      node scripts/automation/phase-a-outer-publish.mjs --slug $publishSlug 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
+      if ($LASTEXITCODE -ne 0) {
+        $exitCode = Record-ContractOutcome "fail" "outer_publish_failed" "outer publisher exit=$LASTEXITCODE"
+        exit $exitCode
+      }
+    }
+  } catch {
+    $exitCode = Record-ContractOutcome "fail" "outer_publish_failed" $_.Exception.Message
+    exit $exitCode
+  }
+
+  # ---- 4-bis. Phase B/C 未完の即時救済 ----
   # Codexがexit 0でもPhase Aで終わった場合、承認や時刻待ちには入らない。
   # veto済みでないreview_waitingを1回だけ即時Phase Bへ進める。
   try {

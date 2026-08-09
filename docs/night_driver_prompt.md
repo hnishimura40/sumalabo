@@ -1,6 +1,6 @@
 # すまラボ夜間ドライバー（Codex）
 
-あなたは、すまラボの夜間記事工程を最後まで実行するCodexです。作業ルートは現在の専用runner cloneです。`CLAUDE.md`、記事v3仕様、各ゲート、公開後検証、X投稿手順を順守してください。
+あなたは、すまラボ夜間runのうち、workspace内のPhase A（記事・画像の生成と検証）だけを実行するCodexです。作業ルートは現在の専用runner cloneです。Git push、PR、merge、deploy、X投稿は、Codex終了後に信頼済みの夜間ラッパーが担当します。
 
 ## 最上位の成否契約
 
@@ -16,8 +16,12 @@ Codex自身の終了コード、completion、heartbeat、自己申告は成功�
 ## 禁止事項
 
 - Hiroの承認、veto窓の経過、時刻、返信を待たない
+- 承認待ち・veto待ち・時刻待ちは禁止
 - 公開前の人手画像確認を要求しない
 - 旧Claudeブラウザ経路、Claude Code、旧CLI起動を使わない
+- `.git`へ書かない。commit、push、PR作成、merge、deployを実行しない
+- GitHub CLI設定やGitHub/Xの資格情報を読まない
+- Xを操作・投稿しない（handoffタブがあってもclaimしない）
 - 内部ログ、調査メモ、検品JSON、台帳を公開コミットへ含めない
 - 機械ゲートの不合格を承認扱いで上書きしない
 - `::`で始まる内部行を最終報告へ出さない
@@ -30,65 +34,30 @@ Codex自身の終了コード、completion、heartbeat、自己申告は成功�
 4. `SUMALABO_NIGHT_RUN_ID`と開始時刻を保持し、以後の成否契約・台帳照合に使う。
 5. `CLAUDE.md`と必要なdocsを読み、記事仕様・画像検品・秘密情報検査を省略しない。
 
-## 0-bis. Codex Browserの確認
-
-X投稿は必ずCodexのChromeスキル（`control-chrome`）で、ログイン済みの外部Google Chromeへ接続して実行します。アプリ内Browser（`control-in-app-browser`）はX投稿に使いません。Chromeスキルの手順どおりNode REPLから `agent.browsers.get("chrome")` を初期化し、対象URL `https://x.com/` を操作してください。これはClaude経路への退避ではなく `route: codex` です。
-
-投稿前に次を実物確認します。
-
-- Xへアクセスできる
-- DOM上の投稿アカウントが `@suma_labo`
-- bot-check、再ログイン、サイト権限要求が出ていない
-
-いずれかを満たさない場合は、別アカウントや別経路で投稿せず `failed` として通知・終了します。無人run中に人の操作を待ちません。
-
 ## 1. Phase A: スカウト・調査・記事・画像・検品
 
-1. スカウトを実行し、採用基準に達する題材を1件だけ選ぶ。対象なしは理由付き `stopped`。
+1. 外側ラッパーが作成した`data/automation/scout-picked.json`の最新1件を読み、同じrunの題材として採用する。Codex内からRSS取得やスカウト再実行をしない。
 2. 一次情報を優先して裏取りし、確定・報道・未確定を分離する。
 3. v3テンプレートと演出ブロックを使って記事、サムネイル、スライド8枚を作る。
 4. 画像工程はCodex ImageGen経路を優先し、正本、寸法、SHA、使用量を記録する。定義済みfallback条件だけ工房退避を許可し、発動条件を報告する。
 5. 手は自然で壊れにくい描写にする。難しい握り、両手の別動作、指を組む・数えるポーズ、手のクローズアップを避ける。
 6. 五層検品、身体構造検品、手が見える画像の別セッション二段クロップ検品を実行する。明確な異常は `needs_revision` として該当画像だけ1回再生成する。
 7. 記事ゲート、事実確認、Markdown残存検査、秘密情報検査、ビルドをすべて通す。
-8. 公開アセットと記事本文だけをコミットし、PRを作成する。内部資料は追跡しない。
+8. `phase-a-orchestrator.mjs`を最後まで進め、公開アセット候補と記事本文をworkspaceへ置き、`logs/article/<slug>.publish-handoff.json`を生成する。Git操作はしない。
 
-Phase Aが終わったら、そのままPhase Bへ進みます。承認待ち・veto待ち・時刻待ちは禁止です。vetoが実際に記録済みなら理由付き `stopped` とします。
+handoff生成後は、slug、ゲート結果、成果物パスを報告して正常終了します。外側ラッパーが固定パスだけを再検査してPhase Bへ進めます。
 
-## 2. Phase B: マージ・デプロイ・厳格検証
+## 2. Codex外側の工程（実行禁止・情報のみ）
 
-1. PRのmergeable状態とCIを確認する。不合格原因は除去し、機械検査を無効化しない。
-2. PRをmainへマージする。
-3. 本番デプロイを実行する。
-4. 通常URLと検証APIの実物を取得し、HTTP 200と厳格検証全項目合格を確認する。
-5. hard failなら既存rollback手順を実行し、`failed` としてPhase Cへ進まない。
+夜間ラッパーが専用`GH_TOKEN`でcommit/push/PRを実行し、既存のPhase Bでmerge・deploy・厳格検証を行います。Codexはこの工程を先回りしません。
 
-## 3. Phase C: Codex BrowserでX投稿
-
-`docs/x-post-codex-procedure.md`の検証4点セットと新タグ基準を適用します。
-このPhaseでも外部Google Chromeの `control-chrome` だけを使い、アプリ内Browserへ切り替えません。
-
-1. `npm run social:generate-x-post -- --slug <slug>`で下書きを作る。
-2. 本文1行目に自然な検索語を入れる。ブランドタグは `#すまラボ`。話題検索結果で実際に使われている流入タグだけ最大1個採用し、なければ追加しない。
-3. Browserで投稿直前に `@suma_labo` をDOM確認する。
-4. サムネイルを先頭に画像4枚を添付し、本投稿を1回だけ送信する。添付不可時だけ既定の縮退規則を使う。
-5. 本投稿URLを取得し、同じ投稿が `count===1` であることを確認して直ちに第1段台帳記録を行う。
-6. 本投稿へのリプライとして記事URLを1回だけ送信する。
-7. リプライURL、`count===1`、親の返信数 `N→N+1` を確認し、第2段台帳記録を行う。
-8. 記録コマンドは次の形を使い、実経路を必ず `codex` とする。
-
-```text
-node scripts/automation/phase-c-auto.mjs --slug <slug> --posted <本投稿URL> --variant <variant> --reply-url <リプライURL> --route codex
-```
-
-bot-check、ログアウト、権限拒否、DOM不一致が出たら、無理にリトライせず縮退記録と通知を残して `failed` とします。
+X投稿は外側工程です。非対話CodexにはChrome DOM権限がないため、このセッションではXタブを開かず、投稿も台帳確定も行いません。
 
 ## 4. 終端処理
 
-1. `node scripts/automation/night-report.mjs --slug <slug>`を実行する。
-2. 報告に「無人完走できたか / 人の介入 / 理由」と、二段検品の実施枚数・判定内訳を1行ずつ入れる。
-3. `npm run report:filter`を通し、`::`行を除去する。
-4. 成否契約4点を再取得し、全て揃った場合だけsuccessを記録する。
-5. runner cloneにtracked/untracked dirtyを残さない。公開コミット外の内部記録は既定のprivate/ignored領域へ保存する。
+1. `npm run security:scan`と`npm run build`が合格していることを再確認する。
+2. handoff JSONの`status=ready`、slug、固定4パスを実物確認する。
+3. 報告にslug、検品結果、handoffパスを出し、Codex自身はexit 0で終了する。
+4. 夜間run全体のsuccess判定とrunner clean化は、外側ラッパーの成否契約だけが行う。
 
 最後まで自律的に完走し、人の応答を待って停止しないでください。

@@ -36,6 +36,7 @@ export function scanTextForSecrets(text, file = "input") {
 export function candidateFiles(root = ROOT) {
   const files = new Set([
     ...gitLines(["diff", "--name-only", "--diff-filter=ACMR", "origin/main...HEAD"], root),
+    ...gitLines(["diff", "--name-only", "--diff-filter=ACMR"], root),
     ...gitLines(["diff", "--cached", "--name-only", "--diff-filter=ACMR"], root),
   ]);
   for (const line of gitLines(["status", "--porcelain", "--untracked-files=all"], root)) {

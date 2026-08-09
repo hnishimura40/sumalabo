@@ -3,17 +3,17 @@
 //
 // ゴール: `npm run article -- --theme "テーマ1行"` の 1 コマンドで Phase A
 // (research → ChatGPT Refinement Loop → スライド9枚 → ファクトチェック → WebP →
-//  MDX → gate → build → PR → Preview → 通知) を完走させる状態機械。
+//  MDX → gate → build → 外側ラッパーへの公開handoff) を完走させる状態機械。
 //
 // 設計:
 //   - 各ステップ完了時に logs/article/{slug}.state.json へチェックポイントを書く。
 //     中断しても同コマンドで途中から再開できる（worktree 事故の教訓）
 //   - ステップは 2 種類:
-//       script   … 本スクリプトが直接実行する（gate / WebP / PR / finalize など）
-//       assisted … ChatGPT ブラウザ操作・画像読解など Claude Code が実行する。
+//       script   … 本スクリプトが直接実行する（gate / WebP / handoff など）
+//       assisted … ChatGPT ブラウザ操作・画像読解など Codex が実行する。
 //                  本スクリプトは「NEXT ACTION」(手順+頑丈化チェックリスト) を出力して
 //                  exit 10 で停止し、完了後に `--advance <step> [--result <path>]` で進める
-//   - 有料 API は一切使わない（記事/画像 = ChatGPT サブスクのブラウザ、画像FC = Claude 自身）
+//   - 有料 API は一切使わない（記事/画像 = 既存のChatGPT/Codex経路）
 //   - リトライは各ステップ 2 回まで。超えたら state を保存して停止・通知（無理に進まない）
 //   - 再開時、final_article が 7 日超なら鮮度チェック（公式再取得）ステップへ差し戻す
 //
@@ -269,53 +269,31 @@ const jobs = ${JSON.stringify(jobs)};
   },
 
   commit_pr(state) {
-    if (STUB) return { ok: true, data: { prUrl: "https://github.com/stub/pr/0" } };
     const slug = state.slug;
     const branch = `preview/${slug}`;
-    const sh = (args) => spawnSync("git", args, { cwd: ROOT, stdio: "pipe", encoding: "utf-8" });
-    const cur = sh(["rev-parse", "--abbrev-ref", "HEAD"]).stdout.trim();
-    if (cur !== branch) {
-      const sw = sh(["switch", "-c", branch]);
-      if (sw.status !== 0) {
-        const sw2 = sh(["switch", branch]);
-        if (sw2.status !== 0) return { ok: false, reason: "branch_switch_failed" };
-      }
-    }
-    // 明示パスのみ add（git add . 禁止）
     const paths = [
       `content/articles/${slug}.mdx`,
       `public/images/articles/${slug}`,
       `public/images/thumbnails/${slug}.webp`,
       `drafts/refinement/${slug}`,
     ];
-    for (const p of paths) sh(["add", p]);
-    const ci = sh(["commit", "-m", `feat(article): ${state.theme || slug}（Phase Aオーケストレータ経由）\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>`]);
-    if (ci.status !== 0 && !/nothing to commit/.test(ci.stdout + ci.stderr)) return { ok: false, reason: "commit_failed" };
-    const push = sh(["push", "-u", "origin", branch]);
-    if (push.status !== 0) return { ok: false, reason: "push_failed" };
-    const prList = spawnSync("gh", ["pr", "list", "--head", branch, "--json", "url", "--jq", ".[0].url"], { cwd: ROOT, stdio: "pipe", encoding: "utf-8" });
-    let prUrl = (prList.stdout || "").trim();
-    if (!prUrl) {
-      const pr = spawnSync("gh", ["pr", "create", "--base", "main", "--head", branch, "--fill"], { cwd: ROOT, stdio: "pipe", encoding: "utf-8" });
-      if (pr.status !== 0) return { ok: false, reason: "pr_create_failed" };
-      prUrl = (pr.stdout || "").trim().split("\n").pop();
-    }
-    return { ok: true, data: { prUrl, branch } };
+    const handoffPath = path.join(ROOT, "logs", "article", `${slug}.publish-handoff.json`);
+    const handoff = {
+      schemaVersion: 1,
+      slug,
+      title: state.steps.write_mdx.data?.title || state.theme || slug,
+      branch,
+      paths,
+      createdAt: new Date().toISOString(),
+      status: "ready",
+      owner: "night-run-entry",
+    };
+    if (!STUB) writeFileSync(handoffPath, JSON.stringify(handoff, null, 2) + "\n", "utf-8");
+    return { ok: true, data: { branch, handoffPath: path.relative(ROOT, handoffPath).replace(/\\/g, "/"), deferredToOuter: true } };
   },
 
   finalize(state) {
-    if (STUB) return { ok: true };
-    const prUrl = state.steps.commit_pr.data?.prUrl || "";
-    const title = state.steps.write_mdx.data?.title || state.theme || state.slug;
-    const r = run(process.execPath, [
-      path.join(ROOT, "scripts", "run", "phase-a-finalize.mjs"),
-      "--slug", state.slug,
-      "--title", title,
-      "--branch", `preview/${state.slug}`,
-      "--prUrl", prUrl,
-      "--thumbnail", `images/thumbnails/${state.slug}.webp`,
-    ]);
-    return r.status === 0 ? { ok: true } : { ok: false, reason: "finalize_failed" };
+    return { ok: true, data: { deferredToOuter: true, owner: "night-run-entry" } };
   },
 };
 

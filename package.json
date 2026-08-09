@@ -36,6 +36,7 @@
     "purge:cache": "node scripts/automation/cache-purge.mjs",
     "verify:post-publish": "node scripts/automation/post-publish-verify.mjs",
     "phaseb:auto": "node scripts/automation/auto-phase-b.mjs",
+    "phasea:outer-publish": "node scripts/automation/phase-a-outer-publish.mjs",
     "article": "node scripts/automation/phase-a-orchestrator.mjs",
     "ledger:sync": "node scripts/automation/ledger.mjs --sync",
     "ledger:check": "node scripts/automation/ledger.mjs --check",
