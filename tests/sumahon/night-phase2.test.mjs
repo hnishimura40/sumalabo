@@ -82,6 +82,20 @@ test("night parent actor is Codex while Git and X stay outside its sandbox", () 
   assert.match(prompt, /Codex内からRSS取得やスカウト再実行をしない/);
 });
 
+test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentials", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  const prompt = read("docs/x-post-codex-night-prompt.md");
+  assert.match(wrapper, /x-post-codex-night-prompt\.md/);
+  assert.match(wrapper, /Invoke-CodexIsolated \$XPrompt/);
+  assert.match(wrapper, /Remove-Item Env:GH_TOKEN/);
+  assert.match(prompt, /tabs\.new\(\)/);
+  assert.match(prompt, /handoff.*claim.*しない/);
+  assert.match(prompt, /@suma_labo/);
+  assert.match(prompt, /N→N\+1/);
+  assert.match(prompt, /route: codex/);
+  assert.match(prompt, /GH_TOKEN.*読まない/);
+});
+
 test("runner keeps generated evidence private and preserves the live X ledger outside Git status", () => {
   const ignore = read(".gitignore");
   const prepare = read("scripts/automation/prepare-night-runner.mjs");
