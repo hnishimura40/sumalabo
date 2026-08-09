@@ -80,6 +80,7 @@ test("runner keeps generated evidence private and preserves the live X ledger ou
   }
   assert.match(prepare, /PRIVATE_TRACKED_RUNTIME_FILES/);
   assert.match(prepare, /update-index[\s\S]*--skip-worktree/);
+  assert.match(prepare, /if \(existsSync\(target\)\) continue;/);
   assert.doesNotMatch(setup, /ヘッドレスClaude Code|claude-opus-4-8|Sumalabo Claude Auth Probe|軽量な`claude -p`/);
 });
 

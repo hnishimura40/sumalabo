@@ -73,6 +73,10 @@ export function prepareRunner() {
     const source = path.join(SOURCE_ROOT, relative);
     if (!existsSync(source)) continue;
     const target = path.join(RUNNER_ROOT, relative);
+    // Existing runner state is newer and is the canonical unattended ledger.
+    // Registration only seeds a missing file; it must never roll runtime state
+    // back to an older daytime-workspace snapshot.
+    if (existsSync(target)) continue;
     mkdirSync(path.dirname(target), { recursive: true });
     copyFileSync(source, target);
     privateFilesCopied += 1;
