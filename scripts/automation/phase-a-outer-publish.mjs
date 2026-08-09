@@ -7,6 +7,7 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { probeGitHubToken } from "./github-token-probe.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const SLUG_RE = /^20\d{4}-[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -106,6 +107,12 @@ async function publish(slug) {
 async function main() {
   const argv = process.argv.slice(2);
   const slug = argv.includes("--slug") ? argv[argv.indexOf("--slug") + 1] : null;
+  if (argv.includes("--auth-probe")) {
+    const result = await probeGitHubToken();
+    console.log(JSON.stringify(result));
+    process.exitCode = result.exitCode;
+    return;
+  }
   if (argv.includes("--decide")) {
     const slugs = readySlugs();
     console.log(slugs.length ? `対象: ${slugs[0]}` : "対象なし");

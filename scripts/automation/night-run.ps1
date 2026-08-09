@@ -244,7 +244,17 @@ try {
   Log "launch: codex exec (ephemeral, workspace-write) -> $CodexLog"
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
   $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
-  $codexExit = Invoke-CodexIsolated $Prompt $codexArgs $CodexLog "codex"
+  # GH_TOKENは外側publisher専用。Codex子プロセスへ継承させない。
+  $publisherToken = $env:GH_TOKEN
+  $publisherExpiry = $env:GH_TOKEN_EXPIRES_AT
+  Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
+  Remove-Item Env:GH_TOKEN_EXPIRES_AT -ErrorAction SilentlyContinue
+  try {
+    $codexExit = Invoke-CodexIsolated $Prompt $codexArgs $CodexLog "codex"
+  } finally {
+    if ($publisherToken) { $env:GH_TOKEN = $publisherToken }
+    if ($publisherExpiry) { $env:GH_TOKEN_EXPIRES_AT = $publisherExpiry }
+  }
   $sw.Stop()
   Log "codex exited: code=$codexExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"
 
