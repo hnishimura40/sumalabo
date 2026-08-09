@@ -53,6 +53,8 @@ test("scheduler entry wrappers are ASCII-only and point only to dedicated clone"
   assert.match(prepare, /data\/automation\/autonomy\.json/);
   assert.match(prepare, /runner-package-lock\.sha256/);
   assert.match(prepare, /createHash\("sha256"\)/);
+  assert.match(prepare, /preservedGeneratedPaths/);
+  assert.match(prepare, /invalid handoff is never sufficient/i);
 });
 
 test("VIVANT reannouncement registration uses the weekly ASCII task entry", async () => {

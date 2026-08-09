@@ -33,6 +33,29 @@ export function assertAscii(file) {
   if ([...bytes].some((value) => value > 0x7f)) throw new Error(`entry wrapper is not ASCII-only: ${file}`);
 }
 
+function preservedGeneratedPaths() {
+  const handoffDir = path.join(RUNNER_ROOT, "logs", "article");
+  if (!existsSync(handoffDir)) return new Set();
+  const paths = new Set();
+  for (const name of readdirSync(handoffDir)) {
+    if (!name.endsWith(".publish-handoff.json")) continue;
+    try {
+      const handoff = JSON.parse(readFileSync(path.join(handoffDir, name), "utf8"));
+      if (handoff.status !== "ready" || !Array.isArray(handoff.paths)) continue;
+      for (const relative of handoff.paths) paths.add(relative.replace(/\\/g, "/"));
+    } catch {
+      // An invalid handoff is never sufficient to exempt a dirty runner.
+    }
+  }
+  return paths;
+}
+
+function isPreservedGeneratedChange(line, allowed) {
+  if (!line.startsWith("?? ")) return false;
+  const changed = line.slice(3).replace(/\\/g, "/").replace(/\/$/, "");
+  return [...allowed].some((relative) => changed === relative || relative.startsWith(`${changed}/`) || changed.startsWith(`${relative}/`));
+}
+
 export function prepareRunner() {
   mkdirSync(path.dirname(RUNNER_ROOT), { recursive: true });
   if (!existsSync(path.join(RUNNER_ROOT, ".git"))) {
@@ -49,7 +72,9 @@ export function prepareRunner() {
     run("git", ["update-index", "--skip-worktree", "--", relative], RUNNER_ROOT);
   }
   const dirty = run("git", ["status", "--porcelain", "--untracked-files=normal"], RUNNER_ROOT);
-  if (dirty) throw new Error(`dedicated runner clone is dirty:\n${dirty}`);
+  const preserved = preservedGeneratedPaths();
+  const blocking = dirty.split(/\r?\n/).filter(Boolean).filter((line) => !isPreservedGeneratedChange(line, preserved));
+  if (blocking.length) throw new Error(`dedicated runner clone is dirty:\n${blocking.join("\n")}`);
   run("git", ["fetch", "origin", "main", "--prune"], RUNNER_ROOT);
   run("git", ["checkout", "--detach", "origin/main"], RUNNER_ROOT);
   for (const relative of PRIVATE_TRACKED_RUNTIME_FILES) {
