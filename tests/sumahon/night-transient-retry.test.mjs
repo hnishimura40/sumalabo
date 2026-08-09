@@ -22,6 +22,7 @@ test("一過性失敗は待機後1回だけ再試行して成功する", async (
   const count = join(dir, "count.txt");
   writeFileSync(prompt, "test");
   writeFileSync(args, JSON.stringify([helper, count]));
+  writeFileSync(state, "\uFEFF" + JSON.stringify({ runId: "bom-preserved-run" }));
   writeFileSync(helper, [
     'import fs from "node:fs";',
     'const p=process.argv[2];',
@@ -38,6 +39,7 @@ test("一過性失敗は待機後1回だけ再試行して成功する", async (
   assert.equal(code, 0);
   assert.equal(readFileSync(count, "utf8"), "2");
   const final = JSON.parse(readFileSync(state, "utf8"));
+  assert.equal(final.runId, "bom-preserved-run");
   assert.equal(final.status, "completed");
   assert.equal(final.retriesUsed, 1);
 });
