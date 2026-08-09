@@ -306,6 +306,32 @@ try {
     Log "Phase B fallback error: $($_.Exception.Message)"
   }
 
+  # ---- 4-ter. Phase C は権限分離した別の非対話 Codex で実行 ----
+  # 2026-08-09 実機マトリクスで、x.com を事前許可し、非対話 Codex 自身が
+  # tabs.new() で専用タブを作る条件なら、入力・送信・投稿実在DOM確認まで成功した。
+  # 対話側の所有タブは競合するため handoff/claim は標準経路にしない。
+  if ($publishSlug) {
+    $XPromptFile = Join-Path $RepoRoot "docs\x-post-codex-night-prompt.md"
+    $XPrompt = (Get-Content $XPromptFile -Raw -Encoding utf8).Replace("{{SLUG}}", $publishSlug)
+    $XCodexLog = Join-Path $NightDir "$DateStr.codex-phase-c.log"
+    $xCodexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
+    Log "Phase C: non-interactive Codex opens its own fresh Chrome tab for $publishSlug"
+    $publisherToken = $env:GH_TOKEN
+    $publisherExpiry = $env:GH_TOKEN_EXPIRES_AT
+    Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
+    Remove-Item Env:GH_TOKEN_EXPIRES_AT -ErrorAction SilentlyContinue
+    try {
+      $xCodexExit = Invoke-CodexIsolated $XPrompt $xCodexArgs $XCodexLog "codex-phase-c"
+    } finally {
+      if ($publisherToken) { $env:GH_TOKEN = $publisherToken }
+      if ($publisherExpiry) { $env:GH_TOKEN_EXPIRES_AT = $publisherExpiry }
+    }
+    if ($xCodexExit -ne 0) {
+      $exitCode = Record-ContractOutcome "fail" "codex_phase_c_failed" "Codex Phase C exit=$xCodexExit"
+      exit $exitCode
+    }
+  }
+
   # Codexや補助ファイルの終了状態はsuccessの根拠にしない。記事URL、PR、
   # strict verify、X二段階台帳をここで実物照合し、4点が揃った場合だけ0を返す。
   if (Test-Path $ContractFile) {
