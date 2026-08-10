@@ -8,7 +8,6 @@ import {
   renameSync,
   writeFileSync,
 } from "node:fs";
-import { spawnSync } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -112,23 +111,28 @@ export async function probeArticleHttp(url) {
   }
 }
 
-export function probePrMerged(prUrl, { spawn = spawnSync } = {}) {
+export async function probePrMerged(prUrl, { token = process.env.GH_TOKEN, fetchImpl = fetch } = {}) {
   if (!prUrl) return { ok: false, reason: "pr_url_missing" };
-  const result = spawn("gh", ["pr", "view", prUrl, "--json", "state,mergedAt,mergeCommit,url"], {
-    encoding: "utf8",
-    windowsHide: true,
+  if (!token) return { ok: false, reason: "gh_token_missing" };
+  const match = String(prUrl).match(/^https:\/\/github\.com\/hnishimura40\/sumalabo\/pull\/(\d+)$/);
+  if (!match) return { ok: false, reason: "pr_url_invalid" };
+  const response = await fetchImpl(`https://api.github.com/repos/hnishimura40/sumalabo/pulls/${match[1]}`, {
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${token}`,
+      "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "sumalabo-night-contract",
+    },
   });
-  if (result.status !== 0) {
-    return { ok: false, reason: "github_api_failed", exitCode: result.status, detail: String(result.stderr || "").trim() };
-  }
+  if (!response.ok) return { ok: false, reason: `github_api_http_${response.status}` };
   try {
-    const value = JSON.parse(result.stdout);
+    const value = await response.json();
     return {
-      ok: value.state === "MERGED" && Boolean(value.mergedAt),
+      ok: value.merged === true && Boolean(value.merged_at),
       state: value.state,
-      mergedAt: value.mergedAt || null,
-      mergeCommit: value.mergeCommit?.oid || null,
-      url: value.url || prUrl,
+      mergedAt: value.merged_at || null,
+      mergeCommit: value.merge_commit_sha || null,
+      url: value.html_url || prUrl,
     };
   } catch (error) {
     return { ok: false, reason: "github_api_invalid_json", detail: error.message };

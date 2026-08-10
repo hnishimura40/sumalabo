@@ -9,6 +9,7 @@ import {
   auditRecordedOutcome,
   evaluateSuccessContract,
   makeStoppedResult,
+  probePrMerged,
   recordRunOutcome,
   verifyAutomationExecution,
 } from "./night-run-contract.mjs";
@@ -62,6 +63,25 @@ test("8/10 regression ID is preserved when no slug can be resolved", async () =>
   const recorded = recordRunOutcome(result, { root, startedAt: STARTED_AT });
   assert.equal(recorded.runId, REGRESSION_RUN_ID);
   assert.equal(recorded.reason, "slug_not_resolved");
+});
+
+test("PR merge evidence uses REST and survives GraphQL exhaustion", async () => {
+  const result = await probePrMerged("https://github.com/hnishimura40/sumalabo/pull/284", {
+    token: "test-token",
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        state: "closed",
+        merged: true,
+        merged_at: "2026-08-10T03:16:58Z",
+        merge_commit_sha: "a1d98be",
+        html_url: "https://github.com/hnishimura40/sumalabo/pull/284",
+      }),
+    }),
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.mergedAt, "2026-08-10T03:16:58Z");
 });
 
 for (const [name, override] of [
