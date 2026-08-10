@@ -85,6 +85,23 @@ test("outer publisher uses REST PR resolution and can complete a recovered hando
   assert.match(read("scripts/automation/phase-a-outer-publish.mjs"), /--mark-completed/);
 });
 
+test("Phase B merges through REST without GraphQL", async () => {
+  const phaseB = await import("../../scripts/automation/auto-phase-b.mjs");
+  const calls = [];
+  const result = await phaseB.mergePr(284, false, {
+    token: "test-token",
+    fetchImpl: async (url, options = {}) => {
+      calls.push({ url, options });
+      if (!options.method) return { ok: true, status: 200, json: async () => ({ state: "open", merged: false, draft: false }) };
+      return { ok: true, status: 200, json: async () => ({ merged: true }) };
+    },
+  });
+  assert.deepEqual(result, { ok: true });
+  assert.equal(calls.length, 2);
+  assert.equal(calls[1].options.method, "PUT");
+  assert.doesNotMatch(read("scripts/automation/auto-phase-b.mjs"), /gh", \["pr"/);
+});
+
 test("Codex auth probe is non-interactive and never uses auth status", () => {
   const source = read("scripts/automation/codex-auth-probe.mjs");
   assert.match(source, /"exec"/);

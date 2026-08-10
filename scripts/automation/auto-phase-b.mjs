@@ -101,22 +101,30 @@ function parsePrNumber(prUrl) {
   return m ? Number(m[1]) : null;
 }
 
-function mergePr(prNumber, dryRun) {
-  const view = run("gh", ["pr", "view", String(prNumber), "--json", "state,isDraft,mergeable,mergeStateStatus"], { capture: true });
-  if (view.code !== 0) return { ok: false, reason: "gh_pr_view_failed" };
-  let info;
-  try {
-    info = JSON.parse(view.stdout);
-  } catch {
-    return { ok: false, reason: "gh_pr_view_unparseable" };
-  }
-  if (info.state === "MERGED") return { ok: true, alreadyMerged: true };
-  if (info.state !== "OPEN") return { ok: false, reason: `pr_state_${info.state}` };
-  if (info.isDraft) return { ok: false, reason: "pr_is_draft" };
-  if (info.mergeable !== "MERGEABLE") return { ok: false, reason: `not_mergeable_${info.mergeable}` };
+export async function mergePr(prNumber, dryRun, { token = process.env.GH_TOKEN, fetchImpl = fetch } = {}) {
+  if (!token) return { ok: false, reason: "gh_token_missing" };
+  const headers = {
+    Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${token}`,
+    "X-GitHub-Api-Version": "2022-11-28",
+    "User-Agent": "sumalabo-auto-phase-b",
+  };
+  const endpoint = `https://api.github.com/repos/hnishimura40/sumalabo/pulls/${prNumber}`;
+  const view = await fetchImpl(endpoint, { headers });
+  if (!view.ok) return { ok: false, reason: `pr_view_http_${view.status}` };
+  const info = await view.json();
+  if (info.merged === true) return { ok: true, alreadyMerged: true };
+  if (info.state !== "open") return { ok: false, reason: `pr_state_${info.state}` };
+  if (info.draft === true) return { ok: false, reason: "pr_is_draft" };
   if (dryRun) return { ok: true, dryRun: true };
-  const merge = run("gh", ["pr", "merge", String(prNumber), "--merge", "--delete-branch=false"]);
-  return merge.code === 0 ? { ok: true } : { ok: false, reason: "gh_pr_merge_failed" };
+  const merge = await fetchImpl(`${endpoint}/merge`, {
+    method: "PUT",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify({ merge_method: "merge" }),
+  });
+  if (!merge.ok) return { ok: false, reason: `pr_merge_http_${merge.status}` };
+  const merged = await merge.json();
+  return merged?.merged === true ? { ok: true } : { ok: false, reason: merged?.message || "pr_merge_rejected" };
 }
 
 async function main() {
@@ -171,7 +179,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  const merged = mergePr(prNumber, false);
+  const merged = await mergePr(prNumber, false);
   if (!merged.ok) {
     console.error(`[auto-phase-b] PR merge 失敗: ${merged.reason}`);
     await notifyAutonomyEvent({
