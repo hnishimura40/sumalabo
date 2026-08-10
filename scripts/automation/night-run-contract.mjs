@@ -99,7 +99,7 @@ export function findPrUrl(slug, root = ROOT) {
   const ledger = findLedgerEntry(slug, root);
   const queue = findQueueEntry(slug, root);
   const handoff = readJson(path.join(root, "logs", "article", `${slug}.publish-handoff.json`), {});
-  return ledger.prUrl || handoff.prUrl || state?.steps?.commit_pr?.data?.prUrl || queue.prUrl || null;
+  return handoff.prUrl || ledger.prUrl || state?.steps?.commit_pr?.data?.prUrl || queue.prUrl || null;
 }
 
 export async function probeArticleHttp(url) {
