@@ -52,6 +52,40 @@ function requireDedicatedToken() {
   if (!process.env.GH_TOKEN) throw new Error("gh_token_missing");
 }
 
+export async function resolvePullRequest({ branch, title, token = process.env.GH_TOKEN, fetchImpl = fetch } = {}) {
+  if (!token) throw new Error("gh_token_missing");
+  const headers = {
+    Accept: "application/vnd.github+json",
+    Authorization: `Bearer ${token}`,
+    "X-GitHub-Api-Version": "2022-11-28",
+    "User-Agent": "sumalabo-night-publisher",
+  };
+  const head = encodeURIComponent(`hnishimura40:${branch}`);
+  const list = await fetchImpl(`https://api.github.com/repos/hnishimura40/sumalabo/pulls?state=all&head=${head}`, { headers });
+  if (!list.ok) throw new Error(`pr_list_http_${list.status}`);
+  const existing = await list.json();
+  if (existing?.[0]?.html_url) return existing[0].html_url;
+  const created = await fetchImpl("https://api.github.com/repos/hnishimura40/sumalabo/pulls", {
+    method: "POST",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify({ title, head: branch, base: "main", body: "Night-run generated and verified article." }),
+  });
+  if (!created.ok) throw new Error(`pr_create_http_${created.status}`);
+  const value = await created.json();
+  if (!value?.html_url) throw new Error("pr_create_response_invalid");
+  return value.html_url;
+}
+
+export function markHandoffCompleted(slug, prUrl, root = ROOT) {
+  if (!/^https:\/\/github\.com\/hnishimura40\/sumalabo\/pull\/\d+$/.test(String(prUrl || ""))) throw new Error("invalid_pr_url");
+  const { file, value } = readManifest(slug, root);
+  value.status = "completed";
+  value.completedAt = new Date().toISOString();
+  value.prUrl = prUrl;
+  writeFileSync(file, JSON.stringify(value, null, 2) + "\n", "utf8");
+  return { ok: true, slug, prUrl, status: value.status };
+}
+
 function ensureOnlyAllowedChanges(expected, root = ROOT) {
   const status = run("git", ["status", "--porcelain", "--untracked-files=all", "--", ...expected], { root });
   if (status.status !== 0) throw new Error("git_status_failed");
@@ -86,27 +120,18 @@ async function publish(slug) {
   r = run("git", ["push", "-u", "origin", value.branch]);
   if (r.status !== 0) throw new Error("push_failed");
 
-  const childEnv = { ...process.env, GH_TOKEN: process.env.GH_TOKEN };
-  r = run("gh", ["pr", "list", "--head", value.branch, "--json", "url", "--jq", ".[0].url"], { env: childEnv });
-  let prUrl = (r.stdout || "").trim();
-  if (!prUrl) {
-    r = run("gh", ["pr", "create", "--base", "main", "--head", value.branch, "--fill"], { env: childEnv });
-    if (r.status !== 0) throw new Error("pr_create_failed");
-    prUrl = (r.stdout || "").trim().split(/\r?\n/).pop();
-  }
+  const prUrl = await resolvePullRequest({ branch: value.branch, title: value.title });
 
   r = run(process.execPath, [path.join(ROOT, "scripts", "run", "phase-a-finalize.mjs"), "--slug", slug, "--title", value.title, "--branch", value.branch, "--prUrl", prUrl, "--thumbnail", `images/thumbnails/${slug}.webp`], { inherit: true });
   if (r.status !== 0) throw new Error("finalize_failed");
-  value.status = "completed";
-  value.completedAt = new Date().toISOString();
-  value.prUrl = prUrl;
-  writeFileSync(file, JSON.stringify(value, null, 2) + "\n", "utf8");
+  markHandoffCompleted(slug, prUrl);
   return { ok: true, slug, branch: value.branch, prUrl };
 }
 
 async function main() {
   const argv = process.argv.slice(2);
   const slug = argv.includes("--slug") ? argv[argv.indexOf("--slug") + 1] : null;
+  const prUrl = argv.includes("--pr-url") ? argv[argv.indexOf("--pr-url") + 1] : null;
   if (argv.includes("--auth-probe")) {
     const result = await probeGitHubToken();
     console.log(JSON.stringify(result));
@@ -124,6 +149,11 @@ async function main() {
   if (argv.includes("--decide")) {
     const slugs = readySlugs();
     console.log(slugs.length ? `対象: ${slugs[0]}` : "対象なし");
+    process.exitCode = 0;
+    return;
+  }
+  if (argv.includes("--mark-completed")) {
+    console.log(JSON.stringify(markHandoffCompleted(slug, prUrl)));
     process.exitCode = 0;
     return;
   }

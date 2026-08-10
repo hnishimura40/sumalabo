@@ -66,6 +66,25 @@ test("VIVANT reannouncement registration uses the weekly ASCII task entry", asyn
   assert.equal(existing.postUrl, "https://x.com/suma_labo/status/2081707073398861988");
 });
 
+test("outer publisher uses REST PR resolution and can complete a recovered handoff", async () => {
+  const outer = await import("../../scripts/automation/phase-a-outer-publish.mjs");
+  const calls = [];
+  const prUrl = await outer.resolvePullRequest({
+    branch: "preview/202608-iphone-9-9-9-12",
+    title: "regression",
+    token: "test-token",
+    fetchImpl: async (url, options = {}) => {
+      calls.push({ url, options });
+      return { ok: true, status: 200, json: async () => [{ html_url: "https://github.com/hnishimura40/sumalabo/pull/284" }] };
+    },
+  });
+  assert.equal(prUrl, "https://github.com/hnishimura40/sumalabo/pull/284");
+  assert.equal(calls.length, 1);
+  assert.match(calls[0].url, /api\.github\.com\/repos\/hnishimura40\/sumalabo\/pulls/);
+  assert.doesNotMatch(read("scripts/automation/phase-a-outer-publish.mjs"), /gh", \["pr"/);
+  assert.match(read("scripts/automation/phase-a-outer-publish.mjs"), /--mark-completed/);
+});
+
 test("Codex auth probe is non-interactive and never uses auth status", () => {
   const source = read("scripts/automation/codex-auth-probe.mjs");
   assert.match(source, /"exec"/);
