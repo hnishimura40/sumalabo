@@ -8,6 +8,7 @@ import {
   OUTCOMES,
   auditRecordedOutcome,
   evaluateSuccessContract,
+  findPrUrl,
   makeStoppedResult,
   probePrMerged,
   recordRunOutcome,
@@ -82,6 +83,14 @@ test("PR merge evidence uses REST and survives GraphQL exhaustion", async () => 
   });
   assert.equal(result.ok, true);
   assert.equal(result.mergedAt, "2026-08-10T03:16:58Z");
+});
+
+test("PR URL is recovered from the outer publisher handoff", () => {
+  const root = fixture();
+  writeFileSync(path.join(root, "logs", "article", `${SLUG}.publish-handoff.json`), JSON.stringify({
+    prUrl: "https://github.com/hnishimura40/sumalabo/pull/284",
+  }));
+  assert.equal(findPrUrl(SLUG, root), "https://github.com/hnishimura40/sumalabo/pull/284");
 });
 
 for (const [name, override] of [
