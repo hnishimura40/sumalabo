@@ -24,6 +24,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { isVerifyPropagationPending } from "../../scripts/automation/deploy-production-from-main.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -105,6 +106,19 @@ test("3. HTTP 5xx (httpStatus.ok=false) は failed", () => {
   checks.httpStatus = { ok: false, actual: 502 };
   const r = evaluateVerify({ checks });
   assert.equal(r.status, "failed");
+});
+
+test("3b. deploy直後の404だけはCDN反映待ちとして再試行する", () => {
+  assert.equal(isVerifyPropagationPending({
+    status: "failed",
+    checks: { httpStatus: { ok: false, actual: 404 } },
+    failedChecks: ["httpStatus", "slugInHtml"],
+  }), true);
+  assert.equal(isVerifyPropagationPending({
+    status: "failed",
+    checks: { httpStatus: { ok: false, actual: 502 } },
+    failedChecks: ["httpStatus"],
+  }), false);
 });
 
 // ----- deploy script: --slug 未指定で引数エラー -----

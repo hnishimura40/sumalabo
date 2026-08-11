@@ -48,7 +48,7 @@
 import { spawnSync, spawn } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
 import { gate, loadAutonomy } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
@@ -404,6 +404,12 @@ function stepWranglerDeploy(result, dryRun, skipWrangler = false) {
   return true;
 }
 
+export function isVerifyPropagationPending(body) {
+  return body?.status === "failed"
+    && body?.checks?.httpStatus?.ok === false
+    && Number(body?.checks?.httpStatus?.actual) === 404;
+}
+
 async function stepVerify(result, slug, verifyUrl, timeoutMs, noVerify) {
   if (noVerify) {
     result.steps.verify = { status: "skipped", reason: "--no-verify" };
@@ -434,6 +440,10 @@ async function stepVerify(result, slug, verifyUrl, timeoutMs, noVerify) {
       result.productionUrl = body.productionUrl || null;
       console.log(`  verify: published (${attempts} attempts)`);
       return true;
+    }
+    if (isVerifyPropagationPending(body)) {
+      await new Promise((r) => setTimeout(r, intervalMs));
+      continue;
     }
     if (body && body.status === "failed") {
       result.steps.verify = {
@@ -660,7 +670,10 @@ function finalize(result, args, exitCode) {
   process.exitCode = exitCode;
 }
 
-main().catch((err) => {
-  console.error("[fatal]", err && err.message ? err.message : err);
-  process.exitCode = 1;
-});
+const direct = process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
+if (direct) {
+  main().catch((err) => {
+    console.error("[fatal]", err && err.message ? err.message : err);
+    process.exitCode = 1;
+  });
+}
