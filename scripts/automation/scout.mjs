@@ -354,7 +354,12 @@ export function findExclusion(item, config) {
 
 export function tokenize(title) {
   // 日本語はスペース区切りされないため、ASCII 語 + CJK バイグラムでトークン化する
-  const s = String(title).toLowerCase();
+  // RSS titles commonly append a publisher after a spaced dash. The suffix is
+  // not part of the topic and can push a near-identical title just below the
+  // duplicate threshold (for example, the same announcement plus "- PC Watch").
+  const s = String(title)
+    .replace(/\s[-–—｜|]\s[^-–—｜|]{2,40}$/u, "")
+    .toLowerCase();
   const tokens = new Set();
   for (const m of s.match(/[a-z0-9][a-z0-9.\-]*/g) || []) {
     if (m.length >= 2) tokens.add(m);
