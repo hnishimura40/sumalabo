@@ -298,25 +298,45 @@ try {
     exit $exitCode
   }
 
-  # ---- 4-bis. Phase B/C 未完の即時救済 ----
-  # Codexがexit 0でもPhase Aで終わった場合、承認や時刻待ちには入らない。
-  # veto済みでないreview_waitingを1回だけ即時Phase Bへ進める。
-  try {
-    $pending = (node scripts/automation/auto-phase-b.mjs --decide 2>$null | Out-String)
-    if ($pending -match '対象:') {
-      Log "Phase B fallback: review_waitingを即時公開する。"
-      node scripts/automation/auto-phase-b.mjs 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
-      if ($LASTEXITCODE -ne 0) { Log "Phase B fallback failed: exit=$LASTEXITCODE" }
+  # ---- 4-bis. Phase B target propagation retry and real-world guard ----
+  # The review API can lag behind handoff completion. Wait up to five minutes for
+  # this exact slug. Phase C stays forbidden until PR merge and production HTTP 200.
+  $phaseBVerified = $false
+  if ($publishSlug) {
+    Log "Phase B: review-item反映を30秒間隔・最大10回待って $publishSlug を公開する。"
+    node scripts/automation/auto-phase-b.mjs --wait-for-target --attempts=10 --interval-ms=30000 --slug=$publishSlug 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
+    $phaseBExit = $LASTEXITCODE
+    if ($phaseBExit -eq 12) {
+      $exitCode = Record-ContractOutcome "fail" "phase_b_target_not_found_after_retry" "slug=$publishSlug attempts=10 interval=30s"
+      exit $exitCode
     }
-  } catch {
-    Log "Phase B fallback error: $($_.Exception.Message)"
+    if ($phaseBExit -ne 0) {
+      $exitCode = Record-ContractOutcome "fail" "phase_b_publish_failed" "slug=$publishSlug exit=$phaseBExit"
+      exit $exitCode
+    }
+
+    $phaseBCheck = & node $ContractScript phase-b-check --slug $publishSlug 2>&1
+    $phaseBCheckExit = $LASTEXITCODE
+    Log (($phaseBCheck | Out-String).Trim())
+    if ($phaseBCheckExit -ne 0) {
+      $exitCode = Record-ContractOutcome "fail" "phase_b_completion_not_verified" (($phaseBCheck | Out-String).Trim())
+      exit $exitCode
+    }
+    $phaseBVerified = $true
+
+    $xPostFile = Join-Path $RepoRoot "logs\social\$publishSlug.x-post.json"
+    node scripts/run/generate-x-post.mjs --slug $publishSlug 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $xPostFile)) {
+      $exitCode = Record-ContractOutcome "fail" "phase_c_input_generation_failed" "missing=$xPostFile"
+      exit $exitCode
+    }
   }
 
   # ---- 4-ter. Phase C は権限分離した別の非対話 Codex で実行 ----
   # 2026-08-09 実機マトリクスで、x.com を事前許可し、非対話 Codex 自身が
   # tabs.new() で専用タブを作る条件なら、入力・送信・投稿実在DOM確認まで成功した。
   # 対話側の所有タブは競合するため handoff/claim は標準経路にしない。
-  if ($publishSlug) {
+  if ($publishSlug -and $phaseBVerified) {
     $XPromptFile = Join-Path $RepoRoot "docs\x-post-codex-night-prompt.md"
     $XPrompt = (Get-Content $XPromptFile -Raw -Encoding utf8).Replace("{{SLUG}}", $publishSlug)
     $XCodexLog = Join-Path $NightDir "$DateStr.codex-phase-c.log"

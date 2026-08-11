@@ -40,13 +40,19 @@ const ROOT = resolve(dirname(__filename), "..", "..");
 const REVIEW_ITEMS_URL = process.env.REVIEW_ITEMS_URL || "https://sumalabo.com/api/review-items";
 
 export function parseArgs(argv) {
-  const out = { decide: false, dryRun: false, itemsFile: null, now: null };
+  const out = { decide: false, dryRun: false, itemsFile: null, now: null, slug: null, waitForTarget: false, attempts: 10, intervalMs: 30_000 };
   for (const a of argv) {
     if (a === "--decide") out.decide = true;
     else if (a === "--dry-run") out.dryRun = true;
     else if (a.startsWith("--items-file=")) out.itemsFile = a.slice("--items-file=".length).trim();
     else if (a.startsWith("--now=")) out.now = a.slice("--now=".length).trim();
+    else if (a.startsWith("--slug=")) out.slug = a.slice("--slug=".length).trim();
+    else if (a === "--wait-for-target") out.waitForTarget = true;
+    else if (a.startsWith("--attempts=")) out.attempts = Number(a.slice("--attempts=".length));
+    else if (a.startsWith("--interval-ms=")) out.intervalMs = Number(a.slice("--interval-ms=".length));
   }
+  if (!Number.isInteger(out.attempts) || out.attempts < 1) throw new Error("attempts must be a positive integer");
+  if (!Number.isFinite(out.intervalMs) || out.intervalMs < 0) throw new Error("interval-ms must be non-negative");
   return out;
 }
 
@@ -127,6 +133,18 @@ export async function mergePr(prNumber, dryRun, { token = process.env.GH_TOKEN, 
   return merged?.merged === true ? { ok: true } : { ok: false, reason: merged?.message || "pr_merge_rejected" };
 }
 
+const sleep = (milliseconds) => new Promise((resolveSleep) => setTimeout(resolveSleep, milliseconds));
+
+export async function waitForEligibleTarget({ load, slug = null, attempts = 10, intervalMs = 30_000, nowMs = Date.now(), sleepImpl = sleep }) {
+  for (let attempt = 1; attempt <= attempts + 1; attempt += 1) {
+    const eligible = selectEligible(await load(), nowMs);
+    const target = slug ? eligible.find((item) => item.slug === slug) : eligible[0];
+    if (target) return { ok: true, target, attempt, retries: attempt - 1 };
+    if (attempt <= attempts) await sleepImpl(intervalMs);
+  }
+  return { ok: false, target: null, attempt: attempts + 1, retries: attempts, reason: "phase_b_target_not_found_after_retry" };
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const nowMs = args.now ? Date.parse(args.now) : Date.now();
@@ -141,24 +159,34 @@ async function main() {
   }
 
   // 2-3. 対象選定
-  let items;
+  let decision;
   try {
-    items = await loadItems(args);
+    decision = await waitForEligibleTarget({
+      load: () => loadItems(args),
+      slug: args.slug,
+      attempts: args.waitForTarget ? args.attempts : 1,
+      intervalMs: args.intervalMs,
+      nowMs,
+    });
   } catch (e) {
     console.error(`[auto-phase-b] review-items 取得失敗: ${e && e.message}`);
     writeGithubOutput("eligible", "none");
     process.exitCode = args.decide ? 0 : 1;
     return;
   }
-  const eligible = selectEligible(items, nowMs);
-  if (eligible.length === 0) {
+  if (!decision.ok) {
     console.log("[auto-phase-b] Phase B対象なし");
     writeGithubOutput("eligible", "none");
-    process.exitCode = 0;
+    if (args.waitForTarget) {
+      console.error(`[auto-phase-b] ${decision.reason} retries=${decision.retries}`);
+      process.exitCode = 12;
+    } else {
+      process.exitCode = 0;
+    }
     return;
   }
 
-  const target = eligible[0]; // 4. 1 実行 1 slug
+  const target = decision.target; // 4. 1 実行 1 slug
   console.log(`[auto-phase-b] 対象: ${target.slug} (PR=${target.prUrl})`);
   writeGithubOutput("eligible", target.slug);
   if (args.decide) {
@@ -219,18 +247,8 @@ async function main() {
     return;
   }
 
-  // 7. Phase C 自動起動の配線 (L2): level>=2 かつ post-publish verify 合格のときだけ
-  //    phase-c-auto が進む（現 level では gate が skip する）
-  const phaseC = run(process.execPath, [
-    join(ROOT, "scripts", "automation", "phase-c-auto.mjs"),
-    `--slug=${target.slug}`,
-    "--trigger=auto_after_veto",
-  ]);
-  if (phaseC.code !== 0 && phaseC.code !== 10) {
-    console.warn(`[auto-phase-b] phase-c-auto exit=${phaseC.code}（非致命。Phase B自体は成功）`);
-  }
-
-  // 8. Phase B 完了通知（既存の完了報告テンプレ相当の要点）
+  // Phase C is intentionally not started here. The outer wrapper first verifies
+  // the merged PR and production HTTP 200, then creates x-post.json.
   const productionUrl = `https://sumalabo.com/articles/${target.slug}/`;
   await notifyAutonomyEvent({
     slug: target.slug,

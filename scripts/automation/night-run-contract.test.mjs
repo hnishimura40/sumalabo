@@ -7,16 +7,19 @@ import {
   EXIT_CODES,
   OUTCOMES,
   auditRecordedOutcome,
+  discoverSlugSince,
   evaluateSuccessContract,
   findPrUrl,
   makeStoppedResult,
   probePrMerged,
   recordRunOutcome,
+  verifyPhaseBCompletion,
   verifyAutomationExecution,
 } from "./night-run-contract.mjs";
 
 const RUN_ID = "20260808T043000.000";
 const REGRESSION_RUN_ID = "20260810T043002.254";
+const HANDOFF_REGRESSION_RUN_ID = "20260811T043002.521";
 const STARTED_AT = "2026-08-08T04:30:00+09:00";
 const SLUG = "202608-contract-test";
 
@@ -91,6 +94,40 @@ test("PR URL is recovered from the outer publisher handoff", () => {
     prUrl: "https://github.com/hnishimura40/sumalabo/pull/284",
   }));
   assert.equal(findPrUrl(SLUG, root), "https://github.com/hnishimura40/sumalabo/pull/284");
+});
+
+test("8/11 regression resolves the real handoff slug before Phase C evidence exists", () => {
+  const root = fixture();
+  const startedAt = "2026-08-10T19:30:02.521Z";
+  writeFileSync(path.join(root, "logs", "article", "202608-line-mute-message-lyp-premium.publish-handoff.json"), JSON.stringify({
+    schemaVersion: 1,
+    slug: "202608-line-mute-message-lyp-premium",
+    title: "LINE quiet send",
+    branch: "preview/202608-line-mute-message-lyp-premium",
+    createdAt: "2026-08-10T19:53:50.777Z",
+    status: "completed",
+    completedAt: "2026-08-10T20:01:00.000Z",
+    prUrl: "https://github.com/hnishimura40/sumalabo/pull/285",
+    runId: HANDOFF_REGRESSION_RUN_ID,
+  }));
+  assert.equal(discoverSlugSince({ root, startedAt }), "202608-line-mute-message-lyp-premium");
+});
+
+test("Phase B completion requires both production HTTP 200 and merged PR", async () => {
+  const root = fixture();
+  const failed = await verifyPhaseBCompletion({
+    root,
+    slug: SLUG,
+    probes: { http: async () => ({ ok: true, status: 200 }), pr: async () => ({ ok: false, state: "open" }) },
+  });
+  assert.equal(failed.outcome, OUTCOMES.FAILED);
+  assert.deepEqual(failed.failedChecks, ["prMerged"]);
+  const success = await verifyPhaseBCompletion({
+    root,
+    slug: SLUG,
+    probes: { http: async () => ({ ok: true, status: 200 }), pr: async () => ({ ok: true, mergedAt: "2026-08-11T00:00:00Z" }) },
+  });
+  assert.equal(success.outcome, OUTCOMES.SUCCESS);
 });
 
 for (const [name, override] of [

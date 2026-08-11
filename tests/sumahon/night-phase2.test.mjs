@@ -31,7 +31,7 @@ test("night prompts and wrapper have no approval or veto-wait branch", () => {
   ].join("\n");
   assert.doesNotMatch(text, /Start-Sleep\s+-Seconds\s+300|AskUserQuestion|request_user_input/);
   assert.match(text, /承認待ち・veto待ち・時刻待ちは禁止/);
-  assert.match(text, /Phase B fallback: review_waitingを即時公開/);
+  assert.match(text, /Phase B: review-item反映を30秒間隔・最大10回待って/);
   assert.match(text, /outer scout --auto-pick/);
   assert.match(text, /Record-ContractOutcome "stop" "no_scout_target"/);
 });
@@ -100,6 +100,53 @@ test("Phase B merges through REST without GraphQL", async () => {
   assert.equal(calls.length, 2);
   assert.equal(calls[1].options.method, "PUT");
   assert.doesNotMatch(read("scripts/automation/auto-phase-b.mjs"), /gh", \["pr"/);
+});
+
+test("Phase B retries an initially invisible target and later selects it", async () => {
+  const phaseB = await import("../../scripts/automation/auto-phase-b.mjs");
+  let loads = 0;
+  const sleeps = [];
+  const target = { slug: "202608-line-mute-message-lyp-premium", status: "review_waiting", prUrl: "https://github.com/hnishimura40/sumalabo/pull/285" };
+  const result = await phaseB.waitForEligibleTarget({
+    load: async () => (++loads < 3 ? [] : [target]),
+    slug: target.slug,
+    attempts: 10,
+    intervalMs: 30_000,
+    sleepImpl: async (milliseconds) => sleeps.push(milliseconds),
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.attempt, 3);
+  assert.deepEqual(sleeps, [30_000, 30_000]);
+});
+
+test("Phase B target retry exhausts ten 30-second waits before failing closed", async () => {
+  const phaseB = await import("../../scripts/automation/auto-phase-b.mjs");
+  const sleeps = [];
+  const result = await phaseB.waitForEligibleTarget({
+    load: async () => [],
+    slug: "202608-line-mute-message-lyp-premium",
+    attempts: 10,
+    intervalMs: 30_000,
+    sleepImpl: async (milliseconds) => sleeps.push(milliseconds),
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, "phase_b_target_not_found_after_retry");
+  assert.equal(result.retries, 10);
+  assert.equal(sleeps.length, 10);
+  assert.ok(sleeps.every((milliseconds) => milliseconds === 30_000));
+});
+
+test("Phase B/C ordering verifies production then creates x-post input before Codex", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  const retry = wrapper.indexOf("--wait-for-target --attempts=10 --interval-ms=30000");
+  const verify = wrapper.indexOf("phase-b-check --slug");
+  const generate = wrapper.indexOf("generate-x-post.mjs --slug");
+  const phaseC = wrapper.indexOf("Invoke-CodexIsolated $XPrompt");
+  assert.ok(retry >= 0 && retry < verify);
+  assert.ok(verify < generate && generate < phaseC);
+  assert.match(wrapper, /phase_b_target_not_found_after_retry/);
+  assert.match(wrapper, /if \(\$publishSlug -and \$phaseBVerified\)/);
+  assert.doesNotMatch(read("scripts/automation/auto-phase-b.mjs"), /phase-c-auto\.mjs/);
 });
 
 test("Codex auth probe is non-interactive and never uses auth status", () => {

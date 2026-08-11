@@ -77,7 +77,20 @@ export function discoverSlugSince({ root = ROOT, startedAt }) {
     (ledger.entries || []).filter((e) => Date.parse(e.publishedAt) >= startedMs),
     "publishedAt",
   );
-  return recentPublish?.slug || null;
+  if (recentPublish?.slug) return recentPublish.slug;
+
+  const articleDir = path.join(root, "logs", "article");
+  if (!existsSync(articleDir)) return null;
+  const recentHandoff = readdirSync(articleDir)
+    .filter((name) => name.endsWith(".publish-handoff.json"))
+    .map((name) => readJson(path.join(articleDir, name)))
+    .filter((handoff) => {
+      if (!handoff || typeof handoff.slug !== "string" || !handoff.slug) return false;
+      const timestamp = handoff.createdAt || handoff.completedAt;
+      return Number.isFinite(Date.parse(timestamp)) && Date.parse(timestamp) >= startedMs;
+    })
+    .sort((a, b) => Date.parse(b.createdAt || b.completedAt) - Date.parse(a.createdAt || a.completedAt))[0];
+  return recentHandoff?.slug || null;
 }
 
 function findArticleState(slug, root) {
@@ -138,6 +151,26 @@ export async function probePrMerged(prUrl, { token = process.env.GH_TOKEN, fetch
   } catch (error) {
     return { ok: false, reason: "github_api_invalid_json", detail: error.message };
   }
+}
+
+export async function verifyPhaseBCompletion({ root = ROOT, slug, probes = {} }) {
+  if (!slug) return { outcome: OUTCOMES.FAILED, reason: "phase_b_slug_missing", slug: null };
+  const articleUrl = `https://sumalabo.com/articles/${slug}/`;
+  const prUrl = findPrUrl(slug, root);
+  const articleHttp200 = await (probes.http || probeArticleHttp)(articleUrl);
+  const prMerged = await (probes.pr || ((url) => probePrMerged(url)))(prUrl);
+  const failedChecks = [];
+  if (articleHttp200?.ok !== true) failedChecks.push("articleHttp200");
+  if (prMerged?.ok !== true) failedChecks.push("prMerged");
+  return {
+    outcome: failedChecks.length === 0 ? OUTCOMES.SUCCESS : OUTCOMES.FAILED,
+    reason: failedChecks.length === 0 ? "phase_b_real_world_verified" : `phase_b_incomplete:${failedChecks.join(",")}`,
+    slug,
+    articleUrl,
+    prUrl,
+    evidence: { articleHttp200, prMerged },
+    failedChecks,
+  };
 }
 
 export function probeStrictVerify(slug, root = ROOT) {
@@ -377,6 +410,10 @@ async function main() {
     printAndExit(recordRunOutcome(result, { root, startedAt: args["started-at"] }));
     return;
   }
+  if (command === "phase-b-check") {
+    printAndExit(await verifyPhaseBCompletion({ root, slug: args.slug || null }));
+    return;
+  }
   if (command === "stop") {
     const result = makeStoppedResult({ runId: args["run-id"], reason: args.reason, detail: args.detail || null });
     printAndExit(recordRunOutcome(result, { root, startedAt: args["started-at"] || null }));
@@ -401,7 +438,7 @@ async function main() {
     printAndExit(verifyAutomationExecution({ id: args.id, scheduledAt: args["scheduled-at"], deadline: args.deadline, root }));
     return;
   }
-  console.error("usage: evaluate|stop|fail|audit|intervene|correction|automation-check");
+  console.error("usage: evaluate|phase-b-check|stop|fail|audit|intervene|correction|automation-check");
   process.exitCode = 2;
 }
 
