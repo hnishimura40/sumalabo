@@ -27,6 +27,11 @@ export function validateNightTaskXml(xml, root = ROOT) {
   if (!/<Command>(?:[^<]*\\)?cmd\.exe<\/Command>/i.test(text)) problems.push("ascii_cmd_command_missing");
   if (!text.includes(expectedScript)) problems.push("night_run_script_path_missing");
   if (FORBIDDEN_PRODUCTION_FLAGS.test(text)) problems.push("test_flag_present");
+  if (!/<ExecutionTimeLimit>PT12H<\/ExecutionTimeLimit>/i.test(text)) problems.push("execution_time_limit_not_12h");
+  if (!/<AllowStartOnDemand>true<\/AllowStartOnDemand>/i.test(text)) problems.push("on_demand_start_disabled");
+  if (!/<DisallowStartIfOnBatteries>false<\/DisallowStartIfOnBatteries>/i.test(text)) problems.push("battery_start_disallowed");
+  if (!/<StopIfGoingOnBatteries>false<\/StopIfGoingOnBatteries>/i.test(text)) problems.push("battery_stop_enabled");
+  if (!/<StopOnIdleEnd>false<\/StopOnIdleEnd>/i.test(text)) problems.push("idle_stop_enabled");
   return { ok: problems.length === 0, problems, expectedScript };
 }
 
@@ -85,7 +90,7 @@ function main() {
     if (a.status !== 0) { process.exitCode = a.status ?? 1; return; }
     const harden = spawnSync("powershell.exe", ["-NoProfile", "-Command", [
       `$names=@('${TASK_NAME}','${WATCHDOG_TASK_NAME}','${AUTH_PROBE_TASK_NAME}')`,
-      "foreach($name in $names){$settings=New-ScheduledTaskSettingsSet -WakeToRun -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Hours 12); Set-ScheduledTask -TaskName $name -Settings $settings | Out-Null}",
+      "foreach($name in $names){$settings=New-ScheduledTaskSettingsSet -WakeToRun -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -DontStopOnIdleEnd -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Hours 12); Set-ScheduledTask -TaskName $name -Settings $settings | Out-Null}",
     ].join("; ")], { encoding: "utf-8" });
     if (harden.status !== 0) console.warn(`警告: 復帰・取りこぼし設定の反映に失敗: ${harden.stderr || harden.stdout}`);
     if (leaveDisabled) {
