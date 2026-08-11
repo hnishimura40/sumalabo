@@ -9,7 +9,12 @@ import {
 } from "../../scripts/automation/register-night-task.mjs";
 
 const root = "D:\\documents\\動画作成関連\\すまラボ";
-const taskXml = (argumentsText) => `<Task><Actions><Exec><Command>cmd.exe</Command><Arguments>${argumentsText}</Arguments></Exec></Actions></Task>`;
+const taskXml = (argumentsText) => `<Task><Settings>
+  <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+  <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+  <IdleSettings><StopOnIdleEnd>false</StopOnIdleEnd></IdleSettings>
+  <ExecutionTimeLimit>PT12H</ExecutionTimeLimit>
+</Settings><Actions><Exec><Command>cmd.exe</Command><Arguments>${argumentsText}</Arguments></Exec></Actions></Task>`;
 
 test("本番タスクコマンドにtestMode・dryRun・自己診断フラグを含めない", () => {
   const command = buildNightTaskCommand(root);
