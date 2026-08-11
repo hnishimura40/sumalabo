@@ -33,6 +33,20 @@ export function runIsolatedShell(command, args, options = {}) {
   });
 }
 
+export function runPowerShellIsolated(scriptPath, scriptArgs = [], options = {}) {
+  const powershellArgs = [
+    "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", scriptPath,
+    ...scriptArgs,
+  ];
+  if (process.platform === "win32") {
+    // A directly detached powershell.exe can return 0 without running -File on
+    // Windows. A detached cmd.exe owns the new process group, waits for
+    // PowerShell, and preserves its real exit code.
+    return runIsolatedShell("cmd.exe", ["/d", "/c", "powershell.exe", ...powershellArgs], options);
+  }
+  return runIsolatedShell("powershell.exe", powershellArgs, options);
+}
+
 function runIdFor(date) {
   const pad = (value, width = 2) => String(value).padStart(width, "0");
   return `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}T${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}.${pad(date.getMilliseconds(), 3)}`;
@@ -76,10 +90,11 @@ async function main() {
           }
         }
         if (process.exitCode !== 30) {
-          const shell = await runIsolatedShell("powershell.exe", [
-            "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+          const shell = await runPowerShellIsolated(
             path.join(ROOT, "scripts", "automation", "night-run.ps1"),
-          ], { cwd: ROOT, env: process.env });
+            [],
+            { cwd: ROOT, env: process.env },
+          );
           if (!existsSync(outcomeFile(runId, ROOT))) {
             fail(runId, startedAt, "night_run_returned_without_contract", `exit=${shell.status ?? 1}`);
           } else {
