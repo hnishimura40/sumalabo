@@ -81,7 +81,10 @@ async function main() {
   const discoveredTrafficTags = /^(?:none|なし)$/i.test(String(discoveredArg).trim())
     ? []
     : String(discoveredArg).split(",").map((tag) => tag.trim()).filter(Boolean);
-  const searchPhrase = String(args.searchPhrase ?? args["search-phrase"] ?? "").trim();
+  // Unattended Phase C has no human search-phrase handoff. The article title is
+  // already the reviewed natural-language query and generateXPost will sanitize
+  // it to the supported 40-character lead. Explicit CLI input still wins.
+  const searchPhrase = String(args.searchPhrase ?? args["search-phrase"] ?? fm.title ?? "").trim();
 
   // Phase C 投稿形式（autonomy.json の xPostOptions）を読み、画像添付計画とリンク運用を決める。
   const xPostOptions = loadXPostOptions();

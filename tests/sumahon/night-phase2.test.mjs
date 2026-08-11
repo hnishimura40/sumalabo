@@ -138,6 +138,7 @@ test("Phase B target retry exhausts ten 30-second waits before failing closed", 
 
 test("Phase B/C ordering verifies production then creates x-post input before Codex", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
+  const generator = read("scripts/run/generate-x-post.mjs");
   const retry = wrapper.indexOf("--wait-for-target --attempts=10 --interval-ms=30000");
   const verify = wrapper.indexOf("phase-b-check --slug");
   const generate = wrapper.indexOf("generate-x-post.mjs --slug");
@@ -146,6 +147,7 @@ test("Phase B/C ordering verifies production then creates x-post input before Co
   assert.ok(verify < generate && generate < phaseC);
   assert.match(wrapper, /phase_b_target_not_found_after_retry/);
   assert.match(wrapper, /if \(\$publishSlug -and \$phaseBVerified\)/);
+  assert.match(generator, /args\["search-phrase"\] \?\? fm\.title/);
   assert.doesNotMatch(read("scripts/automation/auto-phase-b.mjs"), /phase-c-auto\.mjs/);
 });
 
