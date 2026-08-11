@@ -28,7 +28,6 @@ export function validateNightTaskXml(xml, root = ROOT) {
   if (!text.includes(expectedScript)) problems.push("night_run_script_path_missing");
   if (FORBIDDEN_PRODUCTION_FLAGS.test(text)) problems.push("test_flag_present");
   if (!/<ExecutionTimeLimit>PT12H<\/ExecutionTimeLimit>/i.test(text)) problems.push("execution_time_limit_not_12h");
-  if (!/<AllowStartOnDemand>true<\/AllowStartOnDemand>/i.test(text)) problems.push("on_demand_start_disabled");
   if (!/<DisallowStartIfOnBatteries>false<\/DisallowStartIfOnBatteries>/i.test(text)) problems.push("battery_start_disallowed");
   if (!/<StopIfGoingOnBatteries>false<\/StopIfGoingOnBatteries>/i.test(text)) problems.push("battery_stop_enabled");
   if (!/<StopOnIdleEnd>false<\/StopOnIdleEnd>/i.test(text)) problems.push("idle_stop_enabled");
