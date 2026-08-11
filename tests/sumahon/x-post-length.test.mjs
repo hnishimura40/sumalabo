@@ -5,6 +5,16 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { generateXPost, weightedTweetLength } from "../../scripts/sumahon/generate-x-post.mjs";
 
+test("neutral free-offer ending remains grammatical after banned-word sanitizing", () => {
+  const result = generateXPost({
+    title: "LINEの静かな送信、条件変更",
+    description: "LINEラボの機能は8月26日に無料提供を終了し、日本では会員特典へ移ります。",
+    slug: "202608-line-mute-message-lyp-premium",
+  });
+  assert.match(result.primary.text, /無料枠から外れ、日本では会員特典へ移ります/);
+  assert.doesNotMatch(result.primary.text, /無料提供をし/);
+});
+
 test("1. weightedTweetLength: CJKは1文字=2、ASCIIは1、URLは23固定", () => {
   assert.equal(weightedTweetLength("abc"), 3);
   assert.equal(weightedTweetLength("あいう"), 6);

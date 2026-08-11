@@ -129,6 +129,10 @@ export function buildHashtags({ discoveredTrafficTags = [] } = {}) {
 
 function sanitizeText(text) {
   let out = String(text);
+  // Preserve grammar when a factual description uses the banned clickbait word
+  // in a neutral service-change context.
+  out = out.replace(/無料提供を終了し/g, "無料枠から外れ");
+  out = out.replace(/提供終了/g, "提供条件の変更");
   for (const banned of BAN_WORDS) {
     if (out.includes(banned)) {
       // 安全側: 「変更」「動向」「話題」など穏当な語に置換
