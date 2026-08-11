@@ -65,7 +65,9 @@ export function generateMaterialsFlowMarkdown({ generatedDraftPath, materialsDra
 
 - 「ひまりが質問、らぼまるが説明」の固定構図にしない
 - 2人とも記事内容を理解した後の反応を見せる
-- 良いニュースなら前向きな反応、悪いニュースなら悲しむ・心配する反応、判断が分かれる話なら慎重・困惑など、話題に応じたリアクションにする`;
+- 良いニュースなら前向きな反応、悪いニュースなら悲しむ・心配する反応、判断が分かれる話なら慎重・困惑など、話題に応じたリアクションにする
+- 日付・期日・変更日が絡む記事では、カレンダー・日めくり・スケジュール帳を主要モチーフにしない。日付ではなく変化の中身を記事固有の行動・対象物・場所で演じ、日付は短い文字ラベルだけにする
+- 終了・有料化・増量・発表待ち・条件変更の作例を新しい固定テンプレにしない。公開日順の直近10記事のthumbnailAltと利用可能なslide_planを確認し、同じ類型なら主要モチーフ・場所・人物の動きを変える`;
 }
 
 export function generateThumbnailImageFlowMarkdown({ finalThumbnailPromptPath, thumbnailOutputPath, thumbnailAttach } = {}) {

@@ -96,6 +96,11 @@ test("performance block rejects unexplained standard-only thumbnail outfits", ()
     "- 背景・状況: 司令室",
     "- 表情: 穏やか",
     "- 演出根拠: AI判定",
+    "- 日付型判定: 非該当",
+    "- 変化の中身: 非該当",
+    "- 主要モチーフ: AI判定の操作卓",
+    "- 日付ラベル: なし",
+    "- 直近10記事類型チェック: 操作卓型は類似なし",
   ];
   const weak = validatePerformanceBlock([
     common[0],
@@ -125,6 +130,28 @@ test("performance block rejects unexplained standard-only thumbnail outfits", ()
     ...common.slice(1),
   ].join("\n"));
   assert.equal(neutral.ok, true);
+});
+
+test("date-type thumbnail rejects calendar as the major motif", () => {
+  const base = [
+    "## 演出ブロック",
+    "- 衣装: 会員サービス売り場のスタッフ風ベスト",
+    "- 小道具: 会員特典カード。カレンダーは片隅だけ",
+    "- 手・小道具: 壊れにくい手を自然に描き、開いた手・軽く添える手を使う",
+    "- ポーズ・動き: 無料枠から変わる対象を見比べる",
+    "- 背景・状況: サービス条件の切替カウンター",
+    "- 表情: 自分の条件を確かめる迷い顔",
+    "- 演出根拠: 利用条件変更を体験図にする",
+    "- 日付型判定: 該当",
+    "- 変化の中身: 無料枠から会員特典へ利用条件が移る",
+    "- 日付ラベル: 8/26から",
+    "- 直近10記事類型チェック: カレンダー型と異なる売り場場面へ変更",
+  ];
+  const rejected = validatePerformanceBlock([...base, "- 主要モチーフ: 大きなカレンダーを見る二人"].join("\n"));
+  assert.equal(rejected.ok, false);
+  assert.ok(rejected.missing.includes("日付型記事の主要モチーフはカレンダー類禁止"));
+  const accepted = validatePerformanceBlock([...base, "- 主要モチーフ: 会員特典へ移るサービスカード"].join("\n"));
+  assert.equal(accepted.ok, true);
 });
 
 test("fallback identity classifier ignores performance changes", () => {

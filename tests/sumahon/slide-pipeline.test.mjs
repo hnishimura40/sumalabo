@@ -19,6 +19,7 @@ import { generateArticleUnderstanding } from "../../scripts/sumahon/generate-art
 import {
   derivePerformanceBlock,
   deriveExpression,
+  deriveDateThumbnailPolicy,
   generateSlidePlan,
   validateSlidePlan,
 } from "../../scripts/sumahon/generate-slide-plan.mjs";
@@ -160,6 +161,21 @@ test("derivePerformanceBlock: specific verification staging wins over generic pr
   assert.match(performance.thumbnail.handUse, /手を消すためだけの後ろ手・机の陰・フレームアウトは使わない/);
   assert.match(performance.slides.handUse, /手を隠すことを既定にしない/);
   assert.match(performance.thumbnail.pose, /片手だけを開くか小道具へ軽く添え/);
+});
+
+test("date-type articles stage the change, not a calendar", () => {
+  const policy = deriveDateThumbnailPolicy("LINEミュートメッセージが8月26日から有料会員特典へ変更");
+  assert.equal(policy.applicable, true);
+  assert.deepEqual(policy.forbiddenMajorMotifs, ["カレンダー", "日めくり", "スケジュール帳"]);
+  assert.match(policy.compositionRule, /変化の中身/);
+  assert.match(policy.dateTreatment, /短い文字ラベル/);
+  assert.match(policy.recentComparison, /直近10記事/);
+  assert.match(policy.ideationGuard, /固定型として使い回さない/);
+  assert.equal(deriveDateThumbnailPolicy("7月30日問題を整理").applicable, true);
+
+  const plan = derivePerformanceBlock({ theme: "iPhone発表は9/9、まだ開かない新製品を待つ" });
+  assert.equal(plan.thumbnail.datePolicy.applicable, true);
+  assert.match(plan.thumbnail.recentThumbnailCheck, /主要モチーフ・場所・人物の動きを変更/);
 });
 
 test("deriveExpression follows article emotion instead of defaulting to a smile", () => {

@@ -25,14 +25,24 @@ test("thumbnail prompt requires emotion, action, scene, hand action, and integra
   }
   assert.match(prompt, /紹介役にしない/);
   assert.match(prompt, /後乗せは禁止/);
+  assert.match(prompt, /カレンダー・日めくり・スケジュール帳を主要モチーフにしない/);
+  assert.match(prompt, /変化の中身/);
+  assert.match(prompt, /直近10記事/);
+  assert.match(prompt, /短い文字ラベル/);
+  assert.doesNotMatch(prompt, /時間・締切・カレンダー系=カレンダー・大きな時計・砂時計/);
 });
 
 test("phase A and Codex image prompt carry the story-scene rule", () => {
   const phaseA = readFileSync(new URL("scripts/automation/phase-a-orchestrator.mjs", root), "utf8");
   const codexStage = readFileSync(new URL("scripts/automation/codex-image-stage.mjs", root), "utf8");
+  const handoff = readFileSync(new URL("scripts/sumahon/generate-handoff.mjs", root), "utf8");
 
   assert.match(phaseA, /サムネイル節には.*感情.*行動.*場面.*手の動作/s);
   assert.match(phaseA, /テキストパネル横の紹介役は禁止/);
   assert.match(codexStage, /記事主題に対する具体的な感情/);
   assert.match(codexStage, /文字込み一枚絵として生成/);
+  assert.match(phaseA, /日付型判定.*変化の中身.*主要モチーフ.*日付ラベル.*直近10記事類型チェック/s);
+  assert.match(codexStage, /カレンダー類は片隅の小道具に限る/);
+  assert.match(handoff, /日付ではなく変化の中身/);
+  assert.match(handoff, /直近10記事/);
 });

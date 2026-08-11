@@ -190,6 +190,20 @@ const PERFORMANCE_RECIPES = [
   },
 ];
 
+export function deriveDateThumbnailPolicy(theme = "") {
+  const text = String(theme);
+  const hasDate = /(?:\d{1,2}[\/月]\d{1,2}日?|\d{4}年\d{1,2}月\d{1,2}日|期日|期限|変更日|発表日|開始日|終了日)/i.test(text);
+  const hasChange = /終了|終わ|変更|移行|有料|無料|増量|減量|値上|値下|発表|発売|開始|廃止|撤廃|切り替|更新|延期|延長|条件|問題|まで|から|以降/i.test(text);
+  return {
+    applicable: hasDate && hasChange,
+    compositionRule: "日付ではなく変化の中身を、記事固有の行動・対象物・場所で演じる",
+    forbiddenMajorMotifs: ["カレンダー", "日めくり", "スケジュール帳"],
+    dateTreatment: "日付は『8/26から』等の短い文字ラベルだけにし、絵の主役にしない",
+    ideationGuard: "消える・有料化・増量・発表待ち・条件変更の作例は発想補助に限り、棚・箱・分岐路等を次の固定型として使い回さない",
+    recentComparison: "公開日順の直近10記事のthumbnailAltと利用可能なslide_planを比較し、同じ類型なら主要モチーフ・場所・人物の動きを変更する",
+  };
+}
+
 export function deriveExpression({ theme = "本記事" } = {}) {
   if (/セキュリティ|脆弱性|リコール|値上げ|トラブル|障害|不具合|プライバシー|追跡|注意|終了|漏えい/i.test(theme)) {
     return { tone: "caution", direction: "真剣・心配・調べ顔。笑顔を既定にしない" };
@@ -216,6 +230,7 @@ export function derivePerformanceBlock({ theme = "本記事", variant = "news" }
     },
   };
   const expression = deriveExpression({ theme });
+  const datePolicy = deriveDateThumbnailPolicy(theme);
   return {
     rationale: recipe.rationale,
     identityRule: "顔・体型・髪型・耳ビレ・首輪・アンテナ・ハートは正本厳守。衣装・小道具・ポーズ・背景は演出として変えてよい",
@@ -234,6 +249,8 @@ export function derivePerformanceBlock({ theme = "本記事", variant = "news" }
         "奥行き・照明・環境小物を含む背景の作り込み",
       ],
       expression: recipe.thumbnail.expression || expression.direction,
+      datePolicy,
+      recentThumbnailCheck: datePolicy.recentComparison,
     },
     slides: {
       wardrobe: expression.tone === "neutral"
