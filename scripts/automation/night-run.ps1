@@ -229,7 +229,12 @@ try {
         ConvertTo-Json | Set-Content -LiteralPath $AcceptanceResultFile -Encoding utf8
       Log "SCHEDULED ACCEPTANCE OK: 実タスクの通常コマンドで起動し、記事生成直前まで本番同等パスを通過。"
       $exitCode = Record-ContractOutcome "stop" "scheduled_acceptance" "articlePipelineStarted=false"
-      exit $exitCode
+      # The contract remains STOPPED so this synthetic acceptance can never be
+      # mistaken for a production success.  Task Scheduler, however, needs a
+      # zero process exit to prove that the unattended wrapper itself completed
+      # normally.  A contract write failure must still fail closed.
+      if ($exitCode -ne 20) { exit $exitCode }
+      exit 0
     }
     @{ ok=$false; mode="scheduled_production_path_without_article"; taskName="Sumalabo Night Driver"; completedAt=(Get-Date).ToString("o"); pid=$PID; reason="invalid_or_expired_acceptance_request"; articlePipelineStarted=$false } |
       ConvertTo-Json | Set-Content -LiteralPath $AcceptanceResultFile -Encoding utf8

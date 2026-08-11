@@ -226,6 +226,6 @@ test("scheduled acceptance is an explicit stopped outcome, never success", () =>
   const wrapper = read("scripts/automation/night-run.ps1");
   const contract = read("scripts/automation/night-run-contract.mjs");
   assert.match(wrapper, /Record-ContractOutcome "stop" "scheduled_acceptance"/);
-  assert.doesNotMatch(wrapper, /SCHEDULED ACCEPTANCE OK[\s\S]{0,300}exit 0/);
+  assert.match(wrapper, /SCHEDULED ACCEPTANCE OK[\s\S]{0,500}if \(\$exitCode -ne 20\) \{ exit \$exitCode \}[\s\S]{0,100}exit 0/);
   assert.match(contract, /"scheduled_acceptance"/);
 });
