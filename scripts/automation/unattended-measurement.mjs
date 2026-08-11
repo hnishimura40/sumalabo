@@ -60,6 +60,13 @@ export function summarizeMeasurement(root = ROOT) {
   const failed = rows.filter((row) => row.outcome === "failed").length;
   const interventions = events.filter((event) => event.type === "intervention");
   const corrections = events.filter((event) => event.type === "post_publish_correction");
+  const intervenedRunIds = new Set(interventions.map((event) => event.runId));
+  const acceptanceSuccess = rows.filter((row) =>
+    row.outcome === "success" &&
+    row.completionKind !== "recovery" &&
+    row.acceptanceEligible !== false &&
+    !intervenedRunIds.has(row.runId)
+  ).length;
   return {
     config,
     primaryKey: "runId",
@@ -68,6 +75,8 @@ export function summarizeMeasurement(root = ROOT) {
     stopped,
     failed,
     unattendedCompletionRate: rows.length ? success / rows.length : null,
+    acceptanceSuccess,
+    acceptanceCompletionRate: rows.length ? acceptanceSuccess / rows.length : null,
     humanInterventions: interventions.length,
     postPublishBreakages: corrections.length,
     rows,

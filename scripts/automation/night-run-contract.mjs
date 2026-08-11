@@ -218,11 +218,13 @@ export async function evaluateSuccessContract({
   runId,
   startedAt,
   slug = null,
+  completionKind = "fresh_run",
   probes = {},
 }) {
+  const normalizedCompletionKind = completionKind === "recovery" ? "recovery" : "fresh_run";
   const resolvedSlug = slug || discoverSlugSince({ root, startedAt });
   if (!resolvedSlug) {
-    return { runId, outcome: OUTCOMES.FAILED, reason: "slug_not_resolved", slug: null, evidence: null };
+    return { runId, outcome: OUTCOMES.FAILED, reason: "slug_not_resolved", slug: null, evidence: null, completionKind: normalizedCompletionKind, acceptanceEligible: false };
   }
   const ledger = findLedgerEntry(resolvedSlug, root);
   const articleUrl = ledger.productionUrl || ledger.articleUrl || `https://sumalabo.com/articles/${resolvedSlug}/`;
@@ -254,6 +256,8 @@ export async function evaluateSuccessContract({
     prUrl,
     evidence,
     failedChecks,
+    completionKind: normalizedCompletionKind,
+    acceptanceEligible: failedChecks.length === 0 && normalizedCompletionKind === "fresh_run",
   };
 }
 
@@ -279,6 +283,8 @@ export function recordRunOutcome(result, { root = ROOT, startedAt = null, finish
     evidence: result.evidence || null,
     failedChecks: result.failedChecks || [],
     detail: result.detail || null,
+    completionKind: result.completionKind || null,
+    acceptanceEligible: result.acceptanceEligible === true,
   };
   if (!Object.values(OUTCOMES).includes(record.outcome)) throw new Error(`invalid outcome: ${record.outcome}`);
   atomicWriteJson(outcomeFile(runId, root), record);
@@ -313,6 +319,7 @@ export async function auditRecordedOutcome(record, options = {}) {
     runId: record.runId,
     startedAt: record.startedAt,
     slug: record.slug,
+    completionKind: record.completionKind || "fresh_run",
   });
   if (actual.outcome !== OUTCOMES.SUCCESS) {
     return {
@@ -406,7 +413,7 @@ async function main() {
   const command = args._[0];
   const root = args.root ? path.resolve(args.root) : ROOT;
   if (command === "evaluate") {
-    const result = await evaluateSuccessContract({ root, runId: args["run-id"], startedAt: args["started-at"], slug: args.slug || null });
+    const result = await evaluateSuccessContract({ root, runId: args["run-id"], startedAt: args["started-at"], slug: args.slug || null, completionKind: args["completion-kind"] || "fresh_run" });
     printAndExit(recordRunOutcome(result, { root, startedAt: args["started-at"] }));
     return;
   }

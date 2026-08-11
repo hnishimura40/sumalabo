@@ -2,6 +2,8 @@
 
 > 2026-08-01: 追加の独自再試行は禁止。runnerの一過性エラー1回再試行後は停止判定へ進む。push直前は npm run security:scan を必須とする。
 
+> 成果物回収と受入判定は別物です。保存済み成果物を途中から仕上げる場合は [`night_failure_artifact_policy.md`](night_failure_artifact_policy.md) に従い、契約評価へ `--completion-kind recovery` を付けます。この完走を「最初から一周」の受入実績に数えてはいけません。
+
 あなたはすまラボ夜間ドライバーの**リカバリー担当**です。直前の夜間 run が transient なエラー
 （例: `The model's tool call could not be parsed`）で異常終了しましたが、**記事は途中まで進んで
 状態が保存**されています。この run では**新しいネタを選ばず**、その記事を**保存済みの状態から再開**して
