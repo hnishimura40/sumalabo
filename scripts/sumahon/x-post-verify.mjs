@@ -24,6 +24,8 @@ export function accountIdentityJs(expectedHandle = "@suma_labo") {
   const safe = JSON.stringify(String(expectedHandle));
   return `(() => {
     const expected = ${safe};
+    const expectedText = expected.toLowerCase();
+    const expectedHref = '/' + expected.replace(/^@/, '').toLowerCase();
     const selectors = [
       '[data-testid="SideNav_AccountSwitcher_Button"]',
       '[data-testid="AppTabBar_Profile_Link"]',
@@ -31,9 +33,16 @@ export function accountIdentityJs(expectedHandle = "@suma_labo") {
       'a[aria-label*="Profile"]'
     ];
     const nodes = [...new Set(selectors.flatMap(s => [...document.querySelectorAll(s)]))];
-    const evidence = nodes.map(n => [n.innerText || '', n.getAttribute('aria-label') || '', n.getAttribute('href') || ''].join(' '));
-    const confirmed = evidence.some(t => t.includes(expected));
-    return JSON.stringify({ expected, confirmed, evidence });
+    const evidence = nodes.map(n => ({
+      text: [n.innerText || '', n.getAttribute('aria-label') || ''].join(' ').trim(),
+      href: n.getAttribute('href') || ''
+    }));
+    const hrefMatched = evidence.some(item => item.href.toLowerCase() === expectedHref);
+    const textMatched = evidence.some(item => item.text.toLowerCase().includes(expectedText));
+    // href is the stable primary identity.  Matching display text is useful
+    // corroboration, but must never override a different profile href.
+    const confirmed = hrefMatched;
+    return JSON.stringify({ expected, expectedHref, confirmed, hrefMatched, textMatched, evidence });
   })()`;
 }
 
