@@ -192,6 +192,18 @@ test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentia
   assert.match(prompt, /N→N\+1/);
   assert.match(prompt, /route: codex/);
   assert.match(prompt, /GH_TOKEN.*読まない/);
+  assert.match(prompt, /x-post-chrome\.ps1/);
+  assert.match(prompt, /Ctrl\+V.*1回だけ/);
+  assert.match(prompt, /添付数が4/);
+});
+
+test("night Chrome startup guarantees a visible Profile 2 window for clipboard upload fallback", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  assert.match(wrapper, /--profile-directory=Profile 2/);
+  assert.match(wrapper, /--new-window/);
+  assert.match(wrapper, /https:\/\/x\.com\/compose\/post/);
+  assert.match(wrapper, /MainWindowHandle -ne 0/);
+  assert.match(wrapper, /chrome_visible_window_missing/);
 });
 
 test("night run removes only the exact Chrome parent process that it started", () => {

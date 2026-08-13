@@ -150,8 +150,8 @@ try {
     }
   }
 
-  # ---- 2-bis. Chrome 起動確認（デフォルトプロファイル・拡張経路） ----
-  # 夜間ドライバー（Codex）はCodex BrowserのChrome連携で **デフォルトプロファイルの Chrome** を
+  # ---- 2-bis. Chrome 起動確認（Profile 2・拡張経路） ----
+  # 夜間ドライバー（Codex）はCodex BrowserのChrome連携で **Profile 2 の Chrome** を
   # 操作する（ここが ChatGPT/X ログイン済み・拡張ペアリング済みの本番環境）。
   # 【Chrome 136+ 対応】Chrome 136 以降、デフォルトプロファイルでの --remote-debugging-port は
   # 無効化される（実測 2026-07-09 / Chrome 150：デフォルトではポート bind せず、専用 user-data-dir
@@ -168,13 +168,21 @@ try {
     exit $exitCode
   }
 
-  $chromeCount = @(Get-Process chrome -ErrorAction SilentlyContinue).Count
-  if ($chromeCount -gt 0) {
-    Log "Chrome は既に起動中（$chromeCount プロセス）。拡張経路を利用（デフォルトプロファイル）。"
+  $chromeProcesses = @(Get-Process chrome -ErrorAction SilentlyContinue)
+  $chromeCount = $chromeProcesses.Count
+  $visibleChromeCount = @($chromeProcesses | Where-Object { $_.MainWindowHandle -ne 0 }).Count
+  if ($chromeCount -gt 0 -and $visibleChromeCount -gt 0) {
+    Log "Chrome は既に起動中（$chromeCount プロセス / 可視ウィンドウ $visibleChromeCount）。拡張経路を利用（Profile 2）。"
   } else {
-    Log "Chrome 未起動。デフォルトプロファイルで起動する（--restore-last-session で ChatGPT/X タブ・ログイン復元）。"
+    if ($chromeCount -gt 0) {
+      Log "Chrome のバックグラウンドプロセスだけが残存（$chromeCount プロセス）。Profile 2 の可視Xウィンドウを新規起動する。"
+    } else {
+      Log "Chrome 未起動。Profile 2 の可視Xウィンドウを新規起動する。"
+    }
     $chromeProcess = Start-Process -FilePath $ChromeExe -ArgumentList @(
-      "--restore-last-session",
+      "--profile-directory=Profile 2",
+      "--new-window",
+      "https://x.com/compose/post",
       "--no-first-run",
       "--no-default-browser-check",
       "--start-maximized"
@@ -182,10 +190,14 @@ try {
     $script:ChromeRunPid = $chromeProcess.Id
     $script:ChromeRunExe = $ChromeExe
     Start-Sleep -Seconds 12   # 拡張が MCP リレーへ接続する猶予
-    if (@(Get-Process chrome -ErrorAction SilentlyContinue).Count -eq 0) {
-      Log "SKIP: Chrome 起動に失敗（プロセスが立ち上がらない）。停止。"
+    $visibleChromeCount = @(
+      Get-Process chrome -ErrorAction SilentlyContinue |
+        Where-Object { $_.MainWindowHandle -ne 0 }
+    ).Count
+    if ($visibleChromeCount -eq 0) {
+      Log "SKIP: Chromeの可視ウィンドウを確立できない。停止。"
       node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[夜間run] 夜間運転停止: Chrome起動失敗'}))" 2>&1 | Out-Null
-      $exitCode = Record-ContractOutcome "fail" "chrome_start_failed"
+      $exitCode = Record-ContractOutcome "fail" "chrome_visible_window_missing"
       exit $exitCode
     }
   }

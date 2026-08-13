@@ -8,7 +8,8 @@
 
 必須条件:
 
-- Chrome連携を使い、非対話Codex自身が `tabs.new()` で専用の新規タブを作る。handoffタブや既存の対話セッション所有タブはclaimしない。
+- Chrome連携を使い、非対話Codex自身が `tabs.new()` で専用の新規タブを作る。handoffタブや既存の対話セッション所有タブはclaimしない。作成したXタブを可視・選択状態にしてから操作する。
+- Chrome連携のfile chooserが使えない場合は、送信前に限り `scripts/automation/x-post-chrome.ps1` を画像4枚で1回実行し、可視・選択中のX composerへ `Ctrl+V` を1回だけ送る。その後DOMの添付数が4であることを必ず確認する。添付数が4でなければ送信せずfailedとする。
 - `https://x.com` は事前許可済みであることを前提にする。許可拒否、ログアウト、`@suma_labo` のDOM不一致があれば回避せずfailedとして停止する。
 - 投稿前に `@suma_labo`、本文完全一致、添付数、送信ボタン有効をDOMで確認する。
 - 本投稿と返信はそれぞれ送信を1回だけ行う。送信後に不明状態でも再クリックせず、まずプロフィール/with_repliesのDOMで実在を確認する。
