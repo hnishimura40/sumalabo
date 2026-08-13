@@ -211,6 +211,8 @@ test("night Chrome startup guarantees a visible Profile 2 window for clipboard u
   assert.match(wrapper, /https:\/\/x\.com\/compose\/post/);
   assert.match(wrapper, /MainWindowHandle -ne 0/);
   assert.match(wrapper, /chrome_visible_window_missing/);
+  assert.match(wrapper, /CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH/);
+  assert.match(wrapper, /CODEX_CHROMIUM_PREFERENCES_PATH.*Profile 2/);
   assert.match(read("scripts/automation/x-post-chrome.ps1"), /MainWindowHandle -ne 0/);
 });
 

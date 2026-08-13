@@ -160,6 +160,10 @@ try {
   # 検査は Codex Browser 側で行う（docs/night_driver_prompt.md 0-bis）。
   $ChromeExe = "C:\Program Files\Google\Chrome\Application\chrome.exe"
   if (-not (Test-Path $ChromeExe)) { $ChromeExe = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" }
+  # 非対話CodexのsandboxではHKCU/Chromeプロファイル自動検出が偽陰性になるため、
+  # 再インストール済みnative-hostと夜間用Profile 2を明示する。
+  $env:CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH = "C:\Users\hnish\AppData\Local\OpenAI\extension\com.openai.codexextension.json"
+  $env:CODEX_CHROMIUM_PREFERENCES_PATH = "C:\Users\hnish\AppData\Local\Google\Chrome\User Data\Profile 2\Preferences"
 
   if (-not (Test-Path $ChromeExe)) {
     Log "SKIP: Chrome 実行ファイルが見つからない。ブラウザ経路なしのため停止。"
