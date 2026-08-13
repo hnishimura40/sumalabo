@@ -32,7 +32,9 @@ param(
   [string] $ImagePath = "",
   [string[]] $ImagePaths = @(),
   [string] $WindowTitlePattern = "*x.com*",
-  [int] $ForegroundWaitMs = 300
+  [int] $ForegroundWaitMs = 300,
+  [long] $WindowHandle = 0,
+  [switch] $ClipboardOnly
 )
 
 $ErrorActionPreference = 'Stop'
@@ -83,39 +85,32 @@ public class XFg {
 Add-Type -TypeDefinition $sig -ErrorAction SilentlyContinue
 Add-Type -AssemblyName System.Windows.Forms
 
-# === Chrome の X タブを持つウィンドウを探す ===
-# 優先: タイトルに "x.com" を含む / または "X / Twitter" / "𝕏"
-$chrome = Get-Process chrome -ErrorAction SilentlyContinue |
-  Where-Object { $_.MainWindowTitle -like $WindowTitlePattern -or $_.MainWindowTitle -like "*X / *" -or $_.MainWindowTitle -like "*ポスト*" -or $_.MainWindowTitle -like "*ホーム / X*" } |
-  Select-Object -First 1
-
-if (-not $chrome) {
-  # フォールバック: 任意の Chrome ウィンドウを使う (ユーザーが x.com を別タブで開いている可能性)
-  $chrome = Get-Process chrome -ErrorAction SilentlyContinue |
-    Where-Object { $_.MainWindowTitle -like "*Chrome*" -and -not ($_.MainWindowTitle -like "*Edge*") } |
-    Select-Object -First 1
-}
-
-if (-not $chrome) {
-  Write-Error "No Chrome window found. Open x.com in Chrome and re-run."
-  exit 2
-}
-
-if ($chrome.MainWindowTitle -match 'Edge') {
-  Write-Error "Refusing to operate on Edge. Use Chrome only."
-  exit 4
-}
-
-Write-Host ("Target Chrome window: pid={0} title={1}" -f $chrome.Id, $chrome.MainWindowTitle)
-
-# === フォアグラウンド化 ===
-[XFg]::Force($chrome.MainWindowHandle)
-Start-Sleep -Milliseconds $ForegroundWaitMs
-
-$fg = [XFg]::GetForegroundWindow()
-if ($fg -ne $chrome.MainWindowHandle) {
-  Write-Error ("Failed to bring Chrome to foreground. fg={0} target={1}" -f $fg.ToInt64(), $chrome.MainWindowHandle.ToInt64())
-  exit 4
+# === Chrome の X タブを持つウィンドウを探す（必要時のみ） ===
+if (-not $ClipboardOnly) {
+  $chrome = $null
+  if ($WindowHandle -gt 0) {
+    $chrome = [pscustomobject]@{ Id = 0; MainWindowHandle = [IntPtr]$WindowHandle; MainWindowTitle = "Chrome (caller-supplied visible window)" }
+  } else {
+    $chrome = Get-Process chrome -ErrorAction SilentlyContinue |
+      Where-Object { $_.MainWindowTitle -like $WindowTitlePattern -or $_.MainWindowTitle -like "*X / *" -or $_.MainWindowTitle -like "*ポスト*" -or $_.MainWindowTitle -like "*ホーム / X*" } |
+      Select-Object -First 1
+  }
+  if (-not $chrome) {
+    $chrome = Get-Process chrome -ErrorAction SilentlyContinue |
+      Where-Object { $_.MainWindowHandle -ne 0 -and -not ($_.MainWindowTitle -like "*Edge*") } |
+      Select-Object -First 1
+  }
+  if (-not $chrome) { Write-Error "No Chrome window found. Open x.com in Chrome and re-run." }
+  if ($chrome.MainWindowTitle -match 'Edge') { Write-Error "Refusing to operate on Edge. Use Chrome only." }
+  Write-Host ("Target Chrome window: pid={0} title={1}" -f $chrome.Id, $chrome.MainWindowTitle)
+  [XFg]::Force($chrome.MainWindowHandle)
+  Start-Sleep -Milliseconds $ForegroundWaitMs
+  $fg = [XFg]::GetForegroundWindow()
+  if ($fg -ne $chrome.MainWindowHandle) {
+    Write-Error ("Failed to bring Chrome to foreground. fg={0} target={1}" -f $fg.ToInt64(), $chrome.MainWindowHandle.ToInt64())
+  }
+} else {
+  Write-Host "clipboard-only: Chrome focus is delegated to Codex Browser"
 }
 
 # === クリップボード設定: テキストか画像か ===
@@ -139,4 +134,4 @@ catch {
 }
 
 Write-Host "ready. Claude in Chrome should now focus the compose textarea and Ctrl+V, then click the post button via MCP."
-exit 0
+return

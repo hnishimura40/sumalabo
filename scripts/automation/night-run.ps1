@@ -358,6 +358,29 @@ try {
     $XPrompt = (Get-Content $XPromptFile -Raw -Encoding utf8).Replace("{{SLUG}}", $publishSlug)
     $XCodexLog = Join-Path $NightDir "$DateStr.codex-phase-c.log"
     $xCodexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
+    $XPostInputFile = Join-Path $RepoRoot "logs\social\$publishSlug.x-post.json"
+    $XPostInput = Get-Content $XPostInputFile -Raw -Encoding utf8 | ConvertFrom-Json
+    $XImages = @($XPostInput.attachmentPlan.attach)
+    if ($XImages.Count -ne 4) {
+      $exitCode = Record-ContractOutcome "fail" "x_attachment_plan_invalid" "expected=4 actual=$($XImages.Count)"
+      exit $exitCode
+    }
+    $ClipboardHelper = Join-Path $RepoRoot "scripts\automation\x-post-chrome.ps1"
+    $XImageArg = $XImages -join ','
+    $XChromeWindow = Get-Process chrome -ErrorAction SilentlyContinue |
+      Where-Object { $_.MainWindowHandle -ne 0 } |
+      Select-Object -First 1
+    if (-not $XChromeWindow) {
+      $exitCode = Record-ContractOutcome "fail" "x_visible_window_missing_before_prestage"
+      exit $exitCode
+    }
+    try {
+      & $ClipboardHelper -PostText "x" -ImagePaths $XImageArg -ClipboardOnly 2>&1 | ForEach-Object { Log $_ }
+    } catch {
+      $exitCode = Record-ContractOutcome "fail" "x_clipboard_prestage_failed" $_.Exception.Message
+      exit $exitCode
+    }
+    Log "Phase C: 画像4枚を外側工程でCF_HDROPへ事前配置済み"
     Log "Phase C: non-interactive Codex opens its own fresh Chrome tab for $publishSlug"
     $publisherToken = $env:GH_TOKEN
     $publisherExpiry = $env:GH_TOKEN_EXPIRES_AT
