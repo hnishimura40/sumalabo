@@ -5,10 +5,10 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { ENTRY_ROOT, RUNNER_ROOT } from "./night-environment.mjs";
 
 const SOURCE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-export const RUNNER_ROOT = process.env.SUMALABO_NIGHT_RUNNER_ROOT || "D:\\work\\sumalabo-night-runner";
-export const ENTRY_ROOT = process.env.SUMALABO_NIGHT_ENTRY_ROOT || "D:\\work";
+export { ENTRY_ROOT, RUNNER_ROOT };
 const PRIVATE_RUNTIME_FILES = [
   "data/automation/autonomy.json",
   "data/automation/ledger.json",
@@ -111,7 +111,14 @@ export function prepareRunner() {
   for (const name of ["night-entry.cmd", "night-watchdog-entry.cmd", "night-auth-probe-entry.cmd", "vivant-reannounce-entry.cmd"]) {
     const source = path.join(SOURCE_ROOT, "scripts", "automation", name);
     assertAscii(source);
-    copyFileSync(source, path.join(ENTRY_ROOT, `sumalabo-${name}`));
+    const target = path.join(ENTRY_ROOT, `sumalabo-${name}`);
+    if (name.startsWith("night-") || name === "vivant-reannounce-entry.cmd") {
+      const rendered = readFileSync(source, "ascii").replaceAll("__RUNNER_ROOT__", RUNNER_ROOT);
+      if (rendered.includes("__RUNNER_ROOT__")) throw new Error(`runner entry placeholder was not resolved: ${name}`);
+      writeFileSync(target, rendered, "ascii");
+    } else {
+      copyFileSync(source, target);
+    }
   }
   return { runnerRoot: RUNNER_ROOT, entryRoot: ENTRY_ROOT, privateFilesCopied };
 }

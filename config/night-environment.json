@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "canonicalWorkspacePath": "D:\\documents\\動画作成関連\\すまラボ",
+  "runnerPath": "D:\\work\\sumalabo-night-runner",
+  "entryRoot": "D:\\work",
+  "chrome": {
+    "profileDirectory": "Profile 2",
+    "userDataDirectory": "C:\\Users\\hnish\\AppData\\Local\\Google\\Chrome\\User Data",
+    "executableCandidates": [
+      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+    ],
+    "extensionId": "hehggadaopoacecdllhhajmbjkdcmajg",
+    "nativeHostManifestPath": "C:\\Users\\hnish\\AppData\\Local\\OpenAI\\extension\\com.openai.codexextension.json",
+    "nativeHostRegistryKey": "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.openai.codexextension"
+  },
+  "browserPermissions": {
+    "configPath": "C:\\Users\\hnish\\.codex\\browser\\config.toml",
+    "requiredOrigin": "https://x.com",
+    "requiredModes": {
+      "approval": "never_ask",
+      "upload": "never_ask",
+      "download": "never_ask"
+    }
+  },
+  "account": {
+    "expectedHandle": "suma_labo",
+    "href": "/suma_labo"
+  },
+  "tokens": {
+    "github": "GH_TOKEN",
+    "githubExpiry": "GH_TOKEN_EXPIRES_AT"
+  },
+  "requiredChecks": [
+    "environment_definition",
+    "chrome_profile",
+    "chrome_extension",
+    "native_host",
+    "x_site_permission",
+    "file_url_permission",
+    "x_login_href",
+    "dom_read",
+    "github_token",
+    "repository_sha",
+    "runner_dirty"
+  ]
+}

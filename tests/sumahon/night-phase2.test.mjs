@@ -41,7 +41,7 @@ test("scheduler entry wrappers are ASCII-only and point only to dedicated clone"
     const bytes = readFileSync(path.join(ROOT, "scripts/automation", name));
     assert.ok([...bytes].every((value) => value <= 0x7f), `${name} is not ASCII-only`);
     const text = bytes.toString("ascii");
-    assert.match(text, /D:\\work\\sumalabo-night-runner/);
+    assert.match(text, /__RUNNER_ROOT__/);
     assert.doesNotMatch(text, /documents|\.ps1"?\s*$.*動画/u);
   }
   const entry = read("scripts/automation/night-run-entry.mjs");
@@ -49,6 +49,7 @@ test("scheduler entry wrappers are ASCII-only and point only to dedicated clone"
   assert.match(entry, /git", \["fetch", "origin", "main"/);
   assert.match(entry, /git", \["checkout", "--detach", "origin\/main"/);
   const prepare = read("scripts/automation/prepare-night-runner.mjs");
+  assert.match(prepare, /replaceAll\("__RUNNER_ROOT__", RUNNER_ROOT\)/);
   assert.match(prepare, /PRIVATE_RUNTIME_FILES/);
   assert.match(prepare, /data\/automation\/autonomy\.json/);
   assert.match(prepare, /runner-package-lock\.sha256/);
@@ -204,16 +205,40 @@ test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentia
   assert.match(prompt, /添付数が4/);
 });
 
-test("night Chrome startup guarantees a visible Profile 2 window for clipboard upload fallback", () => {
+test("night Chrome startup uses the single environment definition", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
-  assert.match(wrapper, /--profile-directory=Profile 2/);
+  const environment = JSON.parse(read("config/night-environment.json"));
+  assert.equal(environment.chrome.profileDirectory, "Profile 2");
+  assert.match(wrapper, /config\\night-environment\.json/);
+  assert.match(wrapper, /--profile-directory=\$ChromeProfileDirectory/);
+  assert.doesNotMatch(wrapper, /--profile-directory=Profile 2/);
   assert.match(wrapper, /--new-window/);
   assert.match(wrapper, /https:\/\/x\.com\/compose\/post/);
   assert.match(wrapper, /MainWindowHandle -ne 0/);
   assert.match(wrapper, /chrome_visible_window_missing/);
   assert.match(wrapper, /CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH/);
-  assert.match(wrapper, /CODEX_CHROMIUM_PREFERENCES_PATH.*Profile 2/);
+  assert.match(wrapper, /CODEX_CHROMIUM_PREFERENCES_PATH/);
+  assert.match(wrapper, /night-environment-check\.mjs --static-only/);
+  assert.match(wrapper, /night-environment-check\.mjs --dom-evidence/);
+  assert.match(wrapper, /environment_preflight_failed:\$missing/);
   assert.match(read("scripts/automation/x-post-chrome.ps1"), /MainWindowHandle -ne 0/);
+});
+
+test("night environment configuration owns paths, token names, and permissions", () => {
+  const environment = JSON.parse(read("config/night-environment.json"));
+  assert.equal(environment.runnerPath, "D:\\work\\sumalabo-night-runner");
+  assert.equal(environment.chrome.extensionId, "hehggadaopoacecdllhhajmbjkdcmajg");
+  assert.equal(environment.tokens.github, "GH_TOKEN");
+  assert.equal(environment.browserPermissions.requiredOrigin, "https://x.com");
+  assert.ok(environment.requiredChecks.includes("dom_read"));
+  assert.ok(environment.requiredChecks.includes("runner_dirty"));
+  assert.doesNotMatch(read("scripts/automation/prepare-night-runner.mjs"), /D:\\\\work\\\\sumalabo-night-runner/);
+});
+
+test("night run never performs automatic archive deletion", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  assert.doesNotMatch(wrapper, /image-output-lifecycle\.mjs --prune/);
+  assert.match(wrapper, /automatic prune disabled by permanent safety rule/);
 });
 
 test("night run removes only the exact Chrome parent process that it started", () => {

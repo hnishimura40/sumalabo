@@ -105,21 +105,38 @@ function Invoke-CodexIsolated([string]$PromptText, [string[]]$CodexArgs, [string
 }
 
 try {
-  if ($BrowserCheckOnly) { Log "=== BrowserCheckOnly ドライラン（testMode未消費・Codex未起動） ===" }
+  if ($BrowserCheckOnly) { Log "=== EnvironmentCheckOnly（testMode未消費・記事工程未起動） ===" }
   if ($RunnerSelfTest) { Log "=== RunnerSelfTest（testMode未消費・記事生成なし） ===" }
 
-  # ---- 1-bis. Codex画像archiveの期限整理 ----
-  # 本番採用済み原本だけが対象。archive移動から30日を超えた記事フォルダを削除し、
-  # D:\downloads\sumalabo-codex\cleanup-ledger.jsonl に監査記録を残す。
-  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) {
-    Log "image cleanup: archive 30日経過分を確認"
-    $cleanup = node scripts/automation/image-output-lifecycle.mjs --prune 2>&1
-    $cleanupExit = $LASTEXITCODE
-    Log ($cleanup | Out-String).Trim()
-    if ($cleanupExit -ne 0) {
-      Log "WARN: image archive cleanup failed (exit $cleanupExit)。記事生成は継続し、原本は削除しません。"
+  # ---- Phase 0. 実在する夜間環境を記事工程より先に検査 ----
+  # 正は config/night-environment.json。プロファイル名・パス・拡張ID・許可・トークン名を
+  # このスクリプトへ直書きしない。静的実物検査とChrome DOM検査が合格した場合だけ先へ進む。
+  $EnvironmentFile = Join-Path $RepoRoot "config\night-environment.json"
+  $NightEnvironment = Get-Content -LiteralPath $EnvironmentFile -Raw -Encoding utf8 | ConvertFrom-Json
+  $ChromeProfileDirectory = [string]$NightEnvironment.chrome.profileDirectory
+  $ChromeProfileRoot = Join-Path ([string]$NightEnvironment.chrome.userDataDirectory) $ChromeProfileDirectory
+  $env:CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH = [string]$NightEnvironment.chrome.nativeHostManifestPath
+  $env:CODEX_CHROMIUM_PREFERENCES_PATH = Join-Path $ChromeProfileRoot "Preferences"
+  $ChromeExeCandidates = @($NightEnvironment.chrome.executableCandidates | Where-Object { Test-Path -LiteralPath $_ })
+  $ChromeExe = if ($ChromeExeCandidates.Count) { [string]$ChromeExeCandidates[0] } else { $null }
+
+  if (-not $RunnerSelfTest) {
+    Log "Phase 0: static environment evidence"
+    $staticEnvironment = node scripts/automation/night-environment-check.mjs --static-only 2>&1
+    $staticEnvironmentExit = $LASTEXITCODE
+    Log (($staticEnvironment | Out-String).Trim())
+    if ($staticEnvironmentExit -ne 0) {
+      $staticJson = $null
+      try { $staticJson = ($staticEnvironment | Out-String | ConvertFrom-Json) } catch {}
+      $missing = if ($staticJson -and $staticJson.failedChecks.Count) { [string]$staticJson.failedChecks[0] } else { "environment_definition" }
+      if ($BrowserCheckOnly) { exit 30 }
+      $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:$missing" "Phase 0 static evidence failed"
+      exit $exitCode
     }
   }
+
+  # 無承認のarchive削除は禁止。期限整理は環境変更と同様に影響範囲提示と事前承認を要する。
+  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) { Log "image cleanup: automatic prune disabled by permanent safety rule" }
 
   # ---- 2. 軽量プリフライト（Codex を起動する前に node だけで判定） ----
   # ドライランでは testMode ゲートをスキップ（ブラウザ経路だけ確かめたいため）。
@@ -135,35 +152,9 @@ try {
       exit $exitCode
     }
 
-    # RSS候補の取得はサンドボックス外の決定論的スクリプトが担当する。
-    # Codexへ任意ネットワークを与えず、選定結果JSONだけをworkspaceで引き渡す。
-    Log "preflight: outer scout --auto-pick"
-    node scripts/automation/scout.mjs --auto-pick --json 2>&1 | Out-File -FilePath $LogFile -Encoding utf8 -Append
-    $scoutExit = $LASTEXITCODE
-    if ($scoutExit -eq 10) {
-      $exitCode = Record-ContractOutcome "stop" "no_scout_target" "outer scout found no eligible target"
-      exit $exitCode
-    }
-    if ($scoutExit -ne 0) {
-      $exitCode = Record-ContractOutcome "fail" "outer_scout_failed" "outer scout exit=$scoutExit"
-      exit $exitCode
-    }
   }
 
-  # ---- 2-bis. Chrome 起動確認（Profile 2・拡張経路） ----
-  # 夜間ドライバー（Codex）はCodex BrowserのChrome連携で **Profile 2 の Chrome** を
-  # 操作する（ここが ChatGPT/X ログイン済み・拡張ペアリング済みの本番環境）。
-  # 【Chrome 136+ 対応】Chrome 136 以降、デフォルトプロファイルでの --remote-debugging-port は
-  # 無効化される（実測 2026-07-09 / Chrome 150：デフォルトではポート bind せず、専用 user-data-dir
-  # なら bind）。そのため **debug-port ベースのプリフライトは使わない**。実操作は拡張が担うので、
-  # ここでは「Chrome が起動していて拡張が接続できる状態」だけ保証する。**ChatGPT/X ログイン生存の
-  # 検査は Codex Browser 側で行う（docs/night_driver_prompt.md 0-bis）。
-  $ChromeExe = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-  if (-not (Test-Path $ChromeExe)) { $ChromeExe = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" }
-  # 非対話CodexのsandboxではHKCU/Chromeプロファイル自動検出が偽陰性になるため、
-  # 再インストール済みnative-hostと夜間用Profile 2を明示する。
-  $env:CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH = "C:\Users\hnish\AppData\Local\OpenAI\extension\com.openai.codexextension.json"
-  $env:CODEX_CHROMIUM_PREFERENCES_PATH = "C:\Users\hnish\AppData\Local\Google\Chrome\User Data\Profile 2\Preferences"
+  # ---- Phase 0-bis. 定義されたChromeプロファイルを起動 ----
 
   if (-not (Test-Path $ChromeExe)) {
     Log "SKIP: Chrome 実行ファイルが見つからない。ブラウザ経路なしのため停止。"
@@ -176,15 +167,15 @@ try {
   $chromeCount = $chromeProcesses.Count
   $visibleChromeCount = @($chromeProcesses | Where-Object { $_.MainWindowHandle -ne 0 }).Count
   if ($chromeCount -gt 0 -and $visibleChromeCount -gt 0) {
-    Log "Chrome は既に起動中（$chromeCount プロセス / 可視ウィンドウ $visibleChromeCount）。拡張経路を利用（Profile 2）。"
+    Log "Chrome は既に起動中（$chromeCount プロセス / 可視ウィンドウ $visibleChromeCount）。拡張経路を利用（$ChromeProfileDirectory）。"
   } else {
     if ($chromeCount -gt 0) {
-      Log "Chrome のバックグラウンドプロセスだけが残存（$chromeCount プロセス）。Profile 2 の可視Xウィンドウを新規起動する。"
+      Log "Chrome のバックグラウンドプロセスだけが残存（$chromeCount プロセス）。$ChromeProfileDirectory の可視Xウィンドウを新規起動する。"
     } else {
-      Log "Chrome 未起動。Profile 2 の可視Xウィンドウを新規起動する。"
+      Log "Chrome 未起動。$ChromeProfileDirectory の可視Xウィンドウを新規起動する。"
     }
     $chromeProcess = Start-Process -FilePath $ChromeExe -ArgumentList @(
-      "--profile-directory=Profile 2",
+      "--profile-directory=$ChromeProfileDirectory",
       "--new-window",
       "https://x.com/compose/post",
       "--no-first-run",
@@ -206,9 +197,46 @@ try {
     }
   }
 
-  if ($BrowserCheckOnly) {
-    Log "=== BrowserCheckOnly OK: Chrome起動を確認。Xログイン生存と拡張接続はCodex Browserで検査する設計。Codexは起動せず終了（testMode未消費） ==="
-    exit 0
+  if (-not $RunnerSelfTest) {
+    Log "Phase 0: Chrome DOM/account evidence"
+    $EnvironmentDomLog = Join-Path $NightDir "$DateStr.environment-dom.json"
+    $EnvironmentPrompt = Get-Content (Join-Path $RepoRoot "docs\night_environment_dom_probe.md") -Raw -Encoding utf8
+    $environmentArgs = @("exec", "--ephemeral", "--sandbox", "read-only", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
+    $environmentPublisherToken = $env:GH_TOKEN
+    $environmentPublisherExpiry = $env:GH_TOKEN_EXPIRES_AT
+    Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
+    Remove-Item Env:GH_TOKEN_EXPIRES_AT -ErrorAction SilentlyContinue
+    try {
+      $environmentDomExit = Invoke-CodexIsolated $EnvironmentPrompt $environmentArgs $EnvironmentDomLog "environment-dom"
+    } finally {
+      if ($environmentPublisherToken) { $env:GH_TOKEN = $environmentPublisherToken }
+      if ($environmentPublisherExpiry) { $env:GH_TOKEN_EXPIRES_AT = $environmentPublisherExpiry }
+    }
+    if ($environmentDomExit -ne 0) {
+      if ($BrowserCheckOnly) { exit 30 }
+      $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:dom_read" "Phase 0 Codex DOM probe exit=$environmentDomExit"
+      exit $exitCode
+    }
+    $fullEnvironment = node scripts/automation/night-environment-check.mjs --dom-evidence $EnvironmentDomLog 2>&1
+    $fullEnvironmentExit = $LASTEXITCODE
+    Log (($fullEnvironment | Out-String).Trim())
+    if ($fullEnvironmentExit -ne 0) {
+      $fullJson = $null
+      try { $fullJson = ($fullEnvironment | Out-String | ConvertFrom-Json) } catch {}
+      $missing = if ($fullJson -and $fullJson.failedChecks.Count) { [string]$fullJson.failedChecks[0] } else { "dom_read" }
+      if ($BrowserCheckOnly) { exit 30 }
+      $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:$missing" "Phase 0 full evidence failed"
+      exit $exitCode
+    }
+    Log "Phase 0 PASS: all environment evidence is present."
+    if ($BrowserCheckOnly) { exit 0 }
+
+    # 記事候補選定は環境全項目が合格した後だけ開始する。
+    Log "preflight: outer scout --auto-pick"
+    node scripts/automation/scout.mjs --auto-pick --json 2>&1 | Out-File -FilePath $LogFile -Encoding utf8 -Append
+    $scoutExit = $LASTEXITCODE
+    if ($scoutExit -eq 10) { $exitCode = Record-ContractOutcome "stop" "no_scout_target" "outer scout found no eligible target"; exit $exitCode }
+    if ($scoutExit -ne 0) { $exitCode = Record-ContractOutcome "fail" "outer_scout_failed" "outer scout exit=$scoutExit"; exit $exitCode }
   }
 
   if ($RunnerSelfTest) {

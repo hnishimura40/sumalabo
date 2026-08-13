@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
+import { ENTRY_ROOT } from "./night-environment.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const TASK_NAME = "Sumalabo Night Driver";
@@ -12,9 +13,9 @@ export const WATCHDOG_TASK_NAME = "Sumalabo Night Watchdog";
 export const AUTH_PROBE_TASK_NAME = "Sumalabo Codex Auth Probe";
 export const LEGACY_AUTH_PROBE_TASK_NAME = "Sumalabo Claude Auth Probe";
 export const FORBIDDEN_PRODUCTION_FLAGS = /-(?:RunnerSelfTest|BrowserCheckOnly|DryRun|TestMode)\b/i;
-export const DRIVER_ENTRY = "D:\\work\\sumalabo-night-entry.cmd";
-export const WATCHDOG_ENTRY = "D:\\work\\sumalabo-night-watchdog-entry.cmd";
-export const AUTH_PROBE_ENTRY = "D:\\work\\sumalabo-night-auth-probe-entry.cmd";
+export const DRIVER_ENTRY = path.join(ENTRY_ROOT, "sumalabo-night-entry.cmd");
+export const WATCHDOG_ENTRY = path.join(ENTRY_ROOT, "sumalabo-night-watchdog-entry.cmd");
+export const AUTH_PROBE_ENTRY = path.join(ENTRY_ROOT, "sumalabo-night-auth-probe-entry.cmd");
 
 export function buildNightTaskCommand() {
   return `cmd.exe /d /c ${DRIVER_ENTRY}`;
