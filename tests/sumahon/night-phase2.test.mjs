@@ -220,6 +220,8 @@ test("night Chrome startup uses the single environment definition", () => {
   assert.match(wrapper, /CODEX_CHROMIUM_PREFERENCES_PATH/);
   assert.match(wrapper, /night-environment-check\.mjs --static-only/);
   assert.match(wrapper, /night-environment-check\.mjs --dom-evidence/);
+  assert.match(wrapper, /--output-last-message", \$EnvironmentDomEvidence/);
+  assert.match(wrapper, /\$DateStr\.\$RunId\.environment-dom\.evidence\.json/);
   assert.match(wrapper, /environment_preflight_failed:\$missing/);
   assert.match(read("scripts/automation/x-post-chrome.ps1"), /MainWindowHandle -ne 0/);
 });
@@ -238,6 +240,7 @@ test("night environment configuration owns paths, token names, and permissions",
 test("night run never performs automatic archive deletion", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
   assert.doesNotMatch(wrapper, /image-output-lifecycle\.mjs --prune/);
+  assert.doesNotMatch(wrapper, /Remove-Item -LiteralPath \$RunnerOut,\$RunnerErr/);
   assert.match(wrapper, /automatic prune disabled by permanent safety rule/);
 });
 

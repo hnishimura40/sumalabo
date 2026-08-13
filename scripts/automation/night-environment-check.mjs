@@ -21,13 +21,26 @@ function git(cwd, args) {
   return { ok: result.status === 0, text: String(result.stdout || "").trim(), error: String(result.stderr || "").trim() };
 }
 
-function parseDomEvidence(file) {
+export function parseDomEvidence(file) {
   if (!file || !existsSync(file)) return null;
   const text = readFileSync(file, "utf8").replace(/^\uFEFF/, "").trim();
+  return parseDomEvidenceText(text);
+}
+
+export function parseDomEvidenceText(text) {
   try { return JSON.parse(text); } catch {}
-  const match = text.match(/\{[\s\S]*"domRead"[\s\S]*\}/);
-  if (!match) return null;
-  try { return JSON.parse(match[0]); } catch { return null; }
+  // `codex exec --output-last-message` may contain runner diagnostics and the
+  // prompt's example JSON before the agent's final line.  Walk backwards so
+  // only the last complete evidence object is authoritative; never let a
+  // prompt example satisfy the check.
+  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  for (let index = lines.length - 1; index >= 0; index -= 1) {
+    try {
+      const candidate = JSON.parse(lines[index]);
+      if (candidate && typeof candidate === "object" && Object.hasOwn(candidate, "domRead")) return candidate;
+    } catch {}
+  }
+  return null;
 }
 
 export function evaluateEnvironmentEvidence(evidence, injectMissing = []) {

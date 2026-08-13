@@ -87,11 +87,10 @@ if (-not $BrowserCheckOnly) {
 }
 
 function Invoke-CodexIsolated([string]$PromptText, [string[]]$CodexArgs, [string]$OutputFile, [string]$Label) {
-  $PromptPath = Join-Path $NightDir "$DateStr.$Label.prompt.md"
-  $ArgsPath = Join-Path $NightDir "$DateStr.$Label.args.json"
-  $RunnerOut = Join-Path $NightDir "$DateStr.$Label.runner.log"
-  $RunnerErr = Join-Path $NightDir "$DateStr.$Label.runner.err.log"
-  Remove-Item -LiteralPath $RunnerOut,$RunnerErr -Force -ErrorAction SilentlyContinue
+  $PromptPath = Join-Path $NightDir "$DateStr.$RunId.$Label.prompt.md"
+  $ArgsPath = Join-Path $NightDir "$DateStr.$RunId.$Label.args.json"
+  $RunnerOut = Join-Path $NightDir "$DateStr.$RunId.$Label.runner.log"
+  $RunnerErr = Join-Path $NightDir "$DateStr.$RunId.$Label.runner.err.log"
   Set-Content -LiteralPath $PromptPath -Value $PromptText -Encoding utf8
   $CodexArgs | ConvertTo-Json | Set-Content -LiteralPath $ArgsPath -Encoding utf8
   $nodeExe = (Get-Command node -ErrorAction Stop).Source
@@ -199,9 +198,10 @@ try {
 
   if (-not $RunnerSelfTest) {
     Log "Phase 0: Chrome DOM/account evidence"
-    $EnvironmentDomLog = Join-Path $NightDir "$DateStr.environment-dom.json"
+    $EnvironmentDomLog = Join-Path $NightDir "$DateStr.$RunId.environment-dom.full.log"
+    $EnvironmentDomEvidence = Join-Path $NightDir "$DateStr.$RunId.environment-dom.evidence.json"
     $EnvironmentPrompt = Get-Content (Join-Path $RepoRoot "docs\night_environment_dom_probe.md") -Raw -Encoding utf8
-    $environmentArgs = @("exec", "--ephemeral", "--sandbox", "read-only", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
+    $environmentArgs = @("exec", "--ephemeral", "--sandbox", "read-only", "--skip-git-repo-check", "--color", "never", "--output-last-message", $EnvironmentDomEvidence, "-C", $RepoRoot, "-")
     $environmentPublisherToken = $env:GH_TOKEN
     $environmentPublisherExpiry = $env:GH_TOKEN_EXPIRES_AT
     Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
@@ -217,7 +217,7 @@ try {
       $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:dom_read" "Phase 0 Codex DOM probe exit=$environmentDomExit"
       exit $exitCode
     }
-    $fullEnvironment = node scripts/automation/night-environment-check.mjs --dom-evidence $EnvironmentDomLog 2>&1
+    $fullEnvironment = node scripts/automation/night-environment-check.mjs --dom-evidence $EnvironmentDomEvidence 2>&1
     $fullEnvironmentExit = $LASTEXITCODE
     Log (($fullEnvironment | Out-String).Trim())
     if ($fullEnvironmentExit -ne 0) {
@@ -240,8 +240,7 @@ try {
   }
 
   if ($RunnerSelfTest) {
-    $SelfTestLog = Join-Path $NightDir "$DateStr.runner-selftest.codex.log"
-    Remove-Item -LiteralPath $SelfTestLog -Force -ErrorAction SilentlyContinue
+    $SelfTestLog = Join-Path $NightDir "$DateStr.$RunId.runner-selftest.codex.log"
     $selfArgs = @("exec", "--ephemeral", "--sandbox", "read-only", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
     $selfExit = Invoke-CodexIsolated "Reply with exactly RUNNER_SELFTEST_OK and nothing else. Do not use tools." $selfArgs $SelfTestLog "runner-selftest"
     $selfState = Get-Content $HeartbeatFile -Raw -Encoding utf8 | ConvertFrom-Json
@@ -293,7 +292,7 @@ try {
   # このラッパーが専用GH_TOKENで実行し、.gitやCLI資格情報をCodexへ渡さない。
   # Codex の出力は専用ファイルへ（runner 本体ログや tail との Add-Content ロック競合を避ける。
   # 2026-07-05 の初回実走で Add-Content が sharing violation で全損した対策）
-  $CodexLog = Join-Path $NightDir "$DateStr.codex.log"
+  $CodexLog = Join-Path $NightDir "$DateStr.$RunId.codex.log"
   Log "launch: codex exec (ephemeral, workspace-write) -> $CodexLog"
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
   $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
@@ -388,7 +387,7 @@ try {
   if ($publishSlug -and $phaseBVerified) {
     $XPromptFile = Join-Path $RepoRoot "docs\x-post-codex-night-prompt.md"
     $XPrompt = (Get-Content $XPromptFile -Raw -Encoding utf8).Replace("{{SLUG}}", $publishSlug)
-    $XCodexLog = Join-Path $NightDir "$DateStr.codex-phase-c.log"
+    $XCodexLog = Join-Path $NightDir "$DateStr.$RunId.codex-phase-c.log"
     $xCodexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
     $XPostInputFile = Join-Path $RepoRoot "logs\social\$publishSlug.x-post.json"
     $XPostInput = Get-Content $XPostInputFile -Raw -Encoding utf8 | ConvertFrom-Json

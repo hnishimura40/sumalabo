@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CHECK_NAMES, evaluateEnvironmentEvidence } from "../../scripts/automation/night-environment-check.mjs";
+import { CHECK_NAMES, evaluateEnvironmentEvidence, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
 
 const passing = Object.fromEntries(CHECK_NAMES.map((name) => [name, { ok: true, detail: "test" }]));
 
@@ -17,3 +17,18 @@ for (const name of CHECK_NAMES) {
     assert.deepEqual(result.failedChecks, [name]);
   });
 }
+
+test("DOM evidence uses the final JSON line and ignores the prompt example", () => {
+  const evidence = [
+    "prompt example:",
+    '{"domRead":true,"url":"https://x.com/home","accountHref":"/suma_labo","hrefCount":1}',
+    "runner output:",
+    '{"domRead":false,"url":"https://x.com/home","accountHref":"/suma_labo","hrefCount":0}',
+  ].join("\n");
+  assert.deepEqual(parseDomEvidenceText(evidence), {
+    domRead: false,
+    url: "https://x.com/home",
+    accountHref: "/suma_labo",
+    hrefCount: 0,
+  });
+});
