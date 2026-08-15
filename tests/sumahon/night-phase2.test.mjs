@@ -275,6 +275,7 @@ test("runner keeps generated evidence private and preserves the live X ledger ou
   for (const pattern of ["logs/night/", "logs/article/", "logs/preview/", "logs/scout/", "logs/social/", "drafts/social/"]) {
     assert.match(ignore, new RegExp(pattern.replace("/", "\\/")));
   }
+  assert.match(ignore, /^\.wrangler\/$/m, "Wrangler's generated cache must not make the dedicated runner dirty");
   assert.match(prepare, /PRIVATE_TRACKED_RUNTIME_FILES/);
   assert.match(prepare, /update-index[\s\S]*--skip-worktree/);
   assert.match(prepare, /if \(existsSync\(target\)\) continue;/);
