@@ -211,13 +211,13 @@ test("night Chrome startup uses the single environment definition", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
   const recovery = read("scripts/automation/recover-x-pending.ps1");
   const environment = JSON.parse(read("config/night-environment.json"));
-  assert.equal(environment.chrome.profileDirectory, "Profile");
+  assert.equal(environment.chrome.profileDirectory, "Profile 2");
   assert.match(wrapper, /config\\night-environment\.json/);
   assert.match(wrapper, /--profile-directory=\$ChromeProfileDirectory/);
-  assert.doesNotMatch(wrapper, /--profile-directory=Profile 2/);
+  assert.doesNotMatch(wrapper, /--profile-directory=Profile(?! 2)/);
   assert.match(recovery, /config\\night-environment\.json/);
   assert.match(recovery, /--profile-directory=\$\(\$Environment\.chrome\.profileDirectory\)/);
-  assert.doesNotMatch(recovery, /--profile-directory=Profile 2/);
+  assert.doesNotMatch(recovery, /--profile-directory=Profile(?! 2)/);
   assert.match(wrapper, /--new-window/);
   assert.match(wrapper, /https:\/\/x\.com\/compose\/post/);
   assert.match(wrapper, /MainWindowHandle -ne 0/);
