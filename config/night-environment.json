@@ -3,6 +3,9 @@
   "canonicalWorkspacePath": "D:\\documents\\動画作成関連\\すまラボ",
   "runnerPath": "D:\\work\\sumalabo-night-runner",
   "entryRoot": "D:\\work",
+  "codex": {
+    "executable": "C:\\Users\\hnish\\AppData\\Roaming\\npm\\node_modules\\@openai\\codex\\node_modules\\@openai\\codex-win32-x64\\vendor\\x86_64-pc-windows-msvc\\bin\\codex.exe"
+  },
   "chrome": {
     "profileDirectory": "Profile 2",
     "userDataDirectory": "C:\\Users\\hnish\\AppData\\Local\\Google\\Chrome\\User Data",
@@ -43,5 +46,20 @@
     "github_token",
     "repository_sha",
     "runner_dirty"
+  ],
+  "fatalChecks": [
+    "environment_definition",
+    "github_token",
+    "repository_sha",
+    "runner_dirty"
+  ],
+  "warningChecks": [
+    "chrome_profile",
+    "chrome_extension",
+    "native_host",
+    "x_site_permission",
+    "file_url_permission",
+    "x_login_href",
+    "dom_read"
   ]
 }

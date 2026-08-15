@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CHECK_NAMES, evaluateEnvironmentEvidence, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
+import { CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, evaluateEnvironmentEvidence, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
 
 const passing = Object.fromEntries(CHECK_NAMES.map((name) => [name, { ok: true, detail: "test" }]));
 
@@ -31,4 +31,20 @@ test("DOM evidence uses the final JSON line and ignores the prompt example", () 
     accountHref: "/suma_labo",
     hrefCount: 0,
   });
+});
+
+test("fatal environment failures stop the article pipeline", () => {
+  const result = evaluateEnvironmentEvidence(passing, ["github_token"]);
+  assert.equal(result.canProceed, false);
+  assert.equal(result.xReady, true);
+  assert.deepEqual(result.fatalFailedChecks, ["github_token"]);
+  assert.ok(FATAL_CHECK_NAMES.includes("repository_sha"));
+});
+
+test("X environment failures warn while allowing the article pipeline", () => {
+  const result = evaluateEnvironmentEvidence(passing, ["x_login_href"]);
+  assert.equal(result.canProceed, true);
+  assert.equal(result.xReady, false);
+  assert.deepEqual(result.warningFailedChecks, ["x_login_href"]);
+  assert.ok(WARNING_CHECK_NAMES.includes("dom_read"));
 });

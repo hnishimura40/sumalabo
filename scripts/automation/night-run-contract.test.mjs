@@ -58,6 +58,61 @@ test("stale evidence from a prior run cannot satisfy success", async () => {
   assert.equal(result.evidence.xTwoStage.reason, "x_ledger_not_from_current_run");
 });
 
+test("X warning accepts three article points only when the recovery bundle is preserved", async () => {
+  const result = await evaluateSuccessContract({
+    root: fixture(),
+    runId: RUN_ID,
+    startedAt: STARTED_AT,
+    slug: SLUG,
+    xPending: true,
+    xWarnings: ["x_login_href", "dom_read"],
+    probes: probes({ xPendingBundle: async () => ({ ok: true, createdAt: "2026-08-08T05:06:00Z", recoveryCommand: `npm run social:recover-x-pending -- --slug ${SLUG}` }) }),
+  });
+  assert.equal(result.outcome, OUTCOMES.X_PENDING);
+  assert.equal(EXIT_CODES[result.outcome], 20);
+  assert.deepEqual(result.failedChecks, ["xTwoStage"]);
+  assert.equal(result.evidence.articleHttp200.ok, true);
+  assert.equal(result.evidence.prMerged.ok, true);
+  assert.equal(result.evidence.strictVerify.ok, true);
+  assert.equal(result.evidence.xPendingBundle.ok, true);
+  assert.equal(result.acceptanceEligible, true);
+});
+
+test("X warning is failed when any article point or recovery bundle is missing", async () => {
+  const articleFailure = await evaluateSuccessContract({
+    root: fixture(), runId: RUN_ID, startedAt: STARTED_AT, slug: SLUG, xPending: true,
+    probes: probes({ http: async () => ({ ok: false, status: 404 }), xPendingBundle: async () => ({ ok: true }) }),
+  });
+  assert.equal(articleFailure.outcome, OUTCOMES.FAILED);
+  assert.ok(articleFailure.failedChecks.includes("articleHttp200"));
+  const bundleFailure = await evaluateSuccessContract({
+    root: fixture(), runId: RUN_ID, startedAt: STARTED_AT, slug: SLUG, xPending: true,
+    probes: probes({ xPendingBundle: async () => ({ ok: false, reason: "missing" }) }),
+  });
+  assert.equal(bundleFailure.outcome, OUTCOMES.FAILED);
+  assert.ok(bundleFailure.failedChecks.includes("xPendingBundle"));
+});
+
+test("watchdog independently accepts a recorded stopped_x_pending outcome", async () => {
+  const root = fixture();
+  const recorded = recordRunOutcome({
+    runId: RUN_ID,
+    outcome: OUTCOMES.X_PENDING,
+    reason: "x_environment_warning:x_login_href",
+    slug: SLUG,
+    warningChecks: ["x_login_href"],
+    xPending: true,
+    completionKind: "fresh_run",
+    acceptanceEligible: true,
+  }, { root, startedAt: STARTED_AT });
+  const audit = await auditRecordedOutcome(recorded, {
+    root,
+    probes: probes({ xPendingBundle: async () => ({ ok: true, createdAt: "2026-08-08T05:06:00Z" }) }),
+  });
+  assert.equal(audit.outcome, OUTCOMES.X_PENDING);
+  assert.equal(audit.mismatch, false);
+});
+
 test("8/10 regression ID is preserved when no slug can be resolved", async () => {
   const root = fixture();
   const result = await evaluateSuccessContract({ root, runId: REGRESSION_RUN_ID, startedAt: STARTED_AT, probes: probes() });

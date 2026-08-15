@@ -29,3 +29,55 @@ test("無人完走率・介入・公開後破綻を集計する", () => {
   assert.equal(summary.humanInterventions, 1);
   assert.equal(summary.postPublishBreakages, 1);
 });
+
+test("stopped_x_pending counts as unattended acceptance while recovery does not", () => {
+  const root = mkdtempSync(join(tmpdir(), "measurement-x-pending-"));
+  mkdirSync(join(root, "data", "automation"), { recursive: true });
+  writeFileSync(join(root, "data", "automation", "measurement.json"), JSON.stringify({ active: true, startAt: "2026-08-01T00:00:00Z", endAt: "2026-08-08T00:00:00Z" }));
+  recordRunOutcome({
+    runId: "20260804T000000.000",
+    outcome: "stopped_x_pending",
+    reason: "article_three_point_contract_satisfied_x_pending",
+    slug: "fresh",
+    acceptanceEligible: true,
+  }, { root, startedAt: "2026-08-04T00:00:00Z" });
+  recordRunOutcome({
+    runId: "20260805T000000.000",
+    outcome: "success",
+    reason: "four_point_contract_satisfied",
+    slug: "recovery",
+    completionKind: "recovery",
+    acceptanceEligible: false,
+  }, { root, startedAt: "2026-08-05T00:00:00Z" });
+
+  const summary = summarizeMeasurement(root);
+  assert.equal(summary.stoppedXPending, 1);
+  assert.equal(summary.unattendedCompletionRate, 1);
+  assert.equal(summary.acceptanceSuccess, 1);
+});
+
+test("stopped_x_pending counts as unattended acceptance while recovery does not", () => {
+  const root = mkdtempSync(join(tmpdir(), "measurement-x-pending-"));
+  mkdirSync(join(root, "data", "automation"), { recursive: true });
+  writeFileSync(join(root, "data", "automation", "measurement.json"), JSON.stringify({ active: true, startAt: "2026-08-01T00:00:00Z", endAt: "2026-08-08T00:00:00Z" }));
+  recordRunOutcome({
+    runId: "20260804T000000.000",
+    outcome: "stopped_x_pending",
+    reason: "article_three_point_contract_satisfied_x_pending",
+    slug: "fresh",
+    acceptanceEligible: true,
+  }, { root, startedAt: "2026-08-04T00:00:00Z" });
+  recordRunOutcome({
+    runId: "20260805T000000.000",
+    outcome: "success",
+    reason: "four_point_contract_satisfied",
+    slug: "recovery",
+    completionKind: "recovery",
+    acceptanceEligible: false,
+  }, { root, startedAt: "2026-08-05T00:00:00Z" });
+
+  const summary = summarizeMeasurement(root);
+  assert.equal(summary.stoppedXPending, 1);
+  assert.equal(summary.unattendedCompletionRate, 1);
+  assert.equal(summary.acceptanceSuccess, 1);
+});

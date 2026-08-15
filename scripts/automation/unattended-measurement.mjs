@@ -56,13 +56,14 @@ export function summarizeMeasurement(root = ROOT) {
   const events = readJsonl(path.join(root, "logs", "night", "run-contract", "human-events.jsonl"))
     .filter((event) => rows.some((row) => row.runId === event.runId));
   const success = rows.filter((row) => row.outcome === "success").length;
+  const stoppedXPending = rows.filter((row) => row.outcome === "stopped_x_pending").length;
   const stopped = rows.filter((row) => row.outcome === "stopped").length;
   const failed = rows.filter((row) => row.outcome === "failed").length;
   const interventions = events.filter((event) => event.type === "intervention");
   const corrections = events.filter((event) => event.type === "post_publish_correction");
   const intervenedRunIds = new Set(interventions.map((event) => event.runId));
   const acceptanceSuccess = rows.filter((row) =>
-    row.outcome === "success" &&
+    ["success", "stopped_x_pending"].includes(row.outcome) &&
     row.completionKind !== "recovery" &&
     row.acceptanceEligible !== false &&
     !intervenedRunIds.has(row.runId)
@@ -72,9 +73,10 @@ export function summarizeMeasurement(root = ROOT) {
     primaryKey: "runId",
     totalRuns: rows.length,
     success,
+    stoppedXPending,
     stopped,
     failed,
-    unattendedCompletionRate: rows.length ? success / rows.length : null,
+    unattendedCompletionRate: rows.length ? (success + stoppedXPending) / rows.length : null,
     acceptanceSuccess,
     acceptanceCompletionRate: rows.length ? acceptanceSuccess / rows.length : null,
     humanInterventions: interventions.length,

@@ -27,6 +27,7 @@
     "sumahon:notify-review-ready": "node scripts/run/notify-review-ready.mjs",
     "social:generate-x-post": "node scripts/run/generate-x-post.mjs",
     "social:post-to-x": "node scripts/run/post-to-x.mjs",
+    "social:recover-x-pending": "node scripts/automation/recover-x-pending.mjs",
     "automation:run-queue": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/run-sumahon-queue.ps1",
     "automation:register-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/register-sumahon-tasks.ps1",
     "automation:disable-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/disable-sumahon-tasks.ps1",
@@ -60,7 +61,7 @@
     "article:check-response": "node scripts/automation/chatgpt-response-health.mjs",
     "incident:reclassify": "node scripts/automation/incident-reclassify.mjs",
     "measurement:summary": "node scripts/automation/unattended-measurement.mjs",
-    "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/unattended-measurement.test.mjs tests/sumahon/night-phase2.test.mjs tests/sumahon/night-environment-check.test.mjs"
+    "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/unattended-measurement.test.mjs tests/sumahon/night-phase2.test.mjs tests/sumahon/night-environment-check.test.mjs tests/sumahon/x-pending-bundle.test.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",

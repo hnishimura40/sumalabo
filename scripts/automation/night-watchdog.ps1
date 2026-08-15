@@ -68,6 +68,22 @@ if ($auditExit -eq 0 -and $auditJson.outcome -eq 'success') {
   exit 0
 }
 
+if ($auditExit -eq 20 -and $auditJson.outcome -eq 'stopped_x_pending') {
+  @{
+    checkedAt = $Now.ToString('o')
+    result = 'stopped_x_pending'
+    reason = $auditJson.reason
+    notified = $false
+    runId = $auditJson.runId
+    slug = $auditJson.slug
+    independentlyVerified = $true
+    mismatch = [bool]$auditJson.mismatch
+    articleThreePointVerified = $true
+    xPendingBundleVerified = [bool]$auditJson.evidence.xPendingBundle.ok
+  } | ConvertTo-Json -Depth 12 | Set-Content $WatchFile -Encoding utf8
+  exit 20
+}
+
 if ($auditExit -eq 20 -and $auditJson.outcome -eq 'stopped') {
   @{
     checkedAt = $Now.ToString('o')

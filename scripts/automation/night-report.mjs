@@ -71,7 +71,7 @@ export function buildReport(slug) {
   const contractOutcome = readRunOutcomes(ROOT)
     .filter((row) => row.slug === slug)
     .sort((a, b) => Date.parse(b.finishedAt) - Date.parse(a.finishedAt))[0] || null;
-  const unattendedCompleted = contractOutcome?.outcome === "success";
+  const unattendedCompleted = ["success", "stopped_x_pending"].includes(contractOutcome?.outcome);
   const humanIntervention = Boolean(state?.humanIntervention || state?.manualIntervention || entry?.humanIntervention);
   const interventionReason = humanIntervention
     ? (state?.humanInterventionReason || entry?.humanInterventionReason || "manual_intervention")
@@ -152,7 +152,7 @@ export function buildReport(slug) {
   if (entry.xPostUrl) {
     lines.push(`- 投稿URL: ${entry.xPostUrl}（xPostedAt: ${entry.xPostedAt || "-"}）`);
   } else {
-    lines.push("- 未投稿");
+    lines.push(contractOutcome?.outcome === "stopped_x_pending" ? "- X環境警告により保留（記事3点は完了、pending bundleから回収可能）" : "- 未投稿");
   }
   lines.push("");
 

@@ -147,7 +147,9 @@ test("Phase B/C ordering verifies production then creates x-post input before Co
   assert.ok(retry >= 0 && retry < verify);
   assert.ok(verify < generate && generate < phaseC);
   assert.match(wrapper, /phase_b_target_not_found_after_retry/);
-  assert.match(wrapper, /if \(\$publishSlug -and \$phaseBVerified\)/);
+  assert.match(wrapper, /if \(\$publishSlug -and \$phaseBVerified -and \$XPreflightReady\)/);
+  assert.match(wrapper, /x-pending-bundle\.mjs create/);
+  assert.match(wrapper, /--x-pending --x-warnings/);
   assert.match(generator, /args\["search-phrase"\] \?\? fm\.title/);
   assert.doesNotMatch(read("scripts/automation/auto-phase-b.mjs"), /phase-c-auto\.mjs/);
 });
@@ -215,7 +217,7 @@ test("night Chrome startup uses the single environment definition", () => {
   assert.match(wrapper, /--new-window/);
   assert.match(wrapper, /https:\/\/x\.com\/compose\/post/);
   assert.match(wrapper, /MainWindowHandle -ne 0/);
-  assert.match(wrapper, /chrome_visible_window_missing/);
+  assert.match(wrapper, /Chrome可視ウィンドウなし/);
   assert.match(wrapper, /CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH/);
   assert.match(wrapper, /CODEX_CHROMIUM_PREFERENCES_PATH/);
   assert.match(wrapper, /night-environment-check\.mjs --static-only/);
@@ -235,7 +237,10 @@ test("night environment configuration owns paths, token names, and permissions",
   assert.equal(environment.runnerPath, "D:\\work\\sumalabo-night-runner");
   assert.equal(environment.chrome.extensionId, "hehggadaopoacecdllhhajmbjkdcmajg");
   assert.equal(environment.tokens.github, "GH_TOKEN");
+  assert.match(environment.codex.executable, /codex\.exe$/);
   assert.equal(environment.browserPermissions.requiredOrigin, "https://x.com");
+  assert.deepEqual(environment.fatalChecks, ["environment_definition", "github_token", "repository_sha", "runner_dirty"]);
+  assert.ok(environment.warningChecks.includes("x_login_href"));
   assert.ok(environment.requiredChecks.includes("dom_read"));
   assert.ok(environment.requiredChecks.includes("runner_dirty"));
   assert.doesNotMatch(read("scripts/automation/prepare-night-runner.mjs"), /D:\\\\work\\\\sumalabo-night-runner/);
@@ -276,6 +281,21 @@ test("watchdog audits the exact run id instead of a same-day record", () => {
   assert.match(watchdog, /\$activeRunId/);
   assert.match(watchdog, /'--run-id', \$activeRunId/);
   assert.doesNotMatch(watchdog, /'audit', '--date'/);
+});
+
+test("X pending recovery is a one-command fail-closed runner flow", () => {
+  const pkg = JSON.parse(read("package.json"));
+  const launcher = read("scripts/automation/recover-x-pending.mjs");
+  const recovery = read("scripts/automation/recover-x-pending.ps1");
+  assert.equal(pkg.scripts["social:recover-x-pending"], "node scripts/automation/recover-x-pending.mjs");
+  assert.match(launcher, /NIGHT_ENVIRONMENT\.runnerPath/);
+  assert.match(launcher, /latestPendingBundle/);
+  assert.match(recovery, /x-pending-bundle\.mjs verify/);
+  assert.match(recovery, /post-to-x\.mjs --check/);
+  assert.match(recovery, /\$imagePaths\.Count -ne 4/);
+  assert.match(recovery, /docs\\x-post-codex-night-prompt\.md/);
+  assert.match(recovery, /--completion-kind recovery/);
+  assert.doesNotMatch(recovery, /Remove-Item\s+-LiteralPath/);
 });
 
 test("scheduled acceptance is an explicit stopped outcome, never success", () => {

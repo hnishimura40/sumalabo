@@ -698,3 +698,10 @@ PC 表示では **横スクロールを原則使わない**。スマホでも基
 
 ## Final report output filter (mandatory)
 All user-facing completion reports, including Codex interactive, night run, attended runs, and unattended X posting, must pass through `npm run report:filter` immediately before delivery. Remove every line whose first non-whitespace characters are `::`. Never send an unfiltered completion report.
+
+## Night phase-0 severity policy (2026-08-15)
+
+- Fatal checks are limited to article-pipeline prerequisites: `GH_TOKEN`, canonical/runner SHA equality, runner tracked dirty 0, and environment-definition/runner health. Any fatal failure stops before article generation with `failed`.
+- Chrome/X checks are warning-only at phase 0: configured profile, extension/native-host, x.com permission, file URL permission, `href=/suma_labo` login evidence, and DOM read. A warning must not stop article generation, publication, PR merge, or strict verification.
+- If the three article contract points pass while an X warning exists, skip Phase C before any X send, preserve the primary text, URL-only reply, and exactly four images in an immutable pending manifest, and record `stopped_x_pending` (exit 20).
+- Recover pending X work with `npm run social:recover-x-pending -- --slug <slug>`. Recovery remains fail-closed and is recorded as `completionKind=recovery`, `acceptanceEligible=false`.

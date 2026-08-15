@@ -7,6 +7,8 @@ import { pathToFileURL } from "node:url";
 import { NIGHT_ENVIRONMENT, chromeProfilePath } from "./night-environment.mjs";
 
 export const CHECK_NAMES = [...NIGHT_ENVIRONMENT.requiredChecks];
+export const FATAL_CHECK_NAMES = [...NIGHT_ENVIRONMENT.fatalChecks];
+export const WARNING_CHECK_NAMES = [...NIGHT_ENVIRONMENT.warningChecks];
 
 function run(command, args, cwd) {
   return spawnSync(command, args, { cwd, encoding: "utf8", windowsHide: true });
@@ -49,7 +51,18 @@ export function evaluateEnvironmentEvidence(evidence, injectMissing = []) {
     const item = evidence[name] || { ok: false, detail: "evidence_missing" };
     return injected.has(name) ? { name, ok: false, detail: "injected_missing" } : { name, ok: item.ok === true, detail: item.detail || null };
   });
-  return { ok: checks.every((item) => item.ok), checks, failedChecks: checks.filter((item) => !item.ok).map((item) => item.name) };
+  const failedChecks = checks.filter((item) => !item.ok).map((item) => item.name);
+  const fatalFailedChecks = failedChecks.filter((name) => FATAL_CHECK_NAMES.includes(name));
+  const warningFailedChecks = failedChecks.filter((name) => WARNING_CHECK_NAMES.includes(name));
+  return {
+    ok: failedChecks.length === 0,
+    canProceed: fatalFailedChecks.length === 0,
+    xReady: warningFailedChecks.length === 0,
+    checks,
+    failedChecks,
+    fatalFailedChecks,
+    warningFailedChecks,
+  };
 }
 
 export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = process.env) {
@@ -118,8 +131,22 @@ export function runEnvironmentCheck({ domEvidenceFile = null, staticOnly = false
     evidence.dom_read = { ok: dom?.domRead === true && dom?.url === "https://x.com/home", detail: dom?.url || "dom_evidence_missing" };
   }
   const names = staticOnly ? CHECK_NAMES.filter((name) => !["x_login_href", "dom_read"].includes(name)) : CHECK_NAMES;
-  const result = evaluateEnvironmentEvidence(Object.fromEntries(names.map((name) => [name, evidence[name]])), injectMissing).checks.filter((item) => names.includes(item.name));
-  return { ok: result.every((item) => item.ok), profileDirectory: NIGHT_ENVIRONMENT.chrome.profileDirectory, checks: result, failedChecks: result.filter((item) => !item.ok).map((item) => item.name) };
+  const evaluated = evaluateEnvironmentEvidence(Object.fromEntries(names.map((name) => [name, evidence[name]])), injectMissing);
+  const checks = evaluated.checks.filter((item) => names.includes(item.name));
+  const failedChecks = checks.filter((item) => !item.ok).map((item) => item.name);
+  const fatalFailedChecks = failedChecks.filter((name) => FATAL_CHECK_NAMES.includes(name));
+  const warningFailedChecks = failedChecks.filter((name) => WARNING_CHECK_NAMES.includes(name));
+  return {
+    ok: failedChecks.length === 0,
+    canProceed: fatalFailedChecks.length === 0,
+    xReady: warningFailedChecks.length === 0,
+    classification: fatalFailedChecks.length ? "fatal" : warningFailedChecks.length ? "warning" : "pass",
+    profileDirectory: NIGHT_ENVIRONMENT.chrome.profileDirectory,
+    checks,
+    failedChecks,
+    fatalFailedChecks,
+    warningFailedChecks,
+  };
 }
 
 function main() {
@@ -128,7 +155,7 @@ function main() {
   const inject = args.filter((arg) => arg.startsWith("--inject-missing=")).map((arg) => arg.split("=", 2)[1]);
   const result = runEnvironmentCheck({ domEvidenceFile: domIndex >= 0 ? args[domIndex + 1] : null, staticOnly: args.includes("--static-only"), injectMissing: inject });
   console.log(JSON.stringify(result, null, 2));
-  process.exitCode = result.ok ? 0 : 30;
+  process.exitCode = result.ok ? 0 : result.canProceed ? 20 : 30;
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) main();

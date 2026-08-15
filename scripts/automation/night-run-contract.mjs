@@ -11,10 +11,11 @@ import {
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { verifyPendingBundle } from "./x-pending-bundle.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-export const OUTCOMES = Object.freeze({ SUCCESS: "success", STOPPED: "stopped", FAILED: "failed" });
-export const EXIT_CODES = Object.freeze({ success: 0, stopped: 20, failed: 30 });
+export const OUTCOMES = Object.freeze({ SUCCESS: "success", X_PENDING: "stopped_x_pending", STOPPED: "stopped", FAILED: "failed" });
+export const EXIT_CODES = Object.freeze({ success: 0, stopped_x_pending: 20, stopped: 20, failed: 30 });
 export const ALLOWED_STOP_REASONS = new Set([
   "no_scout_target",
   "measurement_outside_window",
@@ -219,6 +220,8 @@ export async function evaluateSuccessContract({
   startedAt,
   slug = null,
   completionKind = "fresh_run",
+  xPending = false,
+  xWarnings = [],
   probes = {},
 }) {
   const normalizedCompletionKind = completionKind === "recovery" ? "recovery" : "fresh_run";
@@ -232,7 +235,9 @@ export async function evaluateSuccessContract({
   const http = await (probes.http || probeArticleHttp)(articleUrl);
   const pr = await (probes.pr || ((url) => probePrMerged(url)))(prUrl);
   const strictVerify = await (probes.strictVerify || ((s) => probeStrictVerify(s, root)))(resolvedSlug);
-  const xTwoStage = await (probes.xTwoStage || ((s) => probeXTwoStage(s, root)))(resolvedSlug);
+  const xTwoStage = xPending
+    ? { ok: false, pending: true, reason: "x_environment_warning" }
+    : await (probes.xTwoStage || ((s) => probeXTwoStage(s, root)))(resolvedSlug);
   const startedMs = parseTime(startedAt);
   const requireFresh = (value, field, label) => {
     if (value?.ok !== true) return value;
@@ -245,7 +250,32 @@ export async function evaluateSuccessContract({
   const freshPr = requireFresh(pr, "mergedAt", "pr_merge");
   const freshStrictVerify = requireFresh(strictVerify, "finishedAt", "strict_verify");
   const freshXTwoStage = requireFresh(xTwoStage, "postedAt", "x_ledger");
-  const evidence = { articleHttp200: http, prMerged: freshPr, strictVerify: freshStrictVerify, xTwoStage: freshXTwoStage };
+  const xPendingBundle = xPending
+    ? (probes.xPendingBundle ? await probes.xPendingBundle(resolvedSlug, runId) : verifyPendingBundle({ root, slug: resolvedSlug, runId }))
+    : null;
+  const evidence = { articleHttp200: http, prMerged: freshPr, strictVerify: freshStrictVerify, xTwoStage: freshXTwoStage, ...(xPending ? { xPendingBundle } : {}) };
+  const articleFailedChecks = [
+    ["articleHttp200", http],
+    ["prMerged", freshPr],
+    ["strictVerify", freshStrictVerify],
+  ].filter(([, value]) => value?.ok !== true).map(([key]) => key);
+  if (xPending && articleFailedChecks.length === 0 && xPendingBundle?.ok === true) {
+    return {
+      runId,
+      slug: resolvedSlug,
+      outcome: OUTCOMES.X_PENDING,
+      reason: `x_environment_warning:${[...new Set(xWarnings.map(String).filter(Boolean))].join(",") || "unspecified"}`,
+      articleUrl,
+      prUrl,
+      evidence,
+      failedChecks: ["xTwoStage"],
+      warningChecks: [...new Set(xWarnings.map(String).filter(Boolean))],
+      xPending: true,
+      completionKind: normalizedCompletionKind,
+      acceptanceEligible: normalizedCompletionKind === "fresh_run",
+    };
+  }
+  if (xPending && xPendingBundle?.ok !== true) articleFailedChecks.push("xPendingBundle");
   const failedChecks = Object.entries(evidence).filter(([, value]) => value?.ok !== true).map(([key]) => key);
   return {
     runId,
@@ -255,7 +285,9 @@ export async function evaluateSuccessContract({
     articleUrl,
     prUrl,
     evidence,
-    failedChecks,
+    failedChecks: xPending ? [...new Set([...articleFailedChecks, ...failedChecks.filter((name) => name !== "xTwoStage")])] : failedChecks,
+    warningChecks: xPending ? [...new Set(xWarnings.map(String).filter(Boolean))] : [],
+    xPending: xPending === true,
     completionKind: normalizedCompletionKind,
     acceptanceEligible: failedChecks.length === 0 && normalizedCompletionKind === "fresh_run",
   };
@@ -285,6 +317,8 @@ export function recordRunOutcome(result, { root = ROOT, startedAt = null, finish
     detail: result.detail || null,
     completionKind: result.completionKind || null,
     acceptanceEligible: result.acceptanceEligible === true,
+    warningChecks: result.warningChecks || [],
+    xPending: result.xPending === true,
   };
   if (!Object.values(OUTCOMES).includes(record.outcome)) throw new Error(`invalid outcome: ${record.outcome}`);
   atomicWriteJson(outcomeFile(runId, root), record);
@@ -314,6 +348,21 @@ export async function auditRecordedOutcome(record, options = {}) {
     return { ...record, outcome: valid ? OUTCOMES.STOPPED : OUTCOMES.FAILED, mismatch: !valid };
   }
   if (record.outcome === OUTCOMES.FAILED) return { ...record, mismatch: false };
+  if (record.outcome === OUTCOMES.X_PENDING) {
+    const actual = await evaluateSuccessContract({
+      ...options,
+      runId: record.runId,
+      startedAt: record.startedAt,
+      slug: record.slug,
+      completionKind: record.completionKind || "fresh_run",
+      xPending: true,
+      xWarnings: record.warningChecks || [],
+    });
+    const valid = actual.outcome === OUTCOMES.X_PENDING;
+    return valid
+      ? { ...actual, mismatch: false, recordedOutcome: record.outcome }
+      : { ...actual, outcome: OUTCOMES.FAILED, reason: `record_actual_mismatch:${actual.reason}`, mismatch: true, recordedOutcome: record.outcome };
+  }
   const actual = await evaluateSuccessContract({
     ...options,
     runId: record.runId,
@@ -413,7 +462,15 @@ async function main() {
   const command = args._[0];
   const root = args.root ? path.resolve(args.root) : ROOT;
   if (command === "evaluate") {
-    const result = await evaluateSuccessContract({ root, runId: args["run-id"], startedAt: args["started-at"], slug: args.slug || null, completionKind: args["completion-kind"] || "fresh_run" });
+    const result = await evaluateSuccessContract({
+      root,
+      runId: args["run-id"],
+      startedAt: args["started-at"],
+      slug: args.slug || null,
+      completionKind: args["completion-kind"] || "fresh_run",
+      xPending: args["x-pending"] === true,
+      xWarnings: String(args["x-warnings"] || "").split(",").filter(Boolean),
+    });
     printAndExit(recordRunOutcome(result, { root, startedAt: args["started-at"] }));
     return;
   }

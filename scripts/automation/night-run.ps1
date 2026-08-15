@@ -95,7 +95,8 @@ function Invoke-CodexIsolated([string]$PromptText, [string[]]$CodexArgs, [string
   $CodexArgs | ConvertTo-Json | Set-Content -LiteralPath $ArgsPath -Encoding utf8
   $nodeExe = (Get-Command node -ErrorAction Stop).Source
   $launcher = Join-Path $RepoRoot "scripts\automation\night-process-runner.mjs"
-  $CodexExe = "C:\Users\hnish\AppData\Roaming\npm\node_modules\@openai\codex\node_modules\@openai\codex-win32-x64\vendor\x86_64-pc-windows-msvc\bin\codex.exe"
+  $EnvironmentFile = Join-Path $RepoRoot "config\night-environment.json"
+  $CodexExe = [string](Get-Content -LiteralPath $EnvironmentFile -Raw -Encoding utf8 | ConvertFrom-Json).codex.executable
   $launcherArgs = @($launcher, "--prompt-file", $PromptPath, "--args-file", $ArgsPath, "--output-file", $OutputFile, "--state-file", $LockFile, "--agent-exe", $CodexExe, "--heartbeat-ms", "15000")
   $proc = Start-Process -FilePath $nodeExe -ArgumentList $launcherArgs -RedirectStandardOutput $RunnerOut -RedirectStandardError $RunnerErr -WindowStyle Hidden -Wait -PassThru
   if (Test-Path $RunnerErr) { Get-Content $RunnerErr -ErrorAction SilentlyContinue | Add-Content $RunnerOut -Encoding utf8 }
@@ -118,20 +119,24 @@ try {
   $env:CODEX_CHROMIUM_PREFERENCES_PATH = Join-Path $ChromeProfileRoot "Preferences"
   $ChromeExeCandidates = @($NightEnvironment.chrome.executableCandidates | Where-Object { Test-Path -LiteralPath $_ })
   $ChromeExe = if ($ChromeExeCandidates.Count) { [string]$ChromeExeCandidates[0] } else { $null }
+  $XPreflightWarnings = [System.Collections.Generic.List[string]]::new()
+  $ChromeDomProbePossible = $true
 
   if (-not $RunnerSelfTest) {
     Log "Phase 0: static environment evidence"
     $staticEnvironment = node scripts/automation/night-environment-check.mjs --static-only 2>&1
     $staticEnvironmentExit = $LASTEXITCODE
     Log (($staticEnvironment | Out-String).Trim())
-    if ($staticEnvironmentExit -ne 0) {
-      $staticJson = $null
-      try { $staticJson = ($staticEnvironment | Out-String | ConvertFrom-Json) } catch {}
-      $missing = if ($staticJson -and $staticJson.failedChecks.Count) { [string]$staticJson.failedChecks[0] } else { "environment_definition" }
+    $staticJson = $null
+    try { $staticJson = ($staticEnvironment | Out-String | ConvertFrom-Json) } catch {}
+    if ($staticEnvironmentExit -eq 30 -or -not $staticJson -or -not $staticJson.canProceed) {
+      $missing = if ($staticJson -and $staticJson.fatalFailedChecks.Count) { [string]$staticJson.fatalFailedChecks[0] } else { "environment_definition" }
       if ($BrowserCheckOnly) { exit 30 }
       $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:$missing" "Phase 0 static evidence failed"
       exit $exitCode
     }
+    foreach ($warning in @($staticJson.warningFailedChecks)) { if (-not $XPreflightWarnings.Contains([string]$warning)) { $XPreflightWarnings.Add([string]$warning) } }
+    if ($XPreflightWarnings.Count) { Log "Phase 0 WARNING: X静的項目=$($XPreflightWarnings -join ',')。記事工程は続行し、Phase Cだけ保留する。" }
   }
 
   # 無承認のarchive削除は禁止。期限整理は環境変更と同様に影響範囲提示と事前承認を要する。
@@ -156,82 +161,79 @@ try {
   # ---- Phase 0-bis. 定義されたChromeプロファイルを起動 ----
 
   if (-not (Test-Path $ChromeExe)) {
-    Log "SKIP: Chrome 実行ファイルが見つからない。ブラウザ経路なしのため停止。"
-    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[夜間run] 夜間運転停止: Chrome実行ファイル不明'}))" 2>&1 | Out-Null
-    $exitCode = Record-ContractOutcome "fail" "chrome_executable_missing"
-    exit $exitCode
-  }
-
-  $chromeProcesses = @(Get-Process chrome -ErrorAction SilentlyContinue)
-  $chromeCount = $chromeProcesses.Count
-  $visibleChromeCount = @($chromeProcesses | Where-Object { $_.MainWindowHandle -ne 0 }).Count
-  if ($chromeCount -gt 0 -and $visibleChromeCount -gt 0) {
-    Log "Chrome は既に起動中（$chromeCount プロセス / 可視ウィンドウ $visibleChromeCount）。拡張経路を利用（$ChromeProfileDirectory）。"
+    Log "Phase 0 WARNING: Chrome実行ファイル不明。記事工程は続行し、Phase Cだけ保留する。"
+    if (-not $XPreflightWarnings.Contains("chrome_profile")) { $XPreflightWarnings.Add("chrome_profile") }
+    $ChromeDomProbePossible = $false
   } else {
-    if ($chromeCount -gt 0) {
-      Log "Chrome のバックグラウンドプロセスだけが残存（$chromeCount プロセス）。$ChromeProfileDirectory の可視Xウィンドウを新規起動する。"
+    $chromeProcesses = @(Get-Process chrome -ErrorAction SilentlyContinue)
+    $chromeCount = $chromeProcesses.Count
+    $visibleChromeCount = @($chromeProcesses | Where-Object { $_.MainWindowHandle -ne 0 }).Count
+    if ($chromeCount -gt 0 -and $visibleChromeCount -gt 0) {
+      Log "Chrome は既に起動中（$chromeCount プロセス / 可視ウィンドウ $visibleChromeCount）。拡張経路を利用（$ChromeProfileDirectory）。"
     } else {
-      Log "Chrome 未起動。$ChromeProfileDirectory の可視Xウィンドウを新規起動する。"
-    }
-    $chromeProcess = Start-Process -FilePath $ChromeExe -ArgumentList @(
-      "--profile-directory=$ChromeProfileDirectory",
-      "--new-window",
-      "https://x.com/compose/post",
-      "--no-first-run",
-      "--no-default-browser-check",
-      "--start-maximized"
-    ) -PassThru
-    $script:ChromeRunPid = $chromeProcess.Id
-    $script:ChromeRunExe = $ChromeExe
-    Start-Sleep -Seconds 12   # 拡張が MCP リレーへ接続する猶予
-    $visibleChromeCount = @(
-      Get-Process chrome -ErrorAction SilentlyContinue |
-        Where-Object { $_.MainWindowHandle -ne 0 }
-    ).Count
-    if ($visibleChromeCount -eq 0) {
-      Log "SKIP: Chromeの可視ウィンドウを確立できない。停止。"
-      node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-driver',status:'blocked',title:'[夜間run] 夜間運転停止: Chrome起動失敗'}))" 2>&1 | Out-Null
-      $exitCode = Record-ContractOutcome "fail" "chrome_visible_window_missing"
-      exit $exitCode
+      if ($chromeCount -gt 0) { Log "Chromeのバックグラウンドプロセスのみ残存。$ChromeProfileDirectory の可視Xウィンドウを起動する。" }
+      else { Log "Chrome未起動。$ChromeProfileDirectory の可視Xウィンドウを起動する。" }
+      try {
+        $chromeProcess = Start-Process -FilePath $ChromeExe -ArgumentList @(
+          "--profile-directory=$ChromeProfileDirectory", "--new-window", "https://x.com/compose/post",
+          "--no-first-run", "--no-default-browser-check", "--start-maximized"
+        ) -PassThru
+        $script:ChromeRunPid = $chromeProcess.Id
+        $script:ChromeRunExe = $ChromeExe
+        Start-Sleep -Seconds 12
+        $visibleChromeCount = @(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }).Count
+      } catch { $visibleChromeCount = 0 }
+      if ($visibleChromeCount -eq 0) {
+        Log "Phase 0 WARNING: Chrome可視ウィンドウなし。記事工程は続行し、Phase Cだけ保留する。"
+        if (-not $XPreflightWarnings.Contains("chrome_profile")) { $XPreflightWarnings.Add("chrome_profile") }
+        $ChromeDomProbePossible = $false
+      }
     }
   }
 
   if (-not $RunnerSelfTest) {
-    Log "Phase 0: Chrome DOM/account evidence"
+    if ($ChromeDomProbePossible) { Log "Phase 0: Chrome DOM/account evidence" }
     $EnvironmentDomLog = Join-Path $NightDir "$DateStr.$RunId.environment-dom.full.log"
     $EnvironmentDomEvidence = Join-Path $NightDir "$DateStr.$RunId.environment-dom.evidence.json"
     $EnvironmentPrompt = Get-Content (Join-Path $RepoRoot "docs\night_environment_dom_probe.md") -Raw -Encoding utf8
     $environmentArgs = @("exec", "--ephemeral", "--sandbox", "read-only", "--skip-git-repo-check", "--color", "never", "--output-last-message", $EnvironmentDomEvidence, "-C", $RepoRoot, "-")
-    $environmentPublisherToken = $env:GH_TOKEN
-    $environmentPublisherExpiry = $env:GH_TOKEN_EXPIRES_AT
-    Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
-    Remove-Item Env:GH_TOKEN_EXPIRES_AT -ErrorAction SilentlyContinue
-    try {
-      $environmentDomExit = Invoke-CodexIsolated $EnvironmentPrompt $environmentArgs $EnvironmentDomLog "environment-dom"
-    } finally {
-      if ($environmentPublisherToken) { $env:GH_TOKEN = $environmentPublisherToken }
-      if ($environmentPublisherExpiry) { $env:GH_TOKEN_EXPIRES_AT = $environmentPublisherExpiry }
+    if ($ChromeDomProbePossible) {
+      $environmentPublisherToken = $env:GH_TOKEN
+      $environmentPublisherExpiry = $env:GH_TOKEN_EXPIRES_AT
+      Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
+      Remove-Item Env:GH_TOKEN_EXPIRES_AT -ErrorAction SilentlyContinue
+      try {
+        $environmentDomExit = Invoke-CodexIsolated $EnvironmentPrompt $environmentArgs $EnvironmentDomLog "environment-dom"
+      } finally {
+        if ($environmentPublisherToken) { $env:GH_TOKEN = $environmentPublisherToken }
+        if ($environmentPublisherExpiry) { $env:GH_TOKEN_EXPIRES_AT = $environmentPublisherExpiry }
+      }
+      if ($environmentDomExit -ne 0) {
+        Log "Phase 0 WARNING: DOM probe exit=$environmentDomExit。記事工程は続行し、Phase Cだけ保留する。"
+        if (-not $XPreflightWarnings.Contains("dom_read")) { $XPreflightWarnings.Add("dom_read") }
+      } else {
+        $fullEnvironment = node scripts/automation/night-environment-check.mjs --dom-evidence $EnvironmentDomEvidence 2>&1
+        $fullEnvironmentExit = $LASTEXITCODE
+        Log (($fullEnvironment | Out-String).Trim())
+        $fullJson = $null
+        try { $fullJson = ($fullEnvironment | Out-String | ConvertFrom-Json) } catch {}
+        if ($fullEnvironmentExit -eq 30 -or -not $fullJson -or -not $fullJson.canProceed) {
+          $missing = if ($fullJson -and $fullJson.fatalFailedChecks.Count) { [string]$fullJson.fatalFailedChecks[0] } else { "environment_definition" }
+          if ($BrowserCheckOnly) { exit 30 }
+          $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:$missing" "Phase 0 fatal evidence failed"
+          exit $exitCode
+        }
+        foreach ($warning in @($fullJson.warningFailedChecks)) { if (-not $XPreflightWarnings.Contains([string]$warning)) { $XPreflightWarnings.Add([string]$warning) } }
+      }
+    } else {
+      foreach ($warning in @("x_login_href", "dom_read")) { if (-not $XPreflightWarnings.Contains($warning)) { $XPreflightWarnings.Add($warning) } }
     }
-    if ($environmentDomExit -ne 0) {
-      if ($BrowserCheckOnly) { exit 30 }
-      $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:dom_read" "Phase 0 Codex DOM probe exit=$environmentDomExit"
-      exit $exitCode
-    }
-    $fullEnvironment = node scripts/automation/night-environment-check.mjs --dom-evidence $EnvironmentDomEvidence 2>&1
-    $fullEnvironmentExit = $LASTEXITCODE
-    Log (($fullEnvironment | Out-String).Trim())
-    if ($fullEnvironmentExit -ne 0) {
-      $fullJson = $null
-      try { $fullJson = ($fullEnvironment | Out-String | ConvertFrom-Json) } catch {}
-      $missing = if ($fullJson -and $fullJson.failedChecks.Count) { [string]$fullJson.failedChecks[0] } else { "dom_read" }
-      if ($BrowserCheckOnly) { exit 30 }
-      $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:$missing" "Phase 0 full evidence failed"
-      exit $exitCode
-    }
-    Log "Phase 0 PASS: all environment evidence is present."
-    if ($BrowserCheckOnly) { exit 0 }
+    $XPreflightReady = $XPreflightWarnings.Count -eq 0
+    if ($XPreflightReady) { Log "Phase 0 PASS: 致命項目・X項目とも合格。" }
+    else { Log "Phase 0 WARNING: X保留項目=$($XPreflightWarnings -join ',')。記事3点を続行する。" }
+    if ($BrowserCheckOnly) { if ($XPreflightReady) { exit 0 } else { exit 20 } }
 
-    # 記事候補選定は環境全項目が合格した後だけ開始する。
+    # 記事候補選定は致命項目が合格した後に開始する。X警告は記事を止めない。
     Log "preflight: outer scout --auto-pick"
     node scripts/automation/scout.mjs --auto-pick --json 2>&1 | Out-File -FilePath $LogFile -Encoding utf8 -Append
     $scoutExit = $LASTEXITCODE
@@ -350,6 +352,7 @@ try {
   # The review API can lag behind handoff completion. Wait up to five minutes for
   # this exact slug. Phase C stays forbidden until PR merge and production HTTP 200.
   $phaseBVerified = $false
+  $XPendingBundleReady = $false
   if ($publishSlug) {
     Log "Phase B: review-item反映を30秒間隔・最大10回待って $publishSlug を公開する。"
     node scripts/automation/auto-phase-b.mjs --wait-for-target --attempts=10 --interval-ms=30000 --slug=$publishSlug 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
@@ -378,13 +381,23 @@ try {
       $exitCode = Record-ContractOutcome "fail" "phase_c_input_generation_failed" "missing=$xPostFile"
       exit $exitCode
     }
+    if (-not $XPreflightReady) {
+      $warningCsv = $XPreflightWarnings -join ','
+      node scripts/automation/x-pending-bundle.mjs create --slug $publishSlug --run-id $RunId --started-at $RunStartedAt --warnings $warningCsv 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
+      if ($LASTEXITCODE -ne 0) {
+        $exitCode = Record-ContractOutcome "fail" "x_pending_bundle_generation_failed" "slug=$publishSlug"
+        exit $exitCode
+      }
+      $XPendingBundleReady = $true
+      Log "Phase C SKIP: X警告=$warningCsv。投稿文・返信文・4画像をpending bundleとして保全した。"
+    }
   }
 
   # ---- 4-ter. Phase C は権限分離した別の非対話 Codex で実行 ----
   # 2026-08-09 実機マトリクスで、x.com を事前許可し、非対話 Codex 自身が
   # tabs.new() で専用タブを作る条件なら、入力・送信・投稿実在DOM確認まで成功した。
   # 対話側の所有タブは競合するため handoff/claim は標準経路にしない。
-  if ($publishSlug -and $phaseBVerified) {
+  if ($publishSlug -and $phaseBVerified -and $XPreflightReady) {
     $XPromptFile = Join-Path $RepoRoot "docs\x-post-codex-night-prompt.md"
     $XPrompt = (Get-Content $XPromptFile -Raw -Encoding utf8).Replace("{{SLUG}}", $publishSlug)
     $XCodexLog = Join-Path $NightDir "$DateStr.$RunId.codex-phase-c.log"
@@ -437,7 +450,11 @@ try {
     Log (($audit | Out-String).Trim())
     exit $contractExit
   }
-  $contract = & node $ContractScript evaluate --run-id $RunId --started-at $RunStartedAt 2>&1
+  if ($XPendingBundleReady) {
+    $contract = & node $ContractScript evaluate --run-id $RunId --started-at $RunStartedAt --slug $publishSlug --x-pending --x-warnings ($XPreflightWarnings -join ',') 2>&1
+  } else {
+    $contract = & node $ContractScript evaluate --run-id $RunId --started-at $RunStartedAt --slug $publishSlug 2>&1
+  }
   $contractExit = $LASTEXITCODE
   Log (($contract | Out-String).Trim())
   exit $contractExit
