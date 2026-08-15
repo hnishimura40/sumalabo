@@ -223,6 +223,7 @@ test("night Chrome startup uses the single environment definition", () => {
   assert.match(wrapper, /night-environment-check\.mjs --static-only/);
   assert.match(wrapper, /night-environment-check\.mjs --dom-evidence/);
   assert.match(wrapper, /--output-last-message", \$EnvironmentDomEvidence/);
+  assert.match(wrapper, /\$environmentArgs = @\("exec", "--ephemeral", "--sandbox", "workspace-write"/);
   assert.match(wrapper, /\$DateStr\.\$RunId\.environment-dom\.evidence\.json/);
   assert.match(wrapper, /environment_preflight_failed:\$missing/);
   const domProbe = read("docs/night_environment_dom_probe.md");

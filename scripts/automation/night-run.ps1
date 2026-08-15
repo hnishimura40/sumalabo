@@ -196,7 +196,10 @@ try {
     $EnvironmentDomLog = Join-Path $NightDir "$DateStr.$RunId.environment-dom.full.log"
     $EnvironmentDomEvidence = Join-Path $NightDir "$DateStr.$RunId.environment-dom.evidence.json"
     $EnvironmentPrompt = Get-Content (Join-Path $RepoRoot "docs\night_environment_dom_probe.md") -Raw -Encoding utf8
-    $environmentArgs = @("exec", "--ephemeral", "--sandbox", "read-only", "--skip-git-repo-check", "--color", "never", "--output-last-message", $EnvironmentDomEvidence, "-C", $RepoRoot, "-")
+    # Chrome control performs an OS process-presence check before DOM access.
+    # Use the same workspace-write sandbox as Phase C; GH_TOKEN remains removed
+    # from this child, so this only fixes the cold-start process inspection.
+    $environmentArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--skip-git-repo-check", "--color", "never", "--output-last-message", $EnvironmentDomEvidence, "-C", $RepoRoot, "-")
     if ($ChromeDomProbePossible) {
       $environmentPublisherToken = $env:GH_TOKEN
       $environmentPublisherExpiry = $env:GH_TOKEN_EXPIRES_AT
