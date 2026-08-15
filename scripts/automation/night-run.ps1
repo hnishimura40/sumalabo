@@ -114,7 +114,8 @@ try {
   $EnvironmentFile = Join-Path $RepoRoot "config\night-environment.json"
   $NightEnvironment = Get-Content -LiteralPath $EnvironmentFile -Raw -Encoding utf8 | ConvertFrom-Json
   $ChromeProfileDirectory = [string]$NightEnvironment.chrome.profileDirectory
-  $ChromeProfileRoot = Join-Path ([string]$NightEnvironment.chrome.userDataDirectory) $ChromeProfileDirectory
+  $ChromeUserDataDirectory = [string]$NightEnvironment.chrome.userDataDirectory
+  $ChromeProfileRoot = Join-Path $ChromeUserDataDirectory $ChromeProfileDirectory
   $env:CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH = [string]$NightEnvironment.chrome.nativeHostManifestPath
   $env:CODEX_CHROMIUM_PREFERENCES_PATH = Join-Path $ChromeProfileRoot "Preferences"
   $ChromeExeCandidates = @($NightEnvironment.chrome.executableCandidates | Where-Object { Test-Path -LiteralPath $_ })
@@ -168,22 +169,28 @@ try {
     $chromeProcesses = @(Get-Process chrome -ErrorAction SilentlyContinue)
     $chromeCount = $chromeProcesses.Count
     $visibleChromeCount = @($chromeProcesses | Where-Object { $_.MainWindowHandle -ne 0 }).Count
-    if ($chromeCount -gt 0 -and $visibleChromeCount -gt 0) {
+    $escapedProfile = [regex]::Escape($ChromeProfileDirectory)
+    $targetProfileRunning = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
+      Where-Object { $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)" }).Count -gt 0
+    if ($targetProfileRunning -and $visibleChromeCount -gt 0) {
       Log "Chrome は既に起動中（$chromeCount プロセス / 可視ウィンドウ $visibleChromeCount）。拡張経路を利用（$ChromeProfileDirectory）。"
     } else {
       if ($chromeCount -gt 0) { Log "Chromeのバックグラウンドプロセスのみ残存。$ChromeProfileDirectory の可視Xウィンドウを起動する。" }
       else { Log "Chrome未起動。$ChromeProfileDirectory の可視Xウィンドウを起動する。" }
       try {
         $chromeProcess = Start-Process -FilePath $ChromeExe -ArgumentList @(
-          "--profile-directory=$ChromeProfileDirectory", "--new-window", "https://x.com/compose/post",
+          "--user-data-dir=`"$ChromeUserDataDirectory`"", "--profile-directory=`"$ChromeProfileDirectory`"",
+          "--new-window", "https://x.com/compose/post",
           "--no-first-run", "--no-default-browser-check", "--start-maximized"
         ) -PassThru
         $script:ChromeRunPid = $chromeProcess.Id
         $script:ChromeRunExe = $ChromeExe
         Start-Sleep -Seconds 12
         $visibleChromeCount = @(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }).Count
+        $targetProfileRunning = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
+          Where-Object { $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)" }).Count -gt 0
       } catch { $visibleChromeCount = 0 }
-      if ($visibleChromeCount -eq 0) {
+      if ($visibleChromeCount -eq 0 -or -not $targetProfileRunning) {
         Log "Phase 0 WARNING: Chrome可視ウィンドウなし。記事工程は続行し、Phase Cだけ保留する。"
         if (-not $XPreflightWarnings.Contains("chrome_profile")) { $XPreflightWarnings.Add("chrome_profile") }
         $ChromeDomProbePossible = $false
