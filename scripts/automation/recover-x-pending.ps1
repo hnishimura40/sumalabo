@@ -22,15 +22,23 @@ if ($LASTEXITCODE -ne 0) { exit 30 }
 
 $ChromeExe = @($Environment.chrome.executableCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1)
 if (-not $ChromeExe) { throw 'chrome_executable_missing' }
+$ChromeProfileDirectory = [string]$Environment.chrome.profileDirectory
+$ChromeUserDataDirectory = [string]$Environment.chrome.userDataDirectory
+$escapedProfile = [regex]::Escape($ChromeProfileDirectory)
+$targetProfileRunning = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
+  Where-Object { $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)" }).Count -gt 0
 $visibleChrome = @(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }).Count
-if ($visibleChrome -eq 0) {
+if (-not $targetProfileRunning -or $visibleChrome -eq 0) {
   Start-Process -FilePath ([string]$ChromeExe[0]) -ArgumentList @(
-    "--profile-directory=$($Environment.chrome.profileDirectory)", '--new-window', 'https://x.com/compose/post',
+    "--user-data-dir=`"$ChromeUserDataDirectory`"", "--profile-directory=`"$ChromeProfileDirectory`"",
+    '--new-window', 'https://x.com/compose/post',
     '--no-first-run', '--no-default-browser-check', '--start-maximized'
   ) | Out-Null
   Start-Sleep -Seconds 15
 }
-if (@(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }).Count -eq 0) { throw 'chrome_visible_window_missing' }
+$targetProfileRunning = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
+  Where-Object { $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)" }).Count -gt 0
+if (-not $targetProfileRunning -or @(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }).Count -eq 0) { throw 'chrome_profile_window_missing' }
 
 $imagePaths = @($manifest.images | Sort-Object index | ForEach-Object { Join-Path $RepoRoot ([string]$_.path) })
 if ($imagePaths.Count -ne 4) { throw "x_attachment_plan_invalid:$($imagePaths.Count)" }
