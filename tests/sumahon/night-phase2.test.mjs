@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -56,6 +57,54 @@ test("scheduler entry wrappers are ASCII-only and point only to dedicated clone"
   assert.match(prepare, /createHash\("sha256"\)/);
   assert.match(prepare, /preservedGeneratedPaths/);
   assert.match(prepare, /invalid handoff is never sufficient/i);
+});
+
+test("runner hygiene deletes only configured temporary paths and distinguishes harmless untracked artifacts", async () => {
+  const environment = JSON.parse(read("config/night-environment.json"));
+  const entry = await import("../../scripts/automation/night-run-entry.mjs");
+  assert.deepEqual(environment.runnerHygiene.cleanupAllowlist, [".wrangler/"]);
+  assert.deepEqual(environment.runnerHygiene.harmlessUntrackedAllowlist, ["drafts/refinement/"]);
+
+  const classified = entry.classifyRunnerStatus([
+    "?? drafts/refinement/preserved/final_article.md",
+    "?? unexpected-token.txt",
+    " M scripts/automation/night-run.ps1",
+  ].join("\n"), environment.runnerHygiene.harmlessUntrackedAllowlist);
+  assert.deepEqual(classified.harmless, ["?? drafts/refinement/preserved/final_article.md"]);
+  assert.deepEqual(classified.dangerous, ["?? unexpected-token.txt", " M scripts/automation/night-run.ps1"]);
+
+  const root = mkdtempSync(path.join(os.tmpdir(), "sumalabo-runner-hygiene-"));
+  mkdirSync(path.join(root, ".wrangler", "tmp"), { recursive: true });
+  writeFileSync(path.join(root, ".wrangler", "tmp", "cache.json"), "{}\n");
+  writeFileSync(path.join(root, "dangerous.txt"), "preserve\n");
+  assert.deepEqual(entry.cleanupAllowlistedPaths(root, environment.runnerHygiene.cleanupAllowlist), [".wrangler/"]);
+  assert.equal(existsSync(path.join(root, ".wrangler")), false);
+  assert.equal(existsSync(path.join(root, "dangerous.txt")), true);
+  assert.throws(() => entry.cleanupAllowlistedPaths(root, ["../outside"]), /unsafe runner policy path/);
+});
+
+test("entry-death contract is discoverable by the watchdog", () => {
+  const entry = read("scripts/automation/night-run-entry.mjs");
+  const watchdog = read("scripts/automation/night-watchdog.ps1");
+  assert.match(entry, /writeLatestEntry\(\{ runId, startedAt, status: "entry_started" \}\)/);
+  assert.match(entry, /recordRunOutcome\(\{ runId, outcome: OUTCOMES\.FAILED, reason, detail \}/);
+  assert.match(entry, /writeLatestEntry\(\{ runId, startedAt, finishedAt: record\.finishedAt, status: "failed"/);
+  assert.match(watchdog, /latest-entry\.json/);
+  assert.match(watchdog, /Sort-Object[\s\S]*startedAt/);
+  assert.match(watchdog, /'--run-id', \$activeRunId/);
+});
+
+test("simulation scheduling requires a current editor instruction and never auto-reschedules", () => {
+  const environment = JSON.parse(read("config/night-environment.json"));
+  const scheduler = read("scripts/automation/schedule-night-acceptance.ps1");
+  const policy = read("docs/night_run_approval_policy.md");
+  assert.equal(environment.runApproval.simulationRequiresEditorInstruction, true);
+  assert.equal(environment.runApproval.acceptanceRequiresEditorInstruction, true);
+  assert.equal(environment.runApproval.autoRescheduleAfterFailure, false);
+  assert.match(scheduler, /\[switch\]\$EditorApproved/);
+  assert.match(scheduler, /if \(-not \$EditorApproved\) \{ throw 'editor_instruction_required' \}/);
+  assert.match(scheduler, /autoRescheduleAfterFailure -ne \$false/);
+  assert.match(policy, /Never schedule a retry automatically/);
 });
 
 test("VIVANT reannouncement registration uses the weekly ASCII task entry", async () => {

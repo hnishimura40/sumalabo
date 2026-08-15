@@ -10,20 +10,22 @@ New-Item -ItemType Directory -Force $NightDir | Out-Null
 $DateStr = $Now.ToString('yyyy-MM-dd')
 $HeartbeatFile = Join-Path $NightDir "$DateStr.heartbeat.json"
 $LockFile = Join-Path $NightDir 'run.lock'
+$LatestEntryFile = Join-Path $NightDir 'latest-entry.json'
 $WatchFile = Join-Path $NightDir "$DateStr.watchdog.json"
 $ContractScript = Join-Path $RepoRoot 'scripts\automation\night-run-contract.mjs'
 
 # Read the current-run state before auditing old outcomes.  A prior scheduled
 # acceptance stop is not a result for a later production attempt.
-$state = $null
-foreach ($candidate in @($LockFile, $HeartbeatFile)) {
+$stateCandidates = @()
+foreach ($candidate in @($LockFile, $HeartbeatFile, $LatestEntryFile)) {
   if (Test-Path $candidate) {
     try {
-      $state = Get-Content $candidate -Raw -Encoding utf8 | ConvertFrom-Json
-      break
+      $candidateState = Get-Content $candidate -Raw -Encoding utf8 | ConvertFrom-Json
+      if ($candidateState.runId -and $candidateState.startedAt) { $stateCandidates += $candidateState }
     } catch {}
   }
 }
+$state = @($stateCandidates | Sort-Object -Property @{ Expression = { try { [datetime]$_.startedAt } catch { [datetime]::MinValue } }; Descending = $true }, @{ Expression = { try { [datetime]$_.heartbeatAt } catch { [datetime]::MinValue } }; Descending = $true } | Select-Object -First 1)[0]
 $activeAttemptAt = $null
 $activeRunId = $null
 if ($state) {

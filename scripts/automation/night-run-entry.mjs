@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import crypto from "node:crypto";
 import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
@@ -8,9 +8,56 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { OUTCOMES, outcomeFile, recordRunOutcome } from "./night-run-contract.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const ENVIRONMENT_FILE = path.join(ROOT, "config", "night-environment.json");
+const LATEST_ENTRY_FILE = path.join(ROOT, "logs", "night", "latest-entry.json");
 
 function run(command, args) {
   return spawnSync(command, args, { cwd: ROOT, encoding: "utf8", windowsHide: true });
+}
+
+function normalizedRelativePolicyPath(value) {
+  const normalized = String(value || "").trim().replaceAll("\\", "/").replace(/^\.\//, "").replace(/\/+$/, "");
+  if (!normalized || normalized === "." || path.posix.isAbsolute(normalized) || /^[A-Za-z]:/.test(normalized)) throw new Error(`unsafe runner policy path: ${value}`);
+  if (normalized.split("/").some((part) => !part || part === "." || part === "..")) throw new Error(`unsafe runner policy path: ${value}`);
+  if (/[*?\[\]{}]/.test(normalized)) throw new Error(`runner policy paths must be exact prefixes: ${value}`);
+  return normalized;
+}
+
+export function cleanupAllowlistedPaths(root, entries, remove = rmSync) {
+  const removed = [];
+  for (const entry of entries || []) {
+    const relative = normalizedRelativePolicyPath(entry);
+    const target = path.resolve(root, ...relative.split("/"));
+    const relation = path.relative(root, target);
+    if (!relation || relation.startsWith("..") || path.isAbsolute(relation)) throw new Error(`runner cleanup escaped root: ${entry}`);
+    if (!existsSync(target)) continue;
+    remove(target, { recursive: true, force: true, maxRetries: 2 });
+    removed.push(`${relative}/`);
+  }
+  return removed;
+}
+
+export function classifyRunnerStatus(statusText, harmlessAllowlist = []) {
+  const harmlessPrefixes = (harmlessAllowlist || []).map(normalizedRelativePolicyPath);
+  const harmless = [];
+  const dangerous = [];
+  for (const line of String(statusText || "").split(/\r?\n/).filter(Boolean)) {
+    if (!line.startsWith("?? ")) {
+      dangerous.push(line);
+      continue;
+    }
+    const relative = line.slice(3).replaceAll("\\", "/").replace(/\/+$/, "");
+    const allowed = harmlessPrefixes.some((prefix) => relative === prefix || relative.startsWith(`${prefix}/`));
+    (allowed ? harmless : dangerous).push(line);
+  }
+  return { harmless, dangerous };
+}
+
+function writeLatestEntry(value) {
+  mkdirSync(path.dirname(LATEST_ENTRY_FILE), { recursive: true });
+  const temporary = `${LATEST_ENTRY_FILE}.${process.pid}.tmp`;
+  writeFileSync(temporary, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  renameSync(temporary, LATEST_ENTRY_FILE);
 }
 
 export function isolatedShellOptions({ cwd = ROOT, env = process.env } = {}) {
@@ -53,7 +100,8 @@ function runIdFor(date) {
 }
 
 function fail(runId, startedAt, reason, detail) {
-  recordRunOutcome({ runId, outcome: OUTCOMES.FAILED, reason, detail }, { root: ROOT, startedAt });
+  const record = recordRunOutcome({ runId, outcome: OUTCOMES.FAILED, reason, detail }, { root: ROOT, startedAt });
+  writeLatestEntry({ runId, startedAt, finishedAt: record.finishedAt, status: "failed", outcome: record.outcome, reason: record.reason });
   console.error(`[night-entry] ${reason}`);
   process.exitCode = 30;
 }
@@ -64,11 +112,21 @@ async function main() {
   const runId = runIdFor(started);
   process.env.SUMALABO_NIGHT_RUN_ID = runId;
   process.env.SUMALABO_NIGHT_RUN_STARTED_AT = startedAt;
+  writeLatestEntry({ runId, startedAt, status: "entry_started" });
 
-  const status = run("git", ["status", "--porcelain", "--untracked-files=normal"]);
-  if (status.status !== 0) fail(runId, startedAt, "runner_clone_status_failed", String(status.stderr || "").trim());
-  else if (String(status.stdout || "").trim()) fail(runId, startedAt, "runner_clone_dirty", String(status.stdout).trim().slice(0, 2000));
-  else {
+  let environment;
+  try { environment = JSON.parse(readFileSync(ENVIRONMENT_FILE, "utf8").replace(/^\uFEFF/u, "")); }
+  catch (error) { fail(runId, startedAt, "runner_environment_definition_invalid", error.message); }
+  if (process.exitCode !== 30) {
+    try { cleanupAllowlistedPaths(ROOT, environment?.runnerHygiene?.cleanupAllowlist || []); }
+    catch (error) { fail(runId, startedAt, "runner_cleanup_allowlist_failed", error.message); }
+  }
+
+  const status = process.exitCode === 30 ? null : run("git", ["status", "--porcelain=v1", "--untracked-files=all"]);
+  const classified = status ? classifyRunnerStatus(status.stdout, environment?.runnerHygiene?.harmlessUntrackedAllowlist || []) : { harmless: [], dangerous: [] };
+  if (status && status.status !== 0) fail(runId, startedAt, "runner_clone_status_failed", String(status.stderr || "").trim());
+  else if (classified.dangerous.length) fail(runId, startedAt, "runner_clone_dirty", classified.dangerous.join("\n").slice(0, 2000));
+  else if (process.exitCode !== 30) {
     const fetch = run("git", ["fetch", "origin", "main", "--prune"]);
     if (fetch.status !== 0) fail(runId, startedAt, "runner_clone_fetch_failed", String(fetch.stderr || "").trim());
     else {
@@ -98,6 +156,8 @@ async function main() {
           if (!existsSync(outcomeFile(runId, ROOT))) {
             fail(runId, startedAt, "night_run_returned_without_contract", `exit=${shell.status ?? 1}`);
           } else {
+            const record = JSON.parse(readFileSync(outcomeFile(runId, ROOT), "utf8").replace(/^\uFEFF/u, ""));
+            writeLatestEntry({ runId, startedAt, finishedAt: record.finishedAt, status: "completed", outcome: record.outcome, reason: record.reason });
             process.exitCode = shell.status ?? 30;
           }
         }
