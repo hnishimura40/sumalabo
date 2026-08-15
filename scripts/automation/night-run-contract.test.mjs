@@ -113,6 +113,21 @@ test("watchdog independently accepts a recorded stopped_x_pending outcome", asyn
   assert.equal(audit.mismatch, false);
 });
 
+test("watchdog accepts an entry-death failed contract for the exact run id without mismatch", async () => {
+  const root = fixture();
+  const recorded = recordRunOutcome({
+    runId: "20260815T113849.464",
+    outcome: OUTCOMES.FAILED,
+    reason: "runner_clone_dirty",
+    detail: "?? dangerous.tmp",
+  }, { root, startedAt: "2026-08-15T11:38:49+09:00" });
+  const audit = await auditRecordedOutcome(recorded, { root });
+  assert.equal(audit.runId, "20260815T113849.464");
+  assert.equal(audit.outcome, OUTCOMES.FAILED);
+  assert.equal(audit.reason, "runner_clone_dirty");
+  assert.equal(audit.mismatch, false);
+});
+
 test("8/10 regression ID is preserved when no slug can be resolved", async () => {
   const root = fixture();
   const result = await evaluateSuccessContract({ root, runId: REGRESSION_RUN_ID, startedAt: STARTED_AT, probes: probes() });
