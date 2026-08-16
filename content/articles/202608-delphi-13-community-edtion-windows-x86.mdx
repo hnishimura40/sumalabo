@@ -1,0 +1,215 @@
+---
+title: "Delphiの無料版が13へ。4OS向け開発、その前に知りたい制限"
+slug: "202608-delphi-13-community-edtion-windows-x86"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Delphi 13 Community Editionが提供開始。64-bit IDE、Android 15・iOS 18対応、4OS向け開発の意味、年5,000 USドルなどの利用条件、Kai非対応をやさしく整理します。"
+thumbnail: "/images/thumbnails/202608-delphi-13-community-edtion-windows-x86.webp"
+thumbnailAlt: "Delphiの無料版が13へ更新され、ひまりとらぼまるが開発机で4種類の端末に同じアプリ画面を表示して喜ぶイラスト"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_guide_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Delphi"
+  - "Community Edition"
+  - "アプリ開発"
+  - "Windows"
+  - "Android"
+  - "iOS"
+related:
+  - "ai-work-productivity-experience-2026"
+  - "ai-model-benchmark-cost-guide-2026"
+pubDate: "2026-08-17"
+updated: "2026-08-17"
+publishAt: "2026-08-17T04:55:00+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Delphi Community Editionの無料版が、12.1から**Delphi 13 Florence世代**へ更新されました。学生や趣味の開発者にとっては、新しい64-bit IDEやAndroid 15、iOS 18対応を無料で使えるようになった朗報です。
+
+ただし、「無料」「4OS対応」だけを見て導入すると、環境やライセンスでつまずく可能性があります。IDEを動かすPCはWindowsが前提で、macOS／iOS向けのビルドにはMac側の環境も必要です。商用利用には年間売上などの条件があり、AIコーディング支援のKaiはCommunity Editionでは利用できません。
+
+<Summary30>
+  <ol>
+    <li>Delphi 13 CEは公式ページで提供開始を確認できる</li>
+    <li>64-bit IDE、64-bit language server、Android 15／iOS 18対応などが加わった</li>
+    <li>4OS向けに作れるが、IDEそのものはWindowsで動かす</li>
+    <li>無料でも年5,000 USドルなどの利用条件があり、Kaiは対象外</li>
+  </ol>
+</Summary30>
+
+<NumCards items={[
+  { num: "13", cap: "Community Editionの新しい世代" },
+  { num: "4OS", cap: "Windows・macOS・iOS・Android向け" },
+  { num: "5,000 USドル", cap: "個人・企業の利用資格で確認する上限" },
+]} />
+
+<CharacterBubble speaker="himari" mood="aha">無料版でも、新しい64-bit IDEを使えるようになったんだね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">そうだよ。ただし「作れるOS」と「IDEを動かすOS」、それに利用条件は分けて確認しよう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-delphi-13-community-edtion-windows-x86/slide01.webp" alt="Delphi Community Editionの無料版が13へ更新されたことを、開発机のひまりとらぼまるが喜ぶ場面で示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：Delphiの無料版が13へ</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>図のポイント（コピー可能）</strong></p><p>公式ダウンロードページでDelphi 13 Community Editionの提供を確認できます。</p></div>
+</section>
+
+## 無料版が12.1からDelphi 13へ
+
+Embarcaderoの公式ダウンロードページは「Delphi 13 CE」を案内し、Community Editionが12.1からFlorence世代へ進んだと説明しています。
+
+主な更新は、新しいDelphi言語機能、Android 15とiOS 18への対応、ネイティブ64-bit IDE、64-bit language server、エディターの分割表示、Focus Mode、コードナビゲーション改善です。特に64-bit化は、大きなプロジェクトでIDEやコード解析が従来のメモリ制約を受けにくくなる変化です。
+
+ただし、公式が「フル機能のIDE」と表現していても、有料版とすべて同じという意味ではありません。利用できる追加機能や接続先、ライセンスには差があります。
+
+<Callout kind="facts" title="公式ページで確認できたこと">
+
+- Delphi 13 Community Editionの提供開始
+- 12.1からFlorence世代への更新
+- Android 15、iOS 18、64-bit IDE、64-bit language server
+- Windows、macOS、Android、iOS向けアプリ開発
+- KaiはCommunity Editionに含まれず、対応もしない
+
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-delphi-13-community-edtion-windows-x86/slide02.webp" alt="Delphi Community Editionが12.1から13へ進み、64-bit IDEになったことを示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：12.1から13へ更新</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>図のポイント（コピー可能）</strong></p><p>世代更新とネイティブ64-bit IDEが、今回の大きな変化です。</p></div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-delphi-13-community-edtion-windows-x86/slide03.webp" alt="分割表示とFocus Modeでコード編集が快適になることを示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：編集まわりの主な改善</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>図のポイント（コピー可能）</strong></p><p>64-bit language server、分割表示、Focus Mode、コードナビゲーション改善が案内されています。</p></div>
+</section>
+
+## 4OS向けに作れる。でもIDEはWindowsで動かす
+
+Delphi CEは、Windows、macOS、Android、iOS向けアプリを単一のDelphiコードベースから開発できると案内されています。ここでいう4OS対応は、**作るアプリのターゲット**を指します。
+
+Delphi／RAD StudioのIDEそのものは、64-bit版Windows 10またはWindows 11が前提です。macOSやiOS向けのアプリをビルド、テスト、署名するには、Mac、Xcode、Apple Developer Programなど対象側の環境も必要になります。
+
+Mac単体にDelphi IDEを入れて4OS開発が完結するわけではありません。Windows PCを開発の中心に置き、必要に応じてMacや実機を接続する構成です。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-delphi-13-community-edtion-windows-x86/slide04.webp" alt="ひとつのコードからWindows、Mac、iOS、Android向けアプリを作れることを4種類の端末で示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：単一コードベースから4OS向け</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>図のポイント（コピー可能）</strong></p><p>対応先は4OSですが、すべての端末でIDEが動くという意味ではありません。</p></div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-delphi-13-community-edtion-windows-x86/slide05.webp" alt="Delphi IDEはWindowsで動かし、MacとiOS向けには別のMac側環境も必要になることを示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：IDEを動かす環境とターゲットは別</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>図のポイント（コピー可能）</strong></p><p>IDEはWindows 10／11が前提。Mac・iOS向けにはMacやXcode等も必要です。</p></div>
+</section>
+
+## 無料でも商用利用には線引きがある
+
+Community Editionは、学生、趣味の個人開発者、条件内の小規模開発者が始めやすい無料版です。一方で、無条件に誰でも業務利用できるライセンスではありません。
+
+公式日本語ページでは、個人が有料アプリやコンポーネントを販売する場合、年間売上が5,000 USドル未満であることを条件として示しています。スタートアップ企業では、企業全体の年間売上が5,000 USドル未満で、開発者が5名以下であることなどが条件です。
+
+企業に所属していて個人的に使う場合も、企業支給PC、企業メール、企業ネットワークを使うと企業利用とみなされる可能性があります。購入前評価や社内研修の代わりにCEを使うことも、公式ページでは対象外の例に含まれます。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-delphi-13-community-edtion-windows-x86/slide06.webp" alt="Delphi Community Editionは無料でも年5,000 USドル未満などの利用条件があることを示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：無料版の利用条件</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>図のポイント（コピー可能）</strong></p><p>個人の売上、企業全体の売上、開発者人数、企業PC利用を確認します。</p></div>
+</section>
+
+## IDE内AIのKaiは対象外
+
+Delphi 13世代にはIDE内で動くAIアシスタントKaiがありますが、Community Editionには含まれず、対応もしないと公式ページに明記されています。
+
+コード生成やビルド、エラー修正を支援するKaiまで試したい場合は、RAD Studio、Delphi、C++BuilderのTrialまたはKaiに対応する有料版を確認する必要があります。「Delphi 13 CEになったからKaiも無料で使える」という理解は誤りです。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-delphi-13-community-edtion-windows-x86/slide07.webp" alt="KaiはDelphi Community Editionの対象外で、AI支援は有料版を確認する必要があることを示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：KaiはCommunity Edition対象外</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>図のポイント（コピー可能）</strong></p><p>Kaiを試したい場合は、Trialまたは対応する有料版を確認します。</p></div>
+</section>
+
+## Windows on Armなどは実物確認が安全
+
+スカウト元の見出しにはWindows x86／Armを含む幅広いターゲットが挙げられていました。一方、Delphi CE 13の公式ページが明記するのは、Windows、macOS、Android、iOS、Android 15、iOS 18、64-bit IDEなどです。
+
+Windows on ArmはRAD Studio 13.1で追加された機能として公式資料にありますが、CE 13公式ページの説明だけではCommunity Editionに含まれると確認できません。Android 16やiOS 26など13.1相当の対応も同様です。特定ターゲットが目的なら、インストール後のFeature Managerとライセンス画面で利用可否を確認してから開発計画を立てましょう。
+
+<Callout kind="claims" title="報道見出しは公式CEページと分けて確認">
+
+- スカウト元はWindows x86／Armなど幅広いターゲットを紹介
+- CE公式ページはWindows on Armの同梱を本文で明記していない
+- RAD Studio 13.1の機能を、そのままCE 13にもあるとは断定しない
+
+</Callout>
+
+## 公式Q&Aには古い12.1表記が残る
+
+2026年8月17日時点で、Delphi CEのダウンロードページとサイトメニューは「Delphi 13 CE」を明記しています。一方、Community Edition Q&Aには「現在の最新バージョンは12.1 Athens」と残る箇所があります。
+
+提供開始自体は公式ダウンロードページで確認できますが、細かな説明ページは更新が揃っていない可能性があります。ダウンロード時に表示されるバージョン、Feature Manager、ライセンス本文を最終確認に使うのが確実です。
+
+<Callout kind="unc" title="要確認（2026年8月17日時点）">
+
+- 実際に配布される細かなビルド番号
+- CEでWindows on Armをターゲットにできるか
+- Android 16、iOS 26など13.1相当機能の範囲
+- 公式Q&Aの旧12.1表記がいつ更新されるか
+
+</Callout>
+
+<Note>「インストールできるOS」と「作れるアプリの対象OS」は別です。特定ターゲットが目的なら、ダウンロード後のFeature Managerで確認してください。</Note>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-delphi-13-community-edtion-windows-x86/slide08.webp" alt="Delphi 13 Community Editionを入れる前に利用資格、Windows環境、対象OS、必要機能の4点を確認する図解" loading="lazy" decoding="async" />
+    <figcaption>図解：導入前に確認する4項目</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>図のポイント（コピー可能）</strong></p><p>利用資格、Windows環境、対象OS側の環境、CEに必要機能があるかを順番に見ます。</p></div>
+</section>
+
+## まとめ
+
+Delphiを学び直したい個人、学生、趣味でデスクトップ／モバイルアプリを作りたい人、利用条件内の小規模開発者には有力な入口です。12.1 CEを使っていた人にとっても、64-bit IDEや新しい編集機能へ進める価値があります。
+
+反対に、企業業務、上限を超える売上、Kai、エンタープライズ向け機能、Windows on Armなど特定のターゲットが必須なら、CEだけで決めずTrialや有料版との差を先に確認しましょう。
+
+始める順番は、利用資格を読む、Windows環境を確認する、必要な対象OSの環境を用意する、Feature Managerでターゲットを確認する、の4段階です。無料という言葉より、自分の用途がライセンスと機能範囲に合うかを先に見ると迷いません。
+
+<CharacterBubble speaker="himari" mood="aha">まず利用条件と開発環境を見れば、自分に合うか判断できそう。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">うん。細かな対応先はFeature Manager、利用範囲は最新のライセンス本文で確認しよう。</CharacterBubble>
+
+## 参考情報
+
+- [Embarcadero：Delphi Community Edition](https://www.embarcadero.com/jp/products/delphi/starter)
+- [Embarcadero：Community Edition Q&A](https://www.embarcadero.com/jp/products/delphi/starter/faq)
+- [Embarcadero DocWiki：Installation Notes - RAD Studio Florence](https://docwiki.embarcadero.com/RADStudio/Florence/en/Installation_Notes)
+- [Embarcadero DocWiki：Supported Target Platforms](https://docwiki.embarcadero.com/RADStudio/Florence/en/Supported_Target_Platforms)
+
+<Note>機能、対応OS、ライセンス条件は2026年8月17日時点です。導入前に公式の最新表示をご確認ください。</Note>
