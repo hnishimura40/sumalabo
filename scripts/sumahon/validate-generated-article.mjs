@@ -1,3 +1,5 @@
+import { validatePlainLanguageArticle } from "./plain-language-policy.mjs";
+
 function normalizeText(value = "") {
   return String(value).replace(/\s+/g, "");
 }
@@ -48,6 +50,7 @@ const CHARACTER_VISUAL_PATTERNS = [
   /<CharacterDialogue[\s/>]/,
   /<CharacterCallout[\s/>]/,
   /<CharacterGuideCard[\s/>]/,
+  /<CharacterBubble[\s/>]/,
   /\/images\/characters\//,
 ];
 
@@ -123,7 +126,7 @@ const requiredTopics = [
   {
     code: "summary",
     label: "先に結論",
-    needles: ["先に結論", "結論", "まず結論", "最初に"],
+    needles: ["先に結論", "結論", "まず結論", "最初に", "これは何？", "結局どうなの？"],
   },
   {
     code: "what_happened",
@@ -465,8 +468,8 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists, f
     issues.push(makeIssue("source_respect", "major", "元記事の要点文と同一または近すぎる長文が本文に含まれている可能性があります。"));
   }
 
-  if (!includesAny(plain, ["普通の人", "初心者", "ユーザー", "読者"])) {
-    issues.push(makeIssue("reader_focus", "warning", "普通の人・初心者・読者目線の表現が弱い可能性があります。"));
+  if (!includesAny(plain, ["関係がある人", "あまり関係がない人", "誰に関係ある？", "結局どうなの？"])) {
+    issues.push(makeIssue("reader_focus", "warning", "誰に関係するか、読者目線の結論が弱い可能性があります。"));
   }
 
   if (!thumbnailExists) {
@@ -518,6 +521,11 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists, f
     issues.push(qIssue);
   }
 
+  const plainLanguageCheck = validatePlainLanguageArticle(body, { requireNewsStructure: true });
+  for (const plainIssue of plainLanguageCheck.issues) {
+    issues.push(plainIssue);
+  }
+
   const hasMajorIssue = issues.some((issue) => issue.severity === "major");
 
   return {
@@ -529,6 +537,7 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists, f
     issues,
     sourceCheck,
     articleQualityCheck,
+    plainLanguageCheck,
     publishable: !hasMajorIssue,
     provisionalDecision: hasMajorIssue ? "要修正" : "preview確認後に公開可",
   };

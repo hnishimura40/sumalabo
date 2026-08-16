@@ -1,70 +1,80 @@
-# Delphiの無料版が13へ。4OS向け開発を始める前に知りたい制限
+Delphiは、アプリを作るための開発ソフトです。初めて聞いた人なら、今回のニュースを急いで気にする必要はありません。これは主に「自分でアプリを作ってみたい人」に関係する更新です。
 
-Delphi Community Editionの無料版が、12.1からDelphi 13 Florence世代へ更新されました。学生や趣味の開発者にとっては、新しい64-bit IDEやAndroid 15、iOS 18対応を無料で使えるようになった朗報です。
+## 30秒で分かる
 
-ただし、「無料」「4OS対応」だけを見て導入すると、環境やライセンスでつまずく可能性があります。IDEを動かすPCはWindowsが前提で、macOS／iOS向けのビルドにはMac側の環境も必要です。商用利用には年間売上などの条件があり、AIコーディング支援のKaiはCommunity Editionでは利用できません。
+- **これは何？** Delphiは、Windowsパソコンでプログラムを書き、アプリを作るための開発ソフトです。Community Editionは、学生や趣味の開発者などが条件内で使える無料版です。
+- **何があった？** 無料版がDelphi 13世代へ進み、作業ソフトの64bit化や新しいスマホOSへの対応などが加わりました。
+- **誰に関係ある？** 趣味でアプリを作りたい人、Delphiを学びたい人、旧無料版の利用者に関係します。完成したアプリを使うだけの人には、ほぼ直接の影響はありません。
+- **結局どうなの？** アプリ作りを無料で試す入口としては便利です。ただし、利用条件と作りたい端末への対応を先に確認しましょう。
 
-## 30秒でわかる結論
+## そもそもDelphiって何？
 
-- Delphi 13 CEは公式ページで提供開始を確認できる
-- 12.1から64-bit IDE、64-bit language server、Android 15／iOS 18対応などが更新された
-- Windows、macOS、Android、iOS向けアプリを単一コードベースから開発できる
-- 無料でも利用資格があり、企業PCや年間売上の条件を確認する必要がある
-- Windows on Armなど細かな対応範囲は、CEのFeature Managerで実物確認したい
+Delphiは、画面を組み立てながらプログラムを書き、Windowsやスマホ向けのアプリを作るための開発ソフトです。文書作成にWordを使うように、アプリ開発ではDelphiのような作業ソフトを使います。
 
-## 無料版が12.1からDelphi 13へ
+この作業ソフトは、専門的にはIDEと呼ばれます。IDEとは、プログラムの入力、動作確認、間違い探しなどを一つの画面で行える「アプリ作りの作業場」のことです。
 
-Embarcaderoの公式ダウンロードページは「Delphi 13 CE」を案内し、Community Editionが12.1からFlorence世代へ進んだと説明しています。
+Community Editionは、Delphiを無料で試せる版です。ただし、誰でも無条件に仕事で使えるわけではなく、売上や利用環境などの条件があります。
 
-主な更新は、新しいDelphi言語機能、Android 15とiOS 18への対応、ネイティブ64-bit IDE、64-bit language server、エディターの分割表示、Focus Mode、コードナビゲーション改善です。特に64-bit化は、大きなプロジェクトでIDEやコード解析が従来のメモリ制約を受けにくくなる変化です。
+## あなたに関係ある？
 
-ただし、公式が「フル機能のIDE」と表現していても、有料版とすべて同じではありません。利用できる追加機能や接続先、ライセンスには差があります。
+### 関係がある人
 
-## 4OS向けに作れる。でもIDEはWindowsで動かす
+- 趣味や学習でアプリを作ってみたい人
+- Delphiを勉強したい学生
+- Delphi 12.1の無料版を使っている人
+- 小規模な仕事で使い、無料版の条件を満たす人
 
-Delphi CEは、Windows、macOS、Android、iOS向けアプリを単一のDelphiコードベースから開発できると案内されています。ここでいう4OS対応は、作るアプリのターゲットを指します。
+### あまり関係がない人
 
-Delphi／RAD StudioのIDEそのものは、64-bit版Windows 10またはWindows 11が前提です。macOSやiOS向けのアプリをビルド、テスト、署名するには、Mac、Xcode、Apple Developer Programなど対象側の環境も必要になります。
+- Windowsやスマホで完成済みのアプリを使うだけの人
+- プログラミングやアプリ開発をする予定がない人
 
-つまり、Mac単体にDelphi IDEを入れて4OS開発が完結するわけではありません。Windows PCを開発の中心に置き、必要に応じてMacや実機を接続する構成です。
+## 今回何が変わった？
 
-## 無料でも商用利用には線引きがある
+公式ページでは、無料版が12.1からDelphi 13 Florence世代へ進んだと案内されています。大きな変更の一つはIDEそのものの64bit化です。作業ソフトがより広いメモリーを使えるため、大きな開発データを扱うときに余裕を持ちやすくなります。
 
-Community Editionは、学生、趣味の個人開発者、条件内の小規模開発者が始めやすい無料版です。一方で、無条件に誰でも業務利用できるライセンスではありません。
+入力補完やエラーチェックを裏側で手伝う仕組み（language server）も64bit化されました。Android 15とiOS 18への対応、画面を分けてコードを見る機能なども案内されています。
 
-公式日本語ページでは、個人が有料アプリやコンポーネントを販売する場合、年間売上が5,000 USドル未満であることを条件として示しています。スタートアップ企業では、企業全体の年間売上が5,000 USドル未満で、開発者が5名以下であることなどが条件です。
+## 1つの元データから4種類の端末向けに作りやすい
 
-企業に所属していて個人的に使う場合も、企業支給PC、企業メール、企業ネットワークを使うと企業利用とみなされる可能性があります。購入前評価や社内研修の代わりとしてCEを使うことも、公式ページでは対象外の例に含まれます。
+Delphiは、基本となる一つのプログラムからWindows、macOS、Android、iOS向けのアプリを作り分けやすい仕組みを持っています。これを専門的には単一コードベースからの開発と呼びます。
 
-## IDE内AIのKaiは対象外
+ただし、Delphiを動かす開発用パソコンは64bit版のWindows 10またはWindows 11が前提です。MacやiPhone向けのアプリを完成させるには、Mac、Appleの開発ソフトXcode、必要に応じて開発者登録も使います。
 
-Delphi 13世代にはIDE内で動くAIアシスタントKaiがありますが、Community Editionには含まれず、対応もしないと公式ページに明記されています。
+## 何がうれしい？
 
-コード生成やビルド、エラー修正を支援するKaiまで試したい場合は、RAD Studio、Delphi、C++BuilderのTrialまたはKaiに対応する有料版を確認する必要があります。「Delphi 13 CEになったからKaiも無料で使える」という理解は誤りです。
+初めてアプリを作る人は、料金を払う前に本格的な開発環境を試せます。旧無料版の利用者は、より新しいスマホOS向けの確認や、64bit化された作業環境へ移れます。
 
-## Windows on Armなどは実物確認が安全
+一つの土台から複数の端末向けへ展開しやすい点も利点です。ただし、ボタン一つで全端末向けが完成するわけではなく、画面サイズや端末ごとの確認は必要です。
 
-スカウト元の見出しにはWindows x86／Armを含む幅広いターゲットが挙げられていました。一方、Delphi CE 13の公式ページが明記するのは、Windows、macOS、Android、iOS、Android 15、iOS 18、64-bit IDEなどです。
+## 注意点：無料版にも利用条件がある
 
-Windows on ArmはRAD Studio 13.1で追加された機能として公式資料にありますが、CE 13公式ページの説明だけでは、Community Editionに含まれると確認できません。Android 16やiOS 26など13.1相当の対応も同様です。特定ターゲットが目的なら、インストール後のFeature Managerとライセンス画面で利用可否を確認してから開発計画を立てましょう。
+公式日本語ページでは、個人が有料アプリなどを販売する場合、年間売上が5,000 USドル未満であることを条件の一つにしています。スタートアップ企業では、企業全体の年間売上が5,000 USドル未満で、開発者が5人以下であることなどが示されています。
 
-## 公式Q&Aには古い12.1表記が残る
+会社のパソコン、メール、ネットワークを使うと企業利用と判断される可能性があります。評価や社内研修の代わりに無料版を使うことも対象外の例です。
 
-2026年8月17日時点で、Delphi CEのダウンロードページとサイトメニューは「Delphi 13 CE」を明記しています。一方、Community Edition Q&Aには「現在の最新バージョンは12.1 Athens」と残る箇所があります。
+## AI開発支援のKaiは無料版では使えない
 
-提供開始自体は公式ダウンロードページで確認できますが、細かな説明ページは更新が揃っていない可能性があります。ダウンロード時に表示されるバージョン、Feature Manager、ライセンス本文を最終確認に使うのが確実です。
+Kaiは、コード作成やエラー修正をAIで手伝うDelphiの開発支援機能です。Delphi 13世代の機能ですが、Community Editionには含まれず、対応もしないと公式ページに明記されています。
 
-## 試しやすい人、先に有料版も見る人
+## もう少し詳しく知りたい人向け
 
-Delphiを学び直したい個人、学生、趣味でデスクトップ／モバイルアプリを作りたい人、利用条件内の小規模開発者には有力な入口です。12.1 CEを使っていた人にとっても、64-bit IDEや新しい編集機能へ進める価値があります。
+ARMは、一部のWindowsパソコンやスマホで使われるCPUの設計方式です。公式資料ではRAD Studio 13.1にWindows on Arm向け機能が追加されたと案内されていますが、Community Editionの案内だけでは無料版で使えると確認できません。
 
-反対に、企業業務、上限を超える売上、Kai、エンタープライズ向け機能、Windows on Armなど特定のターゲットが必須なら、CEだけで決めずTrialや有料版との差を先に確認しましょう。
+Feature Managerは、Delphiへ追加する開発機能や対象端末を選ぶ設定画面です。特定の端末向けに作りたい人は、インストール後にこの画面とライセンス表示で利用可否を確認するのが安全です。
 
-始める順番は、利用資格を読む、Windows環境を確認する、必要な対象OSの環境を用意する、Feature Managerでターゲットを確認する、の4段階です。無料という言葉より、自分の用途がライセンスと機能範囲に合うかを先に見ると迷いません。
+2026年8月17日時点では、Delphi 13 CEのダウンロード案内がある一方、Community EditionのQ&Aに旧版12.1の表記が残る箇所もあります。細かな条件はダウンロード時の表示と最新のライセンスを優先してください。
+
+## すまラボまとめ
+
+Delphi 13 Community Editionは、アプリ作りを学びたい人や、条件内で小規模に使いたい人に便利な無料版です。完成したアプリを使うだけの人には、ほぼ関係ありません。
+
+仕事で使う人、AI支援のKaiが必要な人、Windows on Armなど特定の対応先が必要な人は、無料版だけで決めず公式の利用条件と機能一覧を確認しましょう。
 
 ## 参考情報
 
-- https://www.embarcadero.com/jp/products/delphi/starter
-- https://www.embarcadero.com/jp/products/delphi/starter/faq
-- https://docwiki.embarcadero.com/RADStudio/Florence/en/Installation_Notes
-- https://docwiki.embarcadero.com/RADStudio/Florence/en/Supported_Target_Platforms
+- [Embarcadero：Delphi Community Edition](https://www.embarcadero.com/jp/products/delphi/starter)
+- [Embarcadero：Community Edition Q&A](https://www.embarcadero.com/jp/products/delphi/starter/faq)
+- [Embarcadero DocWiki：Installation Notes - RAD Studio Florence](https://docwiki.embarcadero.com/RADStudio/Florence/en/Installation_Notes)
+- [Embarcadero DocWiki：Supported Target Platforms](https://docwiki.embarcadero.com/RADStudio/Florence/en/Supported_Target_Platforms)
+- [Embarcadero DocWiki：Arm64EC](https://docwiki.embarcadero.com/RADStudio/Florence/en/ARM64EC)

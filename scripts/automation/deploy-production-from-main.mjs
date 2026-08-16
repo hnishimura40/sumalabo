@@ -277,7 +277,9 @@ function stepBuild(result, skipBuild) {
     return false;
   }
   console.log("[2/5] npm run build");
-  const r = runSync(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"]);
+  const r = runSync(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"], {
+    spawnOpts: { env: { ...process.env, SUMALABO_BUILD_TARGET: "production" } },
+  });
   if (r.status !== 0) {
     result.steps.build = { status: "failed", reason: "npm_run_build_failed", code: r.status };
     return false;

@@ -37,6 +37,10 @@ import { fileURLToPath } from "node:url";
 import { findProductNameVariants, FORMAL_PRODUCT_NAMES_PATH, loadFormalProductNames } from "./sumahon/formal-product-names.mjs";
 import { scanRepositoryForSecrets } from "./automation/secret-scan.mjs";
 import { scanRenderedArticleHtml } from "./sumahon/rendered-markdown-scan.mjs";
+import {
+  validatePlainLanguageArticle,
+  validatePlannedTermExplanations,
+} from "./sumahon/plain-language-policy.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, "..");
@@ -309,6 +313,15 @@ function checkDraftStage(slug, patterns, productNames, stage) {
       checkFormalProductNames(body, `drafts/refinement/${slug}/${f}`, productNames);
       if (f === "final_article.md") {
         checkStrayStatusLabels(body, `drafts/refinement/${slug}/${f}`);
+        const plain = validatePlainLanguageArticle(body, { requireNewsStructure: true });
+        for (const item of plain.issues) {
+          report(item.severity === "major" ? "violation" : "warning", "plain-language", `drafts/refinement/${slug}/${f}`, item.message);
+        }
+        const selection = readTextOrNull(path.join(dir, "editorial_selection.md")) || "";
+        const terms = validatePlannedTermExplanations(body, selection);
+        for (const item of terms.issues) {
+          report(item.severity === "major" ? "violation" : "warning", "reader-translation-plan", `drafts/refinement/${slug}/editorial_selection.md`, item.message);
+        }
       }
       if (f === "slide_plan.md" && !/^##\s+演出ブロック(?:\s|（|\(|$)/m.test(body)) {
         report("warning", "image-performance", `drafts/refinement/${slug}/${f}`,
@@ -396,6 +409,16 @@ function checkMdxStage(slug, patterns, productNames) {
   checkFormalProductNames(raw, `content/articles/${slug}.mdx`, productNames);
   checkStrayStatusLabels(body, `content/articles/${slug}.mdx`);
   checkCharacterBubbleVariants(body, mdxPath);
+  const plain = validatePlainLanguageArticle(body, { requireNewsStructure: true });
+  for (const item of plain.issues) {
+    report(item.severity === "major" ? "violation" : "warning", "plain-language", `content/articles/${slug}.mdx`, item.message);
+  }
+  const selectionPath = path.join(CONFIG.draftsDir, slug, "editorial_selection.md");
+  const selection = readTextOrNull(selectionPath) || "";
+  const terms = validatePlannedTermExplanations(body, selection);
+  for (const item of terms.issues) {
+    report(item.severity === "major" ? "violation" : "warning", "reader-translation-plan", selectionPath, item.message);
+  }
   const title = frontmatterValue(frontmatter, "title");
   checkTitleFactBacking(title, body, `content/articles/${slug}.mdx`, patterns);
   return { body, fm: frontmatter };

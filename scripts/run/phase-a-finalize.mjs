@@ -59,9 +59,9 @@ function parseArgs(argv) {
   return out;
 }
 
-function runCommand(cmd, args) {
+function runCommand(cmd, args, options = {}) {
   return new Promise((resolve) => {
-    const child = spawn(cmd, args, { stdio: "inherit", shell: process.platform === "win32" });
+    const child = spawn(cmd, args, { stdio: "inherit", shell: process.platform === "win32", ...options });
     child.on("close", (code) => resolve(code === 0));
     child.on("error", () => resolve(false));
   });
@@ -142,7 +142,9 @@ async function main() {
   // 1. build
   if (!args["skip-build"] || !existsSync("dist")) {
     console.log("[finalize] build...");
-    const ok = await runCommand(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"]);
+    const ok = await runCommand(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"], {
+      env: { ...process.env, SUMALABO_BUILD_TARGET: "preview" },
+    });
     report.steps.build = { ok };
     if (!ok) { report.finishedAt = new Date().toISOString(); await save(report); console.error("[finalize] BLOCK: build failed"); process.exit(2); }
   } else {

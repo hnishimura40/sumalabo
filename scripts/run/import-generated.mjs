@@ -357,7 +357,9 @@ async function main() {
   });
 
   console.log("Running build...");
-  await runCommand(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"]);
+  await runCommand(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"], {
+    env: { ...process.env, SUMALABO_BUILD_TARGET: "preview" },
+  });
 
   await commitAndPushPreview({
     files: [

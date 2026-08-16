@@ -62,7 +62,8 @@
     "article:check-response": "node scripts/automation/chatgpt-response-health.mjs",
     "incident:reclassify": "node scripts/automation/incident-reclassify.mjs",
     "measurement:summary": "node scripts/automation/unattended-measurement.mjs",
-    "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/unattended-measurement.test.mjs tests/sumahon/night-phase2.test.mjs tests/sumahon/night-environment-check.test.mjs tests/sumahon/x-pending-bundle.test.mjs"
+    "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/unattended-measurement.test.mjs tests/sumahon/night-phase2.test.mjs tests/sumahon/night-environment-check.test.mjs tests/sumahon/x-pending-bundle.test.mjs",
+    "test:plain-language": "node --test tests/sumahon/plain-language-policy.test.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",

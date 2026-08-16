@@ -3,21 +3,16 @@ type Props = { slug?: string };
 const { slug } = Astro.props;
 const cfBranch = String(import.meta.env.CF_PAGES_BRANCH || "");
 const isMainBuild = cfBranch === "main" || cfBranch === "master";
----
-
-{!isMainBuild && (
-  <aside class="preview-veto" data-preview-veto data-slug={slug || ""} hidden>
-    <p>この記事の自動公開を止める必要がある場合だけ使用してください。</p>
-    <button type="button" data-veto-button disabled>⛔ 自動公開を停止（veto）</button>
-    <p role="status" aria-live="polite" data-veto-status></p>
-  </aside>
-)}
-
-<script>
-  const wrapper = document.querySelector<HTMLElement>("[data-preview-veto]");
+// Direct Upload builds do not receive CF_PAGES_BRANCH. Preview controls therefore
+// require an explicit build target as well; production's default build can never
+// embed editorial controls or their copy by accident.
+const isExplicitPreviewBuild = String(import.meta.env.SUMALABO_BUILD_TARGET || "") === "preview";
+const isPreviewBuild = !isMainBuild && (isExplicitPreviewBuild || Boolean(cfBranch));
+const previewVetoScript = `
+  const wrapper = document.querySelector("[data-preview-veto]");
   if (wrapper && !new Set(["sumalabo.com", "www.sumalabo.com"]).has(location.host)) {
-    const button = wrapper.querySelector<HTMLButtonElement>("[data-veto-button]");
-    const status = wrapper.querySelector<HTMLParagraphElement>("[data-veto-status]");
+    const button = wrapper.querySelector("[data-veto-button]");
+    const status = wrapper.querySelector("[data-veto-status]");
     const slug = (wrapper.dataset.slug || "").trim();
     if (slug && button && status) {
       wrapper.hidden = false;
@@ -31,12 +26,12 @@ const isMainBuild = cfBranch === "main" || cfBranch === "master";
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ slug }),
           });
-          const body = (await response.json().catch(() => ({}))) as { ok?: boolean; message?: string };
+          const body = await response.json().catch(() => ({}));
           if (response.ok && body.ok) {
             button.textContent = "停止済み（veto）";
             status.textContent = "このプレビューの自動公開を停止しました。";
           } else {
-            status.textContent = body.message || `vetoに失敗しました（HTTP ${response.status}）`;
+            status.textContent = body.message || \`vetoに失敗しました（HTTP \${response.status}）\`;
             button.disabled = false;
           }
         } catch {
@@ -46,7 +41,18 @@ const isMainBuild = cfBranch === "main" || cfBranch === "master";
       });
     }
   }
-</script>
+`;
+---
+
+{isPreviewBuild && (
+  <aside class="preview-veto" data-preview-veto data-slug={slug || ""} hidden>
+    <p>この記事の自動公開を止める必要がある場合だけ使用してください。</p>
+    <button type="button" data-veto-button disabled>⛔ 自動公開を停止（veto）</button>
+    <p role="status" aria-live="polite" data-veto-status></p>
+  </aside>
+)}
+
+{isPreviewBuild && <script is:inline set:html={previewVetoScript} />}
 
 <style>
   .preview-veto {

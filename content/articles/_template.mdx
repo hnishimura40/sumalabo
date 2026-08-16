@@ -21,26 +21,40 @@ publishAt: ""
 import CharacterCallout from "../../src/components/characters/CharacterCallout.astro";
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
 import CharacterGuideCard from "../../src/components/characters/CharacterGuideCard.astro";
+import Summary30 from "../../src/components/article/Summary30.astro";
 
 この記事では、【テーマ】について、初心者にも分かるように整理します。
 
 「【読者が感じている疑問】」という人に向けて、意味、違い、メリット、注意点、向いている人を順番に見ていきます。
 
-<div class="summary-box">
-  <p class="box-label">30秒でわかる結論</p>
-  <ul>
-    <li>【結論1】</li>
-    <li>【結論2】</li>
-    <li>【結論3】</li>
-    <li>【初心者が先に確認すべきこと】</li>
-  </ul>
-</div>
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> 【商品・サービス・制度・技術の正体を1〜2文で】</li>
+    <li><strong>何があった？</strong> 【今回のニュースを1〜3文で】</li>
+    <li><strong>誰に関係ある？</strong> 【関係する人と、関係が薄い人を短く】</li>
+    <li><strong>結局どうなの？</strong> 【ユーザー目線の結論を一言で】</li>
+  </ol>
+</Summary30>
+
+## そもそも【テーマ】って何？
+
+【固有名詞を知らない人へ、何をする商品・サービス・制度・技術なのかを1〜2文で説明する。専門語は初出の同じ文か直後に普通の日本語で説明する。】
+
+## あなたに関係ある？
+
+### 関係がある人
+
+- 【今回の変化で行動や判断が変わる人】
+
+### あまり関係がない人
+
+- 【今すぐ判断を変えなくてよい人】
 
 <CharacterDialogue
   image="/images/characters/duo_talk_half.webp"
   lines={[
-    { speaker: "ひまり", text: "【読者目線の短い質問】" },
-    { speaker: "らぼまる", text: "【一言で整理した答え】" },
+    { speaker: "ひまり", text: "【それは何？ 私にも関係ある？ 結局何が便利？ のいずれか】" },
+    { speaker: "らぼまる", text: "【専門語を使わず、一言で整理した答え】" },
   ]}
 />
 
