@@ -20,6 +20,7 @@ import {
 const RUN_ID = "20260808T043000.000";
 const REGRESSION_RUN_ID = "20260810T043002.254";
 const HANDOFF_REGRESSION_RUN_ID = "20260811T043002.521";
+const SLUG_TYPE_REGRESSION_RUN_ID = "20260815T184848.526";
 const STARTED_AT = "2026-08-08T04:30:00+09:00";
 const SLUG = "202608-contract-test";
 
@@ -137,6 +138,25 @@ test("8/10 regression ID is preserved when no slug can be resolved", async () =>
   const recorded = recordRunOutcome(result, { root, startedAt: STARTED_AT });
   assert.equal(recorded.runId, REGRESSION_RUN_ID);
   assert.equal(recorded.reason, "slug_not_resolved");
+});
+
+test("8/15 boolean slug fails before any meaningless real-world probe", async () => {
+  let probeCount = 0;
+  const mustNotRun = async () => { probeCount += 1; throw new Error("probe must not run"); };
+  const result = await evaluateSuccessContract({
+    root: fixture(),
+    runId: SLUG_TYPE_REGRESSION_RUN_ID,
+    startedAt: "2026-08-15T09:48:48.526Z",
+    slug: true,
+    probes: { http: mustNotRun, pr: mustNotRun, strictVerify: mustNotRun, xTwoStage: mustNotRun },
+  });
+  assert.equal(result.runId, SLUG_TYPE_REGRESSION_RUN_ID);
+  assert.equal(result.outcome, OUTCOMES.FAILED);
+  assert.equal(result.reason, "slug_type_invalid");
+  assert.equal(result.slug, null);
+  assert.deepEqual(result.evidence, { slugType: "boolean" });
+  assert.equal(result.acceptanceEligible, false);
+  assert.equal(probeCount, 0);
 });
 
 test("PR merge evidence uses REST and survives GraphQL exhaustion", async () => {

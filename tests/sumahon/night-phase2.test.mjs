@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -46,9 +47,10 @@ test("scheduler entry wrappers are ASCII-only and point only to dedicated clone"
     assert.doesNotMatch(text, /documents|\.ps1"?\s*$.*動画/u);
   }
   const entry = read("scripts/automation/night-run-entry.mjs");
-  assert.match(entry, /runner_clone_dirty/);
+  assert.match(entry, /inspectRunnerHygiene/);
   assert.match(entry, /git", \["fetch", "origin", "main"/);
   assert.match(entry, /git", \["checkout", "--detach", "origin\/main"/);
+  assert.match(read("scripts/automation/runner-hygiene.mjs"), /runner_clone_dirty/);
   const prepare = read("scripts/automation/prepare-night-runner.mjs");
   assert.match(prepare, /replaceAll\("__RUNNER_ROOT__", RUNNER_ROOT\)/);
   assert.match(prepare, /PRIVATE_RUNTIME_FILES/);
@@ -61,11 +63,11 @@ test("scheduler entry wrappers are ASCII-only and point only to dedicated clone"
 
 test("runner hygiene deletes only configured temporary paths and distinguishes harmless untracked artifacts", async () => {
   const environment = JSON.parse(read("config/night-environment.json"));
-  const entry = await import("../../scripts/automation/night-run-entry.mjs");
+  const hygiene = await import("../../scripts/automation/runner-hygiene.mjs");
   assert.deepEqual(environment.runnerHygiene.cleanupAllowlist, [".wrangler/"]);
   assert.deepEqual(environment.runnerHygiene.harmlessUntrackedAllowlist, ["drafts/refinement/"]);
 
-  const classified = entry.classifyRunnerStatus([
+  const classified = hygiene.classifyRunnerStatus([
     "?? drafts/refinement/preserved/final_article.md",
     "?? unexpected-token.txt",
     " M scripts/automation/night-run.ps1",
@@ -77,10 +79,41 @@ test("runner hygiene deletes only configured temporary paths and distinguishes h
   mkdirSync(path.join(root, ".wrangler", "tmp"), { recursive: true });
   writeFileSync(path.join(root, ".wrangler", "tmp", "cache.json"), "{}\n");
   writeFileSync(path.join(root, "dangerous.txt"), "preserve\n");
-  assert.deepEqual(entry.cleanupAllowlistedPaths(root, environment.runnerHygiene.cleanupAllowlist), [".wrangler/"]);
+  assert.deepEqual(hygiene.cleanupAllowlistedPaths(root, environment.runnerHygiene.cleanupAllowlist), [".wrangler/"]);
   assert.equal(existsSync(path.join(root, ".wrangler")), false);
   assert.equal(existsSync(path.join(root, "dangerous.txt")), true);
-  assert.throws(() => entry.cleanupAllowlistedPaths(root, ["../outside"]), /unsafe runner policy path/);
+  assert.throws(() => hygiene.cleanupAllowlistedPaths(root, ["../outside"]), /unsafe runner policy path/);
+});
+
+test("parent, child command, and standalone inspection share the same preserved-folder decision", async () => {
+  const root = mkdtempSync(path.join(os.tmpdir(), "sumalabo-runner-child-view-"));
+  const policyRoot = mkdtempSync(path.join(os.tmpdir(), "sumalabo-runner-policy-"));
+  mkdirSync(path.join(root, "drafts", "refinement", "202608-chatgpt-pc-mac"), { recursive: true });
+  const environmentFile = path.join(policyRoot, "night-environment.json");
+  writeFileSync(environmentFile, JSON.stringify({
+    runnerHygiene: { cleanupAllowlist: [".wrangler/"], harmlessUntrackedAllowlist: ["drafts/refinement/"] },
+  }));
+  writeFileSync(path.join(root, "drafts", "refinement", "202608-chatgpt-pc-mac", "final_article.md"), "preserved\n");
+  assert.equal(spawnSync("git", ["init", "--quiet", root], { encoding: "utf8" }).status, 0);
+  const hygiene = await import("../../scripts/automation/runner-hygiene.mjs");
+  const parent = hygiene.inspectRunnerHygiene({ root, environmentFile });
+  const childCommand = spawnSync(process.execPath, [path.join(ROOT, "scripts", "automation", "runner-hygiene.mjs"), "--root", root, "--environment-file", environmentFile], { encoding: "utf8" });
+  assert.equal(childCommand.status, 0, childCommand.stderr);
+  const standalone = JSON.parse(childCommand.stdout);
+  assert.equal(parent.ok, standalone.ok);
+  assert.deepEqual(parent.harmless, standalone.harmless);
+  assert.deepEqual(parent.dangerous, standalone.dangerous);
+  assert.equal(parent.ok, true);
+  assert.deepEqual(parent.dangerous, []);
+  writeFileSync(path.join(root, "dangerous.txt"), "block\n");
+  const blocked = spawnSync(process.execPath, [path.join(ROOT, "scripts", "automation", "runner-hygiene.mjs"), "--root", root, "--environment-file", environmentFile], { encoding: "utf8" });
+  assert.equal(blocked.status, 30);
+  assert.deepEqual(JSON.parse(blocked.stdout).dangerous, ["?? dangerous.txt"]);
+  const prompt = read("docs/night_driver_prompt.md");
+  assert.match(prompt, /node scripts\/automation\/runner-hygiene\.mjs/);
+  assert.match(prompt, /独自にclean\/dirtyを再判定してはならない/);
+  assert.doesNotMatch(prompt, /`git status --short`/);
+  assert.match(read("package.json"), /"night:runner-hygiene"/);
 });
 
 test("entry-death contract is discoverable by the watchdog", () => {

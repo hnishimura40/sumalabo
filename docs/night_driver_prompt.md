@@ -28,11 +28,12 @@ Codex自身の終了コード、completion、heartbeat、自己申告は成功�
 
 ## 0. 起動直後の確認
 
-1. `pwd`、ブランチ、`git status --short`を確認する。専用runner clone以外なら失敗終了。
-2. `origin/main`と同期済みであることを確認する。dirtyなら記事工程へ進まず失敗終了。
-3. `node scripts/automation/test-mode.mjs --status`で夜間runが有効か確認する。
-4. `SUMALABO_NIGHT_RUN_ID`と開始時刻を保持し、以後の成否契約・台帳照合に使う。
-5. `CLAUDE.md`と必要なdocsを読み、記事仕様・画像検品・秘密情報検査を省略しない。
+1. `pwd`とブランチを確認する。専用runner clone以外なら失敗終了。
+2. `node scripts/automation/runner-hygiene.mjs`を実行し、`ok=true`を確認する。生の`git status`から独自にclean/dirtyを再判定してはならない。親ラッパー・子Codex・単独点検は、この共通判定だけを正とする。
+3. `git -c safe.directory=<runnerの絶対パス> rev-parse HEAD`と同じ形式の`origin/main`を比較し、同期済みであることを確認する。
+4. `node scripts/automation/test-mode.mjs --status`で夜間runが有効か確認する。
+5. `SUMALABO_NIGHT_RUN_ID`と開始時刻を保持し、以後の成否契約・台帳照合に使う。
+6. `CLAUDE.md`と必要なdocsを読み、記事仕様・画像検品・秘密情報検査を省略しない。
 
 ## 1. Phase A: スカウト・調査・記事・画像・検品
 

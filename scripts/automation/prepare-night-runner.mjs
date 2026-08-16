@@ -5,7 +5,8 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { ENTRY_ROOT, RUNNER_ROOT } from "./night-environment.mjs";
+import { ENTRY_ROOT, NIGHT_ENVIRONMENT, RUNNER_ROOT } from "./night-environment.mjs";
+import { classifyRunnerStatus } from "./runner-hygiene.mjs";
 
 const SOURCE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 export { ENTRY_ROOT, RUNNER_ROOT };
@@ -50,12 +51,6 @@ function preservedGeneratedPaths() {
   return paths;
 }
 
-function isPreservedGeneratedChange(line, allowed) {
-  if (!line.startsWith("?? ")) return false;
-  const changed = line.slice(3).replace(/\\/g, "/").replace(/\/$/, "");
-  return [...allowed].some((relative) => changed === relative || relative.startsWith(`${changed}/`) || changed.startsWith(`${relative}/`));
-}
-
 export function prepareRunner() {
   mkdirSync(path.dirname(RUNNER_ROOT), { recursive: true });
   if (!existsSync(path.join(RUNNER_ROOT, ".git"))) {
@@ -71,10 +66,11 @@ export function prepareRunner() {
     if (existsSync(target)) privateTracked.set(relative, readFileSync(target));
     run("git", ["update-index", "--skip-worktree", "--", relative], RUNNER_ROOT);
   }
-  const dirty = run("git", ["status", "--porcelain", "--untracked-files=normal"], RUNNER_ROOT);
+  const dirty = run("git", ["status", "--porcelain=v1", "--untracked-files=all"], RUNNER_ROOT);
   const preserved = preservedGeneratedPaths();
-  const blocking = dirty.split(/\r?\n/).filter(Boolean).filter((line) => !isPreservedGeneratedChange(line, preserved));
-  if (blocking.length) throw new Error(`dedicated runner clone is dirty:\n${blocking.join("\n")}`);
+  const allowed = [...(NIGHT_ENVIRONMENT.runnerHygiene?.harmlessUntrackedAllowlist || []), ...preserved];
+  const classified = classifyRunnerStatus(dirty, allowed);
+  if (classified.dangerous.length) throw new Error(`dedicated runner clone is dirty:\n${classified.dangerous.join("\n")}`);
   run("git", ["fetch", "origin", "main", "--prune"], RUNNER_ROOT);
   run("git", ["checkout", "--detach", "origin/main"], RUNNER_ROOT);
   for (const relative of PRIVATE_TRACKED_RUNTIME_FILES) {

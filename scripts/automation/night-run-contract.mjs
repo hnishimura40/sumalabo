@@ -225,7 +225,19 @@ export async function evaluateSuccessContract({
   probes = {},
 }) {
   const normalizedCompletionKind = completionKind === "recovery" ? "recovery" : "fresh_run";
-  const resolvedSlug = slug || discoverSlugSince({ root, startedAt });
+  const slugCandidate = slug ?? discoverSlugSince({ root, startedAt });
+  if (slugCandidate != null && typeof slugCandidate !== "string") {
+    return {
+      runId,
+      outcome: OUTCOMES.FAILED,
+      reason: "slug_type_invalid",
+      slug: null,
+      evidence: { slugType: typeof slugCandidate },
+      completionKind: normalizedCompletionKind,
+      acceptanceEligible: false,
+    };
+  }
+  const resolvedSlug = typeof slugCandidate === "string" ? slugCandidate.trim() : "";
   if (!resolvedSlug) {
     return { runId, outcome: OUTCOMES.FAILED, reason: "slug_not_resolved", slug: null, evidence: null, completionKind: normalizedCompletionKind, acceptanceEligible: false };
   }

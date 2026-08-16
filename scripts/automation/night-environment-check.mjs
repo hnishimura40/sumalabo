@@ -5,6 +5,7 @@ import path from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
 import { NIGHT_ENVIRONMENT, chromeProfilePath } from "./night-environment.mjs";
+import { inspectRunnerHygiene } from "./runner-hygiene.mjs";
 
 export const CHECK_NAMES = [...NIGHT_ENVIRONMENT.requiredChecks];
 export const FATAL_CHECK_NAMES = [...NIGHT_ENVIRONMENT.fatalChecks];
@@ -111,8 +112,11 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
   const runnerHead = git(runner, ["rev-parse", "HEAD"]);
   evidence.repository_sha = { ok: canonicalHead.ok && runnerHead.ok && canonicalHead.text === runnerHead.text, detail: `${canonicalHead.text || "?"}/${runnerHead.text || "?"}` };
   const canonicalDirty = git(canonical, ["status", "--porcelain=v1", "--untracked-files=no"]);
-  const runnerDirty = git(runner, ["status", "--porcelain=v1", "--untracked-files=no"]);
-  evidence.runner_dirty = { ok: canonicalDirty.ok && runnerDirty.ok && canonicalDirty.text === "" && runnerDirty.text === "", detail: canonicalDirty.text || runnerDirty.text || "workspace_and_runner_tracked_dirty=0" };
+  const runnerHygiene = inspectRunnerHygiene({ root: runner });
+  evidence.runner_dirty = {
+    ok: canonicalDirty.ok && canonicalDirty.text === "" && runnerHygiene.ok,
+    detail: canonicalDirty.text || runnerHygiene.gitError || runnerHygiene.dangerous.join("\n") || "workspace_and_runner_clean_by_shared_policy",
+  };
   evidence.x_login_href = { ok: false, detail: "dom_probe_required" };
   evidence.dom_read = { ok: false, detail: "dom_probe_required" };
   return evidence;
