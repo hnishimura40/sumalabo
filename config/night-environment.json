@@ -28,7 +28,14 @@
     ],
     "extensionId": "hehggadaopoacecdllhhajmbjkdcmajg",
     "nativeHostManifestPath": "C:\\Users\\hnish\\AppData\\Local\\OpenAI\\extension\\com.openai.codexextension.json",
-    "nativeHostRegistryKey": "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.openai.codexextension"
+    "nativeHostRegistryKey": "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.openai.codexextension",
+    "xReadiness": {
+      "retryIntervalSeconds": 5,
+      "maxWaitSeconds": 90,
+      "maxAttempts": 19,
+      "measuredReadyBySeconds": 60,
+      "safetyMultiplier": 1.5
+    }
   },
   "browserPermissions": {
     "configPath": "C:\\Users\\hnish\\.codex\\browser\\config.toml",

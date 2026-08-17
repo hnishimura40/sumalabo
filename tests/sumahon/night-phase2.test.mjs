@@ -325,8 +325,14 @@ test("night Chrome startup uses the single environment definition", () => {
   assert.match(wrapper, /environment_preflight_failed:\$missing/);
   const domProbe = read("docs/night_environment_dom_probe.md");
   assert.match(domProbe, /wait 5 seconds/i);
-  assert.match(domProbe, /12 total attempts/);
+  assert.match(domProbe, /19 total attempts/);
+  assert.match(domProbe, /90 seconds maximum/);
+  assert.match(domProbe, /50% safety margin/);
   assert.match(domProbe, /Do not return failure after only the first read/);
+  const phaseCPrompt = read("docs/x-post-codex-night-prompt.md");
+  assert.match(phaseCPrompt, /Cold-start X readiness/);
+  assert.match(phaseCPrompt, /config\/night-environment\.json/);
+  assert.match(phaseCPrompt, /90-second maximum/);
   assert.match(read("scripts/automation/x-post-chrome.ps1"), /MainWindowHandle -ne 0/);
 });
 
@@ -337,6 +343,13 @@ test("night environment configuration owns paths, token names, and permissions",
   assert.equal(environment.tokens.github, "GH_TOKEN");
   assert.match(environment.codex.executable, /codex\.exe$/);
   assert.equal(environment.browserPermissions.requiredOrigin, "https://x.com");
+  assert.deepEqual(environment.chrome.xReadiness, {
+    retryIntervalSeconds: 5,
+    maxWaitSeconds: 90,
+    maxAttempts: 19,
+    measuredReadyBySeconds: 60,
+    safetyMultiplier: 1.5,
+  });
   assert.deepEqual(environment.fatalChecks, ["environment_definition", "github_token", "repository_sha", "runner_dirty"]);
   assert.ok(environment.warningChecks.includes("x_login_href"));
   assert.ok(environment.requiredChecks.includes("dom_read"));

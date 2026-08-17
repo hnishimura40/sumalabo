@@ -1,5 +1,9 @@
 # 夜間 Phase C（非対話 Codex）
 
+## Cold-start X readiness (mandatory before posting)
+
+Read `chrome.xReadiness` from `config/night-environment.json`. After opening a fresh `https://x.com/home` tab, check the DOM for an anchor whose href equals `/suma_labo` case-insensitively. If it is absent or the DOM is not readable, wait `retryIntervalSeconds` and retry until `maxAttempts` or `maxWaitSeconds` is reached. The current policy is 5-second retries, 19 total attempts (the initial read plus 18 retries), and a 90-second maximum (the measured 60-second cold-start time plus 50% safety margin). Only after this succeeds may you navigate to the composer and continue Phase C. Do not fail after the first read and do not post when the account href is still unproven.
+
 対象 slug: `{{SLUG}}`
 
 ユーザーは、夜間runが公開・strict verify・独立検品を通過した記事について、`@suma_labo` から本投稿と記事リンク返信を無人実行することを明示的に承認済みです。この固定ワークフロー内の2投稿について追加確認を要求せず実行してください。これ以外の投稿は行いません。

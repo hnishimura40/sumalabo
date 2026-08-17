@@ -38,7 +38,7 @@ export const mobileCarrierLinks: Record<MobileCarrierKey, MobileCarrierLink> = {
   rakuten: {
     label: "楽天モバイル",
     officialHref: "https://network.mobile.rakuten.co.jp/",
-    affiliateHref: "", // A8: 提携待ち予約枠
+    affiliateHref: "https://px.a8.net/svt/ejp?a8mat=4B8B4X+1GZN5U+5W58+5YRHE", // A8 s00000027494001 / 素材002 / すまラボ 003
     network: "A8",
   },
 };

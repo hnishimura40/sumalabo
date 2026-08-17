@@ -11,6 +11,21 @@ export const CHECK_NAMES = [...NIGHT_ENVIRONMENT.requiredChecks];
 export const FATAL_CHECK_NAMES = [...NIGHT_ENVIRONMENT.fatalChecks];
 export const WARNING_CHECK_NAMES = [...NIGHT_ENVIRONMENT.warningChecks];
 
+export function validateXReadinessPolicy(policy) {
+  return Boolean(policy
+    && Number.isInteger(policy.retryIntervalSeconds)
+    && policy.retryIntervalSeconds > 0
+    && Number.isInteger(policy.maxAttempts)
+    && policy.maxAttempts > 0
+    && Number.isFinite(policy.maxWaitSeconds)
+    && policy.maxWaitSeconds >= policy.retryIntervalSeconds * (policy.maxAttempts - 1));
+}
+
+export function findFirstReadyObservation(observations, policy) {
+  if (!validateXReadinessPolicy(policy)) return null;
+  return observations.find((item) => Number(item?.atSeconds) <= policy.maxWaitSeconds && Number(item?.hrefCount) >= 1) || null;
+}
+
 function run(command, args, cwd) {
   return spawnSync(command, args, { cwd, encoding: "utf8", windowsHide: true });
 }
@@ -75,7 +90,12 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
   try { extension = json(securePreferences)?.extensions?.settings?.[environment.chrome.extensionId] || null; } catch {}
   const versions = existsSync(extensionRoot) ? (awaitableDirectories(extensionRoot)) : [];
 
-  evidence.environment_definition = { ok: environment.schemaVersion === 1 && CHECK_NAMES.every((name) => environment.requiredChecks.includes(name)), detail: "schemaVersion=1" };
+  evidence.environment_definition = {
+    ok: environment.schemaVersion === 1
+      && CHECK_NAMES.every((name) => environment.requiredChecks.includes(name))
+      && validateXReadinessPolicy(environment.chrome?.xReadiness),
+    detail: "schemaVersion=1;xReadiness=valid",
+  };
   const expectedPreferences = path.join(profileRoot, "Preferences");
   let runningProfileMatches = true;
   if (process.platform === "win32") {

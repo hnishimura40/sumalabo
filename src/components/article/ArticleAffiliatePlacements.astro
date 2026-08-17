@@ -1,0 +1,19 @@
+---
+import MobileCarrierCTA from "./MobileCarrierCTA.astro";
+import { articleAffiliatePlacements } from "../../data/articleAffiliatePlacements";
+
+interface Props {
+  slug: string;
+}
+
+const placements = articleAffiliatePlacements[Astro.props.slug] ?? [];
+---
+
+{
+  placements.map((placement) => (
+    <MobileCarrierCTA
+      carrier={placement.carrier}
+      description={placement.description}
+    />
+  ))
+}

@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import ArticleLayout from "../../layouts/ArticleLayout.astro";
+import ArticleAffiliatePlacements from "../../components/article/ArticleAffiliatePlacements.astro";
 import { getAdjacentArticles, getSortedVisibleArticles } from "../../lib/articles";
 
 export async function getStaticPaths() {
@@ -31,4 +32,5 @@ const { Content, headings } = await render(article);
   headings={headings}
 >
   <Content />
+  <ArticleAffiliatePlacements slug={article.data.slug} />
 </ArticleLayout>
