@@ -364,6 +364,20 @@
       "variant": "images4+reply",
       "imagesAttached": 4,
       "replyUrl": "https://x.com/suma_labo/status/2085596083808522398"
+    },
+    {
+      "slug": "202608-claude-fable-5-usage-draining-fast",
+      "articleUrl": "https://sumalabo.com/articles/202608-claude-fable-5-usage-draining-fast/",
+      "postedAt": "2026-08-18T00:16:09.301Z",
+      "postText": "Claude Fable 5、2回で5時間制限50％消費。異常？原因と対策を徹底検証\n\nClaude Fable 5で2往復しただけで5時間利用枠の約50％を消費した実測を出発点に、公式仕様、8月の障害、世界の同様報告、直った事例、検証手順を整理します。\n#すまラボ #Claude #ClaudeCode",
+      "postUrl": "https://x.com/suma_labo/status/2089506489732092102",
+      "method": "chrome",
+      "route": "codex",
+      "thumbnailAttached": true,
+      "charCount": 153,
+      "variant": "images4+reply",
+      "imagesAttached": 4,
+      "replyUrl": "https://x.com/suma_labo/status/2089506717126308123"
     }
   ]
 }
