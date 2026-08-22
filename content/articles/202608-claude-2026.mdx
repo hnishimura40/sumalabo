@@ -1,0 +1,293 @@
+---
+title: "Claudeは日本語で使える。無料・Proの違いと仕事での3つの注意点"
+slug: "202608-claude-2026"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Claudeは日本語の質問にそのまま日本語で答えます。画面の日本語化、Free・Pro・Max・Teamの料金、仕事で使う前に決めたい確認ルールを初心者向けに整理します。"
+thumbnail: "/images/thumbnails/202608-claude-2026.webp"
+thumbnailAlt: "Claudeを日本語で使う場面。ひまりがノートPCの日本語会話画面を確認し、らぼまるがFreeとProの比較カードを示すイラスト"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude"
+  - "Anthropic"
+  - "生成AI"
+  - "AIチャット"
+  - "料金"
+  - "日本語"
+pubDate: "2026-08-23"
+updated: "2026-08-23"
+publishAt: "2026-08-23T05:00:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Claude（クロード）は、Anthropicが提供する会話型AIです。質問への回答、文章作成、要約などを手伝います。中で使われる「大規模言語モデル」は、大量の文章から言葉のつながりを学び、入力に続く回答を組み立てる仕組みです。
+
+日本語で質問すれば、日本語で返してくれます。英語の設定画面を先に攻略する必要はありません。ただし、自然な日本語が返ることと、内容がいつも正しいことは別です。この記事では、日本語対応、料金、仕事で使う前の注意点を順番に整理します。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> Claudeは、会話・文章作成・要約などを助けるAIサービス</li>
+    <li><strong>何があった？</strong> 日本語で会話でき、画面の表示言語も日本語へ変更できる</li>
+    <li><strong>誰に関係ある？</strong> メール、議事録、長文の要約を日本語で効率化したい人</li>
+    <li><strong>結局どうなの？</strong> まずFreeで試し、仕事では入力ルールと確認担当を先に決める</li>
+  </ol>
+</Summary30>
+
+<Callout kind="facts" title="公式情報で確認できること">
+  <ul>
+    <li>Claudeは日本語で会話でき、Web版の表示言語も日本語に変更できる</li>
+    <li>個人向けにはFree、Pro、Maxがあり、組織向けにはTeamなどがある</li>
+    <li>2026年8月23日時点の公式案内では、Teamの最少利用人数は2人</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="紹介記事で評価されていること">
+  <ul>
+    <li>日本語の文章作成、要約、議事録整理など、日常業務の補助に使いやすいと紹介されている</li>
+    <li>長い文章を読み、指示に沿って整える用途が企業活用の候補として挙げられている</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="条件が変わりうる点（2026年8月23日時点）">
+  <ul>
+    <li>価格、利用上限、Teamの最少人数は今後変更される可能性がある</li>
+    <li>会話データの扱いは、個人向けと法人向け、設定、契約によって異なる</li>
+  </ul>
+</Callout>
+
+## そもそもClaudeって何？
+
+Claudeは、ブラウザ、パソコン用アプリ、スマートフォンなどから使えます。チャット欄へ「この文章を3行で要約して」「取引先へ失礼のない表現に直して」と書くと、その条件に沿った案を返します。
+
+画面に表示する言語と、会話で使う言語は別です。画面が英語のままでも、日本語で質問すれば日本語で回答します。表示自体も設定から日本語へ変更できます。
+
+<CharacterBubble speaker="himari" mood="curious">最初に英語の設定を全部変えなくても、日本語で話しかけていいの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">大丈夫。まず日本語で質問して、必要ならあとから画面表示も日本語に変えればいいよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず、Claudeができることを一枚で確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-claude-2026/slide01.webp" alt="Claudeは会話、文章、要約を助けるAIで、Web、PC、スマートフォンから使えることを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：Claudeって何？</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>押さえる点</strong></p>
+    <ul>
+      <li>質問への回答、文章作成、要約を手伝う</li>
+      <li>Web、PC、スマートフォンから利用できる</li>
+      <li>回答は下書きとして使い、重要事項は確認する</li>
+    </ul>
+  </div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「画面の言語」と「会話の言語」は分けて考えます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-claude-2026/slide02.webp" alt="英語の画面でも日本語で質問すれば日本語で返り、表示は設定で日本語へ変えられることを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：画面と会話は別</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>押さえる点</strong></p>
+    <ul>
+      <li>日本語で入力すれば、日本語で回答を受け取れる</li>
+      <li>画面表示は設定から日本語へ変更できる</li>
+      <li>「専門語には短い説明を付けて」と条件を足すと読みやすい</li>
+    </ul>
+  </div>
+</section>
+
+## 関係がある人・あまり関係がない人
+
+### 関係がある人
+
+メールの下書き、議事録の整理、長文の要約、企画のたたき台などを日本語で効率化したい人に関係します。文章をゼロから作るだけでなく、「短くする」「やわらかくする」「表にする」といった直しにも使えます。
+
+### あまり関係がない人
+
+すでに別のAIで用途と確認手順が固まっている人や、AIへ文章を入力する機会がない人は、急いで切り替える必要はありません。サービスを増やすほど、保存先や社内ルールの管理も増えるためです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">自分の作業に当てはまるかを見分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-claude-2026/slide03.webp" alt="メール、議事録、長文要約にClaudeが関係し、別のAIで運用済みなら急いで変えなくてよいことを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：こんな人に関係</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>向いている作業</strong></p>
+    <ul>
+      <li>メールや案内文の下書き</li>
+      <li>議事録や長文の要点整理</li>
+      <li>すでに運用が固まっているなら比較してから決める</li>
+    </ul>
+  </div>
+</section>
+
+## 日本語の精度は「高い数字」だけで決めない
+
+Anthropicの多言語評価では、Claude Sonnet 4.5の日本語スコアは英語比96.8%、Claude Haiku 4.5は93.5%と案内されています。「ベンチマーク」とは、同じ問題を解かせて性能を比べる試験のことです。
+
+ただし、この数字は翻訳された選択問題による特定条件の結果です。メール、社内用語、契約条件、最新ニュースまで同じ割合で正しい、という意味ではありません。自然な文章でも、日付、金額、固有名詞、引用元は別に照合します。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">96.8%という数字の範囲を読み違えないための図です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-claude-2026/slide04.webp" alt="特定の選択問題で日本語が英語比96.8%だったが、仕事全体の正解率ではないことを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：96.8%の読み方</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>数字の読み方</strong></p>
+    <ul>
+      <li>特定の試験で英語版と比べた結果</li>
+      <li>すべての日本語業務での正解率ではない</li>
+      <li>実際に使う文書で試して判断する</li>
+    </ul>
+  </div>
+</section>
+
+## 料金はFreeから。Proは月20ドル
+
+個人向けの公式価格は、Freeが0ドル、Proが月20ドルまたは年200ドルです。利用量を増やすMaxは、5xが月100ドル、20xが月200ドルです。日本での請求額は地域、税、決済経路などで変わるため、契約画面の表示を確認してください。
+
+<NumCards
+  items={[
+    { num: "$0", cap: "Free" },
+    { num: "$20/月", cap: "Pro（月払い）" },
+    { num: "$100〜", cap: "Max（月払い）" },
+  ]}
+/>
+
+有料にしても、毎日必ず同じ回数を使える仕組みではありません。会話の長さ、添付ファイル、選ぶモデル、混雑などで利用量は変わります。まずFreeで実際の文書を試し、上限が仕事の妨げになると分かってからProを検討すると無駄がありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">個人向けプランを、試し始める順番で見ます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-claude-2026/slide05.webp" alt="Freeは0ドル、Proは月20ドル、Maxは月100ドルまたは200ドルで、地域や税により変わることを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：まずFreeで試す</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>選び方</strong></p>
+    <ul>
+      <li>用途が合うかはFreeで確認する</li>
+      <li>利用量が足りなくなったらProを比べる</li>
+      <li>日本での支払額は契約画面で確かめる</li>
+    </ul>
+  </div>
+</section>
+
+## Teamは最低2人。席ごとに料金がかかる
+
+Teamは組織向けです。2026年8月23日時点の公式案内では、最少2人から利用できます。Standardは1人あたり月25ドル、年払いでは月20ドル相当です。Premiumは月125ドル、年払いでは月100ドル相当です。
+
+<NumCards
+  items={[
+    { num: "2人", cap: "Teamの最少利用人数" },
+    { num: "$25/月", cap: "Standard・1人あたり" },
+    { num: "$125/月", cap: "Premium・1人あたり" },
+  ]}
+/>
+
+紹介記事にある「最低5人」という条件は、現在の公式案内とは異なります。料金や最少人数のように変わりやすい条件は、比較記事だけで決めず、契約直前に公式ページを見直してください。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">組織向けTeamの最低人数と月払い価格を整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-claude-2026/slide06.webp" alt="Teamは最低2人で、Standardは1人月25ドル、Premiumは1人月125ドル、年払いは月あたり安いことを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：Teamは最低2人</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>契約前の確認</strong></p>
+    <ul>
+      <li>最少利用人数は2人</li>
+      <li>表示価格は1人あたり</li>
+      <li>月払いと年払いで単価が違う</li>
+    </ul>
+  </div>
+</section>
+
+## 仕事で使う前に3つ確認する
+
+### 1. 入力してよい情報を決める
+
+顧客情報、未発表の計画、契約条件、パスワードなどを個人判断で貼り付けないようにします。「名前を消せば安全」とは限りません。会社の規程と利用契約を先に確認します。
+
+### 2. 正しさを確認する担当を決める
+
+日付、金額、固有名詞、法律・医療・会計に関わる判断は、元資料や担当者へ戻って確認します。Claudeには文章を整える役を任せ、最終決定は人が行います。
+
+### 3. データの扱いと契約を確認する
+
+個人向けのFree、Pro、Maxでは、利用者がモデル改善を許可した場合などに会話が改善へ使われることがあります。設定はあとから変更できます。「シークレットチャット」は、履歴やモデル改善への利用を抑えて話す機能です。法人向けサービスは条件が異なるため、保存期間、管理権限、外部サービスとの接続を契約単位で確認します。
+
+<Note>シークレットチャットを使っても、入力してよい情報の範囲を会社のルールより広げてよいわけではありません。</Note>
+
+<CharacterBubble speaker="labo" mood="worried">自然な文章が返ってきても、数字や名前まで正しいとは限らないよ。入力ルールと確認役を先に決めよう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">仕事へ入れる前に、最低限決める3項目です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-claude-2026/slide07.webp" alt="仕事でClaudeを使う前に、入力してよい情報、数字と名前の確認、契約と保存条件を確かめる図" loading="lazy" decoding="async" />
+    <figcaption>図解：仕事は3点確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>先に決めること</strong></p>
+    <ul>
+      <li>入力してよい情報の範囲</li>
+      <li>数字と固有名詞を確認する担当</li>
+      <li>契約、保存期間、管理権限</li>
+    </ul>
+  </div>
+</section>
+
+## まず試すなら、この順番
+
+1. Freeで短い公開文書を要約させる
+2. 「日本語で」「3行で」「専門語には説明を付けて」と条件を足す
+3. 日付、数字、名前を元資料と照合する
+4. 自分の作業時間がどれだけ減ったかを数回測る
+5. 利用量が足りないと分かってから有料プランを比較する
+
+<CharacterBubble speaker="himari" mood="aha">まず無料で、自分が普段使う文書を試せばいいんだね。便利さと確認の手間を一緒に測ってみる！</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">その順番なら、料金だけで決めずに、自分の仕事に本当に合うか判断できるよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">迷ったときの試し方を、5段階にまとめます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202608-claude-2026/slide08.webp" alt="Freeで短文を試し、条件を付け、数字を照合し、時間を測り、足りなければ有料を選ぶ5段階の図" loading="lazy" decoding="async" />
+    <figcaption>図解：この順で試そう</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>試す順番</strong></p>
+    <ul>
+      <li>無料で小さく始める</li>
+      <li>条件を具体的にして、元資料と照合する</li>
+      <li>効果と利用量を見てから有料へ進む</li>
+    </ul>
+  </div>
+</section>
+
+## まとめ
+
+Claudeは日本語でそのまま会話でき、画面表示も日本語へ変えられます。個人ならFreeで実際の文書を試し、利用量が足りなければProを検討するのが分かりやすい順番です。
+
+仕事では、自然な日本語が返ることよりも、入力してよい情報、最終確認の担当、契約上のデータ条件が決まっていることが重要です。便利さと安全を同じ手順へ入れて使いましょう。
+
+## 参考情報
+
+- [Anthropic：好みの言語でClaudeを使用する方法](https://support.claude.com/ja/articles/10769299-%E5%A5%BD%E3%81%BF%E3%81%AE%E8%A8%80%E8%AA%9E%E3%81%A7claude%E3%82%92%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95)
+- [Claude Platform Docs：Multilingual support](https://platform.claude.com/docs/en/build-with-claude/multilingual-support)
+- [Anthropic：Claudeプランを選択](https://support.claude.com/ja/articles/11049762-claude%E3%83%97%E3%83%A9%E3%83%B3%E3%82%92%E9%81%B8%E6%8A%9E)
+- [Anthropic：Teamプランとは何ですか？](https://support.claude.com/ja/articles/9266767-team-%E3%83%97%E3%83%A9%E3%83%B3%E3%81%A8%E3%81%AF%E4%BD%95%E3%81%A7%E3%81%99%E3%81%8B)
+- [Anthropic Privacy Center：Is my data used for model training?](https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training)
