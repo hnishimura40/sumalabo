@@ -12,6 +12,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { verifyPendingBundle } from "./x-pending-bundle.mjs";
+import { X_POSTED_LEDGER_PATH } from "../sumahon/x-posted-path.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const OUTCOMES = Object.freeze({ SUCCESS: "success", X_PENDING: "stopped_x_pending", STOPPED: "stopped", FAILED: "failed" });
@@ -69,10 +70,6 @@ function latestByDate(items, field) {
 
 export function discoverSlugSince({ root = ROOT, startedAt }) {
   const startedMs = parseTime(startedAt);
-  const x = readJson(path.join(root, "data", "social", "x-posted.json"), { posts: [] });
-  const recentPost = latestByDate((x.posts || []).filter((p) => Date.parse(p.postedAt) >= startedMs), "postedAt");
-  if (recentPost?.slug) return recentPost.slug;
-
   const ledger = readJson(path.join(root, "data", "automation", "ledger.json"), { entries: [] });
   const recentPublish = latestByDate(
     (ledger.entries || []).filter((e) => Date.parse(e.publishedAt) >= startedMs),
@@ -81,8 +78,8 @@ export function discoverSlugSince({ root = ROOT, startedAt }) {
   if (recentPublish?.slug) return recentPublish.slug;
 
   const articleDir = path.join(root, "logs", "article");
-  if (!existsSync(articleDir)) return null;
-  const recentHandoff = readdirSync(articleDir)
+  if (existsSync(articleDir)) {
+    const recentHandoff = readdirSync(articleDir)
     .filter((name) => name.endsWith(".publish-handoff.json"))
     .map((name) => readJson(path.join(articleDir, name)))
     .filter((handoff) => {
@@ -90,8 +87,11 @@ export function discoverSlugSince({ root = ROOT, startedAt }) {
       const timestamp = handoff.createdAt || handoff.completedAt;
       return Number.isFinite(Date.parse(timestamp)) && Date.parse(timestamp) >= startedMs;
     })
-    .sort((a, b) => Date.parse(b.createdAt || b.completedAt) - Date.parse(a.createdAt || a.completedAt))[0];
-  return recentHandoff?.slug || null;
+      .sort((a, b) => Date.parse(b.createdAt || b.completedAt) - Date.parse(a.createdAt || a.completedAt))[0];
+    if (recentHandoff?.slug) return recentHandoff.slug;
+  }
+
+  return null;
 }
 
 function findArticleState(slug, root) {
@@ -197,8 +197,14 @@ export function probeStrictVerify(slug, root = ROOT) {
   };
 }
 
-export function probeXTwoStage(slug, root = ROOT) {
-  const ledger = readJson(path.join(root, "data", "social", "x-posted.json"), { posts: [] });
+export function probeXTwoStage(slug, root = ROOT, ledgerPath = X_POSTED_LEDGER_PATH) {
+  let ledger;
+  try {
+    ledger = JSON.parse(readFileSync(ledgerPath, "utf8").replace(/^\uFEFF/u, ""));
+  } catch (error) {
+    return { ok: false, reason: "x_ledger_io_error", detail: error instanceof Error ? error.message : String(error), ledgerPath };
+  }
+  if (!ledger || !Array.isArray(ledger.posts)) return { ok: false, reason: "x_ledger_schema_invalid", ledgerPath };
   const record = latestByDate((ledger.posts || []).filter((post) => post.slug === slug), "postedAt");
   if (!record) return { ok: false, reason: "x_ledger_record_missing" };
   const mainRecorded = Boolean(record.postedAt && /^https:\/\/x\.com\/[^/]+\/status\/\d+/.test(record.postUrl || ""));
@@ -214,15 +220,23 @@ export function probeXTwoStage(slug, root = ROOT) {
   };
 }
 
-export async function evaluateSuccessContract({
+function requireFreshEvidence(value, field, label, startedMs) {
+  if (value?.ok !== true) return value;
+  const actualMs = Date.parse(value?.[field]);
+  if (!Number.isFinite(actualMs) || actualMs < startedMs) {
+    return { ...value, ok: false, reason: `${label}_not_from_current_run` };
+  }
+  return value;
+}
+
+export async function evaluatePrimaryContract({
   root = ROOT,
   runId,
   startedAt,
   slug = null,
   completionKind = "fresh_run",
-  xPending = false,
-  xWarnings = [],
   probes = {},
+  xLedgerPath = X_POSTED_LEDGER_PATH,
 }) {
   const normalizedCompletionKind = completionKind === "recovery" ? "recovery" : "fresh_run";
   const slugCandidate = slug ?? discoverSlugSince({ root, startedAt });
@@ -233,75 +247,117 @@ export async function evaluateSuccessContract({
       reason: "slug_type_invalid",
       slug: null,
       evidence: { slugType: typeof slugCandidate },
+      primaryContract: { ok: false, status: "failed", passed: 0, total: 3, checks: {} },
       completionKind: normalizedCompletionKind,
       acceptanceEligible: false,
     };
   }
   const resolvedSlug = typeof slugCandidate === "string" ? slugCandidate.trim() : "";
   if (!resolvedSlug) {
-    return { runId, outcome: OUTCOMES.FAILED, reason: "slug_not_resolved", slug: null, evidence: null, completionKind: normalizedCompletionKind, acceptanceEligible: false };
+    return {
+      runId,
+      outcome: OUTCOMES.FAILED,
+      reason: "slug_not_resolved",
+      slug: null,
+      evidence: null,
+      primaryContract: { ok: false, status: "failed", passed: 0, total: 3, checks: {} },
+      completionKind: normalizedCompletionKind,
+      acceptanceEligible: false,
+    };
   }
   const ledger = findLedgerEntry(resolvedSlug, root);
   const articleUrl = ledger.productionUrl || ledger.articleUrl || `https://sumalabo.com/articles/${resolvedSlug}/`;
   const prUrl = findPrUrl(resolvedSlug, root);
-  const http = await (probes.http || probeArticleHttp)(articleUrl);
-  const pr = await (probes.pr || ((url) => probePrMerged(url)))(prUrl);
-  const strictVerify = await (probes.strictVerify || ((s) => probeStrictVerify(s, root)))(resolvedSlug);
-  const xTwoStage = xPending
-    ? { ok: false, pending: true, reason: "x_environment_warning" }
-    : await (probes.xTwoStage || ((s) => probeXTwoStage(s, root)))(resolvedSlug);
   const startedMs = parseTime(startedAt);
-  const requireFresh = (value, field, label) => {
-    if (value?.ok !== true) return value;
-    const actualMs = Date.parse(value?.[field]);
-    if (!Number.isFinite(actualMs) || actualMs < startedMs) {
-      return { ...value, ok: false, reason: `${label}_not_from_current_run` };
-    }
-    return value;
+  const articleHttp200 = await (probes.http || probeArticleHttp)(articleUrl);
+  const prMerged = requireFreshEvidence(
+    await (probes.pr || ((url) => probePrMerged(url)))(prUrl),
+    "mergedAt",
+    "pr_merge",
+    startedMs,
+  );
+  const strictVerify = requireFreshEvidence(
+    await (probes.strictVerify || ((s) => probeStrictVerify(s, root)))(resolvedSlug),
+    "finishedAt",
+    "strict_verify",
+    startedMs,
+  );
+  const checks = { articleHttp200, prMerged, strictVerify };
+  const failedChecks = Object.entries(checks).filter(([, value]) => value?.ok !== true).map(([name]) => name);
+  const primaryContract = {
+    ok: failedChecks.length === 0,
+    status: failedChecks.length === 0 ? "success" : "failed",
+    passed: 3 - failedChecks.length,
+    total: 3,
+    checks,
   };
-  const freshPr = requireFresh(pr, "mergedAt", "pr_merge");
-  const freshStrictVerify = requireFresh(strictVerify, "finishedAt", "strict_verify");
-  const freshXTwoStage = requireFresh(xTwoStage, "postedAt", "x_ledger");
-  const xPendingBundle = xPending
-    ? (probes.xPendingBundle ? await probes.xPendingBundle(resolvedSlug, runId) : verifyPendingBundle({ root, slug: resolvedSlug, runId }))
-    : null;
-  const evidence = { articleHttp200: http, prMerged: freshPr, strictVerify: freshStrictVerify, xTwoStage: freshXTwoStage, ...(xPending ? { xPendingBundle } : {}) };
-  const articleFailedChecks = [
-    ["articleHttp200", http],
-    ["prMerged", freshPr],
-    ["strictVerify", freshStrictVerify],
-  ].filter(([, value]) => value?.ok !== true).map(([key]) => key);
-  if (xPending && articleFailedChecks.length === 0 && xPendingBundle?.ok === true) {
-    return {
-      runId,
-      slug: resolvedSlug,
-      outcome: OUTCOMES.X_PENDING,
-      reason: `x_environment_warning:${[...new Set(xWarnings.map(String).filter(Boolean))].join(",") || "unspecified"}`,
-      articleUrl,
-      prUrl,
-      evidence,
-      failedChecks: ["xTwoStage"],
-      warningChecks: [...new Set(xWarnings.map(String).filter(Boolean))],
-      xPending: true,
-      completionKind: normalizedCompletionKind,
-      acceptanceEligible: normalizedCompletionKind === "fresh_run",
-    };
-  }
-  if (xPending && xPendingBundle?.ok !== true) articleFailedChecks.push("xPendingBundle");
-  const failedChecks = Object.entries(evidence).filter(([, value]) => value?.ok !== true).map(([key]) => key);
   return {
     runId,
     slug: resolvedSlug,
-    outcome: failedChecks.length === 0 ? OUTCOMES.SUCCESS : OUTCOMES.FAILED,
-    reason: failedChecks.length === 0 ? "four_point_contract_satisfied" : `contract_failed:${failedChecks.join(",")}`,
+    outcome: primaryContract.ok ? OUTCOMES.SUCCESS : OUTCOMES.FAILED,
+    reason: primaryContract.ok ? "primary_contract_satisfied" : `primary_contract_failed:${failedChecks.join(",")}`,
     articleUrl,
     prUrl,
-    evidence,
-    failedChecks: xPending ? [...new Set([...articleFailedChecks, ...failedChecks.filter((name) => name !== "xTwoStage")])] : failedChecks,
-    warningChecks: xPending ? [...new Set(xWarnings.map(String).filter(Boolean))] : [],
-    xPending: xPending === true,
+    evidence: checks,
+    primaryContract,
+    failedChecks,
     completionKind: normalizedCompletionKind,
-    acceptanceEligible: failedChecks.length === 0 && normalizedCompletionKind === "fresh_run",
+    acceptanceEligible: primaryContract.ok && normalizedCompletionKind === "fresh_run",
+  };
+}
+
+export async function evaluateSuccessContract(options) {
+  const {
+    root = ROOT,
+    runId,
+    startedAt,
+    completionKind = "fresh_run",
+    xPending = false,
+    xWarnings = [],
+    probes = {},
+    xLedgerPath = X_POSTED_LEDGER_PATH,
+  } = options;
+  const primary = await evaluatePrimaryContract({ ...options, root, runId, startedAt, completionKind, probes, xLedgerPath });
+  if (primary.outcome !== OUTCOMES.SUCCESS) {
+    return {
+      ...primary,
+      secondaryContract: { ok: false, status: "not_run", passed: 0, total: 1, checks: {}, reason: "primary_contract_failed" },
+    };
+  }
+
+  const rawXTwoStage = await (probes.xTwoStage || ((s) => probeXTwoStage(s, root, xLedgerPath)))(primary.slug);
+  const xTwoStage = requireFreshEvidence(rawXTwoStage, "postedAt", "x_ledger", parseTime(startedAt));
+  const xPendingBundle = xPending
+    ? (probes.xPendingBundle ? await probes.xPendingBundle(primary.slug, runId) : verifyPendingBundle({ root, slug: primary.slug, runId }))
+    : null;
+  const xStatus = xTwoStage.ok === true ? "success" : xPending ? "skipped" : "failed";
+  const secondaryContract = {
+    ok: xTwoStage.ok === true,
+    status: xStatus,
+    passed: xTwoStage.ok === true ? 1 : 0,
+    total: 1,
+    checks: { xTwoStage },
+    reason: xTwoStage.ok === true ? "x_two_stage_satisfied" : xTwoStage.reason || "x_two_stage_failed",
+    ...(xPendingBundle ? { pendingBundle: xPendingBundle } : {}),
+  };
+  const warningChecks = secondaryContract.ok
+    ? []
+    : [...new Set(["xTwoStage", ...xWarnings.map(String).filter(Boolean)])];
+  return {
+    ...primary,
+    outcome: OUTCOMES.SUCCESS,
+    reason: secondaryContract.ok ? "primary_and_secondary_contracts_satisfied" : "primary_contract_satisfied_x_incomplete",
+    evidence: {
+      ...primary.evidence,
+      xTwoStage,
+      ...(xPendingBundle ? { xPendingBundle } : {}),
+    },
+    failedChecks: [],
+    warningChecks,
+    xPending: xPending === true,
+    primaryContract: primary.primaryContract,
+    secondaryContract,
+    acceptanceEligible: primary.completionKind === "fresh_run",
   };
 }
 
@@ -315,7 +371,7 @@ export function makeStoppedResult({ runId, reason, detail = null }) {
 export function recordRunOutcome(result, { root = ROOT, startedAt = null, finishedAt = new Date().toISOString() } = {}) {
   const runId = sanitizeRunId(result.runId);
   const record = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     runId,
     startedAt,
     finishedAt,
@@ -331,6 +387,8 @@ export function recordRunOutcome(result, { root = ROOT, startedAt = null, finish
     acceptanceEligible: result.acceptanceEligible === true,
     warningChecks: result.warningChecks || [],
     xPending: result.xPending === true,
+    primaryContract: result.primaryContract || null,
+    secondaryContract: result.secondaryContract || null,
   };
   if (!Object.values(OUTCOMES).includes(record.outcome)) throw new Error(`invalid outcome: ${record.outcome}`);
   atomicWriteJson(outcomeFile(runId, root), record);
@@ -370,9 +428,9 @@ export async function auditRecordedOutcome(record, options = {}) {
       xPending: true,
       xWarnings: record.warningChecks || [],
     });
-    const valid = actual.outcome === OUTCOMES.X_PENDING;
+    const valid = actual.outcome === OUTCOMES.SUCCESS && actual.primaryContract?.ok === true;
     return valid
-      ? { ...actual, mismatch: false, recordedOutcome: record.outcome }
+      ? { ...actual, outcome: OUTCOMES.X_PENDING, mismatch: false, recordedOutcome: record.outcome }
       : { ...actual, outcome: OUTCOMES.FAILED, reason: `record_actual_mismatch:${actual.reason}`, mismatch: true, recordedOutcome: record.outcome };
   }
   const actual = await evaluateSuccessContract({
@@ -486,6 +544,16 @@ async function main() {
     printAndExit(recordRunOutcome(result, { root, startedAt: args["started-at"] }));
     return;
   }
+  if (command === "primary-check") {
+    printAndExit(await evaluatePrimaryContract({
+      root,
+      runId: args["run-id"],
+      startedAt: args["started-at"],
+      slug: args.slug || null,
+      completionKind: args["completion-kind"] || "fresh_run",
+    }));
+    return;
+  }
   if (command === "phase-b-check") {
     printAndExit(await verifyPhaseBCompletion({ root, slug: args.slug || null }));
     return;
@@ -514,7 +582,7 @@ async function main() {
     printAndExit(verifyAutomationExecution({ id: args.id, scheduledAt: args["scheduled-at"], deadline: args.deadline, root }));
     return;
   }
-  console.error("usage: evaluate|phase-b-check|stop|fail|audit|intervene|correction|automation-check");
+  console.error("usage: evaluate|primary-check|phase-b-check|stop|fail|audit|intervene|correction|automation-check");
   process.exitCode = 2;
 }
 

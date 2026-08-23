@@ -20,11 +20,12 @@ import { existsSync, readFileSync, writeFileSync, readdirSync, mkdirSync, rename
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
+import { X_POSTED_LEDGER_PATH } from "../sumahon/x-posted-path.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const LEDGER_PATH = path.join(ROOT, "data", "automation", "ledger.json");
 const QUEUE_PATH = path.join(ROOT, "data", "automation", "sumahon-queue.json");
-const XPOSTED_PATH = path.join(ROOT, "data", "social", "x-posted.json");
+const XPOSTED_PATH = X_POSTED_LEDGER_PATH;
 const AUTONOMY_PATH = path.join(ROOT, "data", "automation", "autonomy.json");
 const ARTICLES_DIR = path.join(ROOT, "content", "articles");
 const REVIEW_ITEMS_URL = process.env.REVIEW_ITEMS_URL || "https://sumalabo.com/api/review-items";

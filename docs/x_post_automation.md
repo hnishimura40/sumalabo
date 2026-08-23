@@ -7,7 +7,7 @@
 `CLAUDE.md` の運用ポリシーに従う。**人間は投稿しない / パスワードを入れない / 認証コードを入れない**。Codex対話モードが以下を実行する:
 
 1. 記事公開後、`scripts/run/generate-x-post.mjs` で投稿文 (primary + 代替 2 案) を生成
-2. `scripts/run/post-to-x.mjs --check --slug X` で台帳（`data/social/x-posted.json`）と照合 → 既投稿なら停止
+2. `scripts/run/post-to-x.mjs --check --slug X` で外部台帳（`%USERPROFILE%\.sumalabo\state\x-posted.json`）と照合 → 既投稿なら停止
 3. Chrome で `https://x.com/` を開き、`@suma_labo` がログイン済みであることを確認（ログインしていない場合は失敗として停止、ユーザーへ「Chrome で @suma_labo ログインが必要」とだけ報告）
 4. `scripts/automation/x-post-chrome.ps1` で **Chrome を前面化 + 投稿文をクリップボードへセット**
 5. CodexのChrome拡張で compose textarea へフォーカス → Ctrl+V で貼り付け
@@ -45,7 +45,7 @@
 
 ## 重複投稿防止
 
-`data/social/x-posted.json`:
+`%USERPROFILE%\.sumalabo\state\x-posted.json`:
 
 ```jsonc
 {
@@ -121,7 +121,7 @@ API ルートが使えるようになった場合、`scripts/run/post-to-x.mjs -
 - `scripts/run/generate-x-post.mjs` — 生成 CLI
 - `scripts/run/post-to-x.mjs` — 投稿オーケストレータ CLI
 - `scripts/automation/x-post-chrome.ps1` — Chrome 前面化 + クリップボード準備
-- `data/social/x-posted.json` — 重複投稿台帳
+- `%USERPROFILE%\.sumalabo\state\x-posted.json` — 重複投稿台帳
 - `drafts/social/{slug}.x-post.md` — 投稿文ドラフト（人間レビュー用）
 - `logs/social/{slug}.x-post.json` — 投稿文 JSON（post-to-x が読む）
 - `logs/social/{slug}.x-post-error.json` — 失敗ログ

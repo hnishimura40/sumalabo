@@ -46,7 +46,7 @@
 
 ## 計測の見方（variant 台帳）
 
-投稿ごとに `data/social/x-posted.json` に **`variant`** フィールドが記録される:
+投稿ごとに `%USERPROFILE%\.sumalabo\state\x-posted.json` に **`variant`** フィールドが記録される:
 
 | variant | 意味 |
 |---|---|

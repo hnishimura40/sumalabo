@@ -59,6 +59,7 @@ export function summarizeMeasurement(root = ROOT) {
   const stoppedXPending = rows.filter((row) => row.outcome === "stopped_x_pending").length;
   const stopped = rows.filter((row) => row.outcome === "stopped").length;
   const failed = rows.filter((row) => row.outcome === "failed").length;
+  const xSecondaryFailed = rows.filter((row) => row.outcome === "success" && row.secondaryContract?.status !== "success").length;
   const interventions = events.filter((event) => event.type === "intervention");
   const corrections = events.filter((event) => event.type === "post_publish_correction");
   const intervenedRunIds = new Set(interventions.map((event) => event.runId));
@@ -76,6 +77,7 @@ export function summarizeMeasurement(root = ROOT) {
     stoppedXPending,
     stopped,
     failed,
+    xSecondaryFailed,
     unattendedCompletionRate: rows.length ? (success + stoppedXPending) / rows.length : null,
     acceptanceSuccess,
     acceptanceCompletionRate: rows.length ? acceptanceSuccess / rows.length : null,

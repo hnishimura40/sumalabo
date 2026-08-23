@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { X_POSTED_LEDGER_PATH } from "../sumahon/x-posted-path.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const SLUG = "202607-vivant-ai-hayato-reality-check";
@@ -29,7 +30,7 @@ export function existingReannouncement(posts) {
 }
 
 export async function run({ fetchImpl = fetch, root = ROOT } = {}) {
-  const ledger = readJson(path.join(root, "data", "social", "x-posted.json"), { posts: [] });
+  const ledger = readJson(X_POSTED_LEDGER_PATH, { posts: [] });
   const existing = existingReannouncement(ledger.posts);
   if (existing) {
     return { outcome: "stopped", reason: "existing_reannouncement", slug: SLUG, postUrl: existing.postUrl, replyUrl: existing.replyUrl };

@@ -219,19 +219,23 @@ test("Phase B target retry exhausts ten 30-second waits before failing closed", 
   assert.ok(sleeps.every((milliseconds) => milliseconds === 30_000));
 });
 
-test("Phase B/C ordering verifies production then creates x-post input before Codex", () => {
+test("primary 3-point contract completes before the independent fail-soft X step", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
+  const xStep = read("scripts/automation/night-x-post-step.ps1");
   const generator = read("scripts/run/generate-x-post.mjs");
   const retry = wrapper.indexOf("--wait-for-target --attempts=10 --interval-ms=30000");
   const verify = wrapper.indexOf("phase-b-check --slug");
-  const generate = wrapper.indexOf("generate-x-post.mjs --slug");
-  const phaseC = wrapper.indexOf("Invoke-CodexIsolated $XPrompt");
+  const primary = wrapper.indexOf("primary-check --run-id");
+  const phaseC = wrapper.indexOf("night-x-post-step.ps1");
+  const generate = xStep.indexOf("generate-x-post.mjs --slug");
+  const xPrompt = xStep.indexOf("x-post-codex-night-prompt.md");
   assert.ok(retry >= 0 && retry < verify);
-  assert.ok(verify < generate && generate < phaseC);
+  assert.ok(verify < primary && primary < phaseC);
+  assert.ok(generate >= 0 && generate < xPrompt);
   assert.match(wrapper, /phase_b_target_not_found_after_retry/);
-  assert.match(wrapper, /if \(\$publishSlug -and \$phaseBVerified -and \$XPreflightReady\)/);
-  assert.match(wrapper, /x-pending-bundle\.mjs create/);
-  assert.match(wrapper, /--x-pending --x-warnings/);
+  assert.match(wrapper, /主契約は成功のまま継続する/);
+  assert.match(xStep, /x-pending-bundle\.mjs create/);
+  assert.match(xStep, /x_ledger_io_unavailable/);
   assert.match(generator, /args\["search-phrase"\] \?\? fm\.title/);
   assert.doesNotMatch(read("scripts/automation/auto-phase-b.mjs"), /phase-c-auto\.mjs/);
 });
@@ -266,10 +270,10 @@ test("night parent actor is Codex while Git and X stay outside its sandbox", () 
 });
 
 test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentials", () => {
-  const wrapper = read("scripts/automation/night-run.ps1");
+  const wrapper = read("scripts/automation/night-x-post-step.ps1");
   const prompt = read("docs/x-post-codex-night-prompt.md");
   assert.match(wrapper, /x-post-codex-night-prompt\.md/);
-  assert.match(wrapper, /Invoke-CodexIsolated \$XPrompt/);
+  assert.match(wrapper, /night-process-runner\.mjs/);
   assert.match(wrapper, /Remove-Item Env:GH_TOKEN/);
   assert.match(prompt, /tabs\.new\(\)/);
   assert.match(prompt, /handoff.*claim.*しない/);
@@ -283,6 +287,7 @@ test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentia
   assert.match(wrapper, /XImageArg = \$XImages -join ','/);
   assert.match(wrapper, /x_visible_window_missing_before_prestage/);
   assert.match(wrapper, /-ImagePaths \$XImageArg -ClipboardOnly/);
+  assert.match(wrapper, /--add-dir', \$StateDirectory/);
   assert.match(prompt, /外側工程.*CF_HDROP/);
   assert.match(prompt, /file chooser.*使わない/);
   assert.match(prompt, /Ctrl\+V.*1回だけ/);
@@ -340,6 +345,8 @@ test("night environment configuration owns paths, token names, and permissions",
   const environment = JSON.parse(read("config/night-environment.json"));
   assert.equal(environment.runnerPath, "D:\\work\\sumalabo-night-runner");
   assert.equal(environment.repositoryShaPolicy, "runner_matches_origin_main");
+  assert.equal(environment.xPostedLedger.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\x-posted.json");
+  assert.ok(environment.warningChecks.includes("x_ledger_state"));
   assert.equal(environment.chrome.extensionId, "hehggadaopoacecdllhhajmbjkdcmajg");
   assert.equal(environment.tokens.github, "GH_TOKEN");
   assert.match(environment.codex.executable, /codex\.exe$/);
@@ -375,16 +382,22 @@ test("night run removes only the exact Chrome parent process that it started", (
   assert.doesNotMatch(wrapper, /Get-Process chrome[^\r\n]*\| Stop-Process/);
 });
 
-test("runner keeps generated evidence private and preserves the live X ledger outside Git status", () => {
+test("runner keeps generated evidence private and the X ledger entirely outside Git", () => {
   const ignore = read(".gitignore");
   const prepare = read("scripts/automation/prepare-night-runner.mjs");
+  const ledgerPath = read("scripts/sumahon/x-posted-path.mjs");
+  const backup = read("scripts/automation/backup-x-posted-ledger.mjs");
   const setup = read("docs/night_run_setup.md");
   for (const pattern of ["logs/night/", "logs/article/", "logs/preview/", "logs/scout/", "logs/social/", "drafts/social/"]) {
     assert.match(ignore, new RegExp(pattern.replace("/", "\\/")));
   }
   assert.match(ignore, /^\.wrangler\/$/m, "Wrangler's generated cache must not make the dedicated runner dirty");
-  assert.match(prepare, /PRIVATE_TRACKED_RUNTIME_FILES/);
-  assert.match(prepare, /update-index[\s\S]*--skip-worktree/);
+  assert.match(ignore, /data\/social\/x-posted\.json/);
+  assert.doesNotMatch(prepare, /PRIVATE_TRACKED_RUNTIME_FILES/);
+  assert.doesNotMatch(prepare, /skip-worktree/);
+  assert.doesNotMatch(prepare, /data\/social\/x-posted\.json/);
+  assert.match(ledgerPath, /%USERPROFILE%/);
+  assert.match(backup, /backupDirectory/);
   assert.match(prepare, /if \(existsSync\(target\)\) continue;/);
   assert.doesNotMatch(setup, /ヘッドレスClaude Code|claude-opus-4-8|Sumalabo Claude Auth Probe|軽量な`claude -p`/);
 });
@@ -394,6 +407,17 @@ test("watchdog audits the exact run id instead of a same-day record", () => {
   assert.match(watchdog, /\$activeRunId/);
   assert.match(watchdog, /'--run-id', \$activeRunId/);
   assert.doesNotMatch(watchdog, /'audit', '--date'/);
+  assert.match(watchdog, /backup-x-posted-ledger\.mjs/);
+  assert.match(watchdog, /nextPreflightExit/);
+  assert.match(watchdog, /本体成功／X失敗/);
+});
+
+test("run finalizer records advisory next-run preflight without changing the main contract", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  assert.match(wrapper, /function Invoke-NextRunPreflight/);
+  assert.match(wrapper, /night-environment-check\.mjs --static-only/);
+  assert.match(wrapper, /今回runの成否は変更しない/);
+  assert.match(wrapper, /nextPreflight=\$script:NextPreflight/);
 });
 
 test("X pending recovery is a one-command fail-closed runner flow", () => {
@@ -405,6 +429,7 @@ test("X pending recovery is a one-command fail-closed runner flow", () => {
   assert.match(launcher, /latestPendingBundle/);
   assert.match(recovery, /x-pending-bundle\.mjs verify/);
   assert.match(recovery, /post-to-x\.mjs --check/);
+  assert.match(recovery, /--add-dir',\$StateDirectory/);
   assert.match(recovery, /\$imagePaths\.Count -ne 4/);
   assert.match(recovery, /docs\\x-post-codex-night-prompt\.md/);
   assert.match(recovery, /--completion-kind recovery/);

@@ -52,7 +52,7 @@ Claude が自動でやる部分（記事化・タイトル生成・X 画像投�
 
 ## 計測（どの型が伸びたか）
 
-- X 投稿の型は台帳 `data/social/x-posted.json` の `variant` に記録される（`images4+reply` / `text_only` など）。
+- X 投稿の型は外部台帳 `%USERPROFILE%\.sumalabo\state\x-posted.json` の `variant` に記録される（`images4+reply` / `text_only` など）。
 - 週次ダイジェスト（`npm run digest`）で PV / 投稿インプレの伸びを型別に見返し、
   **伸びた型（画像投稿 vs リンク投稿、驚きサムネ vs 従来）を次の既定に寄せる**。
 - 判断材料が溜まったら、このプレイブックと `autonomy.json` の `xPostOptions` を更新する。

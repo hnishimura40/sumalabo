@@ -49,6 +49,7 @@ data/automation/scout-picked.json
 data/automation/sumahon-queue.json
 data/automation/processed-urls.json
 data/automation/locks/
+data/social/x-posted.json
 
 # night-run runtime audit state — private/local only
 logs/night/

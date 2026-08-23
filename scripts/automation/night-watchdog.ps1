@@ -14,6 +14,28 @@ $LatestEntryFile = Join-Path $NightDir 'latest-entry.json'
 $WatchFile = Join-Path $NightDir "$DateStr.watchdog.json"
 $ContractScript = Join-Path $RepoRoot 'scripts\automation\night-run-contract.mjs'
 
+# Daily external X ledger backup. A backup failure is warning-only and never
+# changes the independently audited main outcome.
+$backup = & node scripts/automation/backup-x-posted-ledger.mjs --date $DateStr 2>&1
+$backupExit = $LASTEXITCODE
+$backupText = ($backup | Out-String).Trim()
+$backupJson = $null
+try { $backupJson = $backupText | ConvertFrom-Json } catch {}
+if ($backupExit -ne 0 -and -not $DryRun) {
+  node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-watchdog-ledger-backup',status:'warning',title:'[night-watchdog] X台帳の日次バックアップ失敗（本体判定は継続）'}))" 2>&1 | Out-Null
+}
+
+# Predict the next scheduled run using the same standalone Phase 0 check. This
+# is advisory only and never changes today's independently audited outcome.
+$nextPreflight = & node scripts/automation/night-environment-check.mjs --static-only 2>&1
+$nextPreflightExit = $LASTEXITCODE
+$nextPreflightText = ($nextPreflight | Out-String).Trim()
+$nextPreflightJson = $null
+try { $nextPreflightJson = $nextPreflightText | ConvertFrom-Json } catch {}
+if ($nextPreflightExit -ne 0 -and -not $DryRun) {
+  node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-watchdog-next-preflight',status:'warning',title:'[night-watchdog] 次回preflight失敗（明朝run失敗見込み、今回結果には非影響）'}))" 2>&1 | Out-Null
+}
+
 # Read the current-run state before auditing old outcomes.  A prior scheduled
 # acceptance stop is not a result for a later production attempt.
 $stateCandidates = @()
@@ -42,7 +64,7 @@ if ($state) {
 }
 
 # Completion and heartbeat files are not proof of success. The contract audit
-# independently checks the production URL, merged PR, strict QA, and X ledger.
+# checks the primary three points and the secondary X ledger independently.
 $auditArgs = @($ContractScript, 'audit')
 if ($activeRunId) {
   $auditArgs += @('--run-id', $activeRunId)
@@ -58,32 +80,56 @@ $auditJson = $null
 try { $auditJson = $auditText | ConvertFrom-Json } catch {}
 
 if ($auditExit -eq 0 -and $auditJson.outcome -eq 'success') {
+  $xStatus = if ($auditJson.secondaryContract) { [string]$auditJson.secondaryContract.status } else { 'not_run' }
+  $xWarningNotified = $false
+  if ($xStatus -ne 'success' -and -not $DryRun) {
+    $reason = if ($auditJson.secondaryContract) { [string]$auditJson.secondaryContract.reason } else { 'secondary_contract_missing' }
+    $notify = node -e "import('./scripts/automation/autonomy-notify.mjs').then(async m=>{const r=await m.notifyAutonomyEvent({slug:process.argv[1],status:'warning',title:'[night-watchdog] 本体成功／X失敗: '+process.argv[2]});console.log(JSON.stringify(r))})" "night-watchdog-$DateStr" $reason 2>&1
+    $xWarningNotified = (($notify | Out-String) -match '"ok"\s*:\s*true')
+  }
   @{
     checkedAt = $Now.ToString('o')
     result = 'success'
-    notified = $false
+    mainStatus = 'success'
+    xStatus = $xStatus
+    notified = $xWarningNotified
     runId = $auditJson.runId
     slug = $auditJson.slug
     independentlyVerified = $true
     mismatch = $false
+    primaryContract = $auditJson.primaryContract
+    secondaryContract = $auditJson.secondaryContract
+    ledgerBackup = $backupJson
+    ledgerBackupOk = ($backupExit -eq 0)
+    nextPreflight = @{ ok=($nextPreflightExit -eq 0); exitCode=$nextPreflightExit; evidence=$nextPreflightJson }
   } | ConvertTo-Json -Depth 8 | Set-Content $WatchFile -Encoding utf8
   exit 0
 }
 
 if ($auditExit -eq 20 -and $auditJson.outcome -eq 'stopped_x_pending') {
+  $legacyNotified = $false
+  if (-not $DryRun) {
+    $notify = node -e "import('./scripts/automation/autonomy-notify.mjs').then(async m=>{const r=await m.notifyAutonomyEvent({slug:process.argv[1],status:'warning',title:'[night-watchdog] 本体成功／X失敗（旧形式のX保留）'});console.log(JSON.stringify(r))})" "night-watchdog-$DateStr" 2>&1
+    $legacyNotified = (($notify | Out-String) -match '"ok"\s*:\s*true')
+  }
   @{
     checkedAt = $Now.ToString('o')
-    result = 'stopped_x_pending'
+    result = 'success'
+    mainStatus = 'success'
+    xStatus = 'skipped'
     reason = $auditJson.reason
-    notified = $false
+    notified = $legacyNotified
     runId = $auditJson.runId
     slug = $auditJson.slug
     independentlyVerified = $true
     mismatch = [bool]$auditJson.mismatch
     articleThreePointVerified = $true
     xPendingBundleVerified = [bool]$auditJson.evidence.xPendingBundle.ok
+    ledgerBackup = $backupJson
+    ledgerBackupOk = ($backupExit -eq 0)
+    nextPreflight = @{ ok=($nextPreflightExit -eq 0); exitCode=$nextPreflightExit; evidence=$nextPreflightJson }
   } | ConvertTo-Json -Depth 12 | Set-Content $WatchFile -Encoding utf8
-  exit 20
+  exit 0
 }
 
 if ($auditExit -eq 20 -and $auditJson.outcome -eq 'stopped') {
@@ -95,6 +141,11 @@ if ($auditExit -eq 20 -and $auditJson.outcome -eq 'stopped') {
     runId = $auditJson.runId
     independentlyVerified = $true
     mismatch = [bool]$auditJson.mismatch
+    mainStatus = 'stopped'
+    xStatus = 'not_run'
+    ledgerBackup = $backupJson
+    ledgerBackupOk = ($backupExit -eq 0)
+    nextPreflight = @{ ok=($nextPreflightExit -eq 0); exitCode=$nextPreflightExit; evidence=$nextPreflightJson }
   } | ConvertTo-Json -Depth 8 | Set-Content $WatchFile -Encoding utf8
   exit 20
 }
@@ -111,7 +162,7 @@ if ($healthyAtDeadline) {
 } elseif ($mismatch) {
   $title = '[night-watchdog] Recorded result conflicts with independently verified facts (failed)'
 } else {
-  $title = '[night-watchdog] Four-point success contract was not satisfied (failed)'
+  $title = '[night-watchdog] Main three-point success contract was not satisfied (failed)'
 }
 
 $notified = $false
@@ -131,6 +182,11 @@ if (-not $DryRun) {
   contractAudit = $auditJson
   mismatch = [bool]($auditJson -and $auditJson.mismatch)
   healthyAtDeadline = [bool]$healthyAtDeadline
+  mainStatus = 'failed'
+  xStatus = if($auditJson -and $auditJson.secondaryContract){$auditJson.secondaryContract.status}else{'not_run'}
+  ledgerBackup = $backupJson
+  ledgerBackupOk = ($backupExit -eq 0)
+  nextPreflight = @{ ok=($nextPreflightExit -eq 0); exitCode=$nextPreflightExit; evidence=$nextPreflightJson }
 } | ConvertTo-Json -Depth 12 | Set-Content $WatchFile -Encoding utf8
 
 exit 30

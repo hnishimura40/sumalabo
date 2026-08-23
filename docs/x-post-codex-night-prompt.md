@@ -17,7 +17,7 @@ Read `chrome.xReadiness` from `config/night-environment.json`. After opening a f
 - `https://x.com` は事前許可済みであることを前提にする。許可拒否、ログアウト、`@suma_labo` のDOM不一致があれば回避せずfailedとして停止する。
 - 投稿前に `@suma_labo`、本文完全一致、添付数、送信ボタン有効をDOMで確認する。
 - 本投稿と返信はそれぞれ送信を1回だけ行う。送信後に不明状態でも再クリックせず、まずプロフィール/with_repliesのDOMで実在を確認する。
-- 本投稿 `count===1` を確認した直後に本投稿台帳、返信 `count===1` と親返信数 `N→N+1` を確認した直後に返信台帳を記録する。`route: codex` とする。
+- 本投稿 `count===1` を確認した直後に外部台帳 `%USERPROFILE%\.sumalabo\state\x-posted.json` へ本投稿を記録し、返信 `count===1` と親返信数 `N→N+1` を確認した直後に同じ外部台帳へ返信を記録する。`route: codex` とする。
 - GH_TOKEN、GitHub CLI設定、Git資格情報を読まない。Git操作、push、PR、merge、deployをしない。
 - 終了時に作成した専用タブを閉じる。
 

@@ -19,6 +19,8 @@ if ($LASTEXITCODE -eq 3) {
   exit $LASTEXITCODE
 }
 if ($LASTEXITCODE -ne 0) { exit 30 }
+$LedgerPath = (& node -e "import('./scripts/sumahon/x-posted-path.mjs').then(m=>console.log(m.X_POSTED_LEDGER_PATH))" | Out-String).Trim()
+$StateDirectory = Split-Path -Parent $LedgerPath
 
 $ChromeExe = @($Environment.chrome.executableCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1)
 if (-not $ChromeExe) { throw 'chrome_executable_missing' }
@@ -55,7 +57,7 @@ $stateFile = Join-Path $logDir "$Slug.$recoveryRunId.recovery.state.json"
 $runnerOut = Join-Path $logDir "$Slug.$recoveryRunId.recovery.runner.log"
 $runnerErr = Join-Path $logDir "$Slug.$recoveryRunId.recovery.runner.err.log"
 $prompt = (Get-Content -LiteralPath (Join-Path $RepoRoot 'docs\x-post-codex-night-prompt.md') -Raw -Encoding utf8).Replace('{{SLUG}}', $Slug)
-$args = @('exec','--ephemeral','--sandbox','workspace-write','--add-dir','D:\downloads\sumalabo-codex','--skip-git-repo-check','--color','never','--output-last-message',$lastMessageFile,'-C',$RepoRoot,'-')
+$args = @('exec','--ephemeral','--sandbox','workspace-write','--add-dir','D:\downloads\sumalabo-codex','--add-dir',$StateDirectory,'--skip-git-repo-check','--color','never','--output-last-message',$lastMessageFile,'-C',$RepoRoot,'-')
 Set-Content -LiteralPath $promptFile -Value $prompt -Encoding utf8
 $args | ConvertTo-Json | Set-Content -LiteralPath $argsFile -Encoding utf8
 $launcherArgs = @(

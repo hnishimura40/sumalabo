@@ -10,7 +10,7 @@
 
 ## 2026-08-01 公開前人手ゲート全廃（最優先・旧記載を上書き）
 
-**夜間run成否契約（2026-08-08 Hiro承認・系全体の最上位）**: 夜間runの `success` は、(a) 本番記事URL HTTP 200、(b) GitHub API上でPRがmerged、(c) strict verifyのhard/soft全項目合格、(d) `data/social/x-posted.json` に本投稿URLとリンク返信URLが二段階記録済み、の4点を終了時と見張り番がそれぞれ実物確認した場合だけ。プロセスexit 0、completion、heartbeat、`recordNightRun({result:'completed'})` はsuccessの根拠にしてはならない。完了は `success` / `stopped`（候補なし・計測外・veto等の意図した停止で理由必須）/ `failed` の三値とし、`stopped=20`、`failed=30` の非0終了でタスクスケジューラから区別する。SKIP・論理停止・想定外分岐を0へ丸めない。記録の主キーはslugでなくrun日時由来の `runId`。人の介入と公開後修正は `npm run night:record-intervention -- --run-id <id> --reason <理由>` / `npm run night:record-correction -- --run-id <id> --slug <slug> --reason <理由>` で記録する。見張り番は完了記録を信用せず4点を独立照合し、不一致をfailedとして残す。第2段の受入完了後、2026-08-08にDriver/Watchdog/Auth Probeを再有効化した。
+**夜間run成否契約（2026-08-24更新・系全体の最上位）**: 夜間runの主契約は、(a) 本番記事URL HTTP 200、(b) GitHub API上でPRがmerged、(c) strict verifyのhard/soft全項目合格、の3点。終了時と見張り番がそれぞれ実物確認し、この3点だけで本体runの `success` / `failed` と終了コードを決める。X本投稿URLとリンク返信URLの二段階台帳は副契約として独立判定し、失敗・認証・DOM・台帳I/Oのいずれも本体成功を失敗へ変更しない。「本体成功／X失敗」として警告通知し、pending bundleを可能な範囲で保全する。X正本は `%USERPROFILE%\.sumalabo\state\x-posted.json`。プロセスexit 0、completion、heartbeat、`recordNightRun({result:'completed'})` だけをsuccessの根拠にしてはならない。意図した停止は `stopped=20`、主契約失敗は `failed=30`。記録の主キーはrun日時由来の `runId`。人の介入と公開後修正は `npm run night:record-intervention -- --run-id <id> --reason <理由>` / `npm run night:record-correction -- --run-id <id> --slug <slug> --reason <理由>` で記録する。
 
 **画像内文字の一体生成（2026-08-07 Hiro決定）**: 文字を含むサムネイル・本文図解は、文字まで含めた一枚絵として生成する。「文字なしベース画像＋固定座標の文字帯・ラベル・パネル後乗せ」は禁止する。例外は、実機スクリーンショット上の実際のUI位置へ番号・説明を付ける専用注釈（`tmp/google-vids/annotate-screenshot.mjs`型）だけ。`tmp/qwen38-compose.mjs` は使い捨てであり、他記事・再生成・自動工程へ流用しない。
 
@@ -34,6 +34,8 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 
 **恒久無人運転（nightRun・2026-07-11 ユーザー承認）**: testMode（3本限定）完走を受け、夜間の無人 run は `autonomy.json` の `nightRun` による恒久運転（毎日 4:30 / scout 自動選定 / 1 晩 1 本 / weeklyCap 7）。恒久ガード＝`errorBudget.consumes: true` のincident 2件で自動停止（非消費incidentは除外）・kill switch・gate/factcheck/verify/rollback従来どおり。scout候補が閾値50未満の日は安全スキップ。scoutの選定はcriticality（自分ごと度）＋**日本自分ごと度4軸（a:日本影響 / b:価格・制度 / c:公式か噂か / d:日本の類似で書ける）**で採点し、海外限定・「日本は対象外」で日本を書けない候補は自動的に不適格にする（「日本は未定」で終わる記事を選ばない）。定義: [`docs/autonomy.md`](docs/autonomy.md) §6。**この無人runは「ユーザー指定なしの自動収集をしない」原則の承認済み例外**。`nightRun.enabled`の再有効化はユーザー宣言のみ。
 
+**シミュレーションの用語定義（2026-08-24 Hiro決定）**: 「シミュレーション」とは、本番と同一の実実行で1周通す検証runを指す。deploy・X投稿・成功契約の実測判定を含み、dry-runを意味しない。外部変更を行わない検証が必要な場合は、明示的に「ドライラン」と指定する。
+
 **夜間run起動層の凍結（2026-07-30 Hiro決定）**: `scripts/automation/night-run.ps1`、`night-process-runner.mjs`、`register-night-task.mjs`、`night-watchdog.ps1` およびタスクスケジューラ登録内容は、当面**障害対応以外の改修禁止**。4日で3回、起動層の変更直後に障害が発生したため、機能追加・リファクタ・自己診断拡張を理由に触らない。障害対応時も、実登録XMLの本番引数確認、禁止テストフラグ検査、`schtasks /Run`による本番同等パス受入を必須とする。
 **昼の立ち会い制作も完走型（2026-07-12 ユーザー承認）**: ユーザーが対話セッションで**記事制作を明示指示**したら、**Human Review Checkpoint を廃止し、Phase A → B → C（公開・X 投稿）まで確認なしで完走**する。停止してよい例外は「除外カテゴリ該当（訴訟/事故/人事/買収/政治）」と「品質・安全のブロック（事実未確認・gate 不合格・build/deploy/verify 失敗・画像生成経路不可）」の 2 つだけ。**事後の取り消しは `npm run retract`**。詳細: [`docs/autonomy.md`](docs/autonomy.md) §7。ユーザーが「下書きだけ」「確認したい」等と明示したときのみ従来どおり途中停止する。
 
@@ -47,7 +49,7 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 
 **身体構造と画像経路の公開ブロック（2026-07-31更新）**: 認識アンカーとは別に、四肢・手指・顔・物体との融合を全画像で検査する。明確な手/腕/脚の本数異常に加え、各手が左手/右手として自然な向きか（親指位置）、手首と腕の接続、指の長さ・太さ（特に親指）を手ごとに必須回答する。明確な左右不整合・接続異常、腕・脚の不自然な長さ/細さ、触手状・ホース状・急なS字、付け根・関節の破綻、不快なシルエットは `needs_revision`。比率だけの違和感は warning とし画像を報告へ添付する。らぼまるは腕・手・脚・足が左右各1つで、それ以外の突起はアンテナ1本と左右の耳ビレだけ。生成では自然な構図を優先し、手を隠すことを既定にしない。壊れにくい手として、開いた手・軽く添える手を優先する。手は小さめ・遠めに描き、クローズアップを避ける。動作する手は片手だけにし、もう片方は体側で自然に休ませる。物を強く握る、両手で別々の動作をする、指を複雑に組む・数えるポーズは避ける。小道具の把持が不可欠な場合だけ、片手で軽く持つ。手を消すためにフレームアウト・後ろ手・机の陰へ不自然に退避させない。テーマ衣装・小道具配置・姿勢と視線・背景の演出密度は維持する。画像生成の標準経路は `codex exec` とし、工房チャットは既定のfallback条件が記録された場合だけ使う。**工房fallbackが1回でも発動した完了報告には「工房退避あり（条件名）」を必須記載**し、発動しなかった場合も「工房退避なし（Codex exec）」と明記する。無記載のまま経路を変更してはならない。
 
-**X投稿の標準経路（Hiro決定・2026-08-08更新）**: 昼夜とも **Codex Browser**を基本とする。対話モードは内蔵BrowserまたはChrome連携、非対話CLIは利用可能なCodex Chrome連携を使う。`claude-in-chrome` は使用しない。投稿前の `@suma_labo` DOM確認、本投稿・リプライ各 `count===1`、親の返信数 `N→N+1`、`x-posted.json` への本投稿直後／リプライ直後の2段階記録を省略しない。新規台帳レコードには `route: "codex"` を加える。**これは7/23の移行見送りを7/27のHiro実測で上書きし、夜間親主体もCodexへ統一した決定**。定型指示: [`docs/x-post-codex-procedure.md`](docs/x-post-codex-procedure.md)。
+**X投稿の標準経路（Hiro決定・2026-08-24更新）**: 昼夜とも **Codex Browser**を基本とする。対話モードは内蔵BrowserまたはChrome連携、非対話CLIは利用可能なCodex Chrome連携を使う。`claude-in-chrome` は使用しない。投稿前の `@suma_labo` DOM確認、本投稿・リプライ各 `count===1`、親の返信数 `N→N+1`、外部台帳 `%USERPROFILE%\.sumalabo\state\x-posted.json` への本投稿直後／リプライ直後の2段階記録を省略しない。新規台帳レコードには `route: "codex"` を加える。夜間X工程は主契約確定後の独立フェイルソフト工程であり、失敗時は本体を失敗にしない。定型指示: [`docs/x-post-codex-procedure.md`](docs/x-post-codex-procedure.md)。
 
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
@@ -701,7 +703,7 @@ All user-facing completion reports, including Codex interactive, night run, atte
 
 ## Night phase-0 severity policy (2026-08-15)
 
-- Fatal checks are limited to article-pipeline prerequisites: `GH_TOKEN`, canonical/runner SHA equality, runner tracked dirty 0, and environment-definition/runner health. Any fatal failure stops before article generation with `failed`.
+- Fatal checks are limited to article-pipeline prerequisites: `GH_TOKEN`, runner HEAD/origin main equality, dedicated runner dirty 0, and environment-definition/runner health. The daytime canonical workspace is not a night-run prerequisite. Any fatal failure stops before article generation with `failed`.
 - Chrome/X checks are warning-only at phase 0: configured profile, extension/native-host, x.com permission, file URL permission, `href=/suma_labo` login evidence, and DOM read. A warning must not stop article generation, publication, PR merge, or strict verification.
-- If the three article contract points pass while an X warning exists, skip Phase C before any X send, preserve the primary text, URL-only reply, and exactly four images in an immutable pending manifest, and record `stopped_x_pending` (exit 20).
+- If the three main contract points pass while an X warning exists, skip Phase C before any X send, preserve the primary text, URL-only reply, and exactly four images in an immutable pending manifest when possible, and record `success` with secondary X status `skipped` or `failed` (exit 0).
 - Recover pending X work with `npm run social:recover-x-pending -- --slug <slug>`. Recovery remains fail-closed and is recorded as `completionKind=recovery`, `acceptanceEligible=false`.

@@ -2,12 +2,13 @@
 
 失敗runが生成した記事、画像、検品結果、state、handoffは削除・巻き戻ししない。既存の原子的保存とrunner保全規則に従い、原因調査と再開に利用できる状態を維持する。
 
-原因修正後、保存済み成果物が必要な検品に合格している場合は、同じslugのpending地点から再開し、Phase B、公開、strict verify、Phase C、X二段階記録まで完了してよい。完了時の契約評価には `--completion-kind recovery` を付ける。この回収完走は四点契約が揃えば公開処理としては`success`になり得るが、`acceptanceEligible=false`であり、夜間構成の受入実績には数えない。
+原因修正後、保存済み成果物が必要な検品に合格している場合は、同じslugのpending地点から再開し、Phase B、公開、strict verify、Phase C、X二段階記録まで完了してよい。完了時の契約評価には `--completion-kind recovery` を付ける。この回収完走は主契約3点が揃えば公開処理としては`success`になり得るが、`acceptanceEligible=false`であり、夜間構成の受入実績には数えない。X二段階記録は副契約として別に報告する。
 
 構成を定刻へ引き渡せるのは、別の実タスクが新規ネタ選定からWatchdogまで最初から一周し、次をすべて満たした場合だけとする。
 
 - Driverの三値が`success`、終了コード0
-- HTTP 200、PR merged、strict verify、X本投稿＋返信の四点が当該run由来
+- 主契約のHTTP 200、PR merged、strict verifyが当該run由来
+- 副契約のX本投稿＋返信は独立して成功・失敗を記録
 - Watchdog `mismatch=false`
 - 人の介入なし、`completionKind=fresh_run`、`acceptanceEligible=true`
 - runner tracked dirty 0
@@ -16,10 +17,10 @@
 
 第0工程では、記事工程を成立させる検査とX投稿だけに必要な検査を分離する。
 
-- 致命検査: `GH_TOKEN`、main/runner SHA一致、runner tracked dirty 0、環境定義とrunnerの健全性。不合格なら記事工程へ入らず `failed`。
-- X警告検査: Xログインhref、x.comサイト許可、ファイルURL許可、拡張/native-host接続、DOM読取、Chromeプロファイル。不合格でも記事生成・公開・PR merge・strict verifyまで続行する。
+- 致命検査: `GH_TOKEN`、runner HEAD/origin main一致、runner tracked dirty 0、環境定義とrunnerの健全性。不合格なら記事工程へ入らず `failed`。
+- X警告検査: Xログインhref、x.comサイト許可、ファイルURL許可、拡張/native-host接続、DOM読取、Chromeプロファイル、外部X台帳I/O。不合格でも記事生成・公開・PR merge・strict verifyまで続行する。
 
-記事3点が実物確認でき、Xだけが環境警告で実行できない場合は `stopped_x_pending`（終了コード20）とする。この状態はfresh runかつ介入なしなら当面の受入下限に数えるが、4点契約の `success` とは区別する。
+記事3点が実物確認でき、Xだけが環境警告で実行できない場合も本体は `success`（終了コード0）とする。副契約は `skipped` または `failed` とし、「本体成功／X失敗」を通知する。
 
 X投稿文、URLだけの返信文、既存画像4枚と各ハッシュは `logs/social/<slug>.<runId>.x-pending.json` に保全する。朝の回収は次の1コマンドで実行し、`completionKind=recovery`、`acceptanceEligible=false` として記録する。
 
