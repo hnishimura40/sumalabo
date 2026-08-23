@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, evaluateEnvironmentEvidence, findFirstReadyObservation, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
+import { CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, evaluateEnvironmentEvidence, evaluateRepositorySha, findFirstReadyObservation, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
 
 const passing = Object.fromEntries(CHECK_NAMES.map((name) => [name, { ok: true, detail: "test" }]));
 
@@ -8,6 +8,25 @@ test("night environment contract accepts every required item", () => {
   const result = evaluateEnvironmentEvidence(passing);
   assert.equal(result.ok, true);
   assert.deepEqual(result.failedChecks, []);
+});
+
+test("repository SHA health compares the runner with origin/main, not the canonical workspace", () => {
+  const result = evaluateRepositorySha({
+    runnerHead: { ok: true, text: "60cac6b" },
+    originMainHead: { ok: true, text: "60cac6b" },
+  });
+  assert.deepEqual(result, {
+    ok: true,
+    detail: "runner=60cac6b;origin/main=60cac6b",
+  });
+});
+
+test("repository SHA health fails when the runner is behind origin/main", () => {
+  const result = evaluateRepositorySha({
+    runnerHead: { ok: true, text: "3cc6e6c" },
+    originMainHead: { ok: true, text: "60cac6b" },
+  });
+  assert.equal(result.ok, false);
 });
 
 for (const name of CHECK_NAMES) {

@@ -26,6 +26,18 @@ export function findFirstReadyObservation(observations, policy) {
   return observations.find((item) => Number(item?.atSeconds) <= policy.maxWaitSeconds && Number(item?.hrefCount) >= 1) || null;
 }
 
+export function evaluateRepositorySha({ runnerHead, originMainHead }) {
+  const runnerSha = runnerHead?.text || "?";
+  const originMainSha = originMainHead?.text || "?";
+  return {
+    ok: runnerHead?.ok === true
+      && originMainHead?.ok === true
+      && runnerSha !== "?"
+      && runnerSha === originMainSha,
+    detail: `runner=${runnerSha};origin/main=${originMainSha}`,
+  };
+}
+
 function run(command, args, cwd) {
   return spawnSync(command, args, { cwd, encoding: "utf8", windowsHide: true });
 }
@@ -92,9 +104,10 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
 
   evidence.environment_definition = {
     ok: environment.schemaVersion === 1
+      && environment.repositoryShaPolicy === "runner_matches_origin_main"
       && CHECK_NAMES.every((name) => environment.requiredChecks.includes(name))
       && validateXReadinessPolicy(environment.chrome?.xReadiness),
-    detail: "schemaVersion=1;xReadiness=valid",
+    detail: `schemaVersion=1;repositoryShaPolicy=${environment.repositoryShaPolicy};xReadiness=valid`,
   };
   const expectedPreferences = path.join(profileRoot, "Preferences");
   let runningProfileMatches = true;
@@ -128,9 +141,9 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
 
   const canonical = environment.canonicalWorkspacePath;
   const runner = environment.runnerPath;
-  const canonicalHead = git(canonical, ["rev-parse", "HEAD"]);
+  const originMainHead = git(runner, ["rev-parse", "origin/main"]);
   const runnerHead = git(runner, ["rev-parse", "HEAD"]);
-  evidence.repository_sha = { ok: canonicalHead.ok && runnerHead.ok && canonicalHead.text === runnerHead.text, detail: `${canonicalHead.text || "?"}/${runnerHead.text || "?"}` };
+  evidence.repository_sha = evaluateRepositorySha({ runnerHead, originMainHead });
   const canonicalDirty = git(canonical, ["status", "--porcelain=v1", "--untracked-files=no"]);
   const runnerHygiene = inspectRunnerHygiene({ root: runner });
   evidence.runner_dirty = {

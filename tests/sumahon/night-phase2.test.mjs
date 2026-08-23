@@ -339,6 +339,7 @@ test("night Chrome startup uses the single environment definition", () => {
 test("night environment configuration owns paths, token names, and permissions", () => {
   const environment = JSON.parse(read("config/night-environment.json"));
   assert.equal(environment.runnerPath, "D:\\work\\sumalabo-night-runner");
+  assert.equal(environment.repositoryShaPolicy, "runner_matches_origin_main");
   assert.equal(environment.chrome.extensionId, "hehggadaopoacecdllhhajmbjkdcmajg");
   assert.equal(environment.tokens.github, "GH_TOKEN");
   assert.match(environment.codex.executable, /codex\.exe$/);

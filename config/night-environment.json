@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "repositoryShaPolicy": "runner_matches_origin_main",
   "canonicalWorkspacePath": "D:\\documents\\動画作成関連\\すまラボ",
   "runnerPath": "D:\\work\\sumalabo-night-runner",
   "entryRoot": "D:\\work",
