@@ -13,7 +13,7 @@
 ## 共通の絶対条件
 
 1. `node scripts/run/post-to-x.mjs --check --slug {{SLUG}}` で既投稿なら、投稿もリプライもせず正常終了する。
-2. `data/automation/ledger.json` と `data/social/x-posted.json` のslugも確認し、重複の疑いがあれば止める。
+2. `data/automation/ledger.json` と `%USERPROFILE%\.sumalabo\state\x-posted.json` のslugも確認し、重複の疑いがあれば止める。
 3. Xの現在アカウントをDOMで検証し、`@suma_labo` の `innerText / aria-label / href` を取得して一致を確認する。目視だけで進めない。
 4. 本文入力後はcomposerの文字列を読み戻し、投稿JSONの `primary.text` と完全一致させる。
 5. 読者が使う自然検索語でXを1回検索し、結果内で実際に使われているタグを収集・集計する。最多の流入タグを0〜2個選び、--search-phrase と --discovered-traffic-tags で再生成する。#すまラボ は常時1個、カテゴリタグは廃止。1行目に自然検索語があることを確認する。

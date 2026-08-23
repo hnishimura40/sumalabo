@@ -3,7 +3,7 @@
 //
 // 役割:
 //   - logs/social/{slug}.x-post.json から投稿文をロード
-//   - data/social/x-posted.json 台帳と照合し、二重投稿を防止
+//   - %USERPROFILE%\.sumalabo\state\x-posted.json 台帳と照合し、二重投稿を防止
 //   - --mode chrome (デフォルト): scripts/automation/x-post-chrome.ps1 を呼び、
 //       Chrome を前面化 + クリップボードに投稿文をセット
 //       （最終クリックは Codex 対話モードの Browser / Chrome が DOM を確認して実行する想定）
@@ -195,7 +195,7 @@ async function modeChrome(args) {
   if (await hasPosted(slug)) {
     const rec = await getPostRecord(slug);
     console.error(
-      `error: slug "${slug}" は既に投稿済みです (${rec?.postedAt || ""}). 再投稿しません。data/social/x-posted.json を参照。`,
+      `error: slug "${slug}" は既に投稿済みです (${rec?.postedAt || ""}). 再投稿しません。外部X投稿台帳を参照。`,
     );
     process.exit(3);
   }

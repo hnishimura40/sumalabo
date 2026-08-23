@@ -6,6 +6,7 @@ import process from "node:process";
 import { pathToFileURL } from "node:url";
 import { NIGHT_ENVIRONMENT, chromeProfilePath } from "./night-environment.mjs";
 import { inspectRunnerHygiene } from "./runner-hygiene.mjs";
+import { inspectXPostedLedgerAccess, resolveXPostedLedgerPath } from "../sumahon/x-posted-path.mjs";
 
 export const CHECK_NAMES = [...NIGHT_ENVIRONMENT.requiredChecks];
 export const FATAL_CHECK_NAMES = [...NIGHT_ENVIRONMENT.fatalChecks];
@@ -105,9 +106,11 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
   evidence.environment_definition = {
     ok: environment.schemaVersion === 1
       && environment.repositoryShaPolicy === "runner_matches_origin_main"
+      && environment.xPostedLedger?.pathTemplate === "%USERPROFILE%\\.sumalabo\\state\\x-posted.json"
+      && typeof environment.xPostedLedger?.backupDirectory === "string"
       && CHECK_NAMES.every((name) => environment.requiredChecks.includes(name))
       && validateXReadinessPolicy(environment.chrome?.xReadiness),
-    detail: `schemaVersion=1;repositoryShaPolicy=${environment.repositoryShaPolicy};xReadiness=valid`,
+    detail: `schemaVersion=1;repositoryShaPolicy=${environment.repositoryShaPolicy};xPostedLedger=external;xReadiness=valid`,
   };
   const expectedPreferences = path.join(profileRoot, "Preferences");
   let runningProfileMatches = true;
@@ -138,17 +141,17 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
     && /upload_approval_mode\s*=\s*"never_ask"/i.test(browserConfig);
   evidence.x_site_permission = { ok: siteOk, detail: environment.browserPermissions.configPath };
   evidence.github_token = { ok: Boolean(env[environment.tokens.github]), detail: `${environment.tokens.github}=${env[environment.tokens.github] ? "present" : "missing"}` };
+  const xLedgerState = inspectXPostedLedgerAccess(resolveXPostedLedgerPath({ env, environment }));
+  evidence.x_ledger_state = { ok: xLedgerState.ok, detail: xLedgerState.ok ? `${xLedgerState.ledgerPath};count=${xLedgerState.count}` : `${xLedgerState.reason}:${xLedgerState.detail || xLedgerState.ledgerPath}` };
 
-  const canonical = environment.canonicalWorkspacePath;
   const runner = environment.runnerPath;
   const originMainHead = git(runner, ["rev-parse", "origin/main"]);
   const runnerHead = git(runner, ["rev-parse", "HEAD"]);
   evidence.repository_sha = evaluateRepositorySha({ runnerHead, originMainHead });
-  const canonicalDirty = git(canonical, ["status", "--porcelain=v1", "--untracked-files=no"]);
   const runnerHygiene = inspectRunnerHygiene({ root: runner });
   evidence.runner_dirty = {
-    ok: canonicalDirty.ok && canonicalDirty.text === "" && runnerHygiene.ok,
-    detail: canonicalDirty.text || runnerHygiene.gitError || runnerHygiene.dangerous.join("\n") || "workspace_and_runner_clean_by_shared_policy",
+    ok: runnerHygiene.ok,
+    detail: runnerHygiene.gitError || runnerHygiene.dangerous.join("\n") || "dedicated_runner_clean",
   };
   evidence.x_login_href = { ok: false, detail: "dom_probe_required" };
   evidence.dom_read = { ok: false, detail: "dom_probe_required" };

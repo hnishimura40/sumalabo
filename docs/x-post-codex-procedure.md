@@ -69,7 +69,7 @@ CLAUDE.md、docs/x_post_workflow.md、logs/social/<slug>.x-post.jsonを読み、
 
 7. リプライの第2段階記録（確認直後）
 - `data/automation/ledger.json` の同じ記事に `xReplyUrl` を追記。
-- 直ちに次を実行し、`data/social/x-posted.json` の同じレコードへ既存の `replyUrl` を追記:
+- 直ちに次を実行し、`%USERPROFILE%\.sumalabo\state\x-posted.json` の同じレコードへ既存の `replyUrl` を追記:
   `node scripts/run/post-to-x.mjs --record-reply --slug <slug> --replyUrl <リプライURL> --route codex`
 
 8. 完了報告
@@ -92,7 +92,7 @@ DOM検証用の最新版は `scripts/sumahon/x-post-verify.mjs` を正本とす�
 
 ## 台帳の互換性
 
-`data/social/x-posted.json` の `version` は1のまま。既存レコードは `route` がなくても有効で、新規レコードだけ `route: "codex"` を追加する。本投稿直後は既存の `replyUrl: null`、リプライ確認直後に同じレコードの `replyUrl` を更新するため、レコード形式や重複防止単位は変えない。
+`%USERPROFILE%\.sumalabo\state\x-posted.json` の `version` は1のまま。既存レコードは `route` がなくても有効で、新規レコードだけ `route: "codex"` を追加する。本投稿直後は既存の `replyUrl: null`、リプライ確認直後に同じレコードの `replyUrl` を更新するため、レコード形式や重複防止単位は変えない。
 
 
 ## 報告出力フィルタ（必須）

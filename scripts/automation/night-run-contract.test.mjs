@@ -8,6 +8,7 @@ import {
   OUTCOMES,
   auditRecordedOutcome,
   discoverSlugSince,
+  evaluatePrimaryContract,
   evaluateSuccessContract,
   findPrUrl,
   makeStoppedResult,
@@ -43,23 +44,31 @@ function probes(overrides = {}) {
   };
 }
 
-test("success requires all four real-world checks", async () => {
+test("success reports primary 3/3 and secondary 1/1 independently", async () => {
   const result = await evaluateSuccessContract({ root: fixture(), runId: RUN_ID, startedAt: STARTED_AT, slug: SLUG, probes: probes() });
   assert.equal(result.outcome, OUTCOMES.SUCCESS);
   assert.deepEqual(result.failedChecks, []);
+  assert.equal(result.primaryContract.passed, 3);
+  assert.equal(result.primaryContract.total, 3);
+  assert.equal(result.secondaryContract.passed, 1);
+  assert.equal(result.secondaryContract.total, 1);
   assert.equal(EXIT_CODES[result.outcome], 0);
 });
 
-test("stale evidence from a prior run cannot satisfy success", async () => {
+test("stale X evidence fails only the secondary contract", async () => {
   const result = await evaluateSuccessContract({
     root: fixture(), runId: RUN_ID, startedAt: STARTED_AT, slug: SLUG,
     probes: probes({ xTwoStage: async () => ({ ok: true, mainRecorded: true, replyRecorded: true, postedAt: "2026-08-07T05:10:00Z" }) }),
   });
-  assert.equal(result.outcome, OUTCOMES.FAILED);
+  assert.equal(result.outcome, OUTCOMES.SUCCESS);
   assert.equal(result.evidence.xTwoStage.reason, "x_ledger_not_from_current_run");
+  assert.equal(result.primaryContract.status, "success");
+  assert.equal(result.secondaryContract.status, "failed");
+  assert.deepEqual(result.failedChecks, []);
+  assert.ok(result.warningChecks.includes("xTwoStage"));
 });
 
-test("X warning accepts three article points only when the recovery bundle is preserved", async () => {
+test("X warning keeps primary success and records a skipped secondary contract", async () => {
   const result = await evaluateSuccessContract({
     root: fixture(),
     runId: RUN_ID,
@@ -67,19 +76,24 @@ test("X warning accepts three article points only when the recovery bundle is pr
     slug: SLUG,
     xPending: true,
     xWarnings: ["x_login_href", "dom_read"],
-    probes: probes({ xPendingBundle: async () => ({ ok: true, createdAt: "2026-08-08T05:06:00Z", recoveryCommand: `npm run social:recover-x-pending -- --slug ${SLUG}` }) }),
+    probes: probes({
+      xTwoStage: async () => ({ ok: false, reason: "not_posted" }),
+      xPendingBundle: async () => ({ ok: true, createdAt: "2026-08-08T05:06:00Z", recoveryCommand: `npm run social:recover-x-pending -- --slug ${SLUG}` }),
+    }),
   });
-  assert.equal(result.outcome, OUTCOMES.X_PENDING);
-  assert.equal(EXIT_CODES[result.outcome], 20);
-  assert.deepEqual(result.failedChecks, ["xTwoStage"]);
+  assert.equal(result.outcome, OUTCOMES.SUCCESS);
+  assert.equal(EXIT_CODES[result.outcome], 0);
+  assert.deepEqual(result.failedChecks, []);
   assert.equal(result.evidence.articleHttp200.ok, true);
   assert.equal(result.evidence.prMerged.ok, true);
   assert.equal(result.evidence.strictVerify.ok, true);
   assert.equal(result.evidence.xPendingBundle.ok, true);
+  assert.equal(result.primaryContract.status, "success");
+  assert.equal(result.secondaryContract.status, "skipped");
   assert.equal(result.acceptanceEligible, true);
 });
 
-test("X warning is failed when any article point or recovery bundle is missing", async () => {
+test("primary failure is fatal while a missing X recovery bundle remains secondary", async () => {
   const articleFailure = await evaluateSuccessContract({
     root: fixture(), runId: RUN_ID, startedAt: STARTED_AT, slug: SLUG, xPending: true,
     probes: probes({ http: async () => ({ ok: false, status: 404 }), xPendingBundle: async () => ({ ok: true }) }),
@@ -88,10 +102,12 @@ test("X warning is failed when any article point or recovery bundle is missing",
   assert.ok(articleFailure.failedChecks.includes("articleHttp200"));
   const bundleFailure = await evaluateSuccessContract({
     root: fixture(), runId: RUN_ID, startedAt: STARTED_AT, slug: SLUG, xPending: true,
-    probes: probes({ xPendingBundle: async () => ({ ok: false, reason: "missing" }) }),
+    probes: probes({ xTwoStage: async () => ({ ok: false, reason: "not_posted" }), xPendingBundle: async () => ({ ok: false, reason: "missing" }) }),
   });
-  assert.equal(bundleFailure.outcome, OUTCOMES.FAILED);
-  assert.ok(bundleFailure.failedChecks.includes("xPendingBundle"));
+  assert.equal(bundleFailure.outcome, OUTCOMES.SUCCESS);
+  assert.equal(bundleFailure.primaryContract.status, "success");
+  assert.equal(bundleFailure.secondaryContract.status, "skipped");
+  assert.equal(bundleFailure.secondaryContract.pendingBundle.ok, false);
 });
 
 test("watchdog independently accepts a recorded stopped_x_pending outcome", async () => {
@@ -224,7 +240,6 @@ for (const [name, override] of [
   ["articleHttp200", { http: async () => ({ ok: false, status: 404 }) }],
   ["prMerged", { pr: async () => ({ ok: false, state: "OPEN" }) }],
   ["strictVerify", { strictVerify: async () => ({ ok: false, hardFail: true }) }],
-  ["xTwoStage", { xTwoStage: async () => ({ ok: false, mainRecorded: true, replyRecorded: false }) }],
 ]) {
   test(`forced ${name} failure is failed`, async () => {
     const result = await evaluateSuccessContract({ root: fixture(), runId: RUN_ID, startedAt: STARTED_AT, slug: SLUG, probes: probes(override) });
@@ -233,6 +248,30 @@ for (const [name, override] of [
     assert.equal(EXIT_CODES[result.outcome], 30);
   });
 }
+
+test("forced xTwoStage failure leaves process success and warns on the secondary contract", async () => {
+  const result = await evaluateSuccessContract({
+    root: fixture(), runId: RUN_ID, startedAt: STARTED_AT, slug: SLUG,
+    probes: probes({ xTwoStage: async () => ({ ok: false, mainRecorded: true, replyRecorded: false }) }),
+  });
+  assert.equal(result.outcome, OUTCOMES.SUCCESS);
+  assert.equal(EXIT_CODES[result.outcome], 0);
+  assert.equal(result.primaryContract.status, "success");
+  assert.equal(result.secondaryContract.status, "failed");
+  assert.ok(result.warningChecks.includes("xTwoStage"));
+});
+
+test("primary-check stops before X and requires exactly the three main checks", async () => {
+  let xProbeCount = 0;
+  const result = await evaluatePrimaryContract({
+    root: fixture(), runId: RUN_ID, startedAt: STARTED_AT, slug: SLUG,
+    probes: probes({ xTwoStage: async () => { xProbeCount += 1; return { ok: false }; } }),
+  });
+  assert.equal(result.outcome, OUTCOMES.SUCCESS);
+  assert.equal(result.primaryContract.passed, 3);
+  assert.equal(result.primaryContract.total, 3);
+  assert.equal(xProbeCount, 0);
+});
 
 test("intentional no-target stop uses stopped and nonzero scheduler code", () => {
   const result = makeStoppedResult({ runId: RUN_ID, reason: "no_scout_target" });
@@ -246,15 +285,16 @@ test("unknown logical stop is failed instead of being rounded to success", () =>
   assert.equal(EXIT_CODES[result.outcome], 30);
 });
 
-test("8/6-type veto-wait fake success is detected", async () => {
+test("an X-only omission no longer invalidates a recorded main success", async () => {
   const root = fixture();
   const claimed = recordRunOutcome({ runId: RUN_ID, outcome: "success", reason: "wrapper_exited", slug: SLUG }, { root, startedAt: STARTED_AT });
   const actual = await auditRecordedOutcome(claimed, {
     root, probes: probes({ xTwoStage: async () => ({ ok: false, reason: "veto_wait_no_x_record" }) }),
   });
-  assert.equal(actual.outcome, OUTCOMES.FAILED);
-  assert.equal(actual.mismatch, true);
-  assert.deepEqual(actual.failedChecks, ["xTwoStage"]);
+  assert.equal(actual.outcome, OUTCOMES.SUCCESS);
+  assert.equal(actual.mismatch, false);
+  assert.deepEqual(actual.failedChecks, []);
+  assert.equal(actual.secondaryContract.status, "failed");
 });
 
 test("8/7-type Phase B omission is detected", async () => {
@@ -271,7 +311,7 @@ test("8/7-type Phase B omission is detected", async () => {
   });
   assert.equal(actual.outcome, OUTCOMES.FAILED);
   assert.equal(actual.mismatch, true);
-  assert.equal(actual.failedChecks.length, 4);
+  assert.equal(actual.failedChecks.length, 3);
 });
 
 test("8/8-type preflight stop without a permitted stop record is detected", async () => {

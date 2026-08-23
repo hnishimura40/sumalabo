@@ -1,6 +1,6 @@
 // すまラボ自動化: X 投稿の重複防止台帳。
 //
-// 保存先: data/social/x-posted.json
+// 保存先: %USERPROFILE%\.sumalabo\state\x-posted.json
 // 構造:
 //   {
 //     "version": 1,
@@ -23,10 +23,13 @@
 // 注意: パスワード/トークンは絶対に保存しない。postedAt と postUrl だけを記録する。
 
 import { existsSync, mkdirSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
+import process from "node:process";
+import { pathToFileURL } from "node:url";
+import { inspectXPostedLedgerAccess, X_POSTED_LEDGER_PATH } from "./x-posted-path.mjs";
 
-const LEDGER_PATH = "data/social/x-posted.json";
+export const LEDGER_PATH = X_POSTED_LEDGER_PATH;
 const EMPTY_LEDGER = { version: 1, posts: [] };
 const createEmptyLedger = () => ({ version: EMPTY_LEDGER.version, posts: [] });
 
@@ -48,7 +51,9 @@ async function readLedger(ledgerPath = LEDGER_PATH) {
 async function writeLedger(ledger, ledgerPath = LEDGER_PATH) {
   const dir = path.dirname(ledgerPath);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  await writeFile(ledgerPath, JSON.stringify(ledger, null, 2) + "\n", "utf-8");
+  const temporary = `${ledgerPath}.${process.pid}.tmp`;
+  await writeFile(temporary, JSON.stringify(ledger, null, 2) + "\n", "utf-8");
+  await rename(temporary, ledgerPath);
 }
 
 export async function hasPosted(slug, ledgerPath = LEDGER_PATH) {
@@ -131,3 +136,24 @@ export async function listPosts(ledgerPath = LEDGER_PATH) {
   const ledger = await readLedger(ledgerPath);
   return ledger.posts.slice();
 }
+
+export function checkLedgerAccess(ledgerPath = LEDGER_PATH) {
+  return inspectXPostedLedgerAccess(ledgerPath);
+}
+
+async function main() {
+  if (!process.argv.includes("--check-access")) {
+    console.error("usage: --check-access");
+    process.exitCode = 2;
+    return;
+  }
+  const result = checkLedgerAccess();
+  console.log(JSON.stringify(result, null, 2));
+  process.exitCode = result.ok ? 0 : 20;
+}
+
+const direct = process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+if (direct) main().catch((error) => {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exitCode = 20;
+});

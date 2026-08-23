@@ -39,6 +39,7 @@ $env:SUMALABO_NIGHT_RUN_STARTED_AT = $RunStartedAt
 $script:SkipContractFinalizer = [bool]($BrowserCheckOnly -or $RunnerSelfTest)
 $script:ChromeRunPid = $null
 $script:ChromeRunExe = $null
+$script:NextPreflight = $null
 if ($BrowserCheckOnly -and $RunnerSelfTest) { throw 'BrowserCheckOnly と RunnerSelfTest は同時指定できません。' }
 if ($RunnerSelfTest) {
   $LockFile = Join-Path $NightDir "runner-selftest.lock"
@@ -58,6 +59,28 @@ function Record-ContractOutcome([string]$Mode, [string]$Reason, [string]$Detail 
   $code = $LASTEXITCODE
   Log (($result | Out-String).Trim())
   return $code
+}
+
+function Invoke-NextRunPreflight {
+  $output = & node scripts/automation/night-environment-check.mjs --static-only 2>&1
+  $code = $LASTEXITCODE
+  $text = ($output | Out-String).Trim()
+  $json = $null
+  try { $json = $text | ConvertFrom-Json } catch {}
+  $record = @{
+    checkedAt = (Get-Date).ToString('o')
+    exitCode = $code
+    ok = ($code -eq 0)
+    evidence = $json
+  }
+  $record | ConvertTo-Json -Depth 12 | Set-Content (Join-Path $NightDir "$DateStr.$RunId.next-preflight.json") -Encoding utf8
+  if ($code -eq 0) {
+    Log "next-run preflight PASS: exit=0"
+  } else {
+    Log "next-run preflight WARNING: exit=$code。明朝のrunが失敗する見込みとして通知するが、今回runの成否は変更しない。"
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-next-preflight',status:'warning',title:'[夜間run] 次回preflight失敗（明朝run失敗見込み、今回結果には非影響）'}))" 2>&1 | Out-Null
+  }
+  return $record
 }
 
 # ---- 1. 多重起動ガード ----（ドライランでは lock を取らない）
@@ -358,11 +381,12 @@ try {
     exit $exitCode
   }
 
-  # ---- 4-bis. Phase B target propagation retry and real-world guard ----
+  # ---- 4-bis. Phase B target propagation retry and primary contract guard ----
   # The review API can lag behind handoff completion. Wait up to five minutes for
   # this exact slug. Phase C stays forbidden until PR merge and production HTTP 200.
   $phaseBVerified = $false
-  $XPendingBundleReady = $false
+  $XStepPending = $false
+  $XStepWarnings = [System.Collections.Generic.List[string]]::new()
   if ($publishSlug) {
     Log "Phase B: review-item反映を30秒間隔・最大10回待って $publishSlug を公開する。"
     node scripts/automation/auto-phase-b.mjs --wait-for-target --attempts=10 --interval-ms=30000 --slug=$publishSlug 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
@@ -385,91 +409,57 @@ try {
     }
     $phaseBVerified = $true
 
-    $xPostFile = Join-Path $RepoRoot "logs\social\$publishSlug.x-post.json"
-    node scripts/run/generate-x-post.mjs --slug $publishSlug 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
-    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $xPostFile)) {
-      $exitCode = Record-ContractOutcome "fail" "phase_c_input_generation_failed" "missing=$xPostFile"
-      exit $exitCode
-    }
-    if (-not $XPreflightReady) {
-      $warningCsv = $XPreflightWarnings -join ','
-      node scripts/automation/x-pending-bundle.mjs create --slug $publishSlug --run-id $RunId --started-at $RunStartedAt --warnings $warningCsv 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
-      if ($LASTEXITCODE -ne 0) {
-        $exitCode = Record-ContractOutcome "fail" "x_pending_bundle_generation_failed" "slug=$publishSlug"
-        exit $exitCode
-      }
-      $XPendingBundleReady = $true
-      Log "Phase C SKIP: X警告=$warningCsv。投稿文・返信文・4画像をpending bundleとして保全した。"
-    }
-  }
-
-  # ---- 4-ter. Phase C は権限分離した別の非対話 Codex で実行 ----
-  # 2026-08-09 実機マトリクスで、x.com を事前許可し、非対話 Codex 自身が
-  # tabs.new() で専用タブを作る条件なら、入力・送信・投稿実在DOM確認まで成功した。
-  # 対話側の所有タブは競合するため handoff/claim は標準経路にしない。
-  if ($publishSlug -and $phaseBVerified -and $XPreflightReady) {
-    $XPromptFile = Join-Path $RepoRoot "docs\x-post-codex-night-prompt.md"
-    $XPrompt = (Get-Content $XPromptFile -Raw -Encoding utf8).Replace("{{SLUG}}", $publishSlug)
-    $XCodexLog = Join-Path $NightDir "$DateStr.$RunId.codex-phase-c.log"
-    $xCodexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
-    $XPostInputFile = Join-Path $RepoRoot "logs\social\$publishSlug.x-post.json"
-    $XPostInput = Get-Content $XPostInputFile -Raw -Encoding utf8 | ConvertFrom-Json
-    $XImages = @($XPostInput.attachmentPlan.attach)
-    if ($XImages.Count -ne 4) {
-      $exitCode = Record-ContractOutcome "fail" "x_attachment_plan_invalid" "expected=4 actual=$($XImages.Count)"
-      exit $exitCode
-    }
-    $ClipboardHelper = Join-Path $RepoRoot "scripts\automation\x-post-chrome.ps1"
-    $XImageArg = $XImages -join ','
-    $XChromeWindow = Get-Process chrome -ErrorAction SilentlyContinue |
-      Where-Object { $_.MainWindowHandle -ne 0 } |
-      Select-Object -First 1
-    if (-not $XChromeWindow) {
-      $exitCode = Record-ContractOutcome "fail" "x_visible_window_missing_before_prestage"
-      exit $exitCode
-    }
-    try {
-      & $ClipboardHelper -PostText "x" -ImagePaths $XImageArg -ClipboardOnly 2>&1 | ForEach-Object { Log $_ }
-    } catch {
-      $exitCode = Record-ContractOutcome "fail" "x_clipboard_prestage_failed" $_.Exception.Message
-      exit $exitCode
-    }
-    Log "Phase C: 画像4枚を外側工程でCF_HDROPへ事前配置済み"
-    Log "Phase C: non-interactive Codex opens its own fresh Chrome tab for $publishSlug"
-    $publisherToken = $env:GH_TOKEN
-    $publisherExpiry = $env:GH_TOKEN_EXPIRES_AT
-    Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
-    Remove-Item Env:GH_TOKEN_EXPIRES_AT -ErrorAction SilentlyContinue
-    try {
-      $xCodexExit = Invoke-CodexIsolated $XPrompt $xCodexArgs $XCodexLog "codex-phase-c"
-    } finally {
-      if ($publisherToken) { $env:GH_TOKEN = $publisherToken }
-      if ($publisherExpiry) { $env:GH_TOKEN_EXPIRES_AT = $publisherExpiry }
-    }
-    if ($xCodexExit -ne 0) {
-      $exitCode = Record-ContractOutcome "fail" "codex_phase_c_failed" "Codex Phase C exit=$xCodexExit"
+    # The primary contract is complete before the independent X step starts.
+    $primary = & node $ContractScript primary-check --run-id $RunId --started-at $RunStartedAt --slug $publishSlug 2>&1
+    $primaryExit = $LASTEXITCODE
+    Log (($primary | Out-String).Trim())
+    if ($primaryExit -ne 0) {
+      $exitCode = Record-ContractOutcome "fail" "primary_contract_not_satisfied_before_x" (($primary | Out-String).Trim())
       exit $exitCode
     }
   }
 
-  # Codexや補助ファイルの終了状態はsuccessの根拠にしない。記事URL、PR、
-  # strict verify、X二段階台帳をここで実物照合し、4点が揃った場合だけ0を返す。
+  # ---- 4-ter. Phase C is an independent fail-soft step after primary success ----
+  if ($publishSlug -and $phaseBVerified) {
+    $warningCsv = $XPreflightWarnings -join ','
+    $XStepScript = Join-Path $RepoRoot 'scripts\automation\night-x-post-step.ps1'
+    $xStep = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $XStepScript -Slug $publishSlug -RunId $RunId -StartedAt $RunStartedAt -NightDir $NightDir -StateFile $LockFile -PreflightWarnings $warningCsv 2>&1
+    $xStepExit = $LASTEXITCODE
+    Log (($xStep | Out-String).Trim())
+    if ($xStepExit -ne 0) {
+      $XStepPending = $true
+      $XStepWarnings.Add("x_step_exit_$xStepExit")
+      Log "Phase C WARNING: X独立工程がexit=$xStepExit。主契約は成功のまま継続する。"
+    }
+  }
+
+  # Main outcome is determined only by HTTP 200, merged PR, and strict verify.
+  # X two-stage evidence is recorded as an independent secondary contract.
   if (Test-Path $ContractFile) {
     $audit = & node $ContractScript audit --run-id $RunId 2>&1
     $contractExit = $LASTEXITCODE
     Log (($audit | Out-String).Trim())
     exit $contractExit
   }
-  if ($XPendingBundleReady) {
-    $contract = & node $ContractScript evaluate --run-id $RunId --started-at $RunStartedAt --slug $publishSlug --x-pending --x-warnings ($XPreflightWarnings -join ',') 2>&1
-  } else {
-    $contract = & node $ContractScript evaluate --run-id $RunId --started-at $RunStartedAt --slug $publishSlug 2>&1
-  }
+  $contractArgs = @($ContractScript, 'evaluate', '--run-id', $RunId, '--started-at', $RunStartedAt, '--slug', $publishSlug)
+  $allXWarnings = @($XPreflightWarnings) + @($XStepWarnings) | Where-Object { $_ } | Select-Object -Unique
+  if ($XStepPending) { $contractArgs += '--x-pending' }
+  if ($allXWarnings.Count) { $contractArgs += @('--x-warnings', ($allXWarnings -join ',')) }
+  $contract = & node @contractArgs 2>&1
   $contractExit = $LASTEXITCODE
   Log (($contract | Out-String).Trim())
+  $contractJson = $null
+  try { $contractJson = ($contract | Out-String | ConvertFrom-Json) } catch {}
+  if ($contractExit -eq 0 -and $contractJson -and $contractJson.secondaryContract.status -ne 'success') {
+    Log "CONTRACT: 本体成功／X失敗（$($contractJson.secondaryContract.reason)）"
+    node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:process.argv[1],status:'warning',title:'[夜間run] 本体成功／X失敗: '+process.argv[2]}))" $publishSlug $contractJson.secondaryContract.reason 2>&1 | Out-Null
+  }
   exit $contractExit
 } finally {
   if (Test-Path $LockFile) { Copy-Item -LiteralPath $LockFile -Destination $HeartbeatFile -Force -ErrorAction SilentlyContinue }
+  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) {
+    $script:NextPreflight = Invoke-NextRunPreflight
+  }
   if (-not $script:SkipContractFinalizer) {
     if (-not (Test-Path $ContractFile)) {
       Record-ContractOutcome "fail" "wrapper_terminated_without_contract" | Out-Null
@@ -482,7 +472,12 @@ try {
       status=if($outcome){$outcome.outcome}else{"failed"}
       reason=if($outcome){$outcome.reason}else{"outcome_record_unreadable"}
       slug=if($outcome){$outcome.slug}else{$null}
-    } | ConvertTo-Json | Set-Content $CompletionFile -Encoding utf8
+      mainStatus=if($outcome -and $outcome.primaryContract){$outcome.primaryContract.status}else{if($outcome -and @('success','stopped_x_pending') -contains $outcome.outcome){'success'}elseif($outcome -and $outcome.outcome -eq 'stopped'){'stopped'}else{'failed'}}
+      xStatus=if($outcome -and $outcome.secondaryContract){$outcome.secondaryContract.status}else{'not_run'}
+      primaryContract=if($outcome){$outcome.primaryContract}else{$null}
+      secondaryContract=if($outcome){$outcome.secondaryContract}else{$null}
+      nextPreflight=$script:NextPreflight
+    } | ConvertTo-Json -Depth 12 | Set-Content $CompletionFile -Encoding utf8
   }
   if ($script:ChromeRunPid) {
     $ownedChrome = Get-Process -Id $script:ChromeRunPid -ErrorAction SilentlyContinue

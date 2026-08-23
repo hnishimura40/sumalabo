@@ -72,11 +72,14 @@ export function buildReport(slug) {
     .filter((row) => row.slug === slug)
     .sort((a, b) => Date.parse(b.finishedAt) - Date.parse(a.finishedAt))[0] || null;
   const unattendedCompleted = ["success", "stopped_x_pending"].includes(contractOutcome?.outcome);
+  const primaryStatus = contractOutcome?.primaryContract?.status || (contractOutcome?.outcome === "success" ? "success" : "failed");
+  const secondaryStatus = contractOutcome?.secondaryContract?.status || (contractOutcome?.outcome === "stopped_x_pending" ? "skipped" : "not_run");
   const humanIntervention = Boolean(state?.humanIntervention || state?.manualIntervention || entry?.humanIntervention);
   const interventionReason = humanIntervention
     ? (state?.humanInterventionReason || entry?.humanInterventionReason || "manual_intervention")
     : (unattendedCompleted ? "なし" : contractOutcome?.reason || state?.haltReason || "成否契約未達");
   lines.push("- 無人完走できたか: " + (unattendedCompleted ? "はい" : "いいえ") + " / 人の介入: " + (humanIntervention ? "あり" : "なし") + " / 理由: " + interventionReason);
+  lines.push(`- 契約判定: 本体${primaryStatus === "success" ? "成功" : "失敗"}／X${secondaryStatus === "success" ? "成功" : secondaryStatus === "not_run" ? "未実行" : "失敗"}`);
   lines.push("");
 
   // 1. 選定
@@ -152,7 +155,7 @@ export function buildReport(slug) {
   if (entry.xPostUrl) {
     lines.push(`- 投稿URL: ${entry.xPostUrl}（xPostedAt: ${entry.xPostedAt || "-"}）`);
   } else {
-    lines.push(contractOutcome?.outcome === "stopped_x_pending" ? "- X環境警告により保留（記事3点は完了、pending bundleから回収可能）" : "- 未投稿");
+    lines.push(primaryStatus === "success" && secondaryStatus !== "success" ? `- 本体成功／X失敗（${secondaryStatus}。pending bundleがあれば回収可能）` : "- 未投稿");
   }
   lines.push("");
 

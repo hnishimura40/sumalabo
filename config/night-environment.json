@@ -1,6 +1,10 @@
 {
   "schemaVersion": 1,
   "repositoryShaPolicy": "runner_matches_origin_main",
+  "xPostedLedger": {
+    "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\x-posted.json",
+    "backupDirectory": "logs\\night\\x-posted-backups"
+  },
   "canonicalWorkspacePath": "D:\\documents\\動画作成関連\\すまラボ",
   "runnerPath": "D:\\work\\sumalabo-night-runner",
   "entryRoot": "D:\\work",
@@ -64,6 +68,7 @@
     "file_url_permission",
     "x_login_href",
     "dom_read",
+    "x_ledger_state",
     "github_token",
     "repository_sha",
     "runner_dirty"
@@ -81,6 +86,7 @@
     "x_site_permission",
     "file_url_permission",
     "x_login_href",
-    "dom_read"
+    "dom_read",
+    "x_ledger_state"
   ]
 }
