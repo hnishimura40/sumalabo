@@ -32,6 +32,7 @@ import { inspectXPostedLedgerAccess, X_POSTED_LEDGER_PATH } from "./x-posted-pat
 export const LEDGER_PATH = X_POSTED_LEDGER_PATH;
 const EMPTY_LEDGER = { version: 1, posts: [] };
 const createEmptyLedger = () => ({ version: EMPTY_LEDGER.version, posts: [] });
+const X_STATUS_URL = /^https:\/\/x\.com\/[^/]+\/status\/\d+/;
 
 async function readLedger(ledgerPath = LEDGER_PATH) {
   if (!existsSync(ledgerPath)) return createEmptyLedger();
@@ -64,6 +65,25 @@ export async function hasPosted(slug, ledgerPath = LEDGER_PATH) {
 export async function getPostRecord(slug, ledgerPath = LEDGER_PATH) {
   const ledger = await readLedger(ledgerPath);
   return ledger.posts.find((p) => p.slug === slug) || null;
+}
+
+export async function verifyTwoStage(slug, ledgerPath = LEDGER_PATH) {
+  const record = await getPostRecord(slug, ledgerPath);
+  if (!record) return { ok: false, reason: "x_ledger_record_missing", slug };
+  if (!record.postedAt || !X_STATUS_URL.test(record.postUrl || "")) {
+    return { ok: false, reason: "x_main_post_evidence_invalid", slug };
+  }
+  if (!X_STATUS_URL.test(record.replyUrl || "")) {
+    return { ok: false, reason: "x_reply_evidence_invalid", slug, postUrl: record.postUrl };
+  }
+  return {
+    ok: true,
+    reason: "x_two_stage_satisfied",
+    slug,
+    postUrl: record.postUrl,
+    replyUrl: record.replyUrl,
+    postedAt: record.postedAt,
+  };
 }
 
 export async function recordPost({
@@ -142,8 +162,21 @@ export function checkLedgerAccess(ledgerPath = LEDGER_PATH) {
 }
 
 async function main() {
+  const verifyIndex = process.argv.indexOf("--verify-two-stage");
+  if (verifyIndex >= 0) {
+    const slug = process.argv[verifyIndex + 1];
+    if (!slug) {
+      console.error("usage: --verify-two-stage <slug>");
+      process.exitCode = 2;
+      return;
+    }
+    const result = await verifyTwoStage(slug);
+    console.log(JSON.stringify(result, null, 2));
+    process.exitCode = result.ok ? 0 : 20;
+    return;
+  }
   if (!process.argv.includes("--check-access")) {
-    console.error("usage: --check-access");
+    console.error("usage: --check-access | --verify-two-stage <slug>");
     process.exitCode = 2;
     return;
   }

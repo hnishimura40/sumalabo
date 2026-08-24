@@ -4,7 +4,7 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-import { recordPost, recordReply } from "../../scripts/sumahon/x-posted-ledger.mjs";
+import { recordPost, recordReply, verifyTwoStage } from "../../scripts/sumahon/x-posted-ledger.mjs";
 
 test("recordPost adds the Codex route without changing the version-1 ledger shape", async () => {
   const dir = await mkdtemp(path.join(os.tmpdir(), "sumalabo-x-ledger-"));
@@ -75,6 +75,34 @@ test("recordReply refuses to update before the main-post record exists", async (
       recordReply({ slug: "missing-main", replyUrl: "https://x.com/suma_labo/status/20", ledgerPath }),
       /本投稿レコードがありません/,
     );
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test("verifyTwoStage rejects a main-only record and accepts the completed reply stage", async () => {
+  const dir = await mkdtemp(path.join(os.tmpdir(), "sumalabo-x-ledger-"));
+  const ledgerPath = path.join(dir, "x-posted.json");
+  try {
+    await recordPost({
+      slug: "verify-two-stage",
+      postUrl: "https://x.com/suma_labo/status/30",
+      ledgerPath,
+    });
+    assert.deepEqual(await verifyTwoStage("missing", ledgerPath), {
+      ok: false,
+      reason: "x_ledger_record_missing",
+      slug: "missing",
+    });
+    assert.equal((await verifyTwoStage("verify-two-stage", ledgerPath)).reason, "x_reply_evidence_invalid");
+    await recordReply({
+      slug: "verify-two-stage",
+      replyUrl: "https://x.com/suma_labo/status/31",
+      ledgerPath,
+    });
+    const complete = await verifyTwoStage("verify-two-stage", ledgerPath);
+    assert.equal(complete.ok, true);
+    assert.equal(complete.reason, "x_two_stage_satisfied");
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

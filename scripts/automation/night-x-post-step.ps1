@@ -109,4 +109,16 @@ if (-not $process -or $process.ExitCode -ne 0) {
   Preserve-XPending "codex_phase_c_failed:exit=$code"
 }
 
+# Codex may correctly report a failed browser operation while its report process
+# itself exits zero. The ledger is the authoritative two-stage completion proof.
+$ledgerVerify = & node scripts/sumahon/x-posted-ledger.mjs --verify-two-stage $Slug 2>&1
+$ledgerVerifyExit = $LASTEXITCODE
+$ledgerVerify | Out-File -FilePath $XLog -Encoding utf8 -Append
+if ($ledgerVerifyExit -ne 0) {
+  $ledgerVerifyJson = $null
+  try { $ledgerVerifyJson = ($ledgerVerify | Out-String | ConvertFrom-Json) } catch {}
+  $reason = if ($ledgerVerifyJson -and $ledgerVerifyJson.reason) { [string]$ledgerVerifyJson.reason } else { 'x_two_stage_verification_failed' }
+  Preserve-XPending $reason
+}
+
 Write-XResult 'completed' 'x_step_completed' 0
