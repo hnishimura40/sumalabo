@@ -423,7 +423,21 @@ try {
   if ($publishSlug -and $phaseBVerified) {
     $warningCsv = $XPreflightWarnings -join ','
     $XStepScript = Join-Path $RepoRoot 'scripts\automation\night-x-post-step.ps1'
-    $xStep = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $XStepScript -Slug $publishSlug -RunId $RunId -StartedAt $RunStartedAt -NightDir $NightDir -StateFile $LockFile -PreflightWarnings $warningCsv 2>&1
+    $xStepArguments = @(
+      '-NoProfile',
+      '-ExecutionPolicy', 'Bypass',
+      '-File', $XStepScript,
+      '-Slug', $publishSlug,
+      '-RunId', $RunId,
+      '-StartedAt', $RunStartedAt,
+      '-NightDir', $NightDir,
+      '-StateFile', $LockFile
+    )
+    # Windows PowerShell treats a trailing empty native-command argument as
+    # "parameter specified without a value". Only pass this optional switch
+    # when Phase 0 actually produced warnings.
+    if ($warningCsv) { $xStepArguments += @('-PreflightWarnings', $warningCsv) }
+    $xStep = & powershell.exe @xStepArguments 2>&1
     $xStepExit = $LASTEXITCODE
     Log (($xStep | Out-String).Trim())
     if ($xStepExit -ne 0) {

@@ -234,6 +234,8 @@ test("primary 3-point contract completes before the independent fail-soft X step
   assert.ok(generate >= 0 && generate < xPrompt);
   assert.match(wrapper, /phase_b_target_not_found_after_retry/);
   assert.match(wrapper, /主契約は成功のまま継続する/);
+  assert.match(wrapper, /if \(\$warningCsv\) \{ \$xStepArguments \+= @\('-PreflightWarnings', \$warningCsv\) \}/);
+  assert.doesNotMatch(wrapper, /-PreflightWarnings \$warningCsv 2>&1/);
   assert.match(xStep, /x-pending-bundle\.mjs create/);
   assert.match(xStep, /x_ledger_io_unavailable/);
   assert.match(generator, /args\["search-phrase"\] \?\? fm\.title/);
