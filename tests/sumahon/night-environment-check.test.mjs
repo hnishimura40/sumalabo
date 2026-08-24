@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, X_STEP_FATAL_CHECK_NAMES, evaluateEnvironmentEvidence, evaluateRepositorySha, evaluateXProfileEvidence, findFirstReadyObservation, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
+import { CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, X_STEP_FATAL_CHECK_NAMES, environmentCheckExitCode, evaluateEnvironmentEvidence, evaluateRepositorySha, evaluateXProfileEvidence, findFirstReadyObservation, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
 
 const passing = Object.fromEntries(CHECK_NAMES.map((name) => [name, { ok: true, detail: "test" }]));
 
@@ -66,6 +66,11 @@ test("X environment failures warn while allowing the article pipeline", () => {
   assert.equal(result.xReady, false);
   assert.deepEqual(result.warningFailedChecks, ["x_login_href"]);
   assert.ok(WARNING_CHECK_NAMES.includes("dom_read"));
+  assert.equal(environmentCheckExitCode(result), 0);
+});
+
+test("fatal environment failures keep exit code 30", () => {
+  assert.equal(environmentCheckExitCode(evaluateEnvironmentEvidence(passing, ["runner_dirty"])), 30);
 });
 
 test("X-local profile gate is fatal to posting but independent from the main contract", () => {

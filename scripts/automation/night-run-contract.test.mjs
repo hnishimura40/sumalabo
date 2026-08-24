@@ -12,6 +12,7 @@ import {
   evaluateSuccessContract,
   findPrUrl,
   makeStoppedResult,
+  parseOptionalSlugArgument,
   probePrMerged,
   recordRunOutcome,
   verifyPhaseBCompletion,
@@ -173,6 +174,13 @@ test("8/15 boolean slug fails before any meaningless real-world probe", async ()
   assert.deepEqual(result.evidence, { slugType: "boolean" });
   assert.equal(result.acceptanceEligible, false);
   assert.equal(probeCount, 0);
+});
+
+test("CLI slug guard rejects a flag without a value and accepts omission", () => {
+  assert.equal(parseOptionalSlugArgument({}), null);
+  assert.equal(parseOptionalSlugArgument({ slug: "202608-valid-slug" }), "202608-valid-slug");
+  assert.throws(() => parseOptionalSlugArgument({ slug: true }), /invalid --slug: expected a non-empty string/);
+  assert.throws(() => parseOptionalSlugArgument({ slug: "   " }), /invalid --slug: expected a non-empty string/);
 });
 
 test("PR merge evidence uses REST and survives GraphQL exhaustion", async () => {

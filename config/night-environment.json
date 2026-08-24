@@ -9,6 +9,7 @@
   "runnerPath": "D:\\work\\sumalabo-night-runner",
   "entryRoot": "D:\\work",
   "runnerHygiene": {
+    "failureRecoveryRoot": "D:\\downloads\\sumalabo-codex",
     "cleanupAllowlist": [
       ".wrangler/"
     ],
