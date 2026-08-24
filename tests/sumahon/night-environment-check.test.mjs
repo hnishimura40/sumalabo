@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, evaluateEnvironmentEvidence, evaluateRepositorySha, findFirstReadyObservation, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
+import { CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, X_STEP_FATAL_CHECK_NAMES, evaluateEnvironmentEvidence, evaluateRepositorySha, evaluateXProfileEvidence, findFirstReadyObservation, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
 
 const passing = Object.fromEntries(CHECK_NAMES.map((name) => [name, { ok: true, detail: "test" }]));
 
@@ -66,6 +66,31 @@ test("X environment failures warn while allowing the article pipeline", () => {
   assert.equal(result.xReady, false);
   assert.deepEqual(result.warningFailedChecks, ["x_login_href"]);
   assert.ok(WARNING_CHECK_NAMES.includes("dom_read"));
+});
+
+test("X-local profile gate is fatal to posting but independent from the main contract", () => {
+  const pass = evaluateXProfileEvidence({
+    profileMatched: true,
+    profileDetail: "exact_user_data_and_profile_process",
+    domRead: true,
+    url: "https://x.com/home",
+    accountHref: "/suma_labo",
+    hrefCount: 2,
+  });
+  assert.equal(pass.ok, true);
+  assert.deepEqual(pass.failedChecks, []);
+  assert.deepEqual(X_STEP_FATAL_CHECK_NAMES, ["chrome_profile", "x_login_href", "dom_read"]);
+
+  const mismatch = evaluateXProfileEvidence({
+    profileMatched: true,
+    domRead: true,
+    url: "https://x.com/home",
+    accountHref: "/personal_account",
+    hrefCount: 1,
+  });
+  assert.equal(mismatch.ok, false);
+  assert.equal(mismatch.classification, "x_fatal");
+  assert.deepEqual(mismatch.failedChecks, ["x_login_href"]);
 });
 
 test("cold-start account href may appear late but still passes inside the 90-second policy", () => {

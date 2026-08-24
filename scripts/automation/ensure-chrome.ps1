@@ -48,8 +48,12 @@ $launchArgs = @(
 )
 
 $escapedProfile = [regex]::Escape($ChromeProfileDirectory)
+$escapedUserData = [regex]::Escape($ChromeUserDataDirectory)
 $targetRunning = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
-  Where-Object { $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)" }).Count
+  Where-Object {
+    $_.CommandLine -match "--user-data-dir=(?:`"$escapedUserData`"|$escapedUserData)(?:\s|$)" -and
+    $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)"
+  }).Count
 if ($targetRunning -gt 0 -and -not $ForceNewWindow) {
   Write-Host ("ensure-chrome: OK {0} は既に起動中（root {1}）。拡張のMCP再接続を {2} 秒待機して確認してください。" -f $ChromeProfileDirectory, $targetRunning, $WaitSeconds)
   # プロセスはあるので起動はしない。ただし拡張リレーが切れている可能性があるため待機だけ行う。
@@ -68,7 +72,10 @@ if ($targetRunning -gt 0 -and $ForceNewWindow) {
 Start-Sleep -Seconds $WaitSeconds
 
 $targetRunningAfter = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
-  Where-Object { $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)" }).Count
+  Where-Object {
+    $_.CommandLine -match "--user-data-dir=(?:`"$escapedUserData`"|$escapedUserData)(?:\s|$)" -and
+    $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)"
+  }).Count
 if ($targetRunningAfter -eq 0) {
   Write-Host ("ensure-chrome: NG {0} の起動を確認できません。" -f $ChromeProfileDirectory)
   exit 4
