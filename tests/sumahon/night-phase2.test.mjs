@@ -237,6 +237,7 @@ test("primary 3-point contract completes before the independent fail-soft X step
   assert.match(wrapper, /if \(\$warningCsv\) \{ \$xStepArguments \+= @\('-PreflightWarnings', \$warningCsv\) \}/);
   assert.doesNotMatch(wrapper, /-PreflightWarnings \$warningCsv 2>&1/);
   assert.match(xStep, /x-pending-bundle\.mjs create/);
+  assert.match(xStep, /x-posted-ledger\.mjs --verify-two-stage \$Slug/);
   assert.match(xStep, /x_ledger_io_unavailable/);
   assert.match(generator, /args\["search-phrase"\] \?\? fm\.title/);
   assert.doesNotMatch(read("scripts/automation/auto-phase-b.mjs"), /phase-c-auto\.mjs/);
