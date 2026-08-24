@@ -48,7 +48,14 @@ if ($ledgerCheckExit -ne 0) {
 }
 
 if ($PreflightWarnings) {
-  Preserve-XPending "x_preflight_warning:$PreflightWarnings"
+  # Chrome profile/login/DOM warnings are re-probed below inside the isolated
+  # X step. Other X prerequisites remain fail-closed.
+  $retryableProfileWarnings = @('chrome_profile', 'chrome_extension', 'native_host', 'x_site_permission', 'file_url_permission', 'x_login_href', 'dom_read')
+  $blockingWarnings = @($PreflightWarnings -split ',' | ForEach-Object { $_.Trim() } |
+    Where-Object { $_ -and $_ -notin $retryableProfileWarnings })
+  if ($blockingWarnings.Count) {
+    Preserve-XPending "x_preflight_warning:$($blockingWarnings -join ',')"
+  }
 }
 
 $XPostInput = $null
@@ -58,11 +65,15 @@ if (-not $XPostInput -or $XImages.Count -ne 4) {
   Preserve-XPending "x_attachment_plan_invalid:expected=4;actual=$($XImages.Count)"
 }
 
-$XChromeWindow = Get-Process chrome -ErrorAction SilentlyContinue |
-  Where-Object { $_.MainWindowHandle -ne 0 } |
-  Select-Object -First 1
-if (-not $XChromeWindow) {
-  Preserve-XPending 'x_visible_window_missing_before_prestage'
+$ProfileCheck = Join-Path $RepoRoot 'scripts\automation\night-x-profile-check.ps1'
+$profileOutput = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $ProfileCheck -RunId $RunId -NightDir $NightDir 2>&1
+$profileExit = $LASTEXITCODE
+$profileOutput | Out-File -FilePath $XLog -Encoding utf8 -Append
+if ($profileExit -ne 0) {
+  $profileJson = $null
+  try { $profileJson = ($profileOutput | Out-String | ConvertFrom-Json) } catch {}
+  $profileReason = if ($profileJson -and $profileJson.reason) { [string]$profileJson.reason } else { "x_profile_check_failed:exit=$profileExit" }
+  Preserve-XPending $profileReason
 }
 
 $ClipboardHelper = Join-Path $RepoRoot 'scripts\automation\x-post-chrome.ps1'

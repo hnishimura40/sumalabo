@@ -15,10 +15,11 @@ Chrome 136 以降（実測: Chrome 150 / 2026-07-09）、**既定（デフォル
 ## 専用プロファイルの場所
 
 ```
-D:\work\chrome-automation-profile
+D:\work\sumalabo-x-chrome
 ```
 
-（環境変数 `SUMALABO_CHROME_PROFILE` で上書き可能。既定はこのパス。）
+正本は `config/night-environment.json` の `chrome.userDataDirectory`。個人用Chromeの
+`%LOCALAPPDATA%\Google\Chrome\User Data` は指定しない。
 
 ## セットアップ手順（一度だけ）
 
@@ -28,8 +29,8 @@ D:\work\chrome-automation-profile
 
    ```powershell
    & "C:\Program Files\Google\Chrome\Application\chrome.exe" `
-     --user-data-dir="D:\work\chrome-automation-profile" `
-     --remote-debugging-port=9222 --remote-allow-origins=* `
+     --user-data-dir="D:\work\sumalabo-x-chrome" `
+     --profile-directory="Profile 2" `
      --no-first-run --no-default-browser-check --start-maximized
    ```
 
@@ -42,29 +43,24 @@ D:\work\chrome-automation-profile
 
 4. 同じ Chrome で **X にログイン**する（https://x.com → アカウント **@suma_labo**）。
 
-5. 同じ Chrome に **claude-in-chrome 拡張をインストール＆ペアリング**する。
-   - 拡張の Connect を実行し、ペアリングが完了したら **deviceId** を控える。
-   - deviceId は Claude 側で `list_connected_browsers` でも取得できる。
+5. 同じ Chrome に **Codex Chrome拡張**をインストールし、接続を確認する。このインストールと
+   Xへのログインは資格情報を扱うため、初回だけユーザー本人が行う。
 
-6. **`data/automation/night-browser.json` の `deviceId` を、この専用プロファイルの deviceId に更新**する。
-   - このプロファイルの Chrome が唯一の接続なら、夜間runの `select_browser` がそれを選ぶ。
-   - （Claude に deviceId を伝えれば night-browser.json 更新は代行できる。）
-
-7. 動作確認（testMode を消費しないドライラン）:
+6. 動作確認（記事生成・X投稿を行わない）:
 
    ```powershell
-   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\automation\night-run.ps1 -BrowserCheckOnly
+   powershell -NoProfile -ExecutionPolicy Bypass -File scripts\automation\night-x-profile-check.ps1
    ```
 
    ログ（`logs/night/{date}.log`）に
-   `=== BrowserCheckOnly OK: Chrome起動・DevTools応答・chrome-preflight合格を実測 ===`
-   が出れば準備完了。
+   `"reason":"x_profile_confirmed"` と終了コード0が出れば準備完了。不一致は終了コード20で、
+   X投稿だけを止める。
 
 ## 運用上の注意
 
 - 専用プロファイルは `D:\work\` 配下に置く（OS Temp 配下は自動クリーンアップで壊れるため禁止・P7）。
-- 専用プロファイルのタブ（ChatGPT / X / 工房チャット）は閉じても `--restore-last-session` で復元される。
-  ログインが切れたら夜間runは `chrome-preflight` 不合格で安全停止するので、再ログインする。
+- ログインが切れたらX工程内のDOMゲートがfatalとなり、pending bundleを保存してXだけ安全停止する。
+  記事生成・公開の主契約は失敗にしない。
 - 通常使いの Chrome とアカウントを分けたい場合も、この専用プロファイルに @suma_labo 等を入れておけば
   日常のブラウジングと混ざらない。
 

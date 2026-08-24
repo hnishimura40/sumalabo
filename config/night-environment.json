@@ -26,7 +26,7 @@
   },
   "chrome": {
     "profileDirectory": "Profile 2",
-    "userDataDirectory": "C:\\Users\\hnish\\AppData\\Local\\Google\\Chrome\\User Data",
+    "userDataDirectory": "D:\\work\\sumalabo-x-chrome",
     "executableCandidates": [
       "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
       "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
@@ -88,5 +88,10 @@
     "x_login_href",
     "dom_read",
     "x_ledger_state"
+  ],
+  "xStepFatalChecks": [
+    "chrome_profile",
+    "x_login_href",
+    "dom_read"
   ]
 }

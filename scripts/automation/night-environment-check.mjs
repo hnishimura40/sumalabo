@@ -11,6 +11,7 @@ import { inspectXPostedLedgerAccess, resolveXPostedLedgerPath } from "../sumahon
 export const CHECK_NAMES = [...NIGHT_ENVIRONMENT.requiredChecks];
 export const FATAL_CHECK_NAMES = [...NIGHT_ENVIRONMENT.fatalChecks];
 export const WARNING_CHECK_NAMES = [...NIGHT_ENVIRONMENT.warningChecks];
+export const X_STEP_FATAL_CHECK_NAMES = [...(NIGHT_ENVIRONMENT.xStepFatalChecks || [])];
 
 export function validateXReadinessPolicy(policy) {
   return Boolean(policy
@@ -94,6 +95,36 @@ export function evaluateEnvironmentEvidence(evidence, injectMissing = []) {
   };
 }
 
+export function evaluateXProfileEvidence(dom, environment = NIGHT_ENVIRONMENT) {
+  const checks = [
+    {
+      name: "chrome_profile",
+      ok: Boolean(dom?.profileMatched === true),
+      detail: dom?.profileDetail || "profile_evidence_missing",
+    },
+    {
+      name: "x_login_href",
+      ok: dom?.accountHref === environment.account.href && Number(dom?.hrefCount || 0) >= 1,
+      detail: dom ? `${dom.accountHref || "?"} count=${Number(dom.hrefCount || 0)}` : "dom_evidence_missing",
+    },
+    {
+      name: "dom_read",
+      ok: dom?.domRead === true && dom?.url === "https://x.com/home",
+      detail: dom?.url || "dom_evidence_missing",
+    },
+  ];
+  const failedChecks = checks.filter((item) => !item.ok).map((item) => item.name);
+  return {
+    ok: failedChecks.length === 0,
+    classification: failedChecks.length ? "x_fatal" : "pass",
+    expectedHandle: `@${environment.account.expectedHandle}`,
+    profileDirectory: environment.chrome.profileDirectory,
+    userDataDirectory: environment.chrome.userDataDirectory,
+    checks,
+    failedChecks,
+  };
+}
+
 export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = process.env) {
   const evidence = {};
   const profileRoot = chromeProfilePath(environment);
@@ -109,6 +140,7 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
       && environment.xPostedLedger?.pathTemplate === "%USERPROFILE%\\.sumalabo\\state\\x-posted.json"
       && typeof environment.xPostedLedger?.backupDirectory === "string"
       && CHECK_NAMES.every((name) => environment.requiredChecks.includes(name))
+      && ["chrome_profile", "x_login_href", "dom_read"].every((name) => environment.xStepFatalChecks?.includes(name))
       && validateXReadinessPolicy(environment.chrome?.xReadiness),
     detail: `schemaVersion=1;repositoryShaPolicy=${environment.repositoryShaPolicy};xPostedLedger=external;xReadiness=valid`,
   };
@@ -118,11 +150,13 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
     const ps = run("powershell.exe", ["-NoProfile", "-Command", "@(Get-CimInstance Win32_Process -Filter \"Name='chrome.exe'\" -ErrorAction SilentlyContinue | Select-Object -ExpandProperty CommandLine) -join \"`n\""]);
     const commandLines = String(ps.stdout || "").trim();
     if (commandLines) {
-      const escaped = environment.chrome.profileDirectory.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      runningProfileMatches = new RegExp(`--profile-directory=(?:\"${escaped}\"|${escaped})(?:\\s|$)`, "i").test(commandLines);
+      const escapedProfile = environment.chrome.profileDirectory.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const escapedUserData = environment.chrome.userDataDirectory.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      runningProfileMatches = new RegExp(`--user-data-dir=(?:\"${escapedUserData}\"|${escapedUserData})(?:\\s|$)`, "i").test(commandLines)
+        && new RegExp(`--profile-directory=(?:\"${escapedProfile}\"|${escapedProfile})(?:\\s|$)`, "i").test(commandLines);
     }
   }
-  evidence.chrome_profile = { ok: existsSync(profileRoot) && runningProfileMatches && (!env.CODEX_CHROMIUM_PREFERENCES_PATH || path.normalize(env.CODEX_CHROMIUM_PREFERENCES_PATH) === path.normalize(expectedPreferences)), detail: `${environment.chrome.profileDirectory};runningMatch=${runningProfileMatches}` };
+  evidence.chrome_profile = { ok: existsSync(profileRoot) && (!env.CODEX_CHROMIUM_PREFERENCES_PATH || path.normalize(env.CODEX_CHROMIUM_PREFERENCES_PATH) === path.normalize(expectedPreferences)), detail: `${environment.chrome.profileDirectory};userData=${environment.chrome.userDataDirectory};runningMatch=${runningProfileMatches}` };
   evidence.chrome_extension = { ok: Boolean(extension && versions.length), detail: versions.join(",") || "extension_not_installed" };
   evidence.file_url_permission = { ok: extension?.newAllowFileAccess === true, detail: `newAllowFileAccess=${String(extension?.newAllowFileAccess)}` };
 
@@ -192,6 +226,17 @@ export function runEnvironmentCheck({ domEvidenceFile = null, staticOnly = false
 function main() {
   const args = process.argv.slice(2);
   const domIndex = args.indexOf("--dom-evidence");
+  if (args.includes("--x-profile-only")) {
+    const dom = parseDomEvidence(domIndex >= 0 ? args[domIndex + 1] : null);
+    const result = evaluateXProfileEvidence(dom ? {
+      ...dom,
+      profileMatched: args.includes("--profile-matched"),
+      profileDetail: args.includes("--profile-matched") ? "exact_user_data_and_profile_process" : "profile_process_mismatch",
+    } : null);
+    console.log(JSON.stringify(result, null, 2));
+    process.exitCode = result.ok ? 0 : 20;
+    return;
+  }
   const inject = args.filter((arg) => arg.startsWith("--inject-missing=")).map((arg) => arg.split("=", 2)[1]);
   const result = runEnvironmentCheck({ domEvidenceFile: domIndex >= 0 ? args[domIndex + 1] : null, staticOnly: args.includes("--static-only"), injectMissing: inject });
   console.log(JSON.stringify(result, null, 2));

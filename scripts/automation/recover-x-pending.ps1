@@ -22,25 +22,13 @@ if ($LASTEXITCODE -ne 0) { exit 30 }
 $LedgerPath = (& node -e "import('./scripts/sumahon/x-posted-path.mjs').then(m=>console.log(m.X_POSTED_LEDGER_PATH))" | Out-String).Trim()
 $StateDirectory = Split-Path -Parent $LedgerPath
 
-$ChromeExe = @($Environment.chrome.executableCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1)
-if (-not $ChromeExe) { throw 'chrome_executable_missing' }
-$ChromeProfileDirectory = [string]$Environment.chrome.profileDirectory
-$ChromeUserDataDirectory = [string]$Environment.chrome.userDataDirectory
-$escapedProfile = [regex]::Escape($ChromeProfileDirectory)
-$targetProfileRunning = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
-  Where-Object { $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)" }).Count -gt 0
-$visibleChrome = @(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }).Count
-if (-not $targetProfileRunning -or $visibleChrome -eq 0) {
-  Start-Process -FilePath ([string]$ChromeExe[0]) -ArgumentList @(
-    "--user-data-dir=`"$ChromeUserDataDirectory`"", "--profile-directory=`"$ChromeProfileDirectory`"",
-    '--new-window', 'https://x.com/compose/post',
-    '--no-first-run', '--no-default-browser-check', '--start-maximized'
-  ) | Out-Null
-  Start-Sleep -Seconds 15
+$profileCheckRunId = 'recovery-profile-' + (Get-Date).ToString('yyyyMMddTHHmmss.fff')
+$profileOutput = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $RepoRoot 'scripts\automation\night-x-profile-check.ps1') -RunId $profileCheckRunId -NightDir (Join-Path $RepoRoot 'logs\social') 2>&1
+$profileExit = $LASTEXITCODE
+if ($profileExit -ne 0) {
+  $profileOutput | Write-Output
+  throw 'x_profile_check_failed'
 }
-$targetProfileRunning = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
-  Where-Object { $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)" }).Count -gt 0
-if (-not $targetProfileRunning -or @(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }).Count -eq 0) { throw 'chrome_profile_window_missing' }
 
 $imagePaths = @($manifest.images | Sort-Object index | ForEach-Object { Join-Path $RepoRoot ([string]$_.path) })
 if ($imagePaths.Count -ne 4) { throw "x_attachment_plan_invalid:$($imagePaths.Count)" }

@@ -5,4 +5,4 @@ X renders the account navigation asynchronously. Read `chrome.xReadiness` from `
 For cold-start diagnosis, also count the compose textbox and account-menu button, and report the total attempts used. Do not include page text, cookies, storage, or credentials.
 Return exactly one JSON object on one line and no Markdown:
 {"domRead":true,"url":"https://x.com/home","accountHref":"/suma_labo","hrefCount":1,"composeTextboxCount":1,"accountMenuCount":1,"attempts":2}
-Use domRead=false and hrefCount=0 only if the condition still cannot be proven after all 12 attempts. Still report composeTextboxCount, accountMenuCount, and attempts so the cold-start failure can be distinguished without exposing page content. Close only the tab you created before finishing.
+Use domRead=false and hrefCount=0 only if the condition still cannot be proven after all 19 attempts. Still report composeTextboxCount, accountMenuCount, and attempts so the cold-start failure can be distinguished without exposing page content. Close only the tab you created before finishing.

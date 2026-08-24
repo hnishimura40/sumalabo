@@ -288,7 +288,10 @@ test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentia
   assert.match(wrapper, /x_clipboard_prestage_failed/);
   assert.match(wrapper, /XImages\.Count -ne 4/);
   assert.match(wrapper, /XImageArg = \$XImages -join ','/);
-  assert.match(wrapper, /x_visible_window_missing_before_prestage/);
+  assert.match(wrapper, /night-x-profile-check\.ps1/);
+  assert.match(wrapper, /x_profile_check_failed/);
+  assert.doesNotMatch(wrapper, /Select-Object -First 1[\s\S]{0,200}x_visible_window_missing_before_prestage/);
+  assert.ok(wrapper.indexOf("night-x-profile-check.ps1") < wrapper.indexOf("-ImagePaths $XImageArg -ClipboardOnly"));
   assert.match(wrapper, /-ImagePaths \$XImageArg -ClipboardOnly/);
   assert.match(wrapper, /--add-dir', \$StateDirectory/);
   assert.match(prompt, /外側工程.*CF_HDROP/);
@@ -301,26 +304,31 @@ test("night Chrome startup uses the single environment definition", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
   const recovery = read("scripts/automation/recover-x-pending.ps1");
   const ensure = read("scripts/automation/ensure-chrome.ps1");
+  const profileCheck = read("scripts/automation/night-x-profile-check.ps1");
   const environment = JSON.parse(read("config/night-environment.json"));
   assert.equal(environment.chrome.profileDirectory, "Profile 2");
+  assert.equal(environment.chrome.userDataDirectory, "D:\\work\\sumalabo-x-chrome");
   assert.match(wrapper, /config\\night-environment\.json/);
   assert.match(wrapper, /--user-data-dir=`"\$ChromeUserDataDirectory`"/);
   assert.match(wrapper, /--profile-directory=`"\$ChromeProfileDirectory`"/);
   assert.doesNotMatch(wrapper, /--profile-directory=Profile(?! 2)/);
-  assert.match(recovery, /config\\night-environment\.json/);
-  assert.match(recovery, /--user-data-dir=`"\$ChromeUserDataDirectory`"/);
-  assert.match(recovery, /--profile-directory=`"\$ChromeProfileDirectory`"/);
-  assert.doesNotMatch(recovery, /--profile-directory=Profile(?! 2)/);
+  assert.match(recovery, /night-x-profile-check\.ps1/);
   assert.match(ensure, /config\\night-environment\.json/);
   assert.match(ensure, /--user-data-dir=`"\$ChromeUserDataDirectory`"/);
   assert.match(ensure, /--profile-directory=`"\$ChromeProfileDirectory`"/);
   assert.doesNotMatch(ensure, /デフォルトプロファイル起動/);
-  for (const source of [wrapper, recovery, ensure]) {
+  for (const source of [wrapper, ensure, profileCheck]) {
     assert.match(source, /Get-CimInstance Win32_Process/);
+    assert.match(source, /--user-data-dir=\(\?:`"\$escapedUserData`"\|\$escapedUserData\)/);
     assert.match(source, /--profile-directory=\(\?:`"\$escapedProfile`"\|\$escapedProfile\)/);
   }
+  assert.match(profileCheck, /--user-data-dir=`"\$ChromeUserDataDirectory`"/);
+  assert.match(profileCheck, /--profile-directory=`"\$ChromeProfileDirectory`"/);
+  assert.match(profileCheck, /--x-profile-only --profile-matched --dom-evidence/);
+  assert.match(profileCheck, /https:\/\/x\.com\/home/);
   assert.match(wrapper, /--new-window/);
-  assert.match(wrapper, /https:\/\/x\.com\/compose\/post/);
+  assert.match(wrapper, /https:\/\/x\.com\/home/);
+  assert.doesNotMatch(wrapper, /https:\/\/x\.com\/compose\/post/);
   assert.match(wrapper, /MainWindowHandle -ne 0/);
   assert.match(wrapper, /Chrome可視ウィンドウなし/);
   assert.match(wrapper, /CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH/);
@@ -363,6 +371,7 @@ test("night environment configuration owns paths, token names, and permissions",
   });
   assert.deepEqual(environment.fatalChecks, ["environment_definition", "github_token", "repository_sha", "runner_dirty"]);
   assert.ok(environment.warningChecks.includes("x_login_href"));
+  assert.deepEqual(environment.xStepFatalChecks, ["chrome_profile", "x_login_href", "dom_read"]);
   assert.ok(environment.requiredChecks.includes("dom_read"));
   assert.ok(environment.requiredChecks.includes("runner_dirty"));
   assert.doesNotMatch(read("scripts/automation/prepare-night-runner.mjs"), /D:\\\\work\\\\sumalabo-night-runner/);
