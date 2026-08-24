@@ -223,6 +223,12 @@ export function runEnvironmentCheck({ domEvidenceFile = null, staticOnly = false
   };
 }
 
+export function environmentCheckExitCode(result) {
+  // X-only warnings must remain visible in JSON, but they do not make the
+  // article pipeline or the next-run preflight fail.
+  return result?.canProceed === true ? 0 : 30;
+}
+
 function main() {
   const args = process.argv.slice(2);
   const domIndex = args.indexOf("--dom-evidence");
@@ -240,7 +246,7 @@ function main() {
   const inject = args.filter((arg) => arg.startsWith("--inject-missing=")).map((arg) => arg.split("=", 2)[1]);
   const result = runEnvironmentCheck({ domEvidenceFile: domIndex >= 0 ? args[domIndex + 1] : null, staticOnly: args.includes("--static-only"), injectMissing: inject });
   console.log(JSON.stringify(result, null, 2));
-  process.exitCode = result.ok ? 0 : result.canProceed ? 20 : 30;
+  process.exitCode = environmentCheckExitCode(result);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) main();

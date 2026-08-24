@@ -33,6 +33,7 @@ $AcceptanceResultFile = Join-Path $NightDir "scheduled-acceptance.result.json"
 $RunStartedAt = if ($env:SUMALABO_NIGHT_RUN_STARTED_AT) { $env:SUMALABO_NIGHT_RUN_STARTED_AT } else { (Get-Date).ToString("o") }
 $RunId = if ($env:SUMALABO_NIGHT_RUN_ID) { $env:SUMALABO_NIGHT_RUN_ID } else { (Get-Date).ToString("yyyyMMddTHHmmss.fff") }
 $ContractScript = Join-Path $RepoRoot "scripts\automation\night-run-contract.mjs"
+$FailureRecoveryScript = Join-Path $RepoRoot "scripts\automation\night-failure-recovery.mjs"
 $ContractFile = Join-Path $NightDir "run-contract\$RunId.json"
 $env:SUMALABO_NIGHT_RUN_ID = $RunId
 $env:SUMALABO_NIGHT_RUN_STARTED_AT = $RunStartedAt
@@ -386,6 +387,20 @@ try {
         $exitCode = Record-ContractOutcome "fail" "outer_publish_failed" "outer publisher exit=$LASTEXITCODE"
         exit $exitCode
       }
+    } else {
+      $failureText = (& node $FailureRecoveryScript inspect --started-at $RunStartedAt 2>&1 | Out-String).Trim()
+      $failureInspectionExit = $LASTEXITCODE
+      $failureInspection = $null
+      try { $failureInspection = $failureText | ConvertFrom-Json } catch {}
+      if ($failureInspectionExit -ne 0 -or -not $failureInspection) {
+        throw "phase_a_failure_inspection_failed: $failureText"
+      }
+      if ($failureInspection.found) {
+        $exitCode = Record-ContractOutcome "fail" ([string]$failureInspection.reason) ([string]$failureInspection.detail)
+        exit $exitCode
+      }
+      $exitCode = Record-ContractOutcome "fail" "phase_a_output_missing" "Codex exited 0 but produced neither a ready nor failed handoff for this run"
+      exit $exitCode
     }
   } catch {
     $exitCode = Record-ContractOutcome "fail" "outer_publish_failed" $_.Exception.Message
@@ -466,7 +481,8 @@ try {
     Log (($audit | Out-String).Trim())
     exit $contractExit
   }
-  $contractArgs = @($ContractScript, 'evaluate', '--run-id', $RunId, '--started-at', $RunStartedAt, '--slug', $publishSlug)
+  $contractArgs = @($ContractScript, 'evaluate', '--run-id', $RunId, '--started-at', $RunStartedAt)
+  if ($publishSlug) { $contractArgs += @('--slug', [string]$publishSlug) }
   $allXWarnings = @($XPreflightWarnings) + @($XStepWarnings) | Where-Object { $_ } | Select-Object -Unique
   if ($XStepPending) { $contractArgs += '--x-pending' }
   if ($allXWarnings.Count) { $contractArgs += @('--x-warnings', ($allXWarnings -join ',')) }
@@ -482,15 +498,28 @@ try {
   exit $contractExit
 } finally {
   if (Test-Path $LockFile) { Copy-Item -LiteralPath $LockFile -Destination $HeartbeatFile -Force -ErrorAction SilentlyContinue }
-  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) {
-    $script:NextPreflight = Invoke-NextRunPreflight
-  }
   if (-not $script:SkipContractFinalizer) {
     if (-not (Test-Path $ContractFile)) {
       Record-ContractOutcome "fail" "wrapper_terminated_without_contract" | Out-Null
     }
     $outcome = $null
     try { $outcome = Get-Content $ContractFile -Raw -Encoding utf8 | ConvertFrom-Json } catch {}
+    if ($outcome -and $outcome.outcome -eq 'failed') {
+      $recoveryArgs = @($FailureRecoveryScript, 'recover', '--run-id', $RunId, '--started-at', $RunStartedAt)
+      if ($outcome.slug) { $recoveryArgs += @('--slug', [string]$outcome.slug) }
+      $recoveryOutput = & node @recoveryArgs 2>&1
+      $recoveryExit = $LASTEXITCODE
+      Log (($recoveryOutput | Out-String).Trim())
+      if ($recoveryExit -ne 0) {
+        Log "failure recovery WARNING: exit=$recoveryExit。成果物は削除せず、次回preflight失敗見込みとして通知する。"
+        node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-failure-recovery',status:'warning',title:'[夜間run] 失敗成果物の自動退避または次回preflight確認に失敗'}))" 2>&1 | Out-Null
+      }
+    }
+  }
+  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) {
+    $script:NextPreflight = Invoke-NextRunPreflight
+  }
+  if (-not $script:SkipContractFinalizer) {
     @{
       runId=$RunId
       finishedAt=(Get-Date).ToString("o")

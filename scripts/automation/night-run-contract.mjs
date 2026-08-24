@@ -522,6 +522,14 @@ function parseArgs(argv) {
   return args;
 }
 
+export function parseOptionalSlugArgument(args) {
+  if (!Object.prototype.hasOwnProperty.call(args, "slug")) return null;
+  if (typeof args.slug !== "string" || !args.slug.trim()) {
+    throw new Error("invalid --slug: expected a non-empty string value; omit --slug when no publication target exists");
+  }
+  return args.slug.trim();
+}
+
 function printAndExit(value) {
   console.log(JSON.stringify(value, null, 2));
   process.exitCode = EXIT_CODES[value.outcome] ?? EXIT_CODES.failed;
@@ -532,11 +540,12 @@ async function main() {
   const command = args._[0];
   const root = args.root ? path.resolve(args.root) : ROOT;
   if (command === "evaluate") {
+    const slug = parseOptionalSlugArgument(args);
     const result = await evaluateSuccessContract({
       root,
       runId: args["run-id"],
       startedAt: args["started-at"],
-      slug: args.slug || null,
+      slug,
       completionKind: args["completion-kind"] || "fresh_run",
       xPending: args["x-pending"] === true,
       xWarnings: String(args["x-warnings"] || "").split(",").filter(Boolean),
@@ -545,17 +554,18 @@ async function main() {
     return;
   }
   if (command === "primary-check") {
+    const slug = parseOptionalSlugArgument(args);
     printAndExit(await evaluatePrimaryContract({
       root,
       runId: args["run-id"],
       startedAt: args["started-at"],
-      slug: args.slug || null,
+      slug,
       completionKind: args["completion-kind"] || "fresh_run",
     }));
     return;
   }
   if (command === "phase-b-check") {
-    printAndExit(await verifyPhaseBCompletion({ root, slug: args.slug || null }));
+    printAndExit(await verifyPhaseBCompletion({ root, slug: parseOptionalSlugArgument(args) }));
     return;
   }
   if (command === "stop") {
