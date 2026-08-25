@@ -27,7 +27,7 @@ if ($backupExit -ne 0 -and -not $DryRun) {
 
 # Predict the next scheduled run using the same standalone Phase 0 check. This
 # is advisory only and never changes today's independently audited outcome.
-$nextPreflight = & node scripts/automation/night-environment-check.mjs --static-only 2>&1
+$nextPreflight = & node scripts/automation/night-environment-check.mjs --article-only 2>&1
 $nextPreflightExit = $LASTEXITCODE
 $nextPreflightText = ($nextPreflight | Out-String).Trim()
 $nextPreflightJson = $null

@@ -66,6 +66,6 @@ D:\work\sumalabo-x-chrome
 
 ## 関連
 
-- `scripts/automation/night-run.ps1` — 専用プロファイルで Chrome 起動（`-BrowserCheckOnly` でドライラン）
+- `scripts/automation/night-x-post-step.ps1` — 主契約完了後にだけ専用プロファイル検査を呼び出す。記事公開フローはChromeに依存しない
 - `scripts/automation/chrome-preflight.mjs` — DevTools ポートで ChatGPT/X ログイン生存を検査（リトライ付き）
 - `docs/night_driver_prompt.md` 0-bis — 夜間ドライバーのブラウザ選択手順

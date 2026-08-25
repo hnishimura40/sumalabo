@@ -80,6 +80,12 @@
     "repository_sha",
     "runner_dirty"
   ],
+  "articleChecks": [
+    "environment_definition",
+    "github_token",
+    "repository_sha",
+    "runner_dirty"
+  ],
   "warningChecks": [
     "chrome_profile",
     "chrome_extension",

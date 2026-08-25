@@ -226,7 +226,7 @@ test("primary 3-point contract completes before the independent fail-soft X step
   const retry = wrapper.indexOf("--wait-for-target --attempts=10 --interval-ms=30000");
   const verify = wrapper.indexOf("phase-b-check --slug");
   const primary = wrapper.indexOf("primary-check --run-id");
-  const phaseC = wrapper.indexOf("night-x-post-step.ps1");
+  const phaseC = wrapper.indexOf("$XStepScript = Join-Path");
   const generate = xStep.indexOf("generate-x-post.mjs --slug");
   const xPrompt = xStep.indexOf("x-post-codex-night-prompt.md");
   assert.ok(retry >= 0 && retry < verify);
@@ -234,8 +234,7 @@ test("primary 3-point contract completes before the independent fail-soft X step
   assert.ok(generate >= 0 && generate < xPrompt);
   assert.match(wrapper, /phase_b_target_not_found_after_retry/);
   assert.match(wrapper, /主契約は成功のまま継続する/);
-  assert.match(wrapper, /if \(\$warningCsv\) \{ \$xStepArguments \+= @\('-PreflightWarnings', \$warningCsv\) \}/);
-  assert.doesNotMatch(wrapper, /-PreflightWarnings \$warningCsv 2>&1/);
+  assert.doesNotMatch(wrapper, /PreflightWarnings|XPreflightWarnings|warningCsv/);
   assert.match(xStep, /x-pending-bundle\.mjs create/);
   assert.match(xStep, /x-posted-ledger\.mjs --verify-two-stage \$Slug/);
   assert.match(xStep, /x_ledger_io_unavailable/);
@@ -300,24 +299,24 @@ test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentia
   assert.match(prompt, /添付数が4/);
 });
 
-test("night Chrome startup uses the single environment definition", () => {
+test("publishing parent is Chrome-free and the X step owns the profile gate", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
+  const xStep = read("scripts/automation/night-x-post-step.ps1");
   const recovery = read("scripts/automation/recover-x-pending.ps1");
   const ensure = read("scripts/automation/ensure-chrome.ps1");
   const profileCheck = read("scripts/automation/night-x-profile-check.ps1");
   const environment = JSON.parse(read("config/night-environment.json"));
   assert.equal(environment.chrome.profileDirectory, "Profile 2");
   assert.equal(environment.chrome.userDataDirectory, "D:\\work\\sumalabo-x-chrome");
-  assert.match(wrapper, /config\\night-environment\.json/);
-  assert.match(wrapper, /--user-data-dir=`"\$ChromeUserDataDirectory`"/);
-  assert.match(wrapper, /--profile-directory=`"\$ChromeProfileDirectory`"/);
-  assert.doesNotMatch(wrapper, /--profile-directory=Profile(?! 2)/);
+  assert.match(wrapper, /night-environment-check\.mjs --article-only/);
+  assert.doesNotMatch(wrapper, /Start-Process[\s\S]{0,300}(?:chrome|x\.com)|Get-CimInstance|CODEX_CHROMIUM|night_environment_dom_probe|--dom-evidence|--static-only/);
+  assert.match(xStep, /night-x-profile-check\.ps1/);
   assert.match(recovery, /night-x-profile-check\.ps1/);
   assert.match(ensure, /config\\night-environment\.json/);
   assert.match(ensure, /--user-data-dir=`"\$ChromeUserDataDirectory`"/);
   assert.match(ensure, /--profile-directory=`"\$ChromeProfileDirectory`"/);
   assert.doesNotMatch(ensure, /デフォルトプロファイル起動/);
-  for (const source of [wrapper, ensure, profileCheck]) {
+  for (const source of [ensure, profileCheck]) {
     assert.match(source, /Get-CimInstance Win32_Process/);
     assert.match(source, /--user-data-dir=\(\?:`"\$escapedUserData`"\|\$escapedUserData\)/);
     assert.match(source, /--profile-directory=\(\?:`"\$escapedProfile`"\|\$escapedProfile\)/);
@@ -326,18 +325,6 @@ test("night Chrome startup uses the single environment definition", () => {
   assert.match(profileCheck, /--profile-directory=`"\$ChromeProfileDirectory`"/);
   assert.match(profileCheck, /--x-profile-only --profile-matched --dom-evidence/);
   assert.match(profileCheck, /https:\/\/x\.com\/home/);
-  assert.match(wrapper, /--new-window/);
-  assert.match(wrapper, /https:\/\/x\.com\/home/);
-  assert.doesNotMatch(wrapper, /https:\/\/x\.com\/compose\/post/);
-  assert.match(wrapper, /MainWindowHandle -ne 0/);
-  assert.match(wrapper, /Chrome可視ウィンドウなし/);
-  assert.match(wrapper, /CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH/);
-  assert.match(wrapper, /CODEX_CHROMIUM_PREFERENCES_PATH/);
-  assert.match(wrapper, /night-environment-check\.mjs --static-only/);
-  assert.match(wrapper, /night-environment-check\.mjs --dom-evidence/);
-  assert.match(wrapper, /--output-last-message", \$EnvironmentDomEvidence/);
-  assert.match(wrapper, /\$environmentArgs = @\("exec", "--ephemeral", "--sandbox", "workspace-write"/);
-  assert.match(wrapper, /\$DateStr\.\$RunId\.environment-dom\.evidence\.json/);
   assert.match(wrapper, /environment_preflight_failed:\$missing/);
   const domProbe = read("docs/night_environment_dom_probe.md");
   assert.match(domProbe, /wait 5 seconds/i);
@@ -370,6 +357,7 @@ test("night environment configuration owns paths, token names, and permissions",
     safetyMultiplier: 1.5,
   });
   assert.deepEqual(environment.fatalChecks, ["environment_definition", "github_token", "repository_sha", "runner_dirty"]);
+  assert.deepEqual(environment.articleChecks, environment.fatalChecks);
   assert.ok(environment.warningChecks.includes("x_login_href"));
   assert.deepEqual(environment.xStepFatalChecks, ["chrome_profile", "x_login_href", "dom_read"]);
   assert.ok(environment.requiredChecks.includes("dom_read"));
@@ -384,14 +372,10 @@ test("night run never performs automatic archive deletion", () => {
   assert.match(wrapper, /automatic prune disabled by permanent safety rule/);
 });
 
-test("night run removes only the exact Chrome parent process that it started", () => {
+test("night publishing parent owns no Chrome lifecycle", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
-  assert.match(wrapper, /\$script:ChromeRunPid = \$null/);
-  assert.match(wrapper, /Start-Process[\s\S]*-PassThru[\s\S]*\$script:ChromeRunPid = \$chromeProcess\.Id/);
-  assert.match(wrapper, /Get-Process -Id \$script:ChromeRunPid/);
-  assert.match(wrapper, /\$ownedChrome\.Path -eq \$script:ChromeRunExe/);
-  assert.match(wrapper, /Stop-Process -Id \$script:ChromeRunPid/);
-  assert.doesNotMatch(wrapper, /Get-Process chrome[^\r\n]*\| Stop-Process/);
+  assert.doesNotMatch(wrapper, /ChromeRunPid|ChromeRunExe|Get-Process chrome|Stop-Process[^\r\n]*Chrome|Start-Process[^\r\n]*Chrome/);
+  assert.match(wrapper, /chromeTouched=\$false; xChecksExecuted=\$false/);
 });
 
 test("runner keeps generated evidence private and the X ledger entirely outside Git", () => {
@@ -427,7 +411,7 @@ test("watchdog audits the exact run id instead of a same-day record", () => {
 test("run finalizer records advisory next-run preflight without changing the main contract", () => {
   const wrapper = read("scripts/automation/night-run.ps1");
   assert.match(wrapper, /function Invoke-NextRunPreflight/);
-  assert.match(wrapper, /night-environment-check\.mjs --static-only/);
+  assert.match(wrapper, /night-environment-check\.mjs --article-only/);
   assert.match(wrapper, /今回runの成否は変更しない/);
   assert.match(wrapper, /nextPreflight=\$script:NextPreflight/);
 });
