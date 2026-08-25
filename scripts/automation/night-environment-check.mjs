@@ -12,6 +12,7 @@ export const CHECK_NAMES = [...NIGHT_ENVIRONMENT.requiredChecks];
 export const FATAL_CHECK_NAMES = [...NIGHT_ENVIRONMENT.fatalChecks];
 export const WARNING_CHECK_NAMES = [...NIGHT_ENVIRONMENT.warningChecks];
 export const X_STEP_FATAL_CHECK_NAMES = [...(NIGHT_ENVIRONMENT.xStepFatalChecks || [])];
+export const ARTICLE_CHECK_NAMES = [...(NIGHT_ENVIRONMENT.articleChecks || FATAL_CHECK_NAMES)];
 
 export function validateXReadinessPolicy(policy) {
   return Boolean(policy
@@ -192,13 +193,59 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
   return evidence;
 }
 
+export function collectArticleEvidence(environment = NIGHT_ENVIRONMENT, env = process.env) {
+  const evidence = {};
+  evidence.environment_definition = {
+    ok: environment.schemaVersion === 1
+      && environment.repositoryShaPolicy === "runner_matches_origin_main"
+      && ARTICLE_CHECK_NAMES.every((name) => environment.requiredChecks.includes(name))
+      && ARTICLE_CHECK_NAMES.every((name) => environment.fatalChecks.includes(name))
+      && environment.fatalChecks.every((name) => ARTICLE_CHECK_NAMES.includes(name))
+      && typeof environment.runnerPath === "string"
+      && environment.runnerPath.length > 0
+      && typeof environment.tokens?.github === "string"
+      && environment.tokens.github.length > 0,
+    detail: `schemaVersion=1;repositoryShaPolicy=${environment.repositoryShaPolicy};scope=article_only`,
+  };
+  evidence.github_token = {
+    ok: Boolean(env[environment.tokens.github]),
+    detail: `${environment.tokens.github}=${env[environment.tokens.github] ? "present" : "missing"}`,
+  };
+  const runner = environment.runnerPath;
+  const originMainHead = git(runner, ["rev-parse", "origin/main"]);
+  const runnerHead = git(runner, ["rev-parse", "HEAD"]);
+  evidence.repository_sha = evaluateRepositorySha({ runnerHead, originMainHead });
+  const runnerHygiene = inspectRunnerHygiene({ root: runner });
+  evidence.runner_dirty = {
+    ok: runnerHygiene.ok,
+    detail: runnerHygiene.gitError || runnerHygiene.dangerous.join("\n") || "dedicated_runner_clean",
+  };
+  return evidence;
+}
+
 function awaitableDirectories(directory) {
   const result = run("powershell.exe", ["-NoProfile", "-Command", `(Get-ChildItem -LiteralPath '${directory.replace(/'/g, "''")}' -Directory -ErrorAction SilentlyContinue).Name -join ','`]);
   return String(result.stdout || "").trim().split(",").filter(Boolean);
 }
 
-export function runEnvironmentCheck({ domEvidenceFile = null, staticOnly = false, injectMissing = [] } = {}) {
-  const evidence = collectStaticEvidence();
+export function runEnvironmentCheck({ domEvidenceFile = null, staticOnly = false, articleOnly = false, injectMissing = [] } = {}) {
+  const evidence = articleOnly ? collectArticleEvidence() : collectStaticEvidence();
+  if (articleOnly) {
+    const evaluated = evaluateEnvironmentEvidence(evidence, injectMissing);
+    const checks = evaluated.checks.filter((item) => ARTICLE_CHECK_NAMES.includes(item.name));
+    const failedChecks = checks.filter((item) => !item.ok).map((item) => item.name);
+    return {
+      ok: failedChecks.length === 0,
+      canProceed: failedChecks.length === 0,
+      xReady: null,
+      classification: failedChecks.length ? "fatal" : "pass",
+      scope: "article_only",
+      checks,
+      failedChecks,
+      fatalFailedChecks: failedChecks,
+      warningFailedChecks: [],
+    };
+  }
   if (!staticOnly) {
     const dom = parseDomEvidence(domEvidenceFile);
     evidence.x_login_href = { ok: dom?.accountHref === NIGHT_ENVIRONMENT.account.href && Number(dom?.hrefCount || 0) >= 1, detail: dom ? `${dom.accountHref} count=${dom.hrefCount}` : "dom_evidence_missing" };
@@ -244,7 +291,12 @@ function main() {
     return;
   }
   const inject = args.filter((arg) => arg.startsWith("--inject-missing=")).map((arg) => arg.split("=", 2)[1]);
-  const result = runEnvironmentCheck({ domEvidenceFile: domIndex >= 0 ? args[domIndex + 1] : null, staticOnly: args.includes("--static-only"), injectMissing: inject });
+  const result = runEnvironmentCheck({
+    domEvidenceFile: domIndex >= 0 ? args[domIndex + 1] : null,
+    staticOnly: args.includes("--static-only"),
+    articleOnly: args.includes("--article-only"),
+    injectMissing: inject,
+  });
   console.log(JSON.stringify(result, null, 2));
   process.exitCode = environmentCheckExitCode(result);
 }

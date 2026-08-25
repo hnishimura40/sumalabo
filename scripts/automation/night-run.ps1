@@ -11,9 +11,6 @@
 # 手動テスト: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/night-run.ps1
 
 param(
-  # ブラウザ経路だけドライラン実測（Chrome起動→DevTools→chrome-preflight）。
-  # testMode を消費せず、Codex 本体も起動しない。修正の実測確認用。
-  [switch]$BrowserCheckOnly,
   # 記事を作らず独立起動・直接ログ・PID/heartbeat・終了回収を実測する。
   [switch]$RunnerSelfTest
 )
@@ -37,11 +34,8 @@ $FailureRecoveryScript = Join-Path $RepoRoot "scripts\automation\night-failure-r
 $ContractFile = Join-Path $NightDir "run-contract\$RunId.json"
 $env:SUMALABO_NIGHT_RUN_ID = $RunId
 $env:SUMALABO_NIGHT_RUN_STARTED_AT = $RunStartedAt
-$script:SkipContractFinalizer = [bool]($BrowserCheckOnly -or $RunnerSelfTest)
-$script:ChromeRunPid = $null
-$script:ChromeRunExe = $null
+$script:SkipContractFinalizer = [bool]$RunnerSelfTest
 $script:NextPreflight = $null
-if ($BrowserCheckOnly -and $RunnerSelfTest) { throw 'BrowserCheckOnly と RunnerSelfTest は同時指定できません。' }
 if ($RunnerSelfTest) {
   $LockFile = Join-Path $NightDir "runner-selftest.lock"
   $HeartbeatFile = Join-Path $NightDir "$DateStr.runner-selftest.heartbeat.json"
@@ -63,7 +57,7 @@ function Record-ContractOutcome([string]$Mode, [string]$Reason, [string]$Detail 
 }
 
 function Invoke-NextRunPreflight {
-  $output = & node scripts/automation/night-environment-check.mjs --static-only 2>&1
+  $output = & node scripts/automation/night-environment-check.mjs --article-only 2>&1
   $code = $LASTEXITCODE
   $text = ($output | Out-String).Trim()
   $json = $null
@@ -84,8 +78,8 @@ function Invoke-NextRunPreflight {
   return $record
 }
 
-# ---- 1. 多重起動ガード ----（ドライランでは lock を取らない）
-if (-not $BrowserCheckOnly) {
+# ---- 1. 多重起動ガード ----
+if (-not $RunnerSelfTest) {
   if (Test-Path $LockFile) {
     try {
       $lock = Get-Content $LockFile -Raw | ConvertFrom-Json
@@ -129,47 +123,32 @@ function Invoke-CodexIsolated([string]$PromptText, [string[]]$CodexArgs, [string
 }
 
 try {
-  if ($BrowserCheckOnly) { Log "=== EnvironmentCheckOnly（testMode未消費・記事工程未起動） ===" }
   if ($RunnerSelfTest) { Log "=== RunnerSelfTest（testMode未消費・記事生成なし） ===" }
 
-  # ---- Phase 0. 実在する夜間環境を記事工程より先に検査 ----
-  # 正は config/night-environment.json。プロファイル名・パス・拡張ID・許可・トークン名を
-  # このスクリプトへ直書きしない。静的実物検査とChrome DOM検査が合格した場合だけ先へ進む。
-  $EnvironmentFile = Join-Path $RepoRoot "config\night-environment.json"
-  $NightEnvironment = Get-Content -LiteralPath $EnvironmentFile -Raw -Encoding utf8 | ConvertFrom-Json
-  $ChromeProfileDirectory = [string]$NightEnvironment.chrome.profileDirectory
-  $ChromeUserDataDirectory = [string]$NightEnvironment.chrome.userDataDirectory
-  $ChromeProfileRoot = Join-Path $ChromeUserDataDirectory $ChromeProfileDirectory
-  $env:CODEX_CHROMIUM_NATIVE_HOST_MANIFEST_PATH = [string]$NightEnvironment.chrome.nativeHostManifestPath
-  $env:CODEX_CHROMIUM_PREFERENCES_PATH = Join-Path $ChromeProfileRoot "Preferences"
-  $ChromeExeCandidates = @($NightEnvironment.chrome.executableCandidates | Where-Object { Test-Path -LiteralPath $_ })
-  $ChromeExe = if ($ChromeExeCandidates.Count) { [string]$ChromeExeCandidates[0] } else { $null }
-  $XPreflightWarnings = [System.Collections.Generic.List[string]]::new()
-  $ChromeDomProbePossible = $true
+  # ---- Phase 0. 記事公開に必要な環境だけを検査 ----
+  # Chrome・X・DOM・投稿台帳はここでは一切検査しない。これらは主契約完了後の
+  # night-x-post-step.ps1 内だけで検査し、公開フローを停止させない。
 
   if (-not $RunnerSelfTest) {
-    Log "Phase 0: static environment evidence"
-    $staticEnvironment = node scripts/automation/night-environment-check.mjs --static-only 2>&1
+    Log "Phase 0: article-only environment evidence (Chrome/X checks are isolated to Phase C)"
+    $staticEnvironment = node scripts/automation/night-environment-check.mjs --article-only 2>&1
     $staticEnvironmentExit = $LASTEXITCODE
     Log (($staticEnvironment | Out-String).Trim())
     $staticJson = $null
     try { $staticJson = ($staticEnvironment | Out-String | ConvertFrom-Json) } catch {}
     if ($staticEnvironmentExit -eq 30 -or -not $staticJson -or -not $staticJson.canProceed) {
       $missing = if ($staticJson -and $staticJson.fatalFailedChecks.Count) { [string]$staticJson.fatalFailedChecks[0] } else { "environment_definition" }
-      if ($BrowserCheckOnly) { exit 30 }
       $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:$missing" "Phase 0 static evidence failed"
       exit $exitCode
     }
-    foreach ($warning in @($staticJson.warningFailedChecks)) { if (-not $XPreflightWarnings.Contains([string]$warning)) { $XPreflightWarnings.Add([string]$warning) } }
-    if ($XPreflightWarnings.Count) { Log "Phase 0 WARNING: X静的項目=$($XPreflightWarnings -join ',')。記事工程は続行し、Phase Cだけ保留する。" }
+    Log "Phase 0 PASS: 記事公開の致命項目に合格。Chrome/X検査は未実行。"
   }
 
   # 無承認のarchive削除は禁止。期限整理は環境変更と同様に影響範囲提示と事前承認を要する。
-  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) { Log "image cleanup: automatic prune disabled by permanent safety rule" }
+  if (-not $RunnerSelfTest) { Log "image cleanup: automatic prune disabled by permanent safety rule" }
 
   # ---- 2. 軽量プリフライト（Codex を起動する前に node だけで判定） ----
-  # ドライランでは testMode ゲートをスキップ（ブラウザ経路だけ確かめたいため）。
-  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) {
+  if (-not $RunnerSelfTest) {
     Log "preflight: test-mode --status"
     $preflight = node scripts/automation/test-mode.mjs --status 2>&1
     $preflightExit = $LASTEXITCODE
@@ -183,102 +162,8 @@ try {
 
   }
 
-  # ---- Phase 0-bis. 定義されたChromeプロファイルを起動 ----
-
-  if (-not (Test-Path $ChromeExe)) {
-    Log "Phase 0 WARNING: Chrome実行ファイル不明。記事工程は続行し、Phase Cだけ保留する。"
-    if (-not $XPreflightWarnings.Contains("chrome_profile")) { $XPreflightWarnings.Add("chrome_profile") }
-    $ChromeDomProbePossible = $false
-  } else {
-    $chromeProcesses = @(Get-Process chrome -ErrorAction SilentlyContinue)
-    $chromeCount = $chromeProcesses.Count
-    $visibleChromeCount = @($chromeProcesses | Where-Object { $_.MainWindowHandle -ne 0 }).Count
-    $escapedProfile = [regex]::Escape($ChromeProfileDirectory)
-    $escapedUserData = [regex]::Escape($ChromeUserDataDirectory)
-    $targetProfileProcesses = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
-      Where-Object {
-        $_.CommandLine -match "--user-data-dir=(?:`"$escapedUserData`"|$escapedUserData)(?:\s|$)" -and
-        $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)"
-      })
-    $targetProfileRunning = $targetProfileProcesses.Count -gt 0
-    $targetProfileVisible = @($targetProfileProcesses | ForEach-Object { Get-Process -Id $_.ProcessId -ErrorAction SilentlyContinue } | Where-Object { $_.MainWindowHandle -ne 0 }).Count -gt 0
-    if ($targetProfileRunning -and $targetProfileVisible) {
-      Log "Chrome は既に起動中（$chromeCount プロセス / 可視ウィンドウ $visibleChromeCount）。拡張経路を利用（$ChromeProfileDirectory）。"
-    } else {
-      if ($chromeCount -gt 0) { Log "Chromeのバックグラウンドプロセスのみ残存。$ChromeProfileDirectory の可視Xウィンドウを起動する。" }
-      else { Log "Chrome未起動。$ChromeProfileDirectory の可視Xウィンドウを起動する。" }
-      try {
-        $chromeProcess = Start-Process -FilePath $ChromeExe -ArgumentList @(
-          "--user-data-dir=`"$ChromeUserDataDirectory`"", "--profile-directory=`"$ChromeProfileDirectory`"",
-          "--new-window", "https://x.com/home",
-          "--no-first-run", "--no-default-browser-check", "--start-maximized"
-        ) -PassThru
-        $script:ChromeRunPid = $chromeProcess.Id
-        $script:ChromeRunExe = $ChromeExe
-        Start-Sleep -Seconds 12
-        $visibleChromeCount = @(Get-Process chrome -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 }).Count
-        $targetProfileProcesses = @(Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" -ErrorAction SilentlyContinue |
-          Where-Object {
-            $_.CommandLine -match "--user-data-dir=(?:`"$escapedUserData`"|$escapedUserData)(?:\s|$)" -and
-            $_.CommandLine -match "--profile-directory=(?:`"$escapedProfile`"|$escapedProfile)(?:\s|$)"
-          })
-        $targetProfileRunning = $targetProfileProcesses.Count -gt 0
-        $targetProfileVisible = @($targetProfileProcesses | ForEach-Object { Get-Process -Id $_.ProcessId -ErrorAction SilentlyContinue } | Where-Object { $_.MainWindowHandle -ne 0 }).Count -gt 0
-      } catch { $visibleChromeCount = 0 }
-      if ($visibleChromeCount -eq 0 -or -not $targetProfileRunning -or -not $targetProfileVisible) {
-        Log "Phase 0 WARNING: Chrome可視ウィンドウなし。記事工程は続行し、Phase Cだけ保留する。"
-        if (-not $XPreflightWarnings.Contains("chrome_profile")) { $XPreflightWarnings.Add("chrome_profile") }
-        $ChromeDomProbePossible = $false
-      }
-    }
-  }
-
   if (-not $RunnerSelfTest) {
-    if ($ChromeDomProbePossible) { Log "Phase 0: Chrome DOM/account evidence" }
-    $EnvironmentDomLog = Join-Path $NightDir "$DateStr.$RunId.environment-dom.full.log"
-    $EnvironmentDomEvidence = Join-Path $NightDir "$DateStr.$RunId.environment-dom.evidence.json"
-    $EnvironmentPrompt = Get-Content (Join-Path $RepoRoot "docs\night_environment_dom_probe.md") -Raw -Encoding utf8
-    # Chrome control performs an OS process-presence check before DOM access.
-    # Use the same workspace-write sandbox as Phase C; GH_TOKEN remains removed
-    # from this child, so this only fixes the cold-start process inspection.
-    $environmentArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--skip-git-repo-check", "--color", "never", "--output-last-message", $EnvironmentDomEvidence, "-C", $RepoRoot, "-")
-    if ($ChromeDomProbePossible) {
-      $environmentPublisherToken = $env:GH_TOKEN
-      $environmentPublisherExpiry = $env:GH_TOKEN_EXPIRES_AT
-      Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
-      Remove-Item Env:GH_TOKEN_EXPIRES_AT -ErrorAction SilentlyContinue
-      try {
-        $environmentDomExit = Invoke-CodexIsolated $EnvironmentPrompt $environmentArgs $EnvironmentDomLog "environment-dom"
-      } finally {
-        if ($environmentPublisherToken) { $env:GH_TOKEN = $environmentPublisherToken }
-        if ($environmentPublisherExpiry) { $env:GH_TOKEN_EXPIRES_AT = $environmentPublisherExpiry }
-      }
-      if ($environmentDomExit -ne 0) {
-        Log "Phase 0 WARNING: DOM probe exit=$environmentDomExit。記事工程は続行し、Phase Cだけ保留する。"
-        if (-not $XPreflightWarnings.Contains("dom_read")) { $XPreflightWarnings.Add("dom_read") }
-      } else {
-        $fullEnvironment = node scripts/automation/night-environment-check.mjs --dom-evidence $EnvironmentDomEvidence 2>&1
-        $fullEnvironmentExit = $LASTEXITCODE
-        Log (($fullEnvironment | Out-String).Trim())
-        $fullJson = $null
-        try { $fullJson = ($fullEnvironment | Out-String | ConvertFrom-Json) } catch {}
-        if ($fullEnvironmentExit -eq 30 -or -not $fullJson -or -not $fullJson.canProceed) {
-          $missing = if ($fullJson -and $fullJson.fatalFailedChecks.Count) { [string]$fullJson.fatalFailedChecks[0] } else { "environment_definition" }
-          if ($BrowserCheckOnly) { exit 30 }
-          $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:$missing" "Phase 0 fatal evidence failed"
-          exit $exitCode
-        }
-        foreach ($warning in @($fullJson.warningFailedChecks)) { if (-not $XPreflightWarnings.Contains([string]$warning)) { $XPreflightWarnings.Add([string]$warning) } }
-      }
-    } else {
-      foreach ($warning in @("x_login_href", "dom_read")) { if (-not $XPreflightWarnings.Contains($warning)) { $XPreflightWarnings.Add($warning) } }
-    }
-    $XPreflightReady = $XPreflightWarnings.Count -eq 0
-    if ($XPreflightReady) { Log "Phase 0 PASS: 致命項目・X項目とも合格。" }
-    else { Log "Phase 0 WARNING: X保留項目=$($XPreflightWarnings -join ',')。記事3点を続行する。" }
-    if ($BrowserCheckOnly) { if ($XPreflightReady) { exit 0 } else { exit 20 } }
-
-    # 記事候補選定は致命項目が合格した後に開始する。X警告は記事を止めない。
+    # 記事候補選定は記事公開の致命項目が合格した後に開始する。
     Log "preflight: outer scout --auto-pick"
     node scripts/automation/scout.mjs --auto-pick --json 2>&1 | Out-File -FilePath $LogFile -Encoding utf8 -Append
     $scoutExit = $LASTEXITCODE
@@ -315,7 +200,7 @@ try {
     }
     Remove-Item -LiteralPath $AcceptanceRequestFile -Force -ErrorAction SilentlyContinue
     if ($fresh) {
-      @{ ok=$true; mode="scheduled_production_path_without_article"; taskName="Sumalabo Night Driver"; completedAt=(Get-Date).ToString("o"); pid=$PID; preflight="passed"; chromeProcessCount=@(Get-Process chrome -ErrorAction SilentlyContinue).Count; commandLineFlags="none"; articlePipelineStarted=$false } |
+      @{ ok=$true; mode="scheduled_production_path_without_article"; taskName="Sumalabo Night Driver"; completedAt=(Get-Date).ToString("o"); pid=$PID; preflight="passed"; chromeTouched=$false; xChecksExecuted=$false; commandLineFlags="none"; articlePipelineStarted=$false } |
         ConvertTo-Json | Set-Content -LiteralPath $AcceptanceResultFile -Encoding utf8
       Log "SCHEDULED ACCEPTANCE OK: 実タスクの通常コマンドで起動し、記事生成直前まで本番同等パスを通過。"
       $exitCode = Record-ContractOutcome "stop" "scheduled_acceptance" "articlePipelineStarted=false"
@@ -447,7 +332,6 @@ try {
 
   # ---- 4-ter. Phase C is an independent fail-soft step after primary success ----
   if ($publishSlug -and $phaseBVerified) {
-    $warningCsv = $XPreflightWarnings -join ','
     $XStepScript = Join-Path $RepoRoot 'scripts\automation\night-x-post-step.ps1'
     $xStepArguments = @(
       '-NoProfile',
@@ -459,10 +343,6 @@ try {
       '-NightDir', $NightDir,
       '-StateFile', $LockFile
     )
-    # Windows PowerShell treats a trailing empty native-command argument as
-    # "parameter specified without a value". Only pass this optional switch
-    # when Phase 0 actually produced warnings.
-    if ($warningCsv) { $xStepArguments += @('-PreflightWarnings', $warningCsv) }
     $xStep = & powershell.exe @xStepArguments 2>&1
     $xStepExit = $LASTEXITCODE
     Log (($xStep | Out-String).Trim())
@@ -483,7 +363,7 @@ try {
   }
   $contractArgs = @($ContractScript, 'evaluate', '--run-id', $RunId, '--started-at', $RunStartedAt)
   if ($publishSlug) { $contractArgs += @('--slug', [string]$publishSlug) }
-  $allXWarnings = @($XPreflightWarnings) + @($XStepWarnings) | Where-Object { $_ } | Select-Object -Unique
+  $allXWarnings = @($XStepWarnings) | Where-Object { $_ } | Select-Object -Unique
   if ($XStepPending) { $contractArgs += '--x-pending' }
   if ($allXWarnings.Count) { $contractArgs += @('--x-warnings', ($allXWarnings -join ',')) }
   $contract = & node @contractArgs 2>&1
@@ -516,7 +396,7 @@ try {
       }
     }
   }
-  if (-not $BrowserCheckOnly -and -not $RunnerSelfTest) {
+  if (-not $RunnerSelfTest) {
     $script:NextPreflight = Invoke-NextRunPreflight
   }
   if (-not $script:SkipContractFinalizer) {
@@ -532,13 +412,6 @@ try {
       secondaryContract=if($outcome){$outcome.secondaryContract}else{$null}
       nextPreflight=$script:NextPreflight
     } | ConvertTo-Json -Depth 12 | Set-Content $CompletionFile -Encoding utf8
-  }
-  if ($script:ChromeRunPid) {
-    $ownedChrome = Get-Process -Id $script:ChromeRunPid -ErrorAction SilentlyContinue
-    if ($ownedChrome -and $ownedChrome.Path -eq $script:ChromeRunExe) {
-      Log "cleanup: runが起動したChrome親プロセスを終了します。"
-      Stop-Process -Id $script:ChromeRunPid -ErrorAction SilentlyContinue
-    }
   }
   Remove-Item $LockFile -Force -Confirm:$false -ErrorAction SilentlyContinue
 }

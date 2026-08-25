@@ -48,7 +48,7 @@
     "schedule:auto-run": "node scripts/automation/register-night-task.mjs",
     "night:prepare-runner": "node scripts/automation/prepare-night-runner.mjs",
     "night:auth-probe": "node scripts/automation/codex-auth-probe.mjs",
-    "night:environment-check": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/automation/night-run.ps1 -BrowserCheckOnly",
+    "night:environment-check": "node scripts/automation/night-environment-check.mjs --article-only",
     "night:runner-hygiene": "node scripts/automation/runner-hygiene.mjs",
     "night:report": "node scripts/automation/night-report.mjs",
     "night:contract": "node scripts/automation/night-run-contract.mjs",

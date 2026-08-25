@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, X_STEP_FATAL_CHECK_NAMES, environmentCheckExitCode, evaluateEnvironmentEvidence, evaluateRepositorySha, evaluateXProfileEvidence, findFirstReadyObservation, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
+import { ARTICLE_CHECK_NAMES, CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, X_STEP_FATAL_CHECK_NAMES, environmentCheckExitCode, evaluateEnvironmentEvidence, evaluateRepositorySha, evaluateXProfileEvidence, findFirstReadyObservation, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
 
 const passing = Object.fromEntries(CHECK_NAMES.map((name) => [name, { ok: true, detail: "test" }]));
 
@@ -67,6 +67,12 @@ test("X environment failures warn while allowing the article pipeline", () => {
   assert.deepEqual(result.warningFailedChecks, ["x_login_href"]);
   assert.ok(WARNING_CHECK_NAMES.includes("dom_read"));
   assert.equal(environmentCheckExitCode(result), 0);
+});
+
+test("article-only preflight contains no Chrome or X checks", () => {
+  assert.deepEqual(ARTICLE_CHECK_NAMES, ["environment_definition", "github_token", "repository_sha", "runner_dirty"]);
+  assert.ok(ARTICLE_CHECK_NAMES.every((name) => FATAL_CHECK_NAMES.includes(name)));
+  assert.ok(!ARTICLE_CHECK_NAMES.some((name) => /chrome|x_|dom/.test(name)));
 });
 
 test("fatal environment failures keep exit code 30", () => {

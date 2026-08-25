@@ -3,8 +3,7 @@ param(
   [Parameter(Mandatory=$true)][string]$RunId,
   [Parameter(Mandatory=$true)][string]$StartedAt,
   [Parameter(Mandatory=$true)][string]$NightDir,
-  [Parameter(Mandatory=$true)][string]$StateFile,
-  [string]$PreflightWarnings = ''
+  [Parameter(Mandatory=$true)][string]$StateFile
 )
 
 $ErrorActionPreference = 'Continue'
@@ -26,8 +25,7 @@ function Write-XResult([string]$Status, [string]$Reason, [int]$ExitCode) {
 
 function Preserve-XPending([string]$Reason) {
   if (Test-Path -LiteralPath $XPostInputFile) {
-    $warnings = @($PreflightWarnings, $Reason) | Where-Object { $_ } | Select-Object -Unique
-    & node scripts/automation/x-pending-bundle.mjs create --slug $Slug --run-id $RunId --started-at $StartedAt --warnings ($warnings -join ',') 2>&1 |
+    & node scripts/automation/x-pending-bundle.mjs create --slug $Slug --run-id $RunId --started-at $StartedAt --warnings $Reason 2>&1 |
       Out-File -FilePath $XLog -Encoding utf8 -Append
   }
   Write-XResult 'warning' $Reason 20
@@ -45,17 +43,6 @@ $ledgerCheckExit = $LASTEXITCODE
 $ledgerCheck | Out-File -FilePath $XLog -Encoding utf8 -Append
 if ($ledgerCheckExit -ne 0) {
   Preserve-XPending 'x_ledger_io_unavailable'
-}
-
-if ($PreflightWarnings) {
-  # Chrome profile/login/DOM warnings are re-probed below inside the isolated
-  # X step. Other X prerequisites remain fail-closed.
-  $retryableProfileWarnings = @('chrome_profile', 'chrome_extension', 'native_host', 'x_site_permission', 'file_url_permission', 'x_login_href', 'dom_read')
-  $blockingWarnings = @($PreflightWarnings -split ',' | ForEach-Object { $_.Trim() } |
-    Where-Object { $_ -and $_ -notin $retryableProfileWarnings })
-  if ($blockingWarnings.Count) {
-    Preserve-XPending "x_preflight_warning:$($blockingWarnings -join ',')"
-  }
 }
 
 $XPostInput = $null

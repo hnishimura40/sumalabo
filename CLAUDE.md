@@ -5,7 +5,7 @@
 - 削除、アンインストール、再インストール、作り替えは、影響範囲を編集長へ提示し、事前承認を得るまで提案・実行しない。
 - 動作実績のある環境が停止した場合、最初に再起動、限定リトライ、接続確認、実在確認を行う。構造的な修理は、その証拠を確認した後に検討する。
 - 夜間環境コンポーネントを変更する場合は `config/night-environment.json` の更新と回帰テストを必須とする。スクリプトへプロファイル名、拡張ID、runnerパスを再び直書きしない。
-- 夜間run開始前にPhase 0環境検査を実施し、1項目でも不合格なら記事選定・生成へ入らずfailedで終了する。
+- 夜間run開始前に記事公開専用のPhase 0環境検査を実施し、`articleChecks` の1項目でも不合格なら記事選定・生成へ入らずfailedで終了する。Chrome・X・DOM・X台帳はPhase 0で検査しない。
 - 画像archiveの期限切れを含め、無承認の自動削除を夜間runから実行しない。
 
 ## 2026-08-01 公開前人手ゲート全廃（最優先・旧記載を上書き）
@@ -701,9 +701,9 @@ PC 表示では **横スクロールを原則使わない**。スマホでも基
 ## Final report output filter (mandatory)
 All user-facing completion reports, including Codex interactive, night run, attended runs, and unattended X posting, must pass through `npm run report:filter` immediately before delivery. Remove every line whose first non-whitespace characters are `::`. Never send an unfiltered completion report.
 
-## Night phase-0 severity policy (2026-08-15)
+## Night phase-0 severity policy (2026-08-25)
 
 - Fatal checks are limited to article-pipeline prerequisites: `GH_TOKEN`, runner HEAD/origin main equality, dedicated runner dirty 0, and environment-definition/runner health. The daytime canonical workspace is not a night-run prerequisite. Any fatal failure stops before article generation with `failed`.
-- Chrome/X checks are warning-only at phase 0: configured profile, extension/native-host, x.com permission, file URL permission, `href=/suma_labo` login evidence, and DOM read. A warning must not stop article generation, publication, PR merge, or strict verification.
+- Chrome/X checks are not executed at Phase 0, the publishing finalizer, or Watchdog next-run preflight. Configured profile, extension/native-host, x.com permission, file URL permission, `href=/suma_labo` login evidence, DOM read, and X ledger access are evaluated only inside the independent X posting step after the primary contract has succeeded. They must not stop article generation, publication, PR merge, deployment, HTTP 200 confirmation, or strict verification.
 - If the three main contract points pass while an X warning exists, skip Phase C before any X send, preserve the primary text, URL-only reply, and exactly four images in an immutable pending manifest when possible, and record `success` with secondary X status `skipped` or `failed` (exit 0).
 - Recover pending X work with `npm run social:recover-x-pending -- --slug <slug>`. Recovery remains fail-closed and is recorded as `completionKind=recovery`, `acceptanceEligible=false`.

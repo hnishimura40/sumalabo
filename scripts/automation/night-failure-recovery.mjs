@@ -107,7 +107,7 @@ function gitStatusForPaths(root, relativePaths) {
 }
 
 function runStaticPreflight(root) {
-  const result = spawnSync(process.execPath, [path.join(root, "scripts", "automation", "night-environment-check.mjs"), "--static-only"], {
+  const result = spawnSync(process.execPath, [path.join(root, "scripts", "automation", "night-environment-check.mjs"), "--article-only"], {
     cwd: root,
     env: process.env,
     encoding: "utf8",
