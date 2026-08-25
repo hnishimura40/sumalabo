@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "siteUrl": "https://sumalabo.com",
+  "rssPath": "/rss.xml",
+  "sitemapPath": "/sitemap.xml",
+  "sitemapContentPath": "/sitemap-0.xml",
+  "indexNow": {
+    "endpoint": "https://api.indexnow.org/indexnow",
+    "key": "c3f20e798cf6421eb34d92d2700faddb",
+    "keyPath": "/c3f20e798cf6421eb34d92d2700faddb.txt"
+  },
+  "google": {
+    "strategy": "robots_sitemap_lastmod",
+    "searchConsoleApiEnabled": false
+  }
+}

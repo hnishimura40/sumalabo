@@ -144,6 +144,7 @@ function makeResult() {
       distCheck: { status: "skipped" },
       wrangler: { status: "skipped" },
       verify: { status: "skipped" },
+      notify: { status: "not_run" },
       lastGoodSnapshot: { status: "skipped" },
       postPublishVerify: { status: "skipped" },
       imageOutputCleanup: { status: "skipped" },
@@ -558,6 +559,12 @@ async function main() {
     await stepPostPublishVerify(result, args);
   }
 
+  // Search notification is an independent fail-soft step. It runs only after
+  // production HTTP/strict verification and never changes the deploy outcome.
+  if (!args.dryRun && !args.skipWrangler && result.errorReason === null) {
+    stepSearchNotify(result, args.slug);
+  }
+
   result.ok = result.errorReason === null;
   if (result.ok && !args.dryRun) {
     try {
@@ -650,6 +657,31 @@ async function stepPostPublishVerify(result, args) {
   };
   if (r.status !== 0) {
     result.errorReason = "post_publish_verify_hard_fail";
+  }
+}
+
+function stepSearchNotify(result, slug) {
+  const script = join(ROOT, "scripts", "automation", "search-notify.mjs");
+  const output = join(ROOT, "logs", "publish", `${slug}.notify.json`);
+  const run = spawnSync(process.execPath, [script, `--slug=${slug}`, `--output=${output}`], {
+    cwd: ROOT,
+    stdio: "pipe",
+    env: process.env,
+    encoding: "utf8",
+    timeout: 60_000,
+  });
+  let evidence = null;
+  try { evidence = JSON.parse(readFileSync(output, "utf8")); } catch {}
+  result.steps.notify = evidence || {
+    status: "warning",
+    ok: false,
+    reason: run.error?.code === "ETIMEDOUT" ? "notify_timeout" : "notify_result_missing",
+    exitCode: run.status,
+  };
+  if (result.steps.notify.status === "success") {
+    console.log(`[notify] success: RSS / sitemap / IndexNow (${slug})`);
+  } else {
+    console.warn(`[notify] warning: ${result.steps.notify.reason || "unknown"}（公開結果には非影響）`);
   }
 }
 

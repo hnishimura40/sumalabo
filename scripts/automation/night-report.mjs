@@ -58,6 +58,7 @@ export function buildReport(slug) {
   const handCropInspection = readJson(path.join(ROOT, "logs", "article", `${slug}.hand-crop-inspection.json`));
   const finalize = readJson(path.join(ROOT, "logs", "preview", `${slug}.finalize.json`));
   const verify = readJson(path.join(ROOT, "logs", "publish", `${slug}.verify.json`));
+  const searchNotify = readJson(path.join(ROOT, "logs", "publish", `${slug}.notify.json`));
   const ledger = readLedger();
   const entry = (ledger.entries || []).find((e) => e.slug === slug) || {};
   const autonomy = loadAutonomy();
@@ -80,6 +81,7 @@ export function buildReport(slug) {
     : (unattendedCompleted ? "なし" : contractOutcome?.reason || state?.haltReason || "成否契約未達");
   lines.push("- 無人完走できたか: " + (unattendedCompleted ? "はい" : "いいえ") + " / 人の介入: " + (humanIntervention ? "あり" : "なし") + " / 理由: " + interventionReason);
   lines.push(`- 契約判定: 本体${primaryStatus === "success" ? "成功" : "失敗"}／X${secondaryStatus === "success" ? "成功" : secondaryStatus === "not_run" ? "未実行" : "失敗"}`);
+  lines.push(`- notify: ${searchNotify?.status || "not_run"}${searchNotify?.reason ? `（${searchNotify.reason}）` : ""}`);
   lines.push("");
 
   // 1. 選定

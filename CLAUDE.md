@@ -51,6 +51,8 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 
 **X投稿の標準経路（Hiro決定・2026-08-24更新）**: 昼夜とも **Codex Browser**を基本とする。対話モードは内蔵BrowserまたはChrome連携、非対話CLIは利用可能なCodex Chrome連携を使う。`claude-in-chrome` は使用しない。夜間Xは `config/night-environment.json` の専用 `userDataDirectory` と `profileDirectory` を両方明示して個人Chromeから分離する。投稿前のX工程内で、専用プロセス一致と `@suma_labo` DOM確認をfatalとし、不一致なら投稿せずpending bundle保存＋警告で終える（主契約には非影響）。本投稿・リプライ各 `count===1`、親の返信数 `N→N+1`、外部台帳 `%USERPROFILE%\.sumalabo\state\x-posted.json` への本投稿直後／リプライ直後の2段階記録を省略しない。新規台帳レコードには `route: "codex"` を加える。夜間X工程は主契約確定後の独立フェイルソフト工程であり、失敗時は本体を失敗にしない。定型指示: [`docs/x-post-codex-procedure.md`](docs/x-post-codex-procedure.md)。
 
+**検索更新通知の主経路（2026-08-25 Hiro決定）**: 公開は deploy → HTTP 200 / strict verify → search notify → X の順。search notify は `/rss.xml`、`/sitemap.xml`（実URL群は `/sitemap-0.xml`）、IndexNowキーファイルを本番で検証し、新規記事URLを IndexNow へPOSTする。Googleの旧sitemap pingは使わず、`robots.txt` のSitemap行と記事frontmatter由来の正確な`lastmod`を使う。Search Console APIはOAuth資格情報を別途運用する必要があるため未導入。notifyは主契約・X副契約のどちらにも含めない独立warningで、失敗しても公開結果を変更しない。
+
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと
