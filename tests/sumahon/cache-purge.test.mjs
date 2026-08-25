@@ -14,4 +14,7 @@ test("cache purge keeps base URLs for an article without a matching MDX", () => 
   const urls = buildPurgeUrls("nonexistent-test-slug", "https://sumalabo.com/");
   assert.ok(urls.includes("https://sumalabo.com/articles/nonexistent-test-slug/"));
   assert.ok(urls.includes("https://sumalabo.com/images/thumbnails/nonexistent-test-slug.webp"));
+  assert.ok(urls.includes("https://sumalabo.com/rss.xml"));
+  assert.ok(urls.includes("https://sumalabo.com/sitemap.xml"));
+  assert.ok(urls.some((url) => /\/[a-f0-9]{32}\.txt$/.test(url)));
 });

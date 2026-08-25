@@ -226,14 +226,16 @@ test("primary 3-point contract completes before the independent fail-soft X step
   const retry = wrapper.indexOf("--wait-for-target --attempts=10 --interval-ms=30000");
   const verify = wrapper.indexOf("phase-b-check --slug");
   const primary = wrapper.indexOf("primary-check --run-id");
+  const notify = wrapper.indexOf("Notify PASS");
   const phaseC = wrapper.indexOf("$XStepScript = Join-Path");
   const generate = xStep.indexOf("generate-x-post.mjs --slug");
   const xPrompt = xStep.indexOf("x-post-codex-night-prompt.md");
   assert.ok(retry >= 0 && retry < verify);
-  assert.ok(verify < primary && primary < phaseC);
+  assert.ok(verify < primary && primary < notify && notify < phaseC);
   assert.ok(generate >= 0 && generate < xPrompt);
   assert.match(wrapper, /phase_b_target_not_found_after_retry/);
   assert.match(wrapper, /主契約は成功のまま継続する/);
+  assert.match(wrapper, /notifyStatus=if\(\$script:NotifyResult\)/);
   assert.doesNotMatch(wrapper, /PreflightWarnings|XPreflightWarnings|warningCsv/);
   assert.match(xStep, /x-pending-bundle\.mjs create/);
   assert.match(xStep, /x-posted-ledger\.mjs --verify-two-stage \$Slug/);
@@ -406,6 +408,17 @@ test("watchdog audits the exact run id instead of a same-day record", () => {
   assert.match(watchdog, /backup-x-posted-ledger\.mjs/);
   assert.match(watchdog, /nextPreflightExit/);
   assert.match(watchdog, /本体成功／X失敗/);
+  assert.match(watchdog, /notifyLine = "notify: \$notifyStatus"/);
+  assert.match(watchdog, /notifyStatus = \$notifyStatus/);
+});
+
+test("production deploy runs fail-soft search notify only after strict verification", () => {
+  const deploy = read("scripts/automation/deploy-production-from-main.mjs");
+  const verify = deploy.indexOf("await stepPostPublishVerify");
+  const notify = deploy.indexOf("stepSearchNotify(result, args.slug)");
+  assert.ok(verify >= 0 && verify < notify);
+  assert.match(deploy, /Search notification is an independent fail-soft step/);
+  assert.doesNotMatch(deploy.slice(notify, notify + 500), /return false|process\.exitCode = 1/);
 });
 
 test("run finalizer records advisory next-run preflight without changing the main contract", () => {

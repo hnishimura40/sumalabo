@@ -34,6 +34,7 @@ import { fileURLToPath } from "node:url";
 
 const DEFAULT_HOST = "sumalabo.com";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const SEARCH_NOTIFY_CONFIG = JSON.parse(readFileSync(path.join(ROOT, "config", "search-notify.json"), "utf8"));
 
 // ---- env フォールバックローダー（2026-07-05 追加） ----
 // 背景: L1初回公開で、シェル起動後に登録された User 環境変数
@@ -143,8 +144,11 @@ export function buildPurgeUrls(slug, baseUrl = `https://${DEFAULT_HOST}`) {
     `${base}/articles/${slug}`,
     `${base}/`,
     `${base}/articles/`,
+    `${base}/rss.xml`,
+    `${base}/sitemap.xml`,
     `${base}/sitemap-index.xml`,
     `${base}/sitemap-0.xml`,
+    `${base}${SEARCH_NOTIFY_CONFIG.indexNow.keyPath}`,
     `${base}/images/thumbnails/${slug}.webp`,
     `${base}/images/thumbnails/${slug}.png`,
   ];

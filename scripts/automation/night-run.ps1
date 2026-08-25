@@ -36,6 +36,7 @@ $env:SUMALABO_NIGHT_RUN_ID = $RunId
 $env:SUMALABO_NIGHT_RUN_STARTED_AT = $RunStartedAt
 $script:SkipContractFinalizer = [bool]$RunnerSelfTest
 $script:NextPreflight = $null
+$script:NotifyResult = $null
 if ($RunnerSelfTest) {
   $LockFile = Join-Path $NightDir "runner-selftest.lock"
   $HeartbeatFile = Join-Path $NightDir "$DateStr.runner-selftest.heartbeat.json"
@@ -328,6 +329,17 @@ try {
       $exitCode = Record-ContractOutcome "fail" "primary_contract_not_satisfied_before_x" (($primary | Out-String).Trim())
       exit $exitCode
     }
+
+    # deploy:production has already run the independent search notify step
+    # after strict verify. Record its evidence before the X-only phase starts.
+    $notifyFile = Join-Path $RepoRoot "logs\publish\$publishSlug.notify.json"
+    try { $script:NotifyResult = Get-Content $notifyFile -Raw -Encoding utf8 | ConvertFrom-Json } catch {}
+    if ($script:NotifyResult -and $script:NotifyResult.status -eq 'success') {
+      Log "Notify PASS: RSS / sitemap / IndexNow"
+    } else {
+      if (-not $script:NotifyResult) { $script:NotifyResult = @{ status='warning'; ok=$false; reason='notify_result_missing' } }
+      Log "Notify WARNING: $($script:NotifyResult.reason)（主契約・X副契約には非影響）"
+    }
   }
 
   # ---- 4-ter. Phase C is an independent fail-soft step after primary success ----
@@ -408,6 +420,8 @@ try {
       slug=if($outcome){$outcome.slug}else{$null}
       mainStatus=if($outcome -and $outcome.primaryContract){$outcome.primaryContract.status}else{if($outcome -and @('success','stopped_x_pending') -contains $outcome.outcome){'success'}elseif($outcome -and $outcome.outcome -eq 'stopped'){'stopped'}else{'failed'}}
       xStatus=if($outcome -and $outcome.secondaryContract){$outcome.secondaryContract.status}else{'not_run'}
+      notifyStatus=if($script:NotifyResult){$script:NotifyResult.status}else{'not_run'}
+      notify=$script:NotifyResult
       primaryContract=if($outcome){$outcome.primaryContract}else{$null}
       secondaryContract=if($outcome){$outcome.secondaryContract}else{$null}
       nextPreflight=$script:NextPreflight
