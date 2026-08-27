@@ -1,4 +1,4 @@
-# ⚠️ DEPRECATED (2026-05-23 〜): user-directed mode 移行により無人実行は停止しました。
+﻿# ⚠️ DEPRECATED (2026-05-23 〜): user-directed mode 移行により無人実行は停止しました。
 #   - タスクスケジューラー "Sumalabo Claude Pipeline Runner Test" は Disabled 化済み。
 #   - 手動起動用として残してありますが、原則使わないでください。
 #   - 詳細: docs/user_directed_mode.md

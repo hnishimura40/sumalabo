@@ -23,6 +23,7 @@ Codex自身の終了コード、completion、heartbeat、自己申告は成功�
 - GitHub CLI設定やGitHub/Xの資格情報を読まない
 - Xを操作・投稿しない（handoffタブがあってもclaimしない）
 - 内部ログ、調査メモ、検品JSON、台帳を公開コミットへ含めない
+- runner直下へ一時ファイルを作らない。コンタクトシート、クロップ、比較画像、変換途中の画像などは必ず環境変数`SUMALABO_NIGHT_TEMP_DIR`配下へ置く
 - 機械ゲートの不合格を承認扱いで上書きしない
 - `::`で始まる内部行を最終報告へ出さない
 
@@ -33,6 +34,7 @@ Codex自身の終了コード、completion、heartbeat、自己申告は成功�
 3. `git -c safe.directory=<runnerの絶対パス> rev-parse HEAD`と同じ形式の`origin/main`を比較し、同期済みであることを確認する。
 4. `node scripts/automation/test-mode.mjs --status`で夜間runが有効か確認する。
 5. `SUMALABO_NIGHT_RUN_ID`と開始時刻を保持し、以後の成否契約・台帳照合に使う。
+   一時作業は`SUMALABO_NIGHT_TEMP_DIR`だけを使用し、作業ルート直下へ`.codex-*`や`contact-sheet*`を生成しない。
 6. `CLAUDE.md`と必要なdocsを読み、記事仕様・画像検品・秘密情報検査を省略しない。
 
 ## 1. Phase A: スカウト・調査・記事・画像・検品

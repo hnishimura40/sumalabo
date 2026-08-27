@@ -31,12 +31,18 @@ $RunStartedAt = if ($env:SUMALABO_NIGHT_RUN_STARTED_AT) { $env:SUMALABO_NIGHT_RU
 $RunId = if ($env:SUMALABO_NIGHT_RUN_ID) { $env:SUMALABO_NIGHT_RUN_ID } else { (Get-Date).ToString("yyyyMMddTHHmmss.fff") }
 $ContractScript = Join-Path $RepoRoot "scripts\automation\night-run-contract.mjs"
 $FailureRecoveryScript = Join-Path $RepoRoot "scripts\automation\night-failure-recovery.mjs"
+$HygieneRecoveryScript = Join-Path $RepoRoot "scripts\automation\runner-hygiene-recovery.mjs"
 $ContractFile = Join-Path $NightDir "run-contract\$RunId.json"
 $env:SUMALABO_NIGHT_RUN_ID = $RunId
 $env:SUMALABO_NIGHT_RUN_STARTED_AT = $RunStartedAt
 $script:SkipContractFinalizer = [bool]$RunnerSelfTest
 $script:NextPreflight = $null
 $script:NotifyResult = $null
+$script:HygieneRecovery = $null
+$script:FinalHygieneFailed = $false
+$NightTempDir = Join-Path ([IO.Path]::GetTempPath()) "sumalabo-night\$RunId"
+New-Item -ItemType Directory -Path $NightTempDir -Force | Out-Null
+$env:SUMALABO_NIGHT_TEMP_DIR = $NightTempDir
 if ($RunnerSelfTest) {
   $LockFile = Join-Path $NightDir "runner-selftest.lock"
   $HeartbeatFile = Join-Path $NightDir "$DateStr.runner-selftest.heartbeat.json"
@@ -234,9 +240,15 @@ try {
   $publisherExpiry = $env:GH_TOKEN_EXPIRES_AT
   Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
   Remove-Item Env:GH_TOKEN_EXPIRES_AT -ErrorAction SilentlyContinue
+  $previousTemp = $env:TEMP
+  $previousTmp = $env:TMP
+  $env:TEMP = $NightTempDir
+  $env:TMP = $NightTempDir
   try {
     $codexExit = Invoke-CodexIsolated $Prompt $codexArgs $CodexLog "codex"
   } finally {
+    $env:TEMP = $previousTemp
+    $env:TMP = $previousTmp
     if ($publisherToken) { $env:GH_TOKEN = $publisherToken }
     if ($publisherExpiry) { $env:GH_TOKEN_EXPIRES_AT = $publisherExpiry }
   }
@@ -407,6 +419,26 @@ try {
         node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-failure-recovery',status:'warning',title:'[夜間run] 失敗成果物の自動退避または次回preflight確認に失敗'}))" 2>&1 | Out-Null
       }
     }
+    if (-not $RunnerSelfTest) {
+      $hygieneOutput = & node $HygieneRecoveryScript recover --run-id $RunId 2>&1
+      $hygieneExit = $LASTEXITCODE
+      $hygieneText = ($hygieneOutput | Out-String).Trim()
+      try { $script:HygieneRecovery = $hygieneText | ConvertFrom-Json } catch {
+        $script:HygieneRecovery = @{ ok=$false; recovered=$false; reason='hygiene_recovery_invalid_json'; detail=$hygieneText }
+      }
+      if ($hygieneExit -eq 0 -and $script:HygieneRecovery.ok) {
+        if ($script:HygieneRecovery.recovered) {
+          Log "runner hygiene WARNING: 予期しない未追跡ファイルを退避しました: $($script:HygieneRecovery.recoveryRoot)"
+          node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-runner-hygiene',status:'warning',title:'[夜間run] 未追跡一時ファイルを退避してrunnerをclean化'}))" 2>&1 | Out-Null
+        } else {
+          Log "runner hygiene PASS: 終了時runner clean"
+        }
+      } else {
+        $script:FinalHygieneFailed = $true
+        Log "runner hygiene FAILED: $($script:HygieneRecovery.reason) / $hygieneText"
+        node -e "import('./scripts/automation/autonomy-notify.mjs').then(m=>m.notifyAutonomyEvent({slug:'night-runner-hygiene',status:'warning',title:'[夜間run] runnerの終了時clean化に失敗（明朝停止見込み）'}))" 2>&1 | Out-Null
+      }
+    }
   }
   if (-not $RunnerSelfTest) {
     $script:NextPreflight = Invoke-NextRunPreflight
@@ -422,11 +454,13 @@ try {
       xStatus=if($outcome -and $outcome.secondaryContract){$outcome.secondaryContract.status}else{'not_run'}
       notifyStatus=if($script:NotifyResult){$script:NotifyResult.status}else{'not_run'}
       notify=$script:NotifyResult
+      hygieneRecovery=$script:HygieneRecovery
       primaryContract=if($outcome){$outcome.primaryContract}else{$null}
       secondaryContract=if($outcome){$outcome.secondaryContract}else{$null}
       nextPreflight=$script:NextPreflight
     } | ConvertTo-Json -Depth 12 | Set-Content $CompletionFile -Encoding utf8
   }
   Remove-Item $LockFile -Force -Confirm:$false -ErrorAction SilentlyContinue
+  if ($script:FinalHygieneFailed) { exit 30 }
 }
 

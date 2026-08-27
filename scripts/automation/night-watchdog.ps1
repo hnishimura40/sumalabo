@@ -1,4 +1,4 @@
-param([switch]$DryRun, [string]$NightDirOverride, [datetime]$Now = (Get-Date))
+﻿param([switch]$DryRun, [string]$NightDirOverride, [datetime]$Now = (Get-Date))
 
 $ErrorActionPreference = 'Continue'
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path

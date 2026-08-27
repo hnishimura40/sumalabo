@@ -1,4 +1,4 @@
-# disable-sumahon-tasks.ps1 — すまラボ自動巡回 Windows スケジュールタスクの無効化
+﻿# disable-sumahon-tasks.ps1 — すまラボ自動巡回 Windows スケジュールタスクの無効化
 #
 # 役割:
 #   user-directed mode 運用へ移行したため、定期実行されている

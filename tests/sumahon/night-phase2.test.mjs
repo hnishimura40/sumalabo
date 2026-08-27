@@ -85,6 +85,18 @@ test("runner hygiene deletes only configured temporary paths and distinguishes h
   assert.throws(() => hygiene.cleanupAllowlistedPaths(root, ["../outside"]), /unsafe runner policy path/);
 });
 
+test("night Codex uses an external run-scoped temp directory and finalizer recovers unexpected untracked files", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  const prompt = read("docs/night_driver_prompt.md");
+  assert.match(wrapper, /SUMALABO_NIGHT_TEMP_DIR/);
+  assert.match(wrapper, /sumalabo-night\\\$RunId/);
+  assert.match(wrapper, /runner-hygiene-recovery\.mjs/);
+  assert.match(wrapper, /runner hygiene WARNING/);
+  assert.match(wrapper, /hygieneRecovery=\$script:HygieneRecovery/);
+  assert.match(prompt, /SUMALABO_NIGHT_TEMP_DIR/);
+  assert.match(prompt, /runner直下へ一時ファイルを作らない/);
+});
+
 test("parent, child command, and standalone inspection share the same preserved-folder decision", async () => {
   const root = mkdtempSync(path.join(os.tmpdir(), "sumalabo-runner-child-view-"));
   const policyRoot = mkdtempSync(path.join(os.tmpdir(), "sumalabo-runner-policy-"));
