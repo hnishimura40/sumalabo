@@ -14,6 +14,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { inspectRunnerHygiene } from "./runner-hygiene.mjs";
+import { recoverRunnerHygieneArtifacts } from "./runner-hygiene-recovery.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const SLUG_RE = /^20\d{4}-[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -150,6 +151,7 @@ export function recoverFailedRunArtifacts({
   statusReader = gitStatusForPaths,
   hygieneReader = (repoRoot) => inspectRunnerHygiene({ root: repoRoot }),
   preflightRunner = runStaticPreflight,
+  residualHygieneRecovery = (options) => recoverRunnerHygieneArtifacts(options),
 } = {}) {
   const normalizedRunId = safeRunId(runId);
   const inspection = inspectFailedRun({ root, startedAt, slug });
@@ -189,6 +191,13 @@ export function recoverFailedRunArtifacts({
   });
   if (files.some((item) => !item.matches)) throw new Error("recovery hash verification failed");
 
+  const residualHygiene = residualHygieneRecovery({
+    root,
+    runId: normalizedRunId,
+    outputRoot: outputRoot || configuredOutputRoot(root),
+    hygieneReader,
+  });
+  if (!residualHygiene.ok) throw new Error(`residual runner hygiene recovery failed: ${residualHygiene.reason}`);
   const hygiene = hygieneReader(root);
   const preflight = preflightRunner(root);
   const manifest = {
@@ -203,6 +212,7 @@ export function recoverFailedRunArtifacts({
     movedPaths: presentPaths,
     fileCount: files.length,
     allHashesMatched: true,
+    residualHygieneRecovery: residualHygiene,
     runnerHygiene: hygiene,
     preflight,
     files,

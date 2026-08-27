@@ -1,4 +1,4 @@
-# chatgpt-attach-files-clipboard.ps1
+﻿# chatgpt-attach-files-clipboard.ps1
 #
 # すまラボ自動化: ChatGPTへローカル画像/PNGをクリップボード貼り付けで添付する標準ヘルパー。
 #

@@ -53,6 +53,8 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 
 **検索更新通知の主経路（2026-08-25 Hiro決定）**: 公開は deploy → HTTP 200 / strict verify → search notify → X の順。search notify は `/rss.xml`、`/sitemap.xml`（実URL群は `/sitemap-0.xml`）、IndexNowキーファイルを本番で検証し、新規記事URLを IndexNow へPOSTする。Googleの旧sitemap pingは使わず、`robots.txt` のSitemap行と記事frontmatter由来の正確な`lastmod`を使う。Search Console APIはOAuth資格情報を別途運用する必要があるため未導入。notifyは主契約・X副契約のどちらにも含めない独立warningで、失敗しても公開結果を変更しない。
 
+**夜間runnerの一時ファイル（2026-08-28 Hiro決定）**: コンタクトシート、クロップ、比較画像、変換途中のファイルをrunner直下へ作らない。夜間Codexは`SUMALABO_NIGHT_TEMP_DIR`配下だけを一時作業領域として使う。run終了時は成功・失敗を問わず共通hygiene回収を実行し、予期しない未追跡ファイルは削除せず、外部recovery rootへ日付・runId付きでSHA-256照合して退避する。runner cleanと次回preflight合格を終了条件とする。
+
 > 詳細： [`docs/user_directed_mode.md`](docs/user_directed_mode.md) ／ Phase A 入力フロー: [`docs/phase_a_input_flow.md`](docs/phase_a_input_flow.md) ／ **Article Refinement Loop: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)** ／ X 投稿フロー： [`docs/x_post_workflow.md`](docs/x_post_workflow.md) ／ queue 状態： [`docs/queue_states.md`](docs/queue_states.md)
 
 ### 3 行で言うと

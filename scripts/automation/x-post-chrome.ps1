@@ -1,4 +1,4 @@
-# x-post-chrome.ps1
+﻿# x-post-chrome.ps1
 #
 # すまラボ自動化: X 投稿 Chrome UI ルートのクリップボード準備ヘルパー。
 #

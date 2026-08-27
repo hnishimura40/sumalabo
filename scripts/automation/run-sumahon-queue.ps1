@@ -1,4 +1,4 @@
-# ⚠️ DEPRECATED (2026-05-23 〜): user-directed mode 移行により定期実行は停止しました。
+﻿# ⚠️ DEPRECATED (2026-05-23 〜): user-directed mode 移行により定期実行は停止しました。
 #   - タスクスケジューラー "Sumalabo Sumahon Queue Runner" は Disabled に変更済み。
 #   - 手動起動用として残してありますが、原則使わないでください。
 #   - 詳細: docs/user_directed_mode.md
