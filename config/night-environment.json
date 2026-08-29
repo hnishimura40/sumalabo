@@ -8,8 +8,13 @@
   "socialPostedLedger": {
     "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\social-posted.json"
   },
-  "threadsTokenState": {
-    "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\threads-token.json"
+  "threadsAuth": {
+    "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\threads-auth.json",
+    "callbackPort": 43821,
+    "certificateValidityDays": 7
+  },
+  "blueskyAuth": {
+    "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\bluesky-auth.json"
   },
   "canonicalWorkspacePath": "D:\\documents\\動画作成関連\\すまラボ",
   "runnerPath": "D:\\work\\sumalabo-night-runner",

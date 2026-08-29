@@ -51,6 +51,13 @@ data/automation/processed-urls.json
 data/automation/locks/
 data/social/x-posted.json
 
+# Social API credentials are private runtime state, even if accidentally copied here.
+**/threads-auth.json
+**/bluesky-auth.json
+**/social-posted.json
+**/localhost-key.pem
+**/localhost-cert.pem
+
 # night-run runtime audit state — private/local only
 logs/night/
 logs/night/

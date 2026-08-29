@@ -251,6 +251,7 @@ test("primary 3-point contract completes before the independent fail-soft X step
   assert.match(wrapper, /notifyStatus=if\(\$script:NotifyResult\)/);
   assert.match(wrapper, /socialStatus=if\(\$script:SocialResult\)/);
   assert.match(read("scripts/automation/night-watchdog.ps1"), /social: threads=\$threadsStatus, bluesky=\$blueskyStatus/);
+  assert.match(read("scripts/automation/night-watchdog.ps1"), /setup-social-auth\.mjs の再実行が必要/);
   assert.doesNotMatch(wrapper, /PreflightWarnings|XPreflightWarnings|warningCsv/);
   assert.match(xStep, /x-pending-bundle\.mjs create/);
   assert.match(xStep, /x-posted-ledger\.mjs --verify-two-stage \$Slug/);
@@ -362,7 +363,10 @@ test("night environment configuration owns paths, token names, and permissions",
   assert.equal(environment.repositoryShaPolicy, "runner_matches_origin_main");
   assert.equal(environment.xPostedLedger.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\x-posted.json");
   assert.equal(environment.socialPostedLedger.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\social-posted.json");
-  assert.equal(environment.threadsTokenState.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\threads-token.json");
+  assert.equal(environment.threadsAuth.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\threads-auth.json");
+  assert.equal(environment.threadsAuth.callbackPort, 43821);
+  assert.equal(environment.threadsAuth.certificateValidityDays, 7);
+  assert.equal(environment.blueskyAuth.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\bluesky-auth.json");
   assert.ok(environment.warningChecks.includes("x_ledger_state"));
   assert.equal(environment.chrome.extensionId, "hehggadaopoacecdllhhajmbjkdcmajg");
   assert.equal(environment.tokens.github, "GH_TOKEN");
