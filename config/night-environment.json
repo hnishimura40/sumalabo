@@ -5,6 +5,12 @@
     "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\x-posted.json",
     "backupDirectory": "logs\\night\\x-posted-backups"
   },
+  "socialPostedLedger": {
+    "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\social-posted.json"
+  },
+  "threadsTokenState": {
+    "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\threads-token.json"
+  },
   "canonicalWorkspacePath": "D:\\documents\\動画作成関連\\すまラボ",
   "runnerPath": "D:\\work\\sumalabo-night-runner",
   "entryRoot": "D:\\work",
