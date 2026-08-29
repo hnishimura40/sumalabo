@@ -86,6 +86,12 @@ if (Test-Path $CompletionFile) {
 $notifyEvidence = if ($completionJson -and $completionJson.runId -eq $activeRunId) { $completionJson.notify } else { $null }
 $notifyStatus = if ($notifyEvidence -and $notifyEvidence.status) { [string]$notifyEvidence.status } else { 'not_run' }
 $notifyLine = "notify: $notifyStatus"
+$socialEvidence = if ($completionJson -and $completionJson.runId -eq $activeRunId) { $completionJson.socialStatus } else { $null }
+$threadsEvidence = if ($socialEvidence -and $socialEvidence.platforms) { $socialEvidence.platforms.threads } else { $null }
+$blueskyEvidence = if ($socialEvidence -and $socialEvidence.platforms) { $socialEvidence.platforms.bluesky } else { $null }
+$threadsStatus = if ($threadsEvidence -and $threadsEvidence.summaryStatus) { [string]$threadsEvidence.summaryStatus } elseif ($threadsEvidence -and $threadsEvidence.status) { [string]$threadsEvidence.status } else { 'not_run' }
+$blueskyStatus = if ($blueskyEvidence -and $blueskyEvidence.summaryStatus) { [string]$blueskyEvidence.summaryStatus } elseif ($blueskyEvidence -and $blueskyEvidence.status) { [string]$blueskyEvidence.status } else { 'not_run' }
+$socialLine = "social: threads=$threadsStatus, bluesky=$blueskyStatus"
 
 if ($auditExit -eq 0 -and $auditJson.outcome -eq 'success') {
   $xStatus = if ($auditJson.secondaryContract) { [string]$auditJson.secondaryContract.status } else { 'not_run' }
@@ -99,9 +105,19 @@ if ($auditExit -eq 0 -and $auditJson.outcome -eq 'success') {
     $notifyReason = if ($notifyEvidence -and $notifyEvidence.reason) { [string]$notifyEvidence.reason } else { 'notify_result_missing' }
     $warningReasons.Add("notify=$notifyStatus($notifyReason)")
   }
+  if (-not $socialEvidence) {
+    $warningReasons.Add('social=not_run(social_result_missing)')
+  } else {
+    foreach ($platformName in @('threads', 'bluesky')) {
+      $platformEvidence = $socialEvidence.platforms.$platformName
+      if ($platformEvidence -and $platformEvidence.status -eq 'failed') {
+        $warningReasons.Add("social.$platformName=failed($($platformEvidence.reason))")
+      }
+    }
+  }
   if ($warningReasons.Count -gt 0 -and -not $DryRun) {
-    $titlePrefix = if ($xStatus -ne 'success') { '[night-watchdog] 本体成功／X失敗' } else { '[night-watchdog] 本体成功／notify失敗' }
-    $watchNotify = node -e "import('./scripts/automation/autonomy-notify.mjs').then(async m=>{const r=await m.notifyAutonomyEvent({slug:process.argv[1],status:'warning',title:process.argv[2]});console.log(JSON.stringify(r))})" "night-watchdog-$DateStr" "$titlePrefix / notify=$notifyStatus / X=$xStatus : $($warningReasons -join '; ')" 2>&1
+    $titlePrefix = if ($xStatus -ne 'success') { '[night-watchdog] 本体成功／X失敗' } elseif ($notifyStatus -ne 'success') { '[night-watchdog] 本体成功／notify失敗' } else { '[night-watchdog] 本体成功／social失敗' }
+    $watchNotify = node -e "import('./scripts/automation/autonomy-notify.mjs').then(async m=>{const r=await m.notifyAutonomyEvent({slug:process.argv[1],status:'warning',title:process.argv[2]});console.log(JSON.stringify(r))})" "night-watchdog-$DateStr" "$titlePrefix / $notifyLine / $socialLine / X=$xStatus : $($warningReasons -join '; ')" 2>&1
     $warningNotified = (($watchNotify | Out-String) -match '"ok"\s*:\s*true')
   }
   @{
@@ -112,6 +128,8 @@ if ($auditExit -eq 0 -and $auditJson.outcome -eq 'success') {
     notifyStatus = $notifyStatus
     notifyLine = $notifyLine
     notify = $notifyEvidence
+    socialStatus = $socialEvidence
+    socialLine = $socialLine
     notified = $warningNotified
     runId = $auditJson.runId
     slug = $auditJson.slug
@@ -140,6 +158,8 @@ if ($auditExit -eq 20 -and $auditJson.outcome -eq 'stopped_x_pending') {
     notifyStatus = $notifyStatus
     notifyLine = $notifyLine
     notify = $notifyEvidence
+    socialStatus = $socialEvidence
+    socialLine = $socialLine
     reason = $auditJson.reason
     notified = $legacyNotified
     runId = $auditJson.runId
@@ -168,6 +188,8 @@ if ($auditExit -eq 20 -and $auditJson.outcome -eq 'stopped') {
     xStatus = 'not_run'
     notifyStatus = $notifyStatus
     notifyLine = $notifyLine
+    socialStatus = $socialEvidence
+    socialLine = $socialLine
     ledgerBackup = $backupJson
     ledgerBackupOk = ($backupExit -eq 0)
     nextPreflight = @{ ok=($nextPreflightExit -eq 0); exitCode=$nextPreflightExit; evidence=$nextPreflightJson }
@@ -212,6 +234,8 @@ if (-not $DryRun) {
   notifyStatus = $notifyStatus
   notifyLine = $notifyLine
   notify = $notifyEvidence
+  socialStatus = $socialEvidence
+  socialLine = $socialLine
   ledgerBackup = $backupJson
   ledgerBackupOk = ($backupExit -eq 0)
   nextPreflight = @{ ok=($nextPreflightExit -eq 0); exitCode=$nextPreflightExit; evidence=$nextPreflightJson }

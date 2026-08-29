@@ -239,15 +239,18 @@ test("primary 3-point contract completes before the independent fail-soft X step
   const verify = wrapper.indexOf("phase-b-check --slug");
   const primary = wrapper.indexOf("primary-check --run-id");
   const notify = wrapper.indexOf("Notify PASS");
+  const social = wrapper.indexOf("social-post-step.mjs --slug=");
   const phaseC = wrapper.indexOf("$XStepScript = Join-Path");
   const generate = xStep.indexOf("generate-x-post.mjs --slug");
   const xPrompt = xStep.indexOf("x-post-codex-night-prompt.md");
   assert.ok(retry >= 0 && retry < verify);
-  assert.ok(verify < primary && primary < notify && notify < phaseC);
+  assert.ok(verify < primary && primary < notify && notify < social && social < phaseC);
   assert.ok(generate >= 0 && generate < xPrompt);
   assert.match(wrapper, /phase_b_target_not_found_after_retry/);
   assert.match(wrapper, /主契約は成功のまま継続する/);
   assert.match(wrapper, /notifyStatus=if\(\$script:NotifyResult\)/);
+  assert.match(wrapper, /socialStatus=if\(\$script:SocialResult\)/);
+  assert.match(read("scripts/automation/night-watchdog.ps1"), /social: threads=\$threadsStatus, bluesky=\$blueskyStatus/);
   assert.doesNotMatch(wrapper, /PreflightWarnings|XPreflightWarnings|warningCsv/);
   assert.match(xStep, /x-pending-bundle\.mjs create/);
   assert.match(xStep, /x-posted-ledger\.mjs --verify-two-stage \$Slug/);
@@ -358,6 +361,8 @@ test("night environment configuration owns paths, token names, and permissions",
   assert.equal(environment.runnerPath, "D:\\work\\sumalabo-night-runner");
   assert.equal(environment.repositoryShaPolicy, "runner_matches_origin_main");
   assert.equal(environment.xPostedLedger.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\x-posted.json");
+  assert.equal(environment.socialPostedLedger.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\social-posted.json");
+  assert.equal(environment.threadsTokenState.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\threads-token.json");
   assert.ok(environment.warningChecks.includes("x_ledger_state"));
   assert.equal(environment.chrome.extensionId, "hehggadaopoacecdllhhajmbjkdcmajg");
   assert.equal(environment.tokens.github, "GH_TOKEN");

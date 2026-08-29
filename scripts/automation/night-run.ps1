@@ -38,6 +38,7 @@ $env:SUMALABO_NIGHT_RUN_STARTED_AT = $RunStartedAt
 $script:SkipContractFinalizer = [bool]$RunnerSelfTest
 $script:NextPreflight = $null
 $script:NotifyResult = $null
+$script:SocialResult = $null
 $script:HygieneRecovery = $null
 $script:FinalHygieneFailed = $false
 $NightTempDir = Join-Path ([IO.Path]::GetTempPath()) "sumalabo-night\$RunId"
@@ -343,7 +344,7 @@ try {
     }
 
     # deploy:production has already run the independent search notify step
-    # after strict verify. Record its evidence before the X-only phase starts.
+    # after strict verify. Record its evidence before the HTTP social step.
     $notifyFile = Join-Path $RepoRoot "logs\publish\$publishSlug.notify.json"
     try { $script:NotifyResult = Get-Content $notifyFile -Raw -Encoding utf8 | ConvertFrom-Json } catch {}
     if ($script:NotifyResult -and $script:NotifyResult.status -eq 'success') {
@@ -352,6 +353,27 @@ try {
       if (-not $script:NotifyResult) { $script:NotifyResult = @{ status='warning'; ok=$false; reason='notify_result_missing' } }
       Log "Notify WARNING: $($script:NotifyResult.reason)（主契約・X副契約には非影響）"
     }
+
+    # Threads / Bluesky are official HTTP-only, independently fail-soft routes.
+    # Missing credentials are an expected skip and never dirty the main run.
+    $socialFile = Join-Path $RepoRoot "logs\publish\$publishSlug.social.json"
+    $socialOutput = & node scripts/automation/social-post-step.mjs --slug=$publishSlug --output=$socialFile 2>&1
+    $socialExit = $LASTEXITCODE
+    Log (($socialOutput | Out-String).Trim())
+    try { $script:SocialResult = Get-Content $socialFile -Raw -Encoding utf8 | ConvertFrom-Json } catch {}
+    if (-not $script:SocialResult) {
+      $script:SocialResult = @{
+        status = 'warning'
+        ok = $false
+        reason = "social_result_missing:exit=$socialExit"
+        summary = 'social: threads=failed, bluesky=failed'
+        platforms = @{
+          threads = @{ status='failed'; summaryStatus='failed'; reason='social_result_missing' }
+          bluesky = @{ status='failed'; summaryStatus='failed'; reason='social_result_missing' }
+        }
+      }
+    }
+    Log ([string]$script:SocialResult.summary)
   }
 
   # ---- 4-ter. Phase C is an independent fail-soft step after primary success ----
@@ -454,6 +476,7 @@ try {
       xStatus=if($outcome -and $outcome.secondaryContract){$outcome.secondaryContract.status}else{'not_run'}
       notifyStatus=if($script:NotifyResult){$script:NotifyResult.status}else{'not_run'}
       notify=$script:NotifyResult
+      socialStatus=if($script:SocialResult){$script:SocialResult}else{@{status='not_run'; summary='social: threads=not_run, bluesky=not_run'; platforms=@{threads=@{status='not_run';summaryStatus='not_run'};bluesky=@{status='not_run';summaryStatus='not_run'}}}}
       hygieneRecovery=$script:HygieneRecovery
       primaryContract=if($outcome){$outcome.primaryContract}else{$null}
       secondaryContract=if($outcome){$outcome.secondaryContract}else{$null}
