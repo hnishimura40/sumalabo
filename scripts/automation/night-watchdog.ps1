@@ -114,6 +114,9 @@ if ($auditExit -eq 0 -and $auditJson.outcome -eq 'success') {
         $warningReasons.Add("social.$platformName=failed($($platformEvidence.reason))")
       }
     }
+    if ($threadsEvidence -and $threadsEvidence.setupRequired -eq $true) {
+      $warningReasons.Add('Threads: setup-social-auth.mjs の再実行が必要')
+    }
   }
   if ($warningReasons.Count -gt 0 -and -not $DryRun) {
     $titlePrefix = if ($xStatus -ne 'success') { '[night-watchdog] 本体成功／X失敗' } elseif ($notifyStatus -ne 'success') { '[night-watchdog] 本体成功／notify失敗' } else { '[night-watchdog] 本体成功／social失敗' }

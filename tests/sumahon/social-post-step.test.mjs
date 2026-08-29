@@ -10,8 +10,10 @@ import {
   graphemeLength,
   isThreadsTokenRefreshRequired,
   readSocialLedger,
+  refreshThreadsAccessToken,
   runSocialPostStep,
 } from "../../scripts/automation/social-post-step.mjs";
+import { readAuthState } from "../../scripts/automation/social-auth-state.mjs";
 
 const SLUG = "202608-social-http-regression";
 const ARTICLE_URL = `https://sumalabo.com/articles/${SLUG}/`;
@@ -25,7 +27,8 @@ function fixture() {
   return {
     root,
     ledgerPath: path.join(root, "state", "social-posted.json"),
-    tokenStatePath: path.join(root, "state", "threads-token.json"),
+    threadsAuthPath: path.join(root, "state", "threads-auth.json"),
+    blueskyAuthPath: path.join(root, "state", "bluesky-auth.json"),
     postData: {
       slug: SLUG,
       articleUrl: ARTICLE_URL,
@@ -77,7 +80,8 @@ test("missing credentials skip both platforms without network or ledger writes",
     env: {},
     root: f.root,
     ledgerPath: f.ledgerPath,
-    tokenStatePath: f.tokenStatePath,
+    threadsAuthPath: f.threadsAuthPath,
+    blueskyAuthPath: f.blueskyAuthPath,
     fetchImpl: async () => { throw new Error("network must not be called"); },
     now: () => new Date(FIXED_TIME),
   });
@@ -92,17 +96,16 @@ test("missing credentials skip both platforms without network or ledger writes",
 test("official API mock posts independently and the platform-by-slug ledger prevents duplicates", async () => {
   const f = fixture();
   const calls = [];
+  mkdirSync(path.dirname(f.threadsAuthPath), { recursive: true });
+  writeFileSync(f.threadsAuthPath, JSON.stringify({ schemaVersion: 1, userId: "threads-user", accessToken: "threads-original" }));
+  writeFileSync(f.blueskyAuthPath, JSON.stringify({ schemaVersion: 1, handle: "sumalabo.bsky.social", appPassword: "app-password" }));
   const options = {
     slug: SLUG,
-    env: {
-      THREADS_USER_ID: "threads-user",
-      THREADS_ACCESS_TOKEN: "threads-original",
-      BLUESKY_HANDLE: "sumalabo.bsky.social",
-      BLUESKY_APP_PASSWORD: "app-password",
-    },
+    env: {},
     root: f.root,
     ledgerPath: f.ledgerPath,
-    tokenStatePath: f.tokenStatePath,
+    threadsAuthPath: f.threadsAuthPath,
+    blueskyAuthPath: f.blueskyAuthPath,
     postData: f.postData,
     articleMeta: f.articleMeta,
     fetchImpl: officialApiMock(calls),
@@ -128,9 +131,10 @@ test("official API mock posts independently and the platform-by-slug ledger prev
   assert.equal(recordBody.record.embed.external.thumb.ref.$link, "bafy-test");
   assert.equal(recordBody.record.facets[0].features[0].uri, ARTICLE_URL);
 
-  const tokenState = JSON.parse(readFileSync(f.tokenStatePath, "utf8"));
+  const tokenState = JSON.parse(readFileSync(f.threadsAuthPath, "utf8"));
   assert.equal(tokenState.accessToken, "threads-refreshed");
   assert.equal(tokenState.expiresInSeconds, 5_184_000);
+  assert.equal(tokenState.userId, "threads-user");
   const ledger = readSocialLedger(f.ledgerPath);
   assert.equal(ledger.platforms.threads[SLUG].postId, "threads-post");
   assert.equal(ledger.platforms.bluesky[SLUG].uri, "at://did:plc:sumalabo/app.bsky.feed.post/3test");
@@ -167,7 +171,8 @@ test("one platform failure does not prevent the other platform from posting", as
     },
     root: f.root,
     ledgerPath: f.ledgerPath,
-    tokenStatePath: f.tokenStatePath,
+    threadsAuthPath: f.threadsAuthPath,
+    blueskyAuthPath: f.blueskyAuthPath,
     postData: f.postData,
     articleMeta: f.articleMeta,
     fetchImpl,
@@ -197,7 +202,8 @@ test("an unreadable existing ledger fails closed before any post", async () => {
     },
     root: f.root,
     ledgerPath: f.ledgerPath,
-    tokenStatePath: f.tokenStatePath,
+    threadsAuthPath: f.threadsAuthPath,
+    blueskyAuthPath: f.blueskyAuthPath,
     fetchImpl: async () => { calls += 1; throw new Error("must not post"); },
     now: () => new Date(FIXED_TIME),
   });
@@ -205,4 +211,28 @@ test("an unreadable existing ledger fails closed before any post", async () => {
   assert.equal(result.platforms.threads.reason, "social_ledger_unavailable");
   assert.equal(result.platforms.bluesky.reason, "social_ledger_unavailable");
   assert.equal(calls, 0);
+});
+
+test("Threads refresh failures on two consecutive Tokyo dates require setup rerun", async () => {
+  const f = fixture();
+  const fetchImpl = async () => jsonResponse(503, { error: { message: "Temporary outage" } });
+  const first = await refreshThreadsAccessToken({
+    accessToken: "threads-token",
+    authPath: f.threadsAuthPath,
+    authState: { schemaVersion: 1, userId: "threads-user", accessToken: "threads-token", appSecret: "secret" },
+    fetchImpl,
+    now: () => new Date("2026-08-29T01:00:00.000Z"),
+  });
+  assert.equal(first.consecutiveFailureDays, 1);
+  assert.equal(first.setupRequired, false);
+  const second = await refreshThreadsAccessToken({
+    accessToken: "threads-token",
+    authPath: f.threadsAuthPath,
+    authState: readAuthState(f.threadsAuthPath),
+    fetchImpl,
+    now: () => new Date("2026-08-30T01:00:00.000Z"),
+  });
+  assert.equal(second.consecutiveFailureDays, 2);
+  assert.equal(second.setupRequired, true);
+  assert.equal(readAuthState(f.threadsAuthPath).refreshHealth.consecutiveFailureDays, 2);
 });

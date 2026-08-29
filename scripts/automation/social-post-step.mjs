@@ -6,13 +6,20 @@
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
-import crypto from "node:crypto";
-import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { extractFrontmatter } from "../sumahon/frontmatter-lite.mjs";
 import { NIGHT_ENVIRONMENT } from "./night-environment.mjs";
+import {
+  expandSocialStatePath,
+  recordThreadsRefreshFailure,
+  recordThreadsRefreshSuccess,
+  resolveBlueskyAuthPath,
+  resolveBlueskyCredentials,
+  resolveThreadsAuthPath,
+  resolveThreadsCredentials,
+} from "./social-auth-state.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const THREADS_GRAPH = "https://graph.threads.net";
@@ -20,29 +27,17 @@ const THREADS_API = "https://graph.threads.net/v1.0";
 const BLUESKY_API = "https://bsky.social/xrpc";
 export const PLATFORM_LIMITS = Object.freeze({ threads: 500, bluesky: 300 });
 
-function expandPathTemplate(template, env = process.env) {
-  const profile = env.USERPROFILE || os.homedir();
-  return path.resolve(String(template).replace(/%USERPROFILE%/giu, profile));
-}
-
 export function resolveSocialLedgerPath(env = process.env) {
-  return env.SUMALABO_SOCIAL_POSTED_LEDGER_PATH || expandPathTemplate(NIGHT_ENVIRONMENT.socialPostedLedger.pathTemplate, env);
+  return env.SUMALABO_SOCIAL_POSTED_LEDGER_PATH || expandSocialStatePath(NIGHT_ENVIRONMENT.socialPostedLedger.pathTemplate, env);
 }
 
-export function resolveThreadsTokenStatePath(env = process.env) {
-  return env.SUMALABO_THREADS_TOKEN_STATE_PATH || expandPathTemplate(NIGHT_ENVIRONMENT.threadsTokenState.pathTemplate, env);
-}
+export { resolveBlueskyAuthPath, resolveThreadsAuthPath };
 
 function atomicWriteJson(file, value) {
   mkdirSync(path.dirname(file), { recursive: true });
   const temporary = `${file}.${process.pid}.${Date.now()}.tmp`;
   writeFileSync(temporary, `${JSON.stringify(value, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
   renameSync(temporary, file);
-}
-
-function readJson(file, fallback = null) {
-  try { return JSON.parse(readFileSync(file, "utf8").replace(/^\uFEFF/u, "")); }
-  catch { return fallback; }
 }
 
 export function readSocialLedger(file = resolveSocialLedgerPath()) {
@@ -135,10 +130,6 @@ function mimeType(file) {
   return ({ ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg" })[extension] || "application/octet-stream";
 }
 
-function tokenFingerprint(token) {
-  return crypto.createHash("sha256").update(String(token)).digest("hex");
-}
-
 function sanitizedApiError(response) {
   const payload = response?.data;
   const api = payload?.error || payload;
@@ -173,35 +164,20 @@ async function requestJson(url, { fetchImpl, method = "GET", headers = {}, body,
   }
 }
 
-function selectThreadsToken(env, tokenStatePath) {
-  const configured = env.THREADS_ACCESS_TOKEN;
-  const state = readJson(tokenStatePath, null);
-  if (configured && state?.sourceFingerprint === tokenFingerprint(configured) && state?.accessToken && Date.parse(state.expiresAt) > Date.now()) {
-    return { accessToken: state.accessToken, source: "refreshed_state", sourceFingerprint: state.sourceFingerprint };
-  }
-  return { accessToken: configured, source: "environment", sourceFingerprint: configured ? tokenFingerprint(configured) : null };
-}
-
-export async function refreshThreadsAccessToken({ accessToken, sourceFingerprint, tokenStatePath, fetchImpl = fetch, now = () => new Date() }) {
+export async function refreshThreadsAccessToken({ accessToken, sourceFingerprint, authPath, authState = {}, fetchImpl = fetch, now = () => new Date() }) {
   const url = new URL(`${THREADS_GRAPH}/refresh_access_token`);
   url.searchParams.set("grant_type", "th_refresh_token");
   url.searchParams.set("access_token", accessToken);
   const response = await requestJson(url, { fetchImpl });
   if (!response.ok) {
-    return { ok: false, tokenRefreshRequired: isThreadsTokenRefreshRequired(response), error: sanitizedApiError(response) };
+    const error = sanitizedApiError(response);
+    const health = recordThreadsRefreshFailure({ authPath, authState, now: now(), error });
+    return { ok: false, tokenRefreshRequired: isThreadsTokenRefreshRequired(response), error, ...health };
   }
   const refreshedToken = response.data?.access_token || accessToken;
   const expiresInSeconds = Number(response.data?.expires_in) || 5_184_000;
   const refreshedAt = now();
-  const state = {
-    schemaVersion: 1,
-    refreshedAt: refreshedAt.toISOString(),
-    expiresAt: new Date(refreshedAt.getTime() + expiresInSeconds * 1000).toISOString(),
-    expiresInSeconds,
-    sourceFingerprint,
-    accessToken: refreshedToken,
-  };
-  atomicWriteJson(tokenStatePath, state);
+  const state = recordThreadsRefreshSuccess({ authPath, authState, accessToken: refreshedToken, sourceFingerprint, expiresInSeconds, now: refreshedAt });
   return { ok: true, accessToken: refreshedToken, refreshedAt: state.refreshedAt, expiresAt: state.expiresAt };
 }
 
@@ -232,13 +208,22 @@ async function waitForThreadsContainer({ containerId, accessToken, fetchImpl, sl
   return { ok: false, containerStatus: "TIMEOUT" };
 }
 
-export async function postToThreads({ slug, text, imageUrl, altText, userId, configuredToken, tokenStatePath, fetchImpl = fetch, sleepImpl = (ms) => new Promise((resolve) => setTimeout(resolve, ms)), now = () => new Date() }) {
-  const selected = selectThreadsToken({ THREADS_ACCESS_TOKEN: configuredToken }, tokenStatePath);
-  const refreshed = await refreshThreadsAccessToken({ accessToken: selected.accessToken, sourceFingerprint: tokenFingerprint(configuredToken), tokenStatePath, fetchImpl, now });
+export async function postToThreads({ slug, text, imageUrl, altText, userId, accessToken: configuredToken, sourceFingerprint = null, authPath, authState = {}, fetchImpl = fetch, sleepImpl = (ms) => new Promise((resolve) => setTimeout(resolve, ms)), now = () => new Date() }) {
+  const refreshed = await refreshThreadsAccessToken({ accessToken: configuredToken, sourceFingerprint, authPath, authState, fetchImpl, now });
   if (!refreshed.ok && refreshed.tokenRefreshRequired) {
-    return platformFailure("threads_token_expired", { tokenRefreshRequired: true, warning: "トークン更新が必要", error: refreshed.error });
+    return platformFailure("threads_token_expired", {
+      tokenRefreshRequired: true,
+      warning: "トークン更新が必要",
+      error: refreshed.error,
+      refreshFailureConsecutiveDays: refreshed.consecutiveFailureDays,
+      setupRequired: refreshed.setupRequired,
+    });
   }
-  const accessToken = refreshed.ok ? refreshed.accessToken : selected.accessToken;
+  const accessToken = refreshed.ok ? refreshed.accessToken : configuredToken;
+  const refreshWarning = refreshed.ok ? {} : {
+    refreshFailureConsecutiveDays: refreshed.consecutiveFailureDays,
+    setupRequired: refreshed.setupRequired,
+  };
   const createBody = new URLSearchParams({ media_type: "IMAGE", image_url: imageUrl, text, alt_text: altText, access_token: accessToken });
   const created = await requestJson(`${THREADS_API}/${encodeURIComponent(userId)}/threads`, {
     fetchImpl,
@@ -248,12 +233,12 @@ export async function postToThreads({ slug, text, imageUrl, altText, userId, con
   });
   if (!created.ok || !created.data?.id) {
     const tokenRefreshRequired = isThreadsTokenRefreshRequired(created);
-    return platformFailure("threads_container_create_failed", { tokenRefreshRequired, ...(tokenRefreshRequired ? { warning: "トークン更新が必要" } : {}), error: sanitizedApiError(created) });
+    return platformFailure("threads_container_create_failed", { tokenRefreshRequired, ...(tokenRefreshRequired ? { warning: "トークン更新が必要" } : {}), ...refreshWarning, error: sanitizedApiError(created) });
   }
   const ready = await waitForThreadsContainer({ containerId: created.data.id, accessToken, fetchImpl, sleepImpl });
   if (!ready.ok) {
     const tokenRefreshRequired = ready.response ? isThreadsTokenRefreshRequired(ready.response) : false;
-    return platformFailure("threads_container_not_ready", { containerId: created.data.id, containerStatus: ready.containerStatus || null, tokenRefreshRequired, ...(tokenRefreshRequired ? { warning: "トークン更新が必要" } : {}) });
+    return platformFailure("threads_container_not_ready", { containerId: created.data.id, containerStatus: ready.containerStatus || null, tokenRefreshRequired, ...(tokenRefreshRequired ? { warning: "トークン更新が必要" } : {}), ...refreshWarning });
   }
   const publishBody = new URLSearchParams({ creation_id: created.data.id, access_token: accessToken });
   const published = await requestJson(`${THREADS_API}/${encodeURIComponent(userId)}/threads_publish`, {
@@ -264,7 +249,7 @@ export async function postToThreads({ slug, text, imageUrl, altText, userId, con
   });
   if (!published.ok || !published.data?.id) {
     const tokenRefreshRequired = isThreadsTokenRefreshRequired(published);
-    return platformFailure("threads_publish_failed", { tokenRefreshRequired, ...(tokenRefreshRequired ? { warning: "トークン更新が必要" } : {}), error: sanitizedApiError(published) });
+    return platformFailure("threads_publish_failed", { tokenRefreshRequired, ...(tokenRefreshRequired ? { warning: "トークン更新が必要" } : {}), ...refreshWarning, error: sanitizedApiError(published) });
   }
   const permalinkUrl = new URL(`${THREADS_API}/${encodeURIComponent(published.data.id)}`);
   permalinkUrl.searchParams.set("fields", "permalink");
@@ -282,6 +267,7 @@ export async function postToThreads({ slug, text, imageUrl, altText, userId, con
     postedAt: now().toISOString(),
     textLength: graphemeLength(text),
     imageUrl,
+    ...refreshWarning,
     tokenRefresh: refreshed.ok ? { status: "success", refreshedAt: refreshed.refreshedAt, expiresAt: refreshed.expiresAt } : { status: "warning", reason: "refresh_failed_but_current_token_worked" },
   };
 }
@@ -358,7 +344,8 @@ export async function runSocialPostStep({
   env = process.env,
   root = ROOT,
   ledgerPath = resolveSocialLedgerPath(env),
-  tokenStatePath = resolveThreadsTokenStatePath(env),
+  threadsAuthPath = resolveThreadsAuthPath(env),
+  blueskyAuthPath = resolveBlueskyAuthPath(env),
   postData = null,
   articleMeta = null,
   fetchImpl = fetch,
@@ -366,11 +353,11 @@ export async function runSocialPostStep({
   now = () => new Date(),
 } = {}) {
   const startedAt = now().toISOString();
-  const missingThreads = ["THREADS_USER_ID", "THREADS_ACCESS_TOKEN"].filter((name) => !env[name]);
-  const missingBluesky = ["BLUESKY_HANDLE", "BLUESKY_APP_PASSWORD"].filter((name) => !env[name]);
+  const threadsCredentials = resolveThreadsCredentials({ env, authPath: threadsAuthPath, now: now() });
+  const blueskyCredentials = resolveBlueskyCredentials({ env, authPath: blueskyAuthPath });
   const platforms = {
-    threads: missingThreads.length ? credentialSkip(missingThreads) : null,
-    bluesky: missingBluesky.length ? credentialSkip(missingBluesky) : null,
+    threads: threadsCredentials.missing.length ? credentialSkip(threadsCredentials.missing) : null,
+    bluesky: blueskyCredentials.missing.length ? credentialSkip(blueskyCredentials.missing) : null,
   };
   let ledger;
   try { ledger = readSocialLedger(ledgerPath); }
@@ -399,14 +386,17 @@ export async function runSocialPostStep({
     if (!platforms.threads) {
       try {
         const threadsText = fitPostText(postData.primary?.text, postData.articleUrl, PLATFORM_LIMITS.threads);
+        const threadsAccess = threadsCredentials.accessToken;
         platforms.threads = await postToThreads({
           slug,
           text: threadsText,
           imageUrl: publicImageUrl(postData),
           altText: articleMeta.title,
-          userId: env.THREADS_USER_ID,
-          configuredToken: env.THREADS_ACCESS_TOKEN,
-          tokenStatePath,
+          userId: threadsCredentials.userId,
+          accessToken: threadsAccess,
+          sourceFingerprint: threadsCredentials.sourceFingerprint,
+          authPath: threadsCredentials.authPath,
+          authState: threadsCredentials.state,
           fetchImpl,
           sleepImpl,
           now,
@@ -426,8 +416,8 @@ export async function runSocialPostStep({
           cardTitle: articleMeta.title,
           cardDescription: articleMeta.description,
           imagePath: localImagePath(postData, root),
-          handle: env.BLUESKY_HANDLE,
-          appPassword: env.BLUESKY_APP_PASSWORD,
+          handle: blueskyCredentials.handle,
+          appPassword: blueskyCredentials.appPassword,
           fetchImpl,
           now,
         });
@@ -507,10 +497,11 @@ async function main() {
   console.log(JSON.stringify(result, null, 2));
   const failed = Object.values(result.platforms || {}).filter((value) => value?.status === "failed");
   if (failed.length) {
+    const setupWarning = result.platforms?.threads?.setupRequired ? " / setup-social-auth.mjs の再実行が必要" : "";
     const tokenWarning = result.platforms?.threads?.tokenRefreshRequired ? " / Threadsトークン更新が必要" : "";
     try {
       const { notifyAutonomyEvent } = await import("./autonomy-notify.mjs");
-      await notifyAutonomyEvent({ slug: args.slug || "social-post", status: "warning", title: `[夜間run] ${result.summary}${tokenWarning}` });
+      await notifyAutonomyEvent({ slug: args.slug || "social-post", status: "warning", title: `[夜間run] ${result.summary}${tokenWarning}${setupWarning}` });
     } catch {
       // Notification failure is evidence-only and cannot change this fail-soft step.
     }

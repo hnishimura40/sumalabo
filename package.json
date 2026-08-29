@@ -28,7 +28,8 @@
     "social:generate-x-post": "node scripts/run/generate-x-post.mjs",
     "social:post-to-x": "node scripts/run/post-to-x.mjs",
     "social:post-http": "node scripts/automation/social-post-step.mjs",
-    "social:set-secrets": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/automation/set-night-social-secrets.ps1",
+    "social:setup-auth": "node scripts/automation/setup-social-auth.mjs",
+    "social:set-secrets": "node scripts/automation/setup-social-auth.mjs",
     "social:recover-x-pending": "node scripts/automation/recover-x-pending.mjs",
     "automation:run-queue": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/run-sumahon-queue.ps1",
     "automation:register-tasks": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/automation/register-sumahon-tasks.ps1",
@@ -66,7 +67,7 @@
     "measurement:summary": "node scripts/automation/unattended-measurement.mjs",
     "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/night-failure-recovery.test.mjs scripts/automation/unattended-measurement.test.mjs tests/sumahon/night-phase2.test.mjs tests/sumahon/night-environment-check.test.mjs tests/sumahon/powershell-encoding.test.mjs tests/sumahon/runner-hygiene-recovery.test.mjs tests/sumahon/search-notify.test.mjs tests/sumahon/x-pending-bundle.test.mjs tests/sumahon/x-posted-path.test.mjs",
     "test:plain-language": "node --test tests/sumahon/plain-language-policy.test.mjs",
-    "test:social": "node --test tests/sumahon/social-post-step.test.mjs"
+    "test:social": "node --test tests/sumahon/social-post-step.test.mjs tests/sumahon/setup-social-auth.test.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "latest",
