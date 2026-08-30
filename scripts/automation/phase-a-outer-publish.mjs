@@ -8,6 +8,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { probeGitHubToken } from "./github-token-probe.mjs";
+import { markPendingPublishResolved } from "../sumahon/preview-publication.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const SLUG_RE = /^20\d{4}-[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -86,6 +87,17 @@ export function markHandoffCompleted(slug, prUrl, root = ROOT) {
   return { ok: true, slug, prUrl, status: value.status };
 }
 
+export function markHandoffPending(slug, { reason, prUrl = null, commitSha = null } = {}, root = ROOT) {
+  const { file, value } = readManifest(slug, root);
+  value.status = "pending";
+  value.pendingAt = new Date().toISOString();
+  value.pendingReason = String(reason || "publish_failed");
+  value.prUrl = prUrl || value.prUrl || null;
+  value.commitSha = commitSha || value.commitSha || null;
+  writeFileSync(file, JSON.stringify(value, null, 2) + "\n", "utf8");
+  return { ok: true, slug, status: value.status, reason: value.pendingReason };
+}
+
 function ensureOnlyAllowedChanges(expected, root = ROOT) {
   const status = run("git", ["status", "--porcelain", "--untracked-files=all", "--", ...expected], { root });
   if (status.status !== 0) throw new Error("git_status_failed");
@@ -122,10 +134,48 @@ async function publish(slug) {
 
   const prUrl = await resolvePullRequest({ branch: value.branch, title: value.title });
 
+  const commitSha = String(run("git", ["rev-parse", "HEAD"]).stdout || "").trim() || null;
   r = run(process.execPath, [path.join(ROOT, "scripts", "run", "phase-a-finalize.mjs"), "--slug", slug, "--title", value.title, "--branch", value.branch, "--prUrl", prUrl, "--thumbnail", `images/thumbnails/${slug}.webp`], { inherit: true });
-  if (r.status !== 0) throw new Error("finalize_failed");
+  if (r.status !== 0) {
+    markHandoffPending(slug, { reason: "finalize_failed", prUrl, commitSha });
+    throw new Error("finalize_failed");
+  }
   markHandoffCompleted(slug, prUrl);
   return { ok: true, slug, branch: value.branch, prUrl };
+}
+
+async function resumePending(slug) {
+  requireDedicatedToken();
+  const { value } = readManifest(slug);
+  if (!["pending", "ready"].includes(value.status)) throw new Error(`handoff_not_pending:${value.status}`);
+
+  let r = run("git", ["fetch", "origin", "main", value.branch]);
+  if (r.status !== 0) throw new Error("resume_fetch_failed");
+  r = run("git", ["switch", value.branch]);
+  if (r.status !== 0) r = run("git", ["switch", "-c", value.branch, "--track", `origin/${value.branch}`]);
+  if (r.status !== 0) throw new Error("resume_branch_switch_failed");
+  r = run("git", ["merge", "--ff-only", `origin/${value.branch}`]);
+  if (r.status !== 0) throw new Error("resume_remote_branch_not_fast_forward");
+  r = run("git", ["merge", "--no-edit", "origin/main"]);
+  if (r.status !== 0) {
+    run("git", ["merge", "--abort"]);
+    throw new Error("resume_main_merge_failed");
+  }
+  r = run(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "security:scan"], { inherit: true });
+  if (r.status !== 0) throw new Error("resume_secret_scan_failed");
+  r = run("git", ["push", "origin", value.branch]);
+  if (r.status !== 0) throw new Error("resume_push_failed");
+
+  const prUrl = await resolvePullRequest({ branch: value.branch, title: value.title });
+  const commitSha = String(run("git", ["rev-parse", "HEAD"]).stdout || "").trim() || null;
+  r = run(process.execPath, [path.join(ROOT, "scripts", "run", "phase-a-finalize.mjs"), "--slug", slug, "--title", value.title, "--branch", value.branch, "--prUrl", prUrl, "--thumbnail", `images/thumbnails/${slug}.webp`], { inherit: true });
+  if (r.status !== 0) {
+    markHandoffPending(slug, { reason: "resume_finalize_failed", prUrl, commitSha });
+    throw new Error("resume_finalize_failed");
+  }
+  markHandoffCompleted(slug, prUrl);
+  try { markPendingPublishResolved({ root: ROOT, slug }); } catch {}
+  return { ok: true, resumed: true, slug, branch: value.branch, commitSha, prUrl };
 }
 
 async function main() {
@@ -157,8 +207,8 @@ async function main() {
     process.exitCode = 0;
     return;
   }
-  if (!slug) throw new Error("usage: --slug <slug> [--dry-run]");
-  const result = argv.includes("--dry-run") ? dryRun(slug) : await publish(slug);
+  if (!slug) throw new Error("usage: --slug <slug> [--dry-run|--resume-pending]");
+  const result = argv.includes("--dry-run") ? dryRun(slug) : argv.includes("--resume-pending") ? await resumePending(slug) : await publish(slug);
   console.log(JSON.stringify(result));
 }
 

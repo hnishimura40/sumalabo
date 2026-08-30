@@ -127,6 +127,64 @@ export function recoverRunnerHygieneArtifacts({
   return { ok: true, recovered: true, reason: "unexpected_untracked_files_recovered", recoveryRoot, manifestPath, movedPaths: manifest.movedPaths, fileCount: files.length, allHashesMatched: true, hygiene };
 }
 
+function runGit(root, args) {
+  const safeRoot = root.replaceAll("\\", "/");
+  const result = spawnSync("git", ["-c", `safe.directory=${safeRoot}`, "-C", root, ...args], {
+    cwd: root,
+    encoding: "utf8",
+    windowsHide: true,
+  });
+  return { status: result.status ?? 1, stdout: String(result.stdout || "").trim(), stderr: String(result.stderr || "").trim() };
+}
+
+export function restoreRunnerToOriginMain({
+  root = ROOT,
+  hygieneReader = (repoRoot) => inspectRunnerHygiene({ root: repoRoot }),
+  gitRunner = (args) => runGit(root, args),
+} = {}) {
+  const before = hygieneReader(root);
+  if (!before.ok) {
+    return { ok: false, reason: "runner_not_clean_before_branch_restore", before };
+  }
+  const fetch = gitRunner(["fetch", "origin", "main"]);
+  if (fetch.status !== 0) return { ok: false, reason: "origin_main_fetch_failed", detail: fetch.stderr || fetch.stdout };
+  const checkout = gitRunner(["switch", "--detach", "origin/main"]);
+  if (checkout.status !== 0) return { ok: false, reason: "origin_main_detach_failed", detail: checkout.stderr || checkout.stdout };
+  const head = gitRunner(["rev-parse", "HEAD"]);
+  const originMain = gitRunner(["rev-parse", "origin/main"]);
+  const branch = gitRunner(["symbolic-ref", "--quiet", "--short", "HEAD"]);
+  const after = hygieneReader(root);
+  const detached = branch.status !== 0;
+  const shaMatches = head.status === 0 && originMain.status === 0 && head.stdout === originMain.stdout;
+  return {
+    ok: after.ok && detached && shaMatches,
+    reason: after.ok && detached && shaMatches ? "runner_clean_origin_main_detached" : "runner_branch_restore_verification_failed",
+    head: head.stdout || null,
+    originMain: originMain.stdout || null,
+    detached,
+    hygiene: after,
+  };
+}
+
+export function finalizeRunnerState({
+  root = ROOT,
+  runId,
+  outputRoot = null,
+  hygieneRecovery = recoverRunnerHygieneArtifacts,
+  branchRestorer = restoreRunnerToOriginMain,
+} = {}) {
+  const recovery = hygieneRecovery({ root, runId, outputRoot });
+  if (!recovery.ok) return { ...recovery, branchRestoration: { ok: false, reason: "skipped_after_hygiene_failure" } };
+  const branchRestoration = branchRestorer({ root });
+  return {
+    ...recovery,
+    ok: branchRestoration.ok,
+    reason: branchRestoration.ok ? "runner_final_state_ready" : branchRestoration.reason,
+    branchRestoration,
+    hygiene: branchRestoration.hygiene || recovery.hygiene,
+  };
+}
+
 function parseArgs(argv) {
   const args = { _: [] };
   for (let index = 0; index < argv.length; index += 1) {
@@ -143,7 +201,7 @@ function parseArgs(argv) {
 function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args._[0] !== "recover") throw new Error("usage: recover --run-id <id> [--root <path>] [--output-root <path>]");
-  const result = recoverRunnerHygieneArtifacts({
+  const result = finalizeRunnerState({
     root: args.root ? path.resolve(String(args.root)) : ROOT,
     runId: args["run-id"],
     outputRoot: typeof args["output-root"] === "string" ? args["output-root"] : null,

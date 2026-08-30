@@ -39,6 +39,8 @@ import { existsSync } from "node:fs";
 
 const DEFAULT_PROJECT = "sumalabo";
 const DEFAULT_TIMEOUT_MS = 180000;
+const DEFAULT_DEPLOYMENT_POLL_INTERVAL_MS = 5000;
+const DEFAULT_DEPLOYMENT_MAX_WAIT_MS = 180000;
 const PROTECTED_BRANCHES = new Set(["main", "master", "production", "prod"]);
 
 // === A1: untracked content guard ===
@@ -90,7 +92,7 @@ function checkUntrackedDeployContent() {
   };
 }
 
-function pickPreviewUrlsFromWranglerOutput(raw) {
+export function pickPreviewUrlsFromWranglerOutput(raw) {
   const urls = [];
   const seen = new Set();
   const urlRegex = /https?:\/\/[a-z0-9-]+\.[a-z0-9-]+\.pages\.dev[^\s)\]'"]*/gi;
@@ -105,6 +107,108 @@ function pickPreviewUrlsFromWranglerOutput(raw) {
   const deploymentSpecific = urls.find((u) => /\/\/[a-f0-9]{6,12}\./.test(u)) || null;
   const branchAlias = urls.find((u) => u !== deploymentSpecific) || null;
   return { deploymentSpecific, branchAlias, all: urls };
+}
+
+function normalizeDeployment(deployment) {
+  if (!deployment) return null;
+  return {
+    id: deployment.id || null,
+    shortId: deployment.short_id || null,
+    url: deployment.url || null,
+    environment: deployment.environment || null,
+    branch: deployment.deployment_trigger?.metadata?.branch || null,
+    commitHash: deployment.deployment_trigger?.metadata?.commit_hash || null,
+    status: deployment.latest_stage?.status || null,
+    latestStage: deployment.latest_stage || null,
+    createdAt: deployment.created_on || null,
+    completedAt: deployment.latest_stage?.ended_on || deployment.modified_on || null,
+    aliases: deployment.aliases || [],
+  };
+}
+
+async function cloudflareApi(pathname, { accountId, token, fetchImpl }) {
+  const response = await fetchImpl(`https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}${pathname}`, {
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+  });
+  let body = null;
+  try { body = await response.json(); } catch {}
+  if (!response.ok || body?.success !== true) {
+    return { ok: false, reason: `cloudflare_api_http_${response.status}`, status: response.status, errors: body?.errors || [] };
+  }
+  return { ok: true, result: body.result };
+}
+
+function matchingDeployment(deployments, { previewUrl, branch, commitHash }) {
+  const expectedUrl = String(previewUrl || "").replace(/\/+$/, "");
+  return (deployments || []).find((deployment) => {
+    const metadata = deployment?.deployment_trigger?.metadata || {};
+    const urlMatches = expectedUrl && String(deployment?.url || "").replace(/\/+$/, "") === expectedUrl;
+    const branchMatches = branch && metadata.branch === branch;
+    const commitMatches = commitHash && metadata.commit_hash === commitHash;
+    if (urlMatches) return (!branch || branchMatches) && (!commitHash || commitMatches);
+    return branchMatches && commitMatches;
+  }) || null;
+}
+
+export async function waitForCloudflarePagesDeployment({
+  previewUrl,
+  branch,
+  commitHash,
+  projectName = process.env.CF_PAGES_PROJECT || DEFAULT_PROJECT,
+  accountId = process.env.CLOUDFLARE_ACCOUNT_ID,
+  token = process.env.CLOUDFLARE_API_TOKEN,
+  intervalMs = DEFAULT_DEPLOYMENT_POLL_INTERVAL_MS,
+  maxWaitMs = DEFAULT_DEPLOYMENT_MAX_WAIT_MS,
+  fetchImpl = fetch,
+  sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  now = () => Date.now(),
+} = {}) {
+  const effectiveAccountId = String(accountId || "").trim();
+  const effectiveToken = String(token || "").trim();
+  if (!effectiveAccountId || !effectiveToken) return { ok: false, reason: "missing_cloudflare_api_credentials" };
+  const startedAtMs = now();
+  let attempts = 0;
+  let lastReason = "deployment_not_visible";
+  let candidate = null;
+  while (true) {
+    attempts += 1;
+    try {
+      const list = await cloudflareApi(`/pages/projects/${encodeURIComponent(projectName)}/deployments?env=preview&page=1&per_page=25`, {
+        accountId: effectiveAccountId,
+        token: effectiveToken,
+        fetchImpl,
+      });
+      if (list.ok) {
+        candidate = matchingDeployment(list.result, { previewUrl, branch, commitHash });
+        if (candidate?.id) {
+          const detail = await cloudflareApi(`/pages/projects/${encodeURIComponent(projectName)}/deployments/${encodeURIComponent(candidate.id)}`, {
+            accountId: effectiveAccountId,
+            token: effectiveToken,
+            fetchImpl,
+          });
+          if (detail.ok) candidate = detail.result;
+          else lastReason = detail.reason;
+        }
+        const normalized = normalizeDeployment(candidate);
+        if (normalized?.status === "success") {
+          return { ok: true, reason: "deployment_success", attempts, elapsedMs: Math.max(0, now() - startedAtMs), deployment: normalized };
+        }
+        if (["failure", "failed", "canceled", "cancelled"].includes(String(normalized?.status || "").toLowerCase())) {
+          return { ok: false, reason: `deployment_${normalized.status}`, attempts, elapsedMs: Math.max(0, now() - startedAtMs), deployment: normalized };
+        }
+        lastReason = normalized ? `deployment_${normalized.status || "pending"}` : "deployment_not_visible";
+      } else {
+        lastReason = list.reason;
+      }
+    } catch (error) {
+      lastReason = `cloudflare_api_error:${error instanceof Error ? error.message : String(error)}`;
+    }
+    const elapsedMs = Math.max(0, now() - startedAtMs);
+    if (elapsedMs >= maxWaitMs) {
+      return { ok: false, reason: "deployment_status_timeout", detail: lastReason, attempts, elapsedMs, deployment: normalizeDeployment(candidate) };
+    }
+    await sleep(Math.min(intervalMs, Math.max(0, maxWaitMs - elapsedMs)));
+  }
 }
 
 function runWrangler(args, { timeoutMs, env } = {}) {

@@ -367,6 +367,9 @@ test("night environment configuration owns paths, token names, and permissions",
   assert.equal(environment.threadsAuth.callbackPort, 43821);
   assert.equal(environment.threadsAuth.certificateValidityDays, 7);
   assert.equal(environment.blueskyAuth.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\bluesky-auth.json");
+  assert.equal(environment.pendingPublish.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\pending-publish.json");
+  assert.equal(environment.previewVerification.httpRetryIntervalSeconds, 15);
+  assert.equal(environment.previewVerification.httpMaxWaitSeconds, 600);
   assert.ok(environment.warningChecks.includes("x_ledger_state"));
   assert.equal(environment.chrome.extensionId, "hehggadaopoacecdllhhajmbjkdcmajg");
   assert.equal(environment.tokens.github, "GH_TOKEN");

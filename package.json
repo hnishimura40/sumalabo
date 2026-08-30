@@ -65,7 +65,7 @@
     "article:check-response": "node scripts/automation/chatgpt-response-health.mjs",
     "incident:reclassify": "node scripts/automation/incident-reclassify.mjs",
     "measurement:summary": "node scripts/automation/unattended-measurement.mjs",
-    "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/night-failure-recovery.test.mjs scripts/automation/unattended-measurement.test.mjs tests/sumahon/night-phase2.test.mjs tests/sumahon/night-environment-check.test.mjs tests/sumahon/powershell-encoding.test.mjs tests/sumahon/runner-hygiene-recovery.test.mjs tests/sumahon/search-notify.test.mjs tests/sumahon/x-pending-bundle.test.mjs tests/sumahon/x-posted-path.test.mjs",
+    "test:night-contract": "node --test scripts/automation/night-run-contract.test.mjs scripts/automation/night-failure-recovery.test.mjs scripts/automation/unattended-measurement.test.mjs tests/sumahon/night-phase2.test.mjs tests/sumahon/night-environment-check.test.mjs tests/sumahon/powershell-encoding.test.mjs tests/sumahon/preview-publication-resilience.test.mjs tests/sumahon/runner-hygiene-recovery.test.mjs tests/sumahon/search-notify.test.mjs tests/sumahon/x-pending-bundle.test.mjs tests/sumahon/x-posted-path.test.mjs",
     "test:plain-language": "node --test tests/sumahon/plain-language-policy.test.mjs",
     "test:social": "node --test tests/sumahon/social-post-step.test.mjs tests/sumahon/setup-social-auth.test.mjs"
   },
