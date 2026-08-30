@@ -31,7 +31,7 @@ Previewの配布またはURL検証が失敗した場合、次へpending情報を
 node scripts/automation/phase-a-outer-publish.mjs --resume-pending --slug 202608-20-his-esim-mvno
 ```
 
-このコマンドはoriginのpreview branchを取得し、最新mainをmergeしてpushしたうえで、Preview build、Cloudflare deployment照合、記事URL検証、review登録を再開する。merge conflict、secret scan、deployment、URL検証のいずれかが失敗した場合は公開を進めずpendingのまま残す。
+このコマンドはoriginのpreview branchを取得し、最新mainをmergeし、`publishAt`を再開時刻へ正規化してpushしたうえで、Preview build、Cloudflare deployment照合、記事URL検証、review登録を再開する。merge conflict、publishAt正規化、secret scan、deployment、URL検証のいずれかが失敗した場合は公開を進めずpendingのまま残す。
 
 再開処理後も夜間run共通の終了処理によりrunnerは `origin/main` detachedへ戻る。単独で再開コマンドを実行した場合は、終了後に次も実行する。
 

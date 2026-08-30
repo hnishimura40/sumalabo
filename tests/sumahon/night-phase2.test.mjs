@@ -178,6 +178,9 @@ test("outer publisher uses REST PR resolution and can complete a recovered hando
   assert.match(calls[0].url, /api\.github\.com\/repos\/hnishimura40\/sumalabo\/pulls/);
   assert.doesNotMatch(read("scripts/automation/phase-a-outer-publish.mjs"), /gh", \["pr"/);
   assert.match(read("scripts/automation/phase-a-outer-publish.mjs"), /--mark-completed/);
+  const outerSource = read("scripts/automation/phase-a-outer-publish.mjs");
+  assert.ok(outerSource.indexOf("normalize-publish-at.mjs") < outerSource.indexOf('run("git", ["add", "--", ...expected])'));
+  assert.match(outerSource, /resume_publish_at_normalize_failed/);
 });
 
 test("Phase B merges through REST without GraphQL", async () => {
