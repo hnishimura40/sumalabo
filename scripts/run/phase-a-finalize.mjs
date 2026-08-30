@@ -210,7 +210,7 @@ async function main() {
   const deploymentStatus = await waitForCloudflarePagesDeployment({
     previewUrl: deploy.previewUrl || deploy.branchAliasUrl,
     branch,
-    commitHash,
+    commitHash: commitSha || undefined,
     intervalMs: verificationPolicy.deploymentPollIntervalMs,
     maxWaitMs: verificationPolicy.deploymentMaxWaitMs,
   });
