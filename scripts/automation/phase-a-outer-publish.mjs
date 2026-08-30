@@ -121,6 +121,8 @@ async function publish(slug) {
   let r = run("git", ["switch", "-c", value.branch]);
   if (r.status !== 0) r = run("git", ["switch", value.branch]);
   if (r.status !== 0) throw new Error("branch_switch_failed");
+  r = run(process.execPath, [path.join(ROOT, "scripts", "automation", "normalize-publish-at.mjs"), "--slug", slug], { inherit: true });
+  if (r.status !== 0) throw new Error("publish_at_normalize_failed");
   r = run("git", ["add", "--", ...expected]);
   if (r.status !== 0) throw new Error("git_add_failed");
   r = run(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "security:scan"], { inherit: true });
@@ -161,8 +163,19 @@ async function resumePending(slug) {
     run("git", ["merge", "--abort"]);
     throw new Error("resume_main_merge_failed");
   }
+  r = run(process.execPath, [path.join(ROOT, "scripts", "automation", "normalize-publish-at.mjs"), "--slug", slug], { inherit: true });
+  if (r.status !== 0) throw new Error("resume_publish_at_normalize_failed");
+  r = run("git", ["add", "--", `content/articles/${slug}.mdx`]);
+  if (r.status !== 0) throw new Error("resume_publish_at_stage_failed");
   r = run(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "security:scan"], { inherit: true });
   if (r.status !== 0) throw new Error("resume_secret_scan_failed");
+  const staged = run("git", ["diff", "--cached", "--quiet"]);
+  if (staged.status === 1) {
+    r = run("git", ["commit", "-m", `chore(article): normalize publishAt for ${slug} resume`]);
+    if (r.status !== 0) throw new Error("resume_publish_at_commit_failed");
+  } else if (staged.status !== 0) {
+    throw new Error("resume_publish_at_diff_failed");
+  }
   r = run("git", ["push", "origin", value.branch]);
   if (r.status !== 0) throw new Error("resume_push_failed");
 
