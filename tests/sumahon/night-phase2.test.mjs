@@ -178,6 +178,9 @@ test("outer publisher uses REST PR resolution and can complete a recovered hando
   assert.match(calls[0].url, /api\.github\.com\/repos\/hnishimura40\/sumalabo\/pulls/);
   assert.doesNotMatch(read("scripts/automation/phase-a-outer-publish.mjs"), /gh", \["pr"/);
   assert.match(read("scripts/automation/phase-a-outer-publish.mjs"), /--mark-completed/);
+  const outerSource = read("scripts/automation/phase-a-outer-publish.mjs");
+  assert.ok(outerSource.indexOf("normalize-publish-at.mjs") < outerSource.indexOf('run("git", ["add", "--", ...expected])'));
+  assert.match(outerSource, /resume_publish_at_normalize_failed/);
 });
 
 test("Phase B merges through REST without GraphQL", async () => {
@@ -367,6 +370,9 @@ test("night environment configuration owns paths, token names, and permissions",
   assert.equal(environment.threadsAuth.callbackPort, 43821);
   assert.equal(environment.threadsAuth.certificateValidityDays, 7);
   assert.equal(environment.blueskyAuth.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\bluesky-auth.json");
+  assert.equal(environment.pendingPublish.pathTemplate, "%USERPROFILE%\\.sumalabo\\state\\pending-publish.json");
+  assert.equal(environment.previewVerification.httpRetryIntervalSeconds, 15);
+  assert.equal(environment.previewVerification.httpMaxWaitSeconds, 600);
   assert.ok(environment.warningChecks.includes("x_ledger_state"));
   assert.equal(environment.chrome.extensionId, "hehggadaopoacecdllhhajmbjkdcmajg");
   assert.equal(environment.tokens.github, "GH_TOKEN");
