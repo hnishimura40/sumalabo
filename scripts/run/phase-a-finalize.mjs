@@ -36,15 +36,24 @@
 
 import { mkdir, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { deployPreviewToCloudflarePages } from "../sumahon/cloudflare-pages-deploy.mjs";
+import { deployPreviewToCloudflarePages, waitForCloudflarePagesDeployment } from "../sumahon/cloudflare-pages-deploy.mjs";
 import { verifyPreviewUrl } from "../sumahon/verify-preview-url.mjs";
+import {
+  markPendingPublishResolved,
+  previewBuildEnvironment,
+  previewVerificationPolicy,
+  recordPendingPublish,
+  waitForPreviewUrl,
+} from "../sumahon/preview-publication.mjs";
 import { notifyReviewReady } from "../sumahon/notify-review-ready.mjs";
 import { validateMainPreviewUrl } from "../sumahon/preview-url-policy.mjs";
 import { gate, loadAutonomy, computeVetoDeadline } from "../automation/autonomy.mjs";
 import { notifyAutonomyEvent } from "../automation/autonomy-notify.mjs";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 function parseArgs(argv) {
   const out = {};
@@ -67,6 +76,19 @@ function runCommand(cmd, args, options = {}) {
   });
 }
 
+function currentCommitSha() {
+  const result = spawnSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8", windowsHide: true });
+  return result.status === 0 ? String(result.stdout || "").trim() : null;
+}
+
+function preservePending(report, details) {
+  try {
+    report.pending = recordPendingPublish({ root: ROOT, ...details });
+  } catch (error) {
+    report.pending = { ok: false, reason: error instanceof Error ? error.message : String(error) };
+  }
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const slug = (typeof args.slug === "string" ? args.slug : "").trim();
@@ -82,6 +104,10 @@ async function main() {
   }
 
   const report = { slug, branch, steps: {}, finishedAt: null };
+  const commitSha = currentCommitSha();
+  const verificationPolicy = previewVerificationPolicy(ROOT);
+  report.commitSha = commitSha;
+  report.verificationPolicy = verificationPolicy;
 
   // -1. autonomy ゲート（L1 基盤・kill switch）: paused: true なら即停止。
   const autonomyState = loadAutonomy();
@@ -143,12 +169,22 @@ async function main() {
   if (!args["skip-build"] || !existsSync("dist")) {
     console.log("[finalize] build...");
     const ok = await runCommand(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"], {
-      env: { ...process.env, SUMALABO_BUILD_TARGET: "preview" },
+      env: previewBuildEnvironment({ root: ROOT, slug }),
     });
     report.steps.build = { ok };
     if (!ok) { report.finishedAt = new Date().toISOString(); await save(report); console.error("[finalize] BLOCK: build failed"); process.exit(2); }
   } else {
     report.steps.build = { ok: true, skipped: true };
+  }
+
+  const targetHtml = path.join(ROOT, "dist", "articles", slug, "index.html");
+  report.steps.previewArtifact = { ok: existsSync(targetHtml), path: path.relative(ROOT, targetHtml).replaceAll("\\", "/") };
+  if (!report.steps.previewArtifact.ok) {
+    preservePending(report, { slug, branch, commitSha, prUrl, reason: "preview_build_missing_target" });
+    report.finishedAt = new Date().toISOString();
+    await save(report);
+    console.error(`[finalize] BLOCK: preview build omitted dist/articles/${slug}/index.html`);
+    process.exit(2);
   }
 
   // 2. preview deploy（main は protected_branch で拒否される）
@@ -157,9 +193,40 @@ async function main() {
     distDir: "dist",
     branch,
     commitMessage: `preview ${slug}`.slice(0, 200),
+    commitHash: commitSha || undefined,
   });
   report.steps.deploy = { ok: !!deploy?.ok, reason: deploy?.reason, previewUrl: deploy?.previewUrl, branchAliasUrl: deploy?.branchAliasUrl };
-  if (!deploy?.ok) { report.finishedAt = new Date().toISOString(); await save(report); console.error(`[finalize] BLOCK: preview deploy failed reason=${deploy?.reason}`); process.exit(2); }
+  if (!deploy?.ok) {
+    preservePending(report, { slug, branch, commitSha, prUrl, reason: `preview_deploy_failed:${deploy?.reason}` });
+    report.finishedAt = new Date().toISOString();
+    await save(report);
+    console.error(`[finalize] BLOCK: preview deploy failed reason=${deploy?.reason}`);
+    process.exit(2);
+  }
+
+  // 2.5 Cloudflare API で、このbranch/commitに対応するdeployment IDと完了状態を確定する。
+  // URLの404だけを見て伝播中・別deployment・配布失敗を混同しない。
+  console.log("[finalize] wait for Cloudflare deployment status...");
+  const deploymentStatus = await waitForCloudflarePagesDeployment({
+    previewUrl: deploy.previewUrl || deploy.branchAliasUrl,
+    branch,
+    commitHash,
+    intervalMs: verificationPolicy.deploymentPollIntervalMs,
+    maxWaitMs: verificationPolicy.deploymentMaxWaitMs,
+  });
+  report.steps.deploymentStatus = deploymentStatus;
+  if (!deploymentStatus.ok) {
+    preservePending(report, {
+      slug, branch, commitSha, prUrl,
+      previewUrl: deploy.previewUrl || deploy.branchAliasUrl || null,
+      deployment: deploymentStatus.deployment,
+      reason: deploymentStatus.reason,
+    });
+    report.finishedAt = new Date().toISOString();
+    await save(report);
+    console.error(`[finalize] BLOCK: Cloudflare deployment status failed reason=${deploymentStatus.reason}`);
+    process.exit(2);
+  }
 
   // 3. resolve previewUrl（commit 固有 URL を優先）
   const base = (deploy.previewUrl || deploy.branchAliasUrl || "").replace(/\/+$/, "");
@@ -174,14 +241,30 @@ async function main() {
 
   // 4. preview URL 検証（実記事 / fallback でない / 到達 200）
   console.log(`[finalize] verify preview url: ${previewUrl}`);
-  let verify = null;
-  for (let attempt = 1; attempt <= 4; attempt++) {
-    verify = await verifyPreviewUrl({ url: previewUrl, slug, titlePrefix: title.slice(0, 16) });
-    if (verify?.ok) break;
-    if (attempt < 4) { console.log(`[finalize] verify attempt ${attempt}/4 failed (${verify?.reason}); wait 6s...`); await new Promise((r) => setTimeout(r, 6000)); }
+  const verify = await waitForPreviewUrl({
+    verify: verifyPreviewUrl,
+    url: previewUrl,
+    slug,
+    titlePrefix: title.slice(0, 16),
+    intervalMs: verificationPolicy.httpRetryIntervalMs,
+    maxWaitMs: verificationPolicy.httpMaxWaitMs,
+    onRetry: ({ attempt, waitMs, elapsedMs, result }) => {
+      console.log(`[finalize] verify attempt ${attempt} failed (${result?.reason}); elapsed=${Math.round(elapsedMs / 1000)}s, wait=${Math.round(waitMs / 1000)}s...`);
+    },
+  });
+  report.steps.verify = verify;
+  if (!verify?.ok) {
+    preservePending(report, {
+      slug, branch, commitSha, prUrl, previewUrl,
+      deployment: deploymentStatus.deployment,
+      reason: verify?.reason,
+      status: verify?.status,
+    });
+    report.finishedAt = new Date().toISOString();
+    await save(report);
+    console.error(`[finalize] BLOCK: preview verify failed reason=${verify?.reason}; pending publish state saved`);
+    process.exit(2);
   }
-  report.steps.verify = { ok: !!verify?.ok, reason: verify?.reason, status: verify?.status };
-  if (!verify?.ok) { report.finishedAt = new Date().toISOString(); await save(report); console.error(`[finalize] BLOCK: preview verify failed reason=${verify?.reason}`); process.exit(2); }
 
   // 4.5 veto 窓の計算（L1 基盤）: 期限を review item と通知に記録する。
   //     L0 では情報記録のみ（自動 Phase B は走らない）。L1 以降は期限経過で
@@ -202,6 +285,8 @@ async function main() {
   });
   report.steps.notify = { ok: !!notify?.ok, reason: notify?.reason, sent: notify?.response?.sent, subscribers: notify?.response?.subscribers };
   report.finishedAt = new Date().toISOString();
+  try { report.pendingResolution = markPendingPublishResolved({ root: ROOT, slug }); }
+  catch (error) { report.pendingResolution = { ok: false, reason: error instanceof Error ? error.message : String(error) }; }
   await save(report);
 
   if (!notify?.ok) {

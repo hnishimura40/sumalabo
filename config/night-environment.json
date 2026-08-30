@@ -16,6 +16,15 @@
   "blueskyAuth": {
     "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\bluesky-auth.json"
   },
+  "pendingPublish": {
+    "pathTemplate": "%USERPROFILE%\\.sumalabo\\state\\pending-publish.json"
+  },
+  "previewVerification": {
+    "deploymentPollIntervalSeconds": 5,
+    "deploymentMaxWaitSeconds": 180,
+    "httpRetryIntervalSeconds": 15,
+    "httpMaxWaitSeconds": 600
+  },
   "canonicalWorkspacePath": "D:\\documents\\動画作成関連\\すまラボ",
   "runnerPath": "D:\\work\\sumalabo-night-runner",
   "entryRoot": "D:\\work",
