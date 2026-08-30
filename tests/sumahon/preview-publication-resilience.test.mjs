@@ -68,6 +68,11 @@ test("Cloudflare deployment polling binds the URL to deployment ID, branch, comm
   assert.equal(result.deployment.branch, "preview/202608-20-his-esim-mvno");
 });
 
+test("phase A finalizer passes its captured commit SHA to Cloudflare deployment polling", () => {
+  const source = readFileSync(path.join(ROOT, "scripts", "run", "phase-a-finalize.mjs"), "utf8");
+  assert.match(source, /waitForCloudflarePagesDeployment\(\{[\s\S]*?commitHash:\s*commitSha\s*\|\|\s*undefined,/);
+});
+
 test("failed preview verification writes a resumable pending record outside the repository", () => {
   const directory = mkdtempSync(path.join(os.tmpdir(), "sumalabo-pending-publish-"));
   const stateFile = path.join(directory, "pending-publish.json");
