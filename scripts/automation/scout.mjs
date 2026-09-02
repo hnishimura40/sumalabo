@@ -349,6 +349,18 @@ export function findExclusion(item, config) {
     const hit = words.find((w) => text.includes(w));
     if (hit) return { category, word: hit };
   }
+  const normalized = text.normalize("NFKC").toLowerCase().replace(/[^a-z0-9\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]+/gu, "");
+  for (const topic of config.excludeTopics || []) {
+    const aliases = (topic.aliases || [])
+      .map((alias) => String(alias).normalize("NFKC").toLowerCase().replace(/[^a-z0-9\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]+/gu, ""))
+      .filter(Boolean);
+    const cues = (topic.cues || [])
+      .map((cue) => String(cue).normalize("NFKC").toLowerCase().replace(/[^a-z0-9\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]+/gu, ""))
+      .filter(Boolean);
+    const alias = aliases.find((value) => normalized.includes(value));
+    const cue = cues.find((value) => normalized.includes(value));
+    if (alias && cue) return { category: "covered_topic", topic: topic.id, word: alias, cue };
+  }
   return null;
 }
 

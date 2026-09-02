@@ -1,0 +1,180 @@
+---
+title: "Claude Fable 5.1発表。無料で使える？Mythosとの違いと料金を解説"
+slug: "202609-claude-fable-5-1-mythos-5-1-explained"
+type: "news"
+category: "ニュースをかみくだく"
+description: "AnthropicのClaude Fable 5.1とMythos 5.1を一次情報で解説。無料プランで使えるか、同一モデルなのに名前が違う理由、キャッシュ値下げ、性能、安全対策を整理します。"
+thumbnail: "/images/thumbnails/202609-claude-fable-5-1-mythos-5-1-explained.webp"
+thumbnailAlt: "ひまりとらぼまるが2本に分かれた光の経路を見比べ、Claude Fable 5.1とMythos 5.1の違いを確かめるサムネイル"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "Claude Fable 5.1"
+  - "Claude Mythos 5.1"
+  - "Claude"
+  - "Anthropic"
+  - "生成AI"
+  - "AI料金"
+related:
+  - "202608-claude-fable-5-usage-draining-fast"
+  - "202608-claude-2026"
+  - "202607-claude-opus-5-everyday-value"
+pubDate: "2026-09-02"
+updated: "2026-09-02"
+publishAt: "2026-09-02T12:21:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Anthropicは2026年9月1日（米国時間）、Claude Fable 5.1とClaude Mythos 5.1を発表しました。2つは同じ基礎モデルです。ここでいう安全対策は、危険な用途を制限し、必要に応じて別モデルへ振り分ける仕組みです。
+
+大きな変更は、長時間の作業性能とキャッシュ料金です。入力・出力の単価は据え置きですが、過去の入力を再利用する料金が4分の1になりました。
+
+## 3行で分かるまとめ
+
+<Summary30>
+  <ul>
+    <li><strong>これは何？何があった？</strong> 同じ基礎モデルに異なる安全対策を施したFable 5.1とMythos 5.1が登場</li>
+    <li><strong>誰に関係ある？</strong> Fable 5.1はPro・Max・Team・Enterprise、Mythos 5.1は審査制</li>
+    <li><strong>結局どうなの？</strong> キャッシュ読み取り（処理済み入力を再利用する仕組み）が75％値下げ</li>
+  </ul>
+</Summary30>
+
+<Callout kind="facts" title="一次情報を確認した日：2026年9月2日">
+  <p>数値と提供条件は、Anthropicの<a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">発表ページ</a>、<a href="https://www.anthropic.com/claude/fable">Fable公式ページ</a>、<a href="https://platform.claude.com/docs/en/models/fable-5-1/overview">Claude Platform公式ドキュメント</a>で照合しています。</p>
+</Callout>
+
+## 誰に関係ある？あまり関係ない人は？
+
+<p class="lead"><strong>Pro以上でClaudeを使う人と、APIで長い処理を動かす開発者</strong>に関係します。</p>
+
+- 関係がある人：Pro・Max・Team・EnterpriseでClaudeを使う人、Claude CodeやAPIで長時間タスクを動かす人
+- あまり関係がない人：無料プランだけを使う人、サイバーセキュリティや生命科学の専門研究をしない人にとってのMythos 5.1
+
+## Fable 5との違いを3行で言うと？
+
+<p class="lead"><strong>性能向上、知識の更新、キャッシュの値下げ</strong>が主な違いです。</p>
+
+- 入力・出力の基本単価は同じで、キャッシュ読み取りだけが$1から$0.25へ下がりました。
+- Terminal-Bench-Science 0.1は24.7％から52.6％へ、Terminal-Bench 4.0は42.0％から55.8％へ上がりました。
+- 信頼できる知識のカットオフは2026年1月から2026年6月へ更新されました。
+
+比較表は次の1つに絞ります。
+
+| 項目 | Claude Fable 5 | Claude Fable 5.1 |
+|---|---|---|
+| API基本料金 | 入力$10・出力$50／100万トークン | 同じ |
+| キャッシュ読み取り | $1／100万トークン | $0.25／100万トークン |
+| 性能 | Science 24.7％・Terminal 42.0％ | Science 52.6％・Terminal 55.8％ |
+| 知識カットオフ | 2026年1月 | 2026年6月 |
+| 提供範囲 | 一般提供 | 一般提供。Pro・Max・Team・EnterpriseとAPI |
+
+## 無料ユーザーは使える？
+
+<p class="lead">発表時点では、<strong>無料プランは対象として案内されていません</strong>。</p>
+
+Anthropicが列挙しているのはPro、Max、Team、Enterpriseです。そのため、Claude.aiの無料ユーザーがモデル選択からFable 5.1を使えるとは確認できません。開発者は従量課金のClaude APIや対応クラウドから利用できます。
+
+<CharacterBubble speaker="himari" mood="curious">Mythos 5.1の方が上位モデルなの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">頭脳は同じだよ。研究用途に合わせて、安全対策のかけ方と利用者の審査が違うんだ。</CharacterBubble>
+
+## MythosとFableは何が違う？
+
+<p class="lead">2つは<strong>同じ基礎モデル</strong>で、安全対策のレベルと利用できる人が違います。</p>
+
+Fable 5.1には、サイバーセキュリティや生命科学で悪用につながる依頼を制限・振り分ける安全対策があります。Mythos 5.1は、審査済みの防御担当者や生命科学の専門家が研究開発へ使えるよう、用途に合わせた安全対策を採用します。
+
+AnthropicはCyber Verification ProgramとLife Sciences Verification Programを案内しています。現在は米国の一部組織に限定され、対象拡大を進める段階です。一般ユーザーが設定でMythosへ切り替える仕組みではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">同じモデルが2つの提供経路に分かれる関係を図で確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-fable-5-1-mythos-5-1-explained/slide01.webp" alt="同じ基礎モデルから、一般向けのFable 5.1と審査制のMythos 5.1へ安全対策の違いで分かれることを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：同じモデル、安全対策が違う</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>読み取りポイント</strong></p>
+    <ul>
+      <li>Fable 5.1とMythos 5.1の基礎能力は同じ</li>
+      <li>Fableは一般提供、Mythosは審査制</li>
+      <li>違いは研究領域に対する安全対策</li>
+    </ul>
+  </div>
+</section>
+
+## 料金は安くなった？
+
+<p class="lead">基本料金は同じですが、<strong>同じ文脈を何度も読む処理は安くなりました</strong>。</p>
+
+API価格は入力$10、出力$50／100万トークンで据え置きです。変わったのはキャッシュ読み取りで、$1から$0.25／100万トークンへ75％下がりました。
+
+キャッシュは、長い指示や会話履歴、コード一式など、すでに処理した入力を保存して再利用する仕組みです。毎回すべてを新規入力として読み直すより安くなります。Anthropicの実測では、典型的なワークロードで約25％、文脈とツール利用が多い高度なエージェント処理で最大約45％のコスト減になるとしています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">実質値下げが大きくなる仕組みを一枚で見ます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-fable-5-1-mythos-5-1-explained/slide02.webp" alt="キャッシュ読み取り料金が100万トークン当たり1ドルから0.25ドルへ下がり、再利用が多い処理ほど効果が大きいことを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：キャッシュ読み取りが4分の1</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>読み取りポイント</strong></p>
+    <ul>
+      <li>入力$10・出力$50は変わらない</li>
+      <li>キャッシュ読み取りは$1から$0.25へ</li>
+      <li>長い会話やツール処理ほど値下げ効果が出やすい</li>
+    </ul>
+  </div>
+</section>
+
+## 性能はどこが伸びた？
+
+<p class="lead">短い一問一答より、<strong>長時間の調査・開発・問題解決</strong>で伸びが目立ちます。</p>
+
+科学研究用のTerminal-Bench-Science 0.1ではFable 5.1が52.6％、Fable 5が24.7％でした。この評価にはモデルごとに±3.5〜4.5ポイントの標準誤差があるため、細かな差より大幅な伸びを見る数値です。
+
+開発用のTerminal-Bench 4.0ではFable 5.1が55.8％でした。比較対象はClaude Opus 5が52.3％、GPT-5.6 Solが37.3％です。同じ基礎モデルで安全対策が異なるMythos 5.1は60.9％でした。
+
+実例として投資会社Millenniumは、約100万回に1回起き、4〜5年間原因を説明できなかった内部システムのクラッシュをFable 5.1が特定したと報告しています。外部ライブラリを解析し、コアダンプと照合してライブラリ側の不具合へたどり着いた事例です。
+
+## 長時間タスクの進み方も良くなった？
+
+<p class="lead">失敗からの復帰や最後までの作業は強化されていますが、<strong>進捗表示には注意点</strong>があります。</p>
+
+Anthropicは、数時間にわたる作業で計画を立て、道具を使い、失敗した手順から復帰しながら進める能力を強調しています。文章も、定型句や説明のない専門用語が減ったとしています。一方で、公式の開発者向け資料は、Fable 5より文章が密になったり、長いツール処理中の進捗更新が少なくなったりする場合があると説明しています。
+
+APIでは、ツール呼び出しの間に読みやすい進捗を返す`display: "updates"`がベータ提供されています。「常に報告が増える」というより、長い処理を続ける力が上がり、必要なら進捗表示を受け取れる設計です。
+
+## サイバーセキュリティの誤検知は減った？
+
+<p class="lead">Claude Codeでは、サイバー安全対策による<strong>1セッション当たりの介入が平均約60％減る</strong>と案内されています。</p>
+
+これは全種類の誤検知が一律60％減るという意味ではありません。Fable 5.1は、防御目的の脆弱性発見を扱えるようになりました。一方、侵入テスト、攻撃コードの生成、バイナリを使う脆弱性スキャンなどは、引き続き別モデルへ振り分けられる場合があります。
+
+## 生成テキストの不可視ウォーターマークとは？
+
+<p class="lead"><strong>統計的ウォーターマークとは、隠し文字ではなく生成傾向からAIの関与を調べる仕組み</strong>です。</p>
+
+隠し文字を埋め込む方式ではなく、文章の意味・読みやすさ・トークン数を変えず、ユーザーや会話内容の情報も含みません。Anthropicは検出APIをプライベートプレビューで提供し、規制当局、報道、研究、教育機関など対象組織から順に案内しています。
+
+## 開発者向け：使い始めるときの要点は？
+
+<p class="lead">Claude APIのモデル名は<strong>`claude-fable-5-1`</strong>です。</p>
+
+キャッシュの再利用が多いほど実質値下げが効きます。移行時は、Fable 5.1が強制ツール指定の`tool_choice: any`や特定ツール固定を受け付けない点にも注意が必要です。まず自社の評価で性能とコストを比べ、簡単な処理はeffortを下げると、品質を保ちながら費用を抑えられる可能性があります。
+
+## まとめ：一般ユーザーが押さえる点は？
+
+Claude Fable 5.1は、Fable 5の基本料金を保ちながら、長時間タスクの性能とキャッシュ料金を改善したモデルです。無料プラン向けではなく、まずPro以上の利用者とAPI開発者が対象です。
+
+Mythos 5.1は「さらに賢い別モデル」ではありません。同じ能力を、審査済みのサイバーセキュリティ・生命科学研究へ提供する経路です。この区別と、キャッシュ利用時だけ大きく安くなる料金の仕組みを分けて見ると、発表内容を読み違えにくくなります。
+
+<Note>出典：<a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Anthropic発表</a>／<a href="https://www.anthropic.com/claude/fable">Fable公式ページ</a>／<a href="https://platform.claude.com/docs/en/models/fable-5-1/whats-new-fable-5-1">開発者向け変更点</a></Note>
