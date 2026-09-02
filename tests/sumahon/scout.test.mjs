@@ -75,6 +75,20 @@ test("4. 除外カテゴリ: 事件・政治・訴訟語で excluded", () => {
   assert.equal(findExclusion({ title: "ChatGPTの新機能" }, CONFIG), null);
 });
 
+test("4b. 明示除外トピック: Fable 5.1発表の表記ゆれを除外する", () => {
+  const topicConfig = {
+    ...CONFIG,
+    excludeTopics: [{
+      id: "claude-fable-mythos-5-1-launch",
+      aliases: ["Fable 5.1", "フェーブル 5.1", "Mythos 5.1", "ミソス 5.1"],
+      cues: ["発表", "リリース", "introducing"],
+    }],
+  };
+  assert.equal(findExclusion({ title: "Claude Fable5.1とMythos 5.1を発表" }, topicConfig).category, "covered_topic");
+  assert.equal(findExclusion({ title: "Claude フェーブル5.1をリリース" }, topicConfig).topic, "claude-fable-mythos-5-1-launch");
+  assert.equal(findExclusion({ title: "Fable 5.1の使い方を検証" }, topicConfig), null, "発表とは別の続報まで恒久除外しない");
+});
+
 test("5. dedupe: 既出タイトルと類似なら duplicate", () => {
   const known = ["Claude Fable 5、7月8日からusage credits制へ。サブスクで使える残り枠と、切り替え後どうなるか"];
   const dup = findDuplicate(
