@@ -1,0 +1,263 @@
+---
+title: "Astra待ちで毎日1回分。「リセット権」は自動回復ではない"
+slug: "202609-chatgpt-astra"
+type: "news"
+category: "ニュースをかみくだく"
+description: "GPT-6 Astraがまだ届かない有料ChatGPT利用者向けに案内された、繰り越し型のCodex利用枠リセット権を解説。自動回復との違い、対象、使う前の確認点を整理します。"
+thumbnail: "/images/thumbnails/202609-chatgpt-astra.webp"
+thumbnailAlt: "ひまりとらぼまるがデジタル利用枠のチャージ装置で、Astra待ちの間に付く毎日1回分の保存型リセット権を確認するイラスト"
+status: "review"
+priority: 2
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "GPT-6 Astra"
+  - "ChatGPT"
+  - "OpenAI"
+  - "Codex"
+  - "利用上限"
+  - "生成AI"
+related:
+  - "202609-gpt-6-astra-announced"
+  - "202607-openai-codex-claude-code-browser-imagegen"
+  - "202607-openai-gpt-5-6-chatgpt-work"
+pubDate: "2026-09-05"
+updated: "2026-09-05"
+publishAt: "2026-09-05T04:58:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+OpenAIの新モデルGPT-6 Astraは、2026年9月3日の発表後、対象アカウントへ順番に届いています。その待ち時間に対する施策として、Astraをまだ利用できない有料ChatGPTプランの利用者へ、対象日ごとにbanked resetを1回分付ける方針が案内されました。
+
+先に結論を言うと、毎日勝手に利用枠が満タンへ戻る仕組みではありません。banked resetは、必要な時まで保存しておき、自分で適用する1回限りのCodex利用枠回復権です。
+
+**関係がある人**は、Astraがまだ届かず、CodexやWorkを多く使う有料プランの利用者です。**あまり関係がない人**は、無料プランの人、すでにAstraが使える人、利用枠に困っていない人です。
+
+<Summary30>
+  <ul>
+    <li><strong>これは何？</strong> 利用上限とは、一定の時間や期間に使える処理量の枠のこと。Codexのその枠を1回だけ回復でき、使うまで保存できる権利です。</li>
+    <li><strong>何があった？</strong> Astraがまだ届いていない有料ChatGPTプランの対象者へ、待っている対象日ごとに1回分を付ける方針が案内されました。</li>
+    <li><strong>誰に関係ある？</strong> Astraが未提供で、CodexやWorkの利用枠を多く使う人です。上限に困っていない人やAstraが届いた人への影響は小さめです。</li>
+    <li><strong>結局どうなの？</strong> 自動回復だと思い込まず、設定の「使用量」で残数と期限を確認し、必要な時に自分で適用するのが安全です。</li>
+  </ul>
+</Summary30>
+
+<Callout kind="facts" title="公式ヘルプで確認できる仕組み">
+  <ul>
+    <li>banked resetは、保存して後から手動で適用する1回限りの権利</li>
+    <li>適用するとCodexの5時間枠（直近の短い期間に使える量を管理する仕組み）と週次枠（およそ1週間単位で使える量を管理する仕組み）が更新される</li>
+    <li>適用後は、次回の週次リセット日が動く場合がある</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="担当者の公開投稿をもとにした案内">
+  <p>Astraへまだアクセスできない有料ChatGPTプランの利用者には、対象日ごとにbanked resetを1回分付ける方針だと、OpenAI担当者が公開投稿で説明しました。ITmediaとPC Watchも同じ投稿を報じています。</p>
+</Callout>
+
+<Callout kind="unc" title="未確定（2026年9月5日時点）">
+  <p>今回の付与分すべてに共通する有効期限、対象となる契約・地域の細かな範囲、Astraが全対象者へ届く日は確認できません。アカウントごとの「使用量」画面を正として確認してください。</p>
+</Callout>
+
+## そもそもbanked resetって何？
+
+<p class="lead"><strong>使うまで取っておける、1回限りのCodex利用枠回復権</strong>です。</p>
+
+追加料金の支払いに使うクレジットではなく、契約の上限を永久に増やす仕組みでもありません。「banked」は、今すぐ使わず貯めておけるという意味です。
+
+<div class="table-card article-wide-block">
+
+| 言葉 | 普通の言葉でいうと | 読者への影響 |
+| --- | --- | --- |
+| banked reset | 使うまで保存できる回復権 | 必要な時に自分で使う |
+| 5時間枠 | 直近の短い期間に使える量を管理する仕組み | 短時間に多く使う時に関係する |
+| 週次枠 | およそ1週間単位で使える量を管理する仕組み | 長い作業を続ける時に関係する |
+
+</div>
+
+<CharacterBubble speaker="himari" mood="curious">「毎日リセット」なら、何もしなくても毎朝満タンになるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">そうではないよ。1回分の権利が保存されて、必要な時に自分で使う仕組みなんだ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず、Astra待ちの対象日に1回分が付くという案内を確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-chatgpt-astra/slide01.webp" alt="Astra待ちの間、対象日ごとに1回分の保存型リセット権が付く案内を、ひまりとらぼまるがチャージ装置で確認する図" loading="lazy" decoding="async" />
+    <figcaption>図解：Astra待ちの対象日に1回分</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>ここだけ押さえる</strong></p>
+    <ul>
+      <li>Astraがまだ届いていない有料プラン利用者向けの案内</li>
+      <li>「1日ごと」は付与の話で、自動回復の話ではない</li>
+    </ul>
+  </div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">付いた権利は、使うまで保存できます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-chatgpt-astra/slide02.webp" alt="保存ケースにたまる回復権をひまりが見比べ、1回の適用で1回だけ利用枠を回復することを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：使うまで保存、適用は1回限り</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>使い方の違い</strong></p>
+    <ul>
+      <li>付与された時点で勝手に消費されない</li>
+      <li>必要な場面で1回分を適用する</li>
+    </ul>
+  </div>
+</section>
+
+## 「毎日リセット」の3つの読み違い
+
+1. **自動で満タンになるわけではない。** 保存された権利を自分で適用します。
+2. **通常のChatが無制限になる案内ではない。** 公式ヘルプで説明されているのはCodexの利用枠回復です。
+3. **全員の条件が同じとは限らない。** 対象の契約、地域、ワークスペース、期限は施策やアカウントで異なる場合があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">自動回復と、保存した権利を使う操作は別です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-chatgpt-astra/slide03.webp" alt="自動ではない、自分で使う、という違いをひまりが回復ボタンで示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：自動ではなく、自分で使う</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>誤読しないために</strong></p>
+    <ul>
+      <li>権利が付くことと、利用枠へ適用することは別</li>
+      <li>使う前に残量を確認する</li>
+    </ul>
+  </div>
+</section>
+
+## 適用すると、どの枠が変わる？
+
+OpenAI Help Centerによると、banked resetを適用するとCodexの**5時間枠**と**週次枠**が更新されます。5時間枠は、直近の短い期間に使える量を管理する仕組みです。週次枠は、およそ1週間単位で使える量を管理する仕組みです。
+
+権利を使った後は、次回の週次リセット日が動く場合があります。そのため、今の枠に十分な余裕があるなら、急いで適用せず、必要な作業の前に判断するほうが分かりやすいでしょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">適用先は、短い期間の枠と週単位の枠の両方です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-chatgpt-astra/slide04.webp" alt="5時間枠と週次枠が更新され、次の週次リセットの基準日が動く場合があることを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：5時間枠と週次枠を更新</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>適用前の注意</strong></p>
+    <ul>
+      <li>短い期間と週単位、両方の利用枠に関係する</li>
+      <li>週次の次回リセット日が動く場合がある</li>
+    </ul>
+  </div>
+</section>
+
+## 自分に関係するかを見分ける
+
+<p class="lead"><strong>Astraがまだ届かず、Codexの利用枠が足りなくなる人</strong>に意味があります。</p>
+
+長い開発作業や複数のCodexタスクを進める人は、回復権が作業の区切りに役立つ可能性があります。一方、無料プランの人、Codexをほとんど使わない人、すでにAstraへアクセスできる人は、今すぐ行動を変える必要はありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">対象になりやすいのは、Astra待ちでCodexをよく使う人です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-chatgpt-astra/slide05.webp" alt="Astraがまだ届かず、Codexをよく使う人に関係することを、利用メーターとタスク列で示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：関係が大きい人</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>判断の目安</strong></p>
+    <ul>
+      <li>Astraがまだ使えない</li>
+      <li>Codexの利用枠が作業中に足りなくなる</li>
+    </ul>
+  </div>
+</section>
+
+## 使う前に確認する3点
+
+- 設定の「使用量」にリセット権の残数が表示されているか
+- いつまで使えるか
+- 現在の5時間枠と週次枠がどれだけ残っているか
+
+まだ枠が十分残っているなら、急いで適用する必要はありません。OpenAIの説明では、何も回復させる必要がない状態なら権利は消費されませんが、画面の表示を確認してから操作するのが確実です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">適用ボタンを押す前に、3つの表示を見ます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-chatgpt-astra/slide06.webp" alt="残数、期限、今の残量の3項目にチェックを付けるひまりとらぼまるの図" loading="lazy" decoding="async" />
+    <figcaption>図解：残数・期限・今の残量を確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>確認する順番</strong></p>
+    <ul>
+      <li>回復権が付いているか</li>
+      <li>期限まで余裕があるか</li>
+      <li>今、本当に回復が必要か</li>
+    </ul>
+  </div>
+</section>
+
+## Astraの提供は今も順次
+
+段階展開とは、全員へ同時に出すのではなく、数日かけて順番に使えるようにすることです。Astraがモデル一覧にまだ見えなくても、それだけで対象外や不具合とは限りません。
+
+<Timeline>
+  <TimelineItem date="2026年9月3日">OpenAIがGPT-6 Astraを発表し、順次展開を開始</TimelineItem>
+  <TimelineItem date="2026年9月4日">Astra待ちの対象者へ、対象日ごとのbanked reset付与方針が報じられる</TimelineItem>
+  <TimelineItem date="今後" hot>アカウントごとにAstraの表示と回復権の条件を確認</TimelineItem>
+</Timeline>
+
+Astraの提供先や機能の全体像は、既存の「[GPT-6 Astra発表。追加料金なしで使える？提供時期と新機能を解説](/articles/202609-gpt-6-astra-announced/)」で整理しています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">一律の完了日を待つより、自分のアカウント表示を確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-chatgpt-astra/slide07.webp" alt="条件はアカウントで確認し、全対象者へのAstra提供完了日は未定であることを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：条件はアカウントごとに確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>まだ決まっていないこと</strong></p>
+    <ul>
+      <li>全対象者への展開完了日</li>
+      <li>今回の付与分すべてに共通する期限</li>
+    </ul>
+  </div>
+</section>
+
+## まとめ：必要な時まで保存し、表示を見て使う
+
+Astra待ちの期間に付くのは、毎日の自動回復ではなく、必要な時まで保存できる1回分の利用枠回復権です。設定の「使用量」で、付与の有無、残数、期限を確認してから使いましょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、確認場所と使うタイミングを1枚にまとめます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-chatgpt-astra/slide08.webp" alt="設定から使用量を開き、保存したリセット権を必要な時に使う流れを示す図" loading="lazy" decoding="async" />
+    <figcaption>図解：設定の「使用量」で確認してから使う</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>今日やること</strong></p>
+    <ul>
+      <li>設定の「使用量」を開く</li>
+      <li>残数と期限を確認する</li>
+      <li>必要な作業の前にだけ適用する</li>
+    </ul>
+  </div>
+</section>
+
+<Note>「毎日リセット」は、対象日ごとに回復権が付く案内を短く表したものです。アカウントの利用枠が自動で毎日満タンになる、という意味ではありません。</Note>
+
+## 参考情報
+
+- [OpenAI「GPT-6 Astra: A new generation of intelligence」](https://openai.com/index/gpt-6-astra/)
+- [OpenAI Help Center「How banked Codex resets work」](https://help.openai.com/en/articles/20001498-how-banked-codex-resets-work)
+- [OpenAI Help Center「GPT-5.6 and GPT-6 Pro in ChatGPT」](https://help.openai.com/en/articles/20001354-gpt-56-and-gpt-6-pro-in-chatgpt)
+- [OpenAI担当者の公開投稿](https://x.com/thsottiaux/status/2095651088502591861)
+- [ITmedia「ChatGPTの利用制限、新モデル『Astra』提供まで“毎日リセット”」](https://www.itmedia.co.jp/aiplus/article/2609/04/2000001165/)
+- [PC Watch「Astra利用可能まで毎日Codexの利用制限をリセット」](https://pc.watch.impress.co.jp/docs/news/2138190.html)
