@@ -235,7 +235,7 @@ try {
   $CodexLog = Join-Path $NightDir "$DateStr.$RunId.codex.log"
   Log "launch: codex exec (ephemeral, workspace-write) -> $CodexLog"
   $sw = [System.Diagnostics.Stopwatch]::StartNew()
-  $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "-C", $RepoRoot, "-")
+  $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "--model", "gpt-5.6-sol", "-C", $RepoRoot, "-")
   # GH_TOKENは外側publisher専用。Codex子プロセスへ継承させない。
   $publisherToken = $env:GH_TOKEN
   $publisherExpiry = $env:GH_TOKEN_EXPIRES_AT
