@@ -1,0 +1,319 @@
+---
+title: "DeepSeekのFlash料金が最大57%下がった。9月14日までに確認したい3つの変更"
+slug: "202609-deepseek-v4-1-flash"
+type: "news"
+category: "ニュースをかみくだく"
+description: "DeepSeek V4.1 Flashが正式発表。API料金の値下げ、旧FlashとProの接続先変更、画像対応と100万トークンを、使う人・使わない人に分けてやさしく整理します。"
+thumbnail: "/images/thumbnails/202609-deepseek-v4-1-flash.webp"
+thumbnailAlt: "『DeepSeek V4.1 Flash 料金と中身が変わる』のサムネイル。ひまりとらぼまるが値下がりする料金メーターと軽くなった計算メモを確認する図"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "DeepSeek"
+  - "DeepSeek V4.1 Flash"
+  - "AIモデル"
+  - "API料金"
+  - "生成AI"
+  - "すまラボ"
+related:
+  - "202607-kimi-k3-open-model-china-risk"
+pubDate: "2026-09-11"
+updated: "2026-09-11"
+publishAt: "2026-09-11T05:12:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+DeepSeek V4.1 Flashは、長い資料を扱うときの計算メモを小さくし、画像も読めるようにした新しいAIモデルです。2026年9月10日に正式発表され、API（別のアプリからAIを呼び出すための接続口）のFlash料金も項目別に下がりました。料金や長さの基準になるトークン（AIが文章を数える細かな単位）も、この記事で順に説明します。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> 文字と画像を扱い、非常に長い会話や資料を参照できるDeepSeekの新モデル</li>
+    <li><strong>何があった？</strong> V4.1 Flashが正式公開され、開発者向けのFlash料金が旧料金より約9〜57%下がった</li>
+    <li><strong>誰に関係ある？</strong> DeepSeekを別のアプリへ組み込む人や、旧Flash・Proのモデル名を指定している人</li>
+    <li><strong>結局どうなの？</strong> 料金と移行条件は魅力的。ただし「V4-Pro超え」は自社評価なので、自分の用途で小さく試す</li>
+  </ol>
+</Summary30>
+
+<CharacterBubble speaker="himari" mood="curious">値下げはうれしいけど、チャットを使うだけの人も何か変えないといけないの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">中心は開発者向けのAPI料金だよ。チャット画面だけを使うなら、すぐ契約を変える話ではないんだ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず、新モデルの基本情報を1枚で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-deepseek-v4-1-flash/slide01-deepseek-v41-overview.webp"
+         alt="DeepSeek V4.1 Flashの概要。9月10日発表、画像も扱える、最長100万トークン、API名はdeepseek-flashと整理した図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：DeepSeek V4.1 Flashの基本</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>2026年9月10日に正式発表</li>
+      <li>文字だけでなく画像も入力できる</li>
+      <li>APIでの新しい標準名は <code>deepseek-flash</code></li>
+    </ul>
+  </div>
+</section>
+
+## そもそもDeepSeek V4.1 Flashって何？
+
+<p class="lead">長い会話や資料を扱いつつ、必要な計算だけを動かす設計のAIモデルです。</p>
+
+モデル全体は5520億パラメータですが、質問のたびにすべてを動かすわけではありません。パラメータはAIが学習で得た調整値で、数が大きいほど常に優秀という意味ではありません。
+
+MoE（内容に合う一部の処理役だけを動かす仕組み）を使い、入力時は80億、出力時は160億のパラメータを動かすと説明されています。
+
+トークン（AIが文章を数える細かな単位）で最大100万個分のコンテキストに対応します。コンテキストは、AIが一度に参照できる会話や資料の範囲です。上限が大きいことと、全内容を常に正しく理解できることは同じではありません。
+
+画像も入力として扱えるマルチモーダル（文字だけでなく画像も材料にできる）モデルです。ただし、日本語画像の細かな読み取り精度まで、すまラボで実測したわけではありません。
+
+<NumCards
+  items={[
+    { num: "5520億", cap: "モデル全体のパラメータ" },
+    { num: "80億", cap: "入力時に動かすパラメータ" },
+    { num: "160億", cap: "出力時に動かすパラメータ" },
+  ]}
+/>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">「全体」と「実際に動く部分」の違いを図で確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-deepseek-v4-1-flash/slide02-moe-active-parameters.webp"
+         alt="DeepSeek V4.1 FlashのMoE構造。全体5520億パラメータのうち、入力時80億、出力時160億を動かすことを示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：全部を毎回動かさないMoE</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>全体の規模と、1回の処理で動く規模は別</li>
+      <li>入力と出力でも動く量が違う</li>
+      <li>数字だけで品質を決めず、用途別のテストが必要</li>
+    </ul>
+  </div>
+</section>
+
+## あなたに関係ある？
+
+### 関係がある人
+
+直接関係するのは、DeepSeek APIを組み込んだサービスを作る人、長い資料を何度も送る人、旧FlashやProのモデル名を指定している人です。料金は使ったトークン量に応じて増えるため、処理の種類と時間帯で費用が変わります。
+
+### あまり関係がない人
+
+APIを使わず、無料のチャット画面をときどき使うだけなら、今回の中心であるAPI単価を理由にすぐ動く必要はありません。
+
+## 料金はどれだけ下がった？
+
+オフピークの100万トークン当たり料金は、キャッシュヒット（以前の計算メモを再利用する仕組み）の入力0.003ドル、キャッシュミス（入力を新しく処理する仕組み）の入力0.15ドル、出力0.60ドルです。
+
+<NumCards
+  items={[
+    { num: "$0.003", cap: "キャッシュヒット入力・100万トークン" },
+    { num: "$0.15", cap: "キャッシュミス入力・100万トークン" },
+    { num: "$0.60", cap: "出力・100万トークン" },
+  ]}
+/>
+
+旧V4 Flashの同じ料金は0.007ドル、0.22ドル、0.66ドルでした。下げ幅は約57%、約32%、約9%で、すべてが半額になったわけではありません。ピーク料金（利用が集中しやすい時間に適用される高い方の料金）は、各項目が2倍です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">新しいオフピーク料金は3項目に分かれます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-deepseek-v4-1-flash/slide03-api-pricing.webp"
+         alt="DeepSeek V4.1 Flashのオフピーク料金。100万トークン当たり、キャッシュヒット入力0.003ドル、キャッシュミス入力0.15ドル、出力0.60ドル"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：オフピーク料金の3項目</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>再利用できる入力は最も安い</li>
+      <li>新しく処理する入力と出力は別料金</li>
+      <li>ピーク時間はこの各料金の2倍</li>
+    </ul>
+  </div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">旧V4 Flashからの下げ幅は項目ごとに違います。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-deepseek-v4-1-flash/slide04-price-reduction.webp"
+         alt="旧V4 Flashと比べた料金の下げ幅。キャッシュヒット入力は約57%、キャッシュミス入力は約32%、出力は約9%の値下げ"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：値下げ率は同じではない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>最大57%はキャッシュヒット入力の下げ幅</li>
+      <li>新規入力は約32%、出力は約9%</li>
+      <li>見積もりでは3項目を分けて考える</li>
+    </ul>
+  </div>
+</section>
+
+## 何が安さにつながった？
+
+KVキャッシュ（長い会話の前半を毎回最初から計算しないための仕組み）は、直前までの計算結果をメモとして保ちます。DeepSeekは、新構造でこの保存量を前世代の約4分の1、SSDへ保持する量を約8分の1にしたと説明しています。
+
+長い資料を何度も参照するAIエージェントでは、この計算メモが費用と機器負担に効きます。AIエージェントは、指示を受けて複数の作業や道具の呼び出しを続ける仕組みです。ただし、すべての利用で同じ割合の節約になるとは限りません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">安さの土台になる「保存量」の変化を図で。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-deepseek-v4-1-flash/slide05-kv-cache-compression.webp"
+         alt="新構造によるKVキャッシュの圧縮。メモリ上の保存量は前世代の約4分の1、SSDへの保持量は約8分の1と示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：計算メモを小さくする新構造</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>メモリの保存量は前世代の約4分の1</li>
+      <li>SSDへの保持量は約8分の1</li>
+      <li>実際の節約率は使い方によって変わる</li>
+    </ul>
+  </div>
+</section>
+
+## ピークとオフピークは日本時間で確認
+
+日本時間のピークは月〜金10時〜13時と15時〜19時です。それ以外はオフピークです。夜間の一括処理を移せる場合は料金を抑えやすい一方、利用者向けの即時応答を料金だけで遅らせるのがよいとは限りません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">日本時間の料金帯を時計で整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-deepseek-v4-1-flash/slide06-peak-offpeak-jst.webp"
+         alt="DeepSeek APIの日本時間の料金帯。月曜から金曜の10時〜13時と15時〜19時がピーク、それ以外がオフピーク"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：ピークとオフピークの時間帯</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>平日は昼前後と夕方がピーク</li>
+      <li>ピーク料金はオフピークの2倍</li>
+      <li>時刻は日本標準時で確認する</li>
+    </ul>
+  </div>
+</section>
+
+## 旧FlashとProはどうなる？
+
+新しい標準名は <code>deepseek-flash</code> です。旧名 <code>deepseek-v4-flash</code> と <code>deepseek-v4-flash-vision-exp</code> は、当面V4.1 Flashへ振り分けられます。
+
+さらに2026年9月14日13時（日本時間）以降、V4.1 Proが出るまで <code>deepseek-v4-pro</code> 宛ての要求もV4.1 Flashへ振り分けられ、Flash料金になります。中身が自動で変わるため、品質や応答形式に敏感な仕組みは事前テストが必要です。
+
+<Timeline>
+  <TimelineItem date="9/10">DeepSeek V4.1 Flashを正式発表</TimelineItem>
+  <TimelineItem date="9/14 13:00（日本時間）" hot>V4.1 Pro公開まで、Pro名の接続先をV4.1 Flashへ変更</TimelineItem>
+  <TimelineItem date="V4.1 Pro公開時">一時的な接続先変更が終了する見込み。最新案内を再確認</TimelineItem>
+</Timeline>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">モデル名と実際の接続先を分けて見ます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-deepseek-v4-1-flash/slide07-model-routing.webp"
+         alt="DeepSeekのモデル名の振り分け。deepseek-flashと旧Flash名はV4.1 Flashへ、9月14日13時以降はV4.1 Pro公開までdeepseek-v4-proもV4.1 Flashへつながる"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：旧Flash名とPro名の接続先</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>新しい標準名は <code>deepseek-flash</code></li>
+      <li>旧Flash名も当面はV4.1 Flashへつながる</li>
+      <li>9月14日13時以降はPro名の接続先にも注意</li>
+    </ul>
+  </div>
+</section>
+
+## 「V4-Pro超え」はどう読む？
+
+DeepSeekは、自社評価でV4.1 Flashが性能・費用・速度・総所要時間でV4 Proを上回ったと説明しています。ただし、ベンチマーク（決められた問題で性能を比べる仕組み）には、最大の推論努力や指定ツールなどの測定条件があります。
+
+自分の日本語文書、画像、コード、長時間の処理でも同じ結果になるかは別の確認が必要です。「公式の評価」と「自分の用途の実測」を分けて考えるのが安全です。
+
+<Callout kind="facts" title="公式資料で確認できること">
+  <ul>
+    <li>DeepSeek V4.1 Flashは2026年9月10日に正式発表された</li>
+    <li>オフピークの100万トークン当たり料金は、キャッシュヒット入力0.003ドル、キャッシュミス入力0.15ドル、出力0.60ドル</li>
+    <li>新しい標準API名は <code>deepseek-flash</code></li>
+    <li>最大100万トークンと画像入力に対応する</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="DeepSeekが説明していること">
+  <ul>
+    <li>V4.1 Flashは自社評価でV4 Proを上回った</li>
+    <li>新構造でKVキャッシュのメモリ保存量を前世代の約4分の1、SSD保持量を約8分の1にした</li>
+    <li>大規模な運用では高い処理効率を見込める</li>
+  </ul>
+</Callout>
+
+<Callout kind="unc" title="まだ自分で確認が必要なこと（2026年9月11日時点）">
+  <ul>
+    <li>自分の日本語資料、画像、コードでV4 Proより良い結果になるか</li>
+    <li>長時間運用で実際にどれだけ費用が下がるか</li>
+    <li>V4.1 Proの公開時期と、その後のモデル名の扱い</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">「公式評価で上回った」と「自分の仕事でも必ず上回る」は別だよ。小さな実データで比べてね。</CharacterBubble>
+
+## オープンでも手元のPC向けとは限らない
+
+モデルの学習済みデータはMITライセンスで公開されています。オープンウェイト（学習済みのモデルデータを公開する仕組み）のため、条件の範囲で自前運用を検討できます。
+
+ただし、公式発表は大規模な運用の目安としてGPU約2,000枚とストレージ群を挙げています。データが公開されていることと、家庭のPCで気軽に動かせることは別です。多くの利用者にとっては、まず公式APIが現実的です。
+
+<Note>オープンウェイトは「無料で簡単に動く」という意味ではありません。機器、電力、運用人員まで含めて考えます。</Note>
+
+## 使う前の3チェック
+
+1. 呼び出すモデル名が <code>deepseek-flash</code> か。旧名を使うなら振り分け先が変わることを理解しているか。
+2. 実行時間はピークかオフピークか。見積もりにキャッシュヒット、ミス、出力を分けているか。
+3. 自分の日本語資料、画像、道具の呼び出しで品質と形式を試したか。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">導入前の確認を3点に絞ります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-deepseek-v4-1-flash/slide08-before-use-checks.webp"
+         alt="DeepSeek V4.1 Flashを使う前の3チェック。モデル名、ピークとオフピーク、自分のデータでの品質確認を示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：使う前の3チェック</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>接続先のモデル名を確認する</li>
+      <li>料金帯と入力・出力の内訳を分ける</li>
+      <li>本番前に自分のデータで品質を比べる</li>
+    </ul>
+  </div>
+</section>
+
+## すまラボまとめ
+
+<p class="lead">V4.1 Flashの要点は、強いベンチマーク見出しだけではありません。計算メモを軽くする設計、項目別の値下げ、旧モデル名とPro名の振り分け変更が、利用者にとって具体的な変化です。</p>
+
+APIを使う人は、まずモデル名と9月14日の移行を確認し、小さなテストで品質と費用を測るのが現実的です。APIを使わない人は、今回だけでサービス選びを急ぐ必要はありません。
+
+<CharacterBubble speaker="himari" mood="aha">最大57%だけを見るのではなく、モデル名・時間帯・自分のデータの3つを確認すればいいんだね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">そう。安さと品質を同じテストで測ると、切り替えるか判断しやすいよ。</CharacterBubble>
+
+## 参考情報
+
+この記事は公式発表と公式料金表を中心に、モデルカードと報道を照合して整理しました。価格や一時的なモデル名の扱いは変わる可能性があるため、利用前に公式の最新表示も確認してください。
+
+- [DeepSeek公式：DeepSeek V4.1 Flash発表](https://deepseek.com/news/deepseek-v4-1-flash/)
+- [DeepSeek API Docs：料金表](https://api-docs.deepseek.com/quick_start/pricing/)
+- [Hugging Face：DeepSeek V4.1 Flashモデルカード](https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash)
+- [ITmedia AI+：DeepSeek V4.1 Flash発表の報道](https://www.itmedia.co.jp/aiplus/article/2609/10/2000001374/)
