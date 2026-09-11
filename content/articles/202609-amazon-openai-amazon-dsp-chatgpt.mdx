@@ -1,0 +1,265 @@
+---
+title: "ChatGPT広告の入口が増える。Amazon Ads連携で何が変わる？"
+slug: "202609-amazon-openai-amazon-dsp-chatgpt"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Amazon AdsとOpenAIの広告連携が米国の一部企業で試験開始。回答と広告の区別、会話データの扱い、日本の利用者と広告主への影響をやさしく整理します。"
+thumbnail: "/images/thumbnails/202609-amazon-openai-amazon-dsp-chatgpt.webp"
+thumbnailAlt: "『ChatGPT広告の入口が増える』のサムネイル。ひまりとらぼまるが広告配信管制室で、回答レーンとスポンサー広告レーンの分離を確認する図"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 3
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "ChatGPT"
+  - "OpenAI"
+  - "Amazon Ads"
+  - "Amazon DSP"
+  - "AI広告"
+  - "すまラボ"
+related:
+  - "202608-openai-chatgpt-digiday"
+pubDate: "2026-09-12"
+updated: "2026-09-12"
+publishAt: "2026-09-12T04:30:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Amazon AdsとOpenAIが広告で提携しました。米国の一部企業は、Amazon Adsで管理するキャンペーンをChatGPT Ads（ChatGPTの回答とは別にスポンサー表示付きで出る広告の仕組み）へ広げる試験に参加できます。利用者にとっては、ChatGPTの回答そのものがAmazonの広告になる話ではありません。回答と広告は分けて表示されるというのがOpenAIの説明です。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> Amazonの企業向け広告管理から、ChatGPT内の広告も試せるようにする連携</li>
+    <li><strong>何があった？</strong> 米国の一部広告主（広告費を払って商品やサービスを知らせる企業）を対象に、Amazon AdsのキャンペーンをChatGPT Adsへ広げる試験が始まった</li>
+    <li><strong>誰に関係ある？</strong> ChatGPTで広告を見る利用者とAmazon Adsを使う企業。日本の広告主は今回の試験対象と確認されていない</li>
+    <li><strong>結局どうなの？</strong> 広告の入口は増えるが、回答と広告は別。スポンサー表示と設定を確認すればよい</li>
+  </ol>
+</Summary30>
+
+<CharacterBubble speaker="himari" mood="curious">Amazonから広告を出せるなら、ChatGPTの回答まで広告になるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">回答と広告は別だよ。まずは「スポンサー」の表示を見分ければ大丈夫。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最初に、今回増えた広告の経路を1枚で確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-amazon-openai-amazon-dsp-chatgpt/slide01-news.webp"
+         alt="Amazon AdsからChatGPT Adsへ広告を広げる経路が、米国の一部広告主向けに試験中であることを示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：ChatGPT広告へ新しい入口</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>Amazon AdsからChatGPT Adsへつなぐ試験</li>
+      <li>対象は米国の一部広告主</li>
+      <li>すべての企業へ一般開放されたわけではない</li>
+    </ul>
+  </div>
+</section>
+
+## そもそもAmazon DSPって何？
+
+Amazon DSPは、企業が複数の場所の広告枠をまとめて買い、配信を調整する仕組みです。DSPは広告業界の言葉ですが、普通の言葉なら「広告を出す場所をまとめて管理する操作室」に近いものです。
+
+ChatGPT Adsは、ChatGPTの回答とは別に、スポンサー表示付きで出る広告の仕組みです。会話型広告は、質問したり商品を比べたりしている流れの近くへ出る広告を指します。今回の連携では、米国の一部広告主がAmazon Ads側からChatGPT Adsを試します。
+
+パイロットは、本格展開の前に限られた参加者で試す仕組みです。したがって「すべてのAmazon出品者が使える」と受け取るのは早すぎます。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Amazon DSPの役割を、広告の操作室として整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-amazon-openai-amazon-dsp-chatgpt/slide02-dsp.webp"
+         alt="Amazon DSPを、広告の計画、配信、調整、測定をまとめる企業向けの操作室として説明する図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Amazon DSPは広告の操作室</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>企業が広告の計画から測定までをまとめて扱う</li>
+      <li>複数の広告枠へ配信を広げるための仕組み</li>
+      <li>一般利用者の買い物画面ではない</li>
+    </ul>
+  </div>
+</section>
+
+## 回答と広告は混ざるの？
+
+OpenAIは、広告が回答へ影響せず、スポンサー表示を付け、通常の回答と見た目で分けると説明しています。利用者は広告を閉じ、表示理由を確認し、広告データを削除し、広告のパーソナライズを管理できます。パーソナライズは、利用者の関心や設定に合わせて表示内容を調整することです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">回答とスポンサー広告は、別々のレーンとして表示されます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-amazon-openai-amazon-dsp-chatgpt/slide03-answer-ad-separation.webp"
+         alt="通常の回答レーンとスポンサー広告レーンを上下に分け、広告は回答へ影響しないと示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：回答と広告は別</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>広告にはスポンサー表示が付く</li>
+      <li>通常の回答とは見た目で分ける</li>
+      <li>広告が回答の内容を決める仕組みではない</li>
+    </ul>
+  </div>
+</section>
+
+## 会話は広告主へ見えるの？
+
+OpenAIの説明では、広告主へ会話本文、チャット履歴、メモリ、個人情報は渡りません。渡るのは集計情報（個別の会話ではなく、閲覧数やクリック数など全体の反応をまとめた数字）です。
+
+一方、OpenAI側はテスト中、会話の話題、過去のチャット、広告への過去の反応を使って広告を選ぶ場合があると説明しています。「広告主が会話を読む」ことと「サービス側が表示候補を選ぶ」ことは分けて考える必要があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">広告主へ渡る情報と渡らない情報を分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-amazon-openai-amazon-dsp-chatgpt/slide04-privacy-boundary.webp"
+         alt="会話、履歴、メモリ、個人情報は広告主へ渡さず、閲覧数とクリック数などの集計情報だけを共有すると示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：会話は広告主へ渡さない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>会話本文や履歴、メモリ、個人情報は渡さない</li>
+      <li>広告主が受け取るのは閲覧数やクリック数などの集計</li>
+      <li>サービス側での広告選択とは別の話</li>
+    </ul>
+  </div>
+</section>
+
+<CharacterBubble speaker="himari" mood="aha">広告主に会話が渡るわけではない。でも、表示の調整は自分で確認したいね。</CharacterBubble>
+
+## あなたに関係ある？
+
+### 関係がある人
+
+ChatGPTの無料・低価格帯を使い、広告がどう表示されるか気になる人には関係があります。Amazon Adsを利用する米国の一部企業や、会話型広告を試したい広告担当者にも直接関係します。広告主は、商品やサービスを知らせるために広告費を払う企業や団体のことです。
+
+### あまり関係がない人
+
+広告のない対象プランだけを使う人は、今回を理由に契約を変える必要はありません。日本の広告主がAmazon DSP経由で今日から利用できるという発表でもありません。Amazonへ商品を出品しているだけで自動参加する仕組みでもありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">自分が今すぐ動く必要があるかを、利用者と広告主に分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-amazon-openai-amazon-dsp-chatgpt/slide05-who-is-affected.webp"
+         alt="ChatGPTで広告を見る人と米国の一部広告主は関係があり、広告のない対象プラン利用者と日本の広告主は今すぐ動かなくてよいと示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：関係がある人、今すぐ動かなくてよい人</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>ChatGPTで広告を見る人は表示の違いを確認</li>
+      <li>米国の一部広告主は試験対象</li>
+      <li>日本の広告主向け開始時期はまだ公表されていない</li>
+    </ul>
+  </div>
+</section>
+
+## 日本ではどうなる？
+
+OpenAIは2026年8月11日、ChatGPT Adsを日本でも始めたと案内しました。しかし、Amazon DSP連携についてAmazonが発表したのは、米国の一部広告主による試験です。
+
+日本の利用者がChatGPT広告を見る可能性はあります。ただし、それが今回のAmazon経由広告か、日本の企業が同じ経路で出稿できるかは分かりません。
+
+<Note>「ChatGPT Adsが日本で始まったこと」と「Amazon DSP連携を日本の広告主が使えること」は別です。</Note>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">日本での広告開始と、今回の米国試験を混同しないことが大切です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-amazon-openai-amazon-dsp-chatgpt/slide06-japan-vs-us-pilot.webp"
+         alt="ChatGPT Adsは日本でも開始した一方、Amazon DSP連携は米国の一部広告主で試験中で、日本広告主向け時期は未公表と示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：日本の広告開始と今回の試験は別</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>ChatGPT Ads自体は日本でも始まっている</li>
+      <li>Amazon DSP連携は米国の一部広告主で試験中</li>
+      <li>日本の広告主向け提供時期は未公表</li>
+    </ul>
+  </div>
+</section>
+
+## 今回何が変わった？
+
+Amazon Adsの既存キャンペーンをChatGPTの広告へ広げる経路が一つ増えました。Amazonは、利用者が選択肢を探し、比べ、決める場面で広告主との接点を作れると説明しています。Delta Vacationsが初期の参加ブランドとして紹介されています。
+
+<Callout kind="facts" title="発表で確認できたこと">
+  <ul>
+    <li>Amazon AdsとOpenAIが広告で提携した</li>
+    <li>米国の一部広告主が試験に参加している</li>
+    <li>Amazon AdsのキャンペーンをChatGPT Adsへ広げる連携である</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="企業側が期待していること">
+  <p>Amazonは、利用者が選択肢を探し、比べ、決める場面で広告主との接点を増やせると説明しています。広告効果を保証する実績ではありません。</p>
+</Callout>
+
+<Callout kind="unc" title="未公表（2026年9月12日時点）">
+  <ul>
+    <li>料金、参加基準、一般開放の時期</li>
+    <li>日本の広告主へ提供する時期</li>
+    <li>Amazon DSP経由の広告が日本で表示される時期</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">公表済みの事実、企業の期待、未公表事項を3つに分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-amazon-openai-amazon-dsp-chatgpt/slide07-facts-expectations-unpublished.webp"
+         alt="発表済みは提携と米国試験、企業の期待は接点増加、未公表は料金と日本展開という3区分を示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：分かっていることを3つに仕分け</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>提携と米国試験は発表済み</li>
+      <li>広告主との接点増加は企業側の期待</li>
+      <li>料金と日本の広告主向け展開は未公表</li>
+    </ul>
+  </div>
+</section>
+
+## 注意点
+
+確認したいのは三つです。まず、広告にはスポンサー表示があるか。次に、回答と広告が見た目で分かれているか。最後に、広告の表示理由や設定を自分で確認できるかです。広告の内容が回答の正しさを保証するわけではありません。
+
+広告主側は、対象地域、参加条件、費用、使える広告形式を公式情報で確認する必要があります。試験段階のため、効果を前提に大きな予算を動かす話ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">利用者と広告主が確認する点を3つに絞ります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-amazon-openai-amazon-dsp-chatgpt/slide08-reader-checklist.webp"
+         alt="スポンサー表示、回答との分離、広告設定の3点を確認し、広告主は公式条件を待つと示す図"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：見るのはこの3点</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>スポンサー表示を確認する</li>
+      <li>回答と広告が分かれているかを見る</li>
+      <li>広告の表示理由と設定を確認する</li>
+    </ul>
+  </div>
+</section>
+
+## すまラボまとめ
+
+ChatGPT広告の購入経路にAmazon Adsが加わり始めました。ただし、現時点では米国の一部広告主による試験です。利用者は特別な操作を急ぐ必要はなく、広告を見かけたらスポンサー表示、回答との分離、広告設定を確認すれば十分です。
+
+## 参考情報
+
+この記事はAmazon AdsとOpenAIの公式発表を中心に、広告ポリシーと報道を照合して整理しました。試験の対象や提供地域は変わる可能性があるため、広告を出す前には公式の最新条件も確認してください。
+
+- [Amazon Ads公式発表](https://advertising.amazon.com/en-ca/library/news/amazon-ads-chat-gpt-advertising-integration)
+- [OpenAI公式：Testing ads in ChatGPT](https://openai.com/index/testing-ads-in-chatgpt/)
+- [OpenAI公式：Ad policies](https://openai.com/policies/ad-policies/)
+- [ITmedia NEWS](https://www.itmedia.co.jp/news/article/2609/11/2000001396/)
