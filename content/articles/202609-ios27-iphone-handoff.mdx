@@ -1,0 +1,278 @@
+---
+title: "iPhoneを2台持ちたい人へ。iPhone Handoffは日本でまだ待ち"
+slug: "202609-ios27-iphone-handoff"
+type: "news"
+category: "ニュースをかみくだく"
+description: "iOS 27のiPhone Handoffは、同じ電話番号を2台のiPhoneで切り替える機能です。仕組み、海外料金、日本での利用可否と注意点を公式情報から整理します。"
+thumbnail: "/images/thumbnails/202609-ios27-iphone-handoff.webp"
+thumbnailAlt: "2台のiPhoneを見比べながら、日本での対応を待つひまりとラボまるのイラスト"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_worried_icon.webp"
+tags:
+  - "iOS 27"
+  - "iPhone Handoff"
+  - "eSIM"
+  - "iPhone"
+  - "通信キャリア"
+related:
+  - "202609-iphone-duo-iphone-18"
+  - "what-is-esim"
+pubDate: "2026-09-14"
+updated: "2026-09-14"
+publishAt: "2026-09-14T05:15:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+iOS 27の「iPhone Handoff」は、同じ電話番号を2台のiPhoneで切り替えて使うための新機能です。電話、留守番電話、メッセージ、「探す」の位置情報などを、使いたい側のiPhoneへ移せます。
+
+ただし、2台が同時に同じ番号で動く仕組みではありません。ロックを解除して使い始めた1台だけが有効になります。また、2026年9月14日時点でAppleが案内する対応通信会社は米国とドイツの2社だけです。日本での提供時期と料金は発表されていません。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> 同じ電話番号を2台のiPhoneで切り替えて使う機能</li>
+    <li><strong>何があった？</strong> AppleがiOS 27で提供し、米国とドイツの通信会社が対応を始めた</li>
+    <li><strong>誰に関係ある？</strong> 仕事と休日など、場面に合わせて2台を持ち替えたい人</li>
+    <li><strong>結局どうなの？</strong> 日本はまだ対象外。国内通信会社の正式発表を待つ段階</li>
+  </ol>
+</Summary30>
+
+## 先に結論
+
+<p class="lead">便利そうに見えても、日本で今すぐ申し込める機能ではありません。まずは国内通信会社の対応発表を待ちましょう。</p>
+
+Apple Accountとは、iCloudやApp Storeなどで使うAppleの利用者アカウントという仕組みです。eSIMとは、端末へ通信契約を書き込むデジタル版SIMの仕組みです。
+
+- 同じ電話番号を2台で共有するが、有効なのは一度に1台
+- 2台ともiOS 27、同じApple Account、Wi-Fi、対応する通信会社のeSIMなどが必要
+- 海外では月額料金がある。日本の提供時期と料金は未発表
+
+<CharacterBubble speaker="himari" mood="curious">電話番号を増やさずに、仕事用と休日用のiPhoneを持ち替えられるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">対応する通信会社ならできるよ。ただし、使えるのはその時に選んだ1台だけなんだ。</CharacterBubble>
+
+### 関係がある人
+
+仕事用と休日用、大画面と小型など、同じ電話番号のまま2台のiPhoneを持ち替えたい人です。海外の対応通信会社をすでに契約している人にも関係があります。
+
+### あまり関係がない人
+
+iPhoneを1台だけ使う人や、日本の通信会社で今すぐ申し込める新機能を探している人です。日本での提供はまだ発表されていません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まず、iPhone Handoffが何をする機能なのかを見ます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ios27-iphone-handoff/slide01-feature.webp" alt="2台のiPhoneの間で同じ電話番号を切り替えるiPhone Handoffの仕組み" loading="lazy" decoding="async" />
+    <figcaption>図解：同じ電話番号を2台で切り替える</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>同じ番号を2台のiPhoneで共有</li>
+      <li>電話やメッセージなどを切り替え</li>
+      <li>場面に合わせて端末を持ち替えられる</li>
+    </ul>
+  </div>
+</section>
+
+## iPhone Handoffは何を切り替える？
+
+iPhone Handoffは、メインiPhone（回線管理の中心になる端末）とサブiPhone（同じ番号を共有する2台目の端末）をひも付ける機能です。使いたいiPhoneのロックを解除すると、その端末へ次の情報が移ります。
+
+- 通話と留守番電話
+- SMSとMMS
+- iMessage
+- RCS（写真や既読表示などに対応する新しい携帯メッセージの仕組み）
+- 「探す」で表示される位置情報
+
+ここで大切なのは「同時利用」ではなく「切り替え」だという点です。片方を使い始めると、もう片方の回線機能は無効になります。
+
+<NumCards
+  items={[
+    { num: "1番号", cap: "2台で共有" },
+    { num: "2台", cap: "登録できるiPhone" },
+    { num: "1台", cap: "一度に有効" },
+  ]}
+/>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">2台とも鳴るサービスとの違いを確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ios27-iphone-handoff/slide02-one-active.webp" alt="2台のうちロックを解除して選んだ1台だけが有効になる様子" loading="lazy" decoding="async" />
+    <figcaption>図解：有効になるのは一度に1台</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p>使う側のiPhoneを選ぶと、もう片方は待機状態になります。2台同時着信の機能ではありません。</p>
+  </div>
+</section>
+
+## 利用に必要なもの
+
+Appleの案内では、次の条件をすべて満たす必要があります。
+
+1. iOS 27以降を搭載したiPhoneが2台
+2. 両方のiPhoneがWi-Fiへ接続
+3. 両方で同じApple Accountへサインイン
+4. 「iCloudにメッセージを保管」が有効
+5. FaceTimeとiMessageも同じApple Accountを使用
+6. 対応する通信会社のeSIM契約
+
+端末が2台あれば自動的に使えるわけではありません。特に通信会社の対応は必須条件です。
+
+<Callout kind="facts" title="Appleが案内している事実">
+  <ul>
+    <li>対応端末はiOS 27以降のiPhone 2台</li>
+    <li>同じApple AccountとWi-Fi接続が必要</li>
+    <li>通信会社がiPhone Handoffに対応している必要がある</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">端末だけでなく、アカウントと通信契約も確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ios27-iphone-handoff/slide03-requirements.webp" alt="iOS 27のiPhone 2台、Wi-Fi、同じApple Account、対応eSIMの4条件" loading="lazy" decoding="async" />
+    <figcaption>図解：利用前にそろえる条件</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>iOS 27のiPhoneを2台用意</li>
+      <li>同じApple AccountとWi-Fiを使う</li>
+      <li>対応通信会社のeSIMを契約</li>
+    </ul>
+  </div>
+</section>
+
+## 従来のHandoffとは別の機能
+
+これまでApple製品で使われてきたHandoffは、iPhoneで開いたWebページやメール作成などをMacやiPadへ引き継ぐ連係機能です。
+
+新しいiPhone Handoffは、電話番号と携帯回線を2台のiPhone間で切り替える機能です。名前は似ていますが、引き継ぐ対象が違います。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">従来のHandoffと新機能を並べて整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ios27-iphone-handoff/slide04-handoff-difference.webp" alt="作業を引き継ぐ従来のHandoffと電話番号を切り替えるiPhone Handoffの比較" loading="lazy" decoding="async" />
+    <figcaption>図解：同じ名前でも役割が違う</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p>従来版は作業の続きを渡し、新機能は同じ電話番号を使うiPhoneを切り替えます。</p>
+  </div>
+</section>
+
+## 海外の料金はいくら？
+
+Appleが共通料金を決めているわけではなく、契約する通信会社によって料金が変わります。
+
+米国のT-Mobileは月額5ドルと案内しています。ドイツのTelekomは、MultiSIM（1つの回線契約を複数のSIMや端末で使う通信会社サービス）の一部として月額6.95ユーロで提供し、一部プランにはMultiSIM枠が含まれます。
+
+これらは海外の料金です。為替換算した金額を、そのまま日本の予定価格として考えることはできません。
+
+<NumCards
+  items={[
+    { num: "$5/月", cap: "米T-Mobile" },
+    { num: "€6.95/月", cap: "独Telekom" },
+    { num: "未発表", cap: "日本の料金" },
+  ]}
+/>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">海外で発表された月額料金を確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ios27-iphone-handoff/slide05-overseas-fees.webp" alt="米国は月5ドル、ドイツは月6.95ユーロ、日本は未発表という料金比較" loading="lazy" decoding="async" />
+    <figcaption>図解：料金は通信会社ごとに決まる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p>海外では追加の月額料金があります。日本の価格を示す材料ではありません。</p>
+  </div>
+</section>
+
+## 日本では使える？
+
+2026年9月14日時点で、Appleの対応通信会社一覧に載っているのは米国のT-MobileとドイツのTelekomです。日本の通信会社は掲載されていません。
+
+そのため、日本国内の回線で利用できるとは確認できません。提供時期、対象プラン、追加料金も未発表です。日本語の設定画面やサポートページがあっても、国内回線が対応していることの証明にはなりません。
+
+<Callout kind="unc" title="日本ではまだ分からないこと（2026年9月14日時点）">
+  <ul>
+    <li>国内通信会社が対応するか</li>
+    <li>対応する場合の開始時期</li>
+    <li>対象プランと追加料金</li>
+  </ul>
+</Callout>
+
+<Note>利用を検討するときは、Appleの一般案内だけでなく、契約中の通信会社による正式発表も確認してください。</Note>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">現在の日本向け情報を整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ios27-iphone-handoff/slide06-japan-status.webp" alt="米国とドイツは対応済みで、日本は未発表だと示す地図風の図解" loading="lazy" decoding="async" />
+    <figcaption>図解：日本は通信会社の発表待ち</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p>Appleの対応一覧に日本の通信会社はありません。今は申し込み方法を探すより、正式発表を待つ段階です。</p>
+  </div>
+</section>
+
+## 使う前に知りたい注意点
+
+Apple Watchのペアリング先は、iPhone Handoffに合わせて自動では切り替わりません。Wallet（電子マネー、決済カード、交通券などを保管するAppleのアプリ）の一部項目は、片方のiPhoneだけで使える場合があります。
+
+銀行や認証アプリなど、他社製アプリはそれぞれの同期や本人確認が必要になることがあります。端末を切り替えれば、あらゆるアプリが同じ状態になるわけではありません。
+
+停止方法にも注意が必要です。Appleは、eSIMを端末から削除しただけでは通信会社の課金が止まらない場合があると案内しています。解約するときは通信会社へ連絡してください。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">回線以外に自動で移らないものを確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ios27-iphone-handoff/slide07-cautions.webp" alt="Apple Watch、Wallet、他社製アプリ、解約手続きを確認する注意点の図解" loading="lazy" decoding="async" />
+    <figcaption>図解：すべてが自動で移るわけではない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>Apple Watchは自動切り替えなし</li>
+      <li>Walletや他社アプリには個別条件あり</li>
+      <li>停止時は通信会社へ連絡</li>
+    </ul>
+  </div>
+</section>
+
+## どんな人に向く？
+
+対応する通信会社を契約でき、同じ電話番号のまま2台を明確に使い分けたい人に向く機能です。たとえば、平日は大画面の仕事用iPhone、休日は小さく軽いiPhoneという持ち替え方が考えられます。
+
+一方、2台へ同時に着信させたい人、Apple Watchや決済機能まで毎回完全に切り替えたい人には合わない可能性があります。日本の利用者は、次の3点が発表されてから判断すると安全です。
+
+1. 契約中の通信会社が対応するか
+2. 月額料金と対象プランは何か
+3. 通話、テザリング、Apple Watch、Walletの条件は何か
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">日本で提供されたときの確認項目をまとめます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ios27-iphone-handoff/slide08-checkpoints.webp" alt="対応通信会社、月額料金、利用条件の3点を確認するチェックリスト" loading="lazy" decoding="async" />
+    <figcaption>図解：申し込む前の3チェック</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p>国内対応、料金、周辺機能の条件がそろってから、自分の使い方に合うか判断しましょう。</p>
+  </div>
+</section>
+
+## すまラボまとめ
+
+iPhone Handoffは、同じ電話番号を2台のiPhoneで切り替える便利な機能です。ただし、有効になるのは一度に1台で、対応通信会社との追加契約も必要です。
+
+海外では提供が始まっていますが、日本の通信会社、開始時期、料金は2026年9月14日時点で未発表です。今は海外料金から予測せず、契約中の通信会社による正式発表を待ちましょう。
+
+## 参考情報
+
+- [Appleサポート：iPhone Handoffを設定する](https://support.apple.com/ja-jp/127274)
+- [T-Mobile Newsroom：iPhone Handoffを月額5ドルで提供](https://www.t-mobile.com/news/devices/iphone-18-pro-iphone-duo-apple-watch-release)
+- [Deutsche Telekom：iPhone HandoffとMultiSIMの料金](https://www.telekom.com/de/newsroom/aktuelles/medieninformationen/2026/09/iphone-handoff-bei-der-telekom)
