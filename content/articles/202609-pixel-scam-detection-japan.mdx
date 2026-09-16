@@ -1,0 +1,216 @@
+---
+title: "Pixelが返信前に詐欺を警告。日本語通知で何が変わる？"
+slug: "202609-pixel-scam-detection-japan"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Google Pixelのチャット通知向け詐欺検知が日本語に対応。仕組み、端末内処理、米国との違い、注意点をやさしく整理します。"
+thumbnail: "/images/thumbnails/202609-pixel-scam-detection-japan.webp"
+thumbnailAlt: "夜の通知セーフティステーションで、返信前の詐欺警告を確認するひまりとラボまる"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_worried_icon.webp"
+tags:
+  - "Google Pixel"
+  - "詐欺検知"
+  - "セキュリティ"
+  - "Android"
+  - "Gboard"
+related:
+  - "what-is-ai-smartphone"
+  - "ai-smartphone-guide"
+pubDate: "2026-09-17"
+updated: "2026-09-17"
+publishAt: "2026-09-17T04:30:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Google Pixelの「詐欺検知」は、メッセージに詐欺でよく使われる不審なパターンがないかを端末で調べ、疑わしいときに注意を促す機能です。チャット通知とは、チャットアプリを開く前に画面へ出る新着メッセージのお知らせです。
+
+Googleは2026年9月のPixel Dropで、チャットアプリから届く通知の詐欺検知を日本と日本語へ広げました。Pixel Dropとは、GoogleがPixelへ定期的に追加する機能更新です。アプリを開いて返信する前に警告を見られる点が、今回の変化です。
+
+ただし、警告は安全・危険を確定する判定ではありません。見逃しや誤検知はあり得るため、送金、認証コード、個人情報を求める連絡は別の方法でも確認する必要があります。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> Pixelがチャットの新着通知を調べ、詐欺の可能性があるときに警告する機能</li>
+    <li><strong>何があった？</strong> 2026年9月のPixel Dropで、日本と日本語を含む地域・言語へ対応が拡大</li>
+    <li><strong>誰に関係ある？</strong> 対応するPixelでSMSやチャットアプリを使う人</li>
+    <li><strong>結局どうなの？</strong> 返信前の気づきには役立つが、警告の有無だけで安全を決めず、別経路でも確認する</li>
+  </ol>
+</Summary30>
+
+## 先に結論
+
+<p class="lead">日本語のチャット通知でも、アプリを開く前に詐欺の可能性を知らせる仕組みが使えるようになりました。</p>
+
+- 基本の判定はPixelの中で行われる
+- 警告後は「詐欺として扱う」「詐欺ではない」を自分で選べる
+- 米国向けの文字入力中の警告とは提供範囲が違う
+- 見逃しや誤検知があるため、警告だけで最終判断しない
+
+<CharacterBubble speaker="himari" mood="curious">メッセージを開く前に、怪しいかもしれないと教えてくれるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="worried">そうだよ。でも安全を保証する機能ではないから、大事な連絡は別の方法でも確かめよう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">今回の変化は、日本語のチャット通知にも警告が広がったことです。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-pixel-scam-detection-japan/slide01-japanese-notifications.webp" alt="Pixelの詐欺検知が日本語のチャット通知へ対応したことを示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：日本語の通知へ対応</figcaption>
+  </figure>
+</section>
+
+<Callout kind="facts" title="公式情報で確認できること">
+  <ul>
+    <li>チャットアプリの通知にある不審な内容をPixelが調べる</li>
+    <li>日本と日本語は対応地域・言語に含まれる</li>
+    <li>機能は初期設定で有効になっている</li>
+    <li>判定は安全に隔離された端末内の環境で行われる</li>
+  </ul>
+</Callout>
+
+### 関係がある人
+
+対応するPixelでSMSやチャットアプリを使う人、家族のPixelで詐欺対策を整えたい人です。返信前に不審な連絡へ気づく材料が1つ増えます。
+
+### あまり関係がない人
+
+Pixel以外のスマートフォンを使う人には、今回のPixel向け更新は直接届きません。対応するPixelでも、更新や設定項目がまだ届いていない場合があります。
+
+## そもそも何を検知する？
+
+<p class="lead">迷惑な広告をまとめて振り分けるだけでなく、だまして情報やお金を取ろうとするメッセージへ注意を出します。</p>
+
+詐欺検知は、メッセージの内容や会話の流れに、不審なパターンがないかを調べます。対象はチャットアプリから届く通知です。警告が必要だと判断すると、通知に赤い注意表示と「詐欺の可能性」という案内が現れます。スパムとは、大量送信された迷惑な連絡のことです。詐欺と重なる場合はありますが、同じ意味ではありません。
+
+これは、通話中の会話を調べるPixelの詐欺検知とは別の場面で働く機能です。今回の中心は、チャットアプリを開く前に見える新着通知です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">不審な内容を見つけると、返信へ進む前の通知で一度止まれます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-pixel-scam-detection-japan/slide02-warning-before-open.webp" alt="チャットアプリを開く前に詐欺の可能性を警告する通知の図解" loading="lazy" decoding="async" />
+    <figcaption>図解：アプリを開く前に警告</figcaption>
+  </figure>
+</section>
+
+<Callout kind="claims" title="報道で注目された利点">
+  <p>ケータイ Watchは、利用者がうっかり返信する前に注意できる点を、この更新の実用的な利点として紹介しています。</p>
+</Callout>
+
+## 警告が出たらどうなる？
+
+<p class="lead">Pixelが勝手に会話を削除するのではなく、詳細を見てから利用者が扱いを選びます。</p>
+
+警告を開くと、内容の詳細を確認し、「詐欺として扱う」か「詐欺ではない」かを選べます。「詐欺ではない」を選ぶと、その会話ではしばらく詐欺検知が無効になります。間違えて解除しないよう、相手を別の連絡先から確かめてから選ぶのが安全です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">警告の後には、詳細確認と2つの選択肢があります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-pixel-scam-detection-japan/slide03-review-options.webp" alt="詳細を確認し、詐欺として扱うか詐欺ではないかを選ぶ流れの図解" loading="lazy" decoding="async" />
+    <figcaption>図解：警告後は自分で選ぶ</figcaption>
+  </figure>
+</section>
+
+## メッセージはGoogleへ送られる？
+
+<p class="lead">通常の判定は端末の中で行われ、利用者が共有を選ばない限り、メッセージ内容はGoogleへ送られません。</p>
+
+オンデバイス処理とは、判定を外部サーバではなく、基本的にスマートフォンの中で行う仕組みです。Googleは、チャット通知の詐欺検知を安全に隔離された端末内の環境で実行すると説明しています。つまり、判定のために会話を毎回外部のサーバへ送る仕組みではありません。
+
+警告後に機能改善のための共有を選ぶことはできます。この場合は、選択したメッセージ内容が一般的な識別情報を除いた形で送られます。「端末内で判定する」ことと、「自分で選んだときだけ改善用に共有できる」ことは分けて考えましょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">まずは端末内の隔離された環境で通知を調べます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-pixel-scam-detection-japan/slide04-on-device-processing.webp" alt="チャット通知の詐欺判定をPixel端末内の隔離された環境で行う図解" loading="lazy" decoding="async" />
+    <figcaption>図解：判定はPixelの中</figcaption>
+  </figure>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">改善用に内容を共有するかどうかは、利用者が選べます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-pixel-scam-detection-japan/slide05-optional-sharing.webp" alt="通常は共有せず、改善のための共有は利用者が選ぶことを示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：共有するかは自分で選ぶ</figcaption>
+  </figure>
+</section>
+
+## 日本と米国では何が違う？
+
+<p class="lead">日本向けに案内された中心機能は通知での警告です。米国では、文字を入力している途中の警告も追加されました。</p>
+
+Gboardとは、Googleが提供する文字入力用のキーボードアプリです。2026年9月の更新では、米国で一部アプリを使って返信文を入力している途中にも、Gboardが詐欺の可能性を警告する機能が追加されました。
+
+日本と日本語への拡大として確認できるのは、チャットアプリから届いた通知を調べる機能です。米国向けのGboard警告まで日本で使えると読み替えないようにしましょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">同じ更新でも、地域によって警告が出る場面が異なります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-pixel-scam-detection-japan/slide06-japan-us-difference.webp" alt="日本は通知で警告し、米国はGboardで入力中にも警告する違いの図解" loading="lazy" decoding="async" />
+    <figcaption>図解：日本と米国の提供範囲</figcaption>
+  </figure>
+</section>
+
+## 警告がなければ安全？
+
+<p class="lead">警告が出ないメッセージでも、安全とは限りません。反対に、正しい連絡へ誤って警告が出ることもあります。</p>
+
+Googleも、詐欺検知は100％正確ではないと案内しています。詐欺の手口は変化するため、見逃しが起きる可能性があります。銀行や配送会社などの正規メッセージを誤って疑う可能性もあります。
+
+特に、急がせる連絡、認証コードや暗証番号を求める連絡、個人情報を返信させる連絡、短縮URLへ誘導する連絡では、警告の有無にかかわらず立ち止まりましょう。届いたリンクをそのまま使わず、公式アプリや手元の連絡先から確認します。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">見逃しと誤検知の両方があるため、警告だけで決めません。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-pixel-scam-detection-japan/slide07-not-perfect.webp" alt="詐欺検知には見逃しと誤検知があり、警告だけで判断しないことを示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：詐欺検知は100％ではない</figcaption>
+  </figure>
+</section>
+
+<Note>警告は「確認するきっかけ」です。安全を保証する印でも、詐欺を確定する判定でもありません。</Note>
+
+<Callout kind="unc" title="まだ分からないこと（2026年9月17日時点）">
+  <ul>
+    <li>日本で使える対応Pixelの詳しい機種一覧</li>
+    <li>検知対象となるチャットアプリの完全な一覧</li>
+    <li>日本語での見逃し率や誤検知率</li>
+    <li>Gboardの入力中警告が日本へ広がる時期</li>
+  </ul>
+</Callout>
+
+## 今できる3つの確認
+
+<p class="lead">端末を更新し、設定を確認し、大切な連絡は別の方法で確かめる。この3段階で使います。</p>
+
+1. Pixelと電話・システム関連アプリを最新の状態にする。
+2. 「設定」→「セキュリティとプライバシー」→「その他のセキュリティとプライバシー」→「詐欺検知」→「メッセージ詐欺」の順に開き、有効か確認する。
+3. 送金や個人情報を求める連絡は、公式アプリや公開された電話番号から別経路で確認する。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">便利な警告を、日ごろの確認手順と組み合わせます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-pixel-scam-detection-japan/slide08-three-checks.webp" alt="更新、設定、別の方法で確認という3つの安全確認を示す図解" loading="lazy" decoding="async" />
+    <figcaption>図解：今できる3つの確認</figcaption>
+  </figure>
+</section>
+
+## すまラボまとめ
+
+Pixelのチャット通知向け詐欺検知が日本語に対応し、アプリを開いて返信する前に、不審なメッセージへ気づける機会が増えました。端末内で判定する設計も、日常的に使う機能として分かりやすい点です。
+
+一方で、警告は最終判定ではありません。通知に警告がなくても油断せず、急がせる連絡や情報を求める連絡は別の方法で確認しましょう。
+
+## 参考情報
+
+- [Google：2026年9月のPixel Drop](https://blog.google/products-and-platforms/devices/pixel/september-2026-pixel-drop/)
+- [Google Pixel ヘルプ：スパム検知と詐欺検知](https://support.google.com/pixelphone/answer/16704479?hl=ja)
+- [Google Security Blog：AIを使った詐欺検知](https://blog.google/security/new-ai-powered-scam-detection-features/)
+- [ケータイ Watch：スマホが詐欺を自動警告、Pixel最新機能が日本でも](https://k-tai.watch.impress.co.jp/docs/news/2141355.html)
