@@ -1,0 +1,293 @@
+---
+title: "マイナポータルアプリが消えた？ マイナアプリへ変わった理由と今やること"
+slug: "202609-myna-app-renewal-guide"
+type: "news"
+category: "ニュースをかみくだく"
+description: "旧マイナポータルアプリがマイナアプリへ更新され、旧デジタル認証アプリの役割も統合されました。何が変わったのか、誰に関係するのか、更新後に何をすればよいかをやさしく整理します。"
+thumbnail: "/images/thumbnails/202609-myna-app-renewal-guide.webp"
+thumbnailAlt: "2本の本人確認レーンが1つにまとまる案内センターで、更新後のマイナアプリを確認するひまりとらぼまる"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "マイナアプリ"
+  - "マイナポータル"
+  - "マイナンバーカード"
+  - "デジタル庁"
+  - "本人確認"
+related: []
+pubDate: "2026-09-21"
+updated: "2026-09-21"
+publishAt: "2026-09-21T05:06:20+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+「マイナポータル」は、行政手続きや自分の情報確認ができる国のオンラインサービスです。その窓口へのログインを助けていたマイナポータルアプリは、2026年8月25日に更新されました。
+
+「マイナアプリ」は、マイナンバーカードの読み取りや本人確認をスマホで助けるソフトです。スマホのホーム画面で旧アプリが見当たらなくても、勝手に消えたのではなく、このアプリへ変わった可能性があります。
+
+これは名前とアイコンだけの変更ではありません。官民のサービスで本人確認に使われていた「デジタル認証アプリ」の役割が統合され、マイナンバーカードを読み取る入口が1つにまとまりました。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> マイナンバーカードの読み取りや本人確認をスマホで助ける、デジタル庁のアプリ</li>
+    <li><strong>何があった？</strong> 2026年8月25日に旧マイナポータルアプリへ旧デジタル認証アプリの機能が統合され、マイナアプリになった</li>
+    <li><strong>誰に関係ある？</strong> 旧アプリ利用者、マイナポータルで手続きする人、カードを使ってオンライン本人確認をする人</li>
+    <li><strong>結局どうなの？</strong> まず更新を確認し、必要なときに初回利用登録。ただし実物カードが必要なサービスも残る</li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "2→1", cap: "旧2アプリの役割を1つへ" },
+    { num: "8/25", cap: "マイナアプリの提供開始日" },
+    { num: "3手順", cap: "更新・初回登録・提供元確認" },
+  ]}
+/>
+
+<Callout kind="facts" title="公式情報で確認できたこと">
+  <ul>
+    <li>2026年8月25日にマイナアプリが提供開始された</li>
+    <li>旧マイナポータルアプリへ旧デジタル認証アプリの機能が統合された</li>
+    <li>旧マイナポータルアプリ利用者はアプリ更新で移行でき、自動更新の設定なら自動で変わる場合がある</li>
+    <li>旧デジタル認証アプリは提供・利用が終了し、統合後はマイナアプリを使う</li>
+    <li>認証、署名、情報連携、スマートフォンへのカード機能追加を1つのアプリで扱う</li>
+    <li>すべてのサービスがスマートフォンだけで完結するわけではない</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="himari" mood="curious">ホーム画面から前のアプリが消えたように見えても、削除されたとは限らないの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">うん。まずアプリストアを開いて、更新後の名前が「マイナアプリ」になっているか確認しよう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最初に、名前が変わった意味を1枚で確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-myna-app-renewal-guide/slide01-app-not-gone.webp"
+         alt="消えたのではなくマイナアプリへ更新されたことを、更新前後のスマートフォン画面とひまり、らぼまるで示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：旧アプリは削除ではなく更新</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>旧マイナポータルアプリは、更新後に名前と見た目が変わる</li>
+      <li>自動更新が有効なら、すでにマイナアプリへ変わっている場合がある</li>
+    </ul>
+  </div>
+</section>
+
+## そもそもマイナアプリって何？
+
+マイナアプリは、マイナンバーカードの読み取りやオンラインの本人確認を助けるアプリです。認証とは、サービスを使う人が本人か確かめること。電子署名とは、オンラインの申請が本人によるものだと示す仕組みです。
+
+似た名前の「マイナポータル」は、行政手続きや自分の情報確認ができる国のオンライン窓口です。たとえると、マイナポータルが役所のオンライン窓口なら、マイナアプリは入口で本人確認をする鍵や受付に近い役割です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">今回の中心は、本人確認の入口が1つになったことです。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-myna-app-renewal-guide/slide02-two-apps-one.webp"
+         alt="2つのアプリが1つになり、ログイン、電子署名、情報提供をまとめて扱えることを示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：2つのアプリが1つに</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>オンライン窓口そのものがマイナポータル</li>
+      <li>カード読み取りや本人確認を支える入口がマイナアプリ</li>
+    </ul>
+  </div>
+</section>
+
+## あなたに関係ある？
+
+### 関係がある人
+
+すでにマイナポータルアプリを入れている人、確定申告や引越しなどでマイナポータルを使う人、銀行・証券などの対応サービスでマイナンバーカードによる本人確認をする人です。旧デジタル認証アプリを使っていた人も移行対象です。
+
+### あまり関係がない人
+
+マイナンバーカードをオンラインで使わない人や、今すぐ手続きの予定がない人は、慌てて利用登録する必要は薄いでしょう。ただし旧アプリを入れているなら、名前とアイコンが変わることは知っておくと安心です。
+
+## 今回何が変わった？
+
+いちばん大きな変化は、従来2つだったアプリの役割が1つにまとまったことです。
+
+- 旧マイナポータルアプリ：マイナポータルへのログインやカード読み取りを担当
+- 旧デジタル認証アプリ：官民の対応サービスで本人確認や電子署名を担当
+- 新しいマイナアプリ：両方の役割をまとめて担当
+
+<Timeline>
+  <TimelineItem date="2026年8月25日" hot>マイナアプリの提供開始。旧2アプリの役割を統合</TimelineItem>
+  <TimelineItem date="更新後">旧マイナポータルアプリは、名前とアイコンがマイナアプリへ変わる</TimelineItem>
+  <TimelineItem date="初回利用時">画面の案内に沿って利用登録と端末ロックを確認</TimelineItem>
+</Timeline>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">旧2アプリの役割を、合流する入口で整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-myna-app-renewal-guide/slide03-auto-update.webp"
+         alt="旧マイナポータルアプリと旧デジタル認証アプリの2本の流れがマイナアプリへまとまる図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：旧2アプリの役割を統合</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>別々に用意されていた本人確認関連の役割を整理</li>
+      <li>更新後はマイナアプリが共通の入口になる</li>
+    </ul>
+  </div>
+</section>
+
+公式アプリストアでは、実物またはスマートフォンのマイナンバーカードを使った認証・署名・情報連携、スマートフォンへのカード機能追加、お知らせのプッシュ通知が主な機能として案内されています。プッシュ通知とは、アプリを開いていなくてもスマホ画面に届くお知らせです。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">主な機能は、大きく3つに分けると理解しやすくなります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-myna-app-renewal-guide/slide04-three-functions.webp"
+         alt="マイナアプリの主な機能を、認証と署名、スマートフォンへの追加、お知らせの3つで示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：マイナアプリでできること</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>本人確認と電子署名</li>
+      <li>対応スマートフォンへのカード機能追加</li>
+      <li>アプリからのお知らせ確認</li>
+    </ul>
+  </div>
+</section>
+
+## 何がうれしい？
+
+対応サービスを使うたびに「どちらのアプリが必要なのか」と迷いにくくなります。本人確認の入口をマイナアプリにまとめられるためです。
+
+スマートフォンのマイナンバーカードを設定済みなら、対応する場面で顔や指紋などの生体認証を使える場合があります。スマートフォンのマイナンバーカードとは、実物カードの一部機能を対応スマホで使えるようにしたものです。生体認証とは、顔や指紋で端末の持ち主を確かめる仕組みです。
+
+ただし、これは実物カードが完全に不要になるという意味ではありません。利用する行政・民間サービスの対応状況によっては、実物のマイナンバーカードが必要です。
+
+## 何をすればいい？
+
+旧マイナポータルアプリを入れている人は、まずアプリストアで更新を確認します。自動更新が有効なら、すでにマイナアプリへ変わっている場合があります。見慣れないアイコンになっていても、別の無関係なアプリに置き換わったわけではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">旧アプリ利用者は、まず更新状況を確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-myna-app-renewal-guide/slide05-smartphone-card.webp"
+         alt="台に置いたスマートフォンで更新状況を確認するひまりとらぼまるの図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：まず更新を確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>アプリストアで提供元と更新状況を見る</li>
+      <li>自動更新なら、すでに新しい名前へ変わっている場合がある</li>
+    </ul>
+  </div>
+</section>
+
+マイナアプリを初めて使うときは、画面の案内に沿って利用登録します。
+
+<Callout kind="claims" title="報道で案内されている初回設定">
+  <p>第三者による不正利用を防ぐため、PIN、顔認証、指紋認証などの端末ロック設定が必要と報じられています。表示や必要な操作は端末と設定によって異なるため、実際の画面案内を確認してください。</p>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">初回は、画面の案内を順に確認すれば大丈夫です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-myna-app-renewal-guide/slide06-when-card-needed.webp"
+         alt="利用規約、端末ロック、登録完了の3段階を案内台で確認するひまりとらぼまるの図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：初回利用登録の流れ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>利用規約を確認する</li>
+      <li>端末ロックの設定を確認する</li>
+      <li>登録完了の表示まで進める</li>
+    </ul>
+  </div>
+</section>
+
+旧デジタル認証アプリは提供・利用が終了しています。旧アプリを開いて案内が出た人は、マイナアプリへ移ります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">対応サービスでは、スマホの生体認証が使える場合があります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-myna-app-renewal-guide/slide07-first-setup.webp"
+         alt="対応サービスの本人確認ゲートで、顔や指紋による生体認証を示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：対応サービスなら顔や指紋で本人確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>生体認証は、顔や指紋で端末の持ち主を確かめる仕組み</li>
+      <li>使えるかどうかは、スマホと利用先サービスの対応状況による</li>
+    </ul>
+  </div>
+</section>
+
+<Callout kind="unc" title="サービスごとに違う点（2026年9月21日時点）">
+  <ul>
+    <li>スマートフォンのカード機能だけで手続きが完了するか</li>
+    <li>実物のマイナンバーカードが必要か</li>
+    <li>表示される確認画面や利用できる生体認証</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="labo" mood="worried">「マイナアプリがあれば、どの手続きも実物カードなしでできる」とは限らないよ。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後に、スマホだけで済まない場合もあることを確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-myna-app-renewal-guide/slide08-checklist.webp"
+         alt="スマートフォン対応の入口と実物カード確認の入口が分かれ、サービスごとに対応が違うことを示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：実物カードが必要なことも</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>利用先の案内で、スマートフォンのカード機能に対応しているか確認する</li>
+      <li>未対応なら、実物のマイナンバーカードを用意する</li>
+    </ul>
+  </div>
+</section>
+
+## 注意点
+
+1つ目は、偽アプリを避けることです。アプリストアで提供元がデジタル庁であることを確認し、メールやSMSのリンクから慌てて入れないようにします。
+
+2つ目は、暗証番号をむやみに入力しないことです。暗証番号は必要な公式画面だけで入力します。分からないまま何度も試すとロックにつながる場合があります。
+
+3つ目は、スマホだけで何でも済むと思い込まないことです。サービス提供側がスマートフォンのカード機能に対応していなければ、実物カードが必要な場面は残ります。
+
+<Note>アプリの画面や対応サービスは変わることがあります。手続きを始める前に、利用先とデジタル庁の最新案内を確認してください。</Note>
+
+## すまラボまとめ
+
+マイナアプリは、旧マイナポータルアプリと旧デジタル認証アプリの役割を1つにまとめたアプリです。旧マイナポータルアプリ利用者は、別物を新規に探すのではなく、まず更新を確認すれば大丈夫です。
+
+便利になるポイントは、本人確認の入口が整理されたこと。ただし、すべての手続きがスマホだけで完結するわけではありません。更新、初回登録、提供元の確認という順で、必要なときに落ち着いて使いましょう。
+
+<CharacterBubble speaker="himari" mood="aha">名前が変わっても、やることは「更新を確認して、必要なときに登録」でいいんだね。</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="smile">そう。利用先によっては実物カードも必要だから、手続きの案内を最後に確認しよう。</CharacterBubble>
+
+## 参考情報
+
+- [デジタル庁：マイナアプリ](https://services.digital.go.jp/mynaapp/)
+- [デジタル庁：松本大臣記者会見（令和8年8月25日）](https://www.digital.go.jp/speech/minister-260825-01)
+- [デジタル庁：マイナアプリ（自治体向け活用情報）](https://www.digital.go.jp/policies/mynumber/local-government/mynaapp)
+- [Google Play：マイナアプリ（旧マイナポータルアプリ）](https://play.google.com/store/apps/details?id=jp.go.cas.mpa&hl=ja)
+- [App Store：マイナアプリ（旧マイナポータルアプリ）](https://apps.apple.com/jp/app/id1476359069)
+- [ITmedia Mobile：マイナアプリへ刷新されて何が変わった？](https://www.itmedia.co.jp/mobile/articles/2609/20/news024.html)
