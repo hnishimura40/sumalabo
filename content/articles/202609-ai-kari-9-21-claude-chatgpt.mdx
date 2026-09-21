@@ -1,0 +1,322 @@
+---
+title: "AIにPC作業を頼める入口が増えた。Kariは無料でどこまで使える？"
+slug: "202609-ai-kari-9-21-claude-chatgpt"
+type: "news"
+category: "ニュースをかみくだく"
+description: "デスクトップAIエージェントKariが9月21日に正式提供を開始。できること、無償ライセンスの条件、Claude・ChatGPT契約との関係、導入前の注意点を整理します。"
+thumbnail: "/images/thumbnails/202609-ai-kari-9-21-claude-chatgpt.webp"
+thumbnailAlt: "デスクトップ作業室でKariにつながる文書、表、ブラウザーの3レーンを確認するひまりとらぼまる"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_worried_icon.webp"
+related: []
+tags:
+  - "Kari"
+  - "AIエージェント"
+  - "Claude"
+  - "ChatGPT"
+  - "デスクトップアプリ"
+pubDate: "2026-09-22"
+updated: "2026-09-22"
+publishAt: "2026-09-22T05:14:38+09:00"
+hasAffiliate: false
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+パソコンにあるPDFや表を開き、ウェブを調べ、資料の下書きまでAIに頼む。そんな作業を1つの画面へまとめるデスクトップアプリ「Kari」が、2026年9月21日に正式提供を始めました。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> Kariは、パソコン内のファイルや内蔵ブラウザーをAIと一緒に扱うデスクトップアプリです。</li>
+    <li><strong>何があった？</strong> GotoAIが9月21日に正式提供を開始しました。Windows、macOS、Linux版があります。</li>
+    <li><strong>誰に関係ある？</strong> ClaudeやChatGPTを契約済みで、文書整理や表計算、ウェブ調査をまとめたい人に関係します。スマホだけで使う人には急ぎません。</li>
+    <li><strong>結局どうなの？</strong> 個人と100人未満の組織はKari自体を無償で試せます。ただしAIサービス側の契約や利用上限、データ権限は別に確認が必要です。</li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "9/21", cap: "正式提供を開始" },
+    { num: "3 OS", cap: "Windows・macOS・Linux" },
+    { num: "100人未満", cap: "組織での利用も無償対象" },
+  ]}
+/>
+
+<Callout kind="facts" title="公式情報で確認できたこと">
+  <ul>
+    <li>2026年9月21日から正式提供</li>
+    <li>Windows、macOS、Linux向けを公開</li>
+    <li>個人と100人未満の法人はコミュニティライセンスで期間を区切らず無償</li>
+    <li>100人以上の法人も60日以内の検証利用は無償</li>
+  </ul>
+</Callout>
+
+<CharacterBubble speaker="himari" mood="curious">いつものAIチャットと、何が違うの？ パソコンのファイルも一緒に扱えるってこと？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">そう。会話だけでなく、文書や表、ブラウザーの作業まで1つの画面から進めるアプリだよ。</CharacterBubble>
+
+## そもそもKariって何？
+
+<p class="lead">Kariは、AIの会話画面を<strong>パソコン上の仕事へ広げるデスクトップアプリ</strong>です。</p>
+
+Kariは「デスクトップAIエージェント」です。デスクトップAIエージェントとは、質問に答えるだけでなく、パソコン上のファイルを読み、必要な操作を順番に進めるソフトです。
+
+ここでいうローカルファイルとは、自分のパソコン内に保存した文書や表のことです。Kariはローカルファイルを別のチャット画面へ貼り直す手間を減らし、その場で読み解いて作業すると説明されています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Kariの正体を、1つの作業画面として見てみます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ai-kari-9-21-claude-chatgpt/slide01-kari-desktop-agent.webp"
+         alt="Kariが文書、表、ブラウザーの作業を1つのパソコン画面へまとめることを示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：KariはPC作業を1つの画面へまとめる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>読みどころ</strong></p>
+    <ul>
+      <li>会話だけでなく、パソコン内のファイルやウェブ操作も扱う</li>
+      <li>文書、表、ブラウザーを同じ作業画面からつなげる</li>
+    </ul>
+  </div>
+</section>
+
+## あなたに関係ある？
+
+<p class="lead">すでにAIへ料金を払っていて、<strong>パソコン作業へ利用範囲を広げたい人</strong>に関係する話です。</p>
+
+### 関係がある人
+
+ClaudeやChatGPTを契約済みで、PDF、表計算、資料作り、ウェブ調査をパソコン上でまとめたい人です。100人未満の組織で、まず小さく試したい担当者にも関係します。
+
+### あまり関係がない人
+
+スマホだけでAIを使う人や、パソコン内のファイルへAIのアクセスを許したくない人です。社内規程で外部AIを使えない場合も、急いで導入する必要はありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">Kari自体が無償になる範囲を、利用人数で整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ai-kari-9-21-claude-chatgpt/slide04-community-license.webp"
+         alt="個人と100人未満の組織は無償、100人以上の組織は60日まで検証利用できることを示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：コミュニティライセンスの無償範囲</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>利用条件</strong></p>
+    <ul>
+      <li><strong>個人</strong>：期間を区切らず無償</li>
+      <li><strong>100人未満の法人</strong>：業務利用も無償</li>
+      <li><strong>100人以上の法人</strong>：60日以内の検証利用は無償</li>
+    </ul>
+  </div>
+</section>
+
+## 今回何が変わった？
+
+<p class="lead">9月21日から正式版の提供が始まり、<strong>3つのOS向けダウンロード</strong>が案内されました。</p>
+
+9月22日の確認時点で、製品ページに表示される版は0.6.0です。対応環境はWindows 10/11（64bit）、macOS 12以降、LinuxはUbuntu 24.04以降またはDebian 13以降です。
+
+macOSはApple SiliconとIntelの両方、Linux版はx86_64のdebパッケージが案内されています。
+
+<Timeline>
+  <TimelineItem date="9/20">GotoAIが提供開始を発表</TimelineItem>
+  <TimelineItem date="9/21" hot>正式提供を開始</TimelineItem>
+  <TimelineItem date="9/22">製品ページでバージョン0.6.0を確認</TimelineItem>
+</Timeline>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">AIが会話窓からパソコン作業へ広がるイメージです。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ai-kari-9-21-claude-chatgpt/slide02-ai-to-pc-work.webp"
+         alt="AIの会話画面から文書、表、ブラウザーなどパソコンの仕事へ利用範囲が広がることを示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：AIがPCの仕事へ広がる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>変化の中心</strong></p>
+    <ul>
+      <li>質問への回答だけでなく、作業の流れまで扱う</li>
+      <li>ファイルとブラウザーをまたぐ仕事が対象になる</li>
+    </ul>
+  </div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">対応する3つのOSを、ロゴに頼らず並べて確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ai-kari-9-21-claude-chatgpt/slide05-supported-os.webp"
+         alt="Windows、macOS、Linuxの3つに対応することを、3台のコンピューターで示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Windows・macOS・Linuxに対応</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>動作環境</strong></p>
+    <ul>
+      <li>Windows 10 / 11（64bit）</li>
+      <li>macOS 12以降（Apple Silicon / Intel）</li>
+      <li>Ubuntu 24.04以降 / Debian 13以降（x86_64）</li>
+    </ul>
+  </div>
+</section>
+
+## 何ができる？
+
+<p class="lead">公式説明では、<strong>文書、表計算、ウェブ操作</strong>を1つの画面から扱えます。</p>
+
+主な用途は、PDF・Wordの要約や翻訳、PowerPointの下書き、Excelデータの集計とグラフ化、ウェブ調査、ブラウザー操作です。
+
+APIとは、アプリ同士が決められた方法で情報をやり取りする仕組みです。MCPとは、AIが外部の道具やデータにつながるための共通ルールです。Kariは、APIやMCPの用意がないサイトでも、内蔵ブラウザーで検索、画面操作、ダウンロードを進められると説明しています。
+
+<Callout kind="claims" title="提供元が説明している機能">
+  <ul>
+    <li>PDF・Word・PowerPointの要約や翻訳</li>
+    <li>PowerPointの下書き、Excelの集計・可視化</li>
+    <li>APIやMCPがないウェブサイトのブラウザー操作</li>
+    <li>70種類以上のAIサービスやローカル環境への接続</li>
+  </ul>
+</Callout>
+
+<Note>上の機能はGotoAIの公式説明を整理したものです。すまラボで処理精度や自動操作の成功率を実機検証した結果ではありません。</Note>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">主な用途を、3つの仕事に分けて見ます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ai-kari-9-21-claude-chatgpt/slide03-capabilities.webp"
+         alt="Kariで扱える文書、表、ブラウザーの3つの用途を示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：Kariでできる3つの仕事</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>主な用途</strong></p>
+    <ul>
+      <li><strong>文書</strong>：要約、翻訳、資料の下書き</li>
+      <li><strong>表</strong>：集計、分析、グラフ化</li>
+      <li><strong>ブラウザー</strong>：検索、画面操作、ダウンロード</li>
+    </ul>
+  </div>
+</section>
+
+## 「サブスクで使える」の読み方
+
+<p class="lead">Kariの利用料と、接続する<strong>AIサービス側の契約</strong>は分けて考えます。</p>
+
+GotoAIは、Claude Pro / MaxやOpenAI ChatGPTのサブスクリプションへ本人がサインインし、新たなAPI従量課金なしで利用できると説明しています。サインインは各社の公式認証画面で完結し、Kariが認証情報やトークンを受け取ったり保存・中継したりしない、というのも提供元の説明です。
+
+一方、OpenAI公式ではChatGPTとAPI Platformは別の課金体系です。Kari経由の利用がAPI契約へ自動的に変わる、という意味ではありません。利用できるモデル、回数、上限は各AIサービス側の契約とアプリ内表示を確認する必要があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">費用を2枚の明細に分けると、誤解しにくくなります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ai-kari-9-21-claude-chatgpt/slide06-two-costs.webp"
+         alt="Kariの利用料と、接続するAIサービスの契約が別であることを2枚の明細で示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：料金はKariとAI契約の2つ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>料金の見方</strong></p>
+    <ul>
+      <li><strong>Kari側</strong>：個人と100人未満の法人は無償対象</li>
+      <li><strong>AI側</strong>：ClaudeやChatGPTなどの契約条件に従う</li>
+      <li>「Kariが無料」でも「使うAIまで無料」とは限らない</li>
+    </ul>
+  </div>
+</section>
+
+## 使う前に確認したいこと
+
+<p class="lead">最初は大事でないファイルで試し、<strong>データ、権限、外部送信</strong>を確認しましょう。</p>
+
+ブラウザー自動化では、送信や確定を勝手に進めないよう、権限と作業範囲を絞ることが大切です。大事な文書を扱うときは、元ファイルの複製で試す、外部送信前に止める、結果を人が確認してから確定する、の3段階が基本です。
+
+<Callout kind="unc" title="2026年9月22日時点で確認が必要なこと">
+  <ul>
+    <li>ChatGPTのどの有料プランが連携対象になるか、その細かな条件</li>
+    <li>各AIサービス側のモデル、回数、利用上限</li>
+    <li>100人以上の法人向け有償ライセンスの価格</li>
+    <li>実際の処理精度やブラウザー操作の成功率</li>
+  </ul>
+</Callout>
+
+会社で使う場合は、社内のAI利用規程とデータ持ち出しルールを先に確認してください。コミュニティ版は現状有姿・無保証とも明記されています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">導入前の3点を、作業台で順番に確認します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ai-kari-9-21-claude-chatgpt/slide07-safety-checks.webp"
+         alt="Kariを使う前にデータ、権限、送信前の確認が必要なことを示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：データ・権限・送信前を確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>最初の安全確認</strong></p>
+    <ul>
+      <li><strong>データ</strong>：機密性の低い複製ファイルから試す</li>
+      <li><strong>権限</strong>：読める場所と操作範囲を絞る</li>
+      <li><strong>送信前</strong>：外部へ出る操作は人が確定する</li>
+    </ul>
+  </div>
+</section>
+
+## どんな人に向いている？
+
+<p class="lead">向いているのは、<strong>いつものAIをパソコン作業へ少しずつ広げたい人</strong>です。</p>
+
+- すでにClaudeやChatGPTを契約し、パソコン作業へ広げたい人
+- PDF、Word、Excel、PowerPointをまたぐ定型作業が多い人
+- API開発をせず、まずデスクトップアプリとして試したい人
+
+反対に、スマホだけで十分な人、パソコン上のデータへAIのアクセスを許したくない人、社内規程が整っていない組織は様子見で構いません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">導入は、小さなテストから3段階で広げます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-ai-kari-9-21-claude-chatgpt/slide08-start-small.webp"
+         alt="大事でないファイルで試し、結果を確認し、任せる範囲を広げる3段階を示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：小さく試してから広げる</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <p><strong>始め方</strong></p>
+    <ul>
+      <li><strong>ためす</strong>：大事でないファイルと短い作業を選ぶ</li>
+      <li><strong>確認する</strong>：結果と送信先を人が見る</li>
+      <li><strong>広げる</strong>：問題がない範囲だけ任せる</li>
+    </ul>
+  </div>
+</section>
+
+## もう少し詳しく知りたい人へ
+
+<p class="lead">Kariは、接続先を細かく選びたい人向けの設定も用意しています。</p>
+
+AIプロバイダーとは、AIモデルや計算環境を提供する会社・サービスのことです。Kariは70種類以上のAIプロバイダーを登録済みとし、APIキー接続やローカルLLMにも対応すると案内しています。
+
+ローカルLLMとは、自分のパソコンや社内設備で動かす文章生成AIのことです。まず試す段階では、普段使うClaudeやChatGPTのサインインから確認すれば十分でしょう。
+
+## まとめ
+
+<p class="lead">Kariは、いつものAIを<strong>パソコン内のファイルやブラウザー作業へ近づける入口</strong>です。</p>
+
+個人と100人未満の組織がKari自体を無償で試せる点は分かりやすい魅力です。ただし、AIサービス側の契約、利用上限、データの扱い、操作権限は別々に確認する必要があります。
+
+最初は大事でないファイルと短い作業から始め、どこまで任せるかを少しずつ広げるのが現実的です。
+
+## 参考情報
+
+この記事はGotoAIの公式製品ページと発表、OpenAIの公式ヘルプをもとに整理しています。機能やライセンス条件は今後変わる可能性があるため、導入前に最新表示を確認してください。
+
+- [GotoAI公式：Kari — 統合型のAIエージェントアプリケーション](https://gotoai.com/ai-products/kari-jp/)
+- [GotoAI発表：Claude・ChatGPTのサブスクで使えるKariを無償公開](https://prtimes.jp/main/html/rd/p/000000003.000190819.html)
+- [Kari公式ドキュメント](https://docs.kari.gotoai.com/)
+- [OpenAI Help Center：ChatGPTとAPI Platformの課金管理](https://help.openai.com/en/articles/9039756)
