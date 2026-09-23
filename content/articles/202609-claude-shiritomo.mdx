@@ -1,0 +1,300 @@
+---
+title: "Claudeの上限、今すぐ戻せる。無料リセットは「必要な時」に1回"
+slug: "202609-claude-shiritomo"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Claudeの利用上限を1回だけ満タンへ戻す無料リセットが登場。5時間枠と週次枠のどちらが対象か、期限、使い方、今すぐ押さずに温存する理由をやさしく整理します。"
+thumbnail: "/images/thumbnails/202609-claude-shiritomo.webp"
+thumbnailAlt: "夜のAI作業エネルギー工房で、ひまりとらぼまるが一度きりの無料リセット用予備セルと残量を見比べるイラスト"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_worried_icon.webp"
+tags:
+  - "Claude"
+  - "Anthropic"
+  - "limit reset"
+  - "Claude Code"
+  - "利用上限"
+related:
+  - "202608-claude-code-cowork"
+  - "202608-claude-code-macos-linux"
+pubDate: "2026-09-24"
+updated: "2026-09-24"
+publishAt: "2026-09-24T05:10:04+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import NumCards from "../../src/components/article/NumCards.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+Claudeの有料契約者向けに、利用上限（Claudeへ一定時間に頼める仕事量を区切る仕組み）を待たずに満タンへ戻せる機能が用意されました。「limit reset」とは、その利用枠を1回だけ満タンへ戻す無料の仕組みです。
+
+ただし、5時間枠と週次枠の両方が必ず同時に戻るわけではありません。自分の画面に表示された対象と期限を確認し、作業が本当に止まった時まで取っておくのが基本です。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> Claudeを一定時間に使える量の上限を、1回だけ満タンへ戻す無料の操作</li>
+    <li><strong>何があった？</strong> Anthropicが利用枠の引き上げと、保存して好きな時に使えるリセットの提供を発表</li>
+    <li><strong>誰に関係ある？</strong> Claudeの有料プランで5時間枠や週次枠に達する人。Claude Code（ターミナルやIDEから開発作業を頼む機能）を長く使う人も確認したい。上限へほぼ届かない人は急がなくてよい</li>
+    <li><strong>結局どうなの？</strong> Web版かDesktopの Settings &gt; Usage で対象枠と期限を見て、止まって困る作業がある時に使う</li>
+  </ol>
+</Summary30>
+
+<NumCards
+  items={[
+    { num: "1回", cap: "使うと取り消せない無料リセット" },
+    { num: "5時間", cap: "対象になり得る短い利用枠" },
+    { num: "0円", cap: "画面ではReset for freeと表示" },
+  ]}
+/>
+
+<CharacterBubble speaker="himari" mood="curious">無料なら、残量があるうちに押しておいた方が得なの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">一度使うと戻せないよ。まず対象の枠と期限を見て、必要な時まで取っておこう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最初に、無料リセットの正体を1枚で整理します。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-shiritomo/slide01-limit-reset.webp"
+         alt="Claudeの無料リセットで空に近い利用枠が満タンへ戻る仕組みを、一度きりの予備セルとゲージで示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：対象の利用枠を1回だけ満タンへ</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>通常の回復時刻を待たず、対象の利用枠を満タンへ戻します</li>
+      <li>一度使うと取り消せないため、残量と期限の確認が大切です</li>
+      <li>無制限になる機能ではありません</li>
+    </ul>
+  </div>
+</section>
+
+## そもそもClaudeの利用上限って何？
+
+利用上限は、Claudeへ一定時間に頼める仕事量の枠です。単純なメッセージ回数ではありません。会話の長さ、添付ファイル、使うモデルや機能、考える深さの設定などで減り方が変わります。
+
+有料プランでは、約5時間単位で使える枠に加えて、1週間単位の枠が設けられることがあります。今回のリセットは、画面に表示された種類に応じて、そのどちらかを満タンへ戻します。
+
+<Callout kind="facts" title="公式に確認できること">
+  <ul>
+    <li>対象となるプランへ、利用枠を満タンに戻すリセットが時折付与される</li>
+    <li>表示された種類に応じて、5時間のセッション枠または週次枠が回復する</li>
+    <li>上限へ達する前でも使えるが、使用後は取り消せない</li>
+    <li>週次枠へ使っても、通常の週次リセット日時は変わらない</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">どんな使い方で上限へ近づきやすいかを見てみます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-shiritomo/slide02-who-should-check.webp"
+         alt="長い会話、大きな添付ファイル、Claude Codeを使う人は利用上限を確認し、上限へ届かない人は急がなくてよいと示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：上限で作業が止まる人は確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>長い会話や大きなファイルは、短い質問より利用枠を多く使うことがあります</li>
+      <li>Claude Code（ターミナルやIDEから開発作業を頼む機能）も同じアカウントの利用枠を使います</li>
+      <li>上限へほとんど届かない人は、急いでリセットする必要がありません</li>
+    </ul>
+  </div>
+</section>
+
+## あなたに関係ある？
+
+### 関係がある人
+
+- Claude Pro・Max・Teamなどの有料プランを使っている
+- 5時間枠や週次枠へ達し、作業が止まることがある
+- 長い会話、大きな添付ファイル、Claude Codeをよく使う
+- 締切のある作業を、上限到達後もすぐ続けたい
+
+### あまり関係がない人
+
+- 無料プランだけを使っている
+- 利用上限へほとんど届かない
+- Claude APIのレート制限だけを調べている
+- Settings &gt; Usageにリセットが表示されていない
+
+<Note>付与対象はアカウントごとに確認してください。公式ヘルプは「対象となるプランへ時折付与」と説明しています。</Note>
+
+## 5時間枠と週次枠、どちらが戻る？
+
+ここがいちばん誤解しやすい点です。公式ヘルプは「表示されたリセットに応じて、5時間のセッション上限または週次上限が満タンへ戻る」と説明しています。
+
+つまり、「無料で全回復」という見出しを見ても、5時間枠と週次枠の両方が必ず同時に戻るとは限りません。Settings &gt; Usageに出ている対象を正本にしてください。
+
+<Callout kind="claims" title="一部の解説で広く書かれている点">
+  <ul>
+    <li>一部の解説記事は、5時間枠と週次枠を1回で両方回復できるように読める表現を使っています</li>
+    <li>「今すぐ使わない人が多い」という説明もありますが、人数や比率を示す一次データは確認できません</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">対象の枠は、自分の表示で見分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-shiritomo/slide03-five-hour-or-weekly.webp"
+         alt="5時間の枠と週次の枠の2つのゲージを並べ、表示されたどちらかが回復し、両方同時とは限らないことを示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：5時間枠か週次枠かを確認</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>5時間枠は、短い時間に集中して使える量の上限です</li>
+      <li>週次枠は、1週間全体で使える量の上限です</li>
+      <li>どちらが戻るかは、リセットの表示内容で確認します</li>
+    </ul>
+  </div>
+</section>
+
+<Callout kind="unc" title="2026年9月24日時点でアカウント確認が必要">
+  <ul>
+    <li>自分のアカウントへ、5時間枠用と週次枠用のどちらが表示されるか</li>
+    <li>自分のリセットが失効する正確な日時</li>
+    <li>すべての有料プラン・地域へ同じ条件で付与されているか</li>
+    <li>今回の5時間上限が具体的に何%増えたか</li>
+  </ul>
+</Callout>
+
+## なぜ今すぐ押さない選択がある？
+
+一度使うと取り消せません。残量が多い時に押すより、上限で作業が止まり、すぐ続けたい時に使う方が回復分を活かしやすくなります。
+
+一方、期限がある場合は放置すると失効します。まず期限を確認してメモし、「重要な作業が止まった時」か「期限が近づいた時」に判断するとよいでしょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">温存する理由は、使い切りだからです。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-shiritomo/slide04-save-until-needed.webp"
+         alt="残量が多い時は一度きりの予備セルを温存し、作業が止まって困る時に使う判断を示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：一度使うと戻せない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>今の残量が多いなら、回復分を使い切れない可能性があります</li>
+      <li>上限で止まった仕事をすぐ続けたい時は、効果を活かしやすくなります</li>
+      <li>期限の直前まで忘れないよう、失効日時はメモしておきましょう</li>
+    </ul>
+  </div>
+</section>
+
+## 無料リセットの使い方
+
+操作はWeb版ClaudeかClaude Desktopから行います。
+
+1. Settings &gt; Usageを開く
+2. Resets欄で、対象の枠と失効日時を確認する
+3. 必要な時にReset for freeを押し、もう一度確認する
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">操作する場所と順番は3つです。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-shiritomo/slide05-how-to-reset.webp"
+         alt="Web版またはDesktopでSettings、Usage、Resets、Reset for freeの順に進む3手順を示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：WebかDesktopで3手順</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>最初に対象の枠と期限を確認します</li>
+      <li>上限へ達していなくても使えます</li>
+      <li>確認後は取り消せないため、押す前に残量も見ておきます</li>
+    </ul>
+  </div>
+</section>
+
+Claude Mobileと、ターミナルやIDE内のClaude Codeにはリセットボタンがありません。ただし、WebかDesktopで適用すれば、同じアカウントで共有される上限はMobileやClaude Code側でも回復します。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">ボタンの場所と、回復が反映される場所は別です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-shiritomo/slide06-account-shared.webp"
+         alt="WebまたはDesktopでリセットすると、同じアカウントのMobileとClaude Codeにも回復が反映されることを3つの端末で示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：回復は同じアカウントで共有</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>リセットボタンを押せるのはWeb版またはClaude Desktopです</li>
+      <li>Claude MobileやClaude Codeだけを使う人も、必要時はWebかDesktopを開きます</li>
+      <li>適用後の利用枠は同じアカウントで共有されます</li>
+    </ul>
+  </div>
+</section>
+
+## 返金や追加のクレジットではない
+
+この操作は、すでに払った追加利用分の返金ではありません。usage credits（契約枠を超えて使うための別料金の仕組み）の残高も増えません。
+
+未使用のまま有料プランを解約・ダウングレードすると、リセットを使えなくなると公式ヘルプは説明しています。契約変更を考えている人は、その前にUsage画面を確認してください。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">変わるものと、変わらないものを分けます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-shiritomo/slide07-not-refund-or-credits.webp"
+         alt="無料リセットは一度きりの利用枠だけを回復し、追加利用分の返金やusage credits残高の追加ではないことを示す図解"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：返金や残高追加ではない</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li>すでに請求された追加利用分は返金されません</li>
+      <li>usage creditsの残高は変わりません</li>
+      <li>変わるのは、画面に示された対象の利用枠です</li>
+    </ul>
+  </div>
+</section>
+
+## 発表から使うまでの流れ
+
+<Timeline>
+  <TimelineItem date="9/22">Anthropicが5時間上限の引き上げと、保存して使えるリセットを発表</TimelineItem>
+  <TimelineItem date="今">Settings &gt; Usageで対象の枠・期限・残量を確認</TimelineItem>
+  <TimelineItem date="必要時" hot>上限で止まって困る時、または失効前にReset for freeを実行</TimelineItem>
+</Timeline>
+
+<CharacterBubble speaker="labo" mood="worried">「無料だから今すぐ」ではなく、対象と期限を見て決めよう。両方の枠が同時に戻るとは限らないよ。</CharacterBubble>
+
+<CharacterBubble speaker="himari" mood="aha">まずUsage画面を見る。止まる作業がある時か、期限が近い時に使えばいいんだね。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">最後は4つの確認だけで判断できます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202609-claude-shiritomo/slide08-check-before-reset.webp"
+         alt="無料リセット前に対象の枠、失効日時、今の残量、止まる作業の4点を確認する判断ガイド"
+         loading="lazy" decoding="async" />
+    <figcaption>図解：まず対象と期限を見る</figcaption>
+  </figure>
+  <div class="slide-reading-note">
+    <ul>
+      <li><strong>対象の枠</strong>：5時間枠か、週次枠か</li>
+      <li><strong>失効日時</strong>：いつまで保存できるか</li>
+      <li><strong>今の残量</strong>：押した後の回復分を活かせるか</li>
+      <li><strong>止まる作業</strong>：今すぐ続ける価値があるか</li>
+    </ul>
+  </div>
+</section>
+
+## すまラボまとめ
+
+まず押すのではなく、まず見る。Settings &gt; Usageで対象枠と期限を確認し、必要な停止場面まで温存するのが基本です。
+
+「無料」「全回復」という言葉だけで両方の上限が戻ると思い込まず、自分のUsage画面を正本にしてください。期限があるならメモし、必要な時か失効前に判断しましょう。
+
+## 参考情報
+
+- [Anthropic公式：Claude Opus 5.5](https://www.anthropic.com/claude-opus-5-5)
+- [Claude Help Center：What is a limit reset?](https://support.claude.com/en/articles/17007452-what-is-a-limit-reset)
+- [Claude Help Center：How do usage and length limits work?](https://support.claude.com/en/articles/11647753-how-do-usage-and-length-limits-work)
+- [Claude Help Center：What is the Pro plan?](https://support.claude.com/en/articles/8325606-what-is-the-pro-plan)
