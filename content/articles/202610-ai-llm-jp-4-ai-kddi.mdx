@@ -1,0 +1,184 @@
+---
+title: "ELYZAが日本語AIモデル2種を公開。スマホですぐ使える？"
+slug: "202610-ai-llm-jp-4-ai-kddi"
+type: "news"
+category: "ニュースをかみくだく"
+description: "ELYZAがllm-jp-4を基にした日本語AIモデル2種を公開。一般向けアプリとの違い、関係する人、商用利用と費用の注意点をやさしく解説します。"
+thumbnail: "/images/thumbnails/202610-ai-llm-jp-4-ai-kddi.webp"
+thumbnailAlt: "日本語AIモデル二つの透明なコアを、研究室でひまりとらぼまるが確認するイラスト"
+status: "review"
+priority: 2
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "生成AI"
+  - "ELYZA"
+  - "LLM-jp"
+  - "AIモデル"
+related: []
+pubDate: "2026-10-03"
+updated: "2026-10-03"
+publishAt: "2026-10-03T04:45:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+ELYZAは2026年10月2日、国立情報学研究所の「llm-jp-4」を土台にした日本語AIモデル2種類を公開すると発表しました。AIモデルは、質問に答える文章を作る「中身」の部分です。開発者が研究や製品づくりに利用できる選択肢が増えます。完成済みの無料チャットアプリが新しく始まったという発表ではありません。
+
+**関係がある人**は、AIを自社サービスや研究に組み込みたい開発者です。**あまり関係がない人**は、完成済みのチャットアプリを使うだけの人です。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> 文章を読んで返答を作る日本語AIの中身です。アプリそのものではありません。</li>
+    <li><strong>何があった？</strong> ELYZAが公開済みのllm-jp-4をもとに、追加学習した2種類を公開しました。追加学習とは、AIの答え方をさらに調整する作業のことです。</li>
+    <li><strong>誰に関係ある？</strong> AIをサービスへ組み込みたい開発者や研究者に関係します。完成済みアプリだけを使う人は今すぐ乗り換える必要はありません。</li>
+    <li><strong>結局どうなの？</strong> モデルを試せる選択肢は増えました。利用条件、動かす費用、実際の性能は用途ごとに確かめる必要があります。</li>
+  </ol>
+</Summary30>
+
+<Callout kind="facts" title="公式発表で確認できること">
+  <ul>
+    <li>ELYZAは2026年10月2日に日本語AIモデル2種の公開を発表した</li>
+    <li>元になったllm-jp-4シリーズは国立情報学研究所の研究プロジェクトが開発した</li>
+    <li>商用利用可能とは、仕事や製品に使える条件のこと。ELYZAは2種をその形で公開すると記している</li>
+  </ul>
+</Callout>
+
+<Callout kind="claims" title="ELYZAが報告した研究結果">
+  <p>同社は学習から評価までの工程で、人が介在する作業を1〜2人日程度に抑え、モデルの性能向上を確認したと説明しています。ほかの開発現場でも同じ結果になるという意味ではありません。</p>
+</Callout>
+
+<Callout kind="unc" title="まだ分からないこと（2026年10月3日時点）">
+  <p>一般向けチャットアプリとしての提供、利用料金、個々の導入費用や実際の仕事での性能は、この発表だけでは確定しません。</p>
+</Callout>
+
+## そもそもAIモデルって何？
+
+<p class="lead"><strong>今回公開されたのは、チャットアプリの画面ではなく、返答を作る中身です。</strong></p>
+
+普段使うチャットアプリを、画面や操作の部分と、返答を作る中身に分けて考えてみましょう。大規模言語モデルという言葉も、この文章を作るAIの中身を指します。モデルを入手して使うには、動かす機器や組み込み作業が必要です。一般利用者がWebページを開くだけで、すぐ使えるサービスとは限りません。
+
+オープンモデルとは、開発者が配布先から入手して自分の環境で試せる仕組みのことです。ただし、公開されていることと運用費用がかからないことは別です。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">アプリの外側と、返答を作る内側を分けて見ます。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202610-ai-llm-jp-4-ai-kddi/slide01-app-core.webp" alt="アプリの画面枠と、その中で返答を作るAIのコアをひまりとらぼまるが見比べる図" loading="lazy" decoding="async" />
+    <figcaption>図解：公開されたのはアプリの「中身」</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>ここだけ押さえる</strong></p><ul><li>AIモデルは返答を作る部分</li><li>完成したアプリの公開とは別の話</li></ul></div>
+</section>
+
+<CharacterBubble speaker="himari" mood="curious">モデルが公開されたなら、スマホで無料チャットできるの？</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">今回は開発用の中身の公開だよ。完成アプリの開始や料金は別に確認しよう。</CharacterBubble>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">質問の文章を受け取り、返答の文章を作るイメージです。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202610-ai-llm-jp-4-ai-kddi/slide02-question-answer.webp" alt="質問のカードがAIのコアへ入り、返答のカードが出る流れをひまりとらぼまるが見る図" loading="lazy" decoding="async" />
+    <figcaption>図解：文章を受け取り、文章で返す</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>読み解き</strong></p><ul><li>絵は仕組みを簡略化したイメージ</li><li>正確な返答には用途ごとの確認が必要</li></ul></div>
+</section>
+
+## あなたに関係がある？
+
+<p class="lead"><strong>開発者には試せる選択肢が増えます。完成済みアプリだけを使う人には、直ちに操作の変更はありません。</strong></p>
+
+開発者や研究者は、日本語のAIを自社の用途に合うか比べられます。企業がサービスへ組み込む場合も、配布条件と必要な設備を確認できます。一方、既存のチャットアプリを使うだけの人は、今日から設定を変える必要はありません。将来のサービスに使われる可能性はありますが、具体的な提供予定は別の話です。
+
+## 今回、何が変わった？
+
+<p class="lead"><strong>国立情報学研究所側のllm-jp-4を土台に、ELYZAが追加学習などを行った2種類を公開しました。</strong></p>
+
+元のllm-jp-4は国立情報学研究所の大規模言語モデル研究開発センターが開発したシリーズです。ELYZAはその土台に追加学習などを行い、「ELYZA-Thinking-1.0-llm-jp-4-33b」と「ELYZA-Thinking-1.0-llm-jp-4-32b-a3b」を発表しました。どちらも公開先が示されています。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">既存の土台へ、さらに教材を与えて調整する流れを描きました。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202610-ai-llm-jp-4-ai-kddi/slide03-extra-training.webp" alt="青い土台のAIコアに追加の教材カードを与え、別のコアへ調整するイメージ図" loading="lazy" decoding="async" />
+    <figcaption>図解：土台のモデルに追加学習を行う</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>読み解き</strong></p><ul><li>土台を一から作ったという話ではない</li><li>絵の色は性能の優劣を示さない</li></ul></div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">公開されたモデルは一つではなく、二種類です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202610-ai-llm-jp-4-ai-kddi/slide04-two-models.webp" alt="二つの透明なケースに入った異なるAIコアをひまりとらぼまるが見比べる図" loading="lazy" decoding="async" />
+    <figcaption>図解：2種類のモデルを公開</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>モデル名</strong></p><ul><li>ELYZA-Thinking-1.0-llm-jp-4-33b</li><li>ELYZA-Thinking-1.0-llm-jp-4-32b-a3b</li></ul></div>
+</section>
+
+## 何がうれしい？
+
+<p class="lead"><strong>日本語を重視したAIを、開発者が実際の用途に合わせて試す入口になります。</strong></p>
+
+開発者は、研究や製品に合うか、自分の質問や業務データで確かめられます。ベンチマークとは、同じ問題を解かせて性能を比べるテストのことです。そこで良い結果が出ても、自分の仕事で期待どおり答えるかは別に試す必要があります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">公開されたモデルを、開発者が検証環境で試す場面です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202610-ai-llm-jp-4-ai-kddi/slide05-developer-test.webp" alt="研究机でAIコアの動作を確かめるひまりとらぼまるの図" loading="lazy" decoding="async" />
+    <figcaption>図解：開発者が用途に合うか試す</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>読み解き</strong></p><ul><li>公開は検証の出発点</li><li>業務への導入には別の作業が必要</li></ul></div>
+</section>
+
+商用利用可能とは、仕事や製品に使える条件のことです。ELYZAは両モデルをその形で公開したと説明しています。ただし、動かす設備や運用の費用まで無料になるわけではありません。使う前に配布先の具体的な条件も確認してください。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">公開された中身と、動かすための設備は別です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202610-ai-llm-jp-4-ai-kddi/slide06-use-and-cost.webp" alt="公開されたAIコアと運用設備のサーバー棚をひまりとらぼまるが見比べる図" loading="lazy" decoding="async" />
+    <figcaption>図解：商用利用の条件と運用費用を分ける</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>注意</strong></p><ul><li>商用利用可能は運用費用ゼロという意味ではない</li><li>配布先の利用条件を確認する</li></ul></div>
+</section>
+
+## 注意したいこと
+
+<p class="lead"><strong>研究での性能報告と、すべての現場での性能は同じではありません。</strong></p>
+
+ELYZAは、学習から評価まで人が介在する作業を1〜2人日程度に抑え、性能改善を確認したと発表しています。これは同社の研究での報告です。どの開発者でも同じ速さで同じ結果が出るという保証ではありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">試験結果を、自分の利用場面へそのまま当てはめないことが大切です。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202610-ai-llm-jp-4-ai-kddi/slide07-test-vs-use.webp" alt="研究室の試験カードと別の現場を見比べるひまりとらぼまるの図" loading="lazy" decoding="async" />
+    <figcaption>図解：研究での評価と実際の利用を分ける</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>読み解き</strong></p><ul><li>少ない人的工数はELYZAの報告値</li><li>実際の用途での性能は個別に確認する</li></ul></div>
+</section>
+
+同時に発表された研究組織は、AIが開発と評価を繰り返す「自己改善」を研究します。ただし、ELYZA自身が現時点ではその前段階の技術であり、自己改善そのものを実現したわけではないと明記しています。一般向けアプリの開始日や料金、個々の利用条件も、今回の発表文だけでは確定しません。
+
+<Note>この記事は2026年10月3日時点のELYZA公式発表に基づきます。モデルの利用条件は配布先で確認してください。</Note>
+
+## すまラボまとめ
+
+ニュースの中心は「日本語AIの中身が2種類、開発者向けに公開された」ことです。アプリを使う人には直ちに操作の変更はありません。開発者は公開先の条件を読み、実際の用途で性能と費用を確かめるとよいでしょう。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">開発者と日常のアプリ利用者で、今必要な行動は異なります。</p>
+  <figure class="article-slide-figure">
+    <img src="/images/articles/202610-ai-llm-jp-4-ai-kddi/slide08-takeaway.webp" alt="研究机のAIコアと従来どおりのスマホを離して配置し、ひまりとらぼまるが眺める図" loading="lazy" decoding="async" />
+    <figcaption>図解：開発者は検証へ、アプリ利用者は今すぐ変更不要</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p><strong>結論</strong></p><ul><li>公開されたのは開発に使うモデル</li><li>一般向けアプリの開始は別の話</li></ul></div>
+</section>
+
+## 参考情報
+
+- [ELYZAの公式発表（2026年10月2日）](https://elyza.ai/news/2026/10/02/rsiresearch)
+- [ELYZA-Thinking-1.0-llm-jp-4-33bの公開先](https://huggingface.co/elyza/ELYZA-Thinking-1.0-llm-jp-4-33b)
+- [ELYZA-Thinking-1.0-llm-jp-4-32b-a3bの公開先](https://huggingface.co/elyza/ELYZA-Thinking-1.0-llm-jp-4-32b-a3b)
+- [LLM-jpによるシリーズの説明](https://llm-jp.nii.ac.jp/blog/llm-jp-4-1/)
