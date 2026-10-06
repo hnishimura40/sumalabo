@@ -1,0 +1,142 @@
+---
+title: "OpenClawとChatGPT、何が違う？始める前に知りたい費用と安全性"
+slug: "202610-openclaw-chatgpt-aismiley"
+type: "news"
+category: "ニュースをかみくだく"
+description: "OpenClawは自分の環境でAIとチャットアプリをつなぐ仕組み。ChatGPTとの使い方の違い、費用の発生場所、権限の確認方法を初心者向けに整理します。"
+thumbnail: "/images/thumbnails/202610-openclaw-chatgpt-aismiley.webp"
+thumbnailAlt: "ひまりが作業机でノートPCの接続図を慎重に見つめ、らぼまるが隣で鍵のカードを確かめるOpenClawの解説イラスト"
+status: "review"
+priority: 1
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags:
+  - "OpenClaw"
+  - "ChatGPT"
+  - "AIアシスタント"
+  - "セキュリティ"
+related: []
+pubDate: "2026-10-07"
+updated: "2026-10-07"
+publishAt: "2026-10-07T04:48:00+09:00"
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Note from "../../src/components/article/Note.astro";
+
+OpenClawをChatGPTの新しい名前だと思っていませんか。OpenClawは、自分のPCなどでAIとチャットアプリをつなぐための仕組みです。使うAIや接続先を自分で選べる一方、設定と管理も自分で行います。違いを知ったうえで、必要な連携があるか判断しましょう。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> OpenClawは自分の環境で動かすAIアシスタントの土台です。ChatGPTはブラウザやアプリからAIと会話できるサービスです。</li>
+    <li><strong>何があった？</strong> OpenClawとChatGPTの違いや始め方が話題です。公式資料をもとに使い方を整理します。</li>
+    <li><strong>誰に関係ある？</strong> チャットを窓口に複数の作業をつなぎたい人に関係します。質問や文章作成だけなら急いで切り替える必要はありません。</li>
+    <li><strong>結局どうなの？</strong> 費用と操作権限は接続方法と設定で変わります。最初は必要な連携を一つに絞って確かめましょう。</li>
+  </ol>
+</Summary30>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202610-openclaw-chatgpt-aismiley/slide01-openclaw-basics.webp" alt="OpenClawはAIとチャットアプリをつなぐ窓口だと示す図。ひまりとらぼまるがPCを確かめる" loading="lazy" decoding="async" /><figcaption>図解：OpenClawは何をつなぐ？</figcaption></figure>
+  <div class="slide-reading-note"><p>OpenClawはAI本体ではなく、チャットや道具とAIを結ぶ窓口を動かす仕組みです。</p></div>
+</section>
+
+## そもそもOpenClawって何？
+
+OpenClawは、AIそのものの名前ではありません。文章を考えて返すAI本体を<strong>モデル</strong>と呼びます。OpenClawは、そのモデルとメッセージアプリ、機器上の機能をつなぐ仕組みです。<strong>Gateway</strong>は、依頼を受け渡す常駐の窓口を指します。公式資料では、自分の機器や管理する環境でこの窓口を動かすと説明されています。
+
+<Callout kind="facts" title="公式資料で確認できること">
+  <p>OpenClawは利用者の環境で動かすAIアシスタントの基盤です。使うAIやメッセージアプリを設定して組み合わせます。詳しくは<a href="https://docs.openclaw.ai/help/faq/what-is-openclaw">OpenClaw公式FAQ</a>を確認できます。</p>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202610-openclaw-chatgpt-aismiley/slide04-gateway.webp" alt="チャットの依頼がGatewayという窓口を通ってAIへ届く流れの図" loading="lazy" decoding="async" /><figcaption>図解：Gatewayの役割</figcaption></figure>
+  <div class="slide-reading-note"><p>Gatewayは、チャットで届いた依頼をAIへ受け渡す窓口です。</p></div>
+</section>
+
+<CharacterBubble speaker="himari" mood="curious">OpenClawを入れたら、ChatGPTとは別のAIを買うことになるの？</CharacterBubble>
+<CharacterBubble speaker="labo" mood="point">OpenClawは接続の土台だよ。どのAIを、どう使うかは設定で決まるんだ。</CharacterBubble>
+
+## あなたに関係ある？
+
+<strong>関係がある人</strong>は、メッセージアプリから同じ助手に頼みたい人や、ファイル・予定など必要な連携を自分で選びたい人です。<strong>あまり関係がない人</strong>は、ブラウザで質問や文章作成ができれば十分な人や、常時動く仕組みを管理したくない人です。後者は急いで導入する必要はありません。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202610-openclaw-chatgpt-aismiley/slide03-who-needs-it.webp" alt="連携を自分で管理したい人に向き、会話だけなら導入を急がなくてよいことを分けた図" loading="lazy" decoding="async" /><figcaption>図解：どんな人に関係する？</figcaption></figure>
+  <div class="slide-reading-note"><p>連携を増やす目的があるか、設定を管理できるかで判断できます。</p></div>
+</section>
+
+## ChatGPTと何が違う？
+
+ふだんのChatGPTは、サービスの画面を開いて会話を始められます。OpenClawは、動かす環境、使うAI、つなぐサービスを利用者が選んで設定します。どちらが高性能なAIかという比較ではなく、<strong>使い方と管理する範囲の違い</strong>です。
+
+| 比べる点 | ChatGPTの一般的な使い方 | OpenClaw |
+| --- | --- | --- |
+| 始め方 | サービスの画面で会話 | 自分の環境に導入して接続を設定 |
+| AIの選び方 | サービス内の機能を使う | 対応する接続先を選ぶ |
+| 管理すること | アカウントと利用設定 | 動かす環境、連携、権限も管理 |
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202610-openclaw-chatgpt-aismiley/slide02-chatgpt-difference.webp" alt="ChatGPTの画面で会話する使い方と、OpenClawで接続を自分で設定する使い方の比較図" loading="lazy" decoding="async" /><figcaption>図解：使い方の違い</figcaption></figure>
+  <div class="slide-reading-note"><p>OpenClawは、つなぐ先や権限を決めるところから利用者が担当します。</p></div>
+</section>
+
+## 費用はどう考える？
+
+AIとアプリが機能を呼び出し合う接続方法を<strong>API</strong>と呼びます。OpenClawをどのAIにどう接続するかで、料金の発生場所が変わります。OpenAIのAPIを使う場合、その料金はChatGPTの月額契約と別です。一方、OpenClawにはOpenAIのサブスクリプション認証を使う経路もあります。すべてがAPI従量課金だとは言えません。
+
+<Callout kind="unc" title="費用は接続方法で変わる（2026年10月時点）">
+  <p>各接続先の料金、利用枠、追加機能の条件は変わる可能性があります。OpenClaw内の推定額だけを請求書と考えず、選んだ接続先の契約画面と請求表示を確認してください。</p>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202610-openclaw-chatgpt-aismiley/slide05-costs.webp" alt="接続先によって費用が変わるため契約と請求を見比べる図" loading="lazy" decoding="async" /><figcaption>図解：費用は接続先で変わる</figcaption></figure>
+  <div class="slide-reading-note"><p>月額契約とAPIの請求は同じものとは限りません。契約方法を先に確認しましょう。</p></div>
+</section>
+
+## 注意点：つなぐ前に権限を確かめる
+
+<strong>認証</strong>は、接続相手が許可済みか確かめる仕組みです。通常のホスト導入では、<strong>ループバック（同じ機器からだけ接続できる設定）</strong>が初期設定です。ただし導入方法や設定変更によって外部とのつながり方は変わります。チャットやファイルにアクセスを許せば、その範囲の情報や操作へ影響します。
+
+公式の`openclaw security audit`は、設定を点検するコマンドです。安全を保証する魔法のボタンではありません。接続相手、許可した操作、公開する範囲を自分で確認することが大切です。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202610-openclaw-chatgpt-aismiley/slide06-permissions.webp" alt="つなぐ前に必要な操作権限だけを確認する図" loading="lazy" decoding="async" /><figcaption>図解：権限を小さく始める</figcaption></figure>
+  <div class="slide-reading-note"><p>最初から多くの連携を許可せず、必要な範囲を見てから増やすと管理しやすくなります。</p></div>
+</section>
+
+## Windowsで始めるなら
+
+公式資料にはWindows HubやPowerShellからの導入が案内されています。<strong>WSL2（Windows上でLinux環境を動かす仕組み）</strong>も選択肢です。導入方法ごとに準備が違うため、公式のWindows案内を読んで自分の環境に合う方法を選んでください。
+
+初回は個人情報を入れない環境で、接続先を一つに絞って試すと、設定と請求を追いやすくなります。アカウントやファイルをつなぐ前に、許可範囲を読み返しましょう。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202610-openclaw-chatgpt-aismiley/slide07-windows-options.webp" alt="WindowsでOpenClawを導入する複数の方法を公式手順で選ぶ図" loading="lazy" decoding="async" /><figcaption>図解：Windowsの導入方法</figcaption></figure>
+  <div class="slide-reading-note"><p>Windows向けの選択肢はあります。手順は公式資料の最新版を確認してください。</p></div>
+</section>
+
+## すまラボまとめ
+
+OpenClawは、自分でAIとチャットアプリをつなぐための土台です。選ぶ基準は「何を連携したいか」と「設定や権限を管理できるか」。会話が主な目的なら今のサービスで足りるかを先に考え、連携したい作業があるなら一つずつ試しましょう。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202610-openclaw-chatgpt-aismiley/slide08-first-step.webp" alt="接続先、費用、権限の順に一つずつ確認する結論の図" loading="lazy" decoding="async" /><figcaption>図解：最初に確かめる順番</figcaption></figure>
+  <div class="slide-reading-note"><p>接続先を決め、費用を見て、操作権限を確認する。必要な連携一つから始めます。</p></div>
+</section>
+
+<Note>この記事は2026年10月7日に公式資料を確認して作成しました。実機の導入・動作検証は行っていません。</Note>
+
+## 参考情報
+
+- [OpenClaw公式FAQ：OpenClawとは](https://docs.openclaw.ai/help/faq/what-is-openclaw)
+- [OpenClaw公式：Windowsでの利用](https://docs.openclaw.ai/platforms/windows)
+- [OpenClaw公式：セキュリティの考え方](https://docs.openclaw.ai/gateway/security)
+- [OpenClaw公式：監査コマンド](https://docs.openclaw.ai/gateway/security/running-the-audit)
+- [OpenClaw公式：利用量と費用](https://docs.openclaw.ai/reference/api-usage-costs)
+- [OpenClaw公式：OpenAIとの接続](https://docs.openclaw.ai/providers/openai)
+- [OpenAI：ChatGPTとAPIの請求について](https://help.openai.com/en/articles/9039756-managing-billing-for-chatgpt-and-the-api-platform)
