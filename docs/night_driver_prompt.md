@@ -40,6 +40,7 @@ Codex自身の終了コード、completion、heartbeat、自己申告は成功�
 ## 1. Phase A: スカウト・調査・記事・画像・検品
 
 1. 外側ラッパーが作成した`data/automation/scout-picked.json`の最新1件を読み、同じrunの題材として採用する。Codex内からRSS取得やスカウト再実行をしない。
+   `readerValue`の加減点・根拠と`docs/scout-selection-policy.md`を確認する。`suggestedAngle`がある場合は題材を変えず、その疑問を調査の出発点にする。提案を事実として扱わず、調査で裏付けられない切り口は採用しない。RSS見出しの言い換えだけで終わらず、読者が何を知りたいかをEditorial Selectionへ引き継ぐ。
 2. 一次情報を優先して裏取りし、確定・報道・未確定を分離する。
 3. `docs/general_reader_explainer_policy.md` とv3テンプレートを使い、専門知識ゼロの読者向けに記事を作る。Editorial Selectionの読者翻訳設計、30秒欄4項目、専門語の初出説明を省略しない。演出ブロックを使ってサムネイル、スライド8枚を作る。
 4. 画像工程はCodex ImageGen経路を優先し、正本、寸法、SHA、使用量を記録する。定義済みfallback条件だけ工房退避を許可し、発動条件を報告する。

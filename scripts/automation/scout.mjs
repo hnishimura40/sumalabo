@@ -19,6 +19,11 @@
 //   +8          インパクト語（値上げ/無料/提供終了 等）
 //   +weight     ソース信頼度（設定値。公式は高め）
 //
+// 2026-11-02: readerValuePolicy 有効時は題材・切り口の実績比較を加減点する。
+// ブランド/一般語の重複加点と鮮度を制限し、身近な変更・条件解説・作品×技術の
+// 疑問・実作業の検証を優先。詳細は docs/scout-selection-policy.md。
+// criticality の旧基準に加え、明確な消費者変更・作品と技術の接点も適格にできる。
+//
 // 「今日書くか」の判定（part 3・量より的中率）:
 //   auto-pick は isEligible（score>=minScore かつ criticality.net>=minCriticality かつ
 //   readerChange が書ける）を満たす 1 位だけ採用する。クリティカル度が低い候補しか
@@ -52,6 +57,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
 import { classifyArticleCategory } from "../sumahon/category-classification.mjs";
+import { scoreReaderValue } from "./scout-reader-value.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const CONFIG_PATH = path.join(ROOT, "data", "automation", "watch-sources.json");
@@ -325,19 +331,24 @@ export function scoreItem(item, source, config, now = Date.now()) {
   const tier1Hits = (config.tier1Keywords || []).filter((k) => text.toLowerCase().includes(k.toLowerCase()));
   const tier2Hits = (config.tier2Keywords || []).filter((k) => text.includes(k));
   const impactHits = (config.impactKeywords || []).filter((k) => text.includes(k));
-  const tier1 = Math.min(24, tier1Hits.length * 8);
+  const policy = config.readerValuePolicy?.enabled ? config.readerValuePolicy : null;
+  const tier1 = Math.min(policy?.brandCap ?? 24, tier1Hits.length * (policy?.brandWeight ?? 8));
+  if (policy) recency = Math.min(recency, policy.recencyCap);
   const tier2 = Math.min(12, tier2Hits.length * 4);
   const impact = impactHits.length > 0 ? 8 : 0;
+  const keywordCapAdjustment = policy ? Math.min(0, policy.keywordCap - tier1 - tier2 - impact) : 0;
   const weight = Number(source.weight) || 0;
   const criticality = scoreCriticality(item, config);
   const japan = japanRelevance(item, config);
+  const readerValue = scoreReaderValue(item, config);
   return {
-    score: recency + tier1 + tier2 + impact + weight + criticality.net + japan.net,
-    breakdown: { recency, tier1, tier2, impact, sourceWeight: weight, criticality: criticality.net, japanRelevance: japan.net },
+    score: recency + tier1 + tier2 + impact + keywordCapAdjustment + weight + criticality.net + japan.net + (readerValue?.net || 0),
+    breakdown: { recency, tier1, tier2, impact, keywordCapAdjustment, sourceWeight: weight, criticality: criticality.net, japanRelevance: japan.net, readerValue: readerValue?.net || 0 },
+    readerValue,
     criticality,
     japanAxes: japan,
     japanReason: japanReasonLine(japan),
-    readerChange: readerChangeLine(criticality),
+    readerChange: readerChangeLine(criticality) || (readerValue?.relevanceEligible ? readerValue.reason : null),
     matched: { tier1: tier1Hits, tier2: tier2Hits, impact: impactHits },
     ageHours: Math.round(h * 10) / 10,
   };
@@ -594,17 +605,20 @@ export async function runScout({ config = loadConfig(), now = Date.now() } = {})
 
 /**
  * auto-pick / 「今日書くか」判定の適格性。
- * score>=minScore かつ クリティカル度>=minCriticality かつ readerChange が書ける候補だけ。
- * これで「クリティカル度が低い候補しかない日は書かない」を実装（part 3）。
+ * 総合閾値と readerChange に加え、旧criticalityまたは明確な読者価値が必要。
+ * 新経路もcriticality負値や海外限定除外を迂回しない。
  */
 export function isEligible(candidate, minScore, minCriticality) {
   // rule #3（2026-07-23）: 海外限定 or 日本否定で「日本ではどうなる/日本の類似」が書けない候補は
   // auto-pick から落とす（「日本は未定」の一文で終わる記事を選定段階で除外）。
   if (candidate.japanAxes && candidate.japanAxes.usOnlyBlocked) return false;
+  const relevant = candidate.criticality != null && (
+    candidate.criticality.net >= minCriticality ||
+    (candidate.criticality.net >= 0 && candidate.readerValue?.relevanceEligible === true)
+  );
   return (
     candidate.score >= minScore &&
-    candidate.criticality != null &&
-    candidate.criticality.net >= minCriticality &&
+    relevant &&
     Boolean(candidate.readerChange)
   );
 }
@@ -625,7 +639,7 @@ function recordPicked(pick) {
       arr = JSON.parse(readFileSync(PICKED_PATH, "utf-8"));
     } catch {}
   }
-  arr.push({ title: pick.title, link: pick.link, score: pick.score, suggestedSlug: pick.suggestedSlug || null, at: new Date().toISOString() });
+  arr.push({ title: pick.title, link: pick.link, score: pick.score, breakdown: pick.breakdown, readerValue: pick.readerValue, readerChange: pick.readerChange, suggestedSlug: pick.suggestedSlug || null, at: new Date().toISOString() });
   writeFileSync(PICKED_PATH, JSON.stringify(arr, null, 2) + "\n", "utf-8");
 }
 
@@ -658,6 +672,7 @@ async function main() {
             ageHours: c.ageHours,
             breakdown: c.breakdown,
             readerChange: c.readerChange,
+            readerValue: c.readerValue,
             criticalityDeductions: c.criticality ? c.criticality.deductions : [],
             eligible: isEligible(c, result.minScore, result.minCriticality),
           })),
@@ -686,6 +701,7 @@ async function main() {
     console.log(`  ${mark} [${String(c.score).padStart(3)}|c${String(crit).padStart(3)}|jp${String(jp >= 0 ? "+" + jp : jp).padStart(3)}] ${c.title.slice(0, 52)} (${c.source}, ${c.ageHours}h)`);
     console.log(`       読者変化: ${c.readerChange || "（書けない＝選ばない）"}`);
     console.log(`       日本自分ごと度: ${c.japanReason || "（該当なし）"}${c.japanAxes && c.japanAxes.usOnlyBlocked ? " ／⚠ 海外限定で日本を書けない→選定除外" : ""}`);
+    console.log(`       題材・切り口: ${c.readerValue?.reason || "（実績比較の加減点なし）"}`);
   }
   console.log(`log: ${path.relative(ROOT, logPath)}`);
   process.exitCode = result.candidates.some((c) => isEligible(c, result.minScore, result.minCriticality)) ? 0 : 10;

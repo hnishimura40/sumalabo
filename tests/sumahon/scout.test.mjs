@@ -171,7 +171,7 @@ test("13. isEligible: クリティカル度が低い候補は不適格（今日�
   assert.equal(isEligible(noChange, 50, 12), false, "readerChange が書けない候補は不適格");
 });
 
-test("14. 較正: 過去2週間の実ネタで新基準の並びを確認（自分ごと上位 / 米国限定・調査は下位）", () => {
+test("14. 旧方針の互換性: 自分ごと上位 / 米国限定・調査は下位", () => {
   const now = Date.parse("2026-07-18T00:00:00Z");
   const mk = (title) => ({ title, description: "", pubDate: new Date(now - 3 * 3600_000).toUTCString() });
   const topics = {
@@ -183,7 +183,7 @@ test("14. 較正: 過去2週間の実ネタで新基準の並びを確認（自�
   };
   const src = { weight: 10 };
   const scored = Object.fromEntries(
-    Object.entries(topics).map(([k, t]) => [k, scoreItem(mk(t), src, PROD_CONFIG, now)]),
+    Object.entries(topics).map(([k, t]) => [k, scoreItem(mk(t), src, { ...PROD_CONFIG, readerValuePolicy: { enabled: false } }, now)]),
   );
 
   // 自分ごと度の高い3本が、米国限定・調査ものより上位に来る
