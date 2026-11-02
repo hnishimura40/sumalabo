@@ -2,6 +2,47 @@
   "minScore": 50,
   "minCriticality": 12,
   "maxAgeHours": 48,
+  "readerValuePolicy": {
+    "enabled": true,
+    "version": "2026-11-02",
+    "basis": "docs/scout-selection-policy.md",
+    "brandWeight": 3,
+    "brandCap": 8,
+    "keywordCap": 16,
+    "recencyCap": 24,
+    "positiveCap": 32,
+    "negativeCap": 24,
+    "curiosityMinScore": 20,
+    "consumerMinScore": 24,
+    "weights": {
+      "consumerChange": 24,
+      "benefitConditions": 12,
+      "clarification": 8,
+      "concreteCuriosity": 26,
+      "cultureTechOpportunity": 20,
+      "practicalWorkflow": 12,
+      "nicheAiUpdate": -16,
+      "announcementOnly": -8
+    },
+    "keywords": {
+      "mainstreamServices": ["Google", "Apple", "iCloud", "iPhone", "Android", "Windows", "LINE", "Gmail", "Yahoo", "PayPay", "Amazon", "楽天", "ドコモ", "ソフトバンク", "ahamo", "日本通信", "UQ mobile", "Y!mobile", "ChatGPT", "Claude", "Gemini"],
+      "consumerStakes": ["料金", "月額", "手数料", "値上げ", "値下げ", "規約", "保存", "設定", "プライバシー", "データ移行", "乗り換え", "通信量", "データ容量", "GB", "ギガ"],
+      "concreteChanges": ["改定", "変更", "値上げ", "値下げ", "引き下げ", "増量", "終了", "廃止", "切り替え", "開始", "無料に", "0円", "還元", "なくなる", "使えなく"],
+      "costBenefits": ["無料", "0円", "割引", "還元", "値下げ", "引き下げ", "据え置き", "増量"],
+      "conditions": ["条件", "対象", "対象外", "ただし", "実質", "キャンペーン", "いつまで", "期限", "手数料", "購入"],
+      "clarification": ["本当", "どうなる", "いくら", "違い", "どれ", "なに", "何", "誤解", "対象外", "ただし", "ではない", "0円ではない"],
+      "popularCulture": ["VIVANT", "ドラマ", "映画", "アニメ", "フィクション", "作中", "劇中"],
+      "technology": ["AI", "人工知能", "ロボット", "音声対話", "映像解析", "顔認識", "自動運転"],
+      "feasibility": ["現実", "実現", "実在", "作れる", "再現でき", "本当にでき", "どこまででき", "実現可能"],
+      "handsOn": ["実機", "実際に", "試した", "試して", "検証", "やってみた", "手順"],
+      "workflows": ["動画", "編集", "ナレーション", "字幕", "写真", "音声", "資料", "データ移行", "バックアップ"],
+      "aiServices": ["AI", "ChatGPT", "OpenAI", "Claude", "Anthropic", "Gemini", "GPT-", "Kimi"],
+      "modelUpdates": ["新モデル", "モデル発表", "モデルを発表", "一般公開", "一般提供", "新機能", "最上位", "無料枠", "サブスク無料", "再延長", "延長", "利用制限", "使用上限"],
+      "nicheAiContexts": ["Fable", "usage credits", "Codex", "Claude Code", "Atlas", "API", "SDK", "max・ultra", "Max/Ultra", "5時間", "ベンチマーク", "パラメータ", "ワークベンチ"],
+      "restrictedAudience": ["研究者向け", "研究者なら", "研究向け", "学術研究", "法人向け", "企業向け", "開発者向け", "企業契約", "親子体験イベント", "無料イベント", "米国限定", "日本は対象外", "日本では使えな"],
+      "announcements": ["発表", "提供開始", "一般公開", "一般提供", "配信開始", "新モデル", "新機能", "リリース"]
+    }
+  },
   "sources": [
     {
       "id": "gnews-ai-ja",
