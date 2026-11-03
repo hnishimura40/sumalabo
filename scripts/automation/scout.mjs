@@ -58,11 +58,17 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
 import { classifyArticleCategory } from "../sumahon/category-classification.mjs";
 import { scoreReaderValue } from "./scout-reader-value.mjs";
+import { fetchAppChart } from "./scout-ai-trends.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const CONFIG_PATH = path.join(ROOT, "data", "automation", "watch-sources.json");
 const PICKED_PATH = path.join(ROOT, "data", "automation", "scout-picked.json");
 const ARTICLES_DIR = path.join(ROOT, "content", "articles");
+const CHART_STATE_PATH = path.join(ROOT, "logs", "scout", "ai-app-charts.json");
+
+function loadChartState() {
+  try { return JSON.parse(readFileSync(CHART_STATE_PATH, "utf8")); } catch { return {}; }
+}
 
 export function loadConfig(p = CONFIG_PATH) {
   return JSON.parse(readFileSync(p, "utf-8"));
@@ -322,7 +328,7 @@ export function japanReasonLine(japan) {
 
 export function scoreItem(item, source, config, now = Date.now()) {
   const text = `${item.title} ${item.description || ""}`;
-  const h = ageHours(item.pubDate, now);
+  const h = ageHours(source.type === "app-store-chart" ? item.observedAt : item.pubDate, now);
   let recency = 0;
   if (h <= 6) recency = 30;
   else if (h <= 24) recency = 22;
@@ -340,7 +346,7 @@ export function scoreItem(item, source, config, now = Date.now()) {
   const weight = Number(source.weight) || 0;
   const criticality = scoreCriticality(item, config);
   const japan = japanRelevance(item, config);
-  const readerValue = scoreReaderValue(item, config);
+  const readerValue = scoreReaderValue(item, config, source);
   return {
     score: recency + tier1 + tier2 + impact + keywordCapAdjustment + weight + criticality.net + japan.net + (readerValue?.net || 0),
     breakdown: { recency, tier1, tier2, impact, keywordCapAdjustment, sourceWeight: weight, criticality: criticality.net, japanRelevance: japan.net, readerValue: readerValue?.net || 0 },
@@ -348,7 +354,7 @@ export function scoreItem(item, source, config, now = Date.now()) {
     criticality,
     japanAxes: japan,
     japanReason: japanReasonLine(japan),
-    readerChange: readerChangeLine(criticality) || (readerValue?.relevanceEligible ? readerValue.reason : null),
+    readerChange: readerChangeLine(criticality) || (readerValue?.relevanceEligible || readerValue?.aiCoreEligible ? readerValue.reason : null),
     matched: { tier1: tier1Hits, tier2: tier2Hits, impact: impactHits },
     ageHours: Math.round(h * 10) / 10,
   };
@@ -548,23 +554,32 @@ export function slugFromPick(pick, now = new Date()) {
 }
 
 // ---- 本体 ----
-export async function runScout({ config = loadConfig(), now = Date.now() } = {}) {
-  const results = await Promise.all((config.sources || []).map((s) => fetchFeed(s)));
+export async function runScout({ config = loadConfig(), now = Date.now(), chartState = loadChartState() } = {}) {
+  const results = await Promise.all((config.sources || []).map((s) => s.type === "app-store-chart" ? fetchAppChart(s, config, now, chartState[s.id]) : fetchFeed(s)));
   const knownTitles = loadKnownTitles();
   const coveredTopics = loadCoveredTopics();
   const seen = new Set();
   const candidates = [];
   const excluded = [];
+  const chartSnapshots = {};
+  let pickedApps = [];
+  try { pickedApps = JSON.parse(readFileSync(PICKED_PATH, "utf8")).map(p => p.appChart?.appId).filter(Boolean); } catch {}
   const sourceStatus = results.map((r) => ({ source: r.source, ok: r.ok, items: r.items.length, reason: r.reason }));
 
   for (const r of results) {
     const source = (config.sources || []).find((s) => s.id === r.source) || {};
+    if (r.snapshot) chartSnapshots[r.source] = r.snapshot;
     for (const item of r.items) {
-      const key = item.title.slice(0, 60);
+      const key = item.appChart ? `app:${item.appChart.appId}` : item.title.slice(0, 60);
       if (seen.has(key)) continue;
       seen.add(key);
-      const h = ageHours(item.pubDate, now);
+      const h = ageHours(source.type === "app-store-chart" ? item.observedAt : item.pubDate, now);
       if (h > (config.maxAgeHours || 48)) continue; // 古すぎは黙って捨てる（ノイズ）
+      if (item.appChart) {
+        const aliases = [item.appChart.name, ...(config.aiTrendWatch.appAliases?.[item.appChart.appId] || [])].map(s => s.normalize("NFKC").toLowerCase());
+        const coveredApp = pickedApps.includes(item.appChart.appId) || knownTitles.some(t => aliases.some(alias => t.normalize("NFKC").toLowerCase().includes(alias)));
+        if (coveredApp) { excluded.push({ title: item.title, source: r.source, reason: "ai_app_already_covered" }); continue; }
+      }
       const exclusion = findExclusion(item, config);
       if (exclusion) {
         excluded.push({ title: item.title, source: r.source, reason: "excluded_category", ...exclusion });
@@ -593,11 +608,13 @@ export async function runScout({ config = loadConfig(), now = Date.now() } = {})
       });
     }
   }
-  candidates.sort((a, b) => b.score - a.score);
+  const priority = c => isEligible(c, config.minScore || 50, config.minCriticality ?? 12) ? c.readerValue?.aiPriority || 0 : 0;
+  candidates.sort((a, b) => priority(b) - priority(a) || b.score - a.score);
   return {
     candidates,
     excluded,
     sourceStatus,
+    chartSnapshots,
     minScore: config.minScore || 50,
     minCriticality: Number.isFinite(config.minCriticality) ? config.minCriticality : 12,
   };
@@ -606,14 +623,16 @@ export async function runScout({ config = loadConfig(), now = Date.now() } = {})
 /**
  * auto-pick / 「今日書くか」判定の適格性。
  * 総合閾値と readerChange に加え、旧criticalityまたは明確な読者価値が必要。
- * 新経路もcriticality負値や海外限定除外を迂回しない。
+ * 一般経路はcriticality負値・海外限定除外を維持。重要AIは即時の行動変化や
+ * 国内提供を必須にせず、性能指標・重要発表・公式ランキングの根拠で判定する。
  */
 export function isEligible(candidate, minScore, minCriticality) {
   // rule #3（2026-07-23）: 海外限定 or 日本否定で「日本ではどうなる/日本の類似」が書けない候補は
-  // auto-pick から落とす（「日本は未定」の一文で終わる記事を選定段階で除外）。
-  if (candidate.japanAxes && candidate.japanAxes.usOnlyBlocked) return false;
+  // 一般ニュースは落とす。重要AIの指標・発表は、日本での利用可否を記事で説明する。
+  const aiCore = candidate.readerValue?.aiCoreEligible === true;
+  if (candidate.japanAxes && candidate.japanAxes.usOnlyBlocked && !aiCore) return false;
   const relevant = candidate.criticality != null && (
-    candidate.criticality.net >= minCriticality ||
+    aiCore || candidate.criticality.net >= minCriticality ||
     (candidate.criticality.net >= 0 && candidate.readerValue?.relevanceEligible === true)
   );
   return (
@@ -639,7 +658,7 @@ function recordPicked(pick) {
       arr = JSON.parse(readFileSync(PICKED_PATH, "utf-8"));
     } catch {}
   }
-  arr.push({ title: pick.title, link: pick.link, score: pick.score, breakdown: pick.breakdown, readerValue: pick.readerValue, readerChange: pick.readerChange, suggestedSlug: pick.suggestedSlug || null, at: new Date().toISOString() });
+  arr.push({ title: pick.title, link: pick.link, appChart: pick.appChart, score: pick.score, breakdown: pick.breakdown, readerValue: pick.readerValue, readerChange: pick.readerChange, suggestedSlug: pick.suggestedSlug || null, at: new Date().toISOString() });
   writeFileSync(PICKED_PATH, JSON.stringify(arr, null, 2) + "\n", "utf-8");
 }
 
@@ -651,6 +670,10 @@ async function main() {
   const limit = limitIdx >= 0 ? Number(argv[limitIdx + 1]) : 10;
 
   const result = await runScout();
+  if (Object.keys(result.chartSnapshots).length) {
+    mkdirSync(path.dirname(CHART_STATE_PATH), { recursive: true });
+    writeFileSync(CHART_STATE_PATH, JSON.stringify({ ...loadChartState(), ...result.chartSnapshots }, null, 2) + "\n");
+  }
   const logPath = saveScoutLog(result);
   const top = result.candidates.slice(0, limit);
 

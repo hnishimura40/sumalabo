@@ -20,14 +20,15 @@ const scored = Object.fromEntries(Object.entries(samples).map(([key, title]) => 
   return [key, { ...result, title, eligible: isEligible(result, config.minScore, config.minCriticality) }];
 }));
 const checks = [
-  ["身近な設定変更をモデル発表より優先", scored.settings.score > scored.model.score && scored.settings.eligible],
+  ["AIモデル発表を主軸の採用対象に残す", scored.model.eligible && scored.model.readerValue.aiCoreEligible && !scored.model.readerValue.signals.nicheAiUpdate],
+  ["身近な設定変更も採用対象に残す", scored.settings.eligible],
   ["広い利用者の手数料条件を限定枠延長より優先", scored.fee.score > scored.narrow.score],
   ["作品×技術の実現可能性を採用対象にできる", scored.curiosity.eligible],
   ["元RSSから検証する問いを提案できる", scored.rssOpportunity.eligible && Boolean(scored.rssOpportunity.readerValue.suggestedAngle)],
   ["研究者の無料枠を一般消費者の変更として加点しない", !scored.researcher.readerValue.signals.consumerChange],
   ["海外限定の除外は維持", !scored.overseas.eligible],
 ];
-for (const row of Object.values(scored).sort((a,b)=>b.score-a.score)) {
+for (const row of Object.values(scored).sort((a,b)=>(b.eligible ? b.readerValue?.aiPriority || 0 : 0)-(a.eligible ? a.readerValue?.aiPriority || 0 : 0)||b.score-a.score)) {
   console.log(`${row.eligible ? "○" : "×"} ${row.score} ${row.title}\n  ${row.readerValue?.reason || "加減点なし"}`);
 }
 for (const [label, ok] of checks) console.log(`${ok ? "PASS" : "FAIL"} ${label}`);
