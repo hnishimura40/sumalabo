@@ -162,5 +162,11 @@
         }
       ]
     }
-  ]
+  ],
+  "editorialPolicy": {
+    "version": "2026-11-03-sumalabo-identity",
+    "document": "docs/sumalabo-editorial-identity.md",
+    "configuration": "data/automation/sumalabo-editorial-identity.json",
+    "requiredBeforePublication": true
+  }
 }
