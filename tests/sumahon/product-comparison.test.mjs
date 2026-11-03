@@ -62,7 +62,7 @@ test('店舗ページをメーカー一次情報としたり、未確認軸を�
   const b=fixtures();b.review.products[0].facts[0].value='未確認';assert.throws(()=>validateReview(b.review,b.snapshot,category,config,now));
 });
 test('比較表・用途別の理由・注意点・出典を出し、実機検証を装わない',()=>{
-  const {review,snapshot}=fixtures();const section=renderComparison(review,snapshot,category,config,now);
+  const {review,snapshot}=fixtures();review.editorial={definition:'持ち運んで機器に給電する製品です。',audience:'外で充電したい人',unaffected:'今の製品で足りる人',conclusion:'用途で選ぶ'};const section=renderComparison(review,snapshot,category,config,now);
   assert.match(section,/使う場面/);assert.match(section,/妥協する点/);assert.match(section,/実機テストではありません/);assert.match(section,/data-comparison-version=/);assert.match(section,/集計期間/);assert.match(section,/tbl-scroll is-scrollable/);
   const article='---\ntitle: "旧比較"\ndescription: "旧説明"\nupdated: "2026-07-20"\npublishAt: "2026-05-05T09:00:00+09:00"\n---\nimport X from "x";\n\n古いおすすめ';
   const output=updateComparisonArticle(article,section,'新比較','新説明','2026-11-03');assert.doesNotMatch(output,/古いおすすめ/);assert.match(output,/publishAt: "2026-05-05T09:00:00\+09:00"/);assert.match(output,/import X/);
