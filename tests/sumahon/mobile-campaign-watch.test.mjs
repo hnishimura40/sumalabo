@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import {canonicalUrl,allowedUrl,extractPage,fetchPage,collectCampaigns,compareObservations,acknowledge,verifyPublicationReceipt} from '../../scripts/automation/mobile-campaign-watch.mjs';
 import {START,END,validateCatalog,renderCampaignSection,updateArticle,sectionVersion} from '../../scripts/automation/mobile-campaign-article.mjs';
 const config=JSON.parse(readFileSync(new URL('../../data/automation/mobile-campaign-watch.json',import.meta.url),'utf8'));
@@ -113,4 +115,13 @@ test('公式テキストに記号やHTMLがあってもMDXへ実行コードを�
   const data=catalog();data.campaigns[0].title='<script>{danger}</script>';
   const section=renderCampaignSection(data,cfg,Date.parse(now));
   assert.doesNotMatch(section,/<script>/);assert.match(section,/&#123;danger&#125;/);
+});
+test('定期公開の明示承認前はCLIのapplyを拒否し、既存記事を変更しない',()=>{
+  assert.equal(config.publicationMode,'draft_only');
+  const article=new URL('../../content/articles/mobile-plan-cost-comparison.mdx',import.meta.url);
+  const before=readFileSync(article,'utf8');
+  const command=fileURLToPath(new URL('../../scripts/automation/mobile-campaign-article.mjs',import.meta.url));
+  const result=spawnSync(process.execPath,[command,'not-used.json','--apply'],{encoding:'utf8',windowsHide:true});
+  assert.notEqual(result.status,0);assert.match(result.stderr,/publication_authorization_required/);
+  assert.equal(readFileSync(article,'utf8'),before);
 });

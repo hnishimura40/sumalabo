@@ -58,6 +58,7 @@ export function updateArticle(text,section,updated,replacements=[]){
 function main(){
   const catalogFile=process.argv[2];if(!catalogFile)throw Error('usage: <reviewed-catalog.json> [--apply]');
   const config=JSON.parse(fs.readFileSync(path.join(ROOT,'data/automation/mobile-campaign-watch.json'),'utf8'));
+  if(process.argv.includes('--apply')&&config.publicationMode!=='auto_publish')throw Error('publication_authorization_required: preview_only');
   const catalog=JSON.parse(fs.readFileSync(path.resolve(catalogFile),'utf8'));
   const article=path.resolve(ROOT,config.articlePath);
   if(!article.startsWith(path.join(ROOT,'content','articles')+path.sep))throw Error('article_path_not_allowed');
