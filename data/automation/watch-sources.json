@@ -4,7 +4,7 @@
   "maxAgeHours": 48,
   "readerValuePolicy": {
     "enabled": true,
-    "version": "2026-11-03-ai-security",
+    "version": "2026-11-03-ai-news-angles",
     "basis": "docs/scout-selection-policy.md",
     "brandWeight": 3,
     "brandCap": 8,
@@ -18,7 +18,7 @@
       "aiBenchmark": 36,
       "aiModelLaunch": 24,
       "aiChartMomentum": 40,
-      "aiSecurityOpportunity": 32,
+      "aiNewsOpportunity": 32,
       "peripheralEvent": -24,
       "consumerChange": 24,
       "benefitConditions": 12,
@@ -42,9 +42,6 @@
       "handsOn": ["実機", "実際に", "試した", "試して", "検証", "やってみた", "手順"],
       "workflows": ["動画", "編集", "ナレーション", "字幕", "写真", "音声", "資料", "データ移行", "バックアップ"],
       "aiServices": ["AI","ChatGPT","OpenAI","Claude","Anthropic","Gemini","GPT-","Kimi","Meta","メタ","Muse","ミューズ","Llama","Grok","DeepSeek","Qwen","Mistral"],
-      "securityIncidents": ["不正アクセス","サイバー攻撃","ハッキング","ランサムウェア","情報漏洩","情報流出","データ流出","マルウェア","フィッシング"],
-      "securityServices": ["GMO","お名前.com","Google","Apple","Microsoft","LINE","Yahoo","Amazon","楽天","ドコモ","ソフトバンク","KDDI","ConoHa"],
-      "securityUpdates": ["被害","漏洩","流出","停止","対応","発表","確認","会見","公表","注意","対策","判明","報告","手口","脅迫","防御","お知らせ"],
       "aiMetrics": ["ベンチマーク", "性能指標", "性能比較", "リーダーボード", "Artificial Analysis", "Intelligence Index", "LMArena", "Arena", "SWE-bench", "GPQA", "ARC-AGI", "推論性能", "評価スコア"],
       "aiLaunchMarkers": ["新モデル", "モデルを発表", "モデル発表", "モデル公開", "一般公開", "一般提供", "AIエージェント", "パーソナルAI", "AIアプリ", "動画生成モデル", "画像生成モデル", "音声モデル"],
       "unconfirmed": ["噂", "うわさ", "リーク", "未確認", "発表か", "かもしれない"],
@@ -55,6 +52,143 @@
       "announcements": ["発表", "提供開始", "一般公開", "一般提供", "配信開始", "新モデル", "新機能", "リリース"]
     }
   },
+  "newsAngleWatch": {
+    "enabled": true,
+    "topListingLimit": 20,
+    "minPublisherCount": 2,
+    "similarityThreshold": 0.55,
+    "maxEvidence": 6,
+    "angleRules": [
+      {
+        "id": "security",
+        "groups": [
+          [
+            "不正アクセス",
+            "サイバー攻撃",
+            "ハッキング",
+            "ランサムウェア",
+            "情報漏洩",
+            "情報流出",
+            "マルウェア",
+            "フィッシング"
+          ],
+          [
+            "被害",
+            "漏洩",
+            "流出",
+            "停止",
+            "対応",
+            "会見",
+            "対策",
+            "判明",
+            "不備",
+            "手口",
+            "防御",
+            "お知らせ"
+          ]
+        ],
+        "question": "何が起き、AI時代の攻撃や防御を考えるうえで何が分かるか。事件でのAI使用と一般論を分ける"
+      },
+      {
+        "id": "authenticity",
+        "groups": [
+          [
+            "動画",
+            "映像",
+            "音声",
+            "写真",
+            "画像",
+            "本人確認"
+          ],
+          [
+            "偽",
+            "加工",
+            "真偽",
+            "なりすまし",
+            "見分け",
+            "検証",
+            "流出"
+          ]
+        ],
+        "question": "本物と偽物をどう確かめるか。AI生成や検出の能力・限界を一次情報で調べる"
+      },
+      {
+        "id": "work",
+        "groups": [
+          [
+            "業務",
+            "仕事",
+            "人手不足",
+            "店舗",
+            "物流",
+            "翻訳",
+            "教育",
+            "学校"
+          ],
+          [
+            "自動化",
+            "代替",
+            "効率",
+            "採点",
+            "翻訳",
+            "教材",
+            "接客",
+            "配送",
+            "負担",
+            "作業時間"
+          ]
+        ],
+        "question": "この課題のどの作業をAIが担え、何が人に残るか。現状の実証と提案を区別する"
+      },
+      {
+        "id": "culture",
+        "groups": [
+          [
+            "ドラマ",
+            "映画",
+            "アニメ",
+            "作品",
+            "ゲーム"
+          ],
+          [
+            "ロボット",
+            "人工知能",
+            "対話",
+            "自動運転",
+            "顔認識",
+            "映像解析",
+            "翻訳",
+            "AI"
+          ]
+        ],
+        "question": "話題の作品に登場する技術は現実のAIでどこまで再現できるか"
+      },
+      {
+        "id": "science",
+        "groups": [
+          [
+            "研究",
+            "発見",
+            "予測",
+            "気象",
+            "天気",
+            "台風",
+            "宇宙",
+            "科学"
+          ],
+          [
+            "予測",
+            "シミュレーション",
+            "解析",
+            "モデル",
+            "データ",
+            "観測"
+          ]
+        ],
+        "question": "予測や発見の仕組みをAIの視点から説明できるか。測定結果と予測・不確実性を分ける"
+      }
+    ]
+  },
   "aiTrendWatch": {
     "topRank": 10,
     "minRise": 10,
@@ -63,12 +197,11 @@
     "appAliases": { "6760173601": ["Muse", "ミューズ"] }
   },
   "sources": [
-    {
-      "id": "gnews-ai-security", "name": "GMOの不正アクセス・AI時代のサイバー攻撃と防御",
-      "type": "rss",
-      "url": "https://news.google.com/rss/search?q=%28GMO+OR+%22%E3%81%8A%E5%90%8D%E5%89%8D.com%22+OR+AI+OR+%E7%94%9F%E6%88%90AI%29+%28%E4%B8%8D%E6%AD%A3%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9+OR+%E3%82%B5%E3%82%A4%E3%83%90%E3%83%BC%E6%94%BB%E6%92%83+OR+%E3%83%8F%E3%83%83%E3%82%AD%E3%83%B3%E3%82%B0+OR+%E3%83%A9%E3%83%B3%E3%82%B5%E3%83%A0%E3%82%A6%E3%82%A7%E3%82%A2+OR+%E3%83%95%E3%82%A3%E3%83%83%E3%82%B7%E3%83%B3%E3%82%B0%29+when%3A2d&hl=ja&gl=JP&ceid=JP%3Aja",
-      "weight": 10, "official": false
-    },
+    {"id":"gnews-business-jp","name":"ビジネスの主要ニュース","type":"rss","role":"general-news","url":"https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=ja&gl=JP&ceid=JP:ja","weight":10,"official":false},
+    {"id":"gnews-technology-jp","name":"技術の主要ニュース","type":"rss","role":"general-news","url":"https://news.google.com/rss/headlines/section/topic/TECHNOLOGY?hl=ja&gl=JP&ceid=JP:ja","weight":10,"official":false},
+    {"id":"gnews-top-jp","name":"日本の主要ニュース全般","type":"rss","role":"general-news","url":"https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja","weight":10,"official":false},
+    {"id":"gnews-science-jp","name":"科学の主要ニュース","type":"rss","role":"general-news","url":"https://news.google.com/rss/headlines/section/topic/SCIENCE?hl=ja&gl=JP&ceid=JP:ja","weight":10,"official":false},
+    {"id":"gnews-entertainment-jp","name":"文化・エンタメの主要ニュース","type":"rss","role":"general-news","url":"https://news.google.com/rss/headlines/section/topic/ENTERTAINMENT?hl=ja&gl=JP&ceid=JP:ja","weight":10,"official":false},
     {
       "id": "apple-ai-charts-jp", "name": "Apple公式・日本無料総合ランキング",
       "type": "app-store-chart", "country": "jp", "countryLabel": "日本",

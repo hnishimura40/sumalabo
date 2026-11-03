@@ -59,6 +59,7 @@ import process from "node:process";
 import { classifyArticleCategory } from "../sumahon/category-classification.mjs";
 import { scoreReaderValue } from "./scout-reader-value.mjs";
 import { fetchAppChart } from "./scout-ai-trends.mjs";
+import { annotateNewsAngles } from "./scout-news-angles.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const CONFIG_PATH = path.join(ROOT, "data", "automation", "watch-sources.json");
@@ -99,7 +100,9 @@ export function parseFeed(xml) {
       (block.match(/<updated>([\s\S]*?)<\/updated>/) || [])[1] ||
       "";
     const description = decodeEntities(((block.match(/<description[^>]*>([\s\S]*?)<\/description>/) || [])[1] || "").replace(/<[^>]+>/g, " ")).slice(0, 300);
-    if (title) items.push({ title, link, pubDate: date.trim(), description });
+    const publisherMatch = block.match(/<source\b[^>]*url=["']([^"']+)["'][^>]*>([\s\S]*?)<\/source>/i);
+    const publisher = publisherMatch ? { url:decodeEntities(publisherMatch[1]), name:decodeEntities(publisherMatch[2]) } : undefined;
+    if (title) items.push({ title, link, pubDate: date.trim(), description, ...(publisher ? {publisher} : {}) });
   }
   return items;
 }
@@ -556,6 +559,7 @@ export function slugFromPick(pick, now = new Date()) {
 // ---- 本体 ----
 export async function runScout({ config = loadConfig(), now = Date.now(), chartState = loadChartState() } = {}) {
   const results = await Promise.all((config.sources || []).map((s) => s.type === "app-store-chart" ? fetchAppChart(s, config, now, chartState[s.id]) : fetchFeed(s)));
+  annotateNewsAngles(results, config, now, tokenize);
   const knownTitles = loadKnownTitles();
   const coveredTopics = loadCoveredTopics();
   const seen = new Set();
@@ -658,7 +662,7 @@ function recordPicked(pick) {
       arr = JSON.parse(readFileSync(PICKED_PATH, "utf-8"));
     } catch {}
   }
-  arr.push({ title: pick.title, link: pick.link, appChart: pick.appChart, score: pick.score, breakdown: pick.breakdown, readerValue: pick.readerValue, readerChange: pick.readerChange, suggestedSlug: pick.suggestedSlug || null, at: new Date().toISOString() });
+  arr.push({ title: pick.title, link: pick.link, appChart: pick.appChart, newsTrend: pick.newsTrend, score: pick.score, breakdown: pick.breakdown, readerValue: pick.readerValue, readerChange: pick.readerChange, suggestedSlug: pick.suggestedSlug || null, at: new Date().toISOString() });
   writeFileSync(PICKED_PATH, JSON.stringify(arr, null, 2) + "\n", "utf-8");
 }
 
@@ -696,6 +700,7 @@ async function main() {
             breakdown: c.breakdown,
             readerChange: c.readerChange,
             readerValue: c.readerValue,
+            newsTrend: c.newsTrend,
             criticalityDeductions: c.criticality ? c.criticality.deductions : [],
             eligible: isEligible(c, result.minScore, result.minCriticality),
           })),
