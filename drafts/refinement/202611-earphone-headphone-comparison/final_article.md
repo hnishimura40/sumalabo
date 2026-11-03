@@ -1,22 +1,3 @@
----
-title: "イヤホン・ヘッドホンおすすめ比較｜用途と気になる違いで選ぶ10候補"
-slug: "202611-earphone-headphone-comparison"
-type: "revenue"
-category: "周辺機器・ガジェット"
-description: "イヤホン・ヘッドホンの人気10候補を写真付きで比較。用途別の理由と弱点、メーカー拠点・製造国・保証、カテゴリごとの気になる違いで選べます。"
-thumbnail: "/images/thumbnails/202611-earphone-headphone-comparison.webp"
-thumbnailAlt: "ひまりとらぼまるが有線イヤホン・無線イヤホン・ヘッドホンを見比べるイラスト"
-status: "ready"
-characterUse:
-  recommended: true
-  count: 1
-  primary: "labomaru_chart_icon.webp"
-priority: 1
-pubDate: "2026-11-03"
-publishAt: "2026-11-03T12:06:56.401Z"
-updated: "2026-11-03"
-hasAffiliate: true
----
 
 import Summary30 from "../../src/components/article/Summary30.astro";
 import CharacterCallout from "../../src/components/characters/CharacterCallout.astro";

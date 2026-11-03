@@ -1,27 +1,3 @@
----
-title: "モバイルバッテリーおすすめ比較｜用途と気になる違いで選ぶ10候補"
-slug: "power-bank-comparison"
-type: "revenue"
-category: "周辺機器・ガジェット"
-description: "モバイルバッテリーの人気10候補を写真付きで比較。用途別の理由と弱点、メーカー拠点・製造国・保証、カテゴリごとの気になる違いで選べます。"
-thumbnail: "/images/thumbnails/power-bank-comparison.webp"
-thumbnailAlt: "モバイルバッテリーのおすすめを、ひまりとらぼまるが容量や重さで比較しているイメージ"
-status: "ready"
-priority: 1
-characterUse:
-  recommended: true
-  count: 1
-  primary: "labomaru_chart_icon.webp"
-  secondary: "duo_guide_half.webp"
-related:
-  - "power-bank-guide"
-  - "usb-c-charger-guide"
-  - "usb-c-charger-comparison"
-pubDate: "2026-05-05"
-publishAt: "2026-05-05T09:00:00+09:00"
-updated: "2026-11-03"
-hasAffiliate: true
----
 
 import CharacterCallout from "../../src/components/characters/CharacterCallout.astro";
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
