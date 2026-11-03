@@ -2,15 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {parseRanking,fetchRanking,observeRankings,digest,verifyPublishedComparison} from '../../scripts/automation/product-comparison-watch.mjs';
-import {validateReview,renderComparison,updateComparisonArticle} from '../../scripts/automation/product-comparison-article.mjs';
+import {validateReview,validateProductPhoto,renderComparison,updateComparisonArticle} from '../../scripts/automation/product-comparison-article.mjs';
 const config=JSON.parse(readFileSync(new URL('../../data/automation/product-comparison-watch.json',import.meta.url),'utf8'));
 const category=config.categories[0],now=Date.parse('2026-11-03T12:00:00Z'),stamp=new Date(now).toISOString();
 function html(count=10){return '<title>価格.com 人気売れ筋ランキング</title><p>更新日：2026/11/03 ( 2026/10/27 ～ 2026/11/02 の集計結果です)</p>'+Array.from({length:count},(_,i)=>`<div class="rkgBoxHead rkgBoxHead-2${i<3?' rank'+(i+1):''}"><a href="https://kakaku.com/item/K00000000${String(i+1).padStart(2,'0')}/"><span class="rkgBoxNum"><span class="num">${i+1}</span>位</span><span class="rkgBoxNameMaker">メーカーA</span><span class="rkgBoxNameItem">モデル${i+1}</span></a></div><div class="rkgPrice"><span class="price">&#165;${i+1},000</span></div><dl><dt class="p-specLabel_itemTtl">重量</dt><dd>200g</dd></dl>`).join('');}
 function fixtures(){
   const snapshot=parseRanking(html(),category,stamp);
   const products=snapshot.products.map(p=>({id:p.id,model:p.name,status:'eligible',suitableFor:'スマホを毎日持ち歩く人',why:'容量と出力が用途に合う',caution:'同時使用時の出力が下がる',facts:category.criteria.map(axis=>({axis,value:'確認済みの仕様値',sourceType:'manufacturer',sourceUrl:'https://maker.example/product/'+p.id,verifiedAt:stamp})),officialEvidence:[{model:p.name,url:'https://maker.example/product/'+p.id,verifiedAt:stamp}],safetyReview:{status:'checked',recalled:false,url:'https://maker.example/support',verifiedAt:stamp,note:'当該型番のメーカー案内を照合'}}));
+  products.forEach(p=>p.display={name:p.model,cells:['10000mAh','190g','30W']});
   const profiles=products.slice(0,3).map((p,i)=>({persona:['普段使い','旅行','PC兼用'][i],productId:p.id,because:category.criteria.slice(0,2).map(axis=>({axis,text:'この使用条件を満たす'})),tradeoff:'荷物が重くなる',avoidIf:'軽さだけを重視する場合'}));
-  return {snapshot,review:{schemaVersion:1,categoryId:category.id,rankingDigest:snapshot.digest,testBasis:'public_sources',reviewedAt:stamp,products,profiles}};
+  return {snapshot,review:{schemaVersion:1,categoryId:category.id,rankingDigest:snapshot.digest,testBasis:'public_sources',reviewedAt:stamp,products,profiles,editorial:{definition:'持ち運んで機器へ給電する製品です。',audience:'外出先で充電したい人',unaffected:'今の製品で足りる人',conclusion:'用途で選ぶ'},presentation:{columns:category.displayColumns,audience:'スマホ・PC用で迷う人',conclusion:'用途と必要な出力で選ぶ'}}};
 }
 test('トップ3の装飾・翌日の矢印に依存せず、実際の表示10製品と集計期間を保存する',()=>{
   const s=parseRanking(html(12),category,stamp);assert.equal(s.products.length,10);assert.equal(s.products[9].rank,10);assert.equal(s.products[0].priceYen,1000);assert.equal(s.products[0].specs[0].value,'200g');assert.equal(s.period.to,'2026/11/02');
@@ -63,7 +64,7 @@ test('店舗ページをメーカー一次情報としたり、未確認軸を�
 });
 test('比較表・用途別の理由・注意点・出典を出し、実機検証を装わない',()=>{
   const {review,snapshot}=fixtures();review.editorial={definition:'持ち運んで機器に給電する製品です。',audience:'外で充電したい人',unaffected:'今の製品で足りる人',conclusion:'用途で選ぶ'};const section=renderComparison(review,snapshot,category,config,now);
-  assert.match(section,/使う場面/);assert.match(section,/妥協する点/);assert.match(section,/実機テストではありません/);assert.match(section,/data-comparison-version=/);assert.match(section,/集計期間/);assert.match(section,/tbl-scroll is-scrollable/);
+  assert.match(section,/使う場面/);assert.match(section,/妥協する点/);assert.match(section,/実機テストではありません/);assert.match(section,/data-comparison-version=/);assert.match(section,/集計期間/);assert.match(section,/pc-table/);assert.equal((section.match(/<tr data-status=/g)||[]).length,10);assert.equal((section.match(/scope="col"/g)||[]).length,4);assert.match(section,/pc-detail/);
   const article='---\ntitle: "旧比較"\ndescription: "旧説明"\nupdated: "2026-07-20"\npublishAt: "2026-05-05T09:00:00+09:00"\n---\nimport X from "x";\n\n古いおすすめ';
   const output=updateComparisonArticle(article,section,'新比較','新説明','2026-11-03');assert.doesNotMatch(output,/古いおすすめ/);assert.match(output,/publishAt: "2026-05-05T09:00:00\+09:00"/);assert.match(output,/import X/);
 });
@@ -72,4 +73,15 @@ test('本番確認はPRマージ・記事の同一比較バージョン・strict
   const response=async url=>url.includes('api.github')?Response.json({merged:true}):url.includes('verify-publication')?Response.json({status:'published'}):new Response('<section data-comparison-version="'+receipt.version+'">');
   await verifyPublishedComparison(receipt,category,response);
   await assert.rejects(()=>verifyPublishedComparison(receipt,category,async url=>url.includes('/articles/')?new Response('old'):response(url)));
+});
+
+test('商品写真は同じ型番・楽天の出店と画像ホスト・今回の確認を必須にする',()=>{
+ const photo={model:'モデル1',imageUrl:'https://thumbnail.image.rakuten.co.jp/@0_mall/shop/cabinet/product.jpg',productUrl:'https://item.rakuten.co.jp/shop/product/',verifiedAt:stamp};
+ assert.doesNotThrow(()=>validateProductPhoto(photo,'モデル1',now));
+ for(const change of [{model:'別型番'},{imageUrl:'https://unrelated.example/image.jpg'},{productUrl:'https://example.com/shop/product/'},{productUrl:'http://item.rakuten.co.jp/shop/product/'},{verifiedAt:'2026-10-01T00:00:00Z'}])assert.throws(()=>validateProductPhoto({...photo,...change},'モデル1',now));
+});
+test('短い表示欄でも全10候補と全比較軸を保持し、写真を理由に候補を選び直さない',()=>{
+ const {review,snapshot}=fixtures();review.products[0].image={model:review.products[0].model,imageModel:review.products[0].model,imageUrl:'https://tshop.r10s.jp/shop/cabinet/product.jpg',productUrl:'https://item.rakuten.co.jp/shop/product/',verifiedAt:stamp};
+ const html=renderComparison(review,snapshot,category,config,now);assert.match(html,/<RakutenAffiliateImage/);assert.equal((html.match(/class="pc-detail"/g)||[]).length,10);for(const axis of category.criteria)assert.ok(html.includes(axis));
+ review.products[0].display.cells=['長い説明'.repeat(30),'190g','30W'];assert.throws(()=>renderComparison(review,snapshot,category,config,now),/short_comparison_cells_required/);
 });
