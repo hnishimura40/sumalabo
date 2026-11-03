@@ -44,3 +44,12 @@ privateな`<category-id>-review.json`を作る。schemaVersion=1、categoryId、
 privateなreceiptへkey（category-id:YYYY-MM）、articleUrl、prUrl、version（生成時の値）を記録し、`node scripts/automation/product-comparison-watch.mjs ack <receipt.json>`を実行する。PRの実マージ、本番HTMLのdata-comparison-version、verify-publicationのpublishedを再取得してから月次タスクを完了にする。更新案だけ・取得だけ・自己申告だけで完了にしない。
 
 変更や対応がなければ通知不要。公開完了・検証失敗・新しい取得障害・ユーザー操作が必要なときだけ、URLと変更内容、未確認をこのチャットへ報告する。添付資料や内部データは通知に添付しない。定期実行にはPCとCodexアプリの起動が必要。
+
+
+## 写真と読みやすさの維持
+
+表示は ProductComparisonPresentation と生成処理を共通で使う。presentation は設定 displayColumns に沿う3つの columns（label/axis）、短い audience/conclusion、先に紹介する3つの featuredProductIds を持つ。全10候補の display は短い name と3個の cells（各70字以内）を必須にする。表へ長い説明文を戻さず、数値と短い言葉だけにし、全6軸の条件・出典・注意点は製品別の開閉欄へ残す。上位10の記録やおすすめの根拠は減らさない。
+
+商品写真の候補は data/automation/product-comparison-images.json。毎回、同じ型番・基本モデルか、楽天の商品ページと画像が表示できるかを確認し、review.products の image（model/imageModel/imageUrl/productUrl/caption/verifiedAt）へ記録する。写真の確認も72時間以内を必須とする。色やセット違い、ケース単品、片耳だけ、互換品、中古、画像なし画像を避け、一覧画像で実物を確認する。写真が確認できなくても順位外へ入れ替えず、その候補は写真未掲載とする。リンクは正規の RakutenAffiliateImage と既存のアフィリエイト設定を使う。画像を使う記事は hasAffiliate を true にし、価格.com参考最安値と写真リンク先の価格が異なることを明示する。写真取得のしやすさでおすすめを変更しない。
+
+スマホ幅320/390pxとPC幅で、ページ・表に横はみ出しがないこと、写真が表示されること、表の絞り込みと詳細を開くリンクが動作することを実測する。次回更新でも、重複説明・全列横スクロール・写真なしの長文カードへ戻さない。
