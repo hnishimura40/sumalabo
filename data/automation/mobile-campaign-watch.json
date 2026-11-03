@@ -4,7 +4,24 @@
   "publicationAuthorization": {
     "approvedOn": "2026-11-03",
     "scope": "officially_verified_campaign_changes_after_passing_checks",
-    "mergeAndProductionDeploy": true
+    "mergeAndProductionDeploy": true,
+    "necessaryRepairs": {
+      "approvedOn": "2026-11-04",
+      "scope": "必要な既存導入・読者案内・専門語説明・編集記録の自動修正後、公式確認と既存検品に合格した変更を本番公開する",
+      "preserve": [
+        "通常料金表・診断の根拠と内容（再確認なしの変更をしない）",
+        "既存画像",
+        "pubDate",
+        "publishAt"
+      ],
+      "neverBypass": [
+        "公式確認",
+        "記事ゲート",
+        "秘密情報検査",
+        "ビルド",
+        "公開確認"
+      ]
+    }
   },
   "targetSlug": "mobile-plan-cost-comparison",
   "articlePath": "content/articles/mobile-plan-cost-comparison.mdx",
