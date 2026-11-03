@@ -4,17 +4,21 @@
   "maxAgeHours": 48,
   "readerValuePolicy": {
     "enabled": true,
-    "version": "2026-11-02",
+    "version": "2026-11-03-ai-core",
     "basis": "docs/scout-selection-policy.md",
     "brandWeight": 3,
     "brandCap": 8,
     "keywordCap": 16,
     "recencyCap": 24,
-    "positiveCap": 32,
+    "positiveCap": 40,
     "negativeCap": 24,
     "curiosityMinScore": 20,
     "consumerMinScore": 24,
     "weights": {
+      "aiBenchmark": 36,
+      "aiModelLaunch": 24,
+      "aiChartMomentum": 40,
+      "peripheralEvent": -24,
       "consumerChange": 24,
       "benefitConditions": 12,
       "clarification": 8,
@@ -36,19 +40,48 @@
       "feasibility": ["現実", "実現", "実在", "作れる", "再現でき", "本当にでき", "どこまででき", "実現可能"],
       "handsOn": ["実機", "実際に", "試した", "試して", "検証", "やってみた", "手順"],
       "workflows": ["動画", "編集", "ナレーション", "字幕", "写真", "音声", "資料", "データ移行", "バックアップ"],
-      "aiServices": ["AI", "ChatGPT", "OpenAI", "Claude", "Anthropic", "Gemini", "GPT-", "Kimi"],
+      "aiServices": ["AI", "ChatGPT", "OpenAI", "Claude", "Anthropic", "Gemini", "GPT-", "Kimi", "Meta", "メタ", "Muse", "ミューズ", "Llama", "Grok", "DeepSeek", "Qwen", "Mistral"],
+      "aiMetrics": ["ベンチマーク", "性能指標", "性能比較", "リーダーボード", "Artificial Analysis", "Intelligence Index", "LMArena", "Arena", "SWE-bench", "GPQA", "ARC-AGI", "推論性能", "評価スコア"],
+      "aiLaunchMarkers": ["新モデル", "モデルを発表", "モデル発表", "モデル公開", "一般公開", "一般提供", "AIエージェント", "パーソナルAI", "AIアプリ", "動画生成モデル", "画像生成モデル", "音声モデル"],
+      "unconfirmed": ["噂", "うわさ", "リーク", "未確認", "発表か", "かもしれない"],
+      "peripheralEvents": ["親子教室", "親子体験", "体験教室", "無料イベント", "夏休みイベント", "ウェビナー", "セミナー", "参加者募集"],
       "modelUpdates": ["新モデル", "モデル発表", "モデルを発表", "一般公開", "一般提供", "新機能", "最上位", "無料枠", "サブスク無料", "再延長", "延長", "利用制限", "使用上限"],
-      "nicheAiContexts": ["Fable", "usage credits", "Codex", "Claude Code", "Atlas", "API", "SDK", "max・ultra", "Max/Ultra", "5時間", "ベンチマーク", "パラメータ", "ワークベンチ"],
+      "nicheAiContexts": ["Fable", "usage credits", "Codex", "Claude Code", "Atlas", "API", "SDK", "max・ultra", "Max/Ultra", "5時間", "ワークベンチ"],
       "restrictedAudience": ["研究者向け", "研究者なら", "研究向け", "学術研究", "法人向け", "企業向け", "開発者向け", "企業契約", "親子体験イベント", "無料イベント", "米国限定", "日本は対象外", "日本では使えな"],
       "announcements": ["発表", "提供開始", "一般公開", "一般提供", "配信開始", "新モデル", "新機能", "リリース"]
     }
   },
+  "aiTrendWatch": {
+    "topRank": 10,
+    "minRise": 10,
+    "risingRankLimit": 30,
+    "appNames": ["Muse from Meta", "Meta AI", "ChatGPT", "Gemini", "Claude", "DeepSeek", "Grok", "Perplexity"],
+    "appAliases": { "6760173601": ["Muse", "ミューズ"] }
+  },
   "sources": [
+    {
+      "id": "apple-ai-charts-jp", "name": "Apple公式・日本無料総合ランキング",
+      "type": "app-store-chart", "country": "jp", "countryLabel": "日本",
+      "url": "https://rss.marketingtools.apple.com/api/v2/jp/apps/top-free/100/apps.json",
+      "weight": 12, "official": true
+    },
+    {
+      "id": "apple-ai-charts-us", "name": "Apple公式・米国無料総合ランキング",
+      "type": "app-store-chart", "country": "us", "countryLabel": "米国",
+      "url": "https://rss.marketingtools.apple.com/api/v2/us/apps/top-free/100/apps.json",
+      "weight": 12, "official": true
+    },
+    {
+      "id": "gnews-ai-metrics", "name": "AI性能指標・モデル更新の発見",
+      "type": "rss",
+      "url": "https://news.google.com/rss/search?q=%28%22Artificial%20Analysis%22%20OR%20LMArena%20OR%20AI%E3%83%99%E3%83%B3%E3%83%81%E3%83%9E%E3%83%BC%E3%82%AF%20OR%20AI%E6%80%A7%E8%83%BD%E6%8C%87%E6%A8%99%29&hl=ja&gl=JP&ceid=JP:ja",
+      "weight": 10, "official": false
+    },
     {
       "id": "gnews-ai-ja",
       "name": "Google News (AI・生成AI)",
       "type": "rss",
-      "url": "https://news.google.com/rss/search?q=%28ChatGPT%20OR%20Claude%20OR%20Gemini%20OR%20%E7%94%9F%E6%88%90AI%29&hl=ja&gl=JP&ceid=JP:ja",
+      "url": "https://news.google.com/rss/search?q=%28ChatGPT%20OR%20Claude%20OR%20Gemini%20OR%20%22Meta%20AI%22%20OR%20%22Muse%20Meta%22%20OR%20Llama%20OR%20DeepSeek%20OR%20%E7%94%9F%E6%88%90AI%29&hl=ja&gl=JP&ceid=JP:ja",
       "weight": 8,
       "official": false
     },

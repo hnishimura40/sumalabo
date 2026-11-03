@@ -10,13 +10,14 @@ const item = (title, description = "") => ({ title, description, pubDate: new Da
 const score = (title, description = "", cfg = config) => scoreItem(item(title, description), { weight: 8 }, cfg, now);
 const eligible = (candidate) => isEligible(candidate, config.minScore, config.minCriticality);
 
-test("身近な規約・料金の変更が、ブランドを並べたモデル発表より上位になる", () => {
+test("重要モデルは主軸として残し、身近な変更も採用対象にする", () => {
   const change = score("Googleの保存設定と利用規約が変更。何を確認すればいい？");
   const model = score("OpenAI ChatGPT Claude Geminiの新モデルを発表、日本でも提供開始");
-  assert.ok(change.score > model.score);
+  assert.ok(model.readerValue.aiCoreEligible);
+  assert.equal(eligible(model), true);
   assert.ok(change.readerValue.signals.consumerChange);
   assert.equal(eligible(change), true);
-  assert.ok(model.readerValue.signals.announcementOnly);
+  assert.equal(model.readerValue.signals.nicheAiUpdate, false);
 });
 
 test("無料・期限だけの限定枠延長は、広いサービスの条件解説より下位になる", () => {
@@ -117,7 +118,8 @@ test("RSS取得からランキング・適格性まで新基準が接続され�
   const current = await runScout({ config: { ...config, sources }, now });
   const old = await runScout({ config: { ...config, sources, readerValuePolicy: { enabled: false } }, now });
   assert.ok(old.candidates[0].title.includes("新モデル"));
-  assert.ok(current.candidates[0].title.includes("保存設定"));
+  assert.ok(current.candidates[0].title.includes("新モデル"), "AI主軸を非AIの設定ニュースより先に残す");
+  assert.ok(current.candidates.find(c => c.title.includes("保存設定")).readerValue.signals.consumerChange);
   assert.ok(current.candidates.filter(eligible).some(c => c.title.includes("架空ドラマ") && c.readerValue.suggestedAngle));
   assert.ok(current.excluded.some(c => c.category === "incident_crime"));
   assert.equal(current.candidates.some(c => c.title.includes("逮捕")), false);
