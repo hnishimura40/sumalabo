@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {spawnSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {canonicalUrl,allowedUrl,extractPage,fetchPage,collectCampaigns,compareObservations,acknowledge,verifyPublicationReceipt} from '../../scripts/automation/mobile-campaign-watch.mjs';
-import {START,END,validateCatalog,renderCampaignSection,updateArticle,sectionVersion} from '../../scripts/automation/mobile-campaign-article.mjs';
+import {START,END,validateCatalog,renderCampaignSection,updateArticle,sectionVersion,assertApplyAuthorized} from '../../scripts/automation/mobile-campaign-article.mjs';
 const config=JSON.parse(readFileSync(new URL('../../data/automation/mobile-campaign-watch.json',import.meta.url),'utf8'));
 const carrier={id:'sample',name:'回線A',url:'https://carrier.example/campaign/',hosts:['carrier.example'],paths:['/campaign/']};
 const cfg={...config,carriers:[carrier],minimumTextLength:15,maximumTextLength:5000};
@@ -116,12 +116,18 @@ test('公式テキストに記号やHTMLがあってもMDXへ実行コードを�
   const section=renderCampaignSection(data,cfg,Date.parse(now));
   assert.doesNotMatch(section,/<script>/);assert.match(section,/&#123;danger&#125;/);
 });
-test('定期公開の明示承認前はCLIのapplyを拒否し、既存記事を変更しない',()=>{
-  assert.equal(config.publicationMode,'draft_only');
+test('承認済みの範囲だけapplyを許可し、draft_onlyや承認情報なしは拒否する',()=>{
+  assert.equal(config.publicationMode,'auto_publish');
+  assert.doesNotThrow(()=>assertApplyAuthorized(config,true));
+  assert.throws(()=>assertApplyAuthorized({...config,publicationMode:'draft_only'},true),/publication_authorization_required/);
+  assert.throws(()=>assertApplyAuthorized({...config,publicationAuthorization:undefined},true),/publication_authorization_required/);
+  assert.doesNotThrow(()=>assertApplyAuthorized({...config,publicationMode:'draft_only'},false));
+});
+test('applyが承認済みでも不完全な入力で既存記事を変更しない',()=>{
   const article=new URL('../../content/articles/mobile-plan-cost-comparison.mdx',import.meta.url);
   const before=readFileSync(article,'utf8');
   const command=fileURLToPath(new URL('../../scripts/automation/mobile-campaign-article.mjs',import.meta.url));
   const result=spawnSync(process.execPath,[command,'not-used.json','--apply'],{encoding:'utf8',windowsHide:true});
-  assert.notEqual(result.status,0);assert.match(result.stderr,/publication_authorization_required/);
+  assert.notEqual(result.status,0);assert.match(result.stderr,/ENOENT/);assert.doesNotMatch(result.stderr,/publication_authorization_required/);
   assert.equal(readFileSync(article,'utf8'),before);
 });
