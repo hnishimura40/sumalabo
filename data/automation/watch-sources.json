@@ -4,7 +4,7 @@
   "maxAgeHours": 48,
   "readerValuePolicy": {
     "enabled": true,
-    "version": "2026-11-03-ai-core",
+    "version": "2026-11-03-ai-practical-use",
     "basis": "docs/scout-selection-policy.md",
     "brandWeight": 3,
     "brandCap": 8,
@@ -18,6 +18,7 @@
       "aiBenchmark": 36,
       "aiModelLaunch": 24,
       "aiChartMomentum": 40,
+      "aiPracticalUse": 32,
       "peripheralEvent": -24,
       "consumerChange": 24,
       "benefitConditions": 12,
@@ -40,7 +41,10 @@
       "feasibility": ["現実", "実現", "実在", "作れる", "再現でき", "本当にでき", "どこまででき", "実現可能"],
       "handsOn": ["実機", "実際に", "試した", "試して", "検証", "やってみた", "手順"],
       "workflows": ["動画", "編集", "ナレーション", "字幕", "写真", "音声", "資料", "データ移行", "バックアップ"],
-      "aiServices": ["AI", "ChatGPT", "OpenAI", "Claude", "Anthropic", "Gemini", "GPT-", "Kimi", "Meta", "メタ", "Muse", "ミューズ", "Llama", "Grok", "DeepSeek", "Qwen", "Mistral"],
+      "aiServices": ["AI", "人工知能", "フィジカルAI", "天秤AI", "天秤.AI", "ヒューマノイド", "ChatGPT", "OpenAI", "Claude", "Anthropic", "Gemini", "GPT-", "Kimi", "Meta", "メタ", "Muse", "ミューズ", "Llama", "Grok", "DeepSeek", "Qwen", "Mistral"],
+      "aiPracticalTasks": ["回答を比較", "回答を統合", "同時実行", "同時に比較", "同時に質問", "業務時間", "作業時間", "時間削減", "問い合わせ対応", "自動返信", "議事録", "資料作成", "口コミ", "写真投稿", "社内データ", "店舗運営", "賃貸管理", "対話機能", "接客", "搬送", "点検", "警備", "動作精度"],
+      "aiDeploymentChanges": ["を導入", "導入した", "導入し", "導入開始", "導入事例", "運用開始", "実証", "を構築", "提供開始", "提供を開始", "取り扱いを開始", "取扱いを開始", "を削減", "削減を実現", "削減した", "リニューアル", "新たに搭載"],
+      "aiDeploymentPlans": ["導入予定", "開発予定", "開発開始", "を目指", "検討", "構想", "計画"],
       "aiMetrics": ["ベンチマーク", "性能指標", "性能比較", "リーダーボード", "Artificial Analysis", "Intelligence Index", "LMArena", "Arena", "SWE-bench", "GPQA", "ARC-AGI", "推論性能", "評価スコア"],
       "aiLaunchMarkers": ["新モデル", "モデルを発表", "モデル発表", "モデル公開", "一般公開", "一般提供", "AIエージェント", "パーソナルAI", "AIアプリ", "動画生成モデル", "画像生成モデル", "音声モデル"],
       "unconfirmed": ["噂", "うわさ", "リーク", "未確認", "発表か", "かもしれない"],
@@ -59,6 +63,12 @@
     "appAliases": { "6760173601": ["Muse", "ミューズ"] }
   },
   "sources": [
+    {
+      "id": "gnews-gmo-ai", "name": "GMOのAI・天秤AI・フィジカルAI公式発表の発見",
+      "type": "rss",
+      "url": "https://news.google.com/rss/search?q=%28site%3Agmo.jp+OR+site%3Agroup.gmo+OR+site%3Atenbin.ai+OR+site%3Aai-robotics.gmo+OR+site%3Ahd.gmotech.jp%29+%28AI+OR+%E4%BA%BA%E5%B7%A5%E7%9F%A5%E8%83%BD+OR+%E3%83%92%E3%83%A5%E3%83%BC%E3%83%9E%E3%83%8E%E3%82%A4%E3%83%89%29+when%3A2d&hl=ja&gl=JP&ceid=JP%3Aja",
+      "weight": 10, "official": false
+    },
     {
       "id": "apple-ai-charts-jp", "name": "Apple公式・日本無料総合ランキング",
       "type": "app-store-chart", "country": "jp", "countryLabel": "日本",
