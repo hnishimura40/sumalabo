@@ -40,8 +40,8 @@
 
 ## 更新から公開まで
 
-5. `node scripts/automation/mobile-campaign-article.mjs <reviewed-catalog.json>`でpreviewを作る。完全な最新mainの記事と照合し、公式リンクと特典・条件を検品する。rendererの`renderCampaignSection`/`updateArticle`を使えば最新mainの本文へ同じ処理を適用できる。確認済みカタログの検証に合格したら、作業用記事へ`--apply`等で適用し、手順6〜8へ自動で進める。CLIは承認範囲とauto_publishの両方を確認する。管理マーカーの外は初回の明示した説明文とupdated以外を保持し、pubDate/publishAtを動かさない。確認していない金額を補完しない。
-6. privateなクリーンcheckout/作業領域で、最新mainを基に対象記事だけの差分を作る。対象外のローカル変更を公開しない。既存の記事ゲート・秘密情報検査・MDX/build検査を通し、PRの対象・ハッシュ・mergeableを確認してマージする。画像を変更しない更新で不要な画像再生成をしない。失敗を成功扱いしたり、検品を飛ばしたりしない。
+5. `node scripts/automation/mobile-campaign-article.mjs <reviewed-catalog.json>`でpreviewを作る。完全な最新mainの記事と照合し、公式リンクと特典・条件を検品する。rendererの`renderCampaignSection`/`updateArticle`を使えば最新mainの本文へ同じ処理を適用できる。確認済みカタログの検証に合格したら、作業用記事へ`--apply`等で適用し、手順6〜8へ自動で進める。CLIは承認範囲とauto_publishの両方を確認する。通常の差分反映では管理マーカーの外を保持する。ただし、2026-11-04のユーザー指示に基づき、検品に必要な既存導入・読者案内・専門語説明・編集記録も自動で修正してよい。修正の前後と理由を記録し、最初の30秒まとめ・関係する人・急がなくてよい人・初出の用語説明・読者翻訳設計・最終本文と検品記録を整合させる。ゲート自体を弱めたり、末尾への形式的な追記で回避したりしない。通常料金表・診断の根拠と内容は再確認なしに変更せず、既存画像・pubDate/publishAtを保持する。通常料金とキャンペーンの確認日を混同しない。確認していない金額を補完しない。
+6. privateなクリーンcheckout/作業領域で、最新mainを基に対象記事とその編集記録、必要な保守設定・手順だけの差分を作る。対象外のローカル変更を公開しない。既存の記事ゲート・秘密情報検査・MDX/build検査を通し、PRの対象・ハッシュ・mergeableを確認してマージする。画像を変更しない更新で不要な画像再生成をしない。既存導入や編集記録の不足による失敗は上記の承認範囲で自動修正し、すべての検品を再実行して合格したものから公開まで進める。公式事実が未確認のものは未処理として残す。失敗を成功扱いしたり、検品を飛ばしたりしない。
 7. 最新mainに一致するクリーンな作業環境で、既存の`deploy:production -- --slug=mobile-plan-cost-comparison --run-mode=maintenance --output=<private-result.json>`を使い、本番更新・HTTP 200・strict verifyを確認する。既存の認証方式を使い、秘密情報を本文・ログ・PRへ出さない。夜間runnerが実行中ならその作業木へ書き込まず、変更を保留するか別のクリーン環境を使う。起動層や既存スケジュールは変更しない。SNS投稿・メール送信はこの保守作業に含めない。
 8. 公開確認後だけ`node scripts/automation/mobile-campaign-watch.mjs ack <receipt.json>`で当該eventIdsを完了にする。ackはGitHubの実マージ、本番HTMLのsectionVersion一致、verify-publicationのpublishedを再取得して確認する。確認できない変更は翌日も未処理として残る。カタログやreceiptだけ作って完了にしない。
 
