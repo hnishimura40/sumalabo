@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "version": "2026-11-03-sumalabo-identity",
+  "handbook": "docs/sumalabo-editorial-identity.md",
+  "purpose": "読者が自分向きの選択と理由を理解できる比較",
+  "reviewMode": "evidence_backed_editorial_checklist",
+  "automaticComplianceValidatorImplemented": false,
+  "checklistDirectory": "logs/scout/product-comparisons/identity",
+  "requiredChecks": [
+    "audience-and-choice", "ten-candidates", "complete-photos",
+    "cross-product-groups", "origin-separation", "battery-claims",
+    "travel-conditions", "character-guidance", "evidence-and-freshness",
+    "responsive-comparison"
+  ],
+  "photos": {
+    "requiredCandidateCount": 10,
+    "allowGenericPlaceholderOnCompletion": false,
+    "requireExactModelAndGeneration": true,
+    "sameBasicModelColorVariantRequiresCaption": true,
+    "allowGeneratedProductPhoto": false
+  },
+  "presentation": {
+    "compactColumnsAreOnlyOverview": true,
+    "keyAxesOnlyInIndividualDetailsAllowed": false,
+    "requireCrossProductComparisonGroups": true,
+    "requireSpecificHimariQuestionAndLabomaruGuidance": true,
+    "viewportWidths": [320, 390, 1440]
+  },
+  "commonComparisonFields": [
+    "makerBaseCountryOrRegion", "manufacturingCountry", "domesticWarrantyAndSupport"
+  ],
+  "evidenceRules": {
+    "makerBaseDoesNotProveManufacturingCountry": true,
+    "unknownRequiresReason": true,
+    "batteryTechnologyRequiresExactModelManufacturerClaim": true,
+    "flightRequiresCurrentAuthorityAndAirlineRules": true,
+    "flightCannotBeDecidedFromMahOnly": true,
+    "flightDecisions": ["条件付き可", "不可", "要確認"]
+  },
+  "categoryComparisonGroups": {
+    "power-bank": [
+      {"id": "performance", "fields": ["price", "capacityMah", "capacityWh", "weight", "singlePortOutput", "simultaneousOutput", "inputAndRechargeTime", "cable"]},
+      {"id": "origin-and-battery", "fields": ["makerBaseCountryOrRegion", "manufacturingCountry", "batteryTechnology", "safetyLabel", "recallReview", "domesticWarrantyAndSupport"]},
+      {"id": "travel", "fields": ["capacityWh", "carryOn", "checkedBaggage", "chargePowerBankOnboard", "chargeDeviceOnboard", "quantityApprovalAndStorageConditions", "airlineScopeAndDate"]}
+    ],
+    "usb-charger": [
+      {"id": "compatibility-and-power", "fields": ["deviceCompatibility", "ports", "singlePortOutput", "simultaneousOutput", "pdPpsAndCable", "weight"]},
+      {"id": "origin-and-travel", "fields": ["makerBaseCountryOrRegion", "manufacturingCountry", "domesticWarrantyAndSupport", "inputVoltageAndPlug", "safetyLabel"]}
+    ],
+    "audio": [
+      {"id": "use-and-compatibility", "fields": ["wearingStyle", "weight", "ancAndTransparency", "runtimeAndMeasurementConditions", "deviceAndCodec", "multipoint", "callFeatures"]},
+      {"id": "origin-and-support", "fields": ["makerBaseCountryOrRegion", "manufacturingCountry", "domesticWarrantyAndSupport"]}
+    ],
+    "wifi-router": [
+      {"id": "network-and-home", "fields": ["wanPorts", "lanPorts", "wifiStandard", "sixGhz", "compatibleDevices", "roomAndPlacementConditions", "meshCompatibility"]},
+      {"id": "origin-and-support", "fields": ["makerBaseCountryOrRegion", "manufacturingCountry", "domesticWarrantyAndSupport", "firmwareSupport", "ongoingCost"]}
+    ]
+  }
+}
