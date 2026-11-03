@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "publicationMode": "auto_publish",
+  "stateDirectory": "logs/scout/product-comparisons",
+  "maximumRankingAgeDays": 10,
+  "maximumSnapshotAgeHours": 72,
+  "categories": [
+    {
+      "id": "power-bank",
+      "name": "モバイルバッテリー",
+      "rankingUrl": "https://kakaku.com/kaden/mobile-battery/ranking_3114/",
+      "rankingScope": "モバイルバッテリー・人気売れ筋ランキング",
+      "articleSlug": "power-bank-comparison",
+      "criteria": [
+        "容量・Wh",
+        "USB-C出力と同時使用",
+        "入力・本体の充電時間",
+        "重さ・携帯性",
+        "対応機器・ケーブル",
+        "安全表示・回収情報・保証"
+      ],
+      "personas": [
+        "スマホ用に安く1台",
+        "軽さを優先して毎日持ち歩く",
+        "PC兼用・旅行で容量を重視"
+      ],
+      "constraints": [
+        "定格mAhと実際に取り出せる容量を混同しない",
+        "最大出力は単ポート・合計・充電規格を区別",
+        "半固体という名称だけで安全と断定しない",
+        "航空機の持込条件は最新の航空会社案内で別途確認"
+      ]
+    },
+    {
+      "id": "usb-charger",
+      "name": "USB-C充電器",
+      "rankingUrl": "https://kakaku.com/kaden/battery/ranking_2209/spec=101-2/",
+      "rankingScope": "充電池・充電器のうち充電器・人気売れ筋ランキング（乾電池用を含む）",
+      "articleSlug": "usb-c-charger-comparison",
+      "criteria": [
+        "対応機器と必要な出力",
+        "USB-C・USB-Aの口数",
+        "同時使用時の配分",
+        "大きさ・重さ",
+        "ケーブル・充電規格",
+        "安全表示・保証"
+      ],
+      "personas": [
+        "スマホ1台を低予算で",
+        "ノートPCと一緒に持ち歩く",
+        "机上で複数機器を同時に充電"
+      ],
+      "constraints": [
+        "候補の上位10には乾電池用充電器も含む。USB-C用途に合わない製品は理由付きで除外",
+        "候補外から10製品を補充して上位10と偽らない",
+        "単ポート最大出力と複数ポート同時の出力を区別"
+      ]
+    },
+    {
+      "id": "audio",
+      "name": "イヤホン・ヘッドホン",
+      "rankingUrl": "https://kakaku.com/kaden/headphones/ranking_2046/",
+      "rankingScope": "イヤホン・ヘッドホン・人気売れ筋ランキング（形状・接続方式の混在あり）",
+      "articleSlug": "202611-earphone-headphone-comparison",
+      "criteria": [
+        "装着方式・重さ",
+        "対応端末・接続",
+        "騒音低減・外音取込",
+        "通話・マイク",
+        "電池・充電",
+        "価格・用途と制約"
+      ],
+      "personas": [
+        "通勤中に騒音を抑えたい",
+        "会議や通話にも使いたい",
+        "長時間の装着と予算を優先"
+      ],
+      "constraints": [
+        "形状が異なる製品を音質だけの一律順位にしない",
+        "実機未検証で装着感・音質・通話品質の実測を装わない",
+        "コーデックはスマホ側の対応も確認"
+      ]
+    },
+    {
+      "id": "wifi-router",
+      "name": "Wi-Fiルーター",
+      "rankingUrl": "https://kakaku.com/pc/wireless-router/ranking_0077/",
+      "rankingScope": "無線LANルーター・人気売れ筋ランキング",
+      "articleSlug": "202611-wifi-router-comparison",
+      "criteria": [
+        "回線速度・WAN端子",
+        "対応端末とWi-Fi規格",
+        "間取り・置き場所",
+        "メッシュ対応条件",
+        "有線LAN・同時利用",
+        "設定・更新と費用"
+      ],
+      "personas": [
+        "1Gbps回線とスマホ中心",
+        "高速回線と対応PCを活用したい",
+        "家の広さ・電波の届き方を改善したい"
+      ],
+      "constraints": [
+        "理論速度と実際の速度を区別",
+        "高速回線・対応端末がない人へ高額機を無条件に勧めない",
+        "メーカーの間取り目安を実測した到達保証としない"
+      ]
+    }
+  ]
+}
