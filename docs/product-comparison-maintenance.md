@@ -26,7 +26,7 @@
 
 ## 3. 構造化レビューと記事生成
 
-privateな`<category-id>-review.json`を作る。schemaVersion=1、categoryId、rankingDigest（取得記録のdigest）、testBasis=public_sources、reviewedAtと以下のproducts/profilesを持つ。
+privateな`<category-id>-review.json`を作る。schemaVersion=1、categoryId、rankingDigest（取得記録のdigest）、testBasis=public_sources、reviewedAtと以下のproducts/profilesとeditorialを持つ。editorialはdefinition（製品は何かの説明）・audience（関係がある人）・unaffected（買い替えを急がなくてよい人）・conclusion（用途別の結論）を必須にする。生成側はこの導入から30秒サマリーとキャラクターの補足を作り、月次更新で読者向け導入を失わない。
 
 - productsは候補と同じ10個のID。modelはランキング製品名に含まれる正確な型番。statusはeligible/excluded/unverified。suitableFor・why・cautionを必須にし、excluded/unverifiedはexclusionReasonも記載。
 - factsは設定criteriaと同じ全比較軸。各項目はaxis/value/sourceType（manufacturerまたはkakaku）/sourceUrl/verifiedAtを持つ。未確認はvalue=未確認とし、推薦の理由に使わない。
