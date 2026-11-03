@@ -1,6 +1,11 @@
 {
   "schemaVersion": 1,
-  "publicationMode": "draft_only",
+  "publicationMode": "auto_publish",
+  "publicationAuthorization": {
+    "approvedOn": "2026-11-03",
+    "scope": "officially_verified_campaign_changes_after_passing_checks",
+    "mergeAndProductionDeploy": true
+  },
   "targetSlug": "mobile-plan-cost-comparison",
   "articlePath": "content/articles/mobile-plan-cost-comparison.mdx",
   "stateDirectory": "logs/scout/mobile-campaign-watch",

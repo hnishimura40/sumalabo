@@ -8,6 +8,10 @@ import {createHash} from 'node:crypto';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 export const START='{/* mobile-campaigns:start */}';
 export const END='{/* mobile-campaigns:end */}';
+export function assertApplyAuthorized(config,apply){
+  if(apply && (config.publicationMode!=='auto_publish' || config.publicationAuthorization?.mergeAndProductionDeploy!==true ||
+    config.publicationAuthorization?.scope!=='officially_verified_campaign_changes_after_passing_checks'))throw Error('publication_authorization_required: preview_only');
+}
 export const sectionVersion=catalog=>createHash('sha256').update(JSON.stringify(catalog)).digest('hex').slice(0,24);
 const required=['title','benefit','eligible','requirements','exclusions','entry','receiveTiming','deadlineLabel','monthlyCost','fees','caveats','suitedFor'];
 export function validateCatalog(catalog,config,now=Date.now()){
@@ -58,7 +62,7 @@ export function updateArticle(text,section,updated,replacements=[]){
 function main(){
   const catalogFile=process.argv[2];if(!catalogFile)throw Error('usage: <reviewed-catalog.json> [--apply]');
   const config=JSON.parse(fs.readFileSync(path.join(ROOT,'data/automation/mobile-campaign-watch.json'),'utf8'));
-  if(process.argv.includes('--apply')&&config.publicationMode!=='auto_publish')throw Error('publication_authorization_required: preview_only');
+  assertApplyAuthorized(config,process.argv.includes('--apply'));
   const catalog=JSON.parse(fs.readFileSync(path.resolve(catalogFile),'utf8'));
   const article=path.resolve(ROOT,config.articlePath);
   if(!article.startsWith(path.join(ROOT,'content','articles')+path.sep))throw Error('article_path_not_allowed');

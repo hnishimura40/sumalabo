@@ -1,6 +1,6 @@
 # 携帯キャンペーンの毎日チェックと記事更新
 
-対象は`data/automation/mobile-campaign-watch.json`の公式11ブランド。AI主軸の毎日1本の新規記事とは別の保守作業として実行する。毎朝8時（日本時間）のCodexアプリの定期実行は、現在は巡回→公式条件の照合→ローカル更新案の作成（手順1〜5）まで。継続的なPRマージ・本番公開を含む定期実行は自動承認審査で拒否されたため、明示承認待ち。`publicationMode`は`draft_only`で、CLIの`--apply`も拒否する。承認前に手順6〜8を自動実行したり、別経路で公開したりしない。凍結中の夜間起動層・Windowsタスク登録を変更しない。
+対象は`data/automation/mobile-campaign-watch.json`の公式11ブランド。AI主軸の毎日1本の新規記事とは別の保守作業として実行する。毎朝8時（日本時間）のCodexアプリの定期実行で、巡回→公式条件の照合→記事更新→PRマージ→本番公開→公開確認（手順1〜8）まで行う。2026-11-03にユーザーが、公式情報の確認と検品を通った変更について、以後の確認を挟まずPRマージから本番公開まで自動実行することを明示承認した。`publicationMode=auto_publish`とこの範囲の`publicationAuthorization`を設定する。確認・検品は省略せず、未確認・検品不合格・公開確認失敗は未処理として残す。凍結中の夜間起動層・Windowsタスク登録を変更しない。
 
 ## 実行と記録
 
@@ -40,7 +40,7 @@
 
 ## 更新から公開まで
 
-5. `node scripts/automation/mobile-campaign-article.mjs <reviewed-catalog.json>`でpreviewを作る。完全な最新mainの記事と照合し、公式リンクと特典・条件を検品する。rendererの`renderCampaignSection`/`updateArticle`を使えば最新mainの本文へ同じ処理を適用できる。現在の定期実行ではここで止め、公開記事ファイルへ書き込まない。`--apply`は公開自動化の明示承認後に`publicationMode`と定期実行設定を更新した場合だけ利用できる。管理マーカーの外は初回の明示した説明文とupdated以外を保持し、pubDate/publishAtを動かさない。確認していない金額を補完しない。
+5. `node scripts/automation/mobile-campaign-article.mjs <reviewed-catalog.json>`でpreviewを作る。完全な最新mainの記事と照合し、公式リンクと特典・条件を検品する。rendererの`renderCampaignSection`/`updateArticle`を使えば最新mainの本文へ同じ処理を適用できる。確認済みカタログの検証に合格したら、作業用記事へ`--apply`等で適用し、手順6〜8へ自動で進める。CLIは承認範囲とauto_publishの両方を確認する。管理マーカーの外は初回の明示した説明文とupdated以外を保持し、pubDate/publishAtを動かさない。確認していない金額を補完しない。
 6. privateなクリーンcheckout/作業領域で、最新mainを基に対象記事だけの差分を作る。対象外のローカル変更を公開しない。既存の記事ゲート・秘密情報検査・MDX/build検査を通し、PRの対象・ハッシュ・mergeableを確認してマージする。画像を変更しない更新で不要な画像再生成をしない。失敗を成功扱いしたり、検品を飛ばしたりしない。
 7. 最新mainに一致するクリーンな作業環境で、既存の`deploy:production -- --slug=mobile-plan-cost-comparison --run-mode=maintenance --output=<private-result.json>`を使い、本番更新・HTTP 200・strict verifyを確認する。既存の認証方式を使い、秘密情報を本文・ログ・PRへ出さない。夜間runnerが実行中ならその作業木へ書き込まず、変更を保留するか別のクリーン環境を使う。起動層や既存スケジュールは変更しない。SNS投稿・メール送信はこの保守作業に含めない。
 8. 公開確認後だけ`node scripts/automation/mobile-campaign-watch.mjs ack <receipt.json>`で当該eventIdsを完了にする。ackはGitHubの実マージ、本番HTMLのsectionVersion一致、verify-publicationのpublishedを再取得して確認する。確認できない変更は翌日も未処理として残る。カタログやreceiptだけ作って完了にしない。
