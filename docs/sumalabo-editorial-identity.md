@@ -117,3 +117,5 @@ AIを主軸にする選定は [記事選定ルール](scout-selection-policy.md)
 該当しない項目は理由付きで対象外とし、未調査を対象外にしない。privateな `logs/scout/product-comparisons/identity/<category-id>-check.json` に policyVersion、reviewedAt、articleSlug、checks（各id/status/evidence）、remainingIssues を保存する。statusはpass/fail/not_applicable。各証拠は確認した出典・記事位置・表示確認記録への参照とし、理由なしの自己申告だけでpassにしない。全必須項目がpassまたは正当な対象外となった更新だけを、従来の公式確認・記事ゲート・build・公開検証へ進める。人の追加承認待ちは設けない。
 
 制定時点の生成器は「3仕様の早見表＋個別詳細」、写真は任意という旧仕様を含む。**この旧生成器をそのまま通しただけでは本ルールの合格にならない。** 次の記事更新では必要な構造化データ・生成器・表示を先に補い、上記を満たしてから公開する。既存の4記事を本ルールに適合済みとさかのぼって扱わず、写真欠落・比較群不足・汎用キャラ文を修正課題として残す。
+
+適用実装では `scripts/automation/product-comparison-identity.mjs` が全10写真、カテゴリ別比較群、項目ごとの根拠と不明理由、Whに基づく飛行機の条件、記事固有の会話を構造検証する。これは事実の真偽や写真の実物一致を自動的に認定するものではない。公式原文との照合と実表示の検品を行い、その更新で確認した証拠に基づいて合否を記録する。

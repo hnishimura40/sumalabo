@@ -3,6 +3,62 @@
     document.querySelectorAll<HTMLElement>('.pc-comparison').forEach((root) => {
       if (root.dataset.ready) return;
       root.dataset.ready = 'true';
+      let statusMode = 'all';
+      let shortlistMode = false;
+      const selected = new Set<string>();
+      const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-pc-tab]')];
+      function activateTab(button: HTMLButtonElement) {
+        tabs.forEach((tab) => {
+          tab.setAttribute('aria-selected', String(tab === button));
+          tab.tabIndex = tab === button ? 0 : -1;
+          const panel = root.querySelector<HTMLElement>(`#${tab.getAttribute('aria-controls')}`);
+          if (panel) panel.hidden = tab !== button;
+        });
+      }
+      if (tabs.length) {
+        root.querySelector<HTMLElement>('.pc-tabs')!.hidden = false;
+        activateTab(tabs[0]);
+      }
+      function applyFilters() {
+        root.querySelectorAll<HTMLTableRowElement>('tbody tr[data-product-id]').forEach((row) => {
+          const statusMatches = statusMode === 'eligible' ? row.dataset.status === 'eligible' : statusMode === 'held' ? row.dataset.status !== 'eligible' : true;
+          row.hidden = !statusMatches || (shortlistMode && !selected.has(row.dataset.productId!));
+        });
+        const counter = root.querySelector('[data-pc-count]');
+        const visible = [...root.querySelectorAll<HTMLTableRowElement>('.pc-overview tbody tr')].filter(row => !row.hidden).length;
+        if (counter) counter.textContent = `${visible}製品を表示中`;
+        const note = root.querySelector('[data-pc-selected-count]');
+        if (note) note.textContent = `${selected.size}製品を選択中（最大3）${shortlistMode && visible === 0 ? '／現在の条件に一致する製品なし' : ''}`;
+        const selectedButton = root.querySelector<HTMLButtonElement>('[data-pc-shortlist="selected"]');
+        if (selectedButton) selectedButton.disabled = selected.size === 0;
+        root.querySelectorAll('[data-pc-shortlist]').forEach(button => button.setAttribute('aria-pressed', String((button.getAttribute('data-pc-shortlist') === 'selected') === shortlistMode)));
+      }
+      root.addEventListener('change', (event) => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement) || !input.dataset.pcSelect) return;
+        if (input.checked && selected.size === 3) {
+          input.checked = false;
+          const note = root.querySelector('[data-pc-selected-count]');
+          if (note) note.textContent = '比較は最大3製品です。別の製品を選ぶには先にチェックを外してください。';
+          return;
+        }
+        if (input.checked) selected.add(input.dataset.pcSelect);
+        else selected.delete(input.dataset.pcSelect);
+        if (!selected.size) shortlistMode = false;
+        applyFilters();
+      });
+      root.addEventListener('keydown', (event) => {
+        const target = event.target;
+        if (!(event instanceof KeyboardEvent) || !(target instanceof HTMLButtonElement) || !target.dataset.pcTab) return;
+        const index = tabs.indexOf(target);
+        let next = index;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault(); activateTab(tabs[next]); tabs[next].focus();
+      });
       root.addEventListener('click', (event) => {
         const target = event.target;
         if (!(target instanceof Element)) return;
@@ -11,17 +67,29 @@
           const detail = document.getElementById(link.hash.slice(1));
           if (detail instanceof HTMLDetailsElement) detail.open = true;
         }
+        if (target.closest('.pc-cell-sources a')) {
+          const sources = root.querySelector<HTMLDetailsElement>('#pc-identity-sources');
+          if (sources) sources.open = true;
+        }
+        const tab = target.closest<HTMLButtonElement>('[data-pc-tab]');
+        if (tab) activateTab(tab);
+        const shortlist = target.closest<HTMLButtonElement>('[data-pc-shortlist]');
+        if (shortlist) {
+          shortlistMode = shortlist.dataset.pcShortlist === 'selected';
+          statusMode = 'all';
+          root.querySelectorAll<HTMLButtonElement>('[data-pc-filter]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.pcFilter === 'all')));
+          applyFilters();
+        }
+        if (target.closest('[data-pc-clear]')) {
+          selected.clear(); shortlistMode = false;
+          root.querySelectorAll<HTMLInputElement>('[data-pc-select]').forEach(input => input.checked = false);
+          applyFilters();
+        }
         const filter = target.closest<HTMLButtonElement>('button[data-pc-filter]');
         if (!filter) return;
-        const mode = filter.dataset.pcFilter;
+        statusMode = filter.dataset.pcFilter || 'all';
         root.querySelectorAll<HTMLButtonElement>('[data-pc-filter]').forEach((button) => button.setAttribute('aria-pressed', String(button === filter)));
-        let count = 0;
-        root.querySelectorAll<HTMLTableRowElement>('.pc-table tbody tr').forEach((row) => {
-          row.hidden = mode === 'eligible' ? row.dataset.status !== 'eligible' : mode === 'held' ? row.dataset.status === 'eligible' : false;
-          if (!row.hidden) count++;
-        });
-        const counter = root.querySelector('[data-pc-count]');
-        if (counter) counter.textContent = `${count}製品を表示中`;
+        applyFilters();
       });
     });
   }
@@ -50,7 +118,6 @@
   .article-content .pc-comparison .pc-photo { --product-image-size:112px; margin:0; text-align:center; min-width:0; }
   .article-content .pc-comparison .pc-photo .rakuten-affiliate-image { margin:auto; }
   .article-content .pc-comparison .pc-photo figcaption { color:var(--fg-soft); font-size:9px; line-height:1.5; margin-top:4px; }
-  .article-content .pc-comparison .pc-no-photo { display:grid; place-items:center; width:var(--product-image-size); height:var(--product-image-size); border-radius:10px; background:var(--bg-tint); color:var(--fg-soft); font-size:11px; }
   .article-content .pc-comparison .pc-reasons { margin:0; padding-left:19px; font-size:14px; line-height:1.8; }
   .article-content .pc-comparison .pc-reasons li { margin:4px 0; }
   .article-content .pc-comparison .pc-caution { padding:9px 11px; border-left:3px solid #c69a41; background:var(--bg-tint); border-radius:0 7px 7px 0; font-size:12px; line-height:1.7; margin:0; }
@@ -97,6 +164,36 @@
   .article-content .pc-comparison .pc-sources { font-size:12px; overflow-wrap:anywhere; }
   .article-content .pc-comparison .pc-method { padding:14px 18px; border:1px solid var(--line); border-radius:12px; font-size:13px; margin:24px 0; }
   .article-content .pc-comparison .pc-method p { margin:12px 0; }
+  .article-content .pc-comparison [hidden] { display:none !important; }
+  .article-content .pc-comparison .pc-conversation { padding:16px; margin:20px 0; border:1px solid var(--line); border-radius:16px; background:linear-gradient(135deg,var(--bg-tint),var(--bg-elev)); }
+  .article-content .pc-comparison .pc-speaker { display:grid; grid-template-columns:54px minmax(0,1fr); gap:12px; align-items:start; margin:10px 0; }
+  .article-content .pc-comparison .pc-speaker img { width:54px; height:54px; object-fit:contain; border-radius:50%; margin:0; background:var(--bg-elev); }
+  .article-content .pc-comparison .pc-speaker p { font-size:14px; line-height:1.8; padding:12px 14px; margin:0; border-radius:4px 14px 14px; background:var(--bg-elev); border:1px solid var(--line); }
+  .article-content .pc-comparison .pc-speaker strong { display:block; font-size:11px; margin-bottom:3px; color:var(--fg-soft); }
+  .article-content .pc-comparison .pc-himari p { border-left:3px solid #c58948; }
+  .article-content .pc-comparison .pc-labomaru p { border-left:3px solid var(--pc-accent); }
+  .article-content .pc-comparison .pc-tabs,.article-content .pc-comparison .pc-shortlist { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:16px 0; }
+  .article-content .pc-comparison .pc-tabs { border-bottom:2px solid var(--line); padding-bottom:12px; }
+  .article-content .pc-comparison .pc-tabs button,.article-content .pc-comparison .pc-shortlist button { appearance:none; background:var(--bg-elev); color:var(--fg); border:1px solid var(--line); padding:10px 13px; border-radius:8px; cursor:pointer; font-size:13px; line-height:1.5; }
+  .article-content .pc-comparison button:focus-visible,.article-content .pc-comparison input:focus-visible { outline:3px solid var(--pc-accent); outline-offset:3px; }
+  .article-content .pc-comparison .pc-tabs [aria-selected="true"],.article-content .pc-comparison .pc-shortlist [aria-pressed="true"] { background:var(--pc-accent); color:white; border-color:var(--pc-accent); }
+  .article-content .pc-comparison button:disabled { opacity:.5; cursor:default; }
+  .article-content .pc-comparison .pc-choose { display:flex; align-items:center; gap:5px; font-size:12px; margin-top:7px; cursor:pointer; }
+  .article-content .pc-comparison .pc-choose input { width:17px; height:17px; accent-color:var(--pc-accent); }
+  .article-content .pc-comparison [data-pc-selected-count] { font-size:12px; color:var(--fg-soft); }
+  .article-content .pc-comparison .pc-group { scroll-margin-top:100px; }
+  .article-content .pc-comparison .pc-group > h3 { font-size:21px; margin:24px 0 12px; padding:0; border:0; }
+  .article-content .pc-comparison .pc-matrix th:first-child { width:29%; }
+  .article-content .pc-comparison .pc-matrix caption { font-weight:700; font-size:14px; color:var(--fg); padding-top:12px; }
+  .article-content .pc-comparison .pc-matrix tbody th { font-size:13px; text-align:left; }
+  .article-content .pc-comparison .pc-fact { display:block; }
+  .article-content .pc-comparison .pc-fact-unknown { color:var(--fg-soft); }
+  .article-content .pc-comparison .pc-fact-reason { display:block; font-size:10px; line-height:1.6; margin-top:4px; color:var(--fg-soft); }
+  .article-content .pc-comparison .pc-cell-sources { font-size:9px; white-space:nowrap; }
+  .article-content .pc-comparison .pc-legend,.article-content .pc-comparison .pc-scope,.article-content .pc-comparison .pc-group-notes { font-size:12px; line-height:1.8; color:var(--fg-soft); border-left:3px solid var(--line); padding-left:12px; }
+  .article-content .pc-comparison .pc-photo .pc-photo-variant { display:block; max-width:150px; white-space:normal; }
+  .article-content .pc-comparison .pc-table-product .pc-photo-variant,.article-content .pc-comparison .pc-detail > summary .pc-photo-variant { font-size:8px; width:90px; max-width:90px; }
+  .article-content .pc-comparison .pc-source-list { font-size:12px; line-height:1.9; overflow-wrap:anywhere; }
   @media(max-width:1000px) { .article-content .pc-comparison .pc-picks { grid-template-columns:1fr; } }
   @media(max-width:640px) {
     .article-content .pc-comparison h2 { font-size:23px; }
@@ -110,6 +207,15 @@
     .article-content .pc-comparison .pc-table-product { flex-direction:row; gap:12px; }
     .article-content .pc-comparison .pc-table td { padding:10px 6px; font-size:13px; line-height:1.7; border:0; text-align:center; background:var(--bg-tint); }
     .article-content .pc-comparison .pc-table td::before { content:attr(data-label); display:block; font-size:10px; color:var(--fg-soft); margin-bottom:4px; }
+    .article-content .pc-comparison .pc-matrix tbody tr { grid-template-columns:1fr; }
+    .article-content .pc-comparison .pc-matrix th:first-child { width:auto; }
+    .article-content .pc-comparison .pc-matrix td { display:grid; grid-template-columns:minmax(80px,35%) minmax(0,1fr); gap:4px 8px; text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); }
+    .article-content .pc-comparison .pc-matrix td::before { grid-column:1; grid-row:1/4; font-size:11px; margin:0; }
+    .article-content .pc-comparison .pc-matrix .pc-fact,.article-content .pc-comparison .pc-matrix .pc-fact-reason,.article-content .pc-comparison .pc-matrix .pc-cell-sources { grid-column:2; }
+    .article-content .pc-comparison .pc-speaker { grid-template-columns:42px minmax(0,1fr); gap:8px; }
+    .article-content .pc-comparison .pc-speaker img { width:42px; height:42px; }
+    .article-content .pc-comparison .pc-conversation { padding:10px; }
+    .article-content .pc-comparison .pc-speaker p { padding:10px; font-size:13px; }
     .article-content .pc-comparison .pc-table-name a { font-size:15px; }
     .article-content .pc-comparison .pc-table-price { font-size:16px; }
     .article-content .pc-comparison .pc-table-name .pc-model { display:none; }

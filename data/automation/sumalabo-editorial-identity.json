@@ -5,6 +5,7 @@
   "purpose": "読者が自分向きの選択と理由を理解できる比較",
   "reviewMode": "evidence_backed_editorial_checklist",
   "automaticComplianceValidatorImplemented": false,
+  "structuralValidator": "scripts/automation/product-comparison-identity.mjs",
   "checklistDirectory": "logs/scout/product-comparisons/identity",
   "requiredChecks": [
     "audience-and-choice", "ten-candidates", "complete-photos",

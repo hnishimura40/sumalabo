@@ -54,7 +54,11 @@ privateなreceiptへkey（category-id:YYYY-MM）、articleUrl、prUrl、version�
 
 ProductComparisonPresentation と生成処理を共通で使う。従来の presentation.columns / product.display.cells の3仕様は早見表用であり、記事全体の比較項目数の上限ではない。カテゴリ別の必須比較群は共通ルールと構造化ポリシーを参照する。重要な違いを製品別の開閉欄だけへ隠さず、同じ10候補をテーマ別の表で横断比較できるようにする。長文の出典や詳細条件は開閉式でもよい。
 
-2026-11-03時点の生成器は3仕様・任意の写真という旧仕様を含むため、それだけを通して新ルールの合格にしない。次回更新では必要なレビュー項目・生成器・表示を補い、基礎検証と編集チェックの双方を通す。既存記事も新ルール適合済みとは扱わない。
+2026-11-03の制定時点の生成器には3仕様・任意の写真という旧仕様があった。現在は `product-comparison-identity.mjs` が写真・比較群・条件付きの根拠を必須にし、`product-comparison-article.mjs` から実行する。構造検証だけを公式確認・表示検品の代わりにしない。
+
+レビューへ identity（policyVersion、opening.question/answer、groups）と各候補の comparisonFacts を追加する。groups は構造化ポリシーのカテゴリ別ID・全fieldsに対応し、title/intro/question/answer、columns（field/label）を持つ。各 comparisonFacts[field] は value、status（verified/unknown/not_applicable）、sources（url/label/type）、verifiedAt を持つ。不明・対象外にはreasonを付ける。sources.type は manufacturer/authority/airline/kakaku。メーカー拠点の根拠を製造国へ転用しない。Whで条件付き持ち込み可とする候補はcapacityWhへnumericValueを入れ、メーカーのWh表示、今回の国交省・航空会社の根拠、identity.travelScopeを必須にする。別色の参考写真はimage.variantNoteを写真直下へ表示する。
+
+表示はテーマ別タブと全候補の共通項目を維持し、比較チェックで最大3製品へ絞れる。絞り込みは元の10候補の改変ではない。タブのキーボード移動、未確認の理由、セルから出典を開く操作も検品する。公開前の証拠付きチェックは従来どおりprivate領域へ残す。
 
 商品写真の候補は data/automation/product-comparison-images.json。毎回、同一型番・基本モデルか、楽天の商品ページと画像が表示できるかを確認し、review.products の image（model/imageModel/imageUrl/productUrl/caption/verifiedAt）へ記録する。写真の確認も72時間以内を必須とする。色やセット違い、ケース単品、片耳だけ、互換品、中古、画像なし画像を避け、一覧画像で実物を確認する。同じ基本モデルの色違いは共通ルールに従って写真直下に明示する。全10候補の写真をそろえ、「写真未掲載」「画像準備中」が残る更新を完成扱いしない。取得できない場合は別の正規販売ページや利用可能な公式素材を調べ、解決しなければ理由と取得先を残して当該更新を未完了にする。候補を順位外へ入れ替えない。他カテゴリの検品済み更新は進められる。
 
