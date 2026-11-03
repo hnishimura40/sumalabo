@@ -66,7 +66,7 @@
     {
       "id": "gnews-gmo-ai", "name": "GMOのAI・天秤AI・フィジカルAI公式発表の発見",
       "type": "rss",
-      "url": "https://news.google.com/rss/search?q=%28site%3Agmo.jp%20OR%20site%3Atenbin.ai%20OR%20site%3Aai-robotics.gmo%20OR%20site%3Ahd.gmotech.jp%29%20%28AI%20OR%20%E4%BA%BA%E5%B7%A5%E7%9F%A5%E8%83%BD%20OR%20%E3%83%92%E3%83%A5%E3%83%BC%E3%83%9E%E3%83%8E%E3%82%A4%E3%83%89%29&hl=ja&gl=JP&ceid=JP:ja",
+      "url": "https://news.google.com/rss/search?q=%28site%3Agmo.jp+OR+site%3Agroup.gmo+OR+site%3Atenbin.ai+OR+site%3Aai-robotics.gmo+OR+site%3Ahd.gmotech.jp%29+%28AI+OR+%E4%BA%BA%E5%B7%A5%E7%9F%A5%E8%83%BD+OR+%E3%83%92%E3%83%A5%E3%83%BC%E3%83%9E%E3%83%8E%E3%82%A4%E3%83%89%29+when%3A2d&hl=ja&gl=JP&ceid=JP%3Aja",
       "weight": 10, "official": false
     },
     {
