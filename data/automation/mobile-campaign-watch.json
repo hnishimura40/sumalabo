@@ -1,5 +1,6 @@
 {
   "schemaVersion": 1,
+  "publicationMode": "draft_only",
   "targetSlug": "mobile-plan-cost-comparison",
   "articlePath": "content/articles/mobile-plan-cost-comparison.mdx",
   "stateDirectory": "logs/scout/mobile-campaign-watch",
