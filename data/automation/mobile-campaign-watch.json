@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "targetSlug": "mobile-plan-cost-comparison",
+  "articlePath": "content/articles/mobile-plan-cost-comparison.mdx",
+  "stateDirectory": "logs/scout/mobile-campaign-watch",
+  "concurrency": 6,
+  "timeoutMs": 20000,
+  "maxDetailsPerCarrier": 80,
+  "minimumTextLength": 100,
+  "maximumTextLength": 180000,
+  "carriers": [
+    {
+      "id": "linemo",
+      "name": "LINEMO",
+      "url": "https://www.linemo.jp/campaign/",
+      "hosts": [
+        "www.linemo.jp"
+      ],
+      "paths": [
+        "/campaign/"
+      ],
+      "resources": [
+        {
+          "url": "https://www.linemo.jp/campaign/js/data.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "ahamo",
+      "name": "ahamo",
+      "url": "https://ahamo.com/campaign/",
+      "hosts": [
+        "ahamo.com"
+      ],
+      "paths": [
+        "/campaign/",
+        "/special/"
+      ]
+    },
+    {
+      "id": "povo",
+      "name": "povo",
+      "url": "https://povo.jp/campaign",
+      "hosts": [
+        "povo.jp"
+      ],
+      "paths": [
+        "/campaign",
+        "/news/"
+      ]
+    },
+    {
+      "id": "rakuten",
+      "name": "楽天モバイル",
+      "url": "https://network.mobile.rakuten.co.jp/campaign/",
+      "hosts": [
+        "network.mobile.rakuten.co.jp"
+      ],
+      "paths": [
+        "/campaign/"
+      ]
+    },
+    {
+      "id": "uq",
+      "name": "UQ mobile",
+      "url": "https://www.uqwimax.jp/mobile/cp/",
+      "hosts": [
+        "www.uqwimax.jp"
+      ],
+      "paths": [
+        "/mobile/cp/",
+        "/mobile/campaign/"
+      ]
+    },
+    {
+      "id": "ymobile",
+      "name": "Y!mobile",
+      "url": "https://www.ymobile.jp/cp/",
+      "hosts": [
+        "www.ymobile.jp"
+      ],
+      "paths": [
+        "/cp/",
+        "/store/LP/"
+      ],
+      "resources": [
+        {
+          "url": "https://www.ymobile.jp/cp/common/js/data.json",
+          "format": "json"
+        }
+      ]
+    },
+    {
+      "id": "docomo",
+      "name": "ドコモ",
+      "url": "https://www.docomo.ne.jp/campaign_event/",
+      "hosts": [
+        "www.docomo.ne.jp"
+      ],
+      "paths": [
+        "/campaign_event/"
+      ]
+    },
+    {
+      "id": "au",
+      "name": "au",
+      "url": "https://www.au.com/mobile/campaign/",
+      "hosts": [
+        "www.au.com"
+      ],
+      "paths": [
+        "/mobile/campaign/",
+        "/mobile/charge/charge-discount/"
+      ]
+    },
+    {
+      "id": "softbank",
+      "name": "ソフトバンク",
+      "url": "https://www.softbank.jp/mobile/campaigns/",
+      "hosts": [
+        "www.softbank.jp"
+      ],
+      "paths": [
+        "/mobile/campaigns/"
+      ]
+    },
+    {
+      "id": "iijmio",
+      "name": "IIJmio",
+      "url": "https://www.iijmio.jp/campaign/",
+      "hosts": [
+        "www.iijmio.jp"
+      ],
+      "paths": [
+        "/campaign/",
+        "/info/iij/"
+      ],
+      "resources": [
+        {
+          "url": "https://www.iijmio.jp/campaign/include/user_campaign.html",
+          "format": "html"
+        }
+      ]
+    },
+    {
+      "id": "mineo",
+      "name": "mineo",
+      "url": "https://mineo.jp/campaign/",
+      "hosts": [
+        "mineo.jp"
+      ],
+      "paths": [
+        "/campaign/"
+      ]
+    }
+  ],
+  "firstInsertionReplacements": [
+    {
+      "from": "この記事は更新型です。料金改定やプラン変更があれば通常料金表を更新します。キャンペーンは変動が速いため、個別金額は載せず、各社公式で最新情報を確認してください。",
+      "to": "この記事は更新型です。通常料金表と、下のキャンペーン欄は確認日が異なります。キャンペーンは各項目の公式情報の確認日時を見て、申し込み前にも対象・受取条件・期限を確認してください。"
+    }
+  ]
+}
