@@ -33,9 +33,10 @@ interface Props {
   nextArticle?: ArticleData;
   /** MDX render() の headings。渡されると h2 から目次を自動生成する */
   headings?: Heading[];
+  renewal?: boolean;
 }
 
-const { article, previousArticle, nextArticle, headings = [] } = Astro.props;
+const { article, previousArticle, nextArticle, headings = [], renewal = false } = Astro.props;
 
 // 目次は h2 のみ・2 個以上あるときだけ出す（v3: モバイルは折りたたみ、PCは開いた状態）
 const tocHeadings = headings.filter((h) => h.depth === 2);
@@ -82,10 +83,11 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   image={article.thumbnail}
   ogType="article"
   canonicalPath={`/articles/${article.slug}/`}
+  paper={renewal}
 >
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <article class={`article-shell article-shell--${article.type}`}>
+  <article class:list={["article-shell", `article-shell--${article.type}`, {"article-shell--renewal":renewal}]}>
     {
       article.hasAffiliate && (
         <p class="ad-disclosure" role="note">
@@ -95,13 +97,13 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     }
     <header class="article-header">
       <div class="meta-row">
-        <span>{article.category}</span>
+        <span>{renewal && article.type!=="news" ? `毎月更新 ／ ${article.updated.slice(0,4)}年${Number(article.updated.slice(5,7))}月号` : article.category}</span>
         <time datetime={article.updated}>更新日: {article.updated}</time>
       </div>
-      <h1>{article.title}</h1>
+      <h1>{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : article.title}</h1>
       <p>{article.description}</p>
       {
-        article.thumbnail ? (
+        !renewal && (article.thumbnail ? (
           <img
             class="article-thumbnail"
             src={article.thumbnail}
@@ -116,12 +118,12 @@ const breadcrumbSchema = buildBreadcrumbSchema([
             <span>Thumbnail pending</span>
             <strong>サムネイルはChatGPT側で作成後に設定</strong>
           </div>
-        )
+        ))
       }
     </header>
 
     {
-      showToc && (
+      !renewal && showToc && (
         <details class="article-toc" id="article-toc">
           <summary>目次</summary>
           <ol>
@@ -1883,4 +1885,9 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   .lightbox-next {
     right: 10px;
   }
+</style>
+
+<style is:global>
+.renewal-paper .article-shell--renewal{width:min(1120px,calc(100% - 40px));max-width:1120px;margin:28px auto 64px;padding:0;background:transparent;border:0;box-shadow:none}.renewal-paper .article-shell--renewal .article-header{padding:0;border:0;border-radius:0;background:none;box-shadow:none;margin:0 0 28px}.renewal-paper .article-shell--renewal .article-header h1{font-family:"Noto Sans JP",system-ui,sans-serif;font-size:38px;font-weight:900;letter-spacing:-.01em;line-height:1.3;color:#15171c}.renewal-title-mark{background:linear-gradient(transparent 63%,#f4c430 63%)}.renewal-paper .article-shell--renewal .article-header p{font-size:16px;color:#3a4150;max-width:800px;margin:16px 0 0}.renewal-paper .article-shell--renewal .meta-row{margin-bottom:16px}.renewal-paper .article-shell--renewal .meta-row span,.renewal-paper .article-shell--renewal .meta-row time{border-radius:4px;background:#fff;font-family:inherit;font-weight:500}.renewal-paper .article-shell--renewal .meta-row span{background:#f4c430;color:#15171c;border-color:#f4c430;font-weight:800}.renewal-paper .article-shell--renewal .article-content{padding:0;border:0;border-radius:0;background:#fff;box-shadow:none}.renewal-paper .article-shell--renewal .ad-disclosure{border:0;border-radius:0;background:none;padding:0;margin:0 0 18px;font-size:11px;color:#5b6472}.renewal-paper .article-shell--renewal .article-content .comparison-renewal{padding:0;border-radius:0}.renewal-paper .article-shell--renewal .article-content :is(p,ul,ol){max-width:none}.renewal-paper .article-shell--renewal .article-content .ai-v2{padding:0;border-radius:0}.renewal-paper .article-shell--renewal.article-shell--news{max-width:860px}
+@media(max-width:720px){.renewal-paper .article-shell--renewal{width:calc(100% - 32px);margin-top:22px}.renewal-paper .article-shell--renewal .article-header h1{font-size:26px;line-height:1.35}.renewal-paper .article-shell--renewal .article-header p{font-size:14px}.renewal-paper .article-shell--renewal .meta-row{font-size:10px}}
 </style>

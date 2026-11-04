@@ -1,4 +1,5 @@
 export const siteConfig = {
+  renewalArticleLayout: true, // false restores the classic outer article layout
   scrollNavigation: true, // false restores the previous navigation layout
   siteName: "すまラボ",
   siteDescription: "むずかしいスマホ・AI・ガジェットの話を、わかりやすく。",
