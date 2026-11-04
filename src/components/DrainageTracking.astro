@@ -6,15 +6,30 @@
 //   - in_body     : B（本文中の収益記事への文脈リンク。data 属性が無くても href から判定）
 // 可視化(メディア司令室)は今回スコープ外。イベント発火まで。
 import { getAllTargetSlugs } from "../lib/related-guides";
+import { siteConfig } from "../config/site";
 const targetSlugs = getAllTargetSlugs();
+const renewalClickTracking = siteConfig.renewalClickTracking;
 ---
 
-<script define:vars={{ targetSlugs }}>
+<script define:vars={{ targetSlugs, renewalClickTracking }}>
   (function () {
     var slugs = new Set(targetSlugs);
 
     function fire(a, evtType) {
+      var store = a.getAttribute("data-price-store");
+      if (renewalClickTracking && store && typeof window.gtag === "function") {
+        var comparison = a.closest("[data-renewal-kind]");
+        window.gtag("event", "comparison_price_click", {
+          store: store,
+          model: a.getAttribute("data-price-model"),
+          category: comparison ? comparison.getAttribute("data-renewal-kind").replace(/^comparison:/, "") : null,
+          from_path: location.pathname,
+          interaction: evtType,
+          transport_type: "beacon",
+        });
+      }
       var lane = a.getAttribute("data-drainage");
+      if (lane === "ai_tools" && !renewalClickTracking) return;
       var target = a.getAttribute("data-drainage-target");
       if (!lane) {
         // data 属性の無い本文内リンク → href が収益記事なら in_body 扱い
@@ -37,6 +52,7 @@ const targetSlugs = getAllTargetSlugs();
     }
 
     function handler(e) {
+      if ((e.type === "auxclick" && e.button !== 1) || (e.type === "click" && e.button !== 0)) return;
       var el = e.target;
       var a = el && el.closest ? el.closest("a[href]") : null;
       if (a) fire(a, e.type);

@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
+import { analyzeAiV2Response, responseTemplate } from "./ai-v2-response-health.mjs";
 
 const DEFAULT_LIMITS = {
   chatgpt_turn1_research: { minBodyBlocks: 3, minProseChars: 600, minHeadings: 3 },
@@ -125,7 +126,11 @@ function findActualOutputTokens(raw) {
   return found;
 }
 
-export function analyzeResponse(text, { step = "chatgpt_turn1_research", externalMetrics = null, raw = null } = {}) {
+export function analyzeResponse(text, { step = "chatgpt_turn1_research", externalMetrics = null, raw = null, templateVersion = null } = {}) {
+  if (templateVersion === "ai-v2") {
+    const result = analyzeAiV2Response(text, step);
+    if (result) return { ...result, outputTokensActual: findActualOutputTokens(raw), outputTokensEstimated: Math.ceil(String(text).length / 2) };
+  }
   const normalized = String(text || "").replace(/\r\n/g, "\n").trim();
   const blocks = normalized.split(/\n\s*\n/).map(meaningfulBlock).filter(Boolean);
   const proseChars = blocks.join("\n").length;
@@ -173,10 +178,10 @@ export function buildStructuredRetryPrompt(originalPrompt, step) {
     `## 元の依頼（情報欠落防止のため全文保持）\n\n${originalPrompt.trim()}\n`;
 }
 
-export function runHealthCheck({ raw, step, attempt = 1, originalPrompt = "" }) {
-  const extracted = extractLatestAssistant(raw);
-  const metrics = analyzeResponse(extracted.text, { step, externalMetrics: extracted.externalMetrics, raw });
-  const retryPrompt = !metrics.healthy && attempt < 2 ? buildStructuredRetryPrompt(originalPrompt, step) : null;
+export function runHealthCheck({ raw, step, attempt = 1, originalPrompt = "", templateVersion = null }) {
+  const extracted = templateVersion === "ai-v2" && raw?.headline && raw?.answer ? {text:JSON.stringify(raw,null,2),source:"ai_v2_json_model"} : extractLatestAssistant(raw);
+  const metrics = analyzeResponse(extracted.text, { step, externalMetrics: extracted.externalMetrics, raw, templateVersion });
+  const retryPrompt = !metrics.healthy && attempt < 2 ? (templateVersion === "ai-v2" && ['chatgpt_turn3_draft','chatgpt_turn5_final','chatgpt_turn6_slideplan'].includes(step) ? `AI記事v2の構造化リトライ（1回限り）。調査と一次情報を維持し、docs/ai-article-template-v2.mdの指定形式を完成させる。本文はJSONモデルの全必須項目、画像計画はthumbnailと任意のslide01のみ。旧8枚構成やMarkdown本文へ戻さない。\n不合格理由：${metrics.reasons.join('／')}\n元の依頼：\n${originalPrompt}` : buildStructuredRetryPrompt(originalPrompt, step)) : null;
   return { extracted, metrics, retryPrompt, attempt };
 }
 
@@ -193,14 +198,15 @@ function main() {
   try { raw = JSON.parse(inputText); } catch { raw = inputText; }
   const attempt = Math.max(1, Number(args.attempt || 1));
   const originalPrompt = args["original-prompt"] ? fs.readFileSync(path.resolve(args["original-prompt"]), "utf8") : "";
-  let result = runHealthCheck({ raw, step: args.step, attempt, originalPrompt });
+  const templateVersion = responseTemplate(args.output);
+  let result = runHealthCheck({ raw, step: args.step, attempt, originalPrompt, templateVersion });
   let selectedInput = inputPath;
   if (!result.metrics.healthy && args["dom-fallback"] && fs.existsSync(path.resolve(args["dom-fallback"]))) {
     const fallbackPath = path.resolve(args["dom-fallback"]);
     const fallbackText = fs.readFileSync(fallbackPath, "utf8").replace(/^\uFEFF/, "");
     let fallbackRaw;
     try { fallbackRaw = JSON.parse(fallbackText); } catch { fallbackRaw = fallbackText; }
-    const fallbackResult = runHealthCheck({ raw: fallbackRaw, step: args.step, attempt, originalPrompt });
+    const fallbackResult = runHealthCheck({ raw: fallbackRaw, step: args.step, attempt, originalPrompt, templateVersion });
     if (fallbackResult.metrics.healthy) {
       result = fallbackResult;
       selectedInput = fallbackPath;

@@ -358,8 +358,9 @@ function assistedInstruction(state, step) {
   };
   if(isAiV2(state)){
     const contract=aiV2Prompt({slug:state.slug,theme:state.theme});
-    for(const key of ['chatgpt_turn3_draft','chatgpt_turn4_review','chatgpt_turn5_final','write_mdx'])map[key]=contract+`\n対象工程：${key}。${dir}の一次調査資料と読者翻訳設計を維持し、この型で保存する。`;
-    map.chatgpt_turn6_slideplan=`${dir}/slide_plan.md を作る。本文図は0〜1枚とサムネ1枚。図が不要ならサムネのみ。見出しは ## thumbnail と任意の ## slide01 を使い、slide02以降は作らない。演出ブロックとキャラクター正本は維持する。`;
+    for(const key of ['chatgpt_turn3_draft','chatgpt_turn5_final','write_mdx'])map[key]=contract+`\n対象工程：${key}。${dir}の一次調査資料と読者翻訳設計を維持し、この型で保存する。`;
+    map.chatgpt_turn4_review=`${dir}/review_report.md にMarkdownのセルフレビューを保存する。docs/ai-article-template-v2.md §7の10チェックIDを一つずつpass/fail/理由付きnot_applicableで判定する。headline-answer-alignは数値だけでなく条件・意味の方向も確認。根拠URL、専門語の初出説明、製品・サービスの対象地域と条件も照合し、未修正のfailがあれば最終稿へ進まない。JSONモデルをレビュー本文の代わりに出力しない。`;
+    map.chatgpt_turn6_slideplan=`${dir}/slide_plan.md を作る。本文図は0〜1枚とサムネ1枚。図が不要ならサムネのみ。見出しは ## thumbnail と任意の ## slide01 を使い、slide02以降は作らない。## 演出ブロック に衣装・小道具・ポーズ・背景・表情・演出根拠・日付型判定・主要モチーフ・直近10記事類型チェックを具体化する。サムネ節には感情・行動・場面・手の動作を独立して記し、キャラクター正本と文字の一枚絵生成を維持する。`;
   }
   map.chatgpt_turn6_slideplan += `\n**演出ブロックの追加必須欄**: \`手・小道具\` は「壊れにくい手を自然に描く」を既定にする。自然な構図を優先し、手を隠すことを既定にしない。開いた手・軽く添える手を優先し、手は小さめ・遠め、動作する手は片手だけ、もう片方は体側で自然に休ませる。物を強く握る、両手で別々の動作をする、指を複雑に組む・数える、手のクローズアップは避ける。小道具が不可欠な場合だけ片手で軽く持つ。手を消すためだけの後ろ手・机の陰・フレームアウトは使わない。テーマ衣装・小道具・姿勢・視線・背景を削らず、標準衣装・棒立ちへ退避しない。\`表情\` も記事の感情トーンから自動導出する。身体構造は、ひまり=腕/手/脚各2、らぼまる=腕・手・脚・足が左右各1つ（追加突起はアンテナ1本と左右の耳ビレのみ、腕は短く・太く・丸い）を前提にする。`;
   map.factcheck_images += `\n**身体構造は認識アンカーとは別の公開ブロック項目**: 手がある画像は手の本数と指を最初に確認し、形・比率・付け根も見る。ひまりは腕/手/脚各2、らぼまるは腕・手・脚・足が左右各1つで、追加突起はアンテナ1本と左右の耳ビレだけ。余分な手・腕、重複、顔の破綻、物体との融合、腕・脚の不自然な長さ/細さ、触手状・ホース状・急なS字、付け根や関節の破綻は needs_revision。日本語誤字・アンカー不一致と同様に、対象画像だけCodexで1回再生成して再検品する。`;

@@ -34,6 +34,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
 import { gate, loadAutonomy } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
+import { assertRenewalSourceRelease, renewalApproval } from "./renewal-release-gate.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const ROOT = resolve(dirname(__filename), "..", "..");
@@ -107,7 +108,7 @@ function parsePrNumber(prUrl) {
   return m ? Number(m[1]) : null;
 }
 
-export async function mergePr(prNumber, dryRun, { token = process.env.GH_TOKEN, fetchImpl = fetch } = {}) {
+export async function mergePr(prNumber, dryRun, { token = process.env.GH_TOKEN, fetchImpl = fetch, approvalLookup = renewalApproval } = {}) {
   if (!token) return { ok: false, reason: "gh_token_missing" };
   const headers = {
     Accept: "application/vnd.github+json",
@@ -122,11 +123,33 @@ export async function mergePr(prNumber, dryRun, { token = process.env.GH_TOKEN, 
   if (info.merged === true) return { ok: true, alreadyMerged: true };
   if (info.state !== "open") return { ok: false, reason: `pr_state_${info.state}` };
   if (info.draft === true) return { ok: false, reason: "pr_is_draft" };
+  const sha = info.head?.sha;
+  if (!/^[a-f0-9]{40}$/.test(sha || "")) return { ok: false, reason: "pr_head_sha_missing" };
+  try {
+    for (let page = 1; ; page++) {
+      if (page > 30) return { ok: false, reason: "pr_files_limit_exceeded" };
+      const response = await fetchImpl(`${endpoint}/files?per_page=100&page=${page}`, { headers });
+      if (!response.ok) return { ok: false, reason: `pr_files_http_${response.status}` };
+      const files = await response.json();
+      if (!Array.isArray(files)) return { ok: false, reason: "pr_files_invalid" };
+      for (const file of files.filter(f => f.status !== "removed" && /^content\/articles\/[^/]+\.mdx$/.test(f.filename))) {
+        const encoded = file.filename.split('/').map(encodeURIComponent).join('/');
+        const contentResponse = await fetchImpl(`https://api.github.com/repos/hnishimura40/sumalabo/contents/${encoded}?ref=${sha}`, { headers });
+        if (!contentResponse.ok) return { ok: false, reason: `pr_source_http_${contentResponse.status}` };
+        const source = await contentResponse.json();
+        if (source.encoding !== "base64" || typeof source.content !== "string") return { ok: false, reason: "pr_source_unavailable" };
+        assertRenewalSourceRelease(Buffer.from(source.content, "base64").toString("utf8"), approvalLookup);
+      }
+      if (files.length < 100) break;
+    }
+  } catch (error) {
+    return { ok: false, held: error.message.startsWith("first_publication_requires_hiro_approval:"), reason: error.message };
+  }
   if (dryRun) return { ok: true, dryRun: true };
   const merge = await fetchImpl(`${endpoint}/merge`, {
     method: "PUT",
     headers: { ...headers, "Content-Type": "application/json" },
-    body: JSON.stringify({ merge_method: "merge" }),
+    body: JSON.stringify({ merge_method: "merge", sha }),
   });
   if (!merge.ok) return { ok: false, reason: `pr_merge_http_${merge.status}` };
   const merged = await merge.json();
@@ -209,11 +232,11 @@ async function main() {
   }
   const merged = await mergePr(prNumber, false);
   if (!merged.ok) {
-    console.error(`[auto-phase-b] PR merge 失敗: ${merged.reason}`);
+    console.error(`[auto-phase-b] ${merged.held ? '初回公開を保留（未公開）' : 'PR merge 失敗'}: ${merged.reason}`);
     await notifyAutonomyEvent({
       slug: target.slug,
-      status: "auto_phase_b_failed",
-      title: `[autonomy] 自動Phase B: PR #${prNumber} merge失敗 (${merged.reason})`,
+      status: merged.held ? "renewal_first_publication_held" : "auto_phase_b_failed",
+      title: `[autonomy] 自動Phase B: PR #${prNumber} ${merged.held ? '初回公開承認待ち・未公開' : 'merge失敗'} (${merged.reason})`,
     });
     process.exitCode = 1;
     return;

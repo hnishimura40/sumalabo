@@ -1,6 +1,6 @@
 # 2026-11-04 リニューアル導入記録
 
-A1〜A7は段階別PRでmainへ導入済みです。ルーターは2026-11-04にHiroの公開OK後、PR #392をマージして本番公開し、#399で比較表の配色を修正しました。B1〜B6はこのPRまでの段階別導入と統合検証を行います。AI記事の初回公開と他3カテゴリの初回公開は保留中です。
+A1〜A7は段階別PRでmainへ導入済みです。ルーターは2026-11-04にHiroの公開OK後、PR #392をマージして本番公開し、#399で比較表の配色を修正しました。B1〜B6も段階別PRで導入済みです。充電器はPR #402、バッテリーはPR #403をHiroの個別承認後に公開済み。イヤホンはPR #404の初回表示確認待ち、AI記事はB7の実記事確認待ちです。
 
 | 段階 | PR | 主な変更先 | 戻す設定・状態 | 検証 |
 |---|---|---|---|---|
@@ -16,9 +16,9 @@ A1〜A7は段階別PRでmainへ導入済みです。ルーターは2026-11-04に
 | B3 | [395](https://github.com/hnishimura40/sumalabo/pull/395) | ai-v2-sources.mjs、generate-article-brief.mjs | enabled=false | 公式ドメイン・確認済み日付。報道は答えと3カラムの根拠に使用不可 |
 | B4 | [396](https://github.com/hnishimura40/sumalabo/pull/396) | ai-v2-stance.mjs、設定の4パターン | enabled=false | 一致する型だけを定型で出力。自由生成は拒否 |
 | B5 | [397](https://github.com/hnishimura40/sumalabo/pull/397) | ai-v2-tools.mjs、comparison-published-picks.json、公開ack | enabled=false | マージ・本番同一バージョン・strict verify確認後のみ登録。未作成カテゴリは省略 |
-| B6 | 本PR | ai-v2-checks.mjs、記事ゲート、既存検品のv2対応、回帰テスト | enabled=false | 関連52テスト成功。表示試験用データで320/390/1280pxの横はみ出し0 |
+| B6 | [398](https://github.com/hnishimura40/sumalabo/pull/398) | ai-v2-checks.mjs、記事ゲート、既存検品のv2対応、回帰テスト | enabled=false | 関連52テスト成功。表示試験用データで320/390/1280pxの横はみ出し0 |
 
-生成の主設定は比較記事が `data/automation/sumalabo-editorial-identity.json` の `renewal.enabled`、AI記事が `data/automation/ai-article-template-v2.json` の `enabled` です。比較はtrue、AI記事はfalseです。AI記事の有効化とB7の初回プレビューは次の工程です。表示済み本文そのものを旧原稿へ差し替える操作とは区別します。
+生成の主設定は比較記事が `data/automation/sumalabo-editorial-identity.json` の `renewal.enabled`、AI記事が `data/automation/ai-article-template-v2.json` の `enabled` です。比較・AI記事ともtrueです。AI記事の初回公開承認はnullのまま、実際の翌晩の1本をプレビューしてから承認を受けます。B7の接続と保留位置は `docs/renewal-b7-first-night.md` を参照。表示済み本文そのものを旧原稿へ差し替える操作とは区別します。
 
 A6では6個のチェックID（editorial-picks / reading-order / no-repeated-cells / origin-escalation / price-buttons / mobile-overflow）を確認しました。製造国は公式の日本製表示がある1候補を確定し、残り9候補は型番別のFAQ・取扱説明書を調べた結果を保存して未確認のまま残しました。国内窓口と製造国は別の判断です。
 
@@ -26,7 +26,7 @@ B6では10個のチェックIDを検品結果に返します。旧Summary30必�
 
 AI表示試験は架空の試験用データです。実際の翌晩の記事を生成・公開したものではなく、B7の初回確認を完了扱いにはしていません。一時的な試験ページは最終ビルドから削除しています。
 
-初回の本番配備にはカテゴリ・記事種別ごとのHiro承認記録（version、approvedBy、approvedAt）が必要です。承認がないHTMLを含む場合、正規の本番配備処理は停止します。A6のルーター公開OKだけを記録済みです。B7のAI記事と他カテゴリの初回公開はそれぞれ保留します。承認後に価格・根拠の鮮度と実際の公開結果を再確認します。
+初回の本番配備にはカテゴリ・記事種別ごとのHiro承認記録（version、approvedBy、approvedAt）が必要です。承認がないHTMLを含む場合、正規の本番配備処理は停止します。A6のルーター・充電器・バッテリー公開OKを記録済みです。イヤホンとB7のAI記事の初回公開はそれぞれ保留します。承認後に価格・根拠の鮮度と実際の公開結果を再確認します。
 
 A7の通常生成設定は有効化済みですが、翌月の実行結果、1か月の観察、B7の翌晩初回記事の確認はまだ実施していません。夜間起動層・Windowsタスク登録・Codexの定期実行設定・Scoutの選定規則は変更していません。公開後の観察やFable監査を実施済みとは扱いません。
 
@@ -35,4 +35,11 @@ A7の通常生成設定は有効化済みですが、翌月の実行結果、1�
 
 PR #392のマージ、本番HTTP 200、同一比較バージョン36a659401fccf941a7b66594、strict verifyおよび公開後hard/soft全項目合格を確認済み。320/390/1280pxで白背景・黄色見出し・横はみ出し0を確認。既存サムネイルを一覧・OGP・Twitterカードへ維持し、本番画像ハッシュ一致も確認しました。
 
-B5の道具カードは、この実公開の証拠と一致するルーターの今月の1台だけを登録します。他3カテゴリを公開済みとして登録しません。
+B5の道具カードは、この実公開の証拠と一致するルーターの今月の1台だけを登録します。他カテゴリは実公開と同一バージョン・strict verifyを照合してから追加します。「迷ったらこれ」が該当なしのカテゴリは空カードを作りません。
+
+
+## 残りの接続と観察準備
+
+B7準備はPR #405で導入済み。AI生成を有効化し、旧形式と新形式の応答検品を分け、未承認AI記事は固定head SHAのMDX確認後、マージ前で保留します。関連54テストと179ページビルドに合格。翌晩の実記事・Hiroの初回表示確認・初回公開は未実施です。専用runnerの既存エントリが起動時にorigin/mainを取得してdetached checkoutすることを読み取り確認し、runner本体や起動設定は書き換えていません。
+
+公開後のクリック計測とFableへの監査指示はdocs/renewal-observation-and-fable-handoff.mdに記録します。計測のコード検査と実際のGA4受信・1か月の成果は区別します。Fableスケジュールは現在の接続ツールから登録・読み返しできず、登録済みとは扱いません。
