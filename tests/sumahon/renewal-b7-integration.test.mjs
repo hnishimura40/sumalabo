@@ -8,6 +8,9 @@ import {aiV2Mdx} from '../../scripts/automation/ai-article-v2.mjs';
 import {runHealthCheck} from '../../scripts/automation/chatgpt-response-health.mjs';
 import {responseTemplate} from '../../scripts/automation/ai-v2-response-health.mjs';
 import {mergePr} from '../../scripts/automation/auto-phase-b.mjs';
+import {newState} from '../../scripts/automation/phase-a-orchestrator.mjs';
+import {isAiV2,aiPolicy} from '../../scripts/automation/ai-article-v2.mjs';
+import {generateArticleBrief} from '../../scripts/sumahon/generate-article-brief.mjs';
 function article(){const m=fixture();m.sources.push({...m.sources[0],id:'official2',url:'https://blog.google/products/another-test-fixture/'});for(const c of m.changes)c.text+='対象の画面が表示された場合に、現在提供されている機能を選びます。提供予定の内容と、今日実際に選べる内容を分けて読み、対象地域や契約条件が自分に合う場合だけ設定を変更します。'.repeat(4);return m;}
 const plan=`## 演出ブロック
 - 衣装：テーマに合わせた家庭用ルータを設定するベスト
@@ -61,4 +64,8 @@ test('未承認AI記事はmainへ入れず、承認後も検査した同一head�
  const held=await mergeFixture();assert.equal(held.result.held,true);assert.match(held.result.reason,/first_publication_requires_hiro_approval:ai/);assert.equal(held.calls.some(c=>c.options.method==='PUT'),false);
  const allowed=await mergeFixture({approved:true});assert.equal(allowed.result.ok,true);assert.match(allowed.calls[2].url,new RegExp('ref='+allowed.sha));assert.equal(JSON.parse(allowed.calls.at(-1).options.body).sha,allowed.sha);
  const failed=await mergeFixture({approved:true,failSource:true});assert.equal(failed.result.ok,false);assert.equal(failed.calls.some(c=>c.options.method==='PUT'),false);
+});
+test('タイトルにAI語がなくても採用した型を状態へ保存し、ブリーフの旧構成と混在させない',()=>{
+ const state=newState({slug:'general-news',theme:'日常の条件が変わった',templateVersion:'ai-v2'});assert.equal(isAiV2(state,true),true);assert.equal(isAiV2(state,false),false);assert.throws(()=>newState({slug:'x',theme:'x',templateVersion:'unknown'}));
+ const brief=generateArticleBrief({source:{},classification:{topicCategory:'AI',tags:['生成AI']},generated:{slug:'x',title:'日常の条件が変わった'}});assert.equal(brief.templateVersion,'ai-v2');assert.deepEqual(brief.suggestedStructure,aiPolicy.blocks);assert.ok(!brief.suggestedStructure.includes('先に結論'));
 });
