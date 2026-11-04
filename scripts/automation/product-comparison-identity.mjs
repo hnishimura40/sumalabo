@@ -10,6 +10,25 @@ export function validateRenewalPolicy(value=policy){
   return value.renewal;
 }
 validateRenewalPolicy();
+export function validateRenewalFacts(review,category,now=Date.now()){
+  const fields=policy.renewal.categoryFields[category.id];
+  if(!fields)throw Error('renewal_fields_required');
+  for(const product of review.products)for(const field of fields){
+    const fact=product.comparisonFacts?.[field];
+    if(!fact||!['verified','unknown','not_applicable'].includes(fact.status)||!fresh(fact.verifiedAt,now)||!Array.isArray(fact.sources)||!fact.sources.length)throw Error('renewal_fact_evidence_required:'+field);
+    if(fact.status!=='verified'){if(!nonempty(fact.reason))throw Error('renewal_fact_reason_required:'+field);continue;}
+    const value=fact.numericValue??fact.booleanValue??fact.enumValue??fact.value;
+    if(typeof value!==policy.renewal.fieldTypes[field]||(typeof value==='number'&&!Number.isFinite(value)))throw Error('renewal_typed_fact_required:'+field);
+    if(!fact.sources.some(source=>source.type==='manufacturer'&&/^https:\/\//.test(source.url)&&!/(?:rakuten|amazon|kakaku)\./.test(new URL(source.url).hostname))&&field!=='airlineCarryOn')throw Error('renewal_official_source_required:'+field);
+  }
+  for(const product of review.products)if(product.comparisonFacts.domesticSupport.status!=='verified')throw Error('domestic_support_must_be_confirmed');
+  const unknown=review.products.filter(p=>p.comparisonFacts.manufacturingCountry.status!=='verified');
+  if(unknown.length>=4)for(const product of unknown){
+    const record=product.comparisonFacts.manufacturingCountry;
+    if(!['公式記載を確認できず','販売地域・ロットで異なる','取説に記載なし'].includes(record.reason)||!record.escalation?.some(e=>['label-photo','manual','official-faq'].includes(e.kind)&&/^https:\/\//.test(e.url)&&fresh(e.checkedAt,now)&&nonempty(e.result)))throw Error('origin_escalation_required:'+product.id);
+  }
+  return true;
+}
 export function validateIdentity(review,category,now=Date.now()){
   const identity=review.identity,groups=policy.categoryComparisonGroups[category.id];
   if(identity?.policyVersion!==policy.version||!Array.isArray(identity.groups)||identity.groups.length!==groups.length)throw Error('identity_policy_required');

@@ -179,6 +179,70 @@
       "usb-charger": null,
       "audio": null,
       "wifi-router": null
+    },
+    "fieldTypes": {
+      "domesticSupport": "boolean",
+      "wifiGeneration": "number",
+      "lanPortCount": "number",
+      "wanMaxGbps": "number",
+      "band5GhzMbps": "number",
+      "band24GhzMbps": "number",
+      "has6GHz": "boolean",
+      "maxSinglePortW": "number",
+      "usbCPortCount": "number",
+      "pdSupported": "boolean",
+      "ppsSupported": "boolean",
+      "pseMark": "boolean",
+      "simultaneousTotalW": "number",
+      "weightG": "number",
+      "productType": "string",
+      "capacityWh": "number",
+      "recallStatus": "string",
+      "usbCOutputW": "number",
+      "airlineCarryOn": "string",
+      "wearStyle": "string",
+      "ancSupported": "boolean",
+      "multipointDevices": "number",
+      "batteryAncHours": "number"
+    },
+    "categoryFields": {
+      "wifi-router": [
+        "domesticSupport",
+        "wanMaxGbps",
+        "wifiGeneration",
+        "lanPortCount",
+        "has6GHz",
+        "band5GhzMbps",
+        "band24GhzMbps"
+      ],
+      "usb-charger": [
+        "domesticSupport",
+        "productType",
+        "maxSinglePortW",
+        "usbCPortCount",
+        "pdSupported",
+        "ppsSupported",
+        "pseMark",
+        "simultaneousTotalW",
+        "weightG"
+      ],
+      "power-bank": [
+        "domesticSupport",
+        "pseMark",
+        "recallStatus",
+        "capacityWh",
+        "usbCOutputW",
+        "airlineCarryOn",
+        "weightG"
+      ],
+      "audio": [
+        "domesticSupport",
+        "wearStyle",
+        "ancSupported",
+        "multipointDevices",
+        "batteryAncHours",
+        "weightG"
+      ]
     }
   }
 }
