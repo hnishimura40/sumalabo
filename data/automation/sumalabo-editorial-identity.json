@@ -171,14 +171,20 @@
   },
   "renewal": {
     "version": "2026-11-04",
-    "enabled": false,
+    "enabled": true,
     "picksConfiguration": "data/automation/product-comparison-picks.json",
     "addendum": "docs/editorial-identity-addendum.md",
     "firstPublicationApprovals": {
       "power-bank": null,
       "usb-charger": null,
       "audio": null,
-      "wifi-router": null
+      "wifi-router": {
+        "version": "2026-11-04",
+        "approvedBy": "Hiro",
+        "approvedAt": "2026-11-04T12:23:12.423Z",
+        "message": "ルーター公開OK。",
+        "scope": "Wi-Fiルーターの初回公開。既存画像を記事一覧・SNS共有サムネイルとして使用。"
+      }
     },
     "fieldTypes": {
       "domesticSupport": "boolean",
