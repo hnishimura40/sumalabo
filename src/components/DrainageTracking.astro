@@ -14,6 +14,18 @@ const targetSlugs = getAllTargetSlugs();
     var slugs = new Set(targetSlugs);
 
     function fire(a, evtType) {
+      var store = a.getAttribute("data-price-store");
+      if (store && typeof window.gtag === "function") {
+        var comparison = a.closest("[data-renewal-kind]");
+        window.gtag("event", "comparison_price_click", {
+          store: store,
+          model: a.getAttribute("data-price-model"),
+          category: comparison ? comparison.getAttribute("data-renewal-kind").replace(/^comparison:/, "") : null,
+          from_path: location.pathname,
+          interaction: evtType,
+          transport_type: "beacon",
+        });
+      }
       var lane = a.getAttribute("data-drainage");
       var target = a.getAttribute("data-drainage-target");
       if (!lane) {
@@ -37,6 +49,7 @@ const targetSlugs = getAllTargetSlugs();
     }
 
     function handler(e) {
+      if ((e.type === "auxclick" && e.button !== 1) || (e.type === "click" && e.button !== 0)) return;
       var el = e.target;
       var a = el && el.closest ? el.closest("a[href]") : null;
       if (a) fire(a, e.type);
