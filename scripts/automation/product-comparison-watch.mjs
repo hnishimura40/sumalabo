@@ -81,6 +81,7 @@ async function main(){
       await verifyPublishedComparison(receipt,category);
       const review=read(path.join(dir,category.id+'-review.json'));
       if(review?.picks?.default?.status==='selected'){
+        if(receipt.version!==digest(review).slice(0,24))throw Error('published_pick_review_version_mismatch');
         const registryPath=path.join(ROOT,'data/automation/comparison-published-picks.json');
         const registry=read(registryPath,{schemaVersion:1,categories:{}});
         registry.categories[category.id]=publishedPickEntry(review,read(path.join(dir,category.id+'-ranking.json')),receipt,category);

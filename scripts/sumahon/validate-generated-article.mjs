@@ -1,3 +1,4 @@
+import {validateAiV2Mdx} from '../automation/ai-v2-checks.mjs';
 import { validatePlainLanguageArticle } from "./plain-language-policy.mjs";
 
 function normalizeText(value = "") {
@@ -37,6 +38,8 @@ const REPORTING_TOPIC_NEEDLES = [
 ];
 
 function extractReferenceSection(body) {
+  const html=body.match(/<section data-ai-block="sources">([\s\S]*?)<\/section>/)?.[1];
+  if(html)return html;
   const match = body.match(/^##\s*参考情報\s*$/m);
   if (!match) return "";
   const start = match.index + match[0].length;
@@ -81,7 +84,7 @@ export function validateCharacterVisualPresence(body, { frontmatterRecommended =
 }
 
 export function validateSourceReferences(body, { source = {} } = {}) {
-  const hasReferenceSection = REFERENCE_SECTION_RE.test(body);
+  const hasReferenceSection = REFERENCE_SECTION_RE.test(body)||body.includes('data-ai-block="sources"');
   const referenceSection = extractReferenceSection(body);
   const referenceUrls = referenceSection.match(URL_RE) || [];
   const urlCount = referenceUrls.length;
@@ -419,12 +422,14 @@ export function validateArticleQuality(body, { title = "", category = "" } = {})
 }
 
 export function validateGeneratedArticle({ body, source = {}, thumbnailExists, frontmatterTitle = "", category = "" }) {
-  const issues = [];
+  const aiV2=/export const aiV2 =|<AiArticleV2\b|data-renewal-kind="ai"/.test(body)?validateAiV2Mdx(body,{title:frontmatterTitle||undefined}):null;
+  if(aiV2?.rendered)body=aiV2.rendered;
+  const issues = [...(aiV2?.issues||[])];
   const plain = body.replace(/<[^>]+>/g, "");
   const normalized = normalizeText(plain);
   const japaneseChars = [...plain].filter((char) => /[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}ー]/u.test(char)).length;
-  const h2Count = (body.match(/^##\s+/gm) || []).length;
-  const hasAnyHeading = (body.match(/^#{2,3}\s+/gm) || []).length > 0;
+  const h2Count = (body.match(/(?:^##\s+|<h2\b)/gm) || []).length;
+  const hasAnyHeading = (body.match(/(?:^#{2,3}\s+|<h[23]\b)/gm) || []).length > 0;
   const presentTopics = [];
   const missingTopics = [];
 
@@ -440,7 +445,7 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists, f
     issues.push(makeIssue("few_h2", "warning", `h2見出しが少なめです。h2数: ${h2Count}`));
   }
 
-  for (const topic of requiredTopics) {
+  for (const topic of (aiV2?requiredTopics.filter(t=>!["summary","summary_end"].includes(t.code)):requiredTopics)) {
     if (includesAny(plain, topic.needles)) {
       presentTopics.push(topic.label);
     } else {
@@ -529,6 +534,7 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists, f
   const hasMajorIssue = issues.some((issue) => issue.severity === "major");
 
   return {
+    aiV2Checks: aiV2?.checks,
     checkedAt: new Date().toISOString(),
     wordCountApprox: japaneseChars,
     h2Count,

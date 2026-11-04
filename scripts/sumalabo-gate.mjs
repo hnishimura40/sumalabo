@@ -30,6 +30,7 @@
 //
 // 検査を弱める変更（パターン削除・チェックのスキップ追加）は理由の報告が必要。
 
+import {validateAiV2Mdx} from "./automation/ai-v2-checks.mjs";
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { execSync } from "node:child_process";
 import path from "node:path";
@@ -392,7 +393,8 @@ function checkMdxStage(slug, patterns, productNames) {
     report("violation", "mdx", mdxPath, "MDX が存在しません");
     return null;
   }
-  const { frontmatter, body } = splitFrontmatter(raw);
+  const {frontmatter}=splitFrontmatter(raw);
+  let {body}=splitFrontmatter(raw);
   if (frontmatter === null) {
     report("violation", "mdx-frontmatter", mdxPath, "frontmatter（--- ... ---）がありません");
     return { body, fm: null };
@@ -404,6 +406,11 @@ function checkMdxStage(slug, patterns, productNames) {
   const fmSlug = frontmatterValue(frontmatter, "slug");
   if (fmSlug !== null && fmSlug !== slug) {
     report("violation", "mdx-frontmatter", mdxPath, `frontmatter slug "${fmSlug}" がファイル名 "${slug}" と不一致`);
+  }
+  if(/<AiArticleV2\b|export const aiV2 =|data-renewal-kind="ai"/.test(body)){
+    const check=validateAiV2Mdx(body,{title:frontmatterValue(frontmatter,'title')});
+    for(const item of check.issues)report('violation',item.code,mdxPath,item.message);
+    if(check.rendered)body=check.rendered;
   }
   checkForbiddenWords(body, `content/articles/${slug}.mdx`, "mdx", patterns);
   checkFormalProductNames(raw, `content/articles/${slug}.mdx`, productNames);

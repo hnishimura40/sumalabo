@@ -35,5 +35,5 @@ const renewal=siteConfig.renewalArticleLayout && /data-renewal-kind=|<AiArticleV
   renewal={renewal}
 >
   <Content />
-  <ArticleAffiliatePlacements slug={article.data.slug} />
+  {!renewal && <ArticleAffiliatePlacements slug={article.data.slug} />}
 </ArticleLayout>
