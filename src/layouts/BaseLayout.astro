@@ -108,7 +108,7 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
             <small>スマホ・AI・ガジェットをやさしく整理</small>
           </span>
         </a>
-        <nav class="site-nav" aria-label="メインナビゲーション">
+        <nav class:list={["site-nav", {"site-nav--scroll": siteConfig.scrollNavigation}]} aria-label="メインナビゲーション">
           <a href="/">ホーム</a>
           <a href="/categories/news/">ニュース</a>
           <a href="/categories/hands-on/">やってみた・検証</a>
@@ -170,3 +170,7 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
     <ForceRefresh />
   </body>
 </html>
+
+<style is:global>
+.site-nav.site-nav--scroll{display:flex;flex-wrap:nowrap;overflow-x:auto;min-width:0;max-width:100%;padding-right:36px;mask-image:linear-gradient(to right,#000 88%,transparent);-webkit-mask-image:linear-gradient(to right,#000 88%,transparent);scrollbar-width:thin;overscroll-behavior-inline:contain}.site-nav.site-nav--scroll a{flex:0 0 auto;white-space:nowrap}.header-inner:has(.site-nav--scroll){min-width:0}.header-inner:has(.site-nav--scroll)>*{min-width:0}@media(max-width:720px){.header-inner:has(.site-nav--scroll){grid-template-columns:minmax(0,1fr) auto}.site-nav.site-nav--scroll{width:100%;grid-column:1/-1;order:3}}
+</style>
