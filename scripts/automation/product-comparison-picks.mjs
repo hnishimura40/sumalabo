@@ -24,6 +24,8 @@ export function requiredPickFields(category){
 export function evaluatePicks(review,snapshot,categoryId,policy=pickPolicy){
   const category=policy.categories.find(c=>c.id===categoryId);if(!category)throw Error('pick_category_required');
   if(review.products.length!==10||snapshot.products.length!==10||new Set(review.products.map(p=>p.id)).size!==10||review.products.some(p=>!snapshot.products.some(r=>r.id===p.id)))throw Error('pick_candidate_pool_mismatch');
+  const supportedRules=new Set(['cheapest_meeting_required','cheapest_in_largest_segment_meeting_required_and_upper','cheapest_in_top_segment_with','cheapest_meeting_required_with','cheapest_in_segment_with','representative_per_other_segment']);
+  if(category.slots.length!==3||new Set(category.slots.map(s=>s.id)).size!==3||category.slots.some(s=>!supportedRules.has(s.rule)))throw Error('unsupported_pick_rule');
   const required=[...policy.common.requiredAxes,...category.requiredAxes];
   const rows=review.products.map(p=>{
     const price=snapshot.products.find(r=>r.id===p.id).priceYen;
@@ -68,5 +70,14 @@ export function evaluatePicks(review,snapshot,categoryId,policy=pickPolicy){
       picks[slot.id]={status:representatives.some(r=>r.status==='selected')?'selected':'none',productId:null,claim:slot.claimTemplate,runnerUp:null,reason:'カナル型以外の各段から必須条件を満たす最安を選定',representatives};
     }else picks[slot.id]=makePick(slot,candidates);
   }
-  return {picks,achievement:rows.map(({product,eligible,...row})=>({...row,selected:used.has(row.productId),reason:row.reason||(used.has(row.productId)?'編集部の枠に選出':'枠の条件・価格・重複排除により別の候補を選出'),suitableFor:product.suitableFor})),pickEvaluation:{policyVersion:policy.version,largestSegment:largest,segmentCounts:counts}};
+  function omissionReason(row){
+    if(row.reason)return row.reason;
+    if(used.has(row.productId))return '編集部の枠に選出';
+    const defaultPick=picks.default,chosen=rows.find(r=>r.productId===defaultPick?.productId);
+    const topPick=Object.values(picks).find(p=>p.status==='selected'&&rows.find(r=>r.productId===p.productId)?.segment===row.segment&&p.productId!==defaultPick?.productId);
+    const peer=rows.find(r=>r.productId===topPick?.productId)||chosen;
+    if(peer)return `${row.segment??'段が未確認'}の段。${row.upper.pass?category.upperAxis.label+'を確認':'上位軸の条件確認が未完了'}。選出した${peer.product.model}との参考価格差は${row.price-peer.price}円。`;
+    return `${row.segment??'段が未確認'}の段・参考価格${row.price}円。枠の追加条件に合わず選出対象外。`;
+  }
+  return {picks,achievement:rows.map(({product,eligible,...row})=>({...row,selected:used.has(row.productId),reason:omissionReason(row),suitableFor:product.suitableFor})),pickEvaluation:{policyVersion:policy.version,largestSegment:largest,segmentCounts:counts}};
 }
