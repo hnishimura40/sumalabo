@@ -52,13 +52,20 @@
     {
       "id": "ahamo",
       "name": "ahamo",
-      "url": "https://ahamo.com/campaign/",
+      "url": "https://ahamo.com/campaigns/",
       "hosts": [
         "ahamo.com"
       ],
       "paths": [
         "/campaign/",
-        "/special/"
+        "/special/",
+        "/campaigns/"
+      ],
+      "resources": [
+        {
+          "url": "https://ahamo.com/special/lp/dpointcp/001.html",
+          "format": "html"
+        }
       ]
     },
     {
@@ -89,11 +96,19 @@
       "name": "UQ mobile",
       "url": "https://www.uqwimax.jp/mobile/cp/",
       "hosts": [
-        "www.uqwimax.jp"
+        "www.uqwimax.jp",
+        "shop.uqmobile.jp"
       ],
       "paths": [
         "/mobile/cp/",
-        "/mobile/campaign/"
+        "/mobile/campaign/",
+        "/shop/cashback/"
+      ],
+      "resources": [
+        {
+          "url": "https://shop.uqmobile.jp/shop/cashback/",
+          "format": "html"
+        }
       ]
     },
     {
@@ -105,12 +120,17 @@
       ],
       "paths": [
         "/cp/",
-        "/store/LP/"
+        "/store/LP/",
+        "/store/sp/sim/"
       ],
       "resources": [
         {
           "url": "https://www.ymobile.jp/cp/common/js/data.json",
           "format": "json"
+        },
+        {
+          "url": "https://www.ymobile.jp/store/sp/sim/",
+          "format": "html"
         }
       ]
     },
@@ -119,10 +139,18 @@
       "name": "ドコモ",
       "url": "https://www.docomo.ne.jp/campaign_event/",
       "hosts": [
-        "www.docomo.ne.jp"
+        "www.docomo.ne.jp",
+        "onlineshop.docomo.ne.jp"
       ],
       "paths": [
-        "/campaign_event/"
+        "/campaign_event/",
+        "/special/sim-campaign"
+      ],
+      "resources": [
+        {
+          "url": "https://onlineshop.docomo.ne.jp/special/sim-campaign",
+          "format": "html"
+        }
       ]
     },
     {
@@ -145,7 +173,14 @@
         "www.softbank.jp"
       ],
       "paths": [
-        "/mobile/campaigns/"
+        "/mobile/campaigns/",
+        "/mobile/special/sim-paypay-point/"
+      ],
+      "resources": [
+        {
+          "url": "https://www.softbank.jp/mobile/special/sim-paypay-point/",
+          "format": "html"
+        }
       ]
     },
     {
@@ -162,6 +197,10 @@
       "resources": [
         {
           "url": "https://www.iijmio.jp/campaign/include/user_campaign.html",
+          "format": "html"
+        },
+        {
+          "url": "https://www.iijmio.jp/campaign/mio.html",
           "format": "html"
         }
       ]

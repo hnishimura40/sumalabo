@@ -14,6 +14,15 @@ const initial={schemaVersion:1,pages:{},pending:[],completed:[]};
 const campaign=()=>({id:'sample-a',carrier:'sample',title:'特典A',status:'active',benefit:'最大1000ポイント',eligible:'他社から乗り換える人',requirements:'翌月末までに開通',exclusions:'同系列からの移行は対象外',entry:'公式専用ページ',receiveTiming:'開通の翌々月',deadlineLabel:'2026年11月4日23:59まで',endsAt:'2026-11-04T23:59:00+09:00',monthlyCost:'月額1000円',fees:'事務手数料100円',caveats:'継続利用が必要',suitedFor:'条件を満たす乗り換え希望者',verifiedAt:now,sources:['https://carrier.example/campaign/a/']});
 const catalog=()=>({schemaVersion:1,campaigns:[campaign()]});
 
+test('公式一覧から確認したショップのキャンペーン詳細を巡回対象に含める',()=>{
+  for(const [id,url] of [['ahamo','https://ahamo.com/special/lp/dpointcp/001.html'],['uq','https://shop.uqmobile.jp/shop/cashback/'],['ymobile','https://www.ymobile.jp/store/sp/sim/'],['docomo','https://onlineshop.docomo.ne.jp/special/sim-campaign'],['softbank','https://www.softbank.jp/mobile/special/sim-paypay-point/'],['iijmio','https://www.iijmio.jp/campaign/mio.html']]){
+    const c=config.carriers.find(c=>c.id===id);
+    assert.equal(allowedUrl(url,c),true,id);
+    assert.ok(c.resources.some(r=>r.url===url),id);
+    assert.equal(allowedUrl(url.replace(new URL(url).hostname,new URL(url).hostname+'.evil.example'),c),false);
+  }
+});
+
 test('公式HTTPS範囲だけ巡回し、広告用パラメータだけを取り除く',()=>{
   assert.equal(canonicalUrl('/campaign/a/?utm_source=x&code=required#entry',carrier.url),'https://carrier.example/campaign/a/?code=required');
   assert.equal(allowedUrl('https://carrier.example.evil.test/campaign/',carrier),false);
