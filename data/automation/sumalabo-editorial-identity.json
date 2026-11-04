@@ -175,7 +175,13 @@
     "picksConfiguration": "data/automation/product-comparison-picks.json",
     "addendum": "docs/editorial-identity-addendum.md",
     "firstPublicationApprovals": {
-      "power-bank": null,
+      "power-bank": {
+        "version": "2026-11-04",
+        "approvedBy": "Hiro",
+        "approvedAt": "2026-11-04T13:37:40.485Z",
+        "message": "バッテリー公開OK",
+        "scope": "初回プレビューの該当なし枠を維持して公開。"
+      },
       "usb-charger": {
         "version": "2026-11-04",
         "approvedBy": "Hiro",
