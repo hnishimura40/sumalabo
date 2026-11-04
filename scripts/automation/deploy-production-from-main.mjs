@@ -45,6 +45,7 @@
 //   - 設定 hint だけは表示する (存在チェック true/false のみ)。
 //   - Deploy Hook は使わない (P1 で廃止。wrangler が正規経路)。
 
+import { assertRenewalDist } from "./renewal-release-gate.mjs";
 import { spawnSync, spawn } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -520,6 +521,7 @@ async function main() {
     finalize(result, args, 1);
     return;
   }
+  assertRenewalDist(join(ROOT, "dist"));
   if (!stepWranglerDeploy(result, args.dryRun, args.skipWrangler)) {
     finalize(result, args, 1);
     return;

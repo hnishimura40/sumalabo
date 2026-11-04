@@ -24,6 +24,8 @@ export function requiredPickFields(category){
 export function evaluatePicks(review,snapshot,categoryId,policy=pickPolicy){
   const category=policy.categories.find(c=>c.id===categoryId);if(!category)throw Error('pick_category_required');
   if(review.products.length!==10||snapshot.products.length!==10||new Set(review.products.map(p=>p.id)).size!==10||review.products.some(p=>!snapshot.products.some(r=>r.id===p.id)))throw Error('pick_candidate_pool_mismatch');
+  const supportedRules=new Set(['cheapest_meeting_required','cheapest_in_largest_segment_meeting_required_and_upper','cheapest_in_top_segment_with','cheapest_meeting_required_with','cheapest_in_segment_with','representative_per_other_segment']);
+  if(category.slots.length!==3||new Set(category.slots.map(s=>s.id)).size!==3||category.slots.some(s=>!supportedRules.has(s.rule)))throw Error('unsupported_pick_rule');
   const required=[...policy.common.requiredAxes,...category.requiredAxes];
   const rows=review.products.map(p=>{
     const price=snapshot.products.find(r=>r.id===p.id).priceYen;
@@ -45,17 +47,17 @@ export function evaluatePicks(review,snapshot,categoryId,policy=pickPolicy){
     let claim=slot.claimTemplate.replace(/\{(\w+)\}/g,(_,key)=>{
       const value=context[key]??verifiedValue(p,key);
       if(value===undefined){missing.push(key);return '';}
-      return String(value);
+      return key==='wifiGeneration'?'Wi-Fi '+value:String(value);
     }).replace('10候補で最安','必須条件を満たす10候補中で最安');
     if(missing.length)return {status:'none',productId:null,claim:null,runnerUp:null,reason:'決め手の公式確認が不足：'+missing.join('・')};
     const evidence=[...required,category.upperAxis,...(slot.with?[slot.with]:[])].filter(a=>passes(p,a));
     if(evidence.length<2)throw Error('two_verified_claim_axes_required');
-    claim+='。'+evidence.map(a=>`${a.label}（${verifiedValue(p,a.field)===true?'確認済み':verifiedValue(p,a.field)}）`).join('、');
+    claim+='。'+evidence.map(a=>`${a.label||({has6GHz:'6GHz帯',simultaneousTotalW:'同時出力（W）',airlineCarryOn:'機内持込'})[a.field]||a.field}（${verifiedValue(p,a.field)===true?'確認済み':verifiedValue(p,a.field)}）`).join('、');
     if(policy.common.forbiddenWords.some(word=>claim.includes(word)))throw Error('forbidden_pick_claim');
     const next=candidates[1];
-    const diff=next&&evidence.find(a=>verifiedValue(next.product,a.field)!==verifiedValue(p,a.field))||evidence[0];
+    const diff=next&&[...required,category.upperAxis].find(a=>verifiedValue(next.product,a.field)!==verifiedValue(p,a.field))||evidence.find(a=>typeof verifiedValue(p,a.field)==='number')||evidence[0];
     used.add(p.id);
-    return {status:'selected',productId:p.id,claim,reason:'確認済み条件を満たす候補を価格昇順・同額は候補ID順で判定',evidence:evidence.map(a=>a.field),runnerUp:next?{productId:next.productId,priceDiff:next.price-selected.price,field:diff.field,value:verifiedValue(next.product,diff.field)??null,text:`次点：${next.product.model}（${next.price-selected.price}円差。${diff.label}：${verifiedValue(next.product,diff.field)??'公式確認が必要'}）`}:null};
+    return {status:'selected',productId:p.id,claim,reason:'確認済み条件を満たす候補を価格昇順・同額は候補ID順で判定',evidence:evidence.map(a=>a.field),runnerUp:next?{productId:next.productId,priceDiff:next.price-selected.price,field:diff.field,value:verifiedValue(next.product,diff.field)??null,text:`次点：${next.product.model}（${next.price-selected.price}円差。${diff.label}：${verifiedValue(next.product,diff.field)===true?'あり':verifiedValue(next.product,diff.field)===false?'なし':verifiedValue(next.product,diff.field)??'公式確認が必要'}）`}:null};
   }
   for(const slot of category.slots){
     let candidates=sorted;
@@ -68,5 +70,14 @@ export function evaluatePicks(review,snapshot,categoryId,policy=pickPolicy){
       picks[slot.id]={status:representatives.some(r=>r.status==='selected')?'selected':'none',productId:null,claim:slot.claimTemplate,runnerUp:null,reason:'カナル型以外の各段から必須条件を満たす最安を選定',representatives};
     }else picks[slot.id]=makePick(slot,candidates);
   }
-  return {picks,achievement:rows.map(({product,eligible,...row})=>({...row,selected:used.has(row.productId),reason:row.reason||(used.has(row.productId)?'編集部の枠に選出':'枠の条件・価格・重複排除により別の候補を選出'),suitableFor:product.suitableFor})),pickEvaluation:{policyVersion:policy.version,largestSegment:largest,segmentCounts:counts}};
+  function omissionReason(row){
+    if(row.reason)return row.reason;
+    if(used.has(row.productId))return '編集部の枠に選出';
+    const defaultPick=picks.default,chosen=rows.find(r=>r.productId===defaultPick?.productId);
+    const topPick=Object.values(picks).find(p=>p.status==='selected'&&rows.find(r=>r.productId===p.productId)?.segment===row.segment&&p.productId!==defaultPick?.productId);
+    const peer=rows.find(r=>r.productId===topPick?.productId)||chosen;
+    if(peer)return `${row.segment??'段が未確認'}の段。${row.upper.pass?category.upperAxis.label+'を確認':'上位軸の条件確認が未完了'}。選出した${peer.product.model}との参考価格差は${row.price-peer.price}円。`;
+    return `${row.segment??'段が未確認'}の段・参考価格${row.price}円。枠の追加条件に合わず選出対象外。`;
+  }
+  return {picks,achievement:rows.map(({product,eligible,...row})=>({...row,selected:used.has(row.productId),reason:omissionReason(row),suitableFor:product.suitableFor})),pickEvaluation:{policyVersion:policy.version,largestSegment:largest,segmentCounts:counts}};
 }
