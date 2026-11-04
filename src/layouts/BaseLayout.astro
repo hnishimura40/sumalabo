@@ -14,6 +14,7 @@ interface Props {
   canonicalPath?: string;
   /** true で robots に noindex を付ける（社内確認ページ用） */
   noindex?: boolean;
+  paper?: boolean;
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   ogType = "website",
   canonicalPath,
   noindex = false,
+  paper = false,
 } = Astro.props;
 const robotsContent = noindex ? "noindex, nofollow" : "max-image-preview:large";
 const pageTitle = title === siteConfig.siteName ? title : `${title} | ${siteConfig.siteName}`;
@@ -96,7 +98,7 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
     <DrainageTracking />
     <title>{pageTitle}</title>
   </head>
-  <body>
+  <body class:list={[{"renewal-paper":paper}]}>
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href="/" aria-label="すまラボ トップへ">
@@ -173,4 +175,10 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
 
 <style is:global>
 .site-nav.site-nav--scroll{display:flex;flex-wrap:nowrap;overflow-x:auto;min-width:0;max-width:100%;padding-right:36px;mask-image:linear-gradient(to right,#000 88%,transparent);-webkit-mask-image:linear-gradient(to right,#000 88%,transparent);scrollbar-width:thin;overscroll-behavior-inline:contain}.site-nav.site-nav--scroll a{flex:0 0 auto;white-space:nowrap}.header-inner:has(.site-nav--scroll){min-width:0}.header-inner:has(.site-nav--scroll)>*{min-width:0}@media(max-width:720px){.header-inner:has(.site-nav--scroll){grid-template-columns:minmax(0,1fr) auto}.site-nav.site-nav--scroll{width:100%;grid-column:1/-1;order:3}}
+</style>
+
+<style is:global>
+body.renewal-paper{color-scheme:light;--bg:#fff;--bg-elev:#fff;--bg-sunk:#f4f2ea;--bg-tint:#f4f2ea;--fg:#15171c;--fg-mid:#3a4150;--fg-soft:#5b6472;--fg-faint:#8a919c;--line:#e3e0d6;--line-soft:#e3e0d6;--teal:#1e9c8b;--teal-deep:#146b65;--img-filter:none;--font-heading:"Noto Sans JP",system-ui,sans-serif;background:#fff;color:#15171c}
+.renewal-paper .site-header{background:#fff;border-bottom:3px solid #15171c;backdrop-filter:none}.renewal-paper .header-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;max-width:1120px;width:calc(100% - 40px);gap:8px;padding:14px 0}.renewal-paper .brand small{display:none}.renewal-paper .brand strong{font-size:20px;font-weight:900}.renewal-paper .site-nav{grid-row:2;grid-column:1/-1;width:100%;margin:0;max-width:100%}.renewal-paper .site-nav a{color:#15171c;font-weight:700;padding:8px 12px}.renewal-paper .theme-toggle{grid-row:1;grid-column:2}.renewal-paper .site-footer{background:#fff;color:#15171c}.renewal-paper img{filter:none!important}.renewal-paper .theme-toggle-icon{background:#f4c430}
+@media(max-width:720px){.renewal-paper .header-inner{width:calc(100% - 32px);padding:12px 0}.renewal-paper .site-nav a{padding:7px 10px;font-size:13px}}
 </style>
