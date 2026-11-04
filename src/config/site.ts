@@ -1,4 +1,5 @@
 export const siteConfig = {
+  scrollNavigation: true, // false restores the previous navigation layout
   siteName: "すまラボ",
   siteDescription: "むずかしいスマホ・AI・ガジェットの話を、わかりやすく。",
   siteUrl: "https://sumalabo.com",
