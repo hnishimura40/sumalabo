@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "policy": "docs/editorial-identity-addendum.md",
+  "notes": [
+    "各カテゴリの判定は comparisonFacts の status=verified の値だけを使う。unknown は条件を満たさない扱い。",
+    "slots は順に評価し、同じ製品が複数の枠に入った場合は後の枠を次の候補に繰り下げる。繰り下げても埋まらなければ status=none と reason を出力する。",
+    "segmentAxis は読者側の条件。記事では『まず自分の段を決める』と案内する。",
+    "requiredAxes は全枠共通の必須条件。upperAxis は『迷ったらこれ』専用の1軸。",
+    "claimTemplate の {} は verified 値で埋める。禁止語（人気・高性能・コスパ・安心）を含む文は生成失敗として扱う。"
+  ],
+  "common": {
+    "requiredAxes": [
+      { "field": "domesticSupport", "op": "eq", "value": true, "label": "国内の保証・問い合わせ窓口あり" }
+    ],
+    "forbiddenWords": ["人気", "高性能", "コスパ", "安心"],
+    "runnerUp": { "enabled": true, "template": "次点：{model}（{priceDiff}円差。{diffAxisLabel}が{diffAxisValue}）" }
+  },
+  "categories": [
+    {
+      "id": "wifi-router",
+      "segmentAxis": { "field": "wanMaxGbps", "label": "回線入口（WAN）", "order": [10, 2.5, 1] },
+      "requiredAxes": [
+        { "field": "wifiGeneration", "op": "gte", "value": 6, "label": "Wi-Fi 6以上" },
+        { "field": "lanPortCount", "op": "gte", "value": 3, "label": "有線LAN 3口以上" }
+      ],
+      "upperAxis": { "field": "band5GhzMbps", "op": "gte", "value": 2400, "label": "5GHz規格値 2400Mbps以上", "note": "月次確認に5GHz・2.4GHzの規格値（Mbps）を追加すること。未確認なら満たさない扱い" },
+      "slots": [
+        { "id": "budget", "name": "とにかく安く", "rule": "cheapest_meeting_required", "claimTemplate": "10候補で最安。それでも{wifiGeneration}と有線{lanPortCount}口" },
+        { "id": "default", "name": "迷ったらこれ", "rule": "cheapest_in_largest_segment_meeting_required_and_upper", "claimTemplate": "{segmentValue}Gbps回線なら、{priceBand}のこれで足りる" },
+        { "id": "top-line", "name": "{topSegment}Gbps回線なら", "rule": "cheapest_in_top_segment_with", "with": { "field": "has6GHz", "op": "eq", "value": true }, "claimTemplate": "{topSegment}Gbps入口と6GHzを{priceBand}で持つ中で最安" }
+      ],
+      "positionBars": ["price", "lanPortCount", "band5GhzMbps"],
+      "achievementColumns": ["domesticSupport", "wifiGeneration", "lanPortCount", "has6GHz"]
+    },
+    {
+      "id": "usb-charger",
+      "segmentAxis": { "field": "maxSinglePortW", "label": "単ポート最大出力", "bands": [{ "label": "〜30W（スマホ）", "max": 30 }, { "label": "31〜65W（ノートPC）", "max": 65 }, { "label": "66W〜（複数台）", "max": null }] },
+      "requiredAxes": [
+        { "field": "usbCPortCount", "op": "gte", "value": 1, "label": "USB-Cポート1口以上" },
+        { "field": "pdSupported", "op": "eq", "value": true, "label": "USB PD対応" },
+        { "field": "pseMark", "op": "eq", "value": true, "label": "PSE表示を確認" }
+      ],
+      "upperAxis": { "field": "ppsSupported", "op": "eq", "value": true, "label": "PPS対応（メーカー公称）" },
+      "exclude": [{ "field": "productType", "op": "eq", "value": "dry-battery-charger", "reason": "乾電池用充電器は用途外" }],
+      "slots": [
+        { "id": "budget", "name": "とにかく安く", "rule": "cheapest_meeting_required", "claimTemplate": "最安でもPD{maxSinglePortW}W・USB-C{usbCPortCount}口" },
+        { "id": "default", "name": "迷ったらこれ", "rule": "cheapest_in_largest_segment_meeting_required_and_upper", "claimTemplate": "{segmentLabel}の段で、PPS対応の最安" },
+        { "id": "multi", "name": "同時充電なら", "rule": "cheapest_meeting_required_with", "with": { "field": "simultaneousTotalW", "op": "gte", "value": 65 }, "claimTemplate": "同時使用で合計{simultaneousTotalW}Wを配分できる最安" }
+      ],
+      "positionBars": ["price", "maxSinglePortW", "weightG"],
+      "achievementColumns": ["domesticSupport", "usbCPortCount", "pdSupported", "pseMark", "ppsSupported"]
+    },
+    {
+      "id": "power-bank",
+      "segmentAxis": { "field": "capacityWh", "label": "容量（Wh）", "bands": [{ "label": "〜40Wh（毎日持ち歩く）", "max": 40 }, { "label": "41〜75Wh（PC兼用）", "max": 75 }, { "label": "76〜100Wh（旅行・大容量）", "max": 100 }] },
+      "requiredAxes": [
+        { "field": "pseMark", "op": "eq", "value": true, "label": "PSE表示を確認" },
+        { "field": "recallStatus", "op": "eq", "value": "none", "label": "回収告知なし（確認済み）" },
+        { "field": "capacityWh", "op": "lte", "value": 100, "label": "100Wh以下（機内持込の条件）" }
+      ],
+      "upperAxis": { "field": "usbCOutputW", "op": "gte", "value": 30, "label": "USB-C出力30W以上" },
+      "slots": [
+        { "id": "budget", "name": "とにかく安く", "rule": "cheapest_meeting_required", "claimTemplate": "最安でも{capacityWh}Wh・PSE確認済み" },
+        { "id": "default", "name": "迷ったらこれ", "rule": "cheapest_in_largest_segment_meeting_required_and_upper", "claimTemplate": "{segmentLabel}の段で、USB-C{usbCOutputW}W以上の最安" },
+        { "id": "travel", "name": "旅行・PC兼用なら", "rule": "cheapest_in_segment_with", "segment": "76〜100Wh（旅行・大容量）", "with": { "field": "airlineCarryOn", "op": "eq", "value": "conditional_ok" }, "claimTemplate": "100Wh以下で機内持込が条件付き可、{usbCOutputW}W出力の最安" }
+      ],
+      "positionBars": ["price", "weightG", "usbCOutputW"],
+      "achievementColumns": ["domesticSupport", "pseMark", "recallStatus", "capacityWh", "usbCOutputW"]
+    },
+    {
+      "id": "audio",
+      "status": "demoted",
+      "statusNote": "音質・装着感が主な差で、買わない方針と相性が悪い。条件で決まる軸だけで判定し、3枠目は『形で選ぶ』に固定する",
+      "segmentAxis": { "field": "wearStyle", "label": "装着方式", "order": ["tws-canal", "open", "headphone", "wired"] },
+      "requiredAxes": [
+        { "field": "ancSupported", "op": "eq", "value": true, "label": "ANCあり" }
+      ],
+      "upperAxis": { "field": "multipointDevices", "op": "gte", "value": 2, "label": "マルチポイント台数がメーカー公称で確認できる" },
+      "slots": [
+        { "id": "budget", "name": "とにかく安く", "rule": "cheapest_meeting_required", "claimTemplate": "10候補で最安。それでもANC付きで、ANC時{batteryAncHours}時間" },
+        { "id": "default", "name": "迷ったらこれ", "rule": "cheapest_in_largest_segment_meeting_required_and_upper", "claimTemplate": "{multipointDevices}台マルチポイントが公称で確認できる中で最安" },
+        { "id": "by-form", "name": "形で選ぶ", "rule": "representative_per_other_segment", "claimTemplate": "カナル型以外は各1台。その形ならこれ" }
+      ],
+      "positionBars": ["price", "batteryAncHours", "weightG"],
+      "achievementColumns": ["domesticSupport", "ancSupported", "multipointDevices", "batteryAncHours"]
+    }
+  ],
+  "candidateCategories": [
+    { "id": "home-router", "name": "ホームルーター／モバイルWi-Fi", "why": "通信費・キャンペーン記事と同じ収益線。対応バンド・契約条件・解約金で判定できる" },
+    { "id": "smart-remote", "name": "スマートリモコン・スマートプラグ", "why": "AI記事から直結。対応規格（Matter・赤外線・Wi-Fi帯）と技適で判定" },
+    { "id": "ssd-microsd", "name": "SSD・microSD", "why": "規格・速度・保証年数・製造国で決まる" },
+    { "id": "smartphone-30k", "name": "3万円台スマホ", "why": "既存記事あり。おサイフケータイ・バンド・OS更新年数で判定" }
+  ]
+}
