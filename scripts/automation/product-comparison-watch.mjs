@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import {publishedPickEntry} from './ai-v2-tools.mjs';
 // Preserve the actual top ten as the candidate pool. Editorial recommendation
 // order is separate from the provider's popularity order.
 import fs from 'node:fs';
@@ -78,6 +79,13 @@ async function main(){
       if(!pending)throw Error('unknown_pending_key');
       const category=config.categories.find(c=>c.id===pending.categoryId);
       await verifyPublishedComparison(receipt,category);
+      const review=read(path.join(dir,category.id+'-review.json'));
+      if(review?.picks?.default?.status==='selected'){
+        const registryPath=path.join(ROOT,'data/automation/comparison-published-picks.json');
+        const registry=read(registryPath,{schemaVersion:1,categories:{}});
+        registry.categories[category.id]=publishedPickEntry(review,read(path.join(dir,category.id+'-ranking.json')),receipt,category);
+        fs.writeFileSync(registryPath,JSON.stringify(registry,null,2)+'\n');
+      }
       state.completed.push({...pending,...receipt,completedAt:new Date().toISOString()});state.pending=state.pending.filter(p=>p.key!==receipt.key);
     }else if(command==='status'){console.log(JSON.stringify({pending:state.pending,categories:Object.keys(state.snapshots)}));return;}
     else if(command==='check'){
