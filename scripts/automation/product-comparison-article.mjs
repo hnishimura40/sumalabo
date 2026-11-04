@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
+import {renderRenewalComparison} from './product-comparison-renewal.mjs';
 import {evaluatePicks} from './product-comparison-picks.mjs';
 import {digest,validateRankingUrl} from './product-comparison-watch.mjs';
 import {validateIdentity,renderIdentityGroups,renderDialogue} from './product-comparison-identity.mjs';
@@ -63,6 +64,7 @@ export function validateProductPhoto(photo,model,now=Date.now()){
 export function renderComparison(review,snapshot,category,config,now=Date.now()){
   validateReview(review,snapshot,category,config,now);
   const identity=validateIdentity(review,category,now);
+  if(config.renewalEnabled)return `${START}\n${renderRenewalComparison(review,snapshot,category,now)}\n${END}`;
   const editorial=review.editorial,presentation=review.presentation;
   if(!editorial||!['definition','audience','unaffected','conclusion'].every(k=>nonempty(editorial[k])))throw Error('reader_introduction_required');
   if(!presentation||!Array.isArray(presentation.columns)||presentation.columns.length!==3||presentation.columns.some(c=>!nonempty(c.label)||!category.criteria.includes(c.axis))||!nonempty(presentation.audience)||!nonempty(presentation.conclusion))throw Error('compact_comparison_required');
@@ -99,7 +101,7 @@ export function updateComparisonArticle(text,section,title,description,updated){
   let front=match[0];
   for(const [key,value] of Object.entries({title,description,updated})){if(!new RegExp('^'+key+':','m').test(front))throw Error('frontmatter_field_missing');front=front.replace(new RegExp('^'+key+':.*$','m'),key+': '+JSON.stringify(value));}
   const preservedImports=[...text.slice(match[0].length).matchAll(/^import[^\n]+;\r?$/gm)].map(m=>m[0]);
-  for(const [name,source] of [['Summary30','article/Summary30.astro'],['CharacterCallout','characters/CharacterCallout.astro'],['RakutenAffiliateImage','article/RakutenAffiliateImage.astro'],['ProductComparisonPresentation','article/ProductComparisonPresentation.astro']])if(!preservedImports.some(s=>new RegExp('^import\\s+'+name+'\\s').test(s)))preservedImports.push('import '+name+' from "../../src/components/'+source+'";');
+  for(const [name,source] of [['ComparisonRenewalPresentation','article/ComparisonRenewalPresentation.astro'],['ComparisonPriceButtons','article/ComparisonPriceButtons.astro'],['Summary30','article/Summary30.astro'],['CharacterCallout','characters/CharacterCallout.astro'],['RakutenAffiliateImage','article/RakutenAffiliateImage.astro'],['ProductComparisonPresentation','article/ProductComparisonPresentation.astro']])if(!preservedImports.some(s=>new RegExp('^import\\s+'+name+'\\s').test(s)))preservedImports.push('import '+name+' from "../../src/components/'+source+'";');
   const imports=preservedImports.join('\n');
   front=front.replace(/^hasAffiliate:.*$/m,'hasAffiliate: '+section.includes('<RakutenAffiliateImage')); 
   // Replace the old comparison, not append a contradictory second set of picks.
@@ -112,7 +114,8 @@ function main(){
   const dir=path.join(ROOT,config.stateDirectory),snapshot=JSON.parse(fs.readFileSync(path.join(dir,categoryId+'-ranking.json'),'utf8'));
   const review=JSON.parse(fs.readFileSync(path.resolve(reviewPath),'utf8'));
   if(config.renewalEnabled||process.argv.includes('--renewal-preview')){Object.assign(review,evaluatePicks(review,snapshot,categoryId));fs.writeFileSync(path.resolve(reviewPath),JSON.stringify(review,null,2));}
-  const section=renderComparison(review,snapshot,category,config);
+  const preview=process.argv.includes('--renewal-preview');
+  const section=renderComparison(review,snapshot,category,{...config,renewalEnabled:config.renewalEnabled||preview});
   const rootFlag=process.argv.indexOf('--article-root');
   if(rootFlag!==-1&&!process.argv[rootFlag+1])throw Error('article_root_required');
   if(process.argv.includes('--apply')&&rootFlag===-1)throw Error('clean_article_root_required');
@@ -122,7 +125,7 @@ function main(){
   const date=new Date(Date.now()+9*3600000).toISOString().slice(0,10),month=date.slice(0,7).replace('-','年')+'月';
   const output=updateComparisonArticle(fs.readFileSync(article,'utf8'),section,`${category.name}おすすめ比較｜用途で選ぶ10候補`,`${category.name}の上位10候補を写真付きで比較。用途別のおすすめと、価格・主要仕様・注意点が分かります。`,date);
   fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,categoryId+'-preview.mdx'),output);
-  if(process.argv.includes('--apply')){if(config.publicationMode!=='auto_publish')throw Error('publication_not_enabled');fs.writeFileSync(article,output);}
+  if(process.argv.includes('--apply')){if(config.publicationMode!=='auto_publish')throw Error('publication_not_enabled');if(section.includes('data-renewal-kind=')&&!JSON.parse(fs.readFileSync(path.join(ROOT,'data/automation/sumalabo-editorial-identity.json'),'utf8')).renewal.firstPublicationApprovals[categoryId]?.approvedAt)throw Error('first_publication_requires_hiro_approval');fs.writeFileSync(article,output);}
   console.log(JSON.stringify({categoryId,version:version(review),preview:path.join(dir,categoryId+'-preview.mdx'),applied:process.argv.includes('--apply')}));
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href){try{main();}catch(e){console.error(e.message);process.exitCode=1;}}
