@@ -1,1 +1,16 @@
-{"schemaVersion":1,"categories":{}}
+{
+  "schemaVersion": 1,
+  "categories": {
+    "wifi-router": {
+      "categoryId": "wifi-router",
+      "status": "published",
+      "headline": "1Gbps回線なら、9,169円のこれで足りる",
+      "model": "WSR-3000AX4L",
+      "imageUrl": "https://thumbnail.image.rakuten.co.jp/@0_mall/jism/cabinet/0096/4981254077016.jpg",
+      "imageVerified": true,
+      "issue": "2026.11",
+      "href": "/articles/202611-wifi-router-comparison/",
+      "publishedVersion": "36a659401fccf941a7b66594"
+    }
+  }
+}
