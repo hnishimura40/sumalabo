@@ -154,10 +154,12 @@ export function saveState(state) {
   writeFileSync(p, JSON.stringify(state, null, 2) + "\n", "utf-8");
 }
 
-export function newState({ slug, theme }) {
+export function newState({ slug, theme, templateVersion = null }) {
+  if (templateVersion !== null && templateVersion !== 'ai-v2') throw new Error('unsupported_template_version');
   return {
     slug,
     theme,
+    templateVersion,
     category: classifyArticleCategory(theme),
     createdAt: new Date().toISOString(),
     updatedAt: null,
@@ -462,11 +464,12 @@ async function halt(state, step, reason) {
 
 async function main() {
   const argv = process.argv.slice(2);
-  const args = { theme: null, slug: null, advance: null, fail: null, reason: null, result: null, status: false };
+  const args = { theme: null, slug: null, templateVersion: null, advance: null, fail: null, reason: null, result: null, status: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--theme") args.theme = argv[++i];
     else if (a === "--slug") args.slug = argv[++i];
+    else if (a === "--template-version") args.templateVersion = argv[++i];
     else if (a === "--advance") args.advance = argv[++i];
     else if (a === "--fail") args.fail = argv[++i];
     else if (a === "--reason") args.reason = argv[++i];
@@ -486,7 +489,7 @@ async function main() {
       process.exitCode = 2;
       return;
     }
-    state = newState({ slug: args.slug, theme: args.theme });
+    state = newState({ slug: args.slug, theme: args.theme, templateVersion: args.templateVersion });
     saveState(state);
   }
 

@@ -1,7 +1,9 @@
 import { pickInternalLinks } from "./utils.mjs";
+import {isAiV2,aiPolicy} from '../automation/ai-article-v2.mjs';
 
 export function generateArticleBrief({ source, classification, generated }) {
   const internalLinks = pickInternalLinks(classification.topicCategory);
+  const ai = isAiV2({articleTitle:generated.title,topicCategory:classification.topicCategory,tags:classification.tags || source.tags || []});
 
   return {
     slug: generated.slug,
@@ -12,6 +14,7 @@ export function generateArticleBrief({ source, classification, generated }) {
     sourcePublishedAt: source.sourcePublishedAt,
     category: "ニュースをかみくだく",
     articleType: "news",
+    templateVersion: ai ? 'ai-v2' : null,
     sumalaboUse: classification.sumalaboUse,
     topicCategory: classification.topicCategory,
     priority: classification.priority,
@@ -21,7 +24,7 @@ export function generateArticleBrief({ source, classification, generated }) {
     sourceKeyPoints: source.keyPoints,
     primarySources: source.primarySources || source.officialSources || [],
     tags: classification.tags || source.tags || [],
-    suggestedStructure: [
+    suggestedStructure: ai ? [...aiPolicy.blocks] : [
       "先に結論",
       "何が話題なのか",
       "難しいポイントをかみくだく",
