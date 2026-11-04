@@ -176,7 +176,13 @@
     "addendum": "docs/editorial-identity-addendum.md",
     "firstPublicationApprovals": {
       "power-bank": null,
-      "usb-charger": null,
+      "usb-charger": {
+        "version": "2026-11-04",
+        "approvedBy": "Hiro",
+        "approvedAt": "2026-11-04T13:26:13.269Z",
+        "message": "充電器公開OK",
+        "scope": "USB-C充電器の初回公開。既存11月号の候補とサムネイルを維持。"
+      },
       "audio": null,
       "wifi-router": {
         "version": "2026-11-04",
