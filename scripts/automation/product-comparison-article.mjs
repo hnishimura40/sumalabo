@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
+import {evaluatePicks} from './product-comparison-picks.mjs';
 import {digest,validateRankingUrl} from './product-comparison-watch.mjs';
 import {validateIdentity,renderIdentityGroups,renderDialogue} from './product-comparison-identity.mjs';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
@@ -110,6 +111,7 @@ function main(){
   const category=config.categories.find(c=>c.id===categoryId);if(!category||!reviewPath)throw Error('usage: <category-id> <review.json> [--apply]');
   const dir=path.join(ROOT,config.stateDirectory),snapshot=JSON.parse(fs.readFileSync(path.join(dir,categoryId+'-ranking.json'),'utf8'));
   const review=JSON.parse(fs.readFileSync(path.resolve(reviewPath),'utf8'));
+  if(config.renewalEnabled||process.argv.includes('--renewal-preview')){Object.assign(review,evaluatePicks(review,snapshot,categoryId));fs.writeFileSync(path.resolve(reviewPath),JSON.stringify(review,null,2));}
   const section=renderComparison(review,snapshot,category,config);
   const rootFlag=process.argv.indexOf('--article-root');
   if(rootFlag!==-1&&!process.argv[rootFlag+1])throw Error('article_root_required');
