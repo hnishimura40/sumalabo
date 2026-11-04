@@ -1,6 +1,6 @@
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function isPrimarySource(source,domains){
-  if(source?.type!=='primary'||source.verified!==true||!source.publisher||!source.basis||!/^\d{4}-\d{2}-\d{2}$/.test(source.date)||!Number.isFinite(Date.parse(source.date))||!['published','checked'].includes(source.dateType))return false;
+  if(source?.type!=='primary'||source.verified!==true||!source.publisher||!source.basis||!/^\d{4}-\d{2}-\d{2}$/.test(source.date)||(!Number.isFinite(Date.parse(source.date))||new Date(source.date).toISOString().slice(0,10)!==source.date)||!['published','checked'].includes(source.dateType))return false;
   try{const u=new URL(source.url);return u.protocol==='https:'&&!u.username&&!u.password&&domains.some(d=>u.hostname===d||u.hostname.endsWith('.'+d));}catch{return false;}
 }
 export function primarySources(model,ids,domains){

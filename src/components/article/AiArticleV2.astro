@@ -1,8 +1,10 @@
 ---
-import {renderAiV2Html} from '../../../scripts/automation/ai-article-v2.mjs';
+import {validateAiV2} from '../../../scripts/automation/ai-v2-checks.mjs';
 const {model}=Astro.props;
+const result=validateAiV2(model);
+if(!result.ok)throw new Error('ai_v2_checks_failed: '+result.issues.map(i=>i.code).join(','));
 ---
-<Fragment set:html={renderAiV2Html(model)} />
+<Fragment set:html={result.rendered} />
 <style is:global>
 .article-content .ai-v2{max-width:860px;width:100%;margin:auto;background:#fff;color:#15171c;padding:24px;border-radius:16px;overflow-wrap:anywhere;min-width:0;line-height:1.8}.article-content .ai-v2 :is(h2,h3,strong){color:#15171c!important}.article-content .ai-v2 p,.article-content .ai-v2 li{color:#394451}.ai-v2>section{margin:32px 0}.ai-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.ai-three>section{border:1px solid #e3e0d6;padding:16px;border-radius:12px}.ai-v2 .ai-three h2,.ai-v2 .ai-three h3{font-size:19px!important;margin:0 0 12px!important;border:0!important}.ai-answer{background:#f4f2ea;border-left:4px solid #1e9c8b;padding:20px;border-radius:12px}.ai-answer p{font-size:21px!important;font-weight:700}.ai-dialogue p{display:grid;grid-template-columns:48px minmax(0,1fr);gap:14px;align-items:center;padding:16px;background:#f4f2ea;border-radius:12px}.ai-dialogue img{width:48px;height:48px;object-fit:contain;margin:0!important}.ai-v2 figure img{max-width:100%;height:auto}.ai-source{display:inline-flex;flex-wrap:wrap;max-width:100%;gap:4px;font-size:11px;background:#f4f2ea;border:1px solid #e3e0d6;padding:3px 10px;border-radius:999px}.ai-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.ai-tools a{border:1px solid #e3e0d6;border-radius:12px;padding:16px;text-decoration:none;color:#146b65}.ai-tools img{width:100%;height:160px;object-fit:contain}.ai-v2 small{font-size:12px;color:#5b6472}@media(max-width:720px){.article-content .ai-v2{padding:16px}.ai-three,.ai-tools{grid-template-columns:minmax(0,1fr)}.ai-v2 .ai-answer p{font-size:19px!important}}
 </style>

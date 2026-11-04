@@ -8,5 +8,17 @@ export function validateComparisonRenewal(body){
   if(!body.includes('日本メーカー＝日本製ではない'))fail('origin-escalation','製造国とメーカー拠点を区別する注記が必要です。');
   if(!body.includes('r-tablewrap')||!body.includes('r-chips'))fail('mobile-overflow','スクロール箱またはスマホ用マップがありません。');
   if(!body.includes('国内')||!body.includes('未確認')&&!body.includes('製造国'))fail('origin-escalation','国内窓口・製造国の比較が必要です。');
+  for(const theme of body.matchAll(/<section class="r-theme"[^>]*>([\s\S]*?)<\/section>/g)){
+    for(const table of theme[1].matchAll(/<tbody>([\s\S]*?)<\/tbody>/g)){
+      const columns=[];
+      for(const row of table[1].matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/g)){
+        [...row[1].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].forEach((cell,i)=>{
+          const value=cell[1].replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+          if(value){columns[i]??=new Map();columns[i].set(value,(columns[i].get(value)||0)+1);}
+        });
+      }
+      if(columns.some(counts=>[...counts.values()].some(n=>n>=3)))fail('no-repeated-cells','3候補以上に重なる文言は表の下に1回だけ置いてください。');
+    }
+  }
   return {issues,ok:issues.length===0};
 }

@@ -141,16 +141,16 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       <slot />
     </div>
 
-    <RelatedGuides
+    {!renewal && <RelatedGuides
       slug={article.slug}
       category={article.category}
       title={article.title}
       description={article.description}
       tags={article.tags}
-    />
+    />}
 
     <p class="article-ai-note">
-      本サイトの記事・図解はAIの支援を受けて制作し、公開前に人間が確認しています。詳しくは<a href="/ai-policy/">本サイトのAI利用について</a>をご覧ください。
+      {renewal ? "本サイトの記事・図解はAIの支援を受けて制作し、公式資料と検品基準に基づいて確認しています。詳しくは" : "本サイトの記事・図解はAIの支援を受けて制作し、公開前に人間が確認しています。詳しくは"}<a href="/ai-policy/">本サイトのAI利用について</a>をご覧ください。
     </p>
 
     <div class="article-share" aria-label="この記事をシェア">

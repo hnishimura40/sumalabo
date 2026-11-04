@@ -1,0 +1,15 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {aiPolicy,aiV2Mdx,parseAiV2Mdx,renderAiV2Html} from '../../scripts/automation/ai-article-v2.mjs';
+import {validateAiV2,headlineAnswerAligned} from '../../scripts/automation/ai-v2-checks.mjs';
+import {deriveStance} from '../../scripts/automation/ai-v2-stance.mjs';
+import {selectToolCards} from '../../scripts/automation/ai-v2-tools.mjs';
+import {fixture} from '../fixtures/ai-v2-fixture.mjs';
+
+test('10チェックを記録し、条件にない見立て・未作成道具カードを出さない',()=>{const m=fixture(),r=validateAiV2(m,{now:Date.parse('2026-11-04T12:00:00Z')});assert.equal(r.ok,true);assert.equal(Object.keys(r.checks).length,10);assert.equal(r.checks['tool-cards'].status,'not_applicable');assert.equal(r.checks['stance-rule'].status,'not_applicable');assert.doesNotMatch(r.rendered,/準備中|data-ai-block="stance"|data-ai-block="tools"/);assert.equal((r.rendered.match(/class="ai-source"/g)||[]).length,4);assert.deepEqual(parseAiV2Mdx(aiV2Mdx(m)),m);});
+test('見出しの金額を答えの1文目で逆転させない',()=>{assert.equal(headlineAnswerAligned('3000円かかる？','今は無料です。終了後に3000円です。'),false);assert.equal(headlineAnswerAligned('3,000円かかる？','終了後の非会員だけ3000円です。'),true);assert.equal(headlineAnswerAligned('日本で使える？','海外の一部利用者が対象です。'),false);});
+test('報道・非公式ホスト・未来の日付・出典欠落を根拠バッジとして使えない',()=>{for(const change of [{type:'reporting'},{url:'https://blog.google.untrusted.example/a'},{date:'2099-01-01'},{date:'2026-02-30'},{verified:false}]){const m=fixture();Object.assign(m.sources[0],change);assert.equal(validateAiV2(m).ok,false);}const m=fixture();m.changes[1].sourceIds=[];assert.equal(validateAiV2(m).checks['source-badges'].status,'fail');});
+test('見立ては組合せの一致・一次出典が揃う場合だけ定型で生成',()=>{const m=fixture();m.uncertainties=[{type:'end-date-unannounced',label:'終了日未発表',sourceId:'official'},{type:'major-features-planned',label:'主要機能は今後提供',sourceId:'official'}];const s=deriveStance(m,aiPolicy);assert.equal(s.id,'end-and-features');assert.equal(s.evidence.length,2);assert.match(renderAiV2Html(m),/確定情報ではありません/);m.uncertainties.pop();assert.equal(deriveStance(m,aiPolicy),null);m.stance='自由な予測';assert.equal(validateAiV2(m).ok,false);});
+test('公開済み・検品済み写真・号数が揃うカードだけ最大2枚',()=>{const m=fixture();m.tags=['スマートホーム'];const card={status:'published',imageVerified:true,headline:'1Gbps回線に合う1台',issue:'2026.11',model:'Model',href:'/articles/router/',imageUrl:'https://tshop.r10s.jp/shop/item.jpg'};assert.equal(selectToolCards(m,aiPolicy,{categories:{'wifi-router':card}}).length,1);assert.equal(selectToolCards(m,aiPolicy,{categories:{'wifi-router':{...card,status:'draft'}}}).length,0);});
+test('廃止ブロック・図の配列・行動のない分岐・更新履歴欠落を止める',()=>{for(const mutate of [m=>m.answer+='先に結論',m=>m.figure=[{},{}],m=>m.branches[0].action='',m=>m.changelog=[]]){const m=fixture();mutate(m);assert.equal(validateAiV2(m).ok,false);}});
+
+test('同じ条件の3分岐・同じ文章の3カラムを完成扱いしない',()=>{const m=fixture();m.branches[1].condition=m.branches[0].condition;assert.equal(validateAiV2(m).ok,false);const n=fixture();n.changes[1].text=n.changes[0].text;assert.equal(validateAiV2(n).ok,false);});

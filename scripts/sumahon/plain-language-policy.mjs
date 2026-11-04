@@ -1,3 +1,4 @@
+import {validateAiV2Mdx} from '../automation/ai-v2-checks.mjs';
 import {validateComparisonRenewal} from '../automation/comparison-renewal-checks.mjs';
 const SUMMARY_LABELS = ["これは何？", "何があった？", "誰に関係ある？", "結局どうなの？"];
 
@@ -6,6 +7,7 @@ function issue(code, severity, message) {
 }
 
 function stripNonPublicMaterial(source = "") {
+  if(/export const aiV2 =/.test(source)){const result=validateAiV2Mdx(source);if(result.rendered)source=result.rendered;}
   return String(source)
     .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "")
     .replace(/```[\s\S]*?```/g, "")
@@ -94,6 +96,8 @@ export function validatePlannedTermExplanations(article, planSource) {
 
 export function validatePlainLanguageArticle(source = "", { requireNewsStructure = true } = {}) {
   const issues = [];
+  const aiV2=/export const aiV2 =|<AiArticleV2\b/.test(source);
+  if(aiV2){const check=validateAiV2Mdx(source);issues.push(...check.issues);if(check.rendered)source=check.rendered;}
   const publicMaterial = stripNonPublicMaterial(source);
   const visible = visibleArticleText(publicMaterial);
   const summary = publicMaterial.match(/<Summary30\b[^>]*>([\s\S]*?)<\/Summary30>/i)?.[1]
@@ -106,7 +110,7 @@ export function validatePlainLanguageArticle(source = "", { requireNewsStructure
 
   const comparisonV2=/data-renewal-kind="comparison:[^"]+"/.test(publicMaterial);
   if(comparisonV2)issues.push(...validateComparisonRenewal(publicMaterial).issues);
-  if (requireNewsStructure && !comparisonV2) {
+  if (requireNewsStructure && !comparisonV2 && !aiV2 && !/data-renewal-kind="ai"/.test(publicMaterial)) {
     if (!summary) {
       issues.push(issue("summary30_missing", "major", "30秒サマリー（Summary30）がありません。"));
     } else {
