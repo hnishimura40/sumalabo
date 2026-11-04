@@ -124,7 +124,7 @@ function main(){
   const article=path.join(articleRoot,'content/articles',category.articleSlug+'.mdx');
   if(!fs.existsSync(article))throw Error('initial_article_workflow_required');
   const date=new Date(Date.now()+9*3600000).toISOString().slice(0,10),month=date.slice(0,7).replace('-','年')+'月';
-  const output=updateComparisonArticle(fs.readFileSync(article,'utf8'),section,`${category.name}おすすめ比較｜用途で選ぶ10候補`,`${category.name}の上位10候補を写真付きで比較。用途別のおすすめと、価格・主要仕様・注意点が分かります。`,date);
+  const output=updateComparisonArticle(fs.readFileSync(article,'utf8'),section,section.includes('data-renewal-kind=')?`${category.name}おすすめ比較｜10候補から、今月の3枠`:`${category.name}おすすめ比較｜用途で選ぶ10候補`,`${category.name}の上位10候補を写真付きで比較。用途別のおすすめと、価格・主要仕様・注意点が分かります。`,date);
   fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(path.join(dir,categoryId+'-preview.mdx'),output);
   if(process.argv.includes('--apply')){if(config.publicationMode!=='auto_publish')throw Error('publication_not_enabled');if(section.includes('data-renewal-kind=')&&!JSON.parse(fs.readFileSync(path.join(ROOT,'data/automation/sumalabo-editorial-identity.json'),'utf8')).renewal.firstPublicationApprovals[categoryId]?.approvedAt)throw Error('first_publication_requires_hiro_approval');fs.writeFileSync(article,output);}
   console.log(JSON.stringify({categoryId,version:version(review),preview:path.join(dir,categoryId+'-preview.mdx'),applied:process.argv.includes('--apply')}));

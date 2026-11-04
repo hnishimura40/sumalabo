@@ -7,4 +7,4 @@ const stores=[['rakuten','楽天',rakutenUrl],['amazon','Amazon','https://www.am
 <div class="renewal-prices" aria-label="価格を確認する">
 {stores.map(([store,label,url])=>{const built=buildMallLink(store,url);return <a href={built.href} target="_blank" rel={built.affiliate?'nofollow sponsored noopener':'noopener'} data-price-store={store}>{label}で見る ▶ {price?price.toLocaleString('ja-JP')+'円〜':'価格確認'}（広告）</a>;})}
 </div>
-<style>.renewal-prices{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.renewal-prices a{display:block;padding:10px 14px;background:#0e7167;color:#fff!important;border-radius:8px;font-size:13px;font-weight:700;overflow-wrap:anywhere}</style>
+<style>.renewal-prices{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.renewal-prices a{display:block;padding:10px 14px;background:#15171c;border:2px solid #15171c;color:#fff!important;border-radius:8px;font-size:13px;font-weight:700;overflow-wrap:anywhere}.renewal-prices a[data-price-store="amazon"]{background:#fff;color:#15171c!important}</style>
