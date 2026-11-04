@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
+import {siteConfig} from "../../config/site";
 import ArticleLayout from "../../layouts/ArticleLayout.astro";
 import ArticleAffiliatePlacements from "../../components/article/ArticleAffiliatePlacements.astro";
 import { getAdjacentArticles, getSortedVisibleArticles } from "../../lib/articles";
@@ -23,6 +24,7 @@ export async function getStaticPaths() {
 
 const { article, previousArticle, nextArticle } = Astro.props;
 const { Content, headings } = await render(article);
+const renewal=siteConfig.renewalArticleLayout && /data-renewal-kind=|<AiArticleV2\b/.test(article.body || "");
 ---
 
 <ArticleLayout
@@ -30,6 +32,7 @@ const { Content, headings } = await render(article);
   previousArticle={previousArticle}
   nextArticle={nextArticle}
   headings={headings}
+  renewal={renewal}
 >
   <Content />
   <ArticleAffiliatePlacements slug={article.data.slug} />
