@@ -3,6 +3,13 @@ const policy=JSON.parse(fs.readFileSync(new URL('../../data/automation/sumalabo-
 const nonempty=v=>typeof v==='string'&&v.trim().length>0;
 const fresh=(v,now)=>Number.isFinite(Date.parse(v))&&now-Date.parse(v)>=0&&now-Date.parse(v)<=72*3600000;
 const escape=value=>String(value??'').replace(/[&<>"'{}]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','{':'&#123;','}':'&#125;'}[c]));
+export const RENEWAL_CHECKS=['editorial-picks','reading-order','no-repeated-cells','origin-escalation','price-buttons','mobile-overflow'];
+export function validateRenewalPolicy(value=policy){
+  if(!RENEWAL_CHECKS.every(id=>value.requiredChecks?.includes(id))||typeof value.renewal?.enabled!=='boolean')throw Error('renewal_policy_required');
+  if(!Object.keys(value.categoryComparisonGroups).every(id=>Object.hasOwn(value.renewal.firstPublicationApprovals,id)))throw Error('category_release_gate_required');
+  return value.renewal;
+}
+validateRenewalPolicy();
 export function validateIdentity(review,category,now=Date.now()){
   const identity=review.identity,groups=policy.categoryComparisonGroups[category.id];
   if(identity?.policyVersion!==policy.version||!Array.isArray(identity.groups)||identity.groups.length!==groups.length)throw Error('identity_policy_required');
