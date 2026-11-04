@@ -31,7 +31,7 @@ export function renderRenewalComparison(review,snapshot,category,now=Date.now())
     if(result.representatives)return `<section class="r-pick" data-pick-slot="${slot.id}"><h3>${esc(slotName(slot))}</h3>${result.representatives.map(r=>card({...slot,name:segmentLabel(r.segment)},r,false,true)).join('\n')}</section>`;
     if(result.status==='none')return `<section class="r-pick" ${slotAttr}="${slot.id}"><h3>${esc(slotName(slot))}：今月は該当なし</h3><p>${esc(result.reason)}</p></section>`;
     const p=product(result.productId);
-    const evidence=[...(slot.id==='default'?[rule.upperAxis.field]:[]),...result.evidence.filter(f=>typeof verifiedValue(p,f)==='number')].filter((f,i,a)=>a.indexOf(f)===i).slice(0,2);
+    const evidence=[...(slot.id==='default'?[rule.upperAxis.field]:[]),...result.evidence.filter(f=>f!=='domesticSupport'&&['number','boolean'].includes(typeof verifiedValue(p,f)))].filter((f,i,a)=>a.indexOf(f)===i).slice(0,2);
     const facts=evidence.map(f=>{const v=verifiedValue(p,f);return `${label(f)}：${v===true?'対応':v===false?'非対応':v}`;});
     const claim=result.claim.split('。')[0];
     const image=`<div class="r-photo-stage">${photo(p)}${hero?`<div class="r-award" aria-hidden="true"><small>すまラボ</small><strong>今月の1台</strong><span>${snapshot.updatedOn.slice(0,7).replace('/','.')}</span></div>`:''}</div>`;
