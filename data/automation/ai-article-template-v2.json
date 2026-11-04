@@ -1,0 +1,9 @@
+{
+  "version": "2026-11-04",
+  "enabled": false,
+  "firstPublicationApproval": null,
+  "blocks": ["headline","answer","branches","changes","figure","dialogue","stance","next-actions","tools","sources"],
+  "maximumFigures": 1,
+  "officialDomains": ["amazon.co.jp","aboutamazon.jp","amazon.com","google.com","blog.google","openai.com","anthropic.com","claude.com","microsoft.com","apple.com","meta.com","ai.meta.com"],
+  "manualStances": {}
+}

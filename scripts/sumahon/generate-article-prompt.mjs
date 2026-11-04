@@ -1,3 +1,4 @@
+import {isAiV2,aiV2Prompt} from '../automation/ai-article-v2.mjs';
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -201,6 +202,7 @@ ${blocks}
 }
 
 export function generateArticlePrompt({ articleBrief, thumbnailBrief, understanding, config }) {
+  if(isAiV2(articleBrief))return aiV2Prompt({...articleBrief,understanding});
   const articleProjectUrl = config.chatgptTargets.articleProjectUrl;
   const generatedDraftPath = `${config.paths.generatedDraftDir}/${articleBrief.slug}.md`;
   const materialsDraftPath = `${config.paths.materialsDraftDir}/${articleBrief.slug}.materials.md`;
