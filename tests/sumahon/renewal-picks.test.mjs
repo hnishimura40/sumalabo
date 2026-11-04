@@ -1,8 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {evaluatePicks} from '../../scripts/automation/product-comparison-picks.mjs';
+import {evaluatePicks,pickPolicy} from '../../scripts/automation/product-comparison-picks.mjs';
 const fact=value=>({status:'verified',value});
 function fixture(){return {review:{products:Array.from({length:10},(_,i)=>({id:String(i),model:'Model '+i,status:'eligible',suitableFor:'有線端末を使う人',comparisonFacts:Object.fromEntries(Object.entries({domesticSupport:true,wifiGeneration:6,lanPortCount:3,wanMaxGbps:i>7?10:1,band5GhzMbps:2402,has6GHz:i>7}).map(([k,v])=>[k,fact(v)]))}))},snapshot:{products:Array.from({length:10},(_,i)=>({id:String(i),priceYen:1000+i*100}))}};}
 test('条件・価格で3枠を選び、重複時は次候補へ繰り下げる',()=>{const f=fixture(),r=evaluatePicks(f.review,f.snapshot,'wifi-router');assert.equal(r.picks.budget.productId,'0');assert.equal(r.picks.default.productId,'1');assert.equal(r.picks['top-line'].productId,'8');assert.equal(r.picks.default.runnerUp.productId,'2');assert.equal(r.achievement.length,10);});
 test('unknownや文字列の数値・真偽値を推測変換せず、該当なしの理由を残す',()=>{const f=fixture();for(const p of f.review.products)p.comparisonFacts.domesticSupport.status='unknown';const r=evaluatePicks(f.review,f.snapshot,'wifi-router');assert.ok(Object.values(r.picks).every(p=>p.status==='none'&&p.reason));for(const p of f.review.products)p.comparisonFacts.domesticSupport=fact('true');assert.equal(evaluatePicks(f.review,f.snapshot,'wifi-router').picks.budget.status,'none');});
 test('候補外・価格なし・保留・禁止語を推薦しない',()=>{const f=fixture();f.review.products[0].status='unverified';f.snapshot.products[1].priceYen=null;assert.equal(evaluatePicks(f.review,f.snapshot,'wifi-router').picks.budget.productId,'2');f.review.products[0].id='outsider';assert.throws(()=>evaluatePicks(f.review,f.snapshot,'wifi-router'));});
+
+test('未定義の判定ルール・禁止語の決め手は生成を止める',()=>{for(const modify of [p=>p.categories[0].slots[0].rule='unknown_rule',p=>p.categories[0].slots[0].claimTemplate='安心だから選ぶ']){const f=fixture(),p=structuredClone(pickPolicy);modify(p);assert.throws(()=>evaluatePicks(f.review,f.snapshot,'wifi-router',p));}});
+
+test('選外理由を同じ定型文で並べず、確認条件と価格差で説明する',()=>{const f=fixture(),r=evaluatePicks(f.review,f.snapshot,'wifi-router');const omitted=r.achievement.filter(a=>!a.selected);assert.ok(omitted.every(a=>/参考価格差|追加条件/.test(a.reason)));assert.equal(new Set(omitted.map(a=>a.reason)).size,omitted.length);});
