@@ -45,17 +45,17 @@ export function evaluatePicks(review,snapshot,categoryId,policy=pickPolicy){
     let claim=slot.claimTemplate.replace(/\{(\w+)\}/g,(_,key)=>{
       const value=context[key]??verifiedValue(p,key);
       if(value===undefined){missing.push(key);return '';}
-      return String(value);
+      return key==='wifiGeneration'?'Wi-Fi '+value:String(value);
     }).replace('10候補で最安','必須条件を満たす10候補中で最安');
     if(missing.length)return {status:'none',productId:null,claim:null,runnerUp:null,reason:'決め手の公式確認が不足：'+missing.join('・')};
     const evidence=[...required,category.upperAxis,...(slot.with?[slot.with]:[])].filter(a=>passes(p,a));
     if(evidence.length<2)throw Error('two_verified_claim_axes_required');
-    claim+='。'+evidence.map(a=>`${a.label}（${verifiedValue(p,a.field)===true?'確認済み':verifiedValue(p,a.field)}）`).join('、');
+    claim+='。'+evidence.map(a=>`${a.label||({has6GHz:'6GHz帯',simultaneousTotalW:'同時出力（W）',airlineCarryOn:'機内持込'})[a.field]||a.field}（${verifiedValue(p,a.field)===true?'確認済み':verifiedValue(p,a.field)}）`).join('、');
     if(policy.common.forbiddenWords.some(word=>claim.includes(word)))throw Error('forbidden_pick_claim');
     const next=candidates[1];
-    const diff=next&&evidence.find(a=>verifiedValue(next.product,a.field)!==verifiedValue(p,a.field))||evidence[0];
+    const diff=next&&[...required,category.upperAxis].find(a=>verifiedValue(next.product,a.field)!==verifiedValue(p,a.field))||evidence.find(a=>typeof verifiedValue(p,a.field)==='number')||evidence[0];
     used.add(p.id);
-    return {status:'selected',productId:p.id,claim,reason:'確認済み条件を満たす候補を価格昇順・同額は候補ID順で判定',evidence:evidence.map(a=>a.field),runnerUp:next?{productId:next.productId,priceDiff:next.price-selected.price,field:diff.field,value:verifiedValue(next.product,diff.field)??null,text:`次点：${next.product.model}（${next.price-selected.price}円差。${diff.label}：${verifiedValue(next.product,diff.field)??'公式確認が必要'}）`}:null};
+    return {status:'selected',productId:p.id,claim,reason:'確認済み条件を満たす候補を価格昇順・同額は候補ID順で判定',evidence:evidence.map(a=>a.field),runnerUp:next?{productId:next.productId,priceDiff:next.price-selected.price,field:diff.field,value:verifiedValue(next.product,diff.field)??null,text:`次点：${next.product.model}（${next.price-selected.price}円差。${diff.label}：${verifiedValue(next.product,diff.field)===true?'あり':verifiedValue(next.product,diff.field)===false?'なし':verifiedValue(next.product,diff.field)??'公式確認が必要'}）`}:null};
   }
   for(const slot of category.slots){
     let candidates=sorted;

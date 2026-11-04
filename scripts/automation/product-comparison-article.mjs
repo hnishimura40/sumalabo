@@ -5,7 +5,7 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 import {renderRenewalComparison} from './product-comparison-renewal.mjs';
 import {evaluatePicks} from './product-comparison-picks.mjs';
 import {digest,validateRankingUrl} from './product-comparison-watch.mjs';
-import {validateIdentity,renderIdentityGroups,renderDialogue} from './product-comparison-identity.mjs';
+import {validateRenewalPolicy,validateIdentity,renderIdentityGroups,renderDialogue} from './product-comparison-identity.mjs';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 export const START='{/* product-comparison:start */}',END='{/* product-comparison:end */}';
 export const version=review=>digest(review).slice(0,24);
@@ -64,7 +64,8 @@ export function validateProductPhoto(photo,model,now=Date.now()){
 export function renderComparison(review,snapshot,category,config,now=Date.now()){
   validateReview(review,snapshot,category,config,now);
   const identity=validateIdentity(review,category,now);
-  if(config.renewalEnabled)return `${START}\n${renderRenewalComparison(review,snapshot,category,now)}\n${END}`;
+  if(config.renewalEnabled)for(const p of review.products)validateProductPhoto(p.image,p.model,now);
+  if(config.renewalEnabled){const section=renderRenewalComparison(review,snapshot,category,now);return `${START}\n<div data-comparison-version="${version(review)}">${section}</div>\n${END}`;}
   const editorial=review.editorial,presentation=review.presentation;
   if(!editorial||!['definition','audience','unaffected','conclusion'].every(k=>nonempty(editorial[k])))throw Error('reader_introduction_required');
   if(!presentation||!Array.isArray(presentation.columns)||presentation.columns.length!==3||presentation.columns.some(c=>!nonempty(c.label)||!category.criteria.includes(c.axis))||!nonempty(presentation.audience)||!nonempty(presentation.conclusion))throw Error('compact_comparison_required');
@@ -113,9 +114,9 @@ function main(){
   const category=config.categories.find(c=>c.id===categoryId);if(!category||!reviewPath)throw Error('usage: <category-id> <review.json> [--apply]');
   const dir=path.join(ROOT,config.stateDirectory),snapshot=JSON.parse(fs.readFileSync(path.join(dir,categoryId+'-ranking.json'),'utf8'));
   const review=JSON.parse(fs.readFileSync(path.resolve(reviewPath),'utf8'));
-  if(config.renewalEnabled||process.argv.includes('--renewal-preview')){Object.assign(review,evaluatePicks(review,snapshot,categoryId));fs.writeFileSync(path.resolve(reviewPath),JSON.stringify(review,null,2));}
+  if(validateRenewalPolicy().enabled||process.argv.includes('--renewal-preview')){Object.assign(review,evaluatePicks(review,snapshot,categoryId));fs.writeFileSync(path.resolve(reviewPath),JSON.stringify(review,null,2));}
   const preview=process.argv.includes('--renewal-preview');
-  const section=renderComparison(review,snapshot,category,{...config,renewalEnabled:config.renewalEnabled||preview});
+  const section=renderComparison(review,snapshot,category,{...config,renewalEnabled:validateRenewalPolicy().enabled||preview});
   const rootFlag=process.argv.indexOf('--article-root');
   if(rootFlag!==-1&&!process.argv[rootFlag+1])throw Error('article_root_required');
   if(process.argv.includes('--apply')&&rootFlag===-1)throw Error('clean_article_root_required');

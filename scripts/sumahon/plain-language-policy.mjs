@@ -1,3 +1,4 @@
+import {validateComparisonRenewal} from '../automation/comparison-renewal-checks.mjs';
 const SUMMARY_LABELS = ["これは何？", "何があった？", "誰に関係ある？", "結局どうなの？"];
 
 function issue(code, severity, message) {
@@ -103,7 +104,9 @@ export function validatePlainLanguageArticle(source = "", { requireNewsStructure
     issues.push(issue(finding.code, "major", `公開本文に${finding.label}が残っています: ${finding.match}`));
   }
 
-  if (requireNewsStructure) {
+  const comparisonV2=/data-renewal-kind="comparison:[^"]+"/.test(publicMaterial);
+  if(comparisonV2)issues.push(...validateComparisonRenewal(publicMaterial).issues);
+  if (requireNewsStructure && !comparisonV2) {
     if (!summary) {
       issues.push(issue("summary30_missing", "major", "30秒サマリー（Summary30）がありません。"));
     } else {
