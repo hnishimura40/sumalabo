@@ -2,8 +2,67 @@
   "version": "2026-11-04",
   "enabled": false,
   "firstPublicationApproval": null,
-  "blocks": ["headline","answer","branches","changes","figure","dialogue","stance","next-actions","tools","sources"],
+  "blocks": [
+    "headline",
+    "answer",
+    "branches",
+    "changes",
+    "figure",
+    "dialogue",
+    "stance",
+    "next-actions",
+    "tools",
+    "sources"
+  ],
   "maximumFigures": 1,
-  "officialDomains": ["amazon.co.jp","aboutamazon.jp","amazon.com","google.com","blog.google","openai.com","anthropic.com","claude.com","microsoft.com","apple.com","meta.com","ai.meta.com"],
-  "manualStances": {}
+  "officialDomains": [
+    "amazon.co.jp",
+    "aboutamazon.jp",
+    "amazon.com",
+    "google.com",
+    "blog.google",
+    "openai.com",
+    "anthropic.com",
+    "claude.com",
+    "microsoft.com",
+    "apple.com",
+    "meta.com",
+    "ai.meta.com"
+  ],
+  "manualStances": {},
+  "stanceNotice": "公式発表から編集部が読んだこと。確定情報ではありません",
+  "stanceRules": [
+    {
+      "id": "end-and-features",
+      "requires": [
+        "end-date-unannounced",
+        "major-features-planned"
+      ],
+      "text": "課金や制限が始まるのは機能が出そろってからで、急いで判断する理由は今のところない"
+    },
+    {
+      "id": "japan-timing",
+      "requires": [
+        "japan-date-unannounced",
+        "base-service-japan-supported"
+      ],
+      "text": "日本で使える状態になってから判断すれば足りる。今は自分の画面で表示を確認する段階"
+    },
+    {
+      "id": "price-scope",
+      "requires": [
+        "price-announced",
+        "availability-unannounced"
+      ],
+      "text": "価格だけが先に出た段階。対象者が決まるまで比較の相手がない"
+    },
+    {
+      "id": "excluded-models",
+      "requires": [
+        "some-models-excluded",
+        "model-list-unannounced"
+      ],
+      "text": "自分の機種が対象か分かるまで、周辺機器を買い足す理由はない"
+    }
+  ]
 }
