@@ -42,6 +42,12 @@ export function renderRenewalComparison(review,snapshot,category,now=Date.now())
   const table=(columns,rows)=>`<div class="r-tablewrap" role="region" aria-label="横にスクロールして比較" tabindex="0"><table class="r-table"><thead><tr><th scope="col">製品名</th>${columns.map(c=>`<th scope="col">${esc(c.label)}</th>`).join('')}</tr></thead><tbody>${rows.map(({id,cells,anchor})=>`<tr${anchor?' id="product-'+id+'"':''}><th scope="row">${anchor?photo(product(id)):''}<a href="#product-${id}">${esc(product(id).model)}</a></th>${cells.map(v=>`<td>${v}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   const achievement=table([...rule.achievementColumns.map(field=>({label:label(field)})),{label:'上位軸'},{label:'外れた理由・こんな人に・価格'}],review.achievement.filter(r=>!r.selected).map(row=>({id:row.productId,anchor:true,cells:[...rule.achievementColumns.map(f=>{const p=product(row.productId),v=verifiedValue(p,f),axis=[...pickPolicy.common.requiredAxes,...rule.requiredAxes,rule.upperAxis].find(a=>a.field===f);return esc(v===undefined?'✕ [公式確認]':axis?[...row.required,row.upper].find(a=>a.field===f)?.pass?'○':'✕':typeof v==='boolean'?v?'○':'✕':String(v));}),row.upper.pass?'○':'✕',`<p>${esc(row.reason)}</p><p>${esc(row.suitableFor)}</p>${buttons(product(row.productId))}`]})));
   const displayValue=(p,field)=>{const v=verifiedValue(p,field);return v===true?'あり':v===false?'なし':field==='wearStyle'?({'tws-canal':'カナル型',open:'オープン型',headphone:'ヘッドホン',wired:'有線'})[v]||p.comparisonFacts[field].value:p.comparisonFacts[field].value;};
+  const members=(field,value)=>{
+    const matching=review.products.filter(p=>displayValue(p,field)===value);
+    if(matching.length===review.products.length)return '全10候補';
+    if(matching.length===review.products.length-1)return review.products.filter(p=>displayValue(p,field)!==value).map(p=>esc(p.model)).join('・')+'を除く9候補';
+    return matching.map(p=>esc(p.model)).join('・');
+  };
   const commonNotes=[],groups=[...review.identity.groups].sort((a,b)=>Number(b.id.includes('origin'))-Number(a.id.includes('origin')));
   const themes=groups.map((group,i)=>{
     const groupNotes=[];
@@ -50,7 +56,7 @@ export function renderRenewalComparison(review,snapshot,category,now=Date.now())
     const columns=group.columns.filter(c=>{
       const counts=new Map();for(const p of review.products){const value=displayValue(p,c.field);counts.set(value,(counts.get(value)||0)+1);}
       if([...counts.values()].some(n=>n>=3)){
-        groupNotes.push(`<p><strong>${esc(c.label)}</strong>：${[...counts].map(([value])=>`${esc(value)}（${review.products.filter(p=>displayValue(p,c.field)===value).map(p=>esc(p.model)).join('・')}）`).join('／')}</p>`);return false;
+        groupNotes.push(`<p><strong>${esc(c.label)}</strong>：${[...counts].map(([value])=>`${esc(value)}（${members(c.field,value)}）`).join('／')}</p>`);return false;
       }return true;
     });
     return `<section class="r-theme" id="r-theme-${i}" data-r-panel="${i}"><h3>${esc(group.title)}</h3><p>${esc(group.intro)}</p>${columns.length?table(columns,snapshot.products.map(p=>({id:p.id,cells:columns.map(c=>{const f=product(p.id).comparisonFacts[c.field];return `${esc(displayValue(product(p.id),c.field))}${f.status!=='verified'?'<small>'+esc(f.reason)+'</small>':''}`;})} ))):'<p>共通事項は表の下にまとめています。</p>'}<aside class="r-common">${groupNotes.join('')}</aside>${i===0?'<p>日本メーカー＝日本製ではない。</p>':''}</section>`;
