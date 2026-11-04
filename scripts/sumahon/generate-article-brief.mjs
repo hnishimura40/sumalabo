@@ -19,6 +19,8 @@ export function generateArticleBrief({ source, classification, generated }) {
     recommendedAction: "send_to_chatgpt_5_5_article_project",
     coreAngle: "単なるニュース紹介ではなく、買う前・待つ前にどこを見ればよいか、まだ確認が必要な点は何かを整理する。",
     sourceKeyPoints: source.keyPoints,
+    primarySources: source.primarySources || source.officialSources || [],
+    tags: classification.tags || source.tags || [],
     suggestedStructure: [
       "先に結論",
       "何が話題なのか",
