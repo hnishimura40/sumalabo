@@ -15,6 +15,13 @@ export function assertRenewalRelease(text,lookup=renewalApproval){
     if(!approval||approval.approvedBy!=='Hiro'||!Number.isFinite(Date.parse(approval.approvedAt))||approval.version!=='2026-11-04')throw Error('first_publication_requires_hiro_approval:'+match[1]);
   }
 }
+// MDX components add the rendered marker only during build. Inspect their source
+// before merging, so an unapproved first article never blocks main's deployments.
+export function assertRenewalSourceRelease(text,lookup=renewalApproval){
+  assertRenewalRelease(text,lookup);
+  if(/export\s+const\s+aiV2\s*=|<AiArticleV2\b/.test(String(text)))
+    assertRenewalRelease('<article data-renewal-kind="ai">',lookup);
+}
 export function assertRenewalDist(directory,lookup=renewalApproval){
   for(const entry of fs.readdirSync(directory,{withFileTypes:true})){
     const file=path.join(directory,entry.name);

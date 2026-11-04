@@ -190,13 +190,15 @@ test("Phase B merges through REST without GraphQL", async () => {
     token: "test-token",
     fetchImpl: async (url, options = {}) => {
       calls.push({ url, options });
-      if (!options.method) return { ok: true, status: 200, json: async () => ({ state: "open", merged: false, draft: false }) };
+      if (url.includes('/files?')) return { ok: true, json: async () => [] };
+      if (!options.method) return { ok: true, status: 200, json: async () => ({ state: "open", merged: false, draft: false, head:{sha:'a'.repeat(40)} }) };
       return { ok: true, status: 200, json: async () => ({ merged: true }) };
     },
   });
   assert.deepEqual(result, { ok: true });
-  assert.equal(calls.length, 2);
-  assert.equal(calls[1].options.method, "PUT");
+  assert.equal(calls.length, 3);
+  assert.equal(calls[2].options.method, "PUT");
+  assert.equal(JSON.parse(calls[2].options.body).sha, 'a'.repeat(40));
   assert.doesNotMatch(read("scripts/automation/auto-phase-b.mjs"), /gh", \["pr"/);
 });
 
