@@ -43,7 +43,17 @@
           "label": "出力",
           "axis": "USB-C出力と同時使用"
         }
-      ]
+      ],
+      "renewalCriteria": [
+        "domesticSupport",
+        "pseMark",
+        "recallStatus",
+        "capacityWh",
+        "usbCOutputW",
+        "airlineCarryOn",
+        "weightG"
+      ],
+      "renewalFactInstructions": "typed numericValue / booleanValue / enumValue; verified only with exact-model official URL and checked date; unknown retains reason; never infer from a combined text field"
     },
     {
       "id": "usb-charger",
@@ -82,7 +92,19 @@
           "label": "同時使用",
           "axis": "同時使用時の配分"
         }
-      ]
+      ],
+      "renewalCriteria": [
+        "domesticSupport",
+        "productType",
+        "maxSinglePortW",
+        "usbCPortCount",
+        "pdSupported",
+        "ppsSupported",
+        "pseMark",
+        "simultaneousTotalW",
+        "weightG"
+      ],
+      "renewalFactInstructions": "typed numericValue / booleanValue / enumValue; verified only with exact-model official URL and checked date; unknown retains reason; never infer from a combined text field"
     },
     {
       "id": "audio",
@@ -121,7 +143,16 @@
           "label": "選ぶポイント",
           "axis": "価格・用途と制約"
         }
-      ]
+      ],
+      "renewalCriteria": [
+        "domesticSupport",
+        "wearStyle",
+        "ancSupported",
+        "multipointDevices",
+        "batteryAncHours",
+        "weightG"
+      ],
+      "renewalFactInstructions": "typed numericValue / booleanValue / enumValue; verified only with exact-model official URL and checked date; unknown retains reason; never infer from a combined text field"
     },
     {
       "id": "wifi-router",
@@ -160,7 +191,17 @@
           "label": "無線規格",
           "axis": "対応端末とWi-Fi規格"
         }
-      ]
+      ],
+      "renewalCriteria": [
+        "domesticSupport",
+        "wanMaxGbps",
+        "wifiGeneration",
+        "lanPortCount",
+        "has6GHz",
+        "band5GhzMbps",
+        "band24GhzMbps"
+      ],
+      "renewalFactInstructions": "typed numericValue / booleanValue / enumValue; verified only with exact-model official URL and checked date; unknown retains reason; never infer from a combined text field"
     }
   ],
   "editorialPolicy": {
@@ -168,5 +209,6 @@
     "document": "docs/sumalabo-editorial-identity.md",
     "configuration": "data/automation/sumalabo-editorial-identity.json",
     "requiredBeforePublication": true
-  }
+  },
+  "renewalEnabled": false
 }
