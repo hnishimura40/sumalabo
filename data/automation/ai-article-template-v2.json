@@ -64,5 +64,65 @@
       ],
       "text": "自分の機種が対象か分かるまで、周辺機器を買い足す理由はない"
     }
+  ],
+  "toolMappings": [
+    {
+      "tags": [
+        "スマートスピーカー",
+        "音声アシスタント",
+        "スマートホーム"
+      ],
+      "categories": [
+        "smart-remote",
+        "wifi-router"
+      ]
+    },
+    {
+      "tags": [
+        "生成AIサービス",
+        "生成AIサービスの新機能"
+      ],
+      "categories": [
+        "pc",
+        "tablet",
+        "usb-charger",
+        "power-bank"
+      ]
+    },
+    {
+      "tags": [
+        "学習AI",
+        "ノート系AI",
+        "学習・ノート系AI"
+      ],
+      "categories": [
+        "tablet"
+      ]
+    },
+    {
+      "tags": [
+        "自動運転",
+        "モビリティ"
+      ],
+      "categories": []
+    },
+    {
+      "tags": [
+        "スマホ新機種",
+        "スマホ価格",
+        "スマホ新機種・価格"
+      ],
+      "categories": [
+        "smartphone-30k",
+        "usb-charger"
+      ]
+    },
+    {
+      "tags": [
+        "AIモデルの提供条件",
+        "AIモデルの料金"
+      ],
+      "categories": []
+    }
   ]
 }
