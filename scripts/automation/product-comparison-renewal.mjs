@@ -9,9 +9,9 @@ export function renderRenewalComparison(review,snapshot,category,now=Date.now())
   const rule=pickPolicy.categories.find(c=>c.id===category.id),evaluation=evaluatePicks(review,snapshot,category.id);
   const copy={
     'wifi-router':{glossary:'',map:'無線速度は規格値で、実際の速度ではありません。',achievement:'メッシュとは、複数の親機を連携して電波を届ける仕組みです。'},
-    'usb-charger':{glossary:'USB-Cは差し込み口の種類です。Wは給電できる電力の大きさ。USB PDは機器に合う電力で充電する規格、PPSは電圧を細かく調整する機能です。PSEは電気用品安全法の表示で、安全性を無条件に保証するものではありません。',map:'単ポート出力と、複数台につないだときの出力配分は別に確認します。',achievement:'PSEなど必須条件の確認が済まない候補は、3枠への選出を保留します。'},
-    'power-bank':{glossary:'USB-Cは差し込み口の種類です。Wh（ワット時）は電池にためられる電力量、Wは給電できる電力の大きさ。PSEは電気用品安全法の表示で、安全性を無条件に保証するものではありません。',map:'容量（Wh）だけで飛行機への持ち込み可否は決まりません。本体表示と利用便の規定を確認します。',achievement:'未確認の容量・PSE表示・回収告知を推測で補って選出しません。'},
-    audio:{glossary:'ANCは周りの騒音を抑える機能です。マルチポイントは複数の機器につないで切り替える機能。電池時間はメーカーの測定条件による公称値です。',map:'形や公称機能による比較です。音質・装着感・通話品質は当サイトで実測していません。',achievement:'ANCの有無や接続台数を比べています。音質や装着感の優劣を示す表ではありません。'}
+    'usb-charger':{glossary:'USB-C（差し込み口の種類）を使います。W（給電できる電力の大きさ）を比べます。USB PDは機器に合う電力で充電する規格、PPSは電圧を細かく調整する機能です。PSEは電気用品安全法の表示で、安全性を無条件に保証するものではありません。',map:'単ポート出力と、複数台につないだときの出力配分は別に確認します。',achievement:'PSEなど必須条件の確認が済まない候補は、3枠への選出を保留します。'},
+    'power-bank':{glossary:'USB-C（差し込み口の種類）を使います。Wh（ワット時）は電池にためられる電力量、W（給電できる電力の大きさ）を比べます。PSEは電気用品安全法の表示で、安全性を無条件に保証するものではありません。',map:'容量（Wh）だけで飛行機への持ち込み可否は決まりません。本体表示と利用便の規定を確認します。',achievement:'未確認の容量・PSE表示・回収告知を推測で補って選出しません。'},
+    audio:{glossary:'ANC（周りの騒音を抑える機能）の有無を比べます。マルチポイントは複数の機器につないで切り替える機能。電池時間はメーカーの測定条件による公称値です。',map:'形や公称機能による比較です。音質・装着感・通話品質は当サイトで実測していません。',achievement:'ANCの有無や接続台数を比べています。音質や装着感の優劣を示す表ではありません。'}
   }[category.id];
 
   Object.assign(review,evaluation);
