@@ -211,12 +211,12 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 - [NTTドコモ「MNPを利用した解約」](https://www.docomo.ne.jp/support/mnp_subscribe/)
 
 {/* mobile-campaigns:start */}
-<section aria-labelledby="mobile-campaigns" data-campaign-version="a58f5fded68a32c21eecff99">
+<section aria-labelledby="mobile-campaigns" data-campaign-version="8e073217bc51baf749fb73ac">
 <h2 id="mobile-campaigns">乗り換えキャンペーンは「受け取れる条件」で比べる</h2>
 <p>還元額だけでなく、対象者・申込方法・継続条件・受取時期まで確認しましょう。ポイントは現金と異なり、最大額が全員に適用されるわけではありません。</p>
 <section data-campaign-id="linemo-20261104-v">
 <h3>LINEMO：11/8まで：ベストプランVのポイント特典＋契約事務手数料無料</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 8:06:37（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>毎月30GBと短い国内通話が必要で、受取までの期間とプラン条件を満たせる人。ポイントのためだけの高いプラン選択は勧めません。</dd>
 <dt>特典</dt><dd>他社MNPは12,000円相当、新しい番号は6,000円相当のPayPayポイント。別途、契約事務手数料3,850円を割引。</dd>
@@ -235,7 +235,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="linemo-20261104-best">
 <h3>LINEMO：11/8まで：ベストプランのポイント特典＋契約事務手数料無料</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 8:06:37（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>毎月のデータが3～10GBに収まり、オンライン手続きとポイント受取の管理ができる人。</dd>
 <dt>特典</dt><dd>他社MNPは10,000円相当、新しい番号は3,000円相当のPayPayポイント。別途、契約事務手数料3,850円を割引。</dd>
@@ -273,7 +273,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="ahamo-dpoint-ah00004">
 <h3>ahamo：SIMのみMNP：dポイント合計20,000ポイント</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/5 8:03:44（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:06:06（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>端末をそのまま使い、オンラインで手続きできるMNP利用者。短い国内通話を使い、ポイントの有効期限を管理できる人。</dd>
 <dt>特典</dt><dd>期間・用途限定dポイント4,000ポイントを5カ月、合計20,000ポイント。現金の一括還元ではありません。</dd>
@@ -292,7 +292,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="povo-honkivari-202505">
 <h3>povo：本気割：対象の年間データ購入代金の50％相当を還元</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 10:22:50（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>年間のデータ使用量を見通せ、まとめ払いできるMNP利用者。月ごとの使用量が変わり、年間容量を柔軟に使いたい人。</dd>
 <dt>特典</dt><dd>対象のデータ追加360GB・365日間（26,400円）ならau PAY残高13,200円相当。1.32TB・365日間（39,240円）なら19,620円相当。対象外のトッピングには適用されません。</dd>
@@ -311,7 +311,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="rakuten-mnp-2091-202610">
 <h3>楽天モバイル：紹介を使わない初回MNP：10,000ポイント</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 10:22:50（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>紹介者がいなくても、スマホをそのまま使って初めて楽天回線へMNPしたい人。通知ごとの受取を管理できる人。</dd>
 <dt>特典</dt><dd>楽天ポイント合計10,000ポイント。現在は4,000・3,000・3,000ポイントの3回に分けて受け取ります。</dd>
@@ -330,7 +330,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="rakuten-referral-1784-202609">
 <h3>楽天モバイル：紹介を受けて初回契約：MNP13,000／新規12,000ポイント</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 10:22:50（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>申し込み前に家族・知人から紹介を受けられる初回利用者。番号を新しく作る場合も通常の初回特典と比べたい人。</dd>
 <dt>特典</dt><dd>紹介される側はMNPで13,000ポイント、新しい番号の契約で12,000ポイント。広告の「2人合わせて」やU-NEXTの別条件分を、自分ひとりの特典として合算していません。</dd>
@@ -349,7 +349,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="uq-sim-debut-20260917">
 <h3>UQ mobile：オンラインのSIMのみMNP：au PAY残高20,000円相当</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 10:22:50（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>au回線の使い勝手を重視し、35GB前後や店舗での相談も必要な人。オンラインの契約とau PAYの利用設定ができるMNP利用者。</dd>
 <dt>特典</dt><dd>au PAY残高20,000円相当（不課税）。商品購入や抽選の最大額を合算していません。</dd>
@@ -368,7 +368,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="ymobile-sim-5-20261102">
 <h3>Y!mobile：ワイモバSIM契約キャンペーン5：MNP最大15,000ポイント</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 10:22:50（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>店舗サポートのある回線へMNPしたい人。ソフトバンク系以外からの乗り換えで、家族・光回線の割引条件も自分で確認できる人。</dd>
 <dt>特典</dt><dd>MNPはシンプル3 Sが5,000円相当、M/Lが15,000円相当。新規番号はS特典なし、M/L各5,000円相当。使用者5～18歳の新規M/Lは、対象者限定の5,000円相当増額と合わせ10,000円相当。</dd>
@@ -406,7 +406,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="au-sim-debut-20260917">
 <h3>au：au Online Shop SIMデビュー：MNP20,000円相当</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 10:22:50（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>auの大容量回線や付帯サービスを必要とし、オンライン契約とau PAYの設定ができる人。還元だけのために高いプランを選ぶ人には向きません。</dd>
 <dt>特典</dt><dd>他社MNPはau PAY残高20,000円相当。新しい番号は原則10,000円相当、使用者5～12歳なら20,000円相当。</dd>
@@ -425,7 +425,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="softbank-sim-paypay-202606">
 <h3>ソフトバンク：専用ページのSIMのみ契約：PayPay12,000ポイント</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 10:22:50（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>ソフトバンクの大容量回線を必要とし、PayPayを利用する人。特典のためだけに月額の高いプランへ移ることは勧めません。</dd>
 <dt>特典</dt><dd>条件を満たすとPayPayポイント12,000円相当を一括付与。MNPまたは新しい番号の契約が対象。</dd>
@@ -440,6 +440,25 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 <dt>注意点</dt><dd>ポイントは出金・譲渡不可。PayPayの利用設定が必要です。無制限プランにも速度制御等があるため、月額と生活圏での使い勝手が合うかを先に確認してください。</dd>
 </dl>
 <p>出典：<a href="https://www.softbank.jp/mobile/special/sim-paypay-point/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://www.softbank.jp/mobile/set/common/pdf/special/sim-paypay-point/paypay-points.pdf" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://www.softbank.jp/mobile/price_plan/data/teigaku-museigen/" rel="noopener noreferrer">公式の条件3</a> ／ <a href="https://www.softbank.jp/shop/support/necessary/fee/" rel="noopener noreferrer">公式の条件4</a></p>
+</section>
+
+<section data-campaign-id="iijmio-gigaplan-half-20261105">
+<h3>IIJmio：ギガプラン半額｜15GBなら月800円・最大20GB</h3>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:06:06（日本時間）</p>
+<dl>
+<dt>向いている人</dt><dd>スマホをそのまま使い、月15GB前後の通信費を抑えたい人。割引と増量が終わっても15GBで足りるか、通常月額1,600円で納得できるかを先に確認してください。</dd>
+<dt>特典</dt><dd>音声5・10・15・25・35GBの月額基本料を最大3カ月割引。15GBを選ぶと同期間に最大5GB増量され、満額適用の月は月800円で20GB使えます。</dd>
+<dt>対象者</dt><dd>新しい番号での契約、または他社からの乗り換え（MNP）で、対象の音声SIMカード・音声eSIMを新たに申し込む人。</dd>
+<dt>必須条件</dt><dd>受付期間中に対象容量を選んで申し込み、回線の利用を開始。特典が終わる月まで音声回線と申込時の容量を維持します。期間内に申し込めば、開通が受付終了後でも対象です。</dd>
+<dt>対象外・併用条件</dt><dd>2GB・45GB・55GB、データ専用・SMS用のSIM、JALモバイル・BIC SIM経由は対象外。対象容量同士でも途中で変更すると割引終了。15GBの増量は月額割引と併用でき、通話定額の無料特典には同時申込など別条件があります。</dd>
+<dt>申込経路・エントリー</dt><dd>IIJmio公式の特典ページから音声SIMまたは音声eSIMを選んで申込。半額・増量は対象回線の申込と開通が条件で、別途ポイントを受け取る手続きはありません。</dd>
+<dt>受取時期・方法</dt><dd>利用開始月を含む最大3カ月の請求に反映。初月は基本料と増量分が日割りで、請求額を超えた割引分の翌月繰り越しはありません。</dd>
+<dt>申込期限</dt><dd>2026年11月5日受付開始。終了日は公式未定です。</dd>
+<dt>月額料金</dt><dd>満額適用月の基本料は5GB 475円、10GB 700円、15GB 800円、25GB 1,000円、35GB 1,200円。割引終了後はそれぞれ950円、1,400円、1,600円、2,000円、2,400円。すべて税込、通話料やオプションは別です。</dd>
+<dt>手数料</dt><dd>初期費用は11月時点で3,300円。音声SIMカードの発行料はタイプD 433.4円・タイプA 446.6円、音声eSIMはタイプD 433.4円・タイプA 220円。12月1日から新規申込時の初期費用は3,850円に改定予定です。</dd>
+<dt>注意点</dt><dd>「20GB」は15GBプランに5GBを足した期間限定の容量です。初月は利用開始日に応じて使える容量が少なくなり、増量終了後は15GBに戻ります。</dd>
+</dl>
+<p>出典：<a href="https://www.iijmio.jp/campaign/mio.html?cptype=simcp" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://www.iijmio.jp/info/iij/1793256547.html" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://www.iijmio.jp/hdc/spec/" rel="noopener noreferrer">公式の条件3</a></p>
 </section>
 
 <section data-campaign-id="iijmio-voice-25g-20261104">
@@ -463,7 +482,7 @@ Y!mobileとUQ mobileは店舗があります。ただし、手続き内容やサ
 
 <section data-campaign-id="mineo-autumn-fit-20260917">
 <h3>mineo：秋のピッタリ割：音声マイピタ最大6カ月割引</h3>
-<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/4 10:22:50（日本時間）</p>
+<p><strong>開催中（条件付き）</strong>／公式情報の確認：2026/11/6 8:00:24（日本時間）</p>
 <dl>
 <dt>向いている人</dt><dd>速さより月額を抑えた使い方を選び、最大3Mbpsの通信でも自分の用途に合う人。ポイント管理より請求額の割引を好む人。</dd>
 <dt>特典</dt><dd>音声マイピタ3GB月880円、7GB・15GB月990円、30GB月1,320円、50GB月2,090円（最大6カ月）。3GB・7GBではパケット放題3Mbpsも条件付きで最大6カ月無料。</dd>
