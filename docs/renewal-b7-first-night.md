@@ -1,29 +1,35 @@
-# AI記事v2：B7の初回公開手順
+# AI記事v2：B7の初回公開記録と通常運用
 
-2026-11-05更新。B1〜B6の型と検品を通常の夜間工程へ接続済み。`ai-article-template-v2.json.enabled=true`、`firstPublicationApproval`にHiroの承認を記録済み。今朝の既存夜間実行で実記事を生成し、[PR #408](https://github.com/hnishimura40/sumalabo/pull/408)まで作成した。手動の夜間runや追加スケジュールは開始していない。
+2026-11-05更新。Hiroの「AI記事公開OK」を受領し、[PR #408](https://github.com/hnishimura40/sumalabo/pull/408)をマージして、[LifeVal記事](https://sumalabo.com/articles/202611-ai-lifeval-openai/)を2026-11-05 12:41 JSTに本番公開した。
 
-現在は[LifeVal記事の初回HTTPSプレビュー](https://eb097687.sumalabo.pages.dev/articles/202611-ai-lifeval-openai/)はHiroの表示確認を経て「AI記事公開OK」を受領。320/390/1280pxで横はみ出し0、本文図0枚・3分岐・キャラクター1往復を確認。記事PRは未マージ、AI記事の本番公開は未実施。
+**B7の初回確認は完了。次の記事からは既存の夜間パイプラインの通常運用に戻り、同じ初回表示確認を繰り返さない。**
 
-## 次の実記事
+## 公開の証拠
 
-既存Scoutが実際に選んだAI記事を、調査・読者翻訳設計・セルフレビュー・画像の独立検品を含む正規工程で作る。比較用の架空モデルや既存記事の着せ替えを「翌晩の1本」と数えない。選定対象がなければ既存の安全スキップを維持する。
+- 初回の実夜間実行：20261105T043002.121。架空の試験モデルを初回記事と数えていない。
+- 承認記録：ai-article-template-v2.jsonのfirstPublicationApproval。version=2026-11-04、approvedBy=Hiro、approvedAt=2026-11-05T03:37:48.893Z、message=AI記事公開OK、対象slugとPR #408を記録。
+- 承認時のMDX本文が不変であることを照合し、公式発表・論文・対応国一覧を再確認した。
+- 公開前320/390/1280pxの横はみ出し0、本文図0枚、3分岐、ひまり・らぼまる1往復を確認。本番画面も白地のAI記事v2として表示。
+- 記事ゲート違反0・警告0、関連14テスト、180ページビルドに合格。
+- PRはmerged、マージコミットb5d454acafc67009a64a780ac094fcbbba9672fa。本番HTTP 200・strict verify、公開後hard 6項目とsoft 2項目がすべて合格。
+- 本番サムネイルは190,724 bytes、承認済みファイルとSHA-256一致。画像を一覧・OGPのサムネイルとして維持。
 
-AI本文はJSONモデルの10検品項目と本文量、画像計画はサムネイル1枚と本文図0〜1枚、キャラクターの演出指定で検査する。旧形式の記事・調査・選定・セルフレビューの応答検査は維持する。検品の不合格を短文や旧8枚構成へ変えて回避しない。
+10チェックIDはheadline-answer-align / answer-with-source / three-way-split / source-badges / one-figure / no-duplicate-summary / next-actions / tool-cards / stance-rule / changelog。初回記事は8項目pass、道具カードと見立ては対応する条件がなく理由付きnot_applicable。数値一致だけで意味の一致を確認済みとはせず、見出しが問う内容と答えの1文目、日本での利用と評価成績の区別も照合した。
 
-AI視点の記事は新規開始時の `--template-version ai-v2` を状態へ保存する。タイトルにAI関連語がない一般ニュースでも、ScoutとEditorial Selectionが採用したAIの視点に従って型を固定できる。記事ブリーフもAIの分類・タグに応じて新しい固定構成を出し、旧「先に結論」の提案と混在させない。
+## 実runの失敗と復旧を区別する
 
-## 公開前に止める位置
+当初runは空の.gitkeepを非WebP画像と誤判定し、finalizeで失敗した。PR #410で空ファイルだけをGitメタデータとして除外し、正規HTTPSプレビューを復旧した。非空の.gitkeepと実際の非WebP画像は不合格のまま。
 
-正規Phase AでプレビューとPRまで用意する。Phase BはPRの変更MDXをhead SHA指定で読み、AI記事v2の初回承認がなければマージ前に保留する。マージも同じSHAを指定する。取得失敗や不明なSHAは失敗扱いで止める。配信直前のHTML承認検査も残す。
+当初runのfailed記録を後からsuccessへ書き換えていない。明示承認後にマージ・本番配備を手動復旧し、正規ヘルパーで公開handoffをcompleted、保留記録をresolvedにした。介入台帳へrunId・対象記事・理由を追記し、当初の成否記録ファイルが不変であることを確認した。公開後訂正や新しい無人完走の実績とは数えない。
 
-Hiroへ320/390/PC幅のスクリーンショットと、以下のIDを含む検品記録を提示する：headline-answer-align / answer-with-source / three-way-split / source-badges / one-figure / no-duplicate-summary / next-actions / tool-cards / stance-rule / changelog。該当しない項目は理由を記録する。意味の一致と一次情報はコード検査だけで確認済みとしない。
+## 以後の通常運用
 
-Hiroの明示した公開OKを受けた記事だけ、承認記録のversion・approvedBy・approvedAt・対象記事を保存する。根拠の鮮度を再照合し、記事PRのマージ→本番配備→実HTTP 200・GitHub merged・strict verifyのhard/soft全項目合格を確認する。未公開の初回保留を夜間runのsuccessと記録しない。既存の主契約、Xの副契約と起動層は変えない。
+Scoutが実際に選んだ記事を、調査・読者翻訳設計・セルフレビュー・画像の独立検品を含む正規工程で作る。AI視点の記事は新規開始の--template-version ai-v2を状態へ保存し、再開・応答検品でも同じ型を使う。タイトルのAI関連語だけに型選択を任せない。
+
+JSONモデルの10項目と本文量、サムネイル1枚と本文図0〜1枚、演出指定を検品する。旧形式の記事・調査・選定・セルフレビューの検査は維持する。不合格を短文や旧8枚構成へ変えて回避しない。該当しない見立て・道具カードは省略する。選定対象がなければ既存の安全スキップを維持する。
+
+通常公開では既存の承認範囲・品質ゲートと、PR merged・本番HTTP 200・strict verifyのhard/soft全項目合格の主契約を維持する。Xの副契約は独立扱い。夜間起動スクリプト・Windowsタスク・Codex定期実行設定は変更していない。
 
 ## 戻す設定
 
-新規生成を旧形式へ戻す場合は `data/automation/ai-article-template-v2.json` の `enabled=false`。初回公開承認を捏造して解除しない。既存の公開本文自体を差し替える設定ではない。
-
-## 実施と未実施
-
-接続時の回帰検査54件と179ページのビルドは合格。今朝の実記事は180ページのビルド・記事ゲート違反0/警告0とHTTPSプレビューの検証まで完了した。初回の実runは空.gitkeepの画像誤判定でfinalizeに失敗し、修正後にプレビュー工程を復旧した。当初runの失敗を成功へ書き換えていない。Hiroの初回表示確認・公開承認は受領済み。記事PRのマージ・本番公開とstrict verifyはこれから実施し、結果を追記する。夜間の起動スクリプト、Windowsタスク登録、Codexアプリの定期実行設定は変更していない。
+新規生成を旧形式へ戻す場合はdata/automation/ai-article-template-v2.jsonのenabled=false。既存の公開本文自体を差し替える設定ではない。初回承認を捏造して解除しない。

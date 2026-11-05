@@ -27,8 +27,8 @@ A1〜A7は段階別PRでmainへ導入済みです。ルーターは2026-11-04に
 | B4 | [396](https://github.com/hnishimura40/sumalabo/pull/396) | ai-v2-stance.mjs、設定の4パターン | enabled=false | 一致する型だけを定型で出力。自由生成は拒否 |
 | B5 | [397](https://github.com/hnishimura40/sumalabo/pull/397) | ai-v2-tools.mjs、comparison-published-picks.json、公開ack | enabled=false | マージ・本番同一バージョン・strict verify確認後のみ登録。未作成カテゴリは省略 |
 | B6 | [398](https://github.com/hnishimura40/sumalabo/pull/398) | ai-v2-checks.mjs、記事ゲート、既存検品のv2対応、回帰テスト | enabled=false | 関連52テスト成功。表示試験用データで320/390/1280pxの横はみ出し0 |
-
 | B7 | [408](https://github.com/hnishimura40/sumalabo/pull/408) | LifeVal実記事・AI初回承認記録 | enabled=falseで新規生成を旧形式へ | 14テスト・180ページビルド・ゲート違反0/警告0、PR merged・HTTP 200・公開後hard/soft全項目合格 |
+
 
 生成の主設定は比較記事が `data/automation/sumalabo-editorial-identity.json` の `renewal.enabled`、AI記事が `data/automation/ai-article-template-v2.json` の `enabled` です。比較・AI記事ともtrueです。AI記事の初回公開承認はnullのまま、実際の翌晩の1本をプレビューしてから承認を受けます。B7の接続と保留位置は `docs/renewal-b7-first-night.md` を参照。表示済み本文そのものを旧原稿へ差し替える操作とは区別します。
 
