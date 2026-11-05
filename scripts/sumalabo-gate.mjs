@@ -464,6 +464,9 @@ function checkImageStage(slug, mdx) {
   const artDir = path.join(CONFIG.imagesDir, "articles", slug);
   if (existsSync(artDir)) {
     for (const f of readdirSync(artDir)) {
+      // A zero-figure article still tracks this directory in the publish handoff.
+      // Its empty Git placeholder is metadata; real non-WebP files stay blocked.
+      if (f === '.gitkeep' && readFileSync(path.join(artDir, f)).length === 0) continue;
       const rel = `/images/articles/${slug}/${f}`;
       if (!refs.has(rel)) report("warning", "image-ref", rel, "public に存在するが MDX から参照されていません");
       if (!/\.webp$/i.test(f)) report("violation", "image-ref", rel, "記事画像フォルダに WebP 以外のファイルがあります");
