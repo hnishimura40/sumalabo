@@ -1,8 +1,8 @@
 # AI記事v2：B7の初回公開手順
 
-2026-11-05更新。B1〜B6の型と検品を通常の夜間工程へ接続済み。`ai-article-template-v2.json.enabled=true`、`firstPublicationApproval=null`。今朝の既存夜間実行で実記事を生成し、[PR #408](https://github.com/hnishimura40/sumalabo/pull/408)まで作成した。手動の夜間runや追加スケジュールは開始していない。
+2026-11-05更新。B1〜B6の型と検品を通常の夜間工程へ接続済み。`ai-article-template-v2.json.enabled=true`、`firstPublicationApproval`にHiroの承認を記録済み。今朝の既存夜間実行で実記事を生成し、[PR #408](https://github.com/hnishimura40/sumalabo/pull/408)まで作成した。手動の夜間runや追加スケジュールは開始していない。
 
-現在は[LifeVal記事の初回HTTPSプレビュー](https://eb097687.sumalabo.pages.dev/articles/202611-ai-lifeval-openai/)の表示確認とHiroの「AI記事公開OK」待ち。320/390/1280pxで横はみ出し0、本文図0枚・3分岐・キャラクター1往復を確認。記事PRは未マージ、AI記事の本番公開は未実施。
+現在は[LifeVal記事の初回HTTPSプレビュー](https://eb097687.sumalabo.pages.dev/articles/202611-ai-lifeval-openai/)はHiroの表示確認を経て「AI記事公開OK」を受領。320/390/1280pxで横はみ出し0、本文図0枚・3分岐・キャラクター1往復を確認。記事PRは未マージ、AI記事の本番公開は未実施。
 
 ## 次の実記事
 
@@ -26,4 +26,4 @@ Hiroの明示した公開OKを受けた記事だけ、承認記録のversion・a
 
 ## 実施と未実施
 
-接続時の回帰検査54件と179ページのビルドは合格。今朝の実記事は180ページのビルド・記事ゲート違反0/警告0とHTTPSプレビューの検証まで完了した。初回の実runは空.gitkeepの画像誤判定でfinalizeに失敗し、修正後にプレビュー工程を復旧した。当初runの失敗を成功へ書き換えていない。Hiroの初回表示確認・公開承認、記事PRのマージ・本番公開とstrict verifyは未実施。夜間の起動スクリプト、Windowsタスク登録、Codexアプリの定期実行設定は変更していない。
+接続時の回帰検査54件と179ページのビルドは合格。今朝の実記事は180ページのビルド・記事ゲート違反0/警告0とHTTPSプレビューの検証まで完了した。初回の実runは空.gitkeepの画像誤判定でfinalizeに失敗し、修正後にプレビュー工程を復旧した。当初runの失敗を成功へ書き換えていない。Hiroの初回表示確認・公開承認は受領済み。記事PRのマージ・本番公開とstrict verifyはこれから実施し、結果を追記する。夜間の起動スクリプト、Windowsタスク登録、Codexアプリの定期実行設定は変更していない。
