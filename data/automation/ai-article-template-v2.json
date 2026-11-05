@@ -1,7 +1,15 @@
 {
   "version": "2026-11-04",
   "enabled": true,
-  "firstPublicationApproval": null,
+  "firstPublicationApproval": {
+    "version": "2026-11-04",
+    "approvedBy": "Hiro",
+    "approvedAt": "2026-11-05T03:37:48.893Z",
+    "message": "AI記事公開OK",
+    "articleSlug": "202611-ai-lifeval-openai",
+    "prNumber": 408,
+    "scope": "AI記事v2の初回表示確認。LifeVal記事を公開し、以後は既存の夜間パイプラインの通常運用。"
+  },
   "blocks": [
     "headline",
     "answer",

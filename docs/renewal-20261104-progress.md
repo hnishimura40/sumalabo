@@ -1,5 +1,16 @@
 # 2026-11-04 リニューアル導入記録
 
+## 現在地（2026-11-05）
+
+- 本番公開済み：ルーター #392、充電器 #402、バッテリー #403。表の配色修正、サムネイル維持、計測 #406も反映済み。
+- イヤホン #404：320/390/PC幅のプレビューと検品済み。「イヤホン公開OK」待ち。
+- AI記事 #408：Hiroの「AI記事公開OK」後、2026-11-05 12:41 JSTに[LifeVal記事](https://sumalabo.com/articles/202611-ai-lifeval-openai/)を公開済み。PR merged・本番HTTP 200・strict verifyおよび公開後hard/soft全項目合格。承認時の本文とサムネイルを維持。実run当初の失敗記録は維持し、手動復旧の介入記録を追記。B7初回確認は完了。詳細はdocs/renewal-b7-first-night.md。
+- GA4：本番ストリームと既存導線イベントの受信を照合済み。集計用のカスタムディメンション3件を11月5日に登録し、管理画面の一覧で照合済み。価格クリックは検証用に1回実施し、11月4〜5日のData API照会では受信未確認。価格クリックとAI道具カードの実受信確認、1か月の観察が残る。
+- Fable：公開4記事で月次監査の手順を試行。公式の定期実行で毎月2日09:00 JSTを指定できることを確認。公開ページへのアクセスと条件付き通知の確認後に登録する。運用の詳細は[観察・Fable監査の手順](renewal-observation-and-fable-handoff.md)。
+
+以下は導入時点ごとの履歴。初回承認・公開・観察がすべて完了したとは扱わない。
+
+
 A1〜A7は段階別PRでmainへ導入済みです。ルーターは2026-11-04にHiroの公開OK後、PR #392をマージして本番公開し、#399で比較表の配色を修正しました。B1〜B6も段階別PRで導入済みです。充電器はPR #402、バッテリーはPR #403をHiroの個別承認後に公開済み。イヤホンはPR #404の初回表示確認待ち、AI記事はB7の実記事確認待ちです。
 
 | 段階 | PR | 主な変更先 | 戻す設定・状態 | 検証 |
@@ -17,6 +28,8 @@ A1〜A7は段階別PRでmainへ導入済みです。ルーターは2026-11-04に
 | B4 | [396](https://github.com/hnishimura40/sumalabo/pull/396) | ai-v2-stance.mjs、設定の4パターン | enabled=false | 一致する型だけを定型で出力。自由生成は拒否 |
 | B5 | [397](https://github.com/hnishimura40/sumalabo/pull/397) | ai-v2-tools.mjs、comparison-published-picks.json、公開ack | enabled=false | マージ・本番同一バージョン・strict verify確認後のみ登録。未作成カテゴリは省略 |
 | B6 | [398](https://github.com/hnishimura40/sumalabo/pull/398) | ai-v2-checks.mjs、記事ゲート、既存検品のv2対応、回帰テスト | enabled=false | 関連52テスト成功。表示試験用データで320/390/1280pxの横はみ出し0 |
+| B7 | [408](https://github.com/hnishimura40/sumalabo/pull/408) | LifeVal実記事・AI初回承認記録 | enabled=falseで新規生成を旧形式へ | 14テスト・180ページビルド・ゲート違反0/警告0、PR merged・HTTP 200・公開後hard/soft全項目合格 |
+
 
 生成の主設定は比較記事が `data/automation/sumalabo-editorial-identity.json` の `renewal.enabled`、AI記事が `data/automation/ai-article-template-v2.json` の `enabled` です。比較・AI記事ともtrueです。AI記事の初回公開承認はnullのまま、実際の翌晩の1本をプレビューしてから承認を受けます。B7の接続と保留位置は `docs/renewal-b7-first-night.md` を参照。表示済み本文そのものを旧原稿へ差し替える操作とは区別します。
 
@@ -43,3 +56,25 @@ B5の道具カードは、この実公開の証拠と一致するルーターの
 B7準備はPR #405で導入済み。AI生成を有効化し、旧形式と新形式の応答検品を分け、未承認AI記事は固定head SHAのMDX確認後、マージ前で保留します。関連54テストと179ページビルドに合格。翌晩の実記事・Hiroの初回表示確認・初回公開は未実施です。専用runnerの既存エントリが起動時にorigin/mainを取得してdetached checkoutすることを読み取り確認し、runner本体や起動設定は書き換えていません。
 
 公開後のクリック計測とFableへの監査指示はdocs/renewal-observation-and-fable-handoff.mdに記録します。計測のコード検査と実際のGA4受信・1か月の成果は区別します。Fableスケジュールは現在の接続ツールから登録・読み返しできず、登録済みとは扱いません。
+
+AI視点を持つ一般ニュースでも型が旧形式へ戻らないよう、新規開始の--template-version ai-v2を記事状態へ保存する経路を追加しました。AI分類のブリーフも新しい固定構成を出し、旧「先に結論」と混在させません。実際の記事や公開承認をこの設定から生成したことにはしません。
+
+
+## 2026-11-05の実行確認
+
+今朝の実夜間runはAI記事v2のLifeVal記事を生成し、PR #408まで作成しました。記事状態にはtemplateVersion=ai-v2が保存されています。ただし正規finalizeが、本文図0枚の空フォルダ保持用.gitkeepを非WebP画像として扱い、プレビュー作成前に停止しました。当初の夜間runはouter_publish_failedのまま保持し、後日の修復を当初runのsuccessに書き換えません。
+
+空の.gitkeepだけをGitのメタデータとして除外する修正を追加しました。非空の.gitkeepは従来どおり不合格、PNG等の非WebP判定も維持します。実際のPR #408原稿で180ページをビルドし、記事ゲート違反0・警告0。正規finalizeを再実行し、CloudflareのHTTPSプレビュー・HTTP 200・実記事タイトル・review_waiting登録まで成功しました。これは本番公開ではありません。
+
+未完了は、イヤホンPR #404の初回公開承認、AI記事PR #408の初回表示確認と公開承認・本番検証、Fable監査の登録と読み返し、GA4の実受信確認・1か月の観察です。初回承認を推測して記録しません。夜間起動層・Windowsタスク・Codex定期実行設定は変更していません。
+
+
+## AI初回公開の実測（2026-11-05）
+
+Hiroの「AI記事公開OK」を2026-11-05に受領し、PR #408へ承認記録を保存。承認時のMDX本文に変更がないことを照合し、公式発表・論文・対応国一覧を再確認しました。初回記事は https://sumalabo.com/articles/202611-ai-lifeval-openai/ 。マージコミットは b5d454acafc67009a64a780ac094fcbbba9672fa、本番配備完了は2026-11-05 12:41 JSTです。
+
+PR merged・本番HTTP 200・strict verify合格、公開後hard 6項目とsoft 2項目がすべて合格。本番画面は白地、AI記事v2の3分岐と固定順で表示され、公開前320/390/1280pxの横はみ出し0を維持。サムネイルは190,724 bytes、SHA-256 ae65ae190bec5bcc998d4a0697e3b77733d85312e48847dbaa5d9658b48cc23f が承認済みファイルと一致しました。
+
+当初の夜間run（20261105T043002.121）のfailed記録は変更していません。正規ヘルパーで公開handoffをcompleted、保留記録をresolvedにし、明示承認後の手動復旧を介入台帳へ追記しました。次回からAI記事v2は既存の通常運用の範囲に戻り、同じ初回表示確認は繰り返しません。夜間起動層・Windowsタスク・Codex定期実行設定は変更していません。
+
+残る未完了はイヤホン初回公開承認、Fable監査の登録・読み返し、GA4実受信確認と1か月の観察です。
