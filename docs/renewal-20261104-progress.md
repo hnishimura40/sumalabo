@@ -5,7 +5,7 @@
 - 本番公開済み：ルーター #392、充電器 #402、バッテリー #403。表の配色修正、サムネイル維持、計測 #406も反映済み。
 - イヤホン #404：320/390/PC幅のプレビューと検品済み。「イヤホン公開OK」待ち。
 - AI記事 #408：Hiroの「AI記事公開OK」後、2026-11-05 12:41 JSTに[LifeVal記事](https://sumalabo.com/articles/202611-ai-lifeval-openai/)を公開済み。PR merged・本番HTTP 200・strict verifyおよび公開後hard/soft全項目合格。承認時の本文とサムネイルを維持。実run当初の失敗記録は維持し、手動復旧の介入記録を追記。B7初回確認は完了。詳細はdocs/renewal-b7-first-night.md。
-- 運用未完了：Fable監査の登録・読み返し、GA4の実受信確認、1か月の観察。指示書はdocs/renewal-observation-and-fable-handoff.md。Fable登録先は未指定で、Codex定期実行を勝手に代替しない。
+- 運用確認：公開4記事で月次監査の手順を試行。GA4の本番ストリームと既存導線イベントの受信を照合済み。価格クリック・AI道具カードの実受信、集計用カスタムディメンションの登録、Fableでの月次登録、1か月の観察が残る。詳細はdocs/renewal-observation-and-fable-handoff.md。
 
 以下は導入時点ごとの履歴。初回承認・公開・観察がすべて完了したとは扱わない。
 
