@@ -179,7 +179,30 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
 </style>
 
 <style is:global>
-body.renewal-paper{color-scheme:light;--bg:#fff;--bg-elev:#fff;--bg-sunk:#f4f2ea;--bg-tint:#f4f2ea;--fg:#15171c;--fg-mid:#3a4150;--fg-soft:#5b6472;--fg-faint:#8a919c;--line:#e3e0d6;--line-soft:#e3e0d6;--teal:#1e9c8b;--teal-deep:#146b65;--img-filter:none;--font-heading:"Noto Sans JP",system-ui,sans-serif;background:#fff;color:#15171c}
-.renewal-paper .site-header{background:#fff;border-bottom:3px solid #15171c;backdrop-filter:none}.renewal-paper .header-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;max-width:1120px;width:calc(100% - 40px);gap:8px;padding:14px 0}.renewal-paper .brand small{display:none}.renewal-paper .brand strong{font-size:20px;font-weight:900}.renewal-paper .site-nav{grid-row:2;grid-column:1/-1;width:100%;margin:0;max-width:100%}.renewal-paper .site-nav a{color:#15171c;font-weight:700;padding:8px 12px}.renewal-paper .theme-toggle{grid-row:1;grid-column:2}.renewal-paper .site-footer{background:#fff;color:#15171c}.renewal-paper img{filter:none!important}.renewal-paper .theme-toggle-icon{background:#f4c430}
+body.renewal-paper {
+  --font-heading: "Noto Sans JP", system-ui, sans-serif;
+  --renewal-title-highlight: #f4c430;
+  --renewal-header-rule: #15171c;
+  background: var(--bg);
+}
+html:not(.dark) body.renewal-paper {
+  --bg: #fff;
+  --bg-elev: #fff;
+  --bg-sunk: #f4f2ea;
+  --bg-tint: #f4f2ea;
+  --fg: #15171c;
+  --fg-mid: #3a4150;
+  --fg-soft: #5b6472;
+  --fg-faint: #8a919c;
+  --line: #e3e0d6;
+  --line-soft: #e3e0d6;
+  --teal: #1e9c8b;
+  --teal-deep: #146b65;
+}
+html.dark body.renewal-paper {
+  --renewal-title-highlight: #775315;
+  --renewal-header-rule: var(--line-strong);
+}
+.renewal-paper .site-header{background:var(--bg);border-bottom:3px solid var(--renewal-header-rule);backdrop-filter:none}.renewal-paper .header-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;max-width:1120px;width:calc(100% - 40px);gap:8px;padding:14px 0}.renewal-paper .brand small{display:none}.renewal-paper .brand strong{font-size:20px;font-weight:900}.renewal-paper .site-nav{grid-row:2;grid-column:1/-1;width:100%;margin:0;max-width:100%}.renewal-paper .site-nav a{color:var(--fg);font-weight:700;padding:8px 12px}.renewal-paper .theme-toggle{grid-row:1;grid-column:2}.renewal-paper .site-footer{background:var(--bg);color:var(--fg)}
 @media(max-width:720px){.renewal-paper .header-inner{width:calc(100% - 32px);padding:12px 0}.renewal-paper .site-nav a{padding:7px 10px;font-size:13px}}
 </style>
