@@ -14,11 +14,25 @@ import Callout from "../../src/components/article/Callout.astro";
   </ol>
 </Summary30>
 
+## 先に結論：候補を比べるところから頼める
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202611-ai-lifeval-openai/slide01-lifeval.webp" alt="ひまりとらぼまるが引っ越し、買い物、幼稚園探しを表すカードを並べている" width="1280" height="1600" loading="lazy" decoding="async" /><figcaption>図解：LifeValは生活の用事を進める力を測る</figcaption></figure>
+  <div class="slide-reading-note"><p>文章の答えに加え、その人の条件で作業をどこまで進めたかを評価します。</p></div>
+</section>
+
+## あなたに関係ある？
+
 **関係がある人**は、引っ越しや買い物で候補を調べ、条件ごとに比べる作業をAIに頼みたい人です。文章の言い換えや雑談が中心なら、今回の評価には**あまり関係がない人**に当たります。いまの使い方のままで大丈夫です。
 
 ## 幼稚園探しで、AIはどこまで進めた？
 
 [OpenAIの発表](https://openai.com/index/lifeval/)に、引っ越し先の近くで幼稚園を探す例があります。AIは候補を3園に絞り、入園手続きに関する情報を整理しました。そのうえで、利用者の希望に関わる2点は本人の判断に委ねています。家族は、ゼロから探す段階を抜けて、候補を見比べるところから始められます。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202611-ai-lifeval-openai/slide02-kindergarten.webp" alt="引っ越し先の地図から幼稚園の候補3園を絞り、入園情報を整理するイメージ" width="1280" height="1600" loading="lazy" decoding="async" /><figcaption>図解：幼稚園の候補を3園に絞る</figcaption></figure>
+  <div class="slide-reading-note"><p>候補と入園情報がそろえば、家族は何を比べるか考えるところから始められます。</p></div>
+</section>
 
 <NumCards items={[
   { num: "169課題", cap: "家計・買い物・引っ越しなど、論文で使われた課題の総数" },
@@ -30,15 +44,35 @@ import Callout from "../../src/components/article/Callout.astro";
 
 <CharacterBubble speaker="labo" mood="point">この例で見せている成果は、候補と入園情報の整理までだよ。どの園が家族に合うかを考える材料がそろった段階だね。</CharacterBubble>
 
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202611-ai-lifeval-openai/slide03-family-choice.webp" alt="ひまりが幼稚園選びで残った2点の希望条件を見比べている" width="1280" height="1600" loading="lazy" decoding="async" /><figcaption>図解：希望条件は家族で決める</figcaption></figure>
+  <div class="slide-reading-note"><p>公式発表の事例では、利用者が判断する希望条件が2点残りました。</p></div>
+</section>
+
 ## LifeValは「できました」の先を採点する
 
 同じ「引っ越し先で園を探して」という依頼でも、徒歩で通いたい家庭と、預かり時間を優先する家庭では、よい候補が変わります。LifeValでは、依頼文に加えて、過去の会話や参考ファイルなど、その人の条件もモデルに渡します。
 
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202611-ai-lifeval-openai/slide04-context.webp" alt="徒歩の経路と預かり時間を表す時計を見比べるひまりとらぼまる" width="1280" height="1600" loading="lazy" decoding="async" /><figcaption>図解：家庭の条件によって候補は変わる</figcaption></figure>
+  <div class="slide-reading-note"><p>徒歩での送り迎えを優先する家庭と、預かり時間を優先する家庭では、確認したい条件が異なります。</p></div>
+</section>
+
 [論文の採点方法（3.3節・3.5節）](https://cdn.openai.com/pdf/lifeval.pdf)では、返事のほか、作成したファイルやテスト環境の操作前後の変化を採点に使います。課題ごとに配点があり、回答が自然でも、確認できない操作には点が入りません。論文ではこの方法でOpenAIの5モデルを比較しています。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202611-ai-lifeval-openai/slide05-evidence.webp" alt="画面上の返事と比較表を見比べ、できた作業を確かめる" width="1280" height="1600" loading="lazy" decoding="async" /><figcaption>図解：返事と作業の証拠を照合する</figcaption></figure>
+  <div class="slide-reading-note"><p>採点では、作成したファイルやテスト環境の操作前後の記録も確認します。</p></div>
+</section>
 
 <Callout kind="facts" title="幼稚園探しの93.1％は、この評価例の点数">
   <p>公式発表ではこの事例に93.1％と表示されています。特定の課題を、そこで与えられた条件と配点で評価した値です。園探し全般の成功率を知るには、地域や制度が異なるケースも調べる必要があります。</p>
 </Callout>
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202611-ai-lifeval-openai/slide06-score.webp" alt="幼稚園探しの一例の点数93.1％が書かれた評価カード" width="1280" height="1600" loading="lazy" decoding="async" /><figcaption>図解：93.1％はこの評価例の点数</figcaption></figure>
+  <div class="slide-reading-note"><p>図の数値は、公式発表に載った一つの課題を、その条件と配点で評価した値です。</p></div>
+</section>
 
 ## 日本の用事に使うときは、どこを見る？
 
@@ -46,13 +80,25 @@ import Callout from "../../src/components/article/Callout.astro";
 
 たとえば日本で幼稚園を探すなら、送迎できる範囲や預かり時間をAIに渡し、園や自治体の公式ページと一緒に候補を並べてもらうところから始められます。申込時期と提出書類は、出てきたリンクを開いて自分で照合します。
 
-たとえば、こう頼むと確認する場所がそろいます。
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202611-ai-lifeval-openai/slide07-japan.webp" alt="自治体の案内と申込書類を並べ、ひまりとらぼまるが確認する" width="1280" height="1600" loading="lazy" decoding="async" /><figcaption>図解：申込期限と必要書類は公式ページで見る</figcaption></figure>
+  <div class="slide-reading-note"><p>日本で園を探すときは、候補が見つかったら園や自治体のページで申込条件を照合します。</p></div>
+</section>
+
+## どう頼むと、確かめやすい？
+
+次のように頼むと、比較に必要な情報をそろえやすくなります。
 
 > 自宅の最寄り駅から通える園を3件まで。預かり時間と申込期限を、園か自治体の公式ページ付きで表にして。確認できない欄は空けておいて。
 
 ## すまラボまとめ
 
 AIに任せる範囲を決めるときは、返事の印象より、手元に何が残ったかを見ます。今回の園探しなら、公式情報までたどれる比較表ができれば、家族で話し合いを始められます。申し込む園を決めた後は、締切と送信内容を申込画面で確かめます。
+
+<section class="article-slide-section article-wide-block">
+  <figure class="article-slide-figure"><img src="/images/articles/202611-ai-lifeval-openai/slide08-first-step.webp" alt="条件と公式ページへのリンクを一緒に整理した幼稚園の比較表" width="1280" height="1600" loading="lazy" decoding="async" /><figcaption>図解：最初は候補の比較から</figcaption></figure>
+  <div class="slide-reading-note"><p>通える範囲、預かり時間、申込期限を出典付きで並べると、家族で検討する材料になります。</p></div>
+</section>
 
 ## 参考情報
 
