@@ -5,7 +5,7 @@
 - 本番公開済み：ルーター #392、充電器 #402、バッテリー #403。表の配色修正、サムネイル維持、計測 #406も反映済み。
 - イヤホン #404：Hiroの「イヤホン公開OK」後、2026-11-05 15:19 JSTに[イヤホン・ヘッドホン比較](https://sumalabo.com/articles/202611-earphone-headphone-comparison/)を新形式で公開。公開後の厳格検証、320/390/1280pxの表示、写真10点、価格リンク、既存サムネイルを確認済み。
 - AI記事 #408：Hiroの「AI記事公開OK」後、2026-11-05 12:41 JSTに[LifeVal記事](https://sumalabo.com/articles/202611-ai-lifeval-openai/)を公開済み。PR merged・本番HTTP 200・strict verifyおよび公開後hard/soft全項目合格。承認時の本文とサムネイルを維持。実run当初の失敗記録は維持し、手動復旧の介入記録を追記。B7初回確認は完了。詳細はdocs/renewal-b7-first-night.md。
-- AI記事の生成形式：11月5日の公開後レビューを受け、新規AI記事は従来のv3形式へ戻す。LifeValの改稿は別PRで扱う。
+- AI記事の生成形式：11月5日の公開後レビューを受け、新規AI記事は[従来のv3形式](https://github.com/hnishimura40/sumalabo/pull/416)へ戻した。LifeValはHiroの差し替え承認を受け、[改稿版](https://github.com/hnishimura40/sumalabo/pull/417)を同日19:47 JSTに本番反映。承認済み本文との一致、公開後8項目、スマホ・PC表示、既存サムネイルを確認した。
 - GA4：本番ストリームと既存導線イベントの受信を照合済み。集計用のカスタムディメンション3件を11月5日に登録し、管理画面の一覧で照合済み。価格クリックは検証用に1回実施し、11月4〜5日のData API照会では受信未確認。価格クリックとAI道具カードの実受信確認、1か月の観察が残る。
 - Fable：公開4記事で月次監査の手順を試行。公式の定期実行で毎月2日09:00 JSTを指定できることを確認。公開ページへのアクセスと条件付き通知の確認後に登録する。運用の詳細は[観察・Fable監査の手順](renewal-observation-and-fable-handoff.md)。
 
