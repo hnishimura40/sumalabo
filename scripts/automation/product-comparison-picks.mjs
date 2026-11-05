@@ -76,8 +76,9 @@ export function evaluatePicks(review,snapshot,categoryId,policy=pickPolicy){
     const defaultPick=picks.default,chosen=rows.find(r=>r.productId===defaultPick?.productId);
     const topPick=Object.values(picks).find(p=>p.status==='selected'&&rows.find(r=>r.productId===p.productId)?.segment===row.segment&&p.productId!==defaultPick?.productId);
     const peer=rows.find(r=>r.productId===topPick?.productId)||chosen;
-    if(peer)return `${row.segment??'段が未確認'}の段。${row.upper.pass?category.upperAxis.label+'を確認':'上位軸の条件確認が未完了'}。選出した${peer.product.model}との参考価格差は${row.price-peer.price}円。`;
-    return `${row.segment??'段が未確認'}の段・参考価格${row.price}円。枠の追加条件に合わず選出対象外。`;
+    const segment=({'tws-canal':'カナル型',open:'オープン型',headphone:'ヘッドホン',wired:'有線'})[row.segment]??row.segment??'未確認';
+    if(peer)return `${segment}の段。${row.upper.pass?'上位軸の確認済み条件を満たします':'上位軸の条件確認が未完了'}。選出した${peer.product.model}との参考価格差は${row.price-peer.price}円。`;
+    return `${segment}の段・参考価格${row.price}円。枠の追加条件に合わず選出対象外。`;
   }
   return {picks,achievement:rows.map(({product,eligible,...row})=>({...row,selected:used.has(row.productId),reason:omissionReason(row),suitableFor:product.suitableFor})),pickEvaluation:{policyVersion:policy.version,largestSegment:largest,segmentCounts:counts}};
 }

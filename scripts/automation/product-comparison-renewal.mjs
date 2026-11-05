@@ -31,13 +31,13 @@ export function renderRenewalComparison(review,snapshot,category,now=Date.now())
     if(result.representatives)return `<section class="r-pick" data-pick-slot="${slot.id}"><h3>${esc(slotName(slot))}</h3>${result.representatives.map(r=>card({...slot,name:segmentLabel(r.segment)},r,false,true)).join('\n')}</section>`;
     if(result.status==='none')return `<section class="r-pick" ${slotAttr}="${slot.id}"><h3>${esc(slotName(slot))}：今月は該当なし</h3><p>${esc(result.reason)}</p></section>`;
     const p=product(result.productId);
-    const evidence=[...(slot.id==='default'?[rule.upperAxis.field]:[]),...result.evidence.filter(f=>typeof verifiedValue(p,f)==='number')].filter((f,i,a)=>a.indexOf(f)===i).slice(0,2);
+    const evidence=[...(slot.id==='default'?[rule.upperAxis.field]:[]),...result.evidence.filter(f=>f!=='domesticSupport'&&['number','boolean'].includes(typeof verifiedValue(p,f)))].filter((f,i,a)=>a.indexOf(f)===i).slice(0,2);
     const facts=evidence.map(f=>{const v=verifiedValue(p,f);return `${label(f)}：${v===true?'対応':v===false?'非対応':v}`;});
     const claim=result.claim.split('。')[0];
     const image=`<div class="r-photo-stage">${photo(p)}${hero?`<div class="r-award" aria-hidden="true"><small>すまラボ</small><strong>今月の1台</strong><span>${snapshot.updatedOn.slice(0,7).replace('/','.')}</span></div>`:''}</div>`;
     const proof=`<ul class="r-reasons"><li><span class="r-ok">○</span> ${esc(facts[0]||'国内窓口の条件を確認')}</li><li><span class="r-ok">○</span> ${esc(facts[1]||'必須条件を確認')}・国内の保証窓口あり</li><li><span class="r-no">✕</span> ${esc(p.caution)}</li></ul>`;
     const copy=`<div class="r-card-copy"><p class="r-slot r-slot-${slot.id}">${esc(slotName(slot))}</p><${hero?'h2':'h3'} class="r-claim">${esc(claim)}</${hero?'h2':'h3'}><p class="r-product-name">${esc(p.model)}</p>${proof}${hero?`<div class="r-position"><h4>同じ${esc(segmentLabel(segmentFor(p,rule.segmentAxis)))}の段の中での位置</h4><ul class="r-bars">${bars(p)}</ul></div>`:''}${buttons(p)}<p class="r-price-note">価格.com取得時の参考最安値。リンク先の販売価格・送料・ポイントとは異なります。</p><p class="r-runner">${esc(result.runnerUp?.text||'次点なし')}</p></div>`;
-    const difference=`<aside class="r-difference"><img src="/images/characters/labomaru_chart_icon.webp" alt="らぼまる" width="44" height="44" /><p><strong>ココに差が</strong> ${esc(facts.join('、'))}。${esc(p.suitableFor)}に向く条件です。</p></aside>`;
+    const difference=`<aside class="r-difference"><img src="/images/characters/labomaru_chart_icon.webp" alt="らぼまる" width="44" height="44" /><p><strong>ココに差が</strong> ${facts.length?esc(facts.join('、'))+'。':esc(segmentLabel(segmentFor(p,rule.segmentAxis)))+'を選ぶ人へ。'}${esc(p.suitableFor)}に向く条件です。</p></aside>`;
     return `<article class="r-pick ${hero?'r-featured':''}" ${slotAttr}="${slot.id}" id="product-${p.id}"><div class="r-card-grid">${image}${copy}</div>${difference}<details><summary>向いている人・注意点・価格</summary><p>${esc(p.suitableFor)}</p><p>${esc(p.caution)}</p>${buttons(p)}</details></article>`;
   };
   const selected=new Set(Object.values(review.picks).flatMap(p=>p.representatives?p.representatives.filter(r=>r.productId).map(r=>r.productId):p.productId?[p.productId]:[]));
