@@ -175,6 +175,14 @@
     "picksConfiguration": "data/automation/product-comparison-picks.json",
     "addendum": "docs/editorial-identity-addendum.md",
     "firstPublicationApprovals": {
+      "audio": {
+        "version": "2026-11-04",
+        "approvedBy": "Hiro",
+        "approvedAt": "2026-11-05T06:16:14Z",
+        "message": "イヤホン公開OK。公開後の確認まで進めて。",
+        "prNumber": 404,
+        "scope": "イヤホン・ヘッドホン初回プレビューの11月3日取得の候補・参考価格と、既存サムネイルで公開。"
+      },
       "power-bank": {
         "version": "2026-11-04",
         "approvedBy": "Hiro",
@@ -189,7 +197,6 @@
         "message": "充電器公開OK",
         "scope": "USB-C充電器の初回公開。既存11月号の候補とサムネイルを維持。"
       },
-      "audio": null,
       "wifi-router": {
         "version": "2026-11-04",
         "approvedBy": "Hiro",
