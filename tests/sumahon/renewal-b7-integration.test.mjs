@@ -65,7 +65,10 @@ test('未承認AI記事はmainへ入れず、承認後も検査した同一head�
  const allowed=await mergeFixture({approved:true});assert.equal(allowed.result.ok,true);assert.match(allowed.calls[2].url,new RegExp('ref='+allowed.sha));assert.equal(JSON.parse(allowed.calls.at(-1).options.body).sha,allowed.sha);
  const failed=await mergeFixture({approved:true,failSource:true});assert.equal(failed.result.ok,false);assert.equal(failed.calls.some(c=>c.options.method==='PUT'),false);
 });
-test('タイトルにAI語がなくても採用した型を状態へ保存し、ブリーフの旧構成と混在させない',()=>{
+test('タイトルにAI語がなくても型を状態へ保存し、ブリーフは現在の生成設定に従う',()=>{
  const state=newState({slug:'general-news',theme:'日常の条件が変わった',templateVersion:'ai-v2'});assert.equal(isAiV2(state,true),true);assert.equal(isAiV2(state,false),false);assert.throws(()=>newState({slug:'x',theme:'x',templateVersion:'unknown'}));
- const brief=generateArticleBrief({source:{},classification:{topicCategory:'AI',tags:['生成AI']},generated:{slug:'x',title:'日常の条件が変わった'}});assert.equal(brief.templateVersion,'ai-v2');assert.deepEqual(brief.suggestedStructure,aiPolicy.blocks);assert.ok(!brief.suggestedStructure.includes('先に結論'));
+ const brief=generateArticleBrief({source:{},classification:{topicCategory:'AI',tags:['生成AI']},generated:{slug:'x',title:'日常の条件が変わった'}});
+ assert.equal(brief.templateVersion,aiPolicy.enabled?'ai-v2':null);
+ if(aiPolicy.enabled){assert.deepEqual(brief.suggestedStructure,aiPolicy.blocks);assert.ok(!brief.suggestedStructure.includes('先に結論'));}
+ else assert.equal(brief.suggestedStructure[0],'先に結論');
 });
