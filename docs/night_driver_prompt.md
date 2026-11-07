@@ -29,13 +29,14 @@ Codex自身の終了コード、completion、heartbeat、自己申告は成功�
 
 ## 0. 起動直後の確認
 
+公開用の Phase 0（`npm run night:environment-check` / `--article-only`）は、外側ラッパーがCodex起動前に実行済みです。子のCodexでは手順2の生成専用検査を使います。GitHub認証情報は公開側に隔離されています。
+
 1. `pwd`とブランチを確認する。専用runner clone以外なら失敗終了。
-2. `node scripts/automation/runner-hygiene.mjs`を実行し、`ok=true`を確認する。生の`git status`から独自にclean/dirtyを再判定してはならない。親ラッパー・子Codex・単独点検は、この共通判定だけを正とする。
-3. `git -c safe.directory=<runnerの絶対パス> rev-parse HEAD`と同じ形式の`origin/main`を比較し、同期済みであることを確認する。
-4. `node scripts/automation/test-mode.mjs --status`で夜間runが有効か確認する。
-5. `SUMALABO_NIGHT_RUN_ID`と開始時刻を保持し、以後の成否契約・台帳照合に使う。
+2. `node scripts/automation/night-environment-check.mjs --generation-only`を実行し、`scope=generation_only`、`canProceed=true`を確認する。環境定義、HEADとorigin/mainの一致、共通のrunner健全性判定をここで検査する。生の`git status`から独自にclean/dirtyを再判定してはならない。
+3. `node scripts/automation/test-mode.mjs --status`で夜間runが有効か確認する。
+4. `SUMALABO_NIGHT_RUN_ID`と開始時刻を保持し、以後の成否契約・台帳照合に使う。
    一時作業は`SUMALABO_NIGHT_TEMP_DIR`だけを使用し、作業ルート直下へ`.codex-*`や`contact-sheet*`を生成しない。
-6. `CLAUDE.md`と必要なdocsを読み、記事仕様・画像検品・秘密情報検査を省略しない。
+5. `CLAUDE.md`と必要なdocsを読み、記事仕様・画像検品・秘密情報検査を省略しない。
 
 ## 1. Phase A: スカウト・調査・記事・画像・検品
 
@@ -69,5 +70,7 @@ X投稿は外側工程です。非対話CodexにはChrome DOM権限がないた�
 2. handoff JSONの`status=ready`、slug、固定4パスを実物確認する。
 3. 報告にslug、検品結果、handoffパスを出し、Codex自身はexit 0で終了する。
 4. 夜間run全体のsuccess判定とrunner clean化は、外側ラッパーの成否契約だけが行う。
+
+検品や生成専用の起動確認で終了する場合も、選定済みslugがあれば `logs/article/<slug>.publish-handoff.json` に `schemaVersion: 1`、`slug`、`status: "failed"`、現在時刻の `createdAt`、具体的な `errorReason` を記録する。失敗項目があれば `failedChecks` に配列で残す。今回の `ready` が既に書かれていれば `failed` に更新し、過去の公開済み記録は上書きしない。この形式を外側ラッパーが実行記録と成果物回収に使う。
 
 最後まで自律的に完走し、人の応答を待って停止しないでください。

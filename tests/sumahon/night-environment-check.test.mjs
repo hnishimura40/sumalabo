@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 import { ARTICLE_CHECK_NAMES, CHECK_NAMES, FATAL_CHECK_NAMES, WARNING_CHECK_NAMES, X_STEP_FATAL_CHECK_NAMES, environmentCheckExitCode, evaluateEnvironmentEvidence, evaluateRepositorySha, evaluateXProfileEvidence, findFirstReadyObservation, parseDomEvidenceText } from "../../scripts/automation/night-environment-check.mjs";
 
 const passing = Object.fromEntries(CHECK_NAMES.map((name) => [name, { ok: true, detail: "test" }]));
@@ -73,6 +75,27 @@ test("article-only preflight contains no Chrome or X checks", () => {
   assert.deepEqual(ARTICLE_CHECK_NAMES, ["environment_definition", "github_token", "repository_sha", "runner_dirty"]);
   assert.ok(ARTICLE_CHECK_NAMES.every((name) => FATAL_CHECK_NAMES.includes(name)));
   assert.ok(!ARTICLE_CHECK_NAMES.some((name) => /chrome|x_|dom/.test(name)));
+});
+
+test("the credential-free generation CLI checks runner health while the publisher still requires its token", () => {
+  const script = fileURLToPath(new URL("../../scripts/automation/night-environment-check.mjs", import.meta.url));
+  const env = Object.fromEntries(Object.entries(process.env).filter(([name]) => !/^GH_TOKEN(?:_EXPIRES_AT)?$/i.test(name)));
+  const check = (...args) => {
+    const result = spawnSync(process.execPath, [script, ...args], { env, encoding: "utf8" });
+    assert.ok(result.stdout, result.stderr);
+    return { status: result.status, evidence: JSON.parse(result.stdout) };
+  };
+
+  const generation = check("--generation-only", "--inject-missing=repository_sha");
+  assert.equal(generation.evidence.scope, "generation_only");
+  assert.deepEqual(generation.evidence.checks.map(({ name }) => name), ["environment_definition", "repository_sha", "runner_dirty"]);
+  assert.ok(generation.evidence.fatalFailedChecks.includes("repository_sha"));
+  assert.equal(generation.status, 30);
+
+  const publisher = check("--article-only", "--generation-only");
+  assert.equal(publisher.evidence.scope, "article_only");
+  assert.ok(publisher.evidence.fatalFailedChecks.includes("github_token"));
+  assert.equal(publisher.status, 30);
 });
 
 test("fatal environment failures keep exit code 30", () => {

@@ -13,6 +13,7 @@ export const FATAL_CHECK_NAMES = [...NIGHT_ENVIRONMENT.fatalChecks];
 export const WARNING_CHECK_NAMES = [...NIGHT_ENVIRONMENT.warningChecks];
 export const X_STEP_FATAL_CHECK_NAMES = [...(NIGHT_ENVIRONMENT.xStepFatalChecks || [])];
 export const ARTICLE_CHECK_NAMES = [...(NIGHT_ENVIRONMENT.articleChecks || FATAL_CHECK_NAMES)];
+const GENERATION_CHECK_NAMES = ARTICLE_CHECK_NAMES.filter((name) => name !== "github_token");
 
 export function validateXReadinessPolicy(policy) {
   return Boolean(policy
@@ -193,7 +194,7 @@ export function collectStaticEvidence(environment = NIGHT_ENVIRONMENT, env = pro
   return evidence;
 }
 
-export function collectArticleEvidence(environment = NIGHT_ENVIRONMENT, env = process.env) {
+export function collectArticleEvidence(environment = NIGHT_ENVIRONMENT, env = process.env, { generationOnly = false } = {}) {
   const evidence = {};
   evidence.environment_definition = {
     ok: environment.schemaVersion === 1
@@ -201,16 +202,24 @@ export function collectArticleEvidence(environment = NIGHT_ENVIRONMENT, env = pr
       && ARTICLE_CHECK_NAMES.every((name) => environment.requiredChecks.includes(name))
       && ARTICLE_CHECK_NAMES.every((name) => environment.fatalChecks.includes(name))
       && environment.fatalChecks.every((name) => ARTICLE_CHECK_NAMES.includes(name))
+      && (!generationOnly || (
+        Array.isArray(environment.generationChecks)
+        && environment.generationChecks.length === GENERATION_CHECK_NAMES.length
+        && GENERATION_CHECK_NAMES.every((name) => environment.generationChecks.includes(name))
+      ))
       && typeof environment.runnerPath === "string"
       && environment.runnerPath.length > 0
       && typeof environment.tokens?.github === "string"
       && environment.tokens.github.length > 0,
-    detail: `schemaVersion=1;repositoryShaPolicy=${environment.repositoryShaPolicy};scope=article_only`,
+    detail: `schemaVersion=1;repositoryShaPolicy=${environment.repositoryShaPolicy};scope=${generationOnly ? "generation_only" : "article_only"}`,
   };
-  evidence.github_token = {
-    ok: Boolean(env[environment.tokens.github]),
-    detail: `${environment.tokens.github}=${env[environment.tokens.github] ? "present" : "missing"}`,
-  };
+  if (!generationOnly) {
+    const tokenPresent = Boolean(env[environment.tokens.github]);
+    evidence.github_token = {
+      ok: tokenPresent,
+      detail: `${environment.tokens.github}=${tokenPresent ? "present" : "missing"}`,
+    };
+  }
   const runner = environment.runnerPath;
   const originMainHead = git(runner, ["rev-parse", "origin/main"]);
   const runnerHead = git(runner, ["rev-parse", "HEAD"]);
@@ -228,24 +237,27 @@ function awaitableDirectories(directory) {
   return String(result.stdout || "").trim().split(",").filter(Boolean);
 }
 
-export function runEnvironmentCheck({ domEvidenceFile = null, staticOnly = false, articleOnly = false, injectMissing = [] } = {}) {
-  const evidence = articleOnly ? collectArticleEvidence() : collectStaticEvidence();
-  if (articleOnly) {
+export function runEnvironmentCheck({ domEvidenceFile = null, staticOnly = false, articleOnly = false, generationOnly = false, injectMissing = [] } = {}) {
+  if (articleOnly || generationOnly) {
+    const checkGeneration = generationOnly && !articleOnly;
+    const names = checkGeneration ? GENERATION_CHECK_NAMES : ARTICLE_CHECK_NAMES;
+    const evidence = collectArticleEvidence(NIGHT_ENVIRONMENT, process.env, { generationOnly: checkGeneration });
     const evaluated = evaluateEnvironmentEvidence(evidence, injectMissing);
-    const checks = evaluated.checks.filter((item) => ARTICLE_CHECK_NAMES.includes(item.name));
+    const checks = evaluated.checks.filter((item) => names.includes(item.name));
     const failedChecks = checks.filter((item) => !item.ok).map((item) => item.name);
     return {
       ok: failedChecks.length === 0,
       canProceed: failedChecks.length === 0,
       xReady: null,
       classification: failedChecks.length ? "fatal" : "pass",
-      scope: "article_only",
+      scope: checkGeneration ? "generation_only" : "article_only",
       checks,
       failedChecks,
       fatalFailedChecks: failedChecks,
       warningFailedChecks: [],
     };
   }
+  const evidence = collectStaticEvidence();
   if (!staticOnly) {
     const dom = parseDomEvidence(domEvidenceFile);
     evidence.x_login_href = { ok: dom?.accountHref === NIGHT_ENVIRONMENT.account.href && Number(dom?.hrefCount || 0) >= 1, detail: dom ? `${dom.accountHref} count=${dom.hrefCount}` : "dom_evidence_missing" };
@@ -295,6 +307,7 @@ function main() {
     domEvidenceFile: domIndex >= 0 ? args[domIndex + 1] : null,
     staticOnly: args.includes("--static-only"),
     articleOnly: args.includes("--article-only"),
+    generationOnly: args.includes("--generation-only"),
     injectMissing: inject,
   });
   console.log(JSON.stringify(result, null, 2));
