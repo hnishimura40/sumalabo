@@ -106,7 +106,7 @@ const REQUIRED_DRAFTS = [
   "review_report.md", "final_article.md", "slide_plan.md",
 ];
 
-const CHATGPT_OUTPUTS = {
+export const CHATGPT_OUTPUTS = {
   chatgpt_turn1_research: "research_report.md",
   chatgpt_turn2_selection: "editorial_selection.md",
   chatgpt_turn3_draft: "draft_article.md",

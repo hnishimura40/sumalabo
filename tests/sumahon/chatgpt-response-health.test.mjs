@@ -8,12 +8,33 @@ import { tmpdir } from "node:os";
 import {
   analyzeResponse,
   buildStructuredRetryPrompt,
+  extractCodexTurn,
   extractLatestAssistant,
   runHealthCheck,
 } from "../../scripts/automation/chatgpt-response-health.mjs";
 
 const execFileAsync = promisify(execFile);
 const SCRIPT = join(process.cwd(), "scripts", "automation", "chatgpt-response-health.mjs");
+
+test("Codex output must come from the completed turn and preserve its provenance", () => {
+  const events = [
+    { type: "thread.started", thread_id: "thread-fixture" },
+    { type: "turn.started" },
+    { type: "item.completed", item: { id: "progress", type: "agent_message", text: "作業を開始します。" } },
+    { type: "item.completed", item: { id: "final", type: "agent_message", text: `${completeReport}\n${completeReport}\n${completeReport}` } },
+    { type: "turn.completed", usage: { output_tokens: 450 } },
+  ];
+  const encode = (list) => list.map((event) => JSON.stringify(event)).join("\n");
+  const turn = extractCodexTurn(encode(events));
+  assert.equal(turn.source, "codex_exec_jsonl");
+  assert.equal(turn.threadId, "thread-fixture");
+  assert.equal(turn.messageId, "final");
+  const { metrics } = runHealthCheck({ raw: turn.usage, step: "chatgpt_turn1_research", codexTurn: turn });
+  assert.equal(metrics.healthy, true, metrics.reasons.join(","));
+  assert.equal(metrics.outputTokensActual, 450);
+  assert.throws(() => extractCodexTurn(encode(events.slice(0, -1))), /codex_completed_response_missing/);
+  assert.throws(() => extractCodexTurn(encode([...events.slice(0, -1), { type: "turn.failed" }])), /codex_completed_response_missing/);
+});
 
 function message(id, role, text, createTime) {
   return {

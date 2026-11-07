@@ -89,6 +89,21 @@ export function extractLatestAssistant(raw) {
   return { text: "", source: "unrecognized_json", messageId: null };
 }
 
+export function extractCodexTurn(jsonl) {
+  const events = jsonl.trim().split(/\r?\n/).map((line) => JSON.parse(line));
+  const started = events[0];
+  const turns = events.filter((event) => event.type === "turn.started");
+  const completed = events.at(-1);
+  const message = events.slice(events.indexOf(turns[0]) + 1, -1)
+    .findLast((event) => event.type === "item.completed" && event.item?.type === "agent_message")?.item;
+  if (started?.type !== "thread.started" || !started.thread_id || turns.length !== 1 || completed?.type !== "turn.completed"
+      || events.some((event) => event.type === "turn.failed" || event.type === "error")
+      || !message?.id || typeof message.text !== "string" || !message.text.trim()) {
+    throw new Error("codex_completed_response_missing");
+  }
+  return { text: message.text, source: "codex_exec_jsonl", messageId: message.id, threadId: started.thread_id, usage: completed.usage };
+}
+
 function stripCitationNoise(text) {
   return text
     .replace(/cite[^]*/g, "")
@@ -178,8 +193,10 @@ export function buildStructuredRetryPrompt(originalPrompt, step) {
     `## 元の依頼（情報欠落防止のため全文保持）\n\n${originalPrompt.trim()}\n`;
 }
 
-export function runHealthCheck({ raw, step, attempt = 1, originalPrompt = "", templateVersion = null }) {
-  const extracted = templateVersion === "ai-v2" && raw?.headline && raw?.answer ? {text:JSON.stringify(raw,null,2),source:"ai_v2_json_model"} : extractLatestAssistant(raw);
+export function runHealthCheck({ raw, step, attempt = 1, originalPrompt = "", templateVersion = null, codexTurn = null }) {
+  const extracted = codexTurn || (templateVersion === "ai-v2" && raw?.headline && raw?.answer
+    ? { text: JSON.stringify(raw, null, 2), source: "ai_v2_json_model" }
+    : extractLatestAssistant(raw));
   const metrics = analyzeResponse(extracted.text, { step, externalMetrics: extracted.externalMetrics, raw, templateVersion });
   const retryPrompt = !metrics.healthy && attempt < 2 ? (templateVersion === "ai-v2" && ['chatgpt_turn3_draft','chatgpt_turn5_final','chatgpt_turn6_slideplan'].includes(step) ? `AI記事v2の構造化リトライ（1回限り）。調査と一次情報を維持し、docs/ai-article-template-v2.mdの指定形式を完成させる。本文はJSONモデルの全必須項目、画像計画はthumbnailと任意のslide01のみ。旧8枚構成やMarkdown本文へ戻さない。\n不合格理由：${metrics.reasons.join('／')}\n元の依頼：\n${originalPrompt}` : buildStructuredRetryPrompt(originalPrompt, step)) : null;
   return { extracted, metrics, retryPrompt, attempt };
@@ -188,18 +205,25 @@ export function runHealthCheck({ raw, step, attempt = 1, originalPrompt = "", te
 function main() {
   const args = parseArgs(process.argv.slice(2));
   if (!args.input || !args.output || !args.report || !args.step) {
-    console.error("usage: --input <raw.json|text> --output <markdown> --report <json> --step <chatgpt_step> [--attempt 1|2] [--original-prompt <path>] [--retry-prompt <path>] [--dom-fallback <path>]");
+    console.error("usage: --input <raw.json|text> --output <markdown> --report <json> --step <chatgpt_step> [--attempt 1|2] [--original-prompt <path>] [--retry-prompt <path>] [--dom-fallback <path>|--codex-jsonl]");
     process.exitCode = 2;
     return;
   }
   const inputPath = path.resolve(args.input);
   const inputText = fs.readFileSync(inputPath, "utf8").replace(/^\uFEFF/, "");
   let raw;
-  try { raw = JSON.parse(inputText); } catch { raw = inputText; }
+  let codexTurn = null;
+  if (args["codex-jsonl"]) {
+    if (args["dom-fallback"]) throw new Error("codex_jsonl_cannot_use_dom_fallback");
+    codexTurn = extractCodexTurn(inputText);
+    raw = codexTurn.usage;
+  } else {
+    try { raw = JSON.parse(inputText); } catch { raw = inputText; }
+  }
   const attempt = Math.max(1, Number(args.attempt || 1));
   const originalPrompt = args["original-prompt"] ? fs.readFileSync(path.resolve(args["original-prompt"]), "utf8") : "";
   const templateVersion = responseTemplate(args.output);
-  let result = runHealthCheck({ raw, step: args.step, attempt, originalPrompt, templateVersion });
+  let result = runHealthCheck({ raw, step: args.step, attempt, originalPrompt, templateVersion, codexTurn });
   let selectedInput = inputPath;
   if (!result.metrics.healthy && args["dom-fallback"] && fs.existsSync(path.resolve(args["dom-fallback"]))) {
     const fallbackPath = path.resolve(args["dom-fallback"]);
@@ -229,6 +253,7 @@ function main() {
     reasons: result.metrics.reasons,
     metrics: result.metrics,
     extraction: { source: result.extracted.source, messageId: result.extracted.messageId || null },
+    ...(codexTurn && { codexThreadId: codexTurn.threadId }),
     inputPath: selectedInput,
     outputPath,
     retryPromptPath,
