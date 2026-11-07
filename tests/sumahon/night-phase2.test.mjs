@@ -122,7 +122,7 @@ test("parent, child command, and standalone inspection share the same preserved-
   assert.equal(blocked.status, 30);
   assert.deepEqual(JSON.parse(blocked.stdout).dangerous, ["?? dangerous.txt"]);
   const prompt = read("docs/night_driver_prompt.md");
-  assert.match(prompt, /node scripts\/automation\/runner-hygiene\.mjs/);
+  assert.match(prompt, /node scripts\/automation\/night-environment-check\.mjs --generation-only/);
   assert.match(prompt, /独自にclean\/dirtyを再判定してはならない/);
   assert.doesNotMatch(prompt, /`git status --short`/);
   assert.match(read("package.json"), /"night:runner-hygiene"/);
@@ -389,6 +389,7 @@ test("night environment configuration owns paths, token names, and permissions",
   });
   assert.deepEqual(environment.fatalChecks, ["environment_definition", "github_token", "repository_sha", "runner_dirty"]);
   assert.deepEqual(environment.articleChecks, environment.fatalChecks);
+  assert.deepEqual(environment.generationChecks, ["environment_definition", "repository_sha", "runner_dirty"]);
   assert.ok(environment.warningChecks.includes("x_login_href"));
   assert.deepEqual(environment.xStepFatalChecks, ["chrome_profile", "x_login_href", "dom_read"]);
   assert.ok(environment.requiredChecks.includes("dom_read"));

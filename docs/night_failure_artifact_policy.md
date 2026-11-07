@@ -15,9 +15,9 @@
 
 ## X環境警告時の下限運転
 
-第0工程では、記事工程を成立させる検査とX投稿だけに必要な検査を分離する。
+第0工程では、記事公開を成立させる検査とX投稿だけに必要な検査を分離する。
 
-- 致命検査: `GH_TOKEN`、runner HEAD/origin main一致、runner tracked dirty 0、環境定義とrunnerの健全性。不合格なら記事工程へ入らず `failed`。
+- 外側ラッパーの致命検査（`--article-only`）は、`GH_TOKEN`、runner HEAD/origin main一致、環境定義とrunnerの健全性。不合格なら記事工程へ入らず `failed`。認証情報を受け取らない子のCodexでは生成専用の `--generation-only` を使い、環境定義、SHA一致、runnerの健全性を再確認する。
 - X警告検査: Xログインhref、x.comサイト許可、ファイルURL許可、拡張/native-host接続、DOM読取、Chromeプロファイル、外部X台帳I/O。不合格でも記事生成・公開・PR merge・strict verifyまで続行する。
 
 記事3点が実物確認でき、Xだけが環境警告で実行できない場合も本体は `success`（終了コード0）とする。副契約は `skipped` または `failed` とし、「本体成功／X失敗」を通知する。
