@@ -36,6 +36,18 @@ test("Codex output must come from the completed turn and preserve its provenance
   assert.throws(() => extractCodexTurn(encode([...events.slice(0, -1), { type: "turn.failed" }])), /codex_completed_response_missing/);
 });
 
+test("night final copy with missing reader guidance is returned for a targeted retry", () => {
+  const codexTurn = { text: completeReport.repeat(5), source: "codex_exec_jsonl" };
+  const readerPlan = "## 読者翻訳設計\n\n- 本登録 → 本人確認を済ませた登録";
+  const { metrics, retryPrompt } = runHealthCheck({
+    step: "chatgpt_turn5_final", codexTurn, readerPlan, originalPrompt: "調査の根拠を保持する",
+  });
+  assert.equal(metrics.healthy, false);
+  assert.match(retryPrompt, /調査の根拠を保持する/);
+  assert.match(retryPrompt, /関係がある人/);
+  assert.match(retryPrompt, /専門用語「本登録」/);
+});
+
 function message(id, role, text, createTime) {
   return {
     id,

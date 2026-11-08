@@ -8,10 +8,11 @@ import { NIGHT_ENVIRONMENT, SOURCE_ROOT } from "./night-environment.mjs";
 import { assistedInstruction, CHATGPT_OUTPUTS, currentStep, loadState } from "./phase-a-orchestrator.mjs";
 
 const ARTICLE_LOG = path.join(SOURCE_ROOT, "logs", "article");
-const runNode = (file, args, env) => {
+const runNode = (file, args, env, logFile) => {
   const result = spawnSync(process.execPath, [path.join(SOURCE_ROOT, "scripts", "automation", file), ...args], {
     cwd: SOURCE_ROOT, env, encoding: "utf8", windowsHide: true,
   });
+  if (logFile) writeFileSync(logFile, `${result.stdout || ""}${result.stderr || ""}`, "utf8");
   if (result.error) throw result.error;
   return result.status;
 };
@@ -31,9 +32,10 @@ function stagePrompt(state, step, pick) {
     .map(([, file]) => `drafts/refinement/${state.slug}/${file}`);
   const extra = {
     chatgpt_turn1_research: "公式一次情報を実際に確認し、URL・公開日・確認事項を記録する。採用情報は調査の起点としてのみ扱う。アプリ順位・ベンチマークの国、対象、条件、観測時点、日本での利用可否を混同しない。AIとの因果や利用事実を推測で埋めない。",
-    chatgpt_turn2_selection: "なぜ今注目か、読者のどの疑問に答えるか、AIの視点を使う場合は何を理解できるかを残す。調査で裏付けられない切り口は不採用とする。判定を独立した行に「判定: 採用」「判定: 限定採用」「判定: 不採用」のいずれかで記す。",
+    chatgpt_turn2_selection: "なぜ今注目か、読者のどの疑問に答えるか、AIの視点を使う場合は何を理解できるかを残す。調査で裏付けられない切り口は不採用とする。判定を独立した行に「判定: 採用」「判定: 限定採用」「判定: 不採用」のいずれかで記す。読者翻訳設計の専門用語は、公開本文で本当に使う表記を一語ずつ記す。略称・別名や複数の用語を一つの行にまとめない。",
+    chatgpt_turn3_draft: "本文前半に『関係がある人』と『あまり関係がない人』の両方を明記する。読者翻訳設計に記録した各用語の表記を本文でも維持し、最初に出す箇所で『用語（短い日常語の説明）』または『用語とは、～の仕組みです』のように説明する。",
     chatgpt_turn4_review: "独立した見出し「## Pass 1」と「## Pass 2」の下で、事実・数値・出典の確認と、読者への伝わり方・判断材料の確認をそれぞれ実施する。必要なら3回目を追加し、修正箇所を具体的に示す。",
-    chatgpt_turn5_final: "2回のレビューで指摘された箇所を修正し、公開本文だけを返す。修正できない事実は削るか未確定として区別する。",
+    chatgpt_turn5_final: "2回のレビューで指摘された箇所を修正し、公開本文だけを返す。修正できない事実は削るか未確定として区別する。本文前半の『関係がある人』『あまり関係がない人』を維持する。読者翻訳設計に記録した各用語を、その表記で本文に使い、最初の箇所で括弧などを使い日常語で短く説明する。",
     chatgpt_turn6_slideplan: "本文図は ## slide01 から ## slide08 まで各1回、サムネイルは ## thumbnail を1回使う。それぞれ図だけで伝わる異なる論点と、読者向けの短い説明を持たせる。",
   };
   return [
@@ -74,6 +76,7 @@ function refineStep(state, step, pick, { env, runId, temp }) {
     const health = runNode("chatgpt-response-health.mjs", [
       "--input", events, "--codex-jsonl", "--output", output, "--report", report, "--step", step.name,
       "--attempt", String(attempt), "--original-prompt", original, "--retry-prompt", retry,
+      ...(step.name === "chatgpt_turn5_final" ? ["--reader-plan", path.join(path.dirname(output), "editorial_selection.md")] : []),
     ], env);
     if (health === 0) {
       if (step.name === "chatgpt_turn2_selection" && /^判定[:：]\s*不採用\s*$/m.test(readFileSync(output, "utf8"))) {
@@ -107,6 +110,9 @@ export function runNightRefinement(pick, { runId, startedAt, temp } = {}) {
       status = runNode("phase-a-orchestrator.mjs", [...args, "--advance", stepName, "--result", report], env);
     }
     if (status !== 0 || currentStep(loadState(slug))?.name !== "save_drafts") throw new Error("night_refinement_did_not_reach_image_boundary");
+    const gateLog = path.join(ARTICLE_LOG, `${slug}.${runId}.draft-gate.log`);
+    const gate = runNode("../sumalabo-gate.mjs", ["--slug", slug, "--stage", "draft"], env, gateLog);
+    if (gate !== 0) throw new Error(`night_refinement_draft_gate_failed:${gate}`);
     return { ok: true, slug, runId, bodyFigures: 8, nextStep: "save_drafts" };
   } catch (error) {
     writeFileSync(handoff, JSON.stringify({
