@@ -220,10 +220,71 @@ export interface DashboardStats {
   siteStats: SiteStatsBlock[];
 }
 
+/* -------------------------------------------------------------------------- */
+/*  シミュレーター (AI二刀流 /sim/)                                           */
+/*  定数は scripts/fetch-dashboard-data.mjs の SIM を正とする                 */
+/* -------------------------------------------------------------------------- */
+
+export interface SimulatorWindow {
+  /** /sim/ の page_view を送ったユーザー数 (開いた人) */
+  openUsers: number;
+  /** /sim/ の表示回数 */
+  openViews: number;
+  /** sim_ で始まるイベントを送ったユーザー数 (遊んだ人) */
+  playUsers: number;
+  /** sim_ イベントの回数 */
+  playEvents: number;
+  /** playUsers / openUsers (0〜1)。開いた人が 0 なら null */
+  playRate: number | null;
+}
+
+export interface SimulatorDailyPoint {
+  /** YYYY-MM-DD */
+  date: string;
+  openUsers: number;
+  openViews: number;
+  playUsers: number;
+  playEvents: number;
+}
+
+export interface SimulatorEventStat {
+  /** GA4 のイベント名 (sim_game など) */
+  name: string;
+  count: number;
+  users: number;
+}
+
+export interface SimulatorBreakdownRow {
+  event: string;
+  /** カスタムディメンションの値 (年度 / 進め方 / タブ) */
+  value: string;
+  count: number;
+  users: number;
+}
+
+export interface SimulatorStats {
+  siteId: SiteId;
+  pathPrefix: string;
+  eventPrefix: string;
+  dataRange: { start: string; end: string; days: number };
+  windows: { d7: SimulatorWindow; d28: SimulatorWindow };
+  /** 日付昇順、DAILY_DAYS 点 (欠測日は 0) */
+  daily: SimulatorDailyPoint[];
+  /** 回数降順 */
+  events: { d7: SimulatorEventStat[]; d28: SimulatorEventStat[] };
+  /** GA4 で登録済みのカスタムディメンション (season / how / tab) だけ入る */
+  breakdowns: Record<string, { d7: SimulatorBreakdownRow[]; d28: SimulatorBreakdownRow[] }>;
+  /** 未登録で内訳を出せないカスタムディメンション */
+  missingBreakdownParams: string[];
+  fetchedAt: string;
+}
+
 export interface DashboardSnapshot {
   generatedAt: string;
   /** 既存 UI 互換のサイト別表示データ */
   sites: SiteDashboard[];
   /** Phase 3A で追加: 後段分析用の生統計。未取得時は省略可 */
   stats?: DashboardStats;
+  /** シミュレーター欄。旧スナップショット・サンプルでは省略、取得失敗時は null */
+  simulator?: SimulatorStats | null;
 }
