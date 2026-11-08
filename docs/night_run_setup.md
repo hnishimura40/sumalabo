@@ -175,3 +175,5 @@ node scripts/automation/phase-a-outer-publish.mjs --auth-probe
 Auth Probeはトークン値を出力せず、GitHub本人確認、対象repositoryへの到達、有効期限と残り日数を記録する。
 既定では残り14日以下を`gh_token_expiring`（exit 45）、期限切れを`gh_token_expired`（exit 44）、
 未配置を`gh_token_missing`（exit 41）としてfail-closedする。警告日数は`GH_TOKEN_WARN_DAYS`で変更できる。
+
+定刻起動ではWindowsユーザーに登録された最新の値を公開側で読み、本文着手前にAuth Probeを実行する。有効な期限間近のトークンは警告を残して続行する。認証情報を外した状態で、外側ラッパーが本文の6工程を順に起動し、合格後に画像担当のCodexへ渡す。
