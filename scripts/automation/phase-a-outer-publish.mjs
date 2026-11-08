@@ -2,7 +2,7 @@
 // Codex が workspace 内へ置いた成果物だけを、Codex終了後の信頼済みラッパーが公開する。
 // Web由来の文面をコマンドとして解釈せず、slugから導出した固定パスだけをGitへ渡す。
 
-import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
@@ -113,9 +113,34 @@ export function dryRun(slug, root = ROOT) {
   return { ok: true, slug, branch: value.branch, paths: expected, mode: "dry-run" };
 }
 
-async function publish(slug) {
+export function verifyEightBodyFigures(slug, root = ROOT) {
+  const [article] = allowedPaths(slug);
+  const mdx = readFileSync(path.join(root, article), "utf8");
+  const sections = [...mdx.matchAll(/<section\b[^>]*\bclass=["'][^"']*\barticle-slide-section\b[^"']*["'][^>]*>([\s\S]*?)<\/section>/g)];
+  const figures = sections.map(([, section]) => {
+    const images = [...section.matchAll(/<img\b[^>]*\bsrc=["']([^"']+)["']/g)];
+    return images.length === 1 ? images[0][1] : null;
+  });
+  const prefix = `/images/articles/${slug}/`;
+  if (figures.length !== 8 || figures.some((src, index) => {
+    if (!src?.startsWith(prefix)) return true;
+    const name = src.slice(prefix.length);
+    if (!/^slide0[1-8](?:-[a-z0-9-]+)?\.webp$/.test(name) || !name.startsWith(`slide0${index + 1}`)) return true;
+    const file = statSync(path.join(root, "public", src), { throwIfNoEntry: false });
+    return !file?.isFile() || file.size === 0;
+  })) throw new Error("image_quality_gate_failed:eight_numbered_body_figures_required");
+}
+
+async function publish(slug, { requireEightBodyFigures = false } = {}) {
   requireDedicatedToken();
   const { file, value, expected } = readManifest(slug);
+  if (requireEightBodyFigures) {
+    try { verifyEightBodyFigures(slug); }
+    catch (error) {
+      writeFileSync(file, JSON.stringify({ ...value, status: "failed", errorReason: error.message }, null, 2) + "\n", "utf8");
+      throw error;
+    }
+  }
   ensureOnlyAllowedChanges(expected);
 
   let r = run("git", ["switch", "-c", value.branch]);
@@ -205,7 +230,7 @@ async function main() {
     const slugs = readySlugs();
     // This crosses PowerShell's native-output decoding boundary, so keep the
     // decision handoff ASCII and machine-readable.
-    console.log(JSON.stringify({ slug: slugs[0] || null }));
+    console.log(JSON.stringify({ slug: slug ? (slugs.includes(slug) ? slug : null) : slugs[0] || null }));
     process.exitCode = 0;
     return;
   }
@@ -221,7 +246,8 @@ async function main() {
     return;
   }
   if (!slug) throw new Error("usage: --slug <slug> [--dry-run|--resume-pending]");
-  const result = argv.includes("--dry-run") ? dryRun(slug) : argv.includes("--resume-pending") ? await resumePending(slug) : await publish(slug);
+  const result = argv.includes("--dry-run") ? dryRun(slug) : argv.includes("--resume-pending") ? await resumePending(slug)
+    : await publish(slug, { requireEightBodyFigures: argv.includes("--require-eight-body-figures") });
   console.log(JSON.stringify(result));
 }
 

@@ -138,6 +138,13 @@ try {
   # night-x-post-step.ps1 内だけで検査し、公開フローを停止させない。
 
   if (-not $RunnerSelfTest) {
+    # Task Scheduler may still have an older inherited user environment after token rotation.
+    $registeredToken = [Environment]::GetEnvironmentVariable("GH_TOKEN", "User")
+    if ($registeredToken) {
+      $env:GH_TOKEN = $registeredToken
+      $env:GH_TOKEN_EXPIRES_AT = [Environment]::GetEnvironmentVariable("GH_TOKEN_EXPIRES_AT", "User")
+      $registeredToken = $null
+    }
     Log "Phase 0: article-only environment evidence (Chrome/X checks are isolated to Phase C)"
     $staticEnvironment = node scripts/automation/night-environment-check.mjs --article-only 2>&1
     $staticEnvironmentExit = $LASTEXITCODE
@@ -147,6 +154,13 @@ try {
     if ($staticEnvironmentExit -eq 30 -or -not $staticJson -or -not $staticJson.canProceed) {
       $missing = if ($staticJson -and $staticJson.fatalFailedChecks.Count) { [string]$staticJson.fatalFailedChecks[0] } else { "environment_definition" }
       $exitCode = Record-ContractOutcome "fail" "environment_preflight_failed:$missing" "Phase 0 static evidence failed"
+      exit $exitCode
+    }
+    $authProbe = & node scripts/automation/github-token-probe.mjs 2>&1
+    $authCode = $LASTEXITCODE
+    Log (($authProbe | Out-String).Trim())
+    if ($authCode -notin @(0, 45)) {
+      $exitCode = Record-ContractOutcome "fail" "publisher_auth_preflight_failed" "auth probe exit=$authCode"
       exit $exitCode
     }
     Log "Phase 0 PASS: 記事公開の致命項目に合格。Chrome/X検査は未実行。"
@@ -233,25 +247,39 @@ try {
   # Codex の出力は専用ファイルへ（runner 本体ログや tail との Add-Content ロック競合を避ける。
   # 2026-07-05 の初回実走で Add-Content が sharing violation で全損した対策）
   $CodexLog = Join-Path $NightDir "$DateStr.$RunId.codex.log"
-  Log "launch: codex exec (ephemeral, workspace-write) -> $CodexLog"
-  $sw = [System.Diagnostics.Stopwatch]::StartNew()
   $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "--model", "gpt-6.1-sol", "-c", 'model_reasoning_effort="high"', "-C", $RepoRoot, "-")
   # GH_TOKENは外側publisher専用。Codex子プロセスへ継承させない。
   $publisherToken = $env:GH_TOKEN
   $publisherExpiry = $env:GH_TOKEN_EXPIRES_AT
+  $githubAlias = $env:GITHUB_TOKEN
   Remove-Item Env:GH_TOKEN -ErrorAction SilentlyContinue
   Remove-Item Env:GH_TOKEN_EXPIRES_AT -ErrorAction SilentlyContinue
+  Remove-Item Env:GITHUB_TOKEN -ErrorAction SilentlyContinue
   $previousTemp = $env:TEMP
   $previousTmp = $env:TMP
   $env:TEMP = $NightTempDir
   $env:TMP = $NightTempDir
   try {
+    Log "Phase A text: outer Codex refinement"
+    $refinementText = (& node scripts/automation/codex-refinement-step.mjs 2>&1 | Out-String).Trim()
+    $refinementExit = $LASTEXITCODE
+    Log $refinementText
+    $refinement = $null
+    try { $refinement = $refinementText | ConvertFrom-Json } catch {}
+    if ($refinementExit -ne 0 -or -not $refinement -or -not $refinement.ok -or $refinement.runId -ne $RunId -or $refinement.nextStep -ne "save_drafts") {
+      $exitCode = Record-ContractOutcome "fail" "outer_refinement_failed" $refinementText
+      exit $exitCode
+    }
+    $Prompt += "`n`n外側の本文工程の対象slug: $($refinement.slug)。このslugを --slug に指定し、save_draftsから再開する。"
+    Log "launch: codex exec (ephemeral, workspace-write) -> $CodexLog"
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
     $codexExit = Invoke-CodexIsolated $Prompt $codexArgs $CodexLog "codex"
   } finally {
     $env:TEMP = $previousTemp
     $env:TMP = $previousTmp
     if ($publisherToken) { $env:GH_TOKEN = $publisherToken }
     if ($publisherExpiry) { $env:GH_TOKEN_EXPIRES_AT = $publisherExpiry }
+    if ($githubAlias) { $env:GITHUB_TOKEN = $githubAlias }
   }
   $sw.Stop()
   Log "codex exited: code=$codexExit elapsed=$([Math]::Round($sw.Elapsed.TotalMinutes,1))min"
@@ -275,13 +303,13 @@ try {
   }
   # ---- 4. Codex外側で Git/PR/Preview を実行 ----
   try {
-    $handoffText = (node scripts/automation/phase-a-outer-publish.mjs --decide-json 2>$null | Out-String)
+    $handoffText = (node scripts/automation/phase-a-outer-publish.mjs --decide-json --slug $refinement.slug 2>$null | Out-String)
     $handoff = $null
     try { $handoff = $handoffText | ConvertFrom-Json } catch { throw "outer_publish_decision_invalid_json: $handoffText" }
     if ($handoff.slug) {
       $publishSlug = [string]$handoff.slug
       Log "Outer publish: $publishSlug を専用GH_TOKEN経路でcommit/push/PR/finalizeする。"
-      node scripts/automation/phase-a-outer-publish.mjs --slug $publishSlug 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
+      node scripts/automation/phase-a-outer-publish.mjs --slug $publishSlug --require-eight-body-figures 2>&1 | Out-File -FilePath $CodexLog -Encoding utf8 -Append
       if ($LASTEXITCODE -ne 0) {
         $exitCode = Record-ContractOutcome "fail" "outer_publish_failed" "outer publisher exit=$LASTEXITCODE"
         exit $exitCode

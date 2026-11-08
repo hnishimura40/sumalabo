@@ -553,7 +553,7 @@ export function slugFromPick(pick, now = new Date()) {
     .slice(0, 6)
     .join("-");
   const base = ascii && ascii.length >= 8 ? ascii : `scout-${Date.now().toString(36)}`;
-  return `${ym}-${base}`.slice(0, 80);
+  return `${ym}-${base}`.slice(0, 80).replace(/-+$/, "");
 }
 
 // ---- 本体 ----

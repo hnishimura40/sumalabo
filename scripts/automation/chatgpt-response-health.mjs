@@ -8,6 +8,8 @@ import path from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
 import { analyzeAiV2Response, responseTemplate } from "./ai-v2-response-health.mjs";
+import { parseSlidePlan } from "./codex-image-stage.mjs";
+import { validatePerformanceBlock } from "./phase-a-orchestrator.mjs";
 
 const DEFAULT_LIMITS = {
   chatgpt_turn1_research: { minBodyBlocks: 3, minProseChars: 600, minHeadings: 3 },
@@ -198,6 +200,22 @@ export function runHealthCheck({ raw, step, attempt = 1, originalPrompt = "", te
     ? { text: JSON.stringify(raw, null, 2), source: "ai_v2_json_model" }
     : extractLatestAssistant(raw));
   const metrics = analyzeResponse(extracted.text, { step, externalMetrics: extracted.externalMetrics, raw, templateVersion });
+  if (codexTurn && step === "chatgpt_turn4_review"
+      && ![1, 2].every((number) => new RegExp(`^## +Pass ${number}\\b`, "m").test(extracted.text))) {
+    metrics.reasons.push("night_review_requires_two_passes");
+  }
+  if (codexTurn && step === "chatgpt_turn6_slideplan" && templateVersion !== "ai-v2") {
+    const ids = parseSlidePlan(extracted.text).map(({ id }) => id).sort();
+    const expected = [...Array.from({ length: 8 }, (_, index) => `slide0${index + 1}`), "thumbnail"];
+    if (ids.join(",") !== expected.join(",")) metrics.reasons.push("night_slide_plan_requires_eight_body_figures_and_thumbnail");
+    const performance = validatePerformanceBlock(extracted.text);
+    if (!performance.ok) metrics.reasons.push(`night_slide_plan_performance_block:${performance.missing.join(",")}`);
+  }
+  if (codexTurn && step === "chatgpt_turn2_selection") {
+    const decisions = [...extracted.text.matchAll(/^判定[:：]\s*(採用|限定採用|不採用)\s*$/gm)];
+    if (decisions.length !== 1) metrics.reasons.push("night_editorial_decision_missing_or_ambiguous");
+  }
+  if (metrics.reasons.length) metrics.healthy = false;
   const retryPrompt = !metrics.healthy && attempt < 2 ? (templateVersion === "ai-v2" && ['chatgpt_turn3_draft','chatgpt_turn5_final','chatgpt_turn6_slideplan'].includes(step) ? `AI記事v2の構造化リトライ（1回限り）。調査と一次情報を維持し、docs/ai-article-template-v2.mdの指定形式を完成させる。本文はJSONモデルの全必須項目、画像計画はthumbnailと任意のslide01のみ。旧8枚構成やMarkdown本文へ戻さない。\n不合格理由：${metrics.reasons.join('／')}\n元の依頼：\n${originalPrompt}` : buildStructuredRetryPrompt(originalPrompt, step)) : null;
   return { extracted, metrics, retryPrompt, attempt };
 }

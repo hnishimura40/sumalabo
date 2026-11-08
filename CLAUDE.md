@@ -128,6 +128,7 @@ Claude API等の一過性エラーは30分後に1回だけ自動再試行する�
 12. **MDX化・WebP化・build・PR・Preview通知まで進む**（WebP 1枚200KB前後・上限500KB / `npm run build` / `gh pr create` / **Phase A 出口 `npm run sumalabo:finalize`** で CF preview deploy→preview URL検証→review item登録+通知→queue `review_waiting`。直後にPhase Bへ進む）
 
 > ステップ 1〜8 は ChatGPT「すまラボ台本」プロジェクト内で本文を練り上げる工程（Research Pass → Editorial Selection → Sumarabo Translation → Draft → Review×2〜3 → Final Draft）。詳細: [`docs/article_refinement_loop.md`](docs/article_refinement_loop.md)。**この手動フローを省略して、いきなり画像生成や本文の機械生成に進まない。**
+> 2026-11-08 Hiro承認。定刻の夜間runは外側ラッパーがブラウザなしの独立Codex実行で同じ調査・論点整理・下書き・最低2回のレビュー・確定稿・図解設計を順に行う。従来のv3で本文図解8枚とサムネイルを使う。立ち会い時はChatGPTプロジェクトの手順を使う。
 
 > **鮮度チェック（2026-07-04 追加）**: 中断していた記事を再開するとき、final_article 作成から **7 日を超えていたら、スライド生成前に公式情報の再取得（鮮度チェック）を必須** とする。提供条件・価格・日付が動いていたら本文をリフレームしてから画像工程へ進む。
 

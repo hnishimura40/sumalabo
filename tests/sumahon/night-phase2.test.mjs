@@ -292,6 +292,37 @@ test("night parent actor is Codex while Git and X stay outside its sandbox", () 
   assert.match(prompt, /Xを操作・投稿しない/);
   assert.match(prompt, /GitHub CLI設定やGitHub\/Xの資格情報を読まない/);
   assert.match(prompt, /Codex内からRSS取得やスカウト再実行をしない/);
+  assert.ok(wrapper.indexOf("codex-refinement-step.mjs") < wrapper.indexOf("Invoke-CodexIsolated $Prompt $codexArgs"));
+  assert.match(wrapper, /--require-eight-body-figures/);
+});
+
+test("night refinement binds the topic to this run and publishing requires eight numbered body figures", async () => {
+  const { validateNightPick } = await import("../../scripts/automation/codex-refinement-step.mjs");
+  const { verifyEightBodyFigures } = await import("../../scripts/automation/phase-a-outer-publish.mjs");
+  const slug = "202611-eight-figures";
+  const startedAt = "2026-11-07T19:30:00Z";
+  const now = Date.parse("2026-11-07T19:30:05Z");
+  const pick = { title: "test", suggestedSlug: slug, at: "2026-11-07T19:30:01Z" };
+  assert.equal(validateNightPick(pick, startedAt, now), slug);
+  assert.throws(() => validateNightPick({ ...pick, at: "2026-11-06T19:30:01Z" }, startedAt, now), /fresh_scout_pick_required/);
+
+  const root = mkdtempSync(path.join(os.tmpdir(), "sumalabo-eight-figures-"));
+  const articles = path.join(root, "content", "articles");
+  const images = path.join(root, "public", "images", "articles", slug);
+  mkdirSync(articles, { recursive: true });
+  mkdirSync(images, { recursive: true });
+  const mdx = path.join(articles, `${slug}.mdx`);
+  const sections = Array.from({ length: 8 }, (_, index) => {
+    const image = `slide0${index + 1}-caption.webp`;
+    writeFileSync(path.join(images, image), "fixture");
+    return `<section class="article-slide-section article-wide-block"><figure><img src="/images/articles/${slug}/${image}" /></figure></section>`;
+  });
+  writeFileSync(mdx, sections.join("\n"));
+  assert.doesNotThrow(() => verifyEightBodyFigures(slug, root));
+  writeFileSync(mdx, sections.slice(0, 7).join("\n"));
+  assert.throws(() => verifyEightBodyFigures(slug, root), /eight_numbered_body_figures_required/);
+  writeFileSync(mdx, [...sections.slice(0, 7), sections[6]].join("\n"));
+  assert.throws(() => verifyEightBodyFigures(slug, root), /eight_numbered_body_figures_required/);
 });
 
 test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentials", () => {

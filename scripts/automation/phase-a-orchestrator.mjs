@@ -314,7 +314,7 @@ const jobs = ${JSON.stringify(jobs)};
 };
 
 // ---------- assisted ステップの指示文 ----------
-function assistedInstruction(state, step) {
+export function assistedInstruction(state, step, { nightRefinement = false } = {}) {
   const slug = state.slug;
   const dir = `drafts/refinement/${slug}`;
   const chatgptResult = CHATGPT_OUTPUTS[step.name] ? ` --result logs/article/${slug}.${step.name}.health.json` : "";
@@ -367,6 +367,9 @@ function assistedInstruction(state, step) {
   map.chatgpt_turn6_slideplan += `\n**演出ブロックの追加必須欄**: \`手・小道具\` は「壊れにくい手を自然に描く」を既定にする。自然な構図を優先し、手を隠すことを既定にしない。開いた手・軽く添える手を優先し、手は小さめ・遠め、動作する手は片手だけ、もう片方は体側で自然に休ませる。物を強く握る、両手で別々の動作をする、指を複雑に組む・数える、手のクローズアップは避ける。小道具が不可欠な場合だけ片手で軽く持つ。手を消すためだけの後ろ手・机の陰・フレームアウトは使わない。テーマ衣装・小道具・姿勢・視線・背景を削らず、標準衣装・棒立ちへ退避しない。\`表情\` も記事の感情トーンから自動導出する。身体構造は、ひまり=腕/手/脚各2、らぼまる=腕・手・脚・足が左右各1つ（追加突起はアンテナ1本と左右の耳ビレのみ、腕は短く・太く・丸い）を前提にする。`;
   map.factcheck_images += `\n**身体構造は認識アンカーとは別の公開ブロック項目**: 手がある画像は手の本数と指を最初に確認し、形・比率・付け根も見る。ひまりは腕/手/脚各2、らぼまるは腕・手・脚・足が左右各1つで、追加突起はアンテナ1本と左右の耳ビレだけ。余分な手・腕、重複、顔の破綻、物体との融合、腕・脚の不自然な長さ/細さ、触手状・ホース状・急なS字、付け根や関節の破綻は needs_revision。日本語誤字・アンカー不一致と同様に、対象画像だけCodexで1回再生成して再検品する。`;
   const label=isAiV2(state)&&step.name==='chatgpt_turn6_slideplan'?'Turn6: slide_plan（本文図0〜1枚とサムネ）':step.label;
+  if (nightRefinement) {
+    return map[step.name].replace(/^ChatGPT「すまラボ台本」プロジェクトで新規チャットを開き、|^同チャットで /, "");
+  }
   return `\n=== NEXT ACTION [${step.name}] ${label} ===\n${map[step.name] || "(手順未定義)"}\n${common}`;
 }
 
@@ -465,7 +468,7 @@ async function halt(state, step, reason) {
 
 async function main() {
   const argv = process.argv.slice(2);
-  const args = { theme: null, slug: null, templateVersion: null, advance: null, fail: null, reason: null, result: null, status: false };
+  const args = { theme: null, slug: null, templateVersion: null, advance: null, fail: null, reason: null, result: null, status: false, refinementOnly: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--theme") args.theme = argv[++i];
@@ -476,6 +479,7 @@ async function main() {
     else if (a === "--reason") args.reason = argv[++i];
     else if (a === "--result") args.result = argv[++i];
     else if (a === "--status") args.status = true;
+    else if (a === "--refinement-only") args.refinementOnly = true;
   }
   if (!args.slug) {
     console.error('usage: --theme "..." --slug <slug> | --slug <slug> [--status|--advance <step>|--fail <step> --reason "..."]');
@@ -556,6 +560,7 @@ async function main() {
   // script ステップを連続実行し、assisted に当たったら指示を出して停止
   for (;;) {
     const step = currentStep(state);
+    if (args.refinementOnly && step?.name === "save_drafts") return;
     if (!step) {
       console.log(`\n=== PHASE A COMPLETE: ${state.slug} ===`);
       console.log(isAiV2(state)&&!aiPolicy.firstPublicationApproval ? "AI記事v2の初回プレビューまで完了。公開承認が空のため、外側Phase Bでマージ前に保留します。未公開を夜間runの成功とは記録しません。" : "立ち会い・夜間共通: 機械検品合格後は人の応答を待たず公開へ進みます。画像は公開後に事後確認し、問題時は再生成→差し替え→キャッシュパージで即時修正します。");
