@@ -445,6 +445,197 @@ async function fetchArticleMomentum(client, property) {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  シミュレーター (AI二刀流 /sim/) — 開いた人・遊んだ人・イベント別           */
+/*                                                                            */
+/*  NPB シミュレーター v3.23 以降、利用者が自分で押した操作だけが `sim_` で   */
+/*  始まる GA4 イベントとして送られる (開いただけでは送られない)。            */
+/*    開いた人 = /sim/ の page_view を送ったユーザー数                        */
+/*    遊んだ人 = eventName が sim_ で始まるイベントを送ったユーザー数        */
+/*  7日 / 28日の人数は日別の足し算ではなく期間指定で取る (重複を数えない)。   */
+/* -------------------------------------------------------------------------- */
+
+export const SIM = Object.freeze({
+  /** GA4 プロパティを借りるサイト */
+  SITE_ID: 'ainitoryu',
+  /** シミュレーターのページパス (前方一致) */
+  PATH_PREFIX: '/sim/',
+  /** シミュレーターが送るイベント名の接頭辞 */
+  EVENT_PREFIX: 'sim_',
+  /** 日別推移の日数 */
+  DAILY_DAYS: 90,
+  /** イベント単位のカスタムディメンション。GA4 で登録済みのものだけ内訳を取る */
+  BREAKDOWN_PARAMS: ['season', 'how', 'tab'],
+});
+
+const SIM_WINDOWS = [
+  { key: 'd7', startDate: '6daysAgo' },
+  { key: 'd28', startDate: '27daysAgo' },
+];
+
+/** 2 dateRanges 指定時の行末 dateRange ディメンションを 'd7' / 'd28' に読み替える */
+function simWindowKey(value) {
+  if (value === 'd7' || value === 'date_range_0') return 'd7';
+  if (value === 'd28' || value === 'date_range_1') return 'd28';
+  return null;
+}
+
+async function fetchSimulator(client, property) {
+  const openFilter = {
+    andGroup: {
+      expressions: [
+        { filter: { fieldName: 'eventName', stringFilter: { matchType: 'EXACT', value: 'page_view' } } },
+        { filter: { fieldName: 'pagePath', stringFilter: { matchType: 'BEGINS_WITH', value: SIM.PATH_PREFIX } } },
+      ],
+    },
+  };
+  const playFilter = {
+    filter: { fieldName: 'eventName', stringFilter: { matchType: 'BEGINS_WITH', value: SIM.EVENT_PREFIX } },
+  };
+  const windowRanges = SIM_WINDOWS.map((w) => ({ startDate: w.startDate, endDate: 'today', name: w.key }));
+  const dailyRange = [{ startDate: `${SIM.DAILY_DAYS - 1}daysAgo`, endDate: 'today' }];
+
+  // 登録済みのカスタムディメンションだけ内訳を取る (未登録の名前を投げると 400 になるため)
+  const [metadata] = await client.getMetadata({ name: `${property}/metadata` });
+  const available = new Set((metadata.dimensions || []).map((d) => d.apiName));
+  const params = SIM.BREAKDOWN_PARAMS.filter((p) => available.has(`customEvent:${p}`));
+  const missingParams = SIM.BREAKDOWN_PARAMS.filter((p) => !params.includes(p));
+
+  const [openDailyRes, playDailyRes, openWinRes, playWinRes, eventsRes, ...breakdownRes] = await Promise.all([
+    client.runReport({
+      property,
+      dateRanges: dailyRange,
+      dimensions: [{ name: 'date' }],
+      metrics: [{ name: 'totalUsers' }, { name: 'screenPageViews' }],
+      dimensionFilter: openFilter,
+      limit: 1000,
+    }),
+    client.runReport({
+      property,
+      dateRanges: dailyRange,
+      dimensions: [{ name: 'date' }],
+      metrics: [{ name: 'totalUsers' }, { name: 'eventCount' }],
+      dimensionFilter: playFilter,
+      limit: 1000,
+    }),
+    client.runReport({
+      property,
+      dateRanges: windowRanges,
+      metrics: [{ name: 'totalUsers' }, { name: 'screenPageViews' }],
+      dimensionFilter: openFilter,
+    }),
+    client.runReport({
+      property,
+      dateRanges: windowRanges,
+      metrics: [{ name: 'totalUsers' }, { name: 'eventCount' }],
+      dimensionFilter: playFilter,
+    }),
+    client.runReport({
+      property,
+      dateRanges: windowRanges,
+      dimensions: [{ name: 'eventName' }],
+      metrics: [{ name: 'eventCount' }, { name: 'totalUsers' }],
+      dimensionFilter: playFilter,
+      limit: 1000,
+    }),
+    ...params.map((p) =>
+      client.runReport({
+        property,
+        dateRanges: windowRanges,
+        dimensions: [{ name: 'eventName' }, { name: `customEvent:${p}` }],
+        metrics: [{ name: 'eventCount' }, { name: 'totalUsers' }],
+        dimensionFilter: playFilter,
+        limit: 1000,
+      }),
+    ),
+  ]);
+
+  // ---- 日別 (欠測日は 0 で埋める) ----
+  const dates = lastNDatesJst(SIM.DAILY_DAYS);
+  const byDate = new Map(
+    dates.map((date) => [date, { date, openUsers: 0, openViews: 0, playUsers: 0, playEvents: 0 }]),
+  );
+  for (const r of openDailyRes[0].rows || []) {
+    const p = byDate.get(ga4DateToIso(r.dimensionValues[0].value));
+    if (!p) continue;
+    p.openUsers = intOf(r.metricValues[0].value);
+    p.openViews = intOf(r.metricValues[1].value);
+  }
+  for (const r of playDailyRes[0].rows || []) {
+    const p = byDate.get(ga4DateToIso(r.dimensionValues[0].value));
+    if (!p) continue;
+    p.playUsers = intOf(r.metricValues[0].value);
+    p.playEvents = intOf(r.metricValues[1].value);
+  }
+
+  // ---- 7日 / 28日の合計 ----
+  const windows = {};
+  for (const w of SIM_WINDOWS) {
+    windows[w.key] = { openUsers: 0, openViews: 0, playUsers: 0, playEvents: 0, playRate: null };
+  }
+  for (const r of openWinRes[0].rows || []) {
+    const k = simWindowKey(r.dimensionValues?.[0]?.value);
+    if (!k) continue;
+    windows[k].openUsers = intOf(r.metricValues[0].value);
+    windows[k].openViews = intOf(r.metricValues[1].value);
+  }
+  for (const r of playWinRes[0].rows || []) {
+    const k = simWindowKey(r.dimensionValues?.[0]?.value);
+    if (!k) continue;
+    windows[k].playUsers = intOf(r.metricValues[0].value);
+    windows[k].playEvents = intOf(r.metricValues[1].value);
+  }
+  for (const w of Object.values(windows)) {
+    w.playRate = w.openUsers > 0 ? Number((w.playUsers / w.openUsers).toFixed(4)) : null;
+  }
+
+  // ---- イベント名別 ----
+  const events = { d7: [], d28: [] };
+  for (const r of eventsRes[0].rows || []) {
+    const k = simWindowKey(r.dimensionValues[1]?.value);
+    if (!k) continue;
+    events[k].push({
+      name: r.dimensionValues[0].value,
+      count: intOf(r.metricValues[0].value),
+      users: intOf(r.metricValues[1].value),
+    });
+  }
+  for (const k of Object.keys(events)) events[k].sort((a, b) => b.count - a.count);
+
+  // ---- カスタムディメンション別 (登録済みのものだけ) ----
+  const breakdowns = {};
+  params.forEach((p, i) => {
+    const rows = { d7: [], d28: [] };
+    for (const r of breakdownRes[i][0].rows || []) {
+      const k = simWindowKey(r.dimensionValues[2]?.value);
+      if (!k) continue;
+      const value = r.dimensionValues[1].value;
+      if (!value || value === '(not set)') continue;
+      rows[k].push({
+        event: r.dimensionValues[0].value,
+        value,
+        count: intOf(r.metricValues[0].value),
+        users: intOf(r.metricValues[1].value),
+      });
+    }
+    for (const k of Object.keys(rows)) rows[k].sort((a, b) => b.count - a.count);
+    breakdowns[p] = rows;
+  });
+
+  return {
+    siteId: SIM.SITE_ID,
+    pathPrefix: SIM.PATH_PREFIX,
+    eventPrefix: SIM.EVENT_PREFIX,
+    dataRange: { start: dates[0], end: dates[dates.length - 1], days: dates.length },
+    windows,
+    daily: [...byDate.values()],
+    events,
+    breakdowns,
+    missingBreakdownParams: missingParams,
+    fetchedAt: jstIso(),
+  };
+}
+
+/* -------------------------------------------------------------------------- */
 /*  GA4 取得 — 1 サイト分                                                     */
 /* -------------------------------------------------------------------------- */
 
@@ -850,6 +1041,22 @@ async function main() {
     }
   }
 
+  // ---- シミュレーター (AI二刀流 /sim/)。失敗しても他の欄は活かす ----
+  let simulator = null;
+  const simPropertyId = getPropertyId(SIM.SITE_ID);
+  if (simPropertyId) {
+    try {
+      simulator = await fetchSimulator(client, `properties/${simPropertyId}`);
+      console.log(
+        `[fetch-dashboard-data] simulator: GA4 fetch OK (${simulator.daily.length} days, ${simulator.events.d28.length} event names in 28d, breakdowns: ${Object.keys(simulator.breakdowns).join('/') || 'none'})`,
+      );
+    } catch (err) {
+      const msg = `Simulator fetch failed: ${err.message}`;
+      console.warn(`[fetch-dashboard-data] ${msg}`);
+      warnings.push(msg);
+    }
+  }
+
   if (liveCount === 0) {
     dataSource = 'sample';
   } else if (liveCount === SITE_KEYS.length) {
@@ -871,6 +1078,8 @@ async function main() {
       meta: { warnings, source: dataSource },
       siteStats: siteStatsBlocks,
     },
+    // 追加のみ (既存キーには触れない)。取得できなかったときは null
+    simulator,
   };
 
   await write(snapshot);

@@ -9,6 +9,7 @@ import { ViewsChart } from './components/ViewsChart';
 import { ArticleMomentum } from './components/ArticleMomentum';
 import { SearchInsights } from './components/SearchInsights';
 import { ImprovementCards } from './components/ImprovementCards';
+import { Simulator } from './components/Simulator';
 
 export default function App() {
   const [snapshot, setSnapshot] = useState<DashboardSnapshot | null>(null);
@@ -87,6 +88,8 @@ export default function App() {
         <ImprovementCards sites={snapshot.sites} />
 
         <SearchInsights sites={snapshot.sites} />
+
+        <Simulator simulator={snapshot.simulator} />
 
         <footer className="pb-4 pt-2 text-center text-[0.7rem] text-slate-500">
           個人用ダッシュボード / 外部公開しない設定で運用

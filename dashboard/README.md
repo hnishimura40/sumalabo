@@ -44,6 +44,17 @@ npm run fetch-data   # public/data/dashboard-latest.json を生成 (gitignore済
 `src/lib/dataLoader.ts` がこの優先順で読み込む。fetch が 404 / JSON エラーになった場合は静かにサンプルへフォールバックし、画面は必ず描画される。
 ライブ vs サンプルはヘッダー右上のバッジ (🟢 ライブデータ / 🟡 サンプル表示) で判別できる。
 
+### シミュレーター欄 (2026-11-08 追加)
+
+AI二刀流の NPB シミュレーター (`https://www.ainitoryu.com/sim/`) の利用状況。AI二刀流の GA4 プロパティから `fetch-dashboard-data.mjs` の `fetchSimulator()` が取り、JSON の **トップレベル `simulator`** に入れる (既存の `sites` / `stats` には触れない。取得失敗時は `null` + warning で、他の欄は止めない)。
+
+- 開いた人 = `/sim/` の `page_view` を送ったユーザー数 (`totalUsers`)、表示回数 = `screenPageViews`
+- 遊んだ人 = `eventName` が `sim_` で始まるイベントを送ったユーザー数。シミュレーター v3.23 から、利用者が自分で押した操作だけが送られる
+- 日別 90 日 (`daily`)、直近7日・28日の合計 (`windows`、期間指定で取るので日別の足し算とは一致しない)、イベント名別の回数・人数 (`events`)
+- イベント単位のカスタムディメンション `season` / `how` / `tab` が GA4 に登録されていれば、その内訳 (`breakdowns`) も取る。未登録のものは `missingBreakdownParams` に入る (サービスアカウントは閲覧者権限のため、登録は GA4 管理画面で手作業)
+
+イベント名の日本語表示は `src/components/Simulator.tsx` の `EVENT_LABELS` (シミュレーター本体 README の v3.23 一覧が正)。
+
 ## 0 円ローカルデプロイ (GitHub Actions 不使用)
 
 GitHub Actions の Budgets 設定で Actions が停止する状態でも、**ローカルからの Wrangler Direct Upload** だけで配備できる。GitHub Free 維持 / 支払い方法不要 / Secrets ファイル保存なし。
