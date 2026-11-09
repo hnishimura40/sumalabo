@@ -31,7 +31,7 @@ function stagePrompt(state, step, pick) {
     .filter(([name]) => state.steps[name].status === "done")
     .map(([, file]) => `drafts/refinement/${state.slug}/${file}`);
   const extra = {
-    chatgpt_turn1_research: "公式一次情報を実際に確認し、URL・公開日・確認事項を記録する。採用情報は調査の起点としてのみ扱う。アプリ順位・ベンチマークの国、対象、条件、観測時点、日本での利用可否を混同しない。AIとの因果や利用事実を推測で埋めない。",
+    chatgpt_turn1_research: "記事の判断に必要な公式一次情報を優先して確認し、URL・公開日・確認事項を記録する。検索は論点ごとにまとめ、同じ事実の検索を繰り返さない。発言や数値の原典を確認できないときは未確認と記録し、裏付けを得た事実の整理に進む。採用情報は調査の起点として扱う。アプリ順位・ベンチマークの国、対象、条件、観測時点、日本での利用可否を区別する。AIとの因果や利用事実を推測で埋めない。",
     chatgpt_turn2_selection: "なぜ今注目か、読者のどの疑問に答えるか、AIの視点を使う場合は何を理解できるかを残す。調査で裏付けられない切り口は不採用とする。判定を独立した行に「判定: 採用」「判定: 限定採用」「判定: 不採用」のいずれかで記す。読者翻訳設計の専門用語は、公開本文で本当に使う表記を一語ずつ記す。略称・別名や複数の用語を一つの行にまとめない。",
     chatgpt_turn3_draft: "本文前半に『関係がある人』と『あまり関係がない人』の両方を明記する。読者翻訳設計に記録した各用語の表記を本文でも維持し、最初に出す箇所で『用語（短い日常語の説明）』または『用語とは、～の仕組みです』のように説明する。",
     chatgpt_turn4_review: "独立した見出し「## Pass 1」と「## Pass 2」の下で、事実・数値・出典の確認と、読者への伝わり方・判断材料の確認をそれぞれ実施する。必要なら3回目を追加し、修正箇所を具体的に示す。",
@@ -47,7 +47,7 @@ function stagePrompt(state, step, pick) {
     `引き継ぐ資料: ${previous.join("、") || "なし"}`,
     assistedInstruction(state, step, { nightRefinement: true }),
     extra[step.name],
-    "最終メッセージにはこの工程の成果物のMarkdownだけを出力する。ファイル保存は外側が担当する。",
+    "成果物がまとまったら最終メッセージにMarkdown本文を直接出力する。外側が保存・検査・完了報告を担当する。本文の再出力を目的にシェルや報告用コマンドを実行する必要はない。",
   ].filter(Boolean).join("\n\n");
 }
 
@@ -58,18 +58,20 @@ function refineStep(state, step, pick, { env, runId, temp }) {
   const original = path.join(temp, `${step.name}.md`);
   const retry = path.join(temp, `${step.name}.retry.md`);
   writeFileSync(original, stagePrompt(state, step, pick), "utf8");
+  const isResearch = step.name === "chatgpt_turn1_research";
+  const timeoutMs = isResearch ? NIGHT_ENVIRONMENT.codex.researchTimeoutMs : NIGHT_ENVIRONMENT.codex.refinementTimeoutMs;
 
   for (const attempt of [1, 2]) {
     const events = `${base}.attempt${attempt}.codex.jsonl`;
     writeFileSync(events, "", { flag: "wx" });
-    const search = ["chatgpt_turn1_research", "chatgpt_turn4_review"].includes(step.name) ? ["--search"] : [];
+    const search = isResearch || step.name === "chatgpt_turn4_review" ? ["--search"] : [];
     const result = spawnSync(NIGHT_ENVIRONMENT.codex.executable, [
       "--ask-for-approval", "never", ...search, "exec", "--ephemeral", "--json", "--sandbox", "read-only",
       "--skip-git-repo-check", "--color", "never", "--model", "gpt-6.1-sol",
       "-c", 'model_reasoning_effort="high"', "-C", SOURCE_ROOT, "-",
     ], {
       cwd: SOURCE_ROOT, env, input: readFileSync(attempt === 1 ? original : retry, "utf8"),
-      encoding: "utf8", timeout: NIGHT_ENVIRONMENT.codex.refinementTimeoutMs, maxBuffer: 8 * 1024 * 1024, windowsHide: true,
+      encoding: "utf8", timeout: timeoutMs, maxBuffer: 8 * 1024 * 1024, windowsHide: true,
     });
     writeFileSync(events, result.stdout || "", "utf8");
     if (result.error || result.status !== 0) throw new Error(`codex_refinement_${step.name}_failed:${result.error?.code || result.status}`);
