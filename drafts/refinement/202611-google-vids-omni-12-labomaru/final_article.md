@@ -1,71 +1,64 @@
 
 
-**比べて、納得。すまラボで。** いつも記事の中でスマホやガジェットの違いを整理している「らぼまる」に、今度は15秒のCMに出てもらいました。
-
-<figure class="article-video-figure article-wide-block">
-  <video controls playsinline preload="metadata" width="1280" height="720" poster="/images/thumbnails/202611-google-vids-omni-12-labomaru.webp" aria-label="らぼまるのすまラボ紹介CM、15秒">
-    <source src="/videos/202611-google-vids-omni-12-labomaru/labomaru-promo-15s.mp4" type="video/mp4" />
-    <track kind="captions" src="/videos/202611-google-vids-omni-12-labomaru/labomaru-promo-ja.vtt" srclang="ja" label="日本語" />
-    お使いのブラウザは動画再生に対応していません。
-  </video>
-  <figcaption>すまラボのらぼまるが登場する15秒CM。Google Vidsで生成したクリップに、音声の調整と最後のテロップを加えています。プレーヤーで日本語字幕を選べます。</figcaption>
-</figure>
+Googleは11月5日、ブラウザで動画を作る **Google Vidsに「Gemini Omni 1.2 Flash」を導入**しました。前世代のOmni 1.1では1回で最長10秒だった生成が、**最長15秒**に。元画像に写った人物や商品の特徴を保ちやすくなり、声もより自然になったとGoogleは説明しています。
 
 <Summary30>
   <ul>
-    <li><strong>これは何？</strong> Google Vidsは、ブラウザで動画を作って編集できるサービスです。</li>
-    <li><strong>何があった？</strong> Googleは2026年11月5日、最長15秒の動画を作れる<strong>Gemini Omni 1.2 Flash</strong>の導入を発表しました。</li>
-    <li><strong>誰に関係ある？</strong> 手元のイラストや商品写真を動かして、短い告知動画を作りたい人です。</li>
-    <li><strong>結局どうなの？</strong> らぼまるの画像1枚で横向き15秒のCMを作れました。サイト名やURLは後から重ねると確実です。</li>
+    <li><strong>これは何？</strong> Gemini Omni 1.2 Flashは、文章や画像をもとに短い映像を作るGoogleのAIです。Google Vidsの中で使えます。</li>
+    <li><strong>何があった？</strong> 2026年11月5日にVidsへの導入を発表。1回で作れる動画は10秒から最長15秒になりました。</li>
+    <li><strong>誰に関係ある？</strong> 手元の商品写真やイラストから、短い紹介動画を作りたい人です。個人のGoogleアカウントでも試せます。</li>
+    <li><strong>結局どうなの？</strong> 15秒で作りたいなら、Vidsの「作成」タブで画像を「素材」に追加し、Omniの設定で秒数を指定します。</li>
   </ul>
 </Summary30>
 
-- **関係がある人：** 自作キャラクターや商品写真から短いCMを作りたい人。個人のGoogleアカウントでも追加料金なしで試せます。Googleの発表では15秒の動画を月3本まで作れると案内されており、ヘルプではアカウント別の上限を秒数で確認できます。
-- **あまり関係がない人：** 長い解説動画を1回の生成で完成させたい人。15秒は1クリップの上限です。
+- **関係がある人：** 写真を動かして商品紹介を作りたい人、スライドに短い挿入動画を入れたい人。
+- **あまり関係がない人：** 長い解説動画を一度の生成で完成させたい人。15秒は生成1回あたりの上限で、長い動画は短い映像をつないで作ります。
 
-## 15秒で、すまラボの何を伝える？
+## Gemini Omni 1.2 Flashで何が変わった？
 
-たとえばスマホ料金。同じ「安いプラン」でも、月に3GBしか使わない人と、外でよく動画を見る人とでは選び方が変わります。モバイルバッテリーなら、容量を増やすほど安心でも、毎日持ち歩くなら重さが気になる。すまラボでは、そんな違いを見比べて、自分の使い方に合うものを選べるように記事を作っています。
+| 変更点 | Google Vidsでできること |
+| --- | --- |
+| 10秒から最長15秒へ | 3〜15秒の範囲で尺を選べます。例えば、商品を見せてから使い方を伝えるところまで、ひと続きで作りやすくなります。 |
+| 元画像の特徴を保ちやすく | Googleによると、画像を参考に生成したときに、人物やキャラクター、商品の見た目が途中で変わりにくくなりました。 |
+| 声の表現が広がる | Googleによると、声の種類や強弱の幅が広がり、より自然な話し声を作れます。 |
 
-CMでは、らぼまるが「スマホ料金も、ガジェット選びも。比べて、納得。」と話します。締めくくりに「すまラボ」とサイトのURLを画面に出しました。
+15秒になったのは、主に**新しい映像を「作成」するときの設定**です。Google Vidsの「アニメーション化」や、既存の動画を加工する「編集」は別のタブで、同じ尺を選べるとは限りません。
 
-## らぼまるの静止画1枚を、Google Vidsで動かす
+## 無料で使える？ Google VidsとGeminiアプリの違い
 
-今回使ったのは、Google Vidsの「アニメーション化」ではなく、**「作成」タブに画像を素材として入れる方法**です。Googleのヘルプでは「作成」が3〜15秒、「アニメーション化」が3〜10秒と案内されています。15秒にしたいなら、先にタブを確認しておくと迷いません。
+Google Vidsでは、個人のGoogleアカウントでも追加料金なしで試せます。無料で使える入口は、9月のOmni 1.1導入時にすでに開放されていました。今回の変更点は、**1.2 Flashで最長15秒の生成に対応したこと**です。
+
+11月5日付のGoogleの発表は「15秒の動画を月3本まで」と案内しています。一方、利用上限のヘルプでは、個人アカウントは「月60秒」と掲載されています。案内の数字がそろっていないため、4本作れるとは考えず、[利用上限のヘルプ](https://support.google.com/docs/answer/15609411)で自分のアカウントの条件を確認してください。仕事や学校のアカウントでは、管理者がVidsや生成AIへのアクセスを制限している場合もあります。
+
+普段のチャットに使う**Geminiアプリ**は提供条件が別です。Googleのモデル発表では、Geminiアプリでの15秒生成は**Google AI Ultra**の利用者向けに順次提供。Google Flowや開発者向けのGemini APIにも展開されていますが、追加料金なしで試すなら、まずはパソコンで **[Google Vids](https://vids.new)** を開くのが分かりやすいです。
+
+## Google Vidsで15秒の動画を作る手順
 
 1. パソコンで [Google Vids](https://vids.new) を開き、**AI 動画を作成する**を選びます。
-2. **作成 → 素材**で、キャラクターの元画像を1枚追加します。
-3. 下部の **Omni** と表示された生成設定を開き、**横向き・15秒**にします。今回は720pを選びました。
-4. プロンプト（AIへの指示文）に動きとセリフを書いて**生成**。結果をプレビューし、使うクリップを**挿入**します。
-5. **ファイル → ダウンロード → MP4 動画**で書き出します。
+2. **作成 → 素材**で、使いたい画像を追加します。
+3. **Omni** の生成設定で、秒数を**15秒**に変更します。横向き・縦向きを選べます。Googleのヘルプには720pと1080pの選択肢があり、今回の試作は横向き・720pです。
+4. プロンプト（AIへの指示文）に「何をどう動かすか」を書いて**生成**。結果を確認して**挿入**し、必要なら**ファイル → ダウンロード → MP4 動画**で書き出します。
 
-### 今回のプロンプト
+### 実例：キャラクター画像1枚で15秒
 
-今回は動きを英語で、話してほしい言葉を日本語で指定しました。CMの動きは「挨拶 → スマホと比較のアイコン → 締め」の3つです。胸のハートやアンテナなど、らぼまると分かる目印も書き添えました。
+試しに、すまラボのキャラクター「らぼまる」の静止画1枚を素材にして、片手を振り、画面の横にスマホとグラフを出すよう指示しました。手を振っている間も、アンテナや青い首輪など、元のキャラクターと分かる特徴が残っています。
 
-```text
-Create a 15-second single-shot 2D illustrated promo. Match the exact mascot in the reference image, preserving its original egg-shaped white body, side fins, green antenna, round black eyes, blue collar, orange heart button and belly panel. Keep the mascot on the left, full body visible, against a clean pale mint studio backdrop.
+<figure class="article-video-figure article-wide-block">
+  <video controls playsinline preload="metadata" width="1280" height="720" poster="/images/thumbnails/202611-google-vids-omni-12-release.webp" aria-label="Google Vidsで参照画像1枚から生成した15秒の実例">
+    <source src="/videos/202611-google-vids-omni-12-labomaru/omni12-image-reference-demo-15s.mp4" type="video/mp4" />
+    <track kind="captions" src="/videos/202611-google-vids-omni-12-labomaru/labomaru-promo-ja.vtt" srclang="ja" label="日本語" />
+    お使いのブラウザは動画再生に対応していません。
+  </video>
+  <figcaption>Google Vidsの「作成」で参照画像1枚から生成。横向き・720p・15秒。生成音声の末尾を調整し、日本語字幕を追加しています。</figcaption>
+</figure>
 
-From 0 to 3 seconds, the mascot blinks, smiles and gives one small wave. From 3 to 11 seconds, it looks toward simple floating icons of a smartphone and a comparison chart on the right, then back at the viewer. From 11 to 15 seconds, the icons disappear, the mascot nods and holds a friendly pose with clean empty space on the right.
-
-A single friendly mascot voice speaks this line naturally in Japanese, exactly as written: 「こんにちは、らぼまるです。スマホ料金も、ガジェット選びも。比べて、納得。すまラボで。」 No other speech. No on-screen text, no logos, no music. Fixed camera. Keep the original drawing style and proportions throughout.
-```
-
-## キャラクターを使うCMで、先に決めておきたいこと
-
-Googleは、1.2 Flashで参照画像を使ったときのキャラクターの一貫性や、音声の自然さが改善したと説明しています。公開用なら、動画の最初と最後だけでなく、**手を動かす途中で姿が変わっていないか、サイト名が聞き取れるか**も確認したいところです。参考画像は目印になりますが、動きや声まで指定どおりになるとは限りません。
-
-今回の映像では、手を振っている間も、アンテナ、青い首輪、ハートのボタンが残りました。一方、元の音声ではセリフの終わりに指示していない発話が混ざったため、該当部分をカットしました。最後の「すまラボ」とURLは、書き出し後にテロップで加えています。
-
-最初の1本は、キャラクター1体、動きは少なめ、伝えることはひとつに絞ると、仕上がりの良し悪しを判断しやすくなります。サイト名や商品名のように表記をそろえたい文字は、後から重ねる方法が使いやすいです。
-
-## らぼまると、一つ比べてみる
-
-- **毎月のスマホ代を見直したい** → [使い方からスマホ料金プランを比べる](/articles/mobile-plan-cost-comparison/)
-- **モバイルバッテリーを持ち歩きたい** → [容量と重さからモバイルバッテリーを比べる](/articles/power-bank-comparison/)
+一方、生成音声の末尾には指定していない言葉が混ざったため、その部分はカットしました。今回確認できたのは、**画像1枚から特徴を保った15秒のクリップを作れたこと**です。旧モデルとの画質や音声の比較は行っていません。公開に使うなら、顔や商品の形だけでなく、話した言葉が台本と合っているかも確認しておくと安心です。
 
 ## 参考にしたGoogle公式情報
 
-- [Google公式ブログ：Omni 1.2 Flashで最長15秒の動画を生成](https://blog.google/products-and-platforms/products/workspace/omni-1-2-flash-google-vids/)
+- [Google Workspace Updates：VidsにGemini Omni 1.2 Flashを導入](https://workspaceupdates.googleblog.com/2026/11/gemini-omni-12-flash-now-in-vids-with-15second-generations-and-improved-quality.html)
+- [Google公式ブログ：Google Vidsの15秒生成と無料枠](https://blog.google/products-and-platforms/products/workspace/omni-1-2-flash-google-vids/)
+- [Google公式ブログ：Gemini Omni 1.2 Flashのモデル発表と各サービスへの展開](https://blog.google/innovation-and-ai/technology/developers-tools/introducing-gemini-omni-1-2-flash/)
+- [Google公式ブログ：Omni 1.1 Flashの時点での無料提供](https://blog.google/products-and-platforms/products/workspace/gemini-omni-in-google-vids/)
 - [Google Vidsヘルプ：AIで動画クリップを生成する](https://support.google.com/docs/answer/16143507)
-- [Google Vidsヘルプ：アカウント別のGemini機能と上限](https://support.google.com/docs/answer/15609411)
+- [Google Vidsヘルプ：アカウント別の利用上限](https://support.google.com/docs/answer/15609411)
