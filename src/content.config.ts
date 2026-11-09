@@ -34,6 +34,7 @@ const articles = defineCollection({
     thumbnailAlt: z.string().default(""),
     draft: z.boolean().default(false),
     status: articleStatus,
+    reviewMethod: z.literal("automated").optional(),
     priority: z.number(),
     characterUse: z.object({
       recommended: z.boolean(),
