@@ -19,6 +19,7 @@ type ArticleData = {
   updated: string;
   pubDate?: string;
   tags?: string[];
+  reviewMethod?: "automated";
 };
 
 type Heading = {
@@ -150,7 +151,11 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     />}
 
     <p class="article-ai-note">
-      {renewal ? "本サイトの記事・図解はAIの支援を受けて制作し、公式資料と検品基準に基づいて確認しています。詳しくは" : "本サイトの記事・図解はAIの支援を受けて制作し、公開前に人間が確認しています。詳しくは"}<a href="/ai-policy/">本サイトのAI利用について</a>をご覧ください。
+      {article.reviewMethod === "automated"
+        ? "この記事はAIの支援を受けて制作し、公式情報との照合と公開前の自動チェックを行っています。詳しくは"
+        : renewal
+          ? "本サイトの記事・図解はAIの支援を受けて制作し、公式資料と検品基準に基づいて確認しています。詳しくは"
+          : "本サイトの記事・図解はAIの支援を受けて制作し、公開前に人間が確認しています。詳しくは"}<a href="/ai-policy/">本サイトのAI利用について</a>をご覧ください。
     </p>
 
     <div class="article-share" aria-label="この記事をシェア">
