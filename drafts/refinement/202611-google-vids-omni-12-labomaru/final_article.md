@@ -44,7 +44,7 @@ Google Vidsでは、個人のGoogleアカウントでも追加料金なしで試
 試しに、すまラボのキャラクター「らぼまる」の静止画1枚を素材にして、片手を振り、画面の横にスマホとグラフを出すよう指示しました。手を振っている間も、アンテナや青い首輪など、元のキャラクターと分かる特徴が残っています。
 
 <figure class="article-video-figure article-wide-block">
-  <video controls playsinline preload="metadata" width="1280" height="720" poster="/images/thumbnails/202611-google-vids-omni-12-release.webp" aria-label="Google Vidsで参照画像1枚から生成した15秒の実例">
+  <video controls playsinline preload="metadata" width="1280" height="720" poster="/images/thumbnails/202611-google-vids-omni-12-labomaru.webp" aria-label="Google Vidsで参照画像1枚から生成した15秒の実例">
     <source src="/videos/202611-google-vids-omni-12-labomaru/omni12-image-reference-demo-15s.mp4" type="video/mp4" />
     <track kind="captions" src="/videos/202611-google-vids-omni-12-labomaru/labomaru-promo-ja.vtt" srclang="ja" label="日本語" />
     お使いのブラウザは動画再生に対応していません。
