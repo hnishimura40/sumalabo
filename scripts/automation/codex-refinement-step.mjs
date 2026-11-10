@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { aiPolicy } from "./ai-article-v2.mjs";
 import { NIGHT_ENVIRONMENT, SOURCE_ROOT } from "./night-environment.mjs";
 import { assistedInstruction, CHATGPT_OUTPUTS, currentStep, loadState } from "./phase-a-orchestrator.mjs";
+import { parsePerformanceBlock, parseSlidePlan } from "./codex-image-stage.mjs";
+import { extractFrontmatter } from "../sumahon/frontmatter-lite.mjs";
+import { getSortedVisibleArticles } from "../../src/lib/articles.ts";
 
 const ARTICLE_LOG = path.join(SOURCE_ROOT, "logs", "article");
 const runNode = (file, args, env, logFile) => {
@@ -26,6 +29,28 @@ export function validateNightPick(pick, startedAt, now = Date.now()) {
   return pick.suggestedSlug;
 }
 
+export function recentIllustrations(root = SOURCE_ROOT, now = new Date()) {
+  const directory = path.join(root, "content", "articles");
+  const entries = readdirSync(directory, { withFileTypes: true })
+    .filter((file) => file.isFile() && file.name.endsWith(".mdx"))
+    .map(({ name }) => {
+      const { fm } = extractFrontmatter(readFileSync(path.join(directory, name), "utf8").replace(/^\uFEFF/, ""));
+      return { data: { ...fm, draft: fm.draft === "true", priority: Number(fm.priority) } };
+    })
+    .filter(({ data }) => /^[a-z0-9][a-z0-9-]*$/.test(data.slug || ""));
+  return getSortedVisibleArticles(entries, now).slice(0, 10).map(({ data }) => {
+    const file = path.join(root, "drafts", "refinement", data.slug, "slide_plan.md");
+    const plan = existsSync(file) ? readFileSync(file, "utf8") : "";
+    const performance = parsePerformanceBlock(plan);
+    const thumbnail = parseSlidePlan(plan).find(({ id }) => id === "thumbnail")?.section;
+    return {
+      slug: data.slug,
+      thumbnailAlt: data.thumbnailAlt || "",
+      plan: [performance.slice(0, 450), thumbnail?.slice(0, 450)].filter(Boolean).join("\n") || plan.slice(0, 450),
+    };
+  });
+}
+
 function stagePrompt(state, step, pick) {
   const previous = Object.entries(CHATGPT_OUTPUTS)
     .filter(([name]) => state.steps[name].status === "done")
@@ -36,7 +61,7 @@ function stagePrompt(state, step, pick) {
     chatgpt_turn3_draft: "本文前半に『関係がある人』と『あまり関係がない人』の両方を明記する。読者翻訳設計に記録した各用語の表記を本文でも維持し、最初に出す箇所で『用語（短い日常語の説明）』または『用語とは、～の仕組みです』のように説明する。",
     chatgpt_turn4_review: "独立した見出し「## Pass 1」と「## Pass 2」の下で、事実・数値・出典の確認と、読者への伝わり方・判断材料の確認をそれぞれ実施する。必要なら3回目を追加し、修正箇所を具体的に示す。",
     chatgpt_turn5_final: "2回のレビューで指摘された箇所を修正し、公開本文だけを返す。修正できない事実は削るか未確定として区別する。本文前半の『関係がある人』『あまり関係がない人』を維持する。読者翻訳設計に記録した各用語を、その表記で本文に使い、最初の箇所で括弧などを使い日常語で短く説明する。",
-    chatgpt_turn6_slideplan: "本文図は ## slide01 から ## slide08 まで各1回、サムネイルは ## thumbnail を1回使う。それぞれ図だけで伝わる異なる論点と、読者向けの短い説明を持たせる。",
+    chatgpt_turn6_slideplan: "本文図は ## slide01 から ## slide08 まで各1回、サムネイルは ## thumbnail を1回使う。各図は伝える事実・画像に入れる短い文言・構図・読者向け補足を明記し、必要な指示に絞る。直近10記事の類型は、外側が公開日順で準備した以下の一覧を使って照合する。",
   };
   return [
     "すまラボ夜間本文の独立セッション。指定された1工程だけを担当する。ファイル変更・Git操作・公開・ブラウザ操作はしない。",
@@ -47,11 +72,12 @@ function stagePrompt(state, step, pick) {
     `引き継ぐ資料: ${previous.join("、") || "なし"}`,
     assistedInstruction(state, step, { nightRefinement: true }),
     extra[step.name],
+    step.name === "chatgpt_turn6_slideplan" ? `直近10記事の類型照合資料: ${JSON.stringify(recentIllustrations())}` : null,
     "成果物がまとまったら最終メッセージにMarkdown本文を直接出力する。外側が保存・検査・完了報告を担当する。本文の再出力を目的にシェルや報告用コマンドを実行する必要はない。",
   ].filter(Boolean).join("\n\n");
 }
 
-function refineStep(state, step, pick, { env, runId, temp }) {
+export function refineStep(state, step, pick, { env, runId, temp }) {
   const base = path.join(ARTICLE_LOG, `${state.slug}.${step.name}.${runId}`);
   const output = path.join(SOURCE_ROOT, "drafts", "refinement", state.slug, CHATGPT_OUTPUTS[step.name]);
   const report = `${base}.health.json`;
@@ -59,7 +85,11 @@ function refineStep(state, step, pick, { env, runId, temp }) {
   const retry = path.join(temp, `${step.name}.retry.md`);
   writeFileSync(original, stagePrompt(state, step, pick), "utf8");
   const isResearch = step.name === "chatgpt_turn1_research";
-  const timeoutMs = isResearch ? NIGHT_ENVIRONMENT.codex.researchTimeoutMs : NIGHT_ENVIRONMENT.codex.refinementTimeoutMs;
+  const { codex } = NIGHT_ENVIRONMENT;
+  const timeoutMs = {
+    chatgpt_turn1_research: codex.researchTimeoutMs,
+    chatgpt_turn6_slideplan: codex.slidePlanTimeoutMs,
+  }[step.name] ?? codex.refinementTimeoutMs;
 
   for (const attempt of [1, 2]) {
     const events = `${base}.attempt${attempt}.codex.jsonl`;
