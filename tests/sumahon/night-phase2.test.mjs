@@ -325,6 +325,27 @@ test("night refinement binds the topic to this run and publishing requires eight
   assert.throws(() => verifyEightBodyFigures(slug, root), /eight_numbered_body_figures_required/);
 });
 
+test("night slide planning receives the latest ten visible articles and their available designs", async () => {
+  const { recentIllustrations } = await import("../../scripts/automation/codex-refinement-step.mjs");
+  const root = mkdtempSync(path.join(os.tmpdir(), "sumalabo-recent-figures-"));
+  const articles = path.join(root, "content", "articles");
+  mkdirSync(articles, { recursive: true });
+  function article(slug, date, extra = "") {
+    writeFileSync(path.join(articles, `${slug}.mdx`), `---\nslug: ${slug}\nstatus: published\npriority: 10\nthumbnailAlt: ${slug} alt\npubDate: ${date}\n${extra}---\nbody\n`);
+  }
+  for (let day = 1; day <= 11; day++) article(`article-${day}`, `2026-10-${String(day).padStart(2, "0")}`);
+  article("future", "2026-10-20", "publishAt: 2026-11-12T00:00:00Z\n");
+  article("draft", "2026-10-20", "draft: true\n");
+  const planDir = path.join(root, "drafts", "refinement", "article-11");
+  mkdirSync(planDir, { recursive: true });
+  writeFileSync(path.join(planDir, "slide_plan.md"), "## 演出ブロック\n\n- 衣装: 作業着\n\n## thumbnail\n\n構図: 端末を比べる");
+
+  const context = recentIllustrations(root, new Date("2026-11-11T00:00:00Z"));
+  assert.deepEqual(context.map(({ slug }) => slug), Array.from({ length: 10 }, (_, index) => `article-${11 - index}`));
+  assert.equal(context[0].thumbnailAlt, "article-11 alt");
+  assert.match(context[0].plan, /衣装: 作業着[\s\S]*構図: 端末を比べる/);
+});
+
 test("night Phase C uses a fresh Codex-owned Chrome tab without GitHub credentials", () => {
   const wrapper = read("scripts/automation/night-x-post-step.ps1");
   const prompt = read("docs/x-post-codex-night-prompt.md");
