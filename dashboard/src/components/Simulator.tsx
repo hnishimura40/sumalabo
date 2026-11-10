@@ -36,6 +36,14 @@ const EVENT_LABELS: Array<[string, string]> = [
   ['sim_myteam_play', 'マイチーム'],
   ['sim_secret', '隠し要素'],
   ['sim_tab', 'タブ切替'],
+  // v3.27〜 殴り込み (gacha.js)
+  ['sim_gacha_start', 'ガチャ開始'],
+  ['sim_gacha_reroll', '引き直し'],
+  ['sim_gacha_hand', '手持ち使用'],
+  ['sim_gacha_season', '殴り込み開幕'],
+  ['sim_gacha_end', '殴り込み終了'],
+  ['sim_gacha_reward', '報酬ガチャ'],
+  ['sim_gacha_secret', '裏技'],
 ];
 const EVENT_LABEL = new Map(EVENT_LABELS);
 
@@ -46,6 +54,7 @@ const HOW_LABEL: Record<string, string> = {
   end: '最後まで進める',
   watch: '試合を見る',
   manager: '監督モード',
+  mark: '次の節目まで',
 };
 
 /** sim_tab の tab (シミュレーターのタブ名) */
@@ -56,6 +65,7 @@ const TAB_LABEL: Record<string, string> = {
   order: '打順ラボ',
   pennant: 'ペナント',
   zukan: '選手名鑑',
+  gacha: '殴り込み',
 };
 
 const PARAM_TITLE: Record<string, string> = {
