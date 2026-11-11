@@ -156,6 +156,10 @@ async function publish(slug, { requireEightBodyFigures = false } = {}) {
   if (r.status !== 0) throw new Error("build_failed");
   r = run("git", ["commit", "-m", `feat(article): ${value.title}（夜間外側ラッパー経由）`]);
   if (r.status !== 0) throw new Error("commit_failed");
+  r = run(process.execPath, [path.join(ROOT, "scripts", "sumalabo-gate.mjs"), "--slug", slug, "--stage", "full"], { inherit: true });
+  if (r.status !== 0) throw new Error("full_article_gate_failed");
+  r = run(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "security:scan"], { inherit: true });
+  if (r.status !== 0) throw new Error("secret_scan_failed");
   r = run("git", ["push", "-u", "origin", value.branch]);
   if (r.status !== 0) throw new Error("push_failed");
 
@@ -201,6 +205,10 @@ async function resumePending(slug) {
   } else if (staged.status !== 0) {
     throw new Error("resume_publish_at_diff_failed");
   }
+  r = run(process.execPath, [path.join(ROOT, "scripts", "sumalabo-gate.mjs"), "--slug", slug, "--stage", "full"], { inherit: true });
+  if (r.status !== 0) throw new Error("resume_full_article_gate_failed");
+  r = run(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "security:scan"], { inherit: true });
+  if (r.status !== 0) throw new Error("resume_secret_scan_failed");
   r = run("git", ["push", "origin", value.branch]);
   if (r.status !== 0) throw new Error("resume_push_failed");
 
