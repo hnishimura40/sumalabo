@@ -269,14 +269,16 @@ try {
       try { $state = $stateText | ConvertFrom-Json } catch {}
       $textSteps = @("chatgpt_turn1_research", "chatgpt_turn2_selection", "chatgpt_turn3_draft", "chatgpt_turn4_review", "chatgpt_turn5_final", "chatgpt_turn6_slideplan")
       $missing = @($textSteps | Where-Object { $state.steps.$_ -ne "done" })
-      if (-not $state -or $state.slug -ne $ResumeSlug -or $state.halted -or $missing.Count -gt 0 -or $state.steps.save_drafts -ne "pending") {
+      $workspaceSteps = @("save_drafts", "gate_draft", "generate_images", "factcheck_images", "webp_convert", "write_mdx")
+      $resumeStep = $workspaceSteps | Where-Object { $state.steps.$_ -eq "pending" } | Select-Object -First 1
+      if (-not $state -or $state.slug -ne $ResumeSlug -or $state.halted -or $missing.Count -gt 0 -or -not $resumeStep) {
         $exitCode = Record-ContractOutcome "fail" "recovery_text_state_invalid" "slug=$ResumeSlug"
         exit $exitCode
       }
       $gate = (& node scripts/sumalabo-gate.mjs --slug $ResumeSlug --stage draft 2>&1 | Out-String).Trim()
       $gateExit = $LASTEXITCODE
       Log $gate
-      $refinementText = @{ ok=($gateExit -eq 0); slug=$ResumeSlug; runId=$RunId; nextStep="save_drafts" } | ConvertTo-Json -Compress
+      $refinementText = @{ ok=($gateExit -eq 0); slug=$ResumeSlug; runId=$RunId; nextStep=$resumeStep } | ConvertTo-Json -Compress
       $refinementExit = $gateExit
     } else {
       $refinementText = (& node scripts/automation/codex-refinement-step.mjs 2>&1 | Out-String).Trim()
@@ -285,11 +287,12 @@ try {
     Log $refinementText
     $refinement = $null
     try { $refinement = $refinementText | ConvertFrom-Json } catch {}
-    if ($refinementExit -ne 0 -or -not $refinement -or -not $refinement.ok -or $refinement.runId -ne $RunId -or $refinement.nextStep -ne "save_drafts") {
+    $allowedNextSteps = if ($ResumeSlug) { $workspaceSteps } else { @("save_drafts") }
+    if ($refinementExit -ne 0 -or -not $refinement -or -not $refinement.ok -or $refinement.runId -ne $RunId -or $refinement.nextStep -notin $allowedNextSteps) {
       $exitCode = Record-ContractOutcome "fail" "outer_refinement_failed" $refinementText
       exit $exitCode
     }
-    $Prompt += "`n`n外側の本文工程の対象slug: $($refinement.slug)。このslugを --slug に指定し、save_draftsから再開する。"
+    $Prompt += "`n`n外側の本文工程の対象slug: $($refinement.slug)。このslugを --slug に指定し、$($refinement.nextStep)から再開する。doneの工程・画像・合格済み検品を維持し、再生成しない。"
     Log "launch: codex exec (ephemeral, workspace-write) -> $CodexLog"
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
     $codexExit = Invoke-CodexIsolated $Prompt $codexArgs $CodexLog "codex"

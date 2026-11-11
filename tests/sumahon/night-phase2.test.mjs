@@ -9,6 +9,15 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 const read = (relative) => readFileSync(path.join(ROOT, relative), "utf8");
 
+test("recovery resumes the first pending workspace stage after validating all text steps", () => {
+  const wrapper = read("scripts/automation/night-run.ps1");
+  assert.match(wrapper, /\$missing = @\(\$textSteps \| Where-Object \{ \$state.steps.\$_ -ne "done" \}\)/);
+  assert.match(wrapper, /\$resumeStep = \$workspaceSteps \| Where-Object \{ \$state.steps.\$_ -eq "pending" \} \| Select-Object -First 1/);
+  assert.match(wrapper, /-or -not \$resumeStep/);
+  assert.match(wrapper, /nextStep=\$resumeStep/);
+  assert.match(wrapper, /\$refinement.nextStep -notin \$allowedNextSteps/);
+});
+
 test("approval endpoint and component are removed while veto remains", () => {
   assert.equal(existsSync(path.join(ROOT, "functions/api/approve-preview.ts")), false);
   assert.equal(existsSync(path.join(ROOT, "src/components/PreviewApprovalButton.astro")), false);
