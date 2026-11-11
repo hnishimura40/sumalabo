@@ -125,6 +125,37 @@ test('公式テキストに記号やHTMLがあってもMDXへ実行コードを�
   const section=renderCampaignSection(data,cfg,Date.parse(now));
   assert.doesNotMatch(section,/<script>/);assert.match(section,/&#123;danger&#125;/);
 });
+
+test('早見表と契約方法の絞り込みを生成し、全文の条件を詳細に保持する',()=>{
+  const data=catalog();
+  Object.assign(data.campaigns[0],{audiences:['mnp'],comparison:{label:'SIMのみ',benefit:'1000ポイント',condition:'翌月末開通',deadline:'11月4日まで'}});
+  const section=renderCampaignSection(data,cfg,Date.parse(now));
+  assert.match(section,/<table class="campaign-table">/);
+  assert.match(section,/data-audiences="mnp"/);
+  assert.match(section,/data-audience-filter="return"/);
+  assert.match(section,/<details class="campaign-offer" id="offer-sample-a"/);
+  assert.match(section,/同系列からの移行は対象外/);
+  assert.match(section,/事務手数料100円/);
+  assert.match(section,/開通の翌々月/);
+  assert.throws(()=>renderCampaignSection({...data,campaigns:[{...data.campaigns[0],audiences:['unknown']}]},cfg,Date.parse(now)),/invalid_audiences/);
+});
+
+test('終了・確認中を早見表から外し、従来カタログと管理欄の位置を維持する',async()=>{
+  const data=catalog();
+  data.campaigns.push({...campaign(),id:'ended-a',status:'ended'});
+  data.campaigns.push({...campaign(),id:'unverified-a',status:'unverified'});
+  const section=renderCampaignSection(data,cfg,Date.parse(now));
+  const table=section.slice(section.indexOf('<tbody>'),section.indexOf('</tbody>'));
+  assert.doesNotMatch(table,/#offer-ended-a|#offer-unverified-a/);
+  assert.match(section,/終了済み・確認中の特典（2件）/);
+  assert.match(section,/詳細の対象条件を確認/);
+  const before='---\nupdated: "2026-08-04"\n---\n導入\n'+section+'\n料金の診断\n';
+  const updated=updateArticle(before,section,'2026-11-03');
+  assert.ok(updated.indexOf(START)<updated.indexOf('料金の診断'));
+  assert.equal(updated.split(START).length,2);
+  const {compile}=await import('@mdx-js/mdx');
+  await compile(updated.replace(/^---\n[\s\S]*?\n---\n/,''));
+});
 test('承認済みの範囲だけapplyを許可し、draft_onlyや承認情報なしは拒否する',()=>{
   assert.equal(config.publicationMode,'auto_publish');
   assert.doesNotThrow(()=>assertApplyAuthorized(config,true));

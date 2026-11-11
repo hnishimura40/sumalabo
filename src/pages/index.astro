@@ -56,6 +56,10 @@ const homeGraph = buildHomeGraph();
   <script type="application/ld+json" set:html={JSON.stringify(homeGraph)} />
   <section class="page-shell">
     <h1 class="sr-only">すまラボ — スマホ・AI・ガジェットをやさしく整理</h1>
+    <a class="campaign-entry" href="/articles/mobile-plan-cost-comparison/#mobile-campaigns">
+      <span><strong>携帯キャンペーンを比較</strong><small>乗り換え・新しい番号・再契約の対象条件と期限を確認</small></span>
+      <span class="campaign-entry-action">早見表を見る →</span>
+    </a>
 
     {/* ===== ヒーロー: 最新記事の大型カード ===== */}
     {
@@ -187,6 +191,13 @@ const homeGraph = buildHomeGraph();
 </BaseLayout>
 
 <style>
+  .campaign-entry { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 20px; padding: 18px 22px; background: var(--labo-bg); border: 1px solid var(--labo); border-radius: 12px; color: var(--fg); text-decoration: none; }
+  .campaign-entry strong { display: block; font-size: 18px; }
+  .campaign-entry small { display: block; margin-top: 4px; font-size: 13px; color: var(--fg-mid); }
+  .campaign-entry-action { flex: none; font-size: 14px; color: var(--teal-deep); font-weight: 700; }
+  .campaign-entry:hover { box-shadow: var(--shadow-md); }
+  .campaign-entry:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+  @media (max-width: 520px) { .campaign-entry { align-items: start; flex-direction: column; padding: 16px; gap: 8px; } }
   .sr-only {
     position: absolute;
     width: 1px;
