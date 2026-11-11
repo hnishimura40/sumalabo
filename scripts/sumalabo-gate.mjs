@@ -11,6 +11,7 @@
 //   --stage full  : draft の検査に加えて MDX（frontmatter 必須キー / slug 整合 /
 //                   本文禁則語）・画像参照整合（/images/ 参照の実在・WebP 限定・
 //                   サムネ実在・未参照画像）・dist の OGP メタ実測（build 済みの場合）。
+//   --stage workspace : full と同じ本文・画像検査。Gitコミット保全は外側のfullで検査。
 //   --audit       : 全記事棚卸しモード（2026-07-25 追加）。--slug は不要。
 //                   content/articles/ の公開 MDX を「全部」走査し、タイトルを
 //                   含む frontmatter と本文の禁則語を検査する。
@@ -686,8 +687,8 @@ function main() {
   const stage = (typeof args.stage === "string" ? args.stage : "full").trim();
   const audit = args.audit === true || args.audit === "true";
 
-  if (!audit && (!slug || !["draft", "full"].includes(stage))) {
-    console.error("Usage: sumalabo-gate --slug <slug> [--stage draft|full]");
+  if (!audit && (!slug || !["draft", "workspace", "full"].includes(stage))) {
+    console.error("Usage: sumalabo-gate --slug <slug> [--stage draft|workspace|full]");
     console.error("       sumalabo-gate --audit   # 全記事棚卸し（slug 不要）");
     process.exit(1);
   }
@@ -711,7 +712,9 @@ function main() {
   }
 
   checkDraftStage(slug, patterns, productNames, stage);
-  if (stage === "full") {
+  // The workspace agent cannot write Git. The outer publisher must run full
+  // after committing these same artifacts and before pushing them.
+  if (stage === "workspace" || stage === "full") {
     const mdx = checkMdxStage(slug, patterns, productNames);
     checkImageStage(slug, mdx);
     checkAffiliate(slug, mdx);

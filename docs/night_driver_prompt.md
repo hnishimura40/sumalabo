@@ -44,7 +44,7 @@ X本投稿と記事URLリプライの二段階記録は外側の副契約です�
 3. 画像工程はCodex ImageGen経路を優先し、正本、寸法、SHA、使用量を記録する。定義済みfallback条件だけ工房退避を許可し、発動条件を報告する。
 4. 手は自然で壊れにくい描写にする。難しい握り、両手の別動作、指を組む・数えるポーズ、手のクローズアップを避ける。
 5. 五層検品、身体構造検品、手が見える画像の別セッション二段クロップ検品を実行する。明確な異常は `needs_revision` として該当画像だけ1回再生成する。
-6. 記事ゲート、事実確認、Markdown残存検査、秘密情報検査、ビルドをすべて通す。
+6. ビルド後、`npm run sumalabo:gate -- --slug <slug> --stage workspace`、事実確認、Markdown残存検査、秘密情報検査をすべて通す。workspace段階は本文・画像・OGPを検査する。Gitへのコミット保全は外側ラッパーがコミット後、push前に`--stage full`で必ず検査する。
 7. `phase-a-orchestrator.mjs`を最後まで進め、公開アセット候補と記事本文をworkspaceへ置き、`logs/article/<slug>.publish-handoff.json`を生成する。Git操作はしない。
 
 handoff生成後は、slug、ゲート結果、成果物パスを報告して正常終了します。外側ラッパーが固定パスだけを再検査してPhase Bへ進めます。
