@@ -12,7 +12,9 @@
 
 param(
   # 記事を作らず独立起動・直接ログ・PID/heartbeat・終了回収を実測する。
-  [switch]$RunnerSelfTest
+  [switch]$RunnerSelfTest,
+  [ValidatePattern('^20\d{4}-[a-z0-9]+(?:-[a-z0-9]+)*$')]
+  [string]$ResumeSlug
 )
 $ErrorActionPreference = 'Continue'
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
@@ -184,7 +186,7 @@ try {
 
   }
 
-  if (-not $RunnerSelfTest) {
+  if (-not $RunnerSelfTest -and -not $ResumeSlug) {
     # 記事候補選定は記事公開の致命項目が合格した後に開始する。
     Log "preflight: outer scout --auto-pick"
     node scripts/automation/scout.mjs --auto-pick --json 2>&1 | Out-File -FilePath $LogFile -Encoding utf8 -Append
@@ -261,8 +263,25 @@ try {
   $env:TMP = $NightTempDir
   try {
     Log "Phase A text: outer Codex refinement"
-    $refinementText = (& node scripts/automation/codex-refinement-step.mjs 2>&1 | Out-String).Trim()
-    $refinementExit = $LASTEXITCODE
+    if ($ResumeSlug) {
+      $stateText = (& node scripts/automation/phase-a-orchestrator.mjs --slug $ResumeSlug --status 2>&1 | Out-String).Trim()
+      $state = $null
+      try { $state = $stateText | ConvertFrom-Json } catch {}
+      $textSteps = @("chatgpt_turn1_research", "chatgpt_turn2_selection", "chatgpt_turn3_draft", "chatgpt_turn4_review", "chatgpt_turn5_final", "chatgpt_turn6_slideplan")
+      $missing = @($textSteps | Where-Object { $state.steps.$_ -ne "done" })
+      if (-not $state -or $state.slug -ne $ResumeSlug -or $state.halted -or $missing.Count -gt 0 -or $state.steps.save_drafts -ne "pending") {
+        $exitCode = Record-ContractOutcome "fail" "recovery_text_state_invalid" "slug=$ResumeSlug"
+        exit $exitCode
+      }
+      $gate = (& node scripts/sumalabo-gate.mjs --slug $ResumeSlug --stage draft 2>&1 | Out-String).Trim()
+      $gateExit = $LASTEXITCODE
+      Log $gate
+      $refinementText = @{ ok=($gateExit -eq 0); slug=$ResumeSlug; runId=$RunId; nextStep="save_drafts" } | ConvertTo-Json -Compress
+      $refinementExit = $gateExit
+    } else {
+      $refinementText = (& node scripts/automation/codex-refinement-step.mjs 2>&1 | Out-String).Trim()
+      $refinementExit = $LASTEXITCODE
+    }
     Log $refinementText
     $refinement = $null
     try { $refinement = $refinementText | ConvertFrom-Json } catch {}
@@ -436,6 +455,7 @@ try {
     exit $contractExit
   }
   $contractArgs = @($ContractScript, 'evaluate', '--run-id', $RunId, '--started-at', $RunStartedAt)
+  if ($ResumeSlug) { $contractArgs += @('--completion-kind', 'recovery') }
   if ($publishSlug) { $contractArgs += @('--slug', [string]$publishSlug) }
   $allXWarnings = @($XStepWarnings) | Where-Object { $_ } | Select-Object -Unique
   if ($XStepPending) { $contractArgs += '--x-pending' }

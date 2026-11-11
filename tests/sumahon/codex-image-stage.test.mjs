@@ -12,6 +12,26 @@ import {
   validatePerformanceBlock,
 } from "../../scripts/automation/phase-a-orchestrator.mjs";
 
+test("date imagery gate distinguishes an excluded calendar from an affirmative calendar motif", () => {
+  const plan = [
+    "## 演出ブロック",
+    "- 衣装: 外出用ジャケット",
+    "- 小道具: スマホ",
+    "- 手・小道具: 壊れにくい手を自然に描く。開いた手・軽く添える手を使う。",
+    "- ポーズ・動き: 外出前に相談する",
+    "- 背景・状況: 玄関",
+    "- 表情: 発見",
+    "- 演出根拠: アプリの提供開始",
+    "- 日付型判定: 該当",
+    "- 変化の中身: iOSアプリの追加",
+    "- 日付ラベル: 11/10発表",
+    "- 直近10記事類型チェック: 比較机から玄関へ変更",
+  ].join("\n");
+  assert.equal(validatePerformanceBlock(plan + "\n- 主要モチーフ: スマホから相談する生活場面。カレンダー類や日付そのものを主要モチーフにしない。").ok, true);
+  assert.equal(validatePerformanceBlock(plan + "\n- 主要モチーフ: カレンダーを中心にスマホを置く。").ok, false);
+  assert.equal(validatePerformanceBlock(plan + "\n- 主要モチーフ: カレンダーは使わないが、スケジュール帳を中心にスマホを置く。").ok, false);
+});
+
 test("parseSlidePlan extracts thumbnail and slide01-08 but stops before memo headings", () => {
   const text = [
     "# plan",

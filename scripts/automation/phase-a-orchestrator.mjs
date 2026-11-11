@@ -67,11 +67,12 @@ export function validatePerformanceBlock(text = "") {
   }
   const dateType = text.match(/^\s*-\s*(?:\*\*)?日付型判定[^:：]*[:：](.*)$/m)?.[1]?.trim() || "";
   const mainMotif = text.match(/^\s*-\s*(?:\*\*)?主要モチーフ[^:：]*[:：](.*)$/m)?.[1]?.trim() || "";
+  const positiveMotif = mainMotif.replace(/(?:カレンダー類?|日めくり|スケジュール帳)(?:や日付そのもの)?(?:を|は)(?:主要モチーフにしない|使わない|使用しない)/g, "");
   const recentCheck = text.match(/^\s*-\s*(?:\*\*)?直近10記事類型チェック[^:：]*[:：](.*)$/m)?.[1]?.trim() || "";
   if (/該当/.test(dateType) && !/非該当/.test(dateType)) {
     if (!/^\s*-\s*(?:\*\*)?変化の中身[^:：]*[:：].+/m.test(text)) missing.push("日付型記事の『変化の中身』");
     if (!/^\s*-\s*(?:\*\*)?日付ラベル[^:：]*[:：].+/m.test(text)) missing.push("日付型記事の短い日付ラベル");
-    if (/カレンダー|日めくり|スケジュール帳/.test(mainMotif)) {
+    if (/カレンダー|日めくり|スケジュール帳/.test(positiveMotif)) {
       missing.push("日付型記事の主要モチーフはカレンダー類禁止");
     }
   }
