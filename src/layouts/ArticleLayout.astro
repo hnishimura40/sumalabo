@@ -3,6 +3,7 @@ import BaseLayout from "./BaseLayout.astro";
 import ArticleNavigation from "../components/ArticleNavigation.astro";
 import PreviewVetoButton from "../components/PreviewVetoButton.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
+import MobileCampaignPresentation from "../components/article/MobileCampaignPresentation.astro";
 
 import { siteConfig } from "../config/site";
 import { getCategoryByName } from "../lib/categories";
@@ -38,9 +39,13 @@ interface Props {
 }
 
 const { article, previousArticle, nextArticle, headings = [], renewal = false } = Astro.props;
+const isCampaignGuide = article.slug === "mobile-plan-cost-comparison";
 
 // 目次は h2 のみ・2 個以上あるときだけ出す（v3: モバイルは折りたたみ、PCは開いた状態）
 const tocHeadings = headings.filter((h) => h.depth === 2);
+if (isCampaignGuide && !tocHeadings.some(h => h.slug === "mobile-campaigns")) {
+  tocHeadings.unshift({ depth: 2, slug: "mobile-campaigns", text: "携帯キャンペーンの早見表" });
+}
 const showToc = tocHeadings.length >= 2;
 
 // 内部レーン名（土台/収益/流入=foundation/revenue/news）は運用分類であり、
@@ -96,13 +101,14 @@ const breadcrumbSchema = buildBreadcrumbSchema([
         </p>
       )
     }
-    <header class="article-header">
+    <header class:list={["article-header", { "article-header--campaigns": isCampaignGuide }]}>
       <div class="meta-row">
         <span>{renewal && article.type!=="news" ? `毎月更新 ／ ${article.updated.slice(0,4)}年${Number(article.updated.slice(5,7))}月号` : article.category}</span>
         <time datetime={article.updated}>更新日: {article.updated}</time>
       </div>
       <h1>{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : article.title}</h1>
       <p>{article.description}</p>
+      {isCampaignGuide && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#mobile-campaigns">キャンペーンを比べる</a><a href="#plan-diagnosis">3問で料金を見直す</a></nav>}
       {
         !renewal && (article.thumbnail ? (
           <img
@@ -141,6 +147,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     <div class="article-content">
       <slot />
     </div>
+    {isCampaignGuide && <MobileCampaignPresentation />}
 
     {!renewal && <RelatedGuides
       slug={article.slug}

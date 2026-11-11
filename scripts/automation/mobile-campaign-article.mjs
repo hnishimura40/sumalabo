@@ -22,6 +22,8 @@ export function validateCatalog(catalog,config,now=Date.now()){
     if(!carrier||!c.id||ids.has(c.id)||!['active','ended','unverified'].includes(c.status))throw Error('invalid_campaign');
     ids.add(c.id);
     for(const field of required)if(typeof c[field]!=='string'||!c[field].trim())throw Error(`missing_${field}`);
+    if(c.audiences && (!Array.isArray(c.audiences)||!c.audiences.length||c.audiences.some(value=>!['mnp','new','return'].includes(value))))throw Error('invalid_audiences');
+    if(c.comparison)for(const field of ['label','benefit','condition','deadline'])if(typeof c.comparison[field]!=='string'||!c.comparison[field].trim())throw Error(`missing_comparison_${field}`);
     if(!Array.isArray(c.sources)||!c.sources.length)throw Error('official_sources_required');
     for(const value of c.sources){
       const u=new URL(value);
@@ -38,15 +40,51 @@ const escape=text=>String(text).replace(/[&<>"'{}]/g,c=>({'&':'&amp;','<':'&lt;'
 const date=value=>new Date(value).toLocaleString('ja-JP',{timeZone:'Asia/Tokyo',hour12:false});
 export function renderCampaignSection(catalog,config,now=Date.now()){
   validateCatalog(catalog,config,now);
-  const cards=catalog.campaigns.map(c=>{
+  const active=catalog.campaigns.filter(c=>c.status==='active');
+  const history=catalog.campaigns.filter(c=>c.status!=='active');
+  const audienceNames={mnp:'他社から乗り換え',new:'新しい番号',return:'以前使った会社に戻る'};
+  const view=c=>({label:c.comparison?.label||c.title,benefit:c.comparison?.benefit||c.benefit,condition:c.comparison?.condition||c.requirements,deadline:c.comparison?.deadline||c.deadlineLabel});
+  const attributes=c=>`data-carrier="${escape(c.carrier)}" data-audiences="${escape((c.audiences||[]).join(' '))}"`;
+  const audience=c=>(c.audiences||[]).map(key=>audienceNames[key]).join('・')||'詳細の対象条件を確認';
+  const details=c=>{
     const name=config.carriers.find(v=>v.id===c.carrier).name;
     const status={active:'開催中（条件付き）',ended:'終了',unverified:'開催状況を確認中'}[c.status];
     const pairs=[['向いている人',c.suitedFor],['特典',c.status==='active'?c.benefit:'現在のおすすめ対象から外しています。過去の特典：'+c.benefit],
       ['対象者',c.eligible],['必須条件',c.requirements],['対象外・併用条件',c.exclusions],['申込経路・エントリー',c.entry],
       ['受取時期・方法',c.receiveTiming],['申込期限',c.deadlineLabel],['月額料金',c.monthlyCost],['手数料',c.fees],['注意点',c.caveats]];
-    return `<section data-campaign-id="${escape(c.id)}">\n<h3>${escape(name)}：${escape(c.title)}</h3>\n<p><strong>${status}</strong>／公式情報の確認：${escape(date(c.verifiedAt))}（日本時間）</p>\n<dl>\n${pairs.map(([label,value])=>`<dt>${label}</dt><dd>${escape(value)}</dd>`).join('\n')}\n</dl>\n<p>出典：${c.sources.map((url,i)=>`<a href="${escape(url)}" rel="noopener noreferrer">公式の条件${i+1}</a>`).join(' ／ ')}</p>\n</section>`;
-  }).join('\n\n');
-  return `${START}\n<section aria-labelledby="mobile-campaigns" data-campaign-version="${sectionVersion(catalog)}">\n<h2 id="mobile-campaigns">乗り換えキャンペーンは「受け取れる条件」で比べる</h2>\n<p>還元額だけでなく、対象者・申込方法・継続条件・受取時期まで確認しましょう。ポイントは現金と異なり、最大額が全員に適用されるわけではありません。</p>\n${cards}\n</section>\n${END}`;
+    return `<details class="campaign-offer" id="offer-${escape(c.id)}" data-campaign-id="${escape(c.id)}" ${attributes(c)}>\n<summary><span class="campaign-company">${escape(name)}</span><span class="campaign-offer-title">${escape(c.title)}</span><span class="campaign-status">${status}</span><span class="campaign-expand">条件・受取方法</span></summary>\n<div class="campaign-offer-body">\n\n<p class="campaign-verified">公式情報の確認 ${escape(date(c.verifiedAt))}（日本時間）</p>\n<dl>\n${pairs.map(([label,value])=>`<div><dt>${label}</dt><dd>${escape(value)}</dd></div>`).join('\n')}\n</dl>\n<p class="campaign-sources">出典 ${c.sources.map((url,i)=>`<a href="${escape(url)}" rel="noopener noreferrer">公式の条件${i+1}</a>`).join(' ／ ')}</p>\n</div>\n</details>`;
+  };
+  const rows=active.map(c=>{
+    const v=view(c),name=config.carriers.find(carrier=>carrier.id===c.carrier).name;
+    return `<tr ${attributes(c)}><th scope="row"><span class="campaign-company">${escape(name)}</span><span class="campaign-row-label">${escape(v.label)}</span><a href="#offer-${escape(c.id)}">条件・受取方法へ</a></th><td data-label="特典"><strong>${escape(v.benefit)}</strong></td><td data-label="対象"><span>${escape(audience(c))}</span></td><td data-label="申込期限">${escape(v.deadline)}</td><td data-label="先に確認する条件">${escape(v.condition)}</td></tr>`;
+  }).join('\n');
+  const companies=config.carriers.filter(carrier=>active.some(c=>c.carrier===carrier.id));
+  return `${START}
+<section class="mobile-campaigns" aria-labelledby="mobile-campaigns" data-campaign-version="${sectionVersion(catalog)}">
+<h2 id="mobile-campaigns">携帯キャンペーンの早見表</h2>
+<p>自分の契約方法を選び、特典と必要な条件を比べてください。MNPは、電話番号を変えずに携帯会社を乗り換える手続きです。ポイントの有効期限や受取操作は「条件・受取方法」で確認できます。</p>
+<div class="campaign-filters" hidden>
+<fieldset><legend>契約方法で絞る</legend><div class="campaign-options"><button type="button" data-audience-filter="all" aria-pressed="true">すべて</button>${Object.entries(audienceNames).map(([key,label])=>`<button type="button" data-audience-filter="${key}" aria-pressed="false">${label}</button>`).join('')}</div></fieldset>
+<div class="campaign-carrier-label"><label for="campaign-carrier">携帯会社</label><select id="campaign-carrier" data-carrier-filter><option value="all">すべての会社</option>${companies.map(c=>`<option value="${escape(c.id)}">${escape(c.name)}</option>`).join('')}</select></div>
+<p class="campaign-count" role="status" aria-live="polite">${active.length}件を表示</p>
+</div>
+<p class="campaign-filter-note">移行元・年齢・過去の特典利用などで対象外になる場合があります。最大額だけで決めず、月額料金と手数料も確認してください。</p>
+<table class="campaign-table"><caption>開催中の携帯キャンペーン比較</caption><thead><tr><th scope="col">携帯会社・特典名</th><th scope="col">特典</th><th scope="col">対象</th><th scope="col">申込期限</th><th scope="col">先に確認する条件</th></tr></thead><tbody>${rows}</tbody></table>
+<p class="campaign-empty" hidden>この組み合わせの掲載特典はありません。契約方法か携帯会社を変えてください。</p>
+<h3 id="campaign-details">キャンペーンごとの詳しい条件</h3>
+<p>気になる特典を開くと、対象外の条件、月額料金、受取時期と公式の出典を確認できます。</p>
+<div class="campaign-detail-list">
+
+${active.map(details).join('\n')}
+
+</div>
+<details class="campaign-history">
+
+<summary>終了済み・確認中の特典（${history.length}件）</summary><p>受付終了後も、申し込み済みの人が条件を確認できるよう履歴を残しています。確認中の特典は、現在のおすすめに含めていません。</p>
+
+${history.map(details).join('\n')}</details>
+</section>
+${END}`;
 }
 export function updateArticle(text,section,updated,replacements=[]){
   const starts=text.split(START).length-1,ends=text.split(END).length-1;

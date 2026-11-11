@@ -1,0 +1,139 @@
+<script>
+  const section = document.querySelector<HTMLElement>(".mobile-campaigns");
+  if (section) {
+    const filters = section.querySelector<HTMLElement>(".campaign-filters");
+    const buttons = Array.from(section.querySelectorAll<HTMLButtonElement>("[data-audience-filter]"));
+    const carrier = section.querySelector<HTMLSelectElement>("[data-carrier-filter]");
+    const rows = Array.from(section.querySelectorAll<HTMLElement>(".campaign-table tbody tr"));
+    const offers = Array.from(section.querySelectorAll<HTMLElement>(".campaign-detail-list > details"));
+    const status = section.querySelector<HTMLElement>(".campaign-count");
+    const empty = section.querySelector<HTMLElement>(".campaign-empty");
+    let audience = "all";
+
+    const update = () => {
+      for (const item of [...rows, ...offers]) {
+        const audiences = item.dataset.audiences?.split(" ").filter(Boolean) || [];
+        const audienceMatches = audience === "all" || !audiences.length || audiences.includes(audience);
+        item.hidden = !audienceMatches || (carrier?.value !== "all" && item.dataset.carrier !== carrier?.value);
+      }
+      const count = rows.filter(row => !row.hidden).length;
+      if (status) status.textContent = `${count}件を表示`;
+      if (empty) empty.hidden = count > 0;
+    };
+
+    for (const button of buttons) {
+      button.addEventListener("click", () => {
+        audience = button.dataset.audienceFilter || "all";
+        for (const option of buttons) option.setAttribute("aria-pressed", String(option === button));
+        update();
+      });
+    }
+    carrier?.addEventListener("change", update);
+    if (filters) filters.hidden = false;
+
+    const openLinkedOffer = () => {
+      const target = document.getElementById(location.hash.slice(1));
+      if (!(target instanceof HTMLDetailsElement) || !section.contains(target)) return;
+      target.open = true;
+      const history = target.closest<HTMLDetailsElement>(".campaign-history");
+      if (history) history.open = true;
+      if (target.hidden) {
+        audience = "all";
+        if (carrier) carrier.value = "all";
+        for (const button of buttons) button.setAttribute("aria-pressed", String(button.dataset.audienceFilter === "all"));
+        update();
+      }
+      target.scrollIntoView({ block: "start" });
+    };
+    window.addEventListener("hashchange", openLinkedOffer);
+    section.addEventListener("click", event => {
+      const link = (event.target as Element).closest<HTMLAnchorElement>('a[href^="#offer-"]');
+      if (link?.hash === location.hash) openLinkedOffer();
+    });
+    openLinkedOffer();
+  }
+</script>
+
+<style is:global>
+  .article-shell .article-header--campaigns { position: relative; padding-right: 230px; min-height: 220px; }
+  .article-shell .article-header--campaigns h1 { font-size: clamp(27px, 4vw, 38px); line-height: 1.45; }
+  .article-shell .article-header--campaigns .article-thumbnail { position: absolute; top: 28px; right: 24px; width: 180px; height: auto; margin: 0; }
+  .campaign-page-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .campaign-page-links a { padding: 10px 14px; border-radius: 8px; background: var(--brand); color: var(--bg-elev); font-size: 14px; font-weight: 700; text-decoration: none; }
+  .campaign-page-links a + a { background: var(--bg-elev); border: 1px solid var(--line-strong); color: var(--fg); }
+  #plan-diagnosis { scroll-margin-top: 110px; }
+  .article-content .mobile-campaigns { margin: 24px 0 48px; }
+  .mobile-campaigns [hidden] { display: none !important; }
+  .mobile-campaigns :is(h2, h3, details[id]) { scroll-margin-top: 110px; }
+  .article-content .mobile-campaigns > h2 { margin-top: 0; }
+  .campaign-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 16px 24px; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg-elev); }
+  .campaign-filters fieldset { min-width: 0; flex: 1 1 440px; margin: 0; padding: 0; border: 0; }
+  .campaign-filters legend, .campaign-carrier-label { font-size: 14px; font-weight: 700; }
+  .campaign-options { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .campaign-options button { min-height: 44px; border: 1px solid var(--line-strong); border-radius: 8px; padding: 9px 12px; background: var(--bg-elev); color: var(--fg); font: inherit; font-size: 14px; cursor: pointer; }
+  .campaign-options button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--bg-elev); font-weight: 700; }
+  .campaign-carrier-label { display: grid; gap: 8px; }
+  .campaign-carrier-label select { min-height: 44px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg-elev); color: var(--fg); font: inherit; }
+  .article-content .mobile-campaigns .campaign-count { flex-basis: 100%; margin: 0; font-size: 14px; color: var(--fg-mid); }
+  .article-content .mobile-campaigns .campaign-filter-note { margin: 12px 0 20px; font-size: 14px; color: var(--fg-mid); }
+  .article-content .mobile-campaigns .campaign-table { width: 100%; margin: 0 0 32px; table-layout: fixed; border-collapse: collapse; font-size: 14px; line-height: 1.65; }
+  .campaign-table caption { padding: 12px 0; text-align: left; color: var(--fg); font-size: 17px; font-weight: 700; }
+  .article-content .mobile-campaigns .campaign-table :is(th, td) { padding: 16px 12px; border: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+  .article-content .mobile-campaigns .campaign-table thead th { background: var(--brand-soft); color: var(--fg); font-size: 13px; }
+  .campaign-table thead th:nth-child(1) { width: 22%; }
+  .campaign-table thead th:nth-child(2) { width: 23%; }
+  .campaign-table thead th:nth-child(3) { width: 15%; }
+  .campaign-table thead th:nth-child(4) { width: 14%; }
+  .campaign-table thead th:nth-child(5) { width: 26%; }
+  .article-content .mobile-campaigns .campaign-table tbody :is(th, td) { background: var(--bg-elev); color: var(--fg); }
+  .article-content .mobile-campaigns .campaign-table tbody tr:nth-child(even) :is(th, td) { background: var(--bg); }
+  .campaign-company { display: block; font-weight: 800; font-size: 16px; color: var(--fg); }
+  .campaign-row-label { display: block; margin: 4px 0 10px; font-size: 13px; font-weight: 500; color: var(--fg-mid); }
+  .campaign-table tbody th a { display: inline-flex; align-items: center; min-height: 44px; padding: 4px 0; font-size: 13px; text-underline-offset: 3px; }
+  .campaign-detail-list { display: grid; gap: 12px; margin: 20px 0 32px; }
+  .campaign-offer { min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-elev); }
+  .campaign-offer > summary { display: grid; grid-template-columns: 140px 1fr; gap: 6px 20px; padding: 18px 20px; cursor: pointer; list-style: none; }
+  .campaign-offer > summary::-webkit-details-marker { display: none; }
+  .campaign-offer-title { font-size: 15px; font-weight: 700; line-height: 1.6; color: var(--fg); }
+  .campaign-status { font-size: 12px; color: var(--fg-mid); }
+  .campaign-expand { color: var(--teal-deep); font-size: 13px; font-weight: 700; }
+  .campaign-expand::before { content: "+ "; }
+  .campaign-offer[open] > summary { border-bottom: 1px solid var(--line); }
+  .campaign-offer[open] > summary .campaign-expand::before { content: "− "; }
+  .campaign-offer-body { padding: 20px; }
+  .article-content .mobile-campaigns .campaign-verified { margin: 0 0 16px; font-size: 13px; color: var(--fg-mid); }
+  .campaign-offer-body dl { margin: 0; }
+  .campaign-offer-body dl > div { display: grid; grid-template-columns: 145px minmax(0, 1fr); border-top: 1px solid var(--line); }
+  .campaign-offer-body dt { margin: 0; padding: 14px 12px; background: var(--bg); font-size: 13px; font-weight: 700; }
+  .campaign-offer-body dd { margin: 0; padding: 14px 16px; font-size: 15px; line-height: 1.8; overflow-wrap: anywhere; }
+  .article-content .mobile-campaigns .campaign-sources { margin: 20px 0 0; font-size: 13px; }
+  .campaign-history { border-top: 1px solid var(--line); padding-top: 20px; }
+  .campaign-history > summary { padding: 12px 0; cursor: pointer; font-weight: 700; }
+  .campaign-history .campaign-offer { margin: 12px 0; }
+  .campaign-empty { padding: 20px; background: var(--unc-bg); border-radius: 12px; }
+  .mobile-campaigns :is(button, select, summary, a):focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+  .mobile-campaigns .campaign-offer:target { border-color: var(--brand); }
+
+  @media (max-width: 720px) {
+    .article-shell .article-header--campaigns { padding: 20px; }
+    .article-shell .article-header--campaigns .article-thumbnail { position: static; width: 150px; margin-top: 18px; }
+    .campaign-filters { padding: 16px; gap: 16px; }
+    .campaign-carrier-label { width: 100%; }
+    .campaign-options { display: grid; grid-template-columns: 1fr 1fr; }
+    .campaign-options button { padding: 9px 8px; font-size: 13px; }
+    .article-content .mobile-campaigns .campaign-table { display: block; border: 0; box-shadow: none; background: transparent; }
+    .campaign-table caption { display: block; }
+    .campaign-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .campaign-table tbody { display: grid; gap: 16px; }
+    .campaign-table tr { display: grid; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-elev); overflow: hidden; }
+    .article-content .mobile-campaigns .campaign-table tbody th { display: block; padding: 16px; border: 0; border-bottom: 1px solid var(--line); background: var(--brand-soft); }
+    .article-content .mobile-campaigns .campaign-table tbody td { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 12px; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--line-soft); background: var(--bg-elev); }
+    .campaign-table td::before { content: attr(data-label); color: var(--fg-mid); font-size: 12px; font-weight: 700; }
+    .campaign-row-label { margin-bottom: 2px; }
+    .campaign-offer > summary { grid-template-columns: 1fr; padding: 16px; }
+    .campaign-offer-title { grid-row: 2; }
+    .campaign-offer-body { padding: 16px; }
+    .campaign-offer-body dl > div { grid-template-columns: 1fr; }
+    .campaign-offer-body :is(dt, dd) { padding: 10px 12px; }
+  }
+</style>
