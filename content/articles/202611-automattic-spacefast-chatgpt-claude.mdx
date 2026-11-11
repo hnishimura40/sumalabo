@@ -1,0 +1,198 @@
+---
+title: "Spacefast（作ったページを公開・管理するサービス）とは？ 共有と更新の仕組み"
+slug: "202611-automattic-spacefast-chatgpt-claude"
+type: "news"
+category: "ニュースをかみくだく"
+description: "SpacefastはAIで作ったページやアプリの公開・管理を支えるサービス。共有設定、更新履歴、対応条件、無料の利用枠と登録なし公開の期限を整理します。"
+thumbnail: "/images/thumbnails/202611-automattic-spacefast-chatgpt-claude.webp"
+thumbnailAlt: "共同制作室で、ひまりが制作用PCから体をひねり、閲覧用タブレットをらぼまると確かめる、Spacefastの公開・管理を表す概念イラスト。"
+status: "ready"
+priority: 1
+updated: "2026-11-12"
+pubDate: "2026-11-12"
+publishAt: "2026-11-11T20:09:50.841Z"
+characterUse:
+  recommended: true
+  count: 2
+  primary: "duo_talk_half.webp"
+  secondary: "labomaru_chart_icon.webp"
+tags: ["Spacefast", "Automattic", "AI", "ChatGPT", "Claude"]
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import Note from "../../src/components/article/Note.astro";
+
+<Summary30>
+<ol>
+<li>
+<p><strong>これは何？</strong><br />
+AI（文章や指示をもとに、回答や作成物を出すコンピューターの仕組み）で作ったページやアプリ（入力に応じて計算や記録などをするソフト）を、ネット上に置き、公開後も管理するためのサービスです。</p>
+</li>
+<li>
+<p><strong>何があった？</strong><br />
+Automattic（今回Spacefastの一般公開を発表した会社）が、2026年11月9日にサービスを一般へ開放しました。9月の先行公開を経ての発表です。<a href="https://automattic.com/2026/11/09/meet-spacefast/">Automattic公式発表</a></p>
+</li>
+<li>
+<p><strong>誰に関係ある？</strong><br />
+作ったページや小さな道具を、誰かに使ってもらいたい人に関係します。AIとの会話や文章作成だけを使う人には、今すぐの影響は小さいニュースです。</p>
+</li>
+<li>
+<p><strong>結局どうなの？</strong><br />
+「作れた」の先にある、見せる相手や更新内容の管理を助ける選択肢です。ただし、動かせるものや利用料金には条件があり、日本からの登録・決済・接続は未確認です。</p>
+</li>
+</ol>
+</Summary30>
+
+<Callout kind="facts"><p>Automatticは2026年11月9日、Spacefastを一般に開放したと発表しました。作成物を公開する場所と、共有・更新を管理する仕組みを提供します。<a href="https://automattic.com/2026/11/09/meet-spacefast/">公式発表</a></p></Callout>
+
+<p>ChatGPTとClaudeは、どちらも質問への回答や文章・ソフト作りを頼めるAIサービスです。Spacefastは、この2つに接続する方法を案内しています。作成を頼むAIと、作ったものを置く場所をつなぐ構成です。<a href="https://spacefast.com/docs/setup/chatgpt/">ChatGPT向け接続案内</a>、<a href="https://spacefast.com/docs/setup/claude-app/">Claude向け接続案内</a></p>
+
+<section class="article-slide-section article-wide-block">
+<figure class="article-slide-figure">
+<img src="/images/articles/202611-automattic-spacefast-chatgpt-claude/slide01.webp" alt="共同制作室でひまりとらぼまるが閲覧端末へ向き直り、Spacefastの公開・管理という役割を知る概念図。" width="1280" height="1600" loading="lazy" decoding="async" />
+<figcaption>図解1：作ったものを公開・管理する</figcaption>
+</figure>
+<div class="slide-reading-note"><ul><li>自分の画面で作れたことと、他の人が開ける公開先を用意することは別。</li><li>今回は公開・管理サービスの一般開放。ChatGPTやClaudeの性能向上を発表したニュースではない。</li></ul></div>
+</section>
+
+
+<h2>そもそも、何をするサービス？</h2>
+<p class="lead"><strong>Spacefastは、作ったものを他の人が開ける場所に置き、その後の変更も管理するサービスです。</strong></p>
+<p>Webサイト（ネット上で開いて読んだり使ったりするページのまとまり）は、作成できても、それだけで他の人が使えるとは限りません。誰かに見てもらうには、ネット上の公開先も必要になります。</p>
+<p>Spacefastは、その公開先を提供します。作成物を置くだけでなく、誰が開けるかを設定し、更新前の内容を残す仕組みもあります。<a href="https://spacefast.com/about/">Spacefastのサービス説明</a></p>
+<CharacterBubble speaker="himari" mood="curious">AIでページを作れたら、友だちもそのまま使えるの？</CharacterBubble>
+<CharacterBubble speaker="labo" mood="point">自分の画面で動くことと、友だちが開けることは別なんだ。公開先を用意して、誰に見せるかも決める必要があるよ。</CharacterBubble>
+<section class="article-slide-section article-wide-block">
+<figure class="article-slide-figure">
+<img src="/images/articles/202611-automattic-spacefast-chatgpt-claude/slide02.webp" alt="ChatGPTやClaudeによる作成と、Spacefastによる公開・管理の役割を分けた概念図。" width="1280" height="1600" loading="lazy" decoding="async" />
+<figcaption>図解2：作るAIと公開先の役割</figcaption>
+</figure>
+<div class="slide-reading-note"><ul><li>Spacefastは作ったものを置く場所と、見せ方や変更の管理を支える。</li><li>AIとの接続方法によって契約・組織設定などの条件がある。接続の実動作は確認していない。</li></ul></div>
+</section>
+
+<h2>あなたに関係ある？</h2>
+<p><strong>関係がある人</strong>は、AIで作ったページや小さなツールを、他の人にも使ってもらいたい人です。「どこに置くか」「修正したらどう差し替えるか」で迷っている場合も、今回の仕組みが参考になります。</p>
+<p><strong>あまり関係がない人</strong>は、AIとの会話、文章作成、調べものだけを利用し、ページやアプリを公開しない人です。現在の公開先で困っていない人も、この発表だけを理由に乗り換える必要はありません。</p>
+<h2>今回、何が変わった？</h2>
+<p class="lead"><strong>11月9日の変化は、先行公開されていたSpacefastが、一般に開放されたことです。</strong></p>
+<p>9月の先行公開を経て、サービスを利用できる人の範囲が広がったという発表です。<a href="https://automattic.com/2026/11/09/meet-spacefast/">Automattic公式発表</a></p>
+<p>ここでいう「一般公開」の対象は、Spacefastというサービスです。利用者が置いたページを、不特定の人が開ける状態にすることとは区別する必要があります。</p>
+<Timeline>
+<TimelineItem date="2026年9月">Spacefastを先行公開。</TimelineItem>
+<TimelineItem date="2026年11月9日">一般への開放を発表。</TimelineItem>
+</Timeline>
+<h2>何が便利？ 公開先・見せる範囲・更新を管理できる</h2>
+<p class="lead"><strong>作成後に必要になる作業を、3つに分けると役割が分かります。</strong></p>
+<table>
+<thead>
+<tr>
+<th>作成後の疑問</th>
+<th>Spacefastが用意する仕組み</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>どこで使ってもらう？</td>
+<td>作成したファイルをネット上に置く</td>
+</tr>
+<tr>
+<td>誰に見せる？</td>
+<td>招待やリンクなどで閲覧範囲を設定する</td>
+</tr>
+<tr>
+<td>修正に失敗したら？</td>
+<td>更新履歴を残し、以前の版へ戻せる</td>
+</tr>
+</tbody>
+</table>
+<p>これらは公式に案内されている仕様です。<a href="https://spacefast.com/about/">Spacefastのサービス説明</a>、<a href="https://spacefast.com/docs/share/">共有設定の公式文書</a></p>
+<h3>見せる相手を選べる</h3>
+<p>共有リンク（他の人が作成物を開くために渡すリンク）や、招待、パスワードなどで閲覧範囲を設定できます。閲覧者を限定しない公開も選べます。</p>
+<p>標準は非公開ですが、チームの設定で新しく作るものの初期状態を変更できます。公開前には、自分の作成物に適用されている設定を見る必要があります。<a href="https://spacefast.com/docs/share/">共有設定の公式文書</a></p>
+<CharacterBubble speaker="himari" mood="curious">サービスが一般公開されたなら、置いたページも自動で公開されるの？</CharacterBubble>
+<CharacterBubble speaker="labo" mood="point">見せる範囲は別に設定するんだ。「サービスを使える人が広がること」と「ページを見せる相手」を分けて考えよう。</CharacterBubble>
+<section class="article-slide-section article-wide-block">
+<figure class="article-slide-figure">
+<img src="/images/articles/202611-automattic-spacefast-chatgpt-claude/slide03.webp" alt="ひまりとらぼまるがSpacefastの閲覧範囲を確かめ、サービスの一般開放とページの公開設定を区別する図。" width="1280" height="1600" loading="lazy" decoding="async" />
+<figcaption>図解3：見せる相手を設定する</figcaption>
+</figure>
+<div class="slide-reading-note"><ul><li>招待、共有リンク、パスワードなどで閲覧範囲を設定できる。</li><li>公開前には、その作成物へ適用される設定を確認する。</li></ul></div>
+</section>
+
+<h3>更新前の内容を残せる</h3>
+<p>変更した内容は、バージョン（更新の前後を区別するために残す、それぞれの版）として管理されます。公開中の内容を以前の版へ戻すこともできます。</p>
+<p>例えば、説明を書き換えた後で前の内容に戻したくなったとき、残された版を使えます。ただし、以前の版へ戻せる仕組みがあっても、アプリの動作や内容の正しさまで保証されるわけではありません。<a href="https://spacefast.com/about/">Spacefastのサービス説明</a></p>
+<section class="article-slide-section article-wide-block">
+<figure class="article-slide-figure">
+<img src="/images/articles/202611-automattic-spacefast-chatgpt-claude/slide04.webp" alt="Spacefastで残された以前の版と現在のページを、ひまりとらぼまるが見比べる概念図。" width="1280" height="1600" loading="lazy" decoding="async" />
+<figcaption>図解4：更新前の版へ戻す</figcaption>
+</figure>
+<div class="slide-reading-note"><ul><li>例えば、説明を書き換えた後に以前の内容へ戻したい場合に使う仕組み。</li><li>版を戻せても、不具合や情報管理の問題まで解消するとは限らない。</li></ul></div>
+</section>
+
+<h2>注意点：作ったものが、そのまま使えるとは限らない</h2>
+<p class="lead"><strong>公開の仕組みが用意されても、対応条件や機能の提供段階は確認が必要です。</strong></p>
+<h3>作成物と接続方法に条件がある</h3>
+<p>公開できるファイルの形式や、アプリの作り方には対応条件があります。別のサービス専用の機能を使っている場合などは、修正が必要になることもあります。<a href="https://spacefast.com/docs/frameworks/">対応形式の公式文書</a></p>
+<p>ChatGPT・Claudeとの接続にも、接続方法によって契約や組織設定の条件があります。利用中の契約で接続できるかは、個別に確認する必要があります。<a href="https://spacefast.com/docs/setup/chatgpt/">ChatGPT向け接続案内</a>、<a href="https://spacefast.com/docs/setup/claude-app/">Claude向け接続案内</a></p>
+<p>また、日本からの登録、日本で発行したカードによる支払い、日本の利用者による接続は、すまラボでは確認していません。日本での利用可否は断定できません。</p>
+<h3>一部の機能は試験提供中</h3>
+<p>公式の機能一覧には、ベータ（正式提供に向けて試験的に提供されている段階）の表示があります。</p>
+<p>例えば、アプリを使う人が登録した本人か確かめる機能には、ベータ表示があります。一方、11月9日の発表では、組み込みの利用者確認機能を提供予定としています。必要な機能が現在どの段階にあるか、利用時点の案内を確認する必要があります。<a href="https://spacefast.com/docs/pricing/">公式の機能一覧</a>、<a href="https://automattic.com/2026/11/09/meet-spacefast/">Automattic公式発表</a></p>
+<p>ページを開ける人の制限と、アプリ内で利用者を見分ける仕組みも、それぞれ別の確認事項です。</p>
+<section class="article-slide-section article-wide-block">
+<figure class="article-slide-figure">
+<img src="/images/articles/202611-automattic-spacefast-chatgpt-claude/slide05.webp" alt="ひまりとらぼまるが、作成物の構成とSpacefastの対応条件を照合する概念図。" width="1280" height="1600" loading="lazy" decoding="async" />
+<figcaption>図解5：作り方・接続・機能の条件</figcaption>
+</figure>
+<div class="slide-reading-note"><ul><li>別サービス専用の機能などは、修正が必要になる場合がある。</li><li>アプリ内で利用者本人か確かめる機能について、発表では提供予定、機能一覧では試験提供中の表示がある。利用時点の案内を確認する。</li></ul></div>
+</section>
+
+<h3>無料枠と、登録なしで公開する期限がある</h3>
+<p>月額0米ドルのプランにも、毎月1米ドル分の利用枠があります。これは、無料で使える処理などの量を金額で表したものです。</p>
+<p>無料枠を使い切ると、新しく公開するためのファイルを作る処理などが止まりますが、公開済みページの配信は続くと案内されています。</p>
+<p>有料プランでは、含まれる枠を超えると従量料金（使った量に応じて増える料金）が発生します。請求は税別の米ドル建てです。<a href="https://spacefast.com/docs/pricing/">料金・上限の公式文書</a></p>
+<section class="article-slide-section article-wide-block">
+<figure class="article-slide-figure">
+<img src="/images/articles/202611-automattic-spacefast-chatgpt-claude/slide06.webp" alt="Spacefastの月額料金と毎月の利用枠を分け、ひまりとらぼまるが利用量を確認する図。" width="1280" height="1600" loading="lazy" decoding="async" />
+<figcaption>図解6：月額と利用枠を分ける</figcaption>
+</figure>
+<div class="slide-reading-note"><ul><li>1米ドル分は、無料で使える処理などの量を金額で表したもの。</li><li>無料枠を使い切ると、新しい公開用ファイルを作る処理などは止まるが、公開済みページの配信は続くと案内されている。</li></ul></div>
+</section>
+
+<p>アカウント（利用者を識別し、自分の作成物などを管理するための登録）を作らずに公開する方法もあります。ただし、その公開には期限があります。</p>
+<p>原則として、作成時またはファイル変更を伴う最新の公開から<strong>33時間20分</strong>で配信が止まります。更新で延長しても、作成から<strong>30日</strong>が上限です。後から登録して作成物を自分の管理下に移すと、この匿名公開の期限はなくなります。<a href="https://spacefast.com/docs/anonymous-and-claim/">登録なしの公開に関する公式文書</a></p>
+<section class="article-slide-section article-wide-block">
+<figure class="article-slide-figure">
+<img src="/images/articles/202611-automattic-spacefast-chatgpt-claude/slide07.webp" alt="Spacefastの登録なし公開について、配信期限と延長上限をひまりとらぼまるが確認する図。" width="1280" height="1600" loading="lazy" decoding="async" />
+<figcaption>図解7：登録なし公開の期限</figcaption>
+</figure>
+<div class="slide-reading-note"><ul><li>ファイルを変えない操作だけで期限が延びるとは説明しない。</li><li>後から登録して作成物を自分の管理下に移すと、この匿名公開の期限はなくなる。無料枠など他の条件は別に残る。</li></ul></div>
+</section>
+
+<h2>もう少し詳しく知りたい人へ</h2>
+<p class="lead"><strong>利用を検討するなら、まず「見せたい相手」「動かしたいもの」「必要な機能」を整理すると、確認先を絞れます。</strong></p>
+<ul>
+<li><strong>仲間にだけ見せたい：</strong> <a href="https://spacefast.com/docs/share/">共有設定</a>で、招待やリンクの扱いを確認する。</li>
+<li><strong>作ったものが動くか知りたい：</strong> <a href="https://spacefast.com/docs/frameworks/">対応形式</a>と、使っている機能の条件を照合する。</li>
+<li><strong>継続して使いたい：</strong> <a href="https://spacefast.com/docs/pricing/">料金と利用上限</a>を確認する。登録なしで試す場合は、<a href="https://spacefast.com/docs/anonymous-and-claim/">公開期限</a>も見る。</li>
+</ul>
+<p>AIで作成した後には、公開先を用意し、見せる相手を決め、変更を管理する仕事が残ります。Spacefastを理解するポイントは、その仕事をどこまで支える仕組みがあるかです。</p>
+<p>仕様・料金の確認日：2026年11月12日。すまラボでは、登録・決済・接続およびアプリ公開の動作確認は行っていません。</p>
+<section class="article-slide-section article-wide-block">
+<figure class="article-slide-figure">
+<img src="/images/articles/202611-automattic-spacefast-chatgpt-claude/slide08.webp" alt="ひまりとらぼまるが制作席へ振り返り、Spacefastを利用する前に条件を確認しようとする概念図。" width="1280" height="1600" loading="lazy" decoding="async" />
+<figcaption>図解8：利用前に条件を確かめる</figcaption>
+</figure>
+<div class="slide-reading-note"><ul><li>利用を検討する場合は、見せたい相手、動かしたいもの、必要な機能から確認先を絞る。</li><li>AIとの会話や文章作成だけを使う人、現在の公開先で困っていない人は、この発表だけで登録や乗り換えを急ぐ必要はない。</li></ul></div>
+</section>
+
+<Callout kind="unc"><p>2026年11月12日時点、すまラボでは日本からの登録・決済・接続やアプリ公開の動作を確認していません。利用可否は断定できません。</p></Callout>
+
+<h2>参考情報</h2>
+<ul><li><a href="https://automattic.com/2026/11/09/meet-spacefast/">公式発表</a></li><li><a href="https://spacefast.com/about/">サービス説明</a></li><li><a href="https://spacefast.com/docs/share/">共有設定</a></li><li><a href="https://spacefast.com/docs/frameworks/">対応形式</a></li><li><a href="https://spacefast.com/docs/setup/chatgpt/">ChatGPTとの接続</a></li><li><a href="https://spacefast.com/docs/setup/claude-app/">Claudeとの接続</a></li><li><a href="https://spacefast.com/docs/pricing/">料金・利用上限</a></li><li><a href="https://spacefast.com/docs/anonymous-and-claim/">登録なし公開の期限</a></li></ul>
+<Note>仕様・料金の確認日：2026年11月12日。公表仕様に基づく説明です。</Note>
