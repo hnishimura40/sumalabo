@@ -4,6 +4,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createPendingBundle, verifyPendingBundle } from "../../scripts/automation/x-pending-bundle.mjs";
+import { generateXPost } from "../../scripts/sumahon/generate-x-post.mjs";
 
 const SLUG = "202608-x-pending-test";
 const RUN_ID = "20260815T043000.000";
@@ -40,4 +41,15 @@ test("X pending bundle preserves post, reply and exactly four hashed images", ()
 test("X pending bundle refuses an incomplete image set", () => {
   const root = fixture({ imageCount: 3 });
   assert.throws(() => createPendingBundle({ root, slug: SLUG, runId: RUN_ID, startedAt: "2026-08-14T19:30:00.000Z", warnings: ["dom_read"] }), /x_attachment_plan_invalid:3/);
+});
+
+test("normal X generator produces a URL-only reply accepted by pending recovery", () => {
+  const root = fixture();
+  const generated = generateXPost({ slug: SLUG, title: "スマホの新機能", description: "使い方を確認できます。", type: "news", linkInReply: true });
+  assert.equal(generated.reply.text, generated.articleUrl);
+  generated.attachmentPlan = { attach: [0, 1, 2, 3].map(index => `public/images/pending/${index}.png`) };
+  writeFileSync(path.join(root, "logs", "social", `${SLUG}.x-post.json`), JSON.stringify(generated));
+  const created = createPendingBundle({ root, slug: SLUG, runId: RUN_ID, startedAt: "2026-08-14T19:30:00.000Z" });
+  assert.equal(created.reply.text, generated.articleUrl);
+  assert.equal(verifyPendingBundle({ root, slug: SLUG, runId: RUN_ID }).ok, true);
 });
