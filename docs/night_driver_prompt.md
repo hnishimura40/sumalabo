@@ -41,7 +41,7 @@ X本投稿と記事URLリプライの二段階記録は外側の副契約です�
 
 1. 外側ラッパーは `data/automation/scout-picked.json` の今回の選定1件について、公式調査、論点選定、下書き、最低2回のレビュー、最終稿、図解設計を独立したCodex実行で順に完了済みです。渡されたslugの `logs/article/<slug>.state.json` と `drafts/refinement/<slug>/` の6成果物を確認し、`node scripts/automation/phase-a-orchestrator.mjs --slug <slug>` で `save_drafts` から再開する。スカウト・本文工程をやり直したり、別のslugを作ったりしない。一次情報の不足・本文と図解設計の矛盾があれば失敗handoffに記録して停止する。
 2. 夜間記事は従来のv3を使う。30秒欄4項目と本文の番号付き図解8枚を配置し、サムネイルは別に1枚使う。本文には `article-slide-section` を図解ごとに1つ置き、その図解と短い読者向け説明を対応させる。
-3. 画像工程はCodex ImageGen経路を優先し、正本、寸法、SHA、使用量を記録する。定義済みfallback条件だけ工房退避を許可し、発動条件を報告する。
+3. 画像工程は、この親Codex自身のbuilt-in ImageGenで直接実行する。画像生成用Codexを入れ子起動する`codex-image-stage.mjs`や`sumalabo:images:codex`は呼ばない。`generate_images`のNEXT ACTIONは、親への作業依頼であって失敗・人待ちではない。正本、実寸、SHA、生成元と時刻をcodex-images.jsonに記録し、`--advance generate_images`で実画像を再照合する。使用量が返らない場合は理由だけ記録する。過去の入れ子タイムアウトは直接ツールを飛ばす理由にしない。直接ツールが実際に失敗した場合だけ定義済みfallback条件で工房退避し、発動条件を報告する。
 4. 手は自然で壊れにくい描写にする。難しい握り、両手の別動作、指を組む・数えるポーズ、手のクローズアップを避ける。
 5. 五層検品、身体構造検品、手が見える画像の別セッション二段クロップ検品を実行する。明確な異常は `needs_revision` として該当画像だけ1回再生成する。
 6. ビルド後、`npm run sumalabo:gate -- --slug <slug> --stage workspace`、事実確認、Markdown残存検査、秘密情報検査をすべて通す。workspace段階は本文・画像・OGPを検査する。Gitへのコミット保全は外側ラッパーがコミット後、push前に`--stage full`で必ず検査する。

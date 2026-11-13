@@ -43,6 +43,7 @@
     "autoRescheduleAfterFailure": false
   },
   "codex": {
+    "imageTransport": "codex_builtin_imagegen",
     "refinementTimeoutMs": 300000,
     "researchTimeoutMs": 480000,
     "slidePlanTimeoutMs": 480000,

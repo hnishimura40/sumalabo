@@ -34,8 +34,9 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import process from "node:process";
 import { gate } from "./autonomy.mjs";
 import { notifyAutonomyEvent } from "./autonomy-notify.mjs";
-import { recordFallback } from "./codex-image-stage.mjs";
-import { markAdopted, markInspection } from "./image-output-lifecycle.mjs";
+import { recordFallback, verifyGeneratedManifest } from "./codex-image-stage.mjs";
+import { markAdopted, markInspection, markGenerated } from "./image-output-lifecycle.mjs";
+import { NIGHT_ENVIRONMENT } from "./night-environment.mjs";
 import { classifyArticleCategory } from "../sumahon/category-classification.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -94,7 +95,7 @@ export const STEPS = [
   { name: "chatgpt_turn6_slideplan", type: "assisted", label: "Turn6: slide_plan（8枚+サムネ体験図）" },
   { name: "save_drafts", type: "script" },
   { name: "gate_draft", type: "script" },
-  { name: "generate_images", type: "script", label: "Codex exec優先でスライド8枚+サムネ生成（正本添付・工房fallback）" },
+  { name: "generate_images", type: "script", label: "親CodexのImageGenでスライド8枚+サムネ生成（正本参照）" },
   { name: "factcheck_images", type: "assisted", label: "画像ファクトチェック（Claude が画像を読み slide_plan と突き合わせ）" },
   { name: "webp_convert", type: "script" },
   { name: "write_mdx", type: "assisted", label: "MDX 作成（final_article v→ 記事テンプレ準拠）" },
@@ -228,6 +229,11 @@ const scriptSteps = {
 
   generate_images(state) {
     if (STUB) return { ok: true, data: { transport: "codex_exec", stub: true } };
+    if (NIGHT_ENVIRONMENT.codex.imageTransport === "codex_builtin_imagegen") {
+      // Return work to the current Codex rather than blocking it on a nested
+      // generation process. exit 10 is the existing assisted-action contract.
+      return { ok: false, fallback: true, data: { transport: "codex_builtin_imagegen" } };
+    }
     const r = spawnSync(process.execPath, [
       path.join(ROOT, "scripts", "automation", "codex-image-stage.mjs"),
       "--slug", state.slug,
@@ -340,7 +346,9 @@ export function assistedInstruction(state, step, { nightRefinement = false } = {
 \`- 直近10記事類型チェック: 点検作業台型は類似なし\`
 \`- スライド演出方針: 衣装は一貫、小道具・ポーズ・背景は各purposeに合わせる\`
 **漢字化け対策（docs/kanji_pitfalls.md）: スライドの帯・見出し・吹き出しの短い文言は、化けやすい漢字（目/未/末/微 等）を避け、ひらがな・言い換えを優先する（例「目的別」→「使い方で」）。特に1〜4文字のラベルは優先的にやさしい和語にする。** **X直接投稿を見据え、各スライドは「文字量を絞り・数字は正確に・単体で意味が通る」ことを意識（文字密度の高いスライドは X 選抜から外れ記事内専用になる）。**`,
-    generate_images: `Codex exec が自動退避条件に該当したため、常設キャラ工房チャット方式へ切り替える。logs/article/${slug}.image-fallback.json の condition を確認し、slide_plan の未生成または要修正分だけを工房で生成する。**fallback のキャラ不一致は、顔・体型・髪型・耳ビレ・首輪・アンテナ・ハート等の認識アンカー不一致に限る。衣装・小道具・ポーズ・背景の変化を理由に退避しない。** 正本2枚の同一性を守りつつ、演出ブロックは維持して生成する。完了したら --advance generate_images で続行する。`,
+    generate_images: NIGHT_ENVIRONMENT.codex.imageTransport === "codex_builtin_imagegen"
+      ? `この親Codex自身のbuilt-in ImageGenを直接使う。画像生成のためにcodex-image-stageや別のCodexを入れ子起動しない。imagegenスキルを読み、parseSlidePlan/buildPromptで${dir}/slide_plan.mdの各画像の指示を作る。assets/characters/himari-canonical.pngとlabomaru-canonical.pngを実見して参照し、本文slide01〜slide08と別thumbnailを各1枚生成する。画像内の日本語も一枚絵で生成し、文字の後乗せは禁止。既存の生成済み画像はハッシュ照合して維持し、未生成・要修正分だけを作る。PNGをD:/downloads/sumalabo-codex/${slug}/へ原本保全して保存する。実際の出力寸法を記録し、比率は引き伸ばさず後段のWebP変換で整える。logs/article/${slug}.codex-images.jsonへslug、transport=codex_builtin_imagegen、outputs（各id/path/width/height/sha256/bytes）、実際の生成元と時刻を記録する。使用量をツールが返さない場合は未取得理由を記し、数値を推測しない。--advance generate_imagesは全画像の実体とハッシュを再検査する。独立検品・身体構造・別セッション手クロップ検品は後段で必ず実行し、自己検品を独立合格扱いしない。直接ツールの実エラー時だけrecordFallbackで定義済み条件を記録し工房退避を試みる。過去の入れ子timeoutだけを理由に直接ImageGenを飛ばさない。`
+      : `Codex execの退避条件をlogs/article/${slug}.image-fallback.jsonで確認し、正本2枚と演出ブロックを維持して未生成・要修正分だけを工房で生成する。衣装・小道具・ポーズ・背景の変化をキャラ不一致の理由にしない。実画像とハッシュをcodex-images.jsonへ記録してから--advance generate_imagesで続行する。`,
     factcheck_images: `logs/article/${slug}.codex-images.json に記録された画像を1枚ずつ Read し、slide_plan と突き合わせて数値・固有名詞・誤字・ブランド表記を検査。**キャラ破綻は認識アンカー（ひまり=金髪サイドテール・顔立ち・頭身／らぼまる=白い卵型ボディ・黄緑アンテナ1本・胸のハートボタン・青い首輪バンド・左右の青い耳ビレ）だけで判定**。耳ビレが正本より短い・丸い傾向は warning として監視し、別キャラ化していなければ pass のまま。服・小道具・ポーズ・背景の違いは破綻ではない。**演出ブロックと照合し、衣装・小道具・ポーズ・背景が記事テーマを体験として表しているかを warning 観察項目にする。弱くても公開停止はしないが改善点を記録する。** 結果を logs/article/${slug}.factcheck.json に保存:\n  { "pass": true|false, "regenerate": [{"which":"slide06","reason":"..."}], "slides": [{"src":"D:/downloads/xxx.png","name":"slide01-xxx.webp"}...], "thumbnail": {"src":"D:/downloads/yyy.png"}, "performanceFit": "themed" | "weak_warning" }\n日本語誤字または認識アンカー不一致は、--advance 時に Codex の対象1回修正を自動実行する。修正後も不合格なら工房チャットへ自動退避する。演出が弱いだけなら warning とし、Hiroの実物レビューへ回す。不合格は該当のみ最大2回。pass 時は slides/thumbnail のマッピングが logs/article/${slug}.images.json にコピーされる。`,
     write_mdx: `final_article を MDX 化（frontmatter 12キー / lead-first / 禁則語なし）→ content/articles/${slug}.mdx。**docs/general_reader_explainer_policy.md を維持し、MDX化で専門語の初出説明や30秒欄4項目を削らない。editorial_selectionの『読者翻訳設計』は検査には使うが、公開MDXへ貼らない。スカウト元、コピー可能、生成・自動公開・veto・内部用prompt等の工程文言は一切出さない。** category は「${state.category?.name || "ニュースをかみくだく"}」。当サイトの実体験・検証を軸にした記事は「やってみた・検証」（hands-on）に分類する。前記事への内部リンクがテーマ上自然なら本文に入れる。**収益記事(モバイルバッテリー比較 /articles/power-bank-comparison/・USB-C充電器比較 /articles/usb-c-charger-comparison/・リコール確認 /articles/power-bank-recall-check/)への文脈リンクは、本文が実際にそのトピックに触れたときだけ自然な一文で1本まで（言及が無ければ入れない・宣伝臭NG）。記事末尾の関連ガイドカードは自動表示されるので本文の手動リンクは重複させない。定義: data/related-guides.json。**
   **publishAt は実公開見込み時刻を入れる（2026-07-14・一覧順ずれ防止）**: 固定の朝時刻（08:00 等）をデフォルトにしない。完走型なら「今」に近い時刻、後で公開予定なら公開予定時刻。未来にすると build から除外され、他記事より古いと一覧で最上位に来ない。**公開直前（Phase B deploy 前）に \`npm run normalize:publish-at -- --slug ${slug}\` を実行して実公開時刻へ自動補正し、その変更を build→commit に含めて deploy する。**
@@ -376,6 +384,16 @@ export function assistedInstruction(state, step, { nightRefinement = false } = {
 
 // ---------- advance/fail 時の付随処理 ----------
 function onAdvance(state, stepName, resultPath) {
+  if (stepName === "generate_images" && !STUB) {
+    const checked = verifyGeneratedManifest({
+      slug: state.slug,
+      planPath: path.join(ROOT, "drafts", "refinement", state.slug, "slide_plan.md"),
+      manifestFile: path.join(ROOT, "logs", "article", `${state.slug}.codex-images.json`),
+    });
+    if (!checked.ok) return checked;
+    markGenerated(state.slug, checked.manifest.outputs);
+    return { ok: true, data: { transport: checked.manifest.transport } };
+  }
   if (CHATGPT_OUTPUTS[stepName]) {
     if (STUB && !resultPath) return { ok: true };
     if (!resultPath || !existsSync(resultPath)) return { ok: false, reason: "chatgpt_health_report_required" };
@@ -404,6 +422,16 @@ function onAdvance(state, stepName, resultPath) {
           const targets = (fc.regenerate || []).map((entry) => entry.which || entry.id).filter(Boolean);
           if (targets.length) {
             const correction = (fc.regenerate || []).map((entry) => `${entry.which || entry.id}: ${entry.reason || "検品指摘を修正"}`).join(" / ");
+            if (NIGHT_ENVIRONMENT.codex.imageTransport === "codex_builtin_imagegen" && !STUB) {
+              state.steps.factcheck_images.data = {
+                ...(state.steps.factcheck_images.data || {}),
+                codexTargetedRetries: 1,
+                lastRetryAt: new Date().toISOString(),
+                builtinRetryTargets: targets,
+              };
+              saveState(state);
+              return { ok: false, reason: `builtin_targeted_retry_required: 親CodexのImageGenで対象だけ1回修正し、manifestの実体・SHAを再検査した後に独立検品を再実行する。${correction}` };
+            }
             const retry = spawnSync(process.execPath, [
               path.join(ROOT, "scripts", "automation", "codex-image-stage.mjs"),
               "--slug", state.slug,

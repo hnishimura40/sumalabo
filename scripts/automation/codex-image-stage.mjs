@@ -103,6 +103,34 @@ export function sha256(file) {
   return createHash("sha256").update(readFileSync(file)).digest("hex");
 }
 
+// A parent Codex can generate through its built-in tool without launching a
+// second Codex. Advancing still requires every planned PNG and its real hash.
+export function verifyGeneratedManifest({ slug, planPath, manifestFile }) {
+  try {
+    const manifest = JSON.parse(readFileSync(manifestFile, "utf8"));
+    if (manifest.slug !== slug) throw new Error("slug_mismatch");
+    if (!["codex_builtin_imagegen", "codex_exec", "workshop_chat"].includes(manifest.transport)) throw new Error("transport_missing_or_invalid");
+    const expected = parseSlidePlan(readFileSync(planPath, "utf8")).map(item => item.id);
+    if (!expected.length || new Set(expected).size !== expected.length) throw new Error("invalid_slide_plan");
+    const outputs = manifest.outputs;
+    if (!Array.isArray(outputs) || outputs.length !== expected.length) throw new Error("image_count_mismatch");
+    const ids = new Set(), hashes = new Set();
+    for (const output of outputs) {
+      if (!expected.includes(output.id) || ids.has(output.id)) throw new Error("image_id_mismatch");
+      if (!path.isAbsolute(output.path || "")) throw new Error("image_path_not_absolute");
+      const { width, height } = pngDimensions(output.path);
+      const hash = sha256(output.path);
+      if (statSync(output.path).size < 1024) throw new Error("image_empty");
+      if (output.width !== width || output.height !== height) throw new Error("image_dimensions_mismatch");
+      if (output.sha256 !== hash || hashes.has(hash)) throw new Error("image_hash_mismatch_or_duplicate");
+      ids.add(output.id); hashes.add(hash);
+    }
+    return { ok: true, manifest };
+  } catch (error) {
+    return { ok: false, reason: `generated_images_invalid:${error.message}` };
+  }
+}
+
 function resolveCodexCli() {
   const configured = process.env.SUMALABO_CODEX_CLI;
   if (configured) return { command: configured, argsPrefix: [] };
