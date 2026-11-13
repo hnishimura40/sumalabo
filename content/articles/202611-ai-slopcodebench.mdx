@@ -1,0 +1,213 @@
+---
+title: "AIに機能追加を任せ続けると？「SlopCodeBench」が調べるプログラムの変化"
+slug: "202611-ai-slopcodebench"
+type: "news"
+category: "ニュースをかみくだく"
+description: "AIにプログラムの変更を任せ続けると、動作やコードのつくりはどう変わる？ SlopCodeBenchの試験方法、合格判定の違い、研究結果を読むときの条件を整理します。"
+thumbnail: "/images/thumbnails/202611-ai-slopcodebench.webp"
+thumbnailAlt: "ソフトウェア検証室で、ひまりが縦長の解析画面へ近づき、コード構造を表す帯の重なりをらぼまると調べる、SlopCodeBenchの概念イラスト。"
+status: "ready"
+priority: 1
+updated: "2026-11-13"
+pubDate: "2026-11-13"
+publishAt: "2026-11-12T19:51:21.478Z"
+tags: ["AI", "SlopCodeBench", "プログラム開発"]
+characterUse: {"recommended": true, "count": 2, "primary": "himari_question_icon.webp", "secondary": "labomaru_normal_icon.webp"}
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+
+<Summary30>
+<ol><li><strong>これは何？</strong> SlopCodeBenchとは、AI（文章などの入力を受けて、回答やプログラムを作る人工知能）にプログラムの変更を繰り返させ、動作や整理状態の変化を調べる試験の仕組みです。<a href="https://www.scbench.ai/design-philosophy">開発元の説明</a></li><li><strong>何があった？</strong> 2026年11月12日にGIGAZINEが紹介しました。研究の初版は3月、改訂版は5月で、11月に初めて登場した研究ではありません。<a href="https://gigazine.net/news/20261112-slopcodebench/">GIGAZINEの報道</a>、<a href="https://arxiv.org/abs/2603.24755">論文の提出履歴</a></li><li><strong>誰に関係ある？</strong> AIでアプリや業務用プログラムを作り、機能追加を繰り返す人に関係します。文章相談や要約が中心の人は、この研究だけを理由に使い方を変える必要があるとは言えません。</li><li><strong>結局どうなの？</strong> 調べた条件では、変更を重ねるにつれて、複雑な処理が一部に集中したり、似た記述が増えたりする傾向が報告されています。AIの成績は、新機能の動作、以前からの動作、プログラムの整理状態を分けて読むのがポイントです。<a href="https://arxiv.org/html/2603.24755v2">論文改訂版</a></li></ol>
+</Summary30>
+
+## そもそも、何をする試験？
+
+<p class="lead"><strong>自分で作ったプログラムを、後から変更し続けられるかを調べます。</strong></p>
+
+<p>対象は、AIコーディングエージェント（指示に沿ってプログラムを書き、修正作業も進めるAIの仕組み）です。SlopCodeBenchは、その力を測るベンチマーク（決めた課題と条件で、できることを測って比べる試験）の一つです。</p>
+
+<p>特徴は、最初の完成品だけで採点を終えないこと。AIは、自分が書いたコード（コンピューターに行わせる処理を書いたもの）を引き継ぎ、追加の要求に対応します。<a href="https://github.com/SprocketLab/slop-code-bench/blob/main/README.md">公式README</a></p>
+
+<p>開発は、チェックポイント（新しい要求が加わり、出来上がりを調べる開発の一区切り）に分かれています。各段階でテスト（プログラムが求められた動きをするか確かめる検査）を行いますが、評価用の検査内容や採点結果はAIに見せない設計です。<a href="https://arxiv.org/html/2603.24755v2">論文改訂版・評価方法</a></p>
+
+<p>たとえると、アプリに検索機能を追加した後で、新しい検索だけでなく、それまでの保存機能も動くか確かめるようなものです。これは仕組みを説明する例で、実際の出題内容ではありません。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">AIは、作ったあとも直せる？</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-ai-slopcodebench/slide01.webp" class="article-slide-link"><img src="/images/articles/202611-ai-slopcodebench/slide01.webp" alt="図1：AIは、作ったあとも直せる？ 最初の完成品だけで評価を終えず、AI自身が選んだ作りを次の変更へ引き継がせます。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図1：AIは、作ったあとも直せる？</figcaption>
+  </figure>
+  <div class="slide-reading-note"><ul><li>最初の完成品だけでは、評価を終えません。</li><li>AI自身が選んだ作りを、次の変更へ引き継がせます。</li></ul></div>
+</section>
+
+## あなたに関係ある？
+
+<p class="lead"><strong>関係の深さは、AIにプログラムの継続的な変更を任せているかで変わります。</strong></p>
+
+<p><strong>関係がある人</strong></p>
+
+<ul><li>AIで作ったアプリに、後から機能を追加・修正している人。</li><li>AIの開発能力を示す成績表について、数字の意味を知りたい人。</li></ul>
+
+<p><strong>あまり関係がない人</strong></p>
+
+<ul><li>AIを文章の相談、要約、単発の画像生成などに使っている人。</li><li>プログラムの継続開発をAIに任せていない人。</li></ul>
+
+<p>今回の評価対象は、プログラムを作り変える作業です。結果をそのまま、文章相談や画像生成の品質へ当てはめることはできません。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">AIでアプリを育てる人へ</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-ai-slopcodebench/slide02.webp" class="article-slide-link"><img src="/images/articles/202611-ai-slopcodebench/slide02.webp" alt="図2：AIでアプリを育てる人へ。継続開発やAIの成績表に関心がある人の判断材料です。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図2：AIでアプリを育てる人へ</figcaption>
+  </figure>
+  <div class="slide-reading-note"><ul><li>継続開発やAIの成績表に関心がある人の判断材料です。</li><li>文章相談・要約が中心なら、この研究だけから使い方を変える必要性は導けません。</li></ul></div>
+</section>
+
+## 今回、何が分かるようになった？
+
+<Callout kind="facts" title="開発元が調べた、変更の積み重ね">
+<p><strong>「最初に作れるか」に加えて、「その後の変更に対応できるか」を調べる視点が示されています。</strong></p>
+
+<p>開発元は、単発の課題だけでは、最初の設計が後の機能追加にどう影響するかを捉えにくいと説明しています。SlopCodeBenchでは内部の作り方を細かく指定せず、AI自身が選んだ構造を次の変更へ引き継がせます。<a href="https://www.scbench.ai/design-philosophy">開発元の設計方針</a></p>
+
+<p>研究者らは、調べた条件では、変更を重ねるにつれて複雑な処理の集中や重複した記述が増える傾向を報告しています。動作の合格率だけでは見えにくい、コードの変化も測ろうとしているわけです。<a href="https://arxiv.org/html/2603.24755v2">論文改訂版</a></p>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">変更を重ねたコードは？</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-ai-slopcodebench/slide03.webp" class="article-slide-link"><img src="/images/articles/202611-ai-slopcodebench/slide03.webp" alt="図3：変更を重ねたコードは？ 報告されたのは検証条件内の傾向です。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図3：変更を重ねたコードは？</figcaption>
+  </figure>
+  <div class="slide-reading-note"><ul><li>報告されたのは検証条件内の傾向です。</li><li>すべてのAI・すべての用途で必ず同じ変化が起きるという意味ではありません。</li></ul></div>
+</section>
+
+## 何が便利？ 成績表の「合格」を読み分けられる
+
+<p class="lead"><strong>新しい要求に対応する力と、以前から必要な動作も満たす力を区別できます。</strong></p>
+
+<CharacterBubble speaker="himari" mood="curious"><p>追加した機能が動けば、それで合格じゃないの？</p></CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point"><p>以前から必要だった動作も確かめる判定があるよ。成績表では、どこまで検査した『合格』なのかを見よう</p></CharacterBubble>
+
+<p>公式の成績表には、次の判定が掲載されています。</p>
+
+<table><thead><tr><th>判定</th><th>何に合格する必要がある？</th></tr></thead><tbody><tr><td><strong>Strict（今と過去の両方を見る厳しい判定）</strong></td><td>今の段階の検査に加え、以前の段階から引き継いだ検査も満たす</td></tr><tr><td><strong>Iso（今の段階の検査を見る判定）</strong></td><td>以前の段階からの検査を除き、今の段階の検査を満たす</td></tr></tbody></table>
+
+<p>出典：<a href="https://www.scbench.ai/leaderboard">公式ランキングの指標定義</a>。</p>
+
+<p>合格率を見るときは、数字の大きさだけでなく、どの範囲を検査したかも確かめましょう。</p>
+
+<p>実際の開発でも、<strong>「今回追加した機能」と「それまで必要だった動作」を分けて確認する</strong>という見方は役立ちます。これはすまラボとしての実用的な示唆であり、その方法で問題を解消できると、この研究が実証したわけではありません。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">『合格』は、どこまで？</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-ai-slopcodebench/slide04.webp" class="article-slide-link"><img src="/images/articles/202611-ai-slopcodebench/slide04.webp" alt="図4：『合格』は、どこまで？ Strictは今の段階と過去から引き継いだ検査の両方、Isoは過去段階の検査を除いた今の段階の検査を見る判定です。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図4：『合格』は、どこまで？</figcaption>
+  </figure>
+  <div class="slide-reading-note"><ul><li>Strictは今の段階と過去から引き継いだ検査の両方、Isoは過去段階の検査を除いた今の段階の検査を見る判定です。</li><li>Isoを「新機能だけ」と単純化しません。</li></ul></div>
+</section>
+
+## 注意点：「コードの状態」と「動作の不具合」は別
+
+<p class="lead"><strong>整理状態を表す数字を、不具合の割合へ読み替えることはできません。</strong></p>
+
+<p>コードの状態を見るために、次の指標も使われます。</p>
+
+<table><thead><tr><th>指標</th><th>調べていること</th></tr></thead><tbody><tr><td><strong>Erosion（複雑な処理の集中度）</strong></td><td>プログラム全体の複雑さが、複雑な処理を持つ一部にどれほど集中しているか</td></tr><tr><td><strong>Verbosity（検出規則に該当する記述や重複行の割合）</strong></td><td>決めた規則で拾われる記述や、似た構造が繰り返される記述が、全体の何割を占めるか</td></tr></tbody></table>
+
+<p>出典：<a href="https://www.scbench.ai/leaderboard">公式ランキングの品質指標</a>。</p>
+
+<p>これらはコードの特徴を数値にするものです。「検出された行はすべて誤り」「数値が高いほど実際の修正費用も同じ割合で増える」とまでは言えません。</p>
+
+<p>また、変更を重ねた結果を調べる研究なので、<strong>AI自身が長時間の使用で疲れたり、能力を失ったりしたと示すものでもありません。</strong> コードの変化と動作の失敗が同時に見られても、それだけで原因まで確定したことにはなりません。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">コードのつくりを、どう見る？</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-ai-slopcodebench/slide05.webp" class="article-slide-link"><img src="/images/articles/202611-ai-slopcodebench/slide05.webp" alt="図5：コードのつくりを、どう見る？ Erosionは複雑な処理への集中度、Verbosityは検出規則に該当する記述や構造的に重複する行の割合です。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図5：コードのつくりを、どう見る？</figcaption>
+  </figure>
+  <div class="slide-reading-note"><ul><li>Erosionは複雑な処理への集中度、Verbosityは検出規則に該当する記述や構造的に重複する行の割合です。</li><li>検出行をすべて誤りとしたり、数値を修正費用へ換算したりはできません。</li></ul></div>
+</section>
+
+## もう少し詳しく：どんな条件で調べた？
+
+<p class="lead"><strong>研究の数字は、そのときの課題・言語・作業条件とセットで読む必要があります。</strong></p>
+
+<p>5月の論文改訂版は、36問題に含まれる合計196のチェックポイントで、15種類のAIを評価しています。196個の独立した問題を一度ずつ解かせた、という意味ではありません。</p>
+
+<p>評価にはPython（この論文で使われた、プログラムを書くための言語）を用いています。前段階のコードは引き継ぎますが、前段階の会話履歴は渡しません。<a href="https://arxiv.org/html/2603.24755v2">論文改訂版・課題構成と実行条件</a></p>
+
+<p>このため、人が途中で採点結果を見て助言する共同作業や、会話履歴を保ったまま進める開発と、同じ条件ではありません。合格率を、そのまま仕事での成功率や失敗率に置き換えることもできません。</p>
+
+<p>10月の追加検証では、モデルと設定の組み合わせごとに実行した回数は1回と記されています。小さな点差から安定した優劣を決めたり、AIに考えさせる量を減らせば改善すると結論づけたりするには、追加の検証が必要です。<a href="https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/benchmarking-new-models-on-slop-code-bench.md">追加検証の実施条件</a></p>
+
+<Callout kind="unc" title="実務・日本語での結果は確認していません"><p>2026年11月13日時点で、すまラボでは、この試験の実行や原データの独立した再集計は行っていません。日本語で依頼した場合に同じ結果になるかも、確認できていません。</p></Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">数字は、条件とセット</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-ai-slopcodebench/slide06.webp" class="article-slide-link"><img src="/images/articles/202611-ai-slopcodebench/slide06.webp" alt="図6：数字は、条件とセット。評価言語はPython。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図6：数字は、条件とセット</figcaption>
+  </figure>
+  <div class="slide-reading-note"><ul><li>評価言語はPython。</li><li>評価用の検査内容や採点結果はAIに見せません。</li><li>人が採点結果を見て助言する作業や、会話履歴を保つ開発とは条件が異なります。</li></ul></div>
+</section>
+
+### 研究と報道の時系列
+
+研究と、その後の検証は時期を分けて読む必要があります。
+
+<Timeline>
+<TimelineItem date="2026-03-25"><p>論文初版を提出</p></TimelineItem>
+<TimelineItem date="2026-05-07"><p>論文改訂版を提出</p></TimelineItem>
+<TimelineItem date="2026-10-15"><p>別の実施者が追加検証を報告</p></TimelineItem>
+<TimelineItem date="2026-11-12"><p>GIGAZINEが紹介</p></TimelineItem>
+</Timeline>
+
+<p>出典：<a href="https://arxiv.org/abs/2603.24755">論文の提出履歴</a>、<a href="https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/benchmarking-new-models-on-slop-code-bench.md">10月の追加検証</a>、<a href="https://gigazine.net/news/20261112-slopcodebench/">GIGAZINEの報道</a>。</p>
+
+<p>論文の日付はarXivの提出履歴に従い、日本時間への換算前の日付を記しています。</p>
+
+<Callout kind="claims" title="11月12日の報道をきっかけに紹介"><p>GIGAZINEが2026年11月12日に紹介しました。研究そのものが11月に初めて登場したという意味ではありません。<a href="https://gigazine.net/news/20261112-slopcodebench/">GIGAZINEの報道</a></p></Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">研究と報道は、時期を分ける</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-ai-slopcodebench/slide07.webp" class="article-slide-link"><img src="/images/articles/202611-ai-slopcodebench/slide07.webp" alt="図7：研究と報道は、時期を分ける。論文の日付はarXiv提出履歴に従い、日本時間への換算前の表記です。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図7：研究と報道は、時期を分ける</figcaption>
+  </figure>
+  <div class="slide-reading-note"><ul><li>論文の日付はarXiv提出履歴に従い、日本時間への換算前の表記です。</li><li>10月の追加検証は開発元論文と別の実験で、モデルと設定の組み合わせごとに1回の実行とされています。</li></ul></div>
+</section>
+
+## すまラボまとめ
+
+<p>SlopCodeBenchから持ち帰れるのは、<strong>AIの開発能力には「作る力」に加えて「変更を重ねる力」という見方がある</strong>ことです。</p>
+
+<p>機能追加を任せているなら、新機能の動作、以前からの動作、コードの整理状態を分けて見てみましょう。成績表を読むときも、どの側面を測った数字かが分かれば、自分の使い方との関係を判断しやすくなります。</p>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">AIに機能を足してもらったら</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-ai-slopcodebench/slide08.webp" class="article-slide-link"><img src="/images/articles/202611-ai-slopcodebench/slide08.webp" alt="図8：AIに機能を足してもらったら。この確認方法で問題が解消すると研究が実証したわけではありません。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図8：AIに機能を足してもらったら</figcaption>
+  </figure>
+  <div class="slide-reading-note"><ul><li>この確認方法で問題が解消すると研究が実証したわけではありません。</li><li>試験の合格率を実務の成功率へ読み替えず、自分の作業条件と照らし合わせて使います。</li></ul></div>
+</section>
+
+## 参考情報
+
+- [開発元の説明](https://www.scbench.ai/design-philosophy)
+- [GIGAZINEの報道](https://gigazine.net/news/20261112-slopcodebench/)
+- [論文の提出履歴](https://arxiv.org/abs/2603.24755)
+- [論文改訂版](https://arxiv.org/html/2603.24755v2)
+- [公式README](https://github.com/SprocketLab/slop-code-bench/blob/main/README.md)
+- [10月の追加検証](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/benchmarking-new-models-on-slop-code-bench.md)
+- [公式ランキングの指標定義](https://www.scbench.ai/leaderboard)
