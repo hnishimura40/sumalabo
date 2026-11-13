@@ -1,16 +1,97 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { mkdtempSync, writeFileSync, readFileSync, rmSync, mkdirSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { spawnSync } from "node:child_process";
+import sharp from "sharp";
 
 import {
   buildPrompt,
   FALLBACK_CONDITIONS,
   parsePerformanceBlock,
   parseSlidePlan,
+  verifyGeneratedManifest,
+  sha256,
 } from "../../scripts/automation/codex-image-stage.mjs";
 import {
   hasIdentityAnchorMismatch,
   validatePerformanceBlock,
+  newState, STEPS, assistedInstruction,
 } from "../../scripts/automation/phase-a-orchestrator.mjs";
+
+test("parent ImageGen action stays pending without launching a nested carrier or claiming success", () => {
+  const slug = "image-carrier-regression-not-real";
+  const root = path.resolve(import.meta.dirname, "../..");
+  const stateFile = path.join(root, "logs/article", `${slug}.state.json`);
+  const state = newState({ slug, theme: "画像経路テスト" });
+  for (const step of STEPS) {
+    if (step.name === "generate_images") break;
+    state.steps[step.name].status = "done";
+  }
+  mkdirSync(path.dirname(stateFile), { recursive: true });
+  writeFileSync(stateFile, JSON.stringify(state));
+  const env = { ...process.env, ORCH_STUB: "0", SUMALABO_CODEX_CLI: "missing-carrier-must-not-launch", REVIEW_NOTIFY_SECRET: "" };
+  const invoke = extra => spawnSync(process.execPath, ["scripts/automation/phase-a-orchestrator.mjs", "--slug", slug, ...extra], { cwd: root, env, encoding: "utf8", timeout: 20000 });
+  try {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const result = invoke([]);
+      assert.equal(result.status, 10, result.stderr);
+      assert.match(result.stdout, /親Codex自身のbuilt-in ImageGenを直接/);
+      const saved = JSON.parse(readFileSync(stateFile, "utf8"));
+      assert.equal(saved.steps.generate_images.status, "pending");
+      assert.equal(saved.steps.generate_images.attempts, 0);
+      assert.equal(saved.steps.generate_images.data.transport, "codex_builtin_imagegen");
+    }
+    const refused = invoke(["--advance", "generate_images"]);
+    assert.equal(refused.status, 1, refused.stderr);
+    assert.match(refused.stderr, /generated_images_invalid/);
+    assert.equal(JSON.parse(readFileSync(stateFile, "utf8")).steps.generate_images.status, "pending");
+    const instruction = assistedInstruction(state, STEPS.find(step => step.name === "generate_images"));
+    assert.match(instruction, /独立検品・身体構造・別セッション手クロップ検品/);
+    assert.match(instruction, /自己検品を独立合格扱いしない/);
+    // Corrective generation also returns to the parent; no nested retry runs.
+    state.steps.generate_images.status = "done";
+    writeFileSync(stateFile, JSON.stringify(state));
+    const factcheck = path.join(root, "logs/article", `${slug}.factcheck.json`);
+    writeFileSync(factcheck, JSON.stringify({ pass: false, regenerate: [{ which: "slide01", reason: "余分な手がある身体構造の破綻" }] }));
+    try {
+      const retry = invoke(["--advance", "factcheck_images", "--result", factcheck]);
+      assert.equal(retry.status, 1, retry.stderr);
+      assert.match(retry.stderr, /builtin_targeted_retry_required/);
+      const saved = JSON.parse(readFileSync(stateFile, "utf8"));
+      assert.equal(saved.steps.factcheck_images.status, "pending");
+      assert.deepEqual(saved.steps.factcheck_images.data.builtinRetryTargets, ["slide01"]);
+      assert.equal(saved.steps.factcheck_images.data.codexTargetedRetries, 1);
+    } finally { rmSync(factcheck, { force: true }); }
+  } finally { rmSync(stateFile, { force: true }); }
+});
+
+test("generation advance validates all nine real PNGs, IDs, dimensions and hashes", async () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "sumalabo-image-manifest-"));
+  const slug = "image-manifest-test";
+  const planPath = path.join(dir, "slide_plan.md"), manifestFile = path.join(dir, "manifest.json");
+  const ids = [...Array.from({ length: 8 }, (_, i) => `slide0${i + 1}`), "thumbnail"];
+  writeFileSync(planPath, ids.map(id => `## ${id}\n- 文字: テスト`).join("\n"));
+  const outputs = [];
+  try {
+    for (const [index, id] of ids.entries()) {
+      const file = path.join(dir, `${id}.png`);
+      await sharp({ create: { width: 32, height: 40, channels: 3, background: { r: index * 20, g: 50, b: 60 } } }).png({ compressionLevel: 0 }).toFile(file);
+      outputs.push({ id, path: file, width: 32, height: 40, sha256: sha256(file) });
+    }
+    const manifest = { slug, transport: "codex_builtin_imagegen", outputs };
+    const check = value => { writeFileSync(manifestFile, JSON.stringify(value)); return verifyGeneratedManifest({ slug, planPath, manifestFile }); };
+    assert.equal(check(manifest).ok, true);
+    assert.equal(check({ ...manifest, outputs: outputs.slice(0, 8) }).ok, false);
+    assert.equal(check({ ...manifest, slug: "another-article" }).ok, false);
+    assert.equal(check({ ...manifest, outputs: outputs.map((x, i) => i ? x : { ...x, sha256: "wrong" }) }).ok, false);
+    assert.equal(check({ ...manifest, outputs: outputs.map((x, i) => i ? x : { ...x, width: 31 }) }).ok, false);
+    assert.equal(check({ ...manifest, outputs: outputs.map((x, i) => i === 8 ? outputs[0] : x) }).ok, false);
+    rmSync(outputs[0].path);
+    assert.equal(check(manifest).ok, false);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
 
 test("date imagery gate distinguishes an excluded calendar from an affirmative calendar motif", () => {
   const plan = [
