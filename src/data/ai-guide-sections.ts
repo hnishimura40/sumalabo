@@ -21,7 +21,16 @@ export const priceEntrances:Record<string,string>={
  'chatgpt':'無料／Plus $20/月','gemini':'無料／AI Plus ¥725/月','claude':'無料／Pro $20/月','copilot':'無料／Premium ¥3,200/月（税込）','perplexity':'無料／Pro $20/月','notebook':'無料枠／Google AIプランに枠を包含','chatgpt-work':'ChatGPTの利用枠と共有','manus':'無料／Pro $20/月〜','perplexity-computer':'Pro $20/月〜／クレジット制','dots':'対象Pro $100/月〜／段階提供','muse':'無料上限／Power $20/月','duet':'米国Pro $20/月〜／日本対象外','openclaw':'本体料$0／機材・API等は別','codex':'無料から枠あり／ChatGPTと共有','claude-code':'Pro $20/月〜／Claudeと枠共有','cursor':'無料／Plus $8/月（Grokのみ）','suno':'無料／Pro $10/月','runway':'無料／Standard $15/月','midjourney':'Basic $10/月〜','elevenlabs':'無料／Starter通常$6/月','ollama':'ローカル本体料$0／Cloud別','lmstudio':'無料／Bionic+ $20/月','comfyui':'本体料$0／Cloud $20/月〜','n8n':'自己ホスト条件内$0／Cloud年払月相当€20〜','dify':'Cloud無料枠／Pro年額$590・workspace',
 };
 export function sectionEntries(section:GuideSection):Entry[]{return section.ids.map(id=>{const e=entries.find(e=>e.id===id);if(!e)throw Error(`Unknown AI entry: ${id}`);return e;});}
-export function axisText(e:Entry,axis:Axis):string {return axis.key in e.features?e.features[axis.key as keyof Entry['features']]||'未確認':String(e[axis.key as keyof Entry]||'未確認');}
+const featureNotes:Record<string,Record<string,string>>={
+ images:{gemini:'Nano Banana 2は無料枠、2.1は有料AIプラン。参照画像の合成・編集・文字・キャラクター一貫性・2Kを公式案内。'},
+ video:{gemini:'アプリ案内はOmni 1.1 Flash。10秒・音声同時生成・写真最大5枚・動画編集と延長。有料AIプラン・18歳以上・地域条件。'},
+ music:{gemini:'Lyria 3.5。文章・写真から歌入り／インストを選び最大3分。18歳以上、アプリ提供国。商用条件は別確認。'},
+};
+export function axisText(e:Entry,axis:Axis,sectionSlug?:string):string {
+ const note=sectionSlug&&featureNotes[sectionSlug]?.[e.id];
+ if(note&&['image','video','music'].includes(axis.key))return note;
+ return axis.key in e.features?e.features[axis.key as keyof Entry['features']]||'未確認':String(e[axis.key as keyof Entry]||'未確認');
+}
 export const japanLabels:Record<string,string>={available:'日本提供の根拠あり',conditional:'機能・契約条件あり',unavailable:'日本は対象外の案内',local:'自己運用・構成次第'};
 const aliases:Record<string,string>={chatgpt:'チャットGPT チャットジーピーティー',gemini:'ジェミニ',claude:'クロード',dots:'ドッツ',muse:'ミューズ',manus:'マナス',codex:'コーデックス',ollama:'オラマ',suno:'スノ スーノ'};
 export const entrySearchTerms=(e:Entry)=>[e.name,e.provider,aliases[e.id]||''];
