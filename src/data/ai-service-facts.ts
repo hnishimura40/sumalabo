@@ -26,6 +26,12 @@ const claudeNote = 'Anthropicは米国San Francisco本社のPBCと公表。保�
 const googleNote = '提供法人Google LLCは米国Delaware設立・Mountain View住所。Google DeepMindの研究拠点や推論場所とは区別。';
 
 export const serviceFacts: Record<string, ServiceFact> = {
+  grok: {
+    country: '米国', countryNote: '現行個人規約の提供法人はSpaceX Super Intelligence LLC、米国Nevada設立・Austin拠点。旧xAI表記やストア販売元と区別し、処理先・保存国を意味しない。',
+    price: '新規Web向けX SubscriptionはFree $0、Plus $8/月・$80/年、Premium $30/月・$300/年、Super $100/月・$1,000/年、Ultra $200/月・$2,000/年。税別。GrokとCursorで週次枠共有、他社モデル・追加枠は別。既存SuperGrok等は継続条件、アプリ内価格とは別。',
+    japan: '日本App Storeに公式アプリ・日本語対応。iOS17.4以上、ストアの年齢区分16+。規約の最低年齢・保護者同意と区別。Web・各生成機能・Grok Botの契約と地域条件は個別確認。', japanStatus: 'available',
+    sources: [s('製品・画像・動画・検索', 'https://x.ai/grok'), s('現行料金・税・既存プラン', 'https://docs.x.ai/x-subscription/pricing'), s('利用枠・別製品・ファイル', 'https://docs.x.ai/grok/faq'), s('日本App Store・対応言語', 'https://apps.apple.com/jp/app/grok/id6670324846'), s('提供法人・米国・年齢条件', 'https://x.ai/legal/terms-of-service')],
+  },
   'chatgpt-work': {
     country: '米国', countryNote: openaiNote,
     price: 'ChatGPT内の機能。Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Codexと枠を共有。追加クレジット・APIは別。税・現地通貨は購入画面。',
