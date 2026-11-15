@@ -106,6 +106,6 @@ Gemini等の複数機能を持つサービスは関係する分類に重複掲�
 
 `AiStrengthStories.astro` は6サービスをひまり・らぼまるが会話で案内する。無料でAI秘書のタスクを始められるMuseを初期表示にし、6タブ・左右/Home/Endキー・カードからの直接選択を提供。JavaScriptなしは6会話すべて表示。無料枠の固定数を捏造せず、使用量上限と回復待ちを明記。無条件に無料最強/無制限/唯一無料とは表示しない。
 
-`AiModelsAndBenchmarks.astro` はサービス→モデルの6行表とAA Intelligence Index v5.0.1の共通7行表をトップに表示。数字・モデル・推論設定・文脈長・利用面・一次測定元を並べ、原データを `public/data/ai-benchmarks-20261115/featured.json` に公開。確認日は2026-11-15であり同一の測定日ではない。Fable65/Opus59、Carbon60、Astra57、Grok35、Wonder44/Full50。11/15時点の個別モデルページを採用し、検索結果に残るCarbon59や旧Grok46を混ぜない。全行v5.0.1。
+`AiModelsAndBenchmarks.astro` はサービス→モデルの6行表とAA Intelligence Index v5.0.1の共通7行表をトップに表示。数字・モデル・推論設定・文脈長・利用面・一次測定元を並べ、原データを `public/data/ai-benchmarks-20261115/featured.json` に公開。確認日は2026-11-15であり同一の測定日ではない。Fable65/Opus59、Carbon60、Astra57、Grok35、Wonder44/Full50。11/15時点の個別モデルページを採用し、検索結果に残るCarbon59や旧Grok46を混ぜない。全行v5.0.1。同一指数内の掲載7行だけを得点の高い順に表示し、世界の全モデル順位とはしない。
 
 無料MuseにWonder Full50点を割り当てない。Meta公式はWonderをAPI/Code提供、Museには有料利用者から展開と案内。Spark1.3は公開設計として別根拠を表示。CopilotはGPT/Claude等を利用するサービスで単独のモデル点を作らない。ベンチマークページにも同じ7行表を追加し、従来の13行は版・日付を保った過去記録として残す。独自実測72判定・5JSONは変更しない。
