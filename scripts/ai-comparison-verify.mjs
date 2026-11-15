@@ -11,6 +11,8 @@ assert.equal((html.match(/data-featured=/g)||[]).length,6);
 assert.equal((html.match(/<input[^>]*data-featured-toggle/g)||[]).length,6);
 assert.ok(html.indexOf('id="major"')<html.indexOf('id="more"'));
 for(const id of payload.featured)assert.ok(html.includes('id="major-detail-'+id+'"'));
+for(const slug of ['chat','research','images','video','voice'])assert.ok(payload.sections.find(s=>s.slug===slug).ids.includes('grok'));
+for(const id of ['gemini','chatgpt','copilot'])assert.ok(payload.sections.find(s=>s.slug==='images').ids.includes(id));
 const sitemap=readFileSync('dist/sitemap-0.xml','utf8');
 const covered=new Set();const pages=[['/ai/',html]];
 for(const section of payload.sections){
