@@ -1,10 +1,12 @@
 ---
 import AiGuideLayout from '../../layouts/AiGuideLayout.astro';
+import AiModelsAndBenchmarks from '../../components/AiModelsAndBenchmarks.astro';
 import AiEvidence from '../../components/AiEvidence.astro';
 import {benchmarks} from '../../data/ai-comparison';
 ---
 <AiGuideLayout title="AIのベンチマークを読み分ける" description="能力・人の好み・開発・PC操作。何を測った数字なのか、試験ごとに分けて比較します。" path="/ai/benchmarks/" current="ベンチマーク">
  <div class="ai-callout"><h2>測っているものが違えば、点数も別。</h2><p>サービスを選ぶ比較とは分けて読みましょう。異なる試験の点数を足した「万能1位」は作りません。</p></div>
+ <AiModelsAndBenchmarks mode="benchmarks" />
  <div class="benchmark-intros">{benchmarks.map(b=><article><h2><a href={b.url} target="_blank" rel="noopener noreferrer">{b.name} ↗</a></h2><strong>{b.scope}</strong><p>{b.meaning}</p><small>{b.caution}</small></article>)}</div>
  <AiEvidence mode="benchmarks" />
 </AiGuideLayout>

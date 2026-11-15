@@ -1,4 +1,5 @@
 // Product facts are summaries of the linked primary sources, not test results.
+import {capabilityFacts,capabilityLabels} from './ai-featured-guide';
 import { serviceFacts } from './ai-service-facts';
 import { toolFacts } from './ai-tool-facts';
 import { modelFacts, modelCountrySources } from './ai-model-facts';
@@ -9,9 +10,12 @@ export type Feature = keyof typeof features;
 export type Entry = { id:string; name:string; provider:string; category:keyof typeof categories; kind:'サービス'|'ツール'|'モデル群'; deployment:'cloud'|'local'|'hybrid'; openness:string; purpose:string; distinction:string; caution:string; cost:string; availability:string; sources:{label:string;url:string}[]; features:Partial<Record<Feature,string>>; checkedAt:string; country:string; countryNote:string; japanStatus:string };
 const item = (entry:Omit<Entry,'checkedAt'|'country'|'countryNote'|'japanStatus'>):Entry => {
  const fact=serviceFacts[entry.id]||toolFacts[entry.id];
+ const caps=capabilityFacts[entry.id];
+ const checkedFeatures=caps?Object.fromEntries(['files','research','image','video','music','voice','automation'].map(key=>{const c=caps[key as keyof typeof caps];return [key,capabilityLabels[c.status]+' '+c.text];})):{};
+ const capabilitySources=caps?[...new Set(Object.values(caps).map(c=>c.source))].map(url=>({label:'機能・提供条件の一次資料',url})):[];
  const model=modelFacts.find(m=>m.id.toLowerCase().includes(entry.id==='llama'?'llama':entry.id));
  const countrySource=modelCountrySources.find(s=>s.provider===entry.provider);
- return {...entry,checkedAt,country:fact?.country||model?.country||'個別モデルを参照',countryNote:fact?.countryNote||'開発組織の国・地域。ホスト・保存先・各モデルのライセンスとは別。',japanStatus:fact?.japanStatus||'local',cost:fact?.price||entry.cost,availability:fact?.japan||entry.availability,sources:[...entry.sources,...(fact?.sources||[]),...(countrySource?[{label:'開発組織・所在地',url:countrySource.url}]:[])]};
+ return {...entry,features:{...entry.features,...checkedFeatures},checkedAt,country:fact?.country||model?.country||'個別モデルを参照',countryNote:fact?.countryNote||'開発組織の国・地域。ホスト・保存先・各モデルのライセンスとは別。',japanStatus:fact?.japanStatus||'local',cost:fact?.price||entry.cost,availability:fact?.japan||entry.availability,sources:[...entry.sources,...capabilitySources,...(fact?.sources||[]),...(countrySource?[{label:'開発組織・所在地',url:countrySource.url}]:[])]};
 };
 const source = (url:string,label='公式機能・条件') => ({label,url});
 export const entries:Entry[] = [

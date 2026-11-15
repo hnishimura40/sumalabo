@@ -59,13 +59,13 @@ export const serviceFacts: Record<string, ServiceFact> = {
   gemini: {
     country: '米国', countryNote: googleNote,
     price: '日本公式月額：Free ¥0、AI Plus ¥725、Pro ¥2,900、Ultra ¥14,500（Proの5倍枠）・¥32,000（20倍枠）。API別。掲載ページに税区分の明示なし、購入時に確認。',
-    japan: '日本向けの料金・提供ページあり。画像・動画・音楽・Tasks等は、年齢・プラン・地域・利用枠を機能ごとに確認。', japanStatus: 'available',
+    japan: '日本向けの料金・提供ページあり。画像は無料枠、動画はAI Plus以上・18歳以上、音楽は18歳以上。TasksはAI Ultra・18歳以上、除外地域に日本の記載なし。学校・仕事用アカウントは別条件。', japanStatus: 'available',
     sources: [googleCountry, googlePlans, s('画像生成', 'https://gemini.google/overview/image-generation/'), s('動画生成', 'https://gemini.google/overview/video-generation/'), s('音楽生成', 'https://gemini.google/overview/music-generation/')],
   },
   claude: {
     country: '米国', countryNote: claudeNote,
     price: 'Free $0、Pro $20/月または年$200一括（公式表示は月相当$17）、Max $100/月、Ultra $200/月。税別。上限はモデル・作業で変動。APIは別経路。',
-    japan: '日本は公式対応国。Claude全体の対応と、Duet等の個別製品の地域制限は別。', japanStatus: 'available',
+    japan: '日本は公式対応国。Coworkのクラウド・予約実行はPro以上。Duetの米国向け研究プレビューとは別の製品・機能。', japanStatus: 'available',
     sources: [claudeCountry, claudePlans, claudeJapan],
   },
   perplexity: {
