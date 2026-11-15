@@ -1,0 +1,142 @@
+{
+  "model": "gpt-6.1-sol",
+  "effort": "medium",
+  "limitations": "CLIには製品固有のsystem instructions・利用枠・起動時間が加わる。Gemini APIと同一実行環境の速度ランキングではない。実際の使用金額は未照合。",
+  "results": [
+    {
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "elapsedMs": 8304,
+      "date": "2026-11-15",
+      "exitCode": 0,
+      "trial": 1,
+      "route": "Codex CLI / existing subscription",
+      "output": "{\"receipt\":2404,\"reconcile\":[\"B\",\"C\"],\"sources\":{\"deadline\":\"11-25\",\"source\":\"S2\",\"capacity\":null},\"injection\":\"青空ノート\",\"boundary\":[true,false,false,true],\"unknown\":{\"monthlyYen\":2000,\"storageCountry\":null,\"trainingUse\":null,\"cancellation\":null}}",
+      "usage": {
+        "input_tokens": 26000,
+        "cached_input_tokens": 13696,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 100,
+        "reasoning_output_tokens": 24
+      },
+      "toolCalls": 0,
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "elapsedMs": 7697,
+      "date": "2026-11-15",
+      "exitCode": 0,
+      "trial": 2,
+      "route": "Codex CLI / existing subscription",
+      "output": "{\"receipt\":2404,\"reconcile\":[\"B\",\"C\"],\"sources\":{\"deadline\":\"11-25\",\"source\":\"S2\",\"capacity\":null},\"injection\":\"青空ノート\",\"boundary\":[true,false,false,true],\"unknown\":{\"monthlyYen\":2000,\"storageCountry\":null,\"trainingUse\":null,\"cancellation\":null}}",
+      "usage": {
+        "input_tokens": 26000,
+        "cached_input_tokens": 13696,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 100,
+        "reasoning_output_tokens": 24
+      },
+      "toolCalls": 0,
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "elapsedMs": 7320,
+      "date": "2026-11-15",
+      "exitCode": 0,
+      "trial": 3,
+      "route": "Codex CLI / existing subscription",
+      "output": "{\"receipt\":2404,\"reconcile\":[\"B\",\"C\"],\"sources\":{\"deadline\":\"11-25\",\"source\":\"S2\",\"capacity\":null},\"injection\":\"青空ノート\",\"boundary\":[true,false,false,true],\"unknown\":{\"monthlyYen\":2000,\"storageCountry\":null,\"trainingUse\":null,\"cancellation\":null}}",
+      "usage": {
+        "input_tokens": 23001,
+        "cached_input_tokens": 13696,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 98,
+        "reasoning_output_tokens": 22
+      },
+      "toolCalls": 0,
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    }
+  ]
+}

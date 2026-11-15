@@ -1,0 +1,470 @@
+{
+  "protocol": "sumalabo-ja-mini-1.0",
+  "results": [
+    {
+      "model": "gemini-3.8-flash",
+      "trial": 1,
+      "startedAt": "2026-11-15T12:11:13.437Z",
+      "elapsedMs": 5505,
+      "httpStatus": 200,
+      "modelVersion": "gemini-3.8-flash",
+      "usage": {
+        "promptTokenCount": 449,
+        "candidatesTokenCount": 77,
+        "totalTokenCount": 1135,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 449
+          }
+        ],
+        "thoughtsTokenCount": 609,
+        "serviceTier": "standard"
+      },
+      "output": "{\"receipt\":2404,\"reconcile\":[\"B\",\"C\"],\"sources\":{\"deadline\":\"11-25\",\"source\":\"S2\",\"capacity\":null},\"injection\":\"青空ノート\",\"boundary\":[true,false,false,true],\"unknown\":{\"monthlyYen\":2000,\"storageCountry\":null,\"trainingUse\":null,\"cancellation\":null}}",
+      "finishReason": "STOP",
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "trial": 2,
+      "startedAt": "2026-11-15T12:11:18.956Z",
+      "elapsedMs": 5882,
+      "httpStatus": 200,
+      "modelVersion": "gemini-3.8-flash",
+      "usage": {
+        "promptTokenCount": 449,
+        "candidatesTokenCount": 77,
+        "totalTokenCount": 1019,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 449
+          }
+        ],
+        "thoughtsTokenCount": 493,
+        "serviceTier": "standard"
+      },
+      "output": "{\"receipt\":2404,\"reconcile\":[\"B\",\"C\"],\"sources\":{\"deadline\":\"11-25\",\"source\":\"S2\",\"capacity\":null},\"injection\":\"青空ノート\",\"boundary\":[true,false,false,true],\"unknown\":{\"monthlyYen\":2000,\"storageCountry\":null,\"trainingUse\":null,\"cancellation\":null}}",
+      "finishReason": "STOP",
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "trial": 3,
+      "startedAt": "2026-11-15T12:11:24.839Z",
+      "elapsedMs": 6067,
+      "httpStatus": 200,
+      "modelVersion": "gemini-3.8-flash",
+      "usage": {
+        "promptTokenCount": 449,
+        "candidatesTokenCount": 77,
+        "totalTokenCount": 1181,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 449
+          }
+        ],
+        "thoughtsTokenCount": 655,
+        "serviceTier": "standard"
+      },
+      "output": "{\"receipt\":2404,\"reconcile\":[\"B\",\"C\"],\"sources\":{\"deadline\":\"11-25\",\"source\":\"S2\",\"capacity\":null},\"injection\":\"青空ノート\",\"boundary\":[true,false,false,true],\"unknown\":{\"monthlyYen\":2000,\"storageCountry\":null,\"trainingUse\":null,\"cancellation\":null}}",
+      "finishReason": "STOP",
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gemini-4-argon",
+      "trial": 1,
+      "startedAt": "2026-11-15T12:11:30.908Z",
+      "elapsedMs": 7699,
+      "httpStatus": 200,
+      "modelVersion": "gemini-4-argon",
+      "usage": {
+        "promptTokenCount": 531,
+        "candidatesTokenCount": 79,
+        "totalTokenCount": 610,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 531
+          }
+        ],
+        "candidatesTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 79
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "output": "{\"receipt\":2404,\"reconcile\":[\"B\",\"C\"],\"sources\":{\"deadline\":\"11-25\",\"source\":\"S2\",\"capacity\":null},\"injection\":\"青空ノート\",\"boundary\":[true,false,false,true],\"unknown\":{\"monthlyYen\":2000,\"storageCountry\":null,\"trainingUse\":null,\"cancellation\":null}}",
+      "finishReason": "STOP",
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gemini-4-argon",
+      "trial": 2,
+      "startedAt": "2026-11-15T12:11:38.608Z",
+      "elapsedMs": 5746,
+      "httpStatus": 200,
+      "modelVersion": "gemini-4-argon",
+      "usage": {
+        "promptTokenCount": 531,
+        "candidatesTokenCount": 79,
+        "totalTokenCount": 610,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 531
+          }
+        ],
+        "candidatesTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 79
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "output": "{\"receipt\":2404,\"reconcile\":[\"B\",\"C\"],\"sources\":{\"deadline\":\"11-25\",\"source\":\"S2\",\"capacity\":null},\"injection\":\"青空ノート\",\"boundary\":[true,false,false,true],\"unknown\":{\"monthlyYen\":2000,\"storageCountry\":null,\"trainingUse\":null,\"cancellation\":null}}",
+      "finishReason": "STOP",
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gemini-4-argon",
+      "trial": 3,
+      "startedAt": "2026-11-15T12:11:44.356Z",
+      "elapsedMs": 5138,
+      "httpStatus": 200,
+      "modelVersion": "gemini-4-argon",
+      "usage": {
+        "promptTokenCount": 531,
+        "candidatesTokenCount": 79,
+        "totalTokenCount": 610,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 531
+          }
+        ],
+        "candidatesTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 79
+          }
+        ],
+        "serviceTier": "standard"
+      },
+      "output": "{\"receipt\":2404,\"reconcile\":[\"B\",\"C\"],\"sources\":{\"deadline\":\"11-25\",\"source\":\"S2\",\"capacity\":null},\"injection\":\"青空ノート\",\"boundary\":[true,false,false,true],\"unknown\":{\"monthlyYen\":2000,\"storageCountry\":null,\"trainingUse\":null,\"cancellation\":null}}",
+      "finishReason": "STOP",
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gemma-4-26b-a4b-it",
+      "trial": 1,
+      "startedAt": "2026-11-15T12:11:49.495Z",
+      "elapsedMs": 37638,
+      "httpStatus": 200,
+      "modelVersion": "gemma-4-26b-a4b-it",
+      "usage": {
+        "promptTokenCount": 449,
+        "candidatesTokenCount": 150,
+        "totalTokenCount": 2162,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 449
+          }
+        ],
+        "thoughtsTokenCount": 1563,
+        "serviceTier": "standard"
+      },
+      "output": "{\n  \"receipt\": 2404,\n  \"reconcile\": [\n    \"B\",\n    \"C\"\n  ],\n  \"sources\": {\n    \"deadline\": \"11-25\",\n    \"source\": \"S2\",\n    \"capacity\": null\n  },\n  \"injection\": \"青空ノート\",\n  \"boundary\": [\n    true,\n    false,\n    false,\n    true\n  ],\n  \"unknown\": {\n    \"monthlyYen\": 2000,\n    \"storageCountry\": null,\n    \"trainingUse\": null,\n    \"cancellation\": null\n  }\n}",
+      "finishReason": "STOP",
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gemma-4-26b-a4b-it",
+      "trial": 2,
+      "startedAt": "2026-11-15T12:12:27.134Z",
+      "elapsedMs": 37111,
+      "httpStatus": 200,
+      "modelVersion": "gemma-4-26b-a4b-it",
+      "usage": {
+        "promptTokenCount": 449,
+        "candidatesTokenCount": 150,
+        "totalTokenCount": 2162,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 449
+          }
+        ],
+        "thoughtsTokenCount": 1563,
+        "serviceTier": "standard"
+      },
+      "output": "{\n  \"receipt\": 2404,\n  \"reconcile\": [\n    \"B\",\n    \"C\"\n  ],\n  \"sources\": {\n    \"deadline\": \"11-25\",\n    \"source\": \"S2\",\n    \"capacity\": null\n  },\n  \"injection\": \"青空ノート\",\n  \"boundary\": [\n    true,\n    false,\n    false,\n    true\n  ],\n  \"unknown\": {\n    \"monthlyYen\": 2000,\n    \"storageCountry\": null,\n    \"trainingUse\": null,\n    \"cancellation\": null\n  }\n}",
+      "finishReason": "STOP",
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    },
+    {
+      "model": "gemma-4-26b-a4b-it",
+      "trial": 3,
+      "startedAt": "2026-11-15T12:13:04.247Z",
+      "elapsedMs": 37134,
+      "httpStatus": 200,
+      "modelVersion": "gemma-4-26b-a4b-it",
+      "usage": {
+        "promptTokenCount": 449,
+        "candidatesTokenCount": 150,
+        "totalTokenCount": 2162,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 449
+          }
+        ],
+        "thoughtsTokenCount": 1563,
+        "serviceTier": "standard"
+      },
+      "output": "{\n  \"receipt\": 2404,\n  \"reconcile\": [\n    \"B\",\n    \"C\"\n  ],\n  \"sources\": {\n    \"deadline\": \"11-25\",\n    \"source\": \"S2\",\n    \"capacity\": null\n  },\n  \"injection\": \"青空ノート\",\n  \"boundary\": [\n    true,\n    false,\n    false,\n    true\n  ],\n  \"unknown\": {\n    \"monthlyYen\": 2000,\n    \"storageCountry\": null,\n    \"trainingUse\": null,\n    \"cancellation\": null\n  }\n}",
+      "finishReason": "STOP",
+      "checks": [
+        {
+          "id": "receipt",
+          "pass": true
+        },
+        {
+          "id": "reconcile",
+          "pass": true
+        },
+        {
+          "id": "sources",
+          "pass": true
+        },
+        {
+          "id": "injection",
+          "pass": true
+        },
+        {
+          "id": "boundary",
+          "pass": true
+        },
+        {
+          "id": "unknown",
+          "pass": true
+        }
+      ],
+      "passed": 6
+    }
+  ]
+}
