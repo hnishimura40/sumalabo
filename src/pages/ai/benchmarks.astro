@@ -1,0 +1,11 @@
+---
+import AiGuideLayout from '../../layouts/AiGuideLayout.astro';
+import AiEvidence from '../../components/AiEvidence.astro';
+import {benchmarks} from '../../data/ai-comparison';
+---
+<AiGuideLayout title="AIのベンチマークを読み分ける" description="能力・人の好み・開発・PC操作。何を測った数字なのか、試験ごとに分けて比較します。" path="/ai/benchmarks/" current="ベンチマーク">
+ <div class="ai-callout"><h2>測っているものが違えば、点数も別。</h2><p>サービスを選ぶ比較とは分けて読みましょう。異なる試験の点数を足した「万能1位」は作りません。</p></div>
+ <div class="benchmark-intros">{benchmarks.map(b=><article><h2><a href={b.url} target="_blank" rel="noopener noreferrer">{b.name} ↗</a></h2><strong>{b.scope}</strong><p>{b.meaning}</p><small>{b.caution}</small></article>)}</div>
+ <AiEvidence mode="benchmarks" />
+</AiGuideLayout>
+<style>.benchmark-intros{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:26px}.benchmark-intros article{padding:22px;background:var(--bg-elev);border:1px solid var(--line);border-radius:10px}.benchmark-intros h2{font-size:20px}.benchmark-intros strong{font-size:13px}.benchmark-intros p{font-size:14px;color:var(--fg-mid)}.benchmark-intros small{font-size:12px;line-height:1.8;color:var(--fg-mid)}@media(max-width:650px){.benchmark-intros{grid-template-columns:1fr}}</style>
