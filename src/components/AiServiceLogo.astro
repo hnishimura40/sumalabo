@@ -1,0 +1,10 @@
+---
+import logoSources from '../data/ai-logo-sources.json';
+interface Props { id:string; size?:number }
+const {id,size=24}=Astro.props;
+const logo=logoSources.find(item=>item.id===id);
+---
+{logo&&<img class="ai-service-logo" src={logo.path} alt="" width={size} height={size} data-ai-logo={id} decoding="async" />}
+<style>
+ .ai-service-logo{display:inline-block;flex-shrink:0;vertical-align:middle;object-fit:contain;box-sizing:border-box;padding:4px;border:1px solid #00000015;border-radius:20%;background:#fff}
+</style>
