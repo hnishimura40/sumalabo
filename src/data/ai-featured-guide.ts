@@ -1,4 +1,5 @@
 // Checked 2026-11-15. Product capabilities, app access and model benchmarks are separate facts.
+export const serviceModelsCheckedAt='2026-11-15';
 export type Capability = {status:'yes'|'limited'|'no'; text:string; source:string};
 const yes=(text:string,source:string):Capability=>({status:'yes',text,source});
 const limited=(text:string,source:string):Capability=>({status:'limited',text,source});

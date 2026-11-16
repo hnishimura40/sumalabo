@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "enabled": true,
+  "timeZone": "Asia/Tokyo",
+  "dailyCheckTime": "09:00",
+  "publicationPolicy": "verified_changes_auto_publish",
+  "stateDirectory": "D:/documents/動画作成関連/すまラボ/logs/scout/ai-guide",
+  "sourceFiles": [
+    {
+      "path": "src/data/ai-featured-pricing.ts",
+      "group": "pricing"
+    },
+    {
+      "path": "src/data/ai-service-facts.ts",
+      "group": "services"
+    },
+    {
+      "path": "src/data/ai-tool-facts.ts",
+      "group": "services"
+    },
+    {
+      "path": "src/data/ai-featured-guide.ts",
+      "group": "models-and-features"
+    },
+    {
+      "path": "src/data/ai-model-facts.ts",
+      "group": "public-models-and-benchmarks"
+    },
+    {
+      "path": "public/data/ai-benchmarks/current.json",
+      "group": "benchmarks"
+    }
+  ],
+  "discoverySources": [
+    {
+      "url": "https://gemini.google/overview/",
+      "group": "new-models"
+    },
+    {
+      "url": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
+      "group": "new-models"
+    },
+    {
+      "url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+      "group": "new-models"
+    },
+    {
+      "url": "https://docs.x.ai/developers/models",
+      "group": "new-models"
+    },
+    {
+      "url": "https://support.microsoft.com/en-us/microsoft-365-copilot/learning/changes-microsoft-copilot-app",
+      "group": "new-models"
+    },
+    {
+      "url": "https://ai.meta.com/muse/",
+      "group": "new-models"
+    },
+    {
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "group": "benchmarks"
+    }
+  ],
+  "allowedHosts": [
+    "gemini.google",
+    "support.google.com",
+    "blog.google",
+    "ai.google.dev",
+    "deepmind.google",
+    "storage.googleapis.com",
+    "openai.com",
+    "chatgpt.com",
+    "help.openai.com",
+    "platform.openai.com",
+    "claude.com",
+    "support.claude.com",
+    "docs.claude.com",
+    "platform.claude.com",
+    "anthropic.com",
+    "www.anthropic.com",
+    "x.ai",
+    "docs.x.ai",
+    "grok.com",
+    "microsoft.com",
+    "www.microsoft.com",
+    "support.microsoft.com",
+    "learn.microsoft.com",
+    "ai.meta.com",
+    "about.fb.com",
+    "www.meta.com",
+    "muse.ai",
+    "huggingface.co",
+    "artificialanalysis.ai",
+    "www.tbench.ai",
+    "tbench.ai",
+    "swebench.com",
+    "www.swebench.com",
+    "os-world.github.io",
+    "lmarena.ai",
+    "arena.ai",
+    "www.alibaba.com",
+    "www.alibabagroup.com",
+    "www.sec.gov",
+    "mistral.ai",
+    "docs.mistral.ai",
+    "legal.mistral.ai",
+    "deepseek.com",
+    "api-docs.deepseek.com",
+    "www.deepseek.com",
+    "perplexity.ai",
+    "www.perplexity.ai",
+    "docs.perplexity.ai",
+    "manus.im",
+    "openclaw.ai",
+    "docs.openclaw.ai",
+    "cursor.com",
+    "www.cursor.com",
+    "docs.cursor.com",
+    "github.com",
+    "ollama.com",
+    "docs.ollama.com",
+    "lmstudio.ai",
+    "bionic-gpt.com",
+    "docs.bionic-gpt.com",
+    "comfy.org",
+    "www.comfy.org",
+    "docs.comfy.org",
+    "n8n.io",
+    "docs.n8n.io",
+    "dify.ai",
+    "docs.dify.ai",
+    "midjourney.com",
+    "www.midjourney.com",
+    "docs.midjourney.com",
+    "runwayml.com",
+    "help.runwayml.com",
+    "suno.com",
+    "help.suno.com",
+    "elevenlabs.io",
+    "www.elevenlabs.io",
+    "plamo.preferredai.jp",
+    "www.preferred.jp",
+    "www.sbintuitions.co.jp",
+    "apps.apple.com",
+    "help.manus.im",
+    "learn.chatgpt.com",
+    "osworld-v2.xlang.ai",
+    "prod.cursor.com",
+    "runway.com",
+    "www.scbench.ai"
+  ],
+  "excludedPathPattern": "\\.(png|webp|jpg|svg|mp4|zip|gguf|safetensors)$|/global-location$|/Archives/edgar/|/policies/row-terms-of-use/|/terms/row-consumer-terms/",
+  "concurrency": 4,
+  "timeoutMs": 15000,
+  "maximumBytes": 4000000,
+  "minimumTextLength": 250,
+  "excludedHosts": [
+    "cdn.deepseek.com",
+    "policies.google.com",
+    "prtimes.jp",
+    "s21.q4cdn.com",
+    "www.lgresearch.ai",
+    "www.weforum.org",
+    "www.ycombinator.com"
+  ]
+}

@@ -136,3 +136,9 @@ Gemini等の複数機能を持つサービスは関係する分類に重複掲�
 `npm run build` 後に既存AI検証を自動実行し、トップ導線・構造化データ・lastmod・noindex混入も検査。公開後は `npm run ai:verify-publication -- --output=logs/ai-comparison-research/production-verify.json` で本番の15ページ・robots・サイトマップ・タイトル・内部リンク・ロゴのハッシュを読み取り検証する。
 
 Googleはrobots.txtのSitemap行とサイト内リンクから発見できる。既存方針に従い、廃止されたGoogle sitemap pingや一般記事非対応のIndexing APIは使わない。Search Console APIのOAuthは未導入。検証の成功はGoogleへの登録や検索順位・掲載日の保証ではない。IndexNowもGoogleへの送信と表現しない。新しい定期タスクやSNS投稿は追加しない。
+
+## 継続自動更新（2026-11-16）
+
+ユーザーの追加指示により、料金・モデル・ベンチマークの継続更新を自動化する。最新の実行・公開承認範囲は [AI比較ガイドの自動更新](ai-guide-maintenance.md) と `config/ai-guide-maintenance.json` が正本。初回公開承認待ち／定期実行未登録という以前の記述は、その時点の記録として扱う。
+
+共通ベンチマークの最新版を `public/data/ai-benchmarks/current.json` に分離し、旧 `ai-benchmarks-20261115/featured.json` と実測記録を保持。モデル対応の確認日はデータ側で管理し、検査は共通指数の版・行数の変更に対応する。本番検証は期待するmainコミットと公開ビルド、配布中の最新数値データの一致まで確認する。

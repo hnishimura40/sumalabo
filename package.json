@@ -8,6 +8,8 @@
     "build": "astro build",
     "postbuild": "node scripts/ai-comparison-verify.mjs",
     "ai:verify-publication": "node scripts/ai-guide-publication-verify.mjs",
+    "ai:watch": "node scripts/automation/ai-guide-watch.mjs",
+    "ai:test-maintenance": "node --test tests/sumahon/ai-guide-watch.test.mjs",
     "preview": "astro preview --host 127.0.0.1",
     "article:from-sumahon": "node scripts/run/create-from-sumahon.mjs",
     "article:prepare-from-sumahon": "node scripts/run/prepare-from-sumahon.mjs",
