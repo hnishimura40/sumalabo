@@ -12,6 +12,10 @@ assert.equal((html.match(/<td[^>]*data-capability-status=/g)||[]).length,48);
 assert.equal((html.match(/<tr[^>]*data-service-model=/g)||[]).length,6);
 assert.equal((html.match(/<tr[^>]*data-frontier-benchmark=/g)||[]).length,7);
 assert.equal((html.match(/<article[^>]*data-strength-panel=/g)||[]).length,6);
+assert.equal((html.match(/data-free-summary=/g)||[]).length,6);assert.equal((html.match(/data-paid-summary=/g)||[]).length,6);
+assert.ok(/<details[^>]*id="advanced-models"/.test(html));assert.ok(!/<details[^>]*id="advanced-models"[^>]*\sopen/.test(html));
+assert.ok(html.indexOf('id="major-details"')<html.indexOf('id="advanced-models"'));assert.ok(!html.includes('>独自実測</a>'));
+
 const common=JSON.parse(readFileSync('public/data/ai-benchmarks-20261115/featured.json'));assert.equal(common.version,'5.0.1');assert.equal(common.rows.length,7);assert.ok(common.rows.every(r=>r.score>0&&r.effort&&r.context&&new URL(r.source).hostname==='artificialanalysis.ai'));
 assert.ok(common.rows.filter(r=>r.serviceId==='muse').every(r=>r.access.includes('無料')));
 

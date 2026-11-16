@@ -5,6 +5,18 @@ const limited=(text:string,source:string):Capability=>({status:'limited',text,so
 const no=(text:string,source:string):Capability=>({status:'no',text,source});
 export const capabilityLabels={yes:'○',limited:'△',no:'×'};
 export const capabilityNames={yes:'対応',limited:'一部・別条件で対応',no:'標準機能に非対応'};
+// Explicit negative statements and catalogue/scope judgements are not the same evidence.
+export const negativeEvidence:Record<string,{basis:string;reason:string}>={
+ 'chatgpt.video':{basis:'公式の終了案内',reason:'SoraのWeb・アプリ・APIの終了を公式ヘルプに明記。'},
+ 'claude.image':{basis:'公式の非対応説明',reason:'写真・イラストは生成しないと公式ヘルプに明記。HTML/SVGの図解とは区別。'},
+ 'claude.video':{basis:'公式が生成方式を説明',reason:'Motionは映像生成モデルを使わず、文字・図形・画像をコードで動かすと明記。'},
+ 'chatgpt.music':{basis:'標準機能一覧と比較範囲の照合',reason:'公式の提供機能は文章・画像・ファイル・音声等。専用の楽曲生成として掲載される機能はなく、歌詞・音声会話・外部アプリはこの行に含めない。'},
+ 'claude.music':{basis:'標準機能一覧と比較範囲の照合',reason:'料金・機能一覧の音声モード、コード実行、ファイル作成を、専用の楽曲生成モデルとして数えない。'},
+ 'grok.music':{basis:'モデルの入出力と比較範囲の照合',reason:'公式一覧の文章・画像・動画・音声モデルと、独立した楽曲生成を区別。動画に含まれる音声はこの行の対象外。'},
+ 'copilot.music':{basis:'公式が素材の出所を説明',reason:'Createの動画BGMはMicrosoftの素材ライブラリと説明。既存BGMの追加を新曲の生成として数えない。'},
+ 'muse.video':{basis:'サービスの提供面を分けた判定',reason:'パーソナルAI秘書Museと、映像生成を提供するMeta AI/Vibesは別サービス。外部サービスへ操作を依頼することは標準搭載と数えない。'},
+ 'muse.music':{basis:'標準機能一覧と比較範囲の照合',reason:'Muse公式の文書・画像・調査・タスク実行と、専用の楽曲生成を区別。他社アプリの操作やコードによる音声合成はこの行の対象外。'},
+};
 export const capabilityAxes=[
  {key:'free',label:'無料で使う',scope:'無料枠のある機能。使用量の上限を含む。'},
  {key:'files',label:'文章・資料を作る',scope:'文章作成、資料の読解、ファイル作成。'},

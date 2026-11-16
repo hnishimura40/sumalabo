@@ -1,3 +1,4 @@
+import {featuredPricing} from './ai-featured-pricing';
 import {capabilityFacts} from './ai-featured-guide';
 import {entries} from './ai-comparison';
 import {priceEntrances} from './ai-guide-sections';
@@ -14,5 +15,5 @@ const profiles=[
 export const featured=profiles.map(p=>{
  const entry=entries.find(e=>e.id===p.id);
  if(!entry)throw Error('Missing featured entry: '+p.id);
- return {...p,entry,capabilities:capabilityFacts[p.id],price:priceEntrances[p.id]};
+ return {...p,entry,capabilities:capabilityFacts[p.id],pricing:featuredPricing[p.id],price:priceEntrances[p.id]};
 });
