@@ -1,0 +1,28 @@
+---
+import AiServiceLogo from './AiServiceLogo.astro';
+import {featured} from '../data/ai-featured';
+---
+<section class="ai-entry" aria-labelledby="ai-entry-heading" data-ai-home-entry>
+ <div class="ai-entry-copy">
+  <p class="ai-entry-eyebrow">すまラボの常設AI比較ガイド</p>
+  <h2 id="ai-entry-heading">毎日のAI、<br /><span>どれにする？</span></h2>
+  <p>無料でできること、料金、得意なこと。<br />主要6サービスを同じ項目で見比べよう。</p>
+  <a class="ai-entry-primary" href="/ai/">AI比較ガイドを見る <span aria-hidden="true">→</span></a>
+ </div>
+ <div class="ai-entry-options">
+  <nav class="ai-entry-services" aria-label="主要6サービスの比較へ">
+   {featured.map(p=><a href={`/ai/#major-detail-${p.id}`}><AiServiceLogo id={p.id} size={44} /><span>{p.name}</span></a>)}
+  </nav>
+  <nav class="ai-entry-purposes" aria-label="AIの用途から選ぶ"><a href="/ai/#major-compare">できることの早見表</a><a href="/ai/companions/">常時動くAI秘書</a><a href="/ai/images/">画像・創作から選ぶ</a></nav>
+  <p class="ai-entry-note">ロゴから各AIの詳細へ。無料枠の上限や、日本で使う条件も掲載。</p>
+ </div>
+</section>
+<style>
+ .ai-entry{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:30px;align-items:center;margin:0 0 20px;padding:28px 32px;background:var(--bg-elev);border:1px solid var(--line-strong);border-top:4px solid var(--teal);border-radius:18px;box-shadow:var(--shadow-sm)}
+ .ai-entry-eyebrow{margin:0 0 9px;font-size:12px;font-weight:700;color:var(--teal-deep)}.ai-entry h2{font-size:clamp(27px,3vw,36px);line-height:1.35;margin:0 0 10px}.ai-entry h2 span{display:inline-block}.ai-entry-copy>p:not(.ai-entry-eyebrow){font-size:14px;line-height:1.8;color:var(--fg-mid);margin:0 0 16px}
+ .ai-entry-primary{display:inline-flex;align-items:center;gap:24px;font-size:14px;font-weight:700;padding:11px 18px;background:var(--teal-deep);color:var(--bg-elev);border-radius:8px;text-decoration:none}.ai-entry-primary:hover{filter:brightness(1.12)}
+ .ai-entry-services{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.ai-entry-services a{display:flex;align-items:center;gap:9px;min-width:0;padding:11px 9px;border:1px solid var(--line);border-radius:10px;color:var(--fg);text-decoration:none;font-size:14px;font-weight:700}.ai-entry-services a:hover{border-color:var(--teal);background:var(--teal-tint)}
+ .ai-entry-purposes{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:16px;font-size:12px;font-weight:700}.ai-entry-purposes a{color:var(--teal-deep)}.ai-entry-note{margin:10px 0 0;font-size:11px;color:var(--fg-mid)}.ai-entry a:focus-visible{outline:3px solid var(--brand);outline-offset:3px}
+ @media(max-width:850px){.ai-entry{grid-template-columns:1fr;gap:20px;padding:24px}.ai-entry h2 br{display:none}}
+ @media(max-width:420px){.ai-entry{padding:20px 16px;gap:18px}.ai-entry-services{gap:7px}.ai-entry-services a{flex-direction:column;gap:6px;padding:10px 4px;font-size:12px}.ai-entry-purposes{font-size:11px;gap:8px 12px}}
+</style>

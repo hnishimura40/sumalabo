@@ -41,6 +41,7 @@ project/
 
 # visual-review internal logs (screenshots + review .md) — never push to main
 logs/visual-review/
+logs/ai-comparison-research/
 
 # automation runtime state (queue / locks / processed URL ledger) — never committed
 data/automation/autonomy.json

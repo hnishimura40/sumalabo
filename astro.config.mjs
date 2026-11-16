@@ -3,6 +3,7 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
+import aiGuidePublication from "./src/data/ai-guide-publication.json" with { type: "json" };
 
 // sitemap の lastmod 用: 記事 slug → updated(なければ pubDate) の対応表を
 // frontmatter から組み立てる（M3 SEO基盤）。固定ページはビルド時刻を lastmod にする。
@@ -39,7 +40,10 @@ export default defineConfig({
       filter: (page) => !page.includes("/design-preview/") && !page.includes("/review/"),
       serialize(item) {
         const m = item.url.match(/\/articles\/([^/]+)\/?$/);
-        if (m && articleLastmod.has(m[1])) {
+        if (new URL(item.url).pathname.startsWith('/ai/')) {
+          // AIガイドは意味のある更新日を正本に持つ。無関係な記事のビルドで更新しない。
+          item.lastmod = new Date(aiGuidePublication.dateModified).toISOString();
+        } else if (m && articleLastmod.has(m[1])) {
           item.lastmod = articleLastmod.get(m[1]).toISOString();
         } else {
           // 固定ページ・一覧ページはビルド時刻

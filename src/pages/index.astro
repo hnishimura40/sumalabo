@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
 import StapleGuideCard from "../components/StapleGuideCard.astro";
+import AiGuideEntry from "../components/AiGuideEntry.astro";
 import { buildStapleCards } from "../lib/staple-cards";
 import { buildHomeGraph } from "../lib/structured-data";
 
@@ -56,6 +57,7 @@ const homeGraph = buildHomeGraph();
   <script type="application/ld+json" set:html={JSON.stringify(homeGraph)} />
   <section class="page-shell">
     <h1 class="sr-only">すまラボ — スマホ・AI・ガジェットをやさしく整理</h1>
+    <AiGuideEntry />
     <a class="campaign-entry" href="/articles/mobile-plan-cost-comparison/#mobile-campaigns">
       <span><strong>携帯キャンペーンを比較</strong><small>乗り換え・新しい番号・再契約の対象条件と期限を確認</small></span>
       <span class="campaign-entry-action">早見表を見る →</span>

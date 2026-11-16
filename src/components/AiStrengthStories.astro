@@ -1,0 +1,27 @@
+---
+import AiServiceLogo from './AiServiceLogo.astro';
+import CharacterBubble from './article/CharacterBubble.astro';
+import {featured} from '../data/ai-featured';
+import {serviceStories} from '../data/ai-featured-guide';
+---
+<section class="strength-stories" id="strengths" aria-labelledby="strengths-heading">
+ <p class="ai-eyebrow">ひまり・らぼまると見つける</p><h2 id="strengths-heading">あなたにうれしい、そのAIの強み。</h2>
+ <p class="strength-intro">知識の点数だけでは決められない。作りたいもの、使っているアプリ、お金をかけずに試せることから選びましょう。</p>
+ <div class="strength-tabs" aria-label="強みを読むサービス" data-strength-tabs>{featured.map(p=><button type="button" id={`strength-tab-${p.id}`} data-strength-tab={p.id} aria-controls={`strength-panel-${p.id}`}><AiServiceLogo id={p.id} size={26} />{p.name}{p.id==='muse'&&<small>無料のAI秘書</small>}</button>)}</div>
+ {featured.map(p=>{const s=serviceStories[p.id];return <article class="strength-panel" id={`strength-panel-${p.id}`} data-strength-panel={p.id} aria-labelledby={`strength-tab-${p.id}`}><header><AiServiceLogo id={p.id} size={36} /><h3>{s.headline}</h3></header><CharacterBubble speaker="himari" mood="curious">{s.question}</CharacterBubble><CharacterBubble speaker="labo" mood="point">{s.answer}</CharacterBubble><div class="strength-example"><strong>こんなふうに頼む</strong><p>{s.tryIt}</p></div><p class="strength-boundary">{s.boundary}</p><a class="strength-source" href={s.source} target="_blank" rel="noopener noreferrer">機能・無料枠の公式根拠 ↗</a></article>;})}
+ <noscript><p class="ai-small-note">以下に6サービスすべての会話を表示しています。</p></noscript>
+</section>
+<script>
+ const tabs=[...document.querySelectorAll<HTMLButtonElement>('[data-strength-tab]')];
+ const panels=[...document.querySelectorAll<HTMLElement>('[data-strength-panel]')];
+ const activate=(id:string,focus=false)=>{for(const tab of tabs){const active=tab.dataset.strengthTab===id;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;if(active&&focus)tab.focus();}for(const panel of panels)panel.hidden=panel.dataset.strengthPanel!==id;};
+ document.querySelector('[data-strength-tabs]')?.setAttribute('role','tablist');
+ for(const panel of panels){panel.setAttribute('role','tabpanel');panel.tabIndex=0;}
+ tabs.forEach((tab,i)=>{tab.setAttribute('role','tab');tab.addEventListener('click',()=>activate(tab.dataset.strengthTab!));tab.addEventListener('keydown',e=>{let n=i;if(e.key==='ArrowRight')n=(i+1)%tabs.length;else if(e.key==='ArrowLeft')n=(i+tabs.length-1)%tabs.length;else if(e.key==='Home')n=0;else if(e.key==='End')n=tabs.length-1;else return;e.preventDefault();activate(tabs[n].dataset.strengthTab!,true);});});
+ document.querySelectorAll<HTMLElement>('[data-show-strength]').forEach(link=>link.addEventListener('click',()=>activate(link.dataset.showStrength!)));
+ activate('muse');
+</script>
+<style>
+ .strength-stories{margin-top:38px;padding:28px;border:1px solid var(--line);background:var(--bg-elev);border-radius:14px;scroll-margin-top:100px}.strength-intro{font-size:14px;color:var(--fg-mid);margin:8px 0 20px}.strength-tabs{display:flex;gap:8px;flex-wrap:wrap}.strength-tabs button{display:flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid var(--line-strong);border-radius:8px;background:var(--bg);cursor:pointer;font-size:12px;font-weight:700}.strength-tabs small{font-size:9px;color:var(--teal-deep)}.strength-tabs [aria-selected=true]{border-color:var(--teal);background:var(--teal-tint);box-shadow:0 0 0 1px var(--teal)}.strength-panel{max-width:850px;margin:24px auto 0}.strength-panel[hidden]{display:none}.strength-panel header{display:flex;align-items:center;gap:12px}.strength-panel h3{margin:0;font-size:21px;line-height:1.6}.strength-example{margin:20px 0 12px;padding:14px 18px;border-left:3px solid var(--teal);background:var(--bg)}.strength-example strong{font-size:11px;color:var(--teal-deep)}.strength-example p{font-size:13px;margin:5px 0 0}.strength-boundary{font-size:12px;color:var(--fg-mid);margin:12px 0}.strength-source{font-size:11px}.strength-panel :global(.talk){margin:16px 0}.strength-panel :global(.bubble){font-size:14px;line-height:1.9}
+ @media(max-width:600px){.strength-stories{padding:18px 14px}.strength-stories h2{font-size:22px}.strength-tabs{display:grid;grid-template-columns:1fr 1fr}.strength-tabs button{min-width:0;font-size:11px;flex-wrap:wrap;padding:8px}.strength-tabs small{width:100%;text-align:center}.strength-panel h3{font-size:18px}.strength-example{padding:12px}.strength-panel :global(.talk){gap:8px}.strength-panel :global(.face){width:36px;height:36px;flex-basis:36px}}
+</style>

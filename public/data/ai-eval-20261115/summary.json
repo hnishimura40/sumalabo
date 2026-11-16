@@ -1,0 +1,57 @@
+[
+  {
+    "model": "gemini-3.8-flash",
+    "trials": 3,
+    "completed": 3,
+    "passed": 18,
+    "checks": 18,
+    "medianMs": 5882,
+    "inputTokens": 1347,
+    "outputTokens": 1988,
+    "route": "Gemini Developer API",
+    "corrections": 0,
+    "estimatedUsd": 0.00846525,
+    "priceSource": "https://aistudio.google.com/docs/pricing"
+  },
+  {
+    "model": "gemini-4-argon",
+    "trials": 3,
+    "completed": 3,
+    "passed": 18,
+    "checks": 18,
+    "medianMs": 5746,
+    "inputTokens": 1593,
+    "outputTokens": 237,
+    "route": "Gemini Developer API",
+    "corrections": 0,
+    "estimatedUsd": 0.005556,
+    "priceSource": "https://aistudio.google.com/docs/pricing"
+  },
+  {
+    "model": "gemma-4-26b-a4b-it",
+    "trials": 3,
+    "completed": 3,
+    "passed": 18,
+    "checks": 18,
+    "medianMs": 37134,
+    "inputTokens": 1347,
+    "outputTokens": 5139,
+    "route": "Gemini Developer API",
+    "corrections": 0,
+    "estimatedUsd": 0,
+    "priceSource": "https://aistudio.google.com/docs/pricing"
+  },
+  {
+    "model": "gpt-6.1-sol",
+    "route": "Codex CLI / medium",
+    "trials": 3,
+    "completed": 3,
+    "passed": 18,
+    "checks": 18,
+    "medianMs": 7697,
+    "corrections": 0,
+    "estimatedUsd": null,
+    "inputTokens": 75001,
+    "outputTokens": 298
+  }
+]

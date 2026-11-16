@@ -1,0 +1,8 @@
+[
+  {
+    "service": "Claude Code",
+    "status": "ログイン未接続",
+    "measuredScore": null,
+    "reason": "2026-11-15の試行はNot logged in。回答未取得なので0点にも順位にも換算しない。"
+  }
+]

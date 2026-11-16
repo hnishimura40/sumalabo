@@ -1,0 +1,18 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import {guideSections} from '../data/ai-guide-sections';
+import {checkedAt} from '../data/ai-comparison';
+import {buildAiGuideSchema} from '../lib/ai-guide-seo';
+import '../styles/ai-guide.css';
+const {title,description,path,current}=Astro.props;
+---
+<BaseLayout title={title} description={description} canonicalPath={path}>
+ <script type="application/ld+json" set:html={JSON.stringify(buildAiGuideSchema(title,description,path,current)).replace(/</g,'\u003c')} />
+ <div class="ai-guide ai-category-page">
+  <nav class="ai-breadcrumb" aria-label="パンくず"><a href="/ai/">AI比較</a><span aria-hidden="true">/</span><span>{current}</span></nav>
+  <header class="ai-page-heading"><p class="ai-eyebrow">すまラボのAI比較</p><h1>{title}</h1><p>{description}</p><small>公式情報の確認：<time datetime={checkedAt}>{checkedAt}</time> · 国・地域は提供組織の拠点。保存先とは別です。</small></header>
+  <details class="ai-category-switch"><summary>ほかの分類を見る</summary><nav aria-label="AI比較の分類">{guideSections.map(s=><a href={`/ai/${s.slug}/`} aria-current={path===`/ai/${s.slug}/`?'page':undefined}>{s.shortTitle}</a>)}<a href="/ai/benchmarks/">ベンチマーク</a><a href="/ai/tests/">独自実測</a></nav></details>
+  <slot />
+  <footer class="ai-back"><a href="/ai/">← 分類を選び直す</a><a href="/ai/benchmarks/">性能の指標を読む</a><a href="/ai/tests/">日本語の独自実測を見る</a></footer>
+ </div>
+</BaseLayout>

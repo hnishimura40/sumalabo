@@ -1,0 +1,62 @@
+[
+  {
+    "id": "gemini",
+    "path": "/images/ai-logos/gemini.png",
+    "url": "https://gemini.google/images/spark_4c.png",
+    "sourcePage": "https://gemini.google/overview/",
+    "bytes": 9531,
+    "mime": "image/png",
+    "sha256": "f39c8b1c0dbdf1411a52b203cd7d2815ef1dc5f899f457499e7d5aa57f25b6c8",
+    "retrievedAt": "2026-11-15"
+  },
+  {
+    "id": "chatgpt",
+    "path": "/images/ai-logos/chatgpt.png",
+    "url": "https://chatgpt.com/cdn/assets/favicon-180x180.9e0103ce69.png",
+    "sourcePage": "https://chatgpt.com/",
+    "bytes": 5152,
+    "mime": "image/png",
+    "sha256": "c450a1e3c375bf5c6d1db10327b59a58f5bd6e4990ffdbf6f292e3d161c668de",
+    "retrievedAt": "2026-11-15"
+  },
+  {
+    "id": "claude",
+    "path": "/images/ai-logos/claude.svg",
+    "url": "https://claude.com/icon.svg",
+    "sourcePage": "https://claude.com/",
+    "bytes": 2558,
+    "mime": "image/svg+xml",
+    "sha256": "b150888bc7257af83e3b85d3c2be4294f88986026f8168f6c12fc1fde6697350",
+    "retrievedAt": "2026-11-15"
+  },
+  {
+    "id": "copilot",
+    "path": "/images/ai-logos/copilot.png",
+    "url": "https://res.cdn.office.net/officehub/images/content/images/unauth-copilotcom/copilot-mobile-logo-static-286643fc8c.png",
+    "sourcePage": "https://copilot.com/",
+    "bytes": 23931,
+    "mime": "image/png",
+    "sha256": "98a5ebda1f77e63fcbe9fd30705075e9d0e8b632a84e4ab76dfa8c37bb318d87",
+    "retrievedAt": "2026-11-15"
+  },
+  {
+    "id": "muse",
+    "path": "/images/ai-logos/muse.svg",
+    "url": "https://muse.ai/images/favicon/app-squiggle.svg",
+    "sourcePage": "https://muse.ai/",
+    "bytes": 2660,
+    "mime": "image/svg+xml",
+    "sha256": "6373d89d274258a38432f3c3729cd716498b8ded849b174a7998683dcf4aaba5",
+    "retrievedAt": "2026-11-15"
+  },
+  {
+    "id": "grok",
+    "path": "/images/ai-logos/grok.png",
+    "url": "https://grok.com/images/apple-touch-icon.png",
+    "sourcePage": "https://grok.com/",
+    "bytes": 8579,
+    "mime": "image/png",
+    "sha256": "a3487e9bfbe49df853c51c5bdbf980bfb3bec782bfdd398a9bf333bb648b832f",
+    "retrievedAt": "2026-11-15"
+  }
+]
