@@ -27,6 +27,12 @@ for(const id of payload.featured)assert.ok(html.includes('id="major-detail-'+id+
 for(const slug of ['chat','research','images','video','voice'])assert.ok(payload.sections.find(s=>s.slug===slug).ids.includes('grok'));
 for(const id of ['gemini','chatgpt','copilot'])assert.ok(payload.sections.find(s=>s.slug==='images').ids.includes(id));
 const sitemap=readFileSync('dist/sitemap-0.xml','utf8');
+const publication=JSON.parse(readFileSync('src/data/ai-guide-publication.json','utf8'));
+const schema=page=>[...page.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].flatMap(m=>{const j=JSON.parse(m[1]);return j['@graph']||[j];});
+const home=read('/');assert.ok(home.includes('data-ai-home-entry'));assert.ok(home.indexOf('data-ai-home-entry')<home.indexOf('class="lead-hero"'));
+for(const id of payload.featured)assert.ok(home.includes(`href="/ai/#major-detail-${id}"`));
+assert.ok(html.includes(`<title>${publication.title} | すまラボ</title>`));
+const collection=schema(html).find(n=>n['@type']==='CollectionPage');assert.equal(collection.mainEntity.numberOfItems,6);assert.equal(collection.dateModified,publication.dateModified);
 const covered=new Set();const pages=[['/ai/',html]];
 for(const section of payload.sections){
  assert.ok(html.includes('href="/ai/'+section.slug+'/"'));
@@ -48,7 +54,7 @@ const archivedGroups=bench.match(/<article[^>]*data-benchmark-group[^>]*>[\s\S]*
 assert.equal((bench.match(/data-frontier-benchmark=/g)||[]).length,7);
 assert.ok(bench.includes('Terminal-Bench 4.1')&&bench.includes('65.8% ±3.1%'));
 assert.ok(!tests.includes('id="models"')&&!models.includes('id="measurements"'));
-for(const [route,page]of pages){assert.ok(page.includes('https://sumalabo.com'+route));assert.ok(!/<meta[^>]+name="robots"[^>]+content="[^"]*noindex/.test(page));const ids=[...page.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size,route+' duplicate ids');}
+for(const [route,page]of pages){assert.ok(page.includes('https://sumalabo.com'+route));assert.ok(!/<meta[^>]+name="robots"[^>]+content="[^"]*noindex/.test(page));assert.ok(schema(page).some(n=>n['@type']==='BreadcrumbList'));const block=sitemap.split('<url>').find(b=>b.includes(`<loc>https://sumalabo.com${route}</loc>`));assert.ok(block?.includes(`<lastmod>${publication.dateModified}T00:00:00.000Z</lastmod>`));const ids=[...page.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size,route+' duplicate ids');}
 const protocol=JSON.parse(readFileSync('public/data/ai-eval-20261115/protocol.json'));
 assert.equal(createHash('sha256').update(protocol.prompt).digest('hex'),protocol.promptSha256);
 const stable=v=>JSON.stringify(v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.entries(v).sort(([a],[b])=>a.localeCompare(b))):v);

@@ -5,12 +5,15 @@ import {featured} from '../../data/ai-featured';
 import CharacterBubble from '../../components/article/CharacterBubble.astro';
 import {guideSections,sectionGroups,sectionEntries,entrySearchTerms} from '../../data/ai-guide-sections';
 import {entries,checkedAt} from '../../data/ai-comparison';
+import publication from '../../data/ai-guide-publication.json';
+import {buildAiGuideSchema} from '../../lib/ai-guide-seo';
 import '../../styles/ai-guide.css';
 const examples=(s:typeof guideSections[number])=>s.slug==='models'?'Qwen / Gemma / PLaMo / Sarashina など':sectionEntries(s).filter(e=>!featured.some(p=>p.id===e.id)).map(e=>e.id==='notebook'?'Gemini Notebook':e.name).join(' / ')||'主要サービスを、用途に合う項目で詳しく比較';
 ---
-<BaseLayout title="AI比較ガイド｜主要6サービスと用途別の選び方" description="Gemini・ChatGPT・Claude・Grok・Copilot・Museを大きく比較。ほかのAIも用途別に紹介。無料と有料の違い、得意なこと、日本での条件から選べます。モデル・性能表も掲載。" canonicalPath="/ai/">
+<BaseLayout title={publication.title} description={publication.description} canonicalPath="/ai/">
+ <script type="application/ld+json" set:html={JSON.stringify(buildAiGuideSchema()).replace(/</g,'\u003c')} />
  <div class="ai-guide ai-directory">
-  <header class="directory-hero"><div><p class="ai-eyebrow">すまラボの常設AIガイド</p><h1>毎日のAI、どれにする？</h1><p class="directory-lead">得意なこと、無料でできること、有料で増えること。まずは自分に合う一つから。</p><p class="directory-meta">主要6サービス · 全35件 · 公式情報の確認：<time datetime={checkedAt}>{checkedAt}</time></p></div><img src="/images/characters/duo_guide_half.webp" alt="AI選びを案内するひまりとらぼまる" width="260" height="260" /></header>
+  <header class="directory-hero"><div><p class="ai-eyebrow">すまラボの常設AI比較ガイド</p><h1>毎日のAI、どれにする？</h1><p class="directory-lead">得意なこと、無料でできること、有料で増えること。まずは自分に合う一つから。</p><p class="directory-meta">主要6サービス · 全35件 · 公式情報の確認：<time datetime={checkedAt}>{checkedAt}</time> · ページ更新：<time datetime={publication.dateModified}>{publication.dateModified}</time></p></div><img src="/images/characters/duo_guide_half.webp" alt="AI選びを案内するひまりとらぼまる" width="260" height="260" /></header>
   <nav class="directory-jumps" aria-label="AIガイドの入口"><a href="#major">主要6サービス</a><a href="#major-compare">6つの機能比較</a><a href="#major-models">モデル・性能（補足）</a><a href="#more">用途別にもっと探す</a><a href="#evaluate">詳しい資料</a></nav>
   <AiFeatured />
   <section class="directory-more" id="more" aria-labelledby="more-heading"><p class="ai-eyebrow">ほかにも、こんなAIがあります</p><h2 id="more-heading">やりたいことから、もう一歩。</h2><p class="directory-lead">曲ならSuno、資料調査ならPerplexity。主要6サービスとあわせて、用途に合う候補を探せます。</p>
