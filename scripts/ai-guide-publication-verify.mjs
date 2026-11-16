@@ -4,6 +4,7 @@ import {dirname} from 'node:path';
 import {createHash} from 'node:crypto';
 const args=Object.fromEntries(process.argv.slice(2).map(a=>a.replace(/^--/,'').split('=')));
 const base=(args['base-url']||'https://sumalabo.com').replace(/\/$/,'');
+const production=base==='https://sumalabo.com';
 if(!/^https:\/\/(sumalabo\.com|[a-z0-9-]+\.sumalabo\.pages\.dev)$/.test(base))throw Error('Expected the production site or its preview');
 const publication=JSON.parse(readFileSync('src/data/ai-guide-publication.json','utf8'));
 const sources=JSON.parse(readFileSync('src/data/ai-logo-sources.json','utf8'));
@@ -24,12 +25,15 @@ checks.hubSchema=collection?.dateModified===publication.dateModified&&collection
 checks.freePaidSummaries=(hub.text.match(/data-free-summary=/g)||[]).length===6&&(hub.text.match(/data-paid-summary=/g)||[]).length===6;
 await Promise.all(routes.map(async route=>{
  const page=route==='/ai/'?hub:await get(route);
- checks[route]=page.status===200&&page.text.includes(`<link rel="canonical" href="https://sumalabo.com${route}"`)&&!/noindex|nofollow/i.test(page.headers.get('x-robots-tag')||'')&&!/<meta[^>]+name="robots"[^>]+content="[^"]*(noindex|nofollow)/i.test(page.text)&&page.text.includes('href="/ai/"')&&graph(page.text).some(n=>n['@type']==='BreadcrumbList');
+ const headerRobots=page.headers.get('x-robots-tag')||'';
+ // Cloudflare intentionally excludes preview hosts. Production must remain indexable.
+ const headerAllowed=!/noindex|nofollow/i.test(headerRobots)||(!production&&headerRobots.toLowerCase()==='noindex');
+ checks[route]=page.status===200&&page.text.includes(`<link rel="canonical" href="https://sumalabo.com${route}"`)&&headerAllowed&&!/<meta[^>]+name="robots"[^>]+content="[^"]*(noindex|nofollow)/i.test(page.text)&&page.text.includes('href="/ai/"')&&graph(page.text).some(n=>n['@type']==='BreadcrumbList');
 }));
 await Promise.all(sources.map(async source=>{
  const r=await fetch(base+source.path,{signal:AbortSignal.timeout(20000)});const bytes=Buffer.from(await r.arrayBuffer());
  checks[source.path]=r.status===200&&createHash('sha256').update(bytes).digest('hex')===source.sha256;
 }));
-const result={at:new Date().toISOString(),base,ok:Object.values(checks).every(Boolean),checks,google:{strategy:'crawlable_internal_links_and_robots_sitemap',indexingConfirmed:false,searchConsoleApiEnabled:false}};
+const result={at:new Date().toISOString(),base,production,ok:Object.values(checks).every(Boolean),checks,google:{strategy:'crawlable_internal_links_and_robots_sitemap',previewNoindexExpected:!production,indexingConfirmed:false,searchConsoleApiEnabled:false}};
 if(args.output){mkdirSync(dirname(args.output),{recursive:true});writeFileSync(args.output,JSON.stringify(result,null,2)+'\n');}
 console.log(JSON.stringify(result));if(!result.ok)process.exitCode=1;
