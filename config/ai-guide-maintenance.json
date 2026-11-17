@@ -59,6 +59,10 @@
     {
       "url": "https://artificialanalysis.ai/leaderboards/models",
       "group": "benchmarks"
+    },
+    {
+      "url": "https://muse.ai/blog/security-and-safety-for-ai-agents-our-approach-with-muse",
+      "group": "new-models"
     }
   ],
   "allowedHosts": [
