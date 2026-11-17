@@ -59,8 +59,8 @@ export const serviceFacts: Record<string, ServiceFact> = {
   gemini: {
     country: '米国', countryNote: googleNote,
     price: '日本公式月額：Free ¥0、AI Plus ¥725、Pro ¥2,900、Ultra ¥14,500（Proの5倍枠）・¥32,000（20倍枠）。API別。掲載ページに税区分の明示なし、購入時に確認。',
-    japan: '日本向けの料金・提供ページあり。画像は無料枠、動画はAI Plus以上・18歳以上、音楽は18歳以上。TasksはAI Ultra・18歳以上、除外地域に日本の記載なし。学校・仕事用アカウントは別条件。', japanStatus: 'available',
-    sources: [googleCountry, googlePlans, s('画像生成', 'https://gemini.google/overview/image-generation/'), s('動画生成', 'https://gemini.google/overview/video-generation/'), s('音楽生成', 'https://gemini.google/overview/music-generation/')],
+    japan: '日本向けの料金・提供ページあり。画像は無料枠、動画はAI Plus以上・18歳以上、音楽は18歳以上。Tasksは日本で無料枠から利用可（2026/11/18確認）。18歳以上・個人アカウント・履歴オンが条件。学校・仕事用アカウントは別条件。', japanStatus: 'available',
+    sources: [googleCountry, googlePlans, s('Tasksの対象・無料提供地域', 'https://support.google.com/gemini/answer/17094507?hl=en'), s('画像生成', 'https://gemini.google/overview/image-generation/'), s('動画生成', 'https://gemini.google/overview/video-generation/'), s('音楽生成', 'https://gemini.google/overview/music-generation/')],
   },
   claude: {
     country: '米国', countryNote: claudeNote,

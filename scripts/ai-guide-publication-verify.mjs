@@ -25,6 +25,9 @@ checks.hubMetadata=hub.text.includes(`<title>${publication.title} | すまラボ
 const collection=graph(hub.text).find(n=>n['@type']==='CollectionPage');
 checks.hubSchema=collection?.dateModified===publication.dateModified&&collection?.mainEntity?.numberOfItems===6&&collection.mainEntity.itemListElement.map(i=>i.name).join('|')==='Gemini|ChatGPT|Claude|Grok|Copilot|Muse';
 checks.freePaidSummaries=(hub.text.match(/data-free-summary=/g)||[]).length===6&&(hub.text.match(/data-paid-summary=/g)||[]).length===6;
+const planTables=[...hub.text.matchAll(/<table[^>]*data-plan-table="(free|paid)"[^>]*>([\s\S]*?)<\/table>/g)];
+checks.freePaidTables=planTables.length===2&&['free','paid'].every(plan=>{const table=planTables.find(m=>m[1]===plan);return table&&(table[2].match(/data-capability-status=/g)||[]).length===42;});
+checks.typeConversations=['chat','agent','companion'].every(type=>{const card=hub.text.match(new RegExp('<article[^>]*data-ai-type="'+type+'"[^>]*>([\\s\\S]*?)</article>'));return card&&card[1].includes('ひまり')&&card[1].includes('らぼまる')&&(card[1].match(/class="talk /g)||[]).length===2;});
 const benchmark=await get('/data/ai-benchmarks/current.json');
 const expectedBenchmark=readFileSync('public/data/ai-benchmarks/current.json','utf8');
 checks.currentBenchmark=benchmark.status===200&&benchmark.text===expectedBenchmark&&(hub.text.match(/data-frontier-benchmark=/g)||[]).length===JSON.parse(expectedBenchmark).rows.length;
