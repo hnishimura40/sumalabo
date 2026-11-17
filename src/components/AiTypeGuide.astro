@@ -1,0 +1,27 @@
+---
+import CharacterBubble from './article/CharacterBubble.astro';
+const types=[
+ {id:'chat',number:'01',name:'チャット型',verb:'相談する',summary:'対話を重ねて、考えや文章を整える。',question:'「旅行の行き先を相談したい」「この文章を読みやすくして」なら？',answer:'まずチャット型。質問すると答えが返り、追加の条件を伝えて一緒に詰めていく。何をするかを自分で決めながら進めたいときに合うよ。',example:'「京都へ日帰り。雨でも楽しめる行き先を3つ提案して」',flow:['質問する','答えを受け取る','条件を足して相談'],services:'Gemini・ChatGPT・Claude・Grok・Copilotなど',href:'/ai/chat/',link:'相談・文章のAIを比べる',source:'https://chatgpt.com/pricing/'},
+ {id:'agent',number:'02',name:'エージェント型',verb:'作業を任せる',summary:'目標を伝え、調査から成果物まで進めてもらう。',question:'候補を答えるだけでなく、調べて比較表まで作ってほしいな。',answer:'それがエージェント型の出番。必要な手順を組み立て、Webやファイル、連携アプリを使って作業する。完成した表や資料を受け取って、自分で内容を確かめるんだ。',example:'「3つの旅行先の交通費と営業時間を調べ、出典付きの比較表を作って」',flow:['目標を伝える','複数の手順を実行','成果物を確認'],services:'ChatGPT Work・Claude Cowork・Manusなど',href:'/ai/agents/',link:'作業を任せるAIを比べる',source:'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex'},
+ {id:'companion',number:'03',name:'常時動くAI秘書型',verb:'継続して見守る',summary:'Dots・Museのように、離れている間も用事を進める。',question:'アプリを閉じた後も、旅行の料金が下がるのを見守ってほしい！',answer:'DotsやMuseは、記憶や接続したアプリを使い、クラウドで仕事を続けるAI秘書。変化や確認が必要な場面を知らせてくれる。Museは無料の使用量内から始められるのが強みだよ。',example:'「この旅行先の予算を覚えて、条件に合う料金になったら知らせて」',flow:['用事・条件を共有','離れている間も継続','変化・結果を受け取る'],services:'Dots（対象Pro等）・Muse（無料枠あり）など',href:'/ai/companions/',link:'Dots・MuseなどのAI秘書を比べる',source:'https://about.fb.com/ja/news/2026/10/muse-personal-ai-agent-launches-in-japan/'},
+];
+---
+<section class="type-guide" id="ai-types" aria-labelledby="ai-types-heading">
+ <p class="ai-eyebrow">ひまりとらぼまるのAI入門</p>
+ <h2 id="ai-types-heading">AIの3つの使い方。どこまで任せたい？</h2>
+ <p class="type-intro">同じ旅行の準備でも、「相談する」「表まで作る」「その後も見守る」で選び方が変わります。同じサービスが複数の使い方に対応することもあります。</p>
+ <nav class="type-shortcuts" aria-label="AIの使い方を選ぶ">{types.map(t=><a href={`#ai-type-${t.id}`}><span>{t.number}</span>{t.verb}<small>{t.name}</small></a>)}</nav>
+ {types.map(t=><article class="type-card" id={`ai-type-${t.id}`} data-ai-type={t.id} aria-labelledby={`type-heading-${t.id}`}>
+  <header><span class="type-number" aria-hidden="true">{t.number}</span><div><p>{t.verb}</p><h3 id={`type-heading-${t.id}`}>{t.name}</h3><p class="type-summary">{t.summary}</p></div></header>
+  <ol class="type-flow" aria-label={`${t.name}の進め方`}>{t.flow.map(step=><li>{step}</li>)}</ol>
+  <div class="type-conversation"><CharacterBubble speaker="himari" mood="curious">{t.question}</CharacterBubble><CharacterBubble speaker="labo" mood="point">{t.answer}</CharacterBubble></div>
+  <div class="type-example"><strong>こんな頼み方</strong><p>{t.example}</p></div>
+  <footer><p>{t.services}</p><a href={t.href}>{t.link} →</a><a class="type-source" href={t.source} target="_blank" rel="noopener noreferrer">公式の説明 ↗</a></footer>
+ </article>)}
+ <p class="type-note">これは使い方の整理で、性能の順位や厳密な製品分類ではありません。エージェントでもクラウド実行や予約に対応する場合があります。AI秘書も無制限・永久に動くわけではなく、利用枠・対象プラン・地域・連携権限に従います。単発の予約通知と、記憶やアプリ連携を伴う継続作業は区別しましょう。</p>
+ <p class="type-note">Dotsは対象Pro・Business Premium・Enterprise等で段階提供。Museは無料枠の回復を待って再開でき、有料は使用量を拡大します。任せる作業の範囲や送信・購入の確認方法も、利用前に決めておきましょう。</p>
+</section>
+<style>
+ .type-guide{margin-top:40px;padding-top:30px;border-top:1px solid var(--line);scroll-margin-top:100px}.type-intro,.type-note{color:var(--fg-mid);line-height:1.9}.type-intro{font-size:14px}.type-note{font-size:12px}.type-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}.type-shortcuts a{display:grid;gap:6px;padding:16px;background:var(--bg-elev);border:1px solid var(--line);border-radius:9px;text-decoration:none;font-weight:800}.type-shortcuts span{font-size:12px;color:var(--teal-deep)}.type-shortcuts small{font-size:11px;color:var(--fg-mid);font-weight:400}.type-card{margin-top:20px;padding:26px;background:var(--bg-elev);border:1px solid var(--line);border-radius:12px;scroll-margin-top:100px;min-width:0}.type-card header{display:flex;gap:16px;align-items:flex-start}.type-number{display:grid;place-items:center;width:42px;height:42px;flex:0 0 42px;border-radius:50%;background:var(--teal-tint);color:var(--teal-deep);font-size:15px;font-weight:800}.type-card header p{font-size:12px;color:var(--teal-deep);margin:0 0 4px;font-weight:700}.type-card h3{margin:0;font-size:23px;line-height:1.5}.type-card header .type-summary{color:var(--fg-mid);font-weight:400;font-size:13px;margin-top:7px}.type-flow{display:flex;gap:12px;flex-wrap:wrap;list-style:none;padding:0;margin:20px 0;font-size:12px;color:var(--fg-mid)}.type-flow li+li:before{content:'→';margin-right:12px;color:var(--teal-deep)}.type-conversation{margin:20px 0}.type-example{padding:15px 18px;background:var(--bg-sunk);border-left:3px solid var(--teal);border-radius:4px}.type-example strong{font-size:11px;color:var(--teal-deep)}.type-example p{font-size:14px;line-height:1.8;margin:7px 0 0}.type-card footer{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:12px;margin-top:18px}.type-card footer p{flex-basis:100%;color:var(--fg-mid);margin:0}.type-source{font-size:11px}
+ @media(max-width:580px){.type-card{padding:18px 14px}.type-shortcuts{gap:7px}.type-shortcuts a{padding:12px 8px;font-size:12px}.type-shortcuts small{font-size:10px}.type-card h3{font-size:21px}.type-card header{gap:10px}.type-number{width:34px;height:34px;flex-basis:34px}.type-flow{gap:6px;font-size:10px}.type-flow li+li:before{margin-right:6px}.type-example{padding:12px}.type-example p{font-size:13px}}
+</style>

@@ -30,7 +30,7 @@ canonical workspaceは `D:\documents\動画作成関連\すまラボ`。開始�
 
 料金は通貨、日本向け価格、税、月払いと年払い、初回割引と通常額、プラン別機能・使用量・段階提供・API別料金を区別。決済画面への進入や契約はしない。変更対象の価格カード、詳細、機能表、用途別説明、会話の注意点を同時に直し、古い数値を残さない。
 
-現行モデルは `src/data/ai-featured-guide.ts` の `serviceModelRows` と `serviceModelsCheckedAt`、公開モデルは `ai-model-facts.ts`、提供条件は `ai-service-facts.ts`／`ai-tool-facts.ts`、料金要約は `ai-featured-pricing.ts` が正本。APIモデルと無料／有料アプリの提供モデルを混同しない。Copilotなど複数モデルを使う製品へ架空の単一モデルや点数を付けない。
+現行モデルは `src/data/ai-featured-guide.ts` の `serviceModelRows` と `serviceModelsCheckedAt`、公開モデルは `ai-model-facts.ts`、提供条件は `ai-service-facts.ts`／`ai-tool-facts.ts`、料金要約は `ai-featured-pricing.ts` が正本。無料・有料別の7機能表は `ai-plan-capabilities.ts` が正本で、共通の非対応根拠を `ai-featured-guide.ts` から継承する。プラン変更時は両方の表の対象プラン・地域・使用量と判定を一緒に更新する。月額0円の表に有料限定機能を混ぜず、有料の価格例ですべての機能が使えると誤解させない。3つの使い方の説明は `AiTypeGuide.astro`。Dots・Museの提供条件や無料枠が変われば会話も更新する。APIモデルと無料／有料アプリの提供モデルを混同しない。Copilotなど複数モデルを使う製品へ架空の単一モデルや点数を付けない。
 
 最新の共通ベンチマークは `public/data/ai-benchmarks/current.json`。測定元の実表で正式モデル、推論設定、指数の版、点数、文脈長、確認日、利用面、出典を照合する。新しいモデルも一次資料を確認し、必要なら掲載行を入れ替える。同じ版だけを同じ表で比較し、版移行時は全行を新しい同一版へ更新する。未発表の値を推定せず、使える行だけにする。ランキングをアプリ全体の順位と呼ばない。
 

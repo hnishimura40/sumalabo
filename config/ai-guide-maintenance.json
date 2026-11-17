@@ -7,6 +7,10 @@
   "stateDirectory": "D:/documents/動画作成関連/すまラボ/logs/scout/ai-guide",
   "sourceFiles": [
     {
+      "path": "src/data/ai-plan-capabilities.ts",
+      "group": "plan-features"
+    },
+    {
       "path": "src/data/ai-featured-pricing.ts",
       "group": "pricing"
     },

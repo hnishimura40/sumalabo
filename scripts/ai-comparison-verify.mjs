@@ -6,10 +6,28 @@ const json=(html,id)=>JSON.parse(html.match(new RegExp('<script[^>]+id="'+id+'"[
 const html=read('/ai/');const payload=json(html,'ai-guide-directory-data');
 const currentBenchmark=JSON.parse(readFileSync('public/data/ai-benchmarks/current.json'));const validDate=date=>/^\d{4}-\d{2}-\d{2}$/.test(date)&&Number.isFinite(Date.parse(date))&&date<=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Tokyo'});
 assert.equal(payload.entries.length,35);assert.equal(new Set(payload.entries.map(e=>e.id)).size,35);
-assert.equal(payload.sections.length,12);assert.equal((html.match(/<table/g)||[]).length,3,'Hub contains separate capability, service/model and benchmark tables');
+assert.equal(payload.sections.length,12);assert.equal((html.match(/<table/g)||[]).length,4,'Hub contains separate free, paid, service/model and benchmark tables');
 assert.ok(!html.includes('このガイドでは未確認')&&!html.includes('制作機能ごとに確認'));
-assert.equal((html.match(/<tr[^>]*data-capability=/g)||[]).length,8);
-assert.equal((html.match(/<td[^>]*data-capability-status=/g)||[]).length,48);
+assert.equal((html.match(/<tr[^>]*data-capability=/g)||[]).length,14);
+assert.equal((html.match(/<td[^>]*data-capability-status=/g)||[]).length,84);
+const planTables=Object.fromEntries([...html.matchAll(/<table[^>]*data-plan-table="(free|paid)"[^>]*>([\s\S]*?)<\/table>/g)].map(m=>[m[1],m[2]]));
+for(const plan of ['free','paid']){
+ assert.ok(planTables[plan]);assert.equal((planTables[plan].match(/data-capability-status=/g)||[]).length,42);
+ assert.equal((planTables[plan].match(/<tr[^>]*data-capability=/g)||[]).length,7);
+ assert.equal((planTables[plan].match(/class="capability-description"[^>]*href="https:\/\//g)||[]).length,42);
+}
+assert.notEqual(planTables.free,planTables.paid);
+const planCell=(plan,axis,id)=>planTables[plan].match(new RegExp('<tr[^>]*data-capability="'+axis+'"[^>]*>([\\s\\S]*?)</tr>'))[1].match(new RegExp('<td[^>]*data-featured-column="'+id+'"[^>]*>([\\s\\S]*?)</td>'))[0];
+assert.match(planCell('free','video','gemini'),/data-capability-status="no"/);
+assert.match(planCell('paid','video','gemini'),/data-capability-status="yes"/);
+assert.match(planCell('free','automation','chatgpt'),/data-capability-status="no"/);
+assert.match(planCell('paid','automation','chatgpt'),/data-capability-status="yes"/);
+assert.match(planCell('paid','video','grok'),/Premium/);
+assert.match(planCell('free','automation','muse'),/data-capability-status="yes"/);
+assert.match(planCell('free','automation','gemini'),/data-capability-status="yes"/);
+const typeCards=[...html.matchAll(/<article[^>]*data-ai-type="([^"]+)"[^>]*>([\s\S]*?)<\/article>/g)];
+assert.deepEqual(typeCards.map(m=>m[1]),['chat','agent','companion']);
+for(const card of typeCards){assert.ok(card[2].includes('ひまり')&&card[2].includes('らぼまる'));assert.equal((card[2].match(/class="talk /g)||[]).length,2);}
 assert.equal((html.match(/<tr[^>]*data-service-model=/g)||[]).length,6);
 assert.equal((html.match(/<tr[^>]*data-frontier-benchmark=/g)||[]).length,currentBenchmark.rows.length);
 assert.equal((html.match(/<article[^>]*data-strength-panel=/g)||[]).length,6);
@@ -65,4 +83,4 @@ assert.equal(google.length,9);assert.equal(codex.length,3);
 for(const r of [...google,...codex]){const answer=JSON.parse(r.output);const score=protocol.cases.filter(c=>stable(answer[c.id])===stable(c.expected)).length;assert.equal(score,r.passed);assert.equal(r.checks.length,6);if(r.httpStatus)assert.equal(r.httpStatus,200);if(r.toolCalls!==undefined)assert.equal(r.toolCalls,0);}
 const sums=JSON.parse(readFileSync('public/data/ai-eval-20261115/summary.json'));assert.equal(sums.length,4);
 for(const s of sums){const rows=[...google,...codex].filter(r=>r.model===s.model);assert.equal(rows.length,s.trials);assert.equal(rows.reduce((n,r)=>n+r.passed,0),s.passed);assert.equal(rows.map(r=>r.elapsedMs).sort((a,b)=>a-b)[1],s.medianMs);}
-console.log(JSON.stringify({ok:true,catalog:35,individualModels:10,benchmarkFamilies:6,benchmarkSnapshots:13,measuredModels:4,trials:12,checks:72,canonical:'/ai/',categoryPages:12,benchmarkGroups:6,capabilityCells:48,serviceModelRows:6,commonBenchmarkRows:currentBenchmark.rows.length,strengthConversations:6}));
+console.log(JSON.stringify({ok:true,catalog:35,individualModels:10,benchmarkFamilies:6,benchmarkSnapshots:13,measuredModels:4,trials:12,checks:72,canonical:'/ai/',categoryPages:12,benchmarkGroups:6,capabilityCells:84,planTables:2,typeConversations:3,serviceModelRows:6,commonBenchmarkRows:currentBenchmark.rows.length,strengthConversations:6}));

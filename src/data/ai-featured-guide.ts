@@ -52,7 +52,7 @@ export const capabilityFacts:Record<string,Record<CapabilityKey,Capability>>={
   video:yes('Gemini Omni。AI Plus以上・18歳以上','https://gemini.google/overview/video-generation/'),
   music:yes('Lyriaで歌・インスト。18歳以上・生成枠あり','https://gemini.google/overview/music-generation/'),
   voice:yes('Gemini Liveで音声会話','https://gemini.google/overview/gemini-live/'),
-  automation:yes('Tasks。AI Ultra・18歳以上、予約実行可',googleTasks),
+  automation:yes('Tasksは日本で無料枠あり。18歳以上・個人アカウント',googleTasks),
  },
  chatgpt:{
   free:yes('通常会話、画像・調査・Workに制限付き無料枠',chatPlans),
@@ -79,7 +79,7 @@ export const capabilityFacts:Record<string,Record<CapabilityKey,Capability>>={
   files:yes('文章・PDF・表計算・画像などを分析',grokFaq),
   research:yes('WebとXを検索。出典・元投稿もたどれる','https://x.ai/grok'),
   image:yes('Imagineで生成・編集。利用枠あり',grokTools),
-  video:yes('Imagineで映像を生成・編集。利用枠あり',grokTools),
+  video:yes('Imagineで映像を生成・編集。新規Premium以上','https://x.ai/pricing'),
   music:no('独立した楽曲生成なし。動画の音声とは別','https://docs.x.ai/developers/models'),
   voice:yes('音声で会話。無料枠あり',grokFaq),
   automation:limited('別アプリGrok Bot。新規Premium $30/月以上','https://docs.x.ai/x-subscription/grok-bot'),
