@@ -249,7 +249,7 @@ try {
   # Codex の出力は専用ファイルへ（runner 本体ログや tail との Add-Content ロック競合を避ける。
   # 2026-07-05 の初回実走で Add-Content が sharing violation で全損した対策）
   $CodexLog = Join-Path $NightDir "$DateStr.$RunId.codex.log"
-  $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "--model", "gpt-6.1-sol", "-c", 'model_reasoning_effort="high"', "-C", $RepoRoot, "-")
+  $codexArgs = @("exec", "--ephemeral", "--sandbox", "workspace-write", "--add-dir", "D:\downloads\sumalabo-codex", "--skip-git-repo-check", "--color", "never", "--model", "gpt-6.2-sol", "-c", 'model_reasoning_effort="high"', "-C", $RepoRoot, "-")
   # GH_TOKENは外側publisher専用。Codex子プロセスへ継承させない。
   $publisherToken = $env:GH_TOKEN
   $publisherExpiry = $env:GH_TOKEN_EXPIRES_AT

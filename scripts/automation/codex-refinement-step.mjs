@@ -97,7 +97,7 @@ export function refineStep(state, step, pick, { env, runId, temp }) {
     const search = isResearch || step.name === "chatgpt_turn4_review" ? ["--search"] : [];
     const result = spawnSync(NIGHT_ENVIRONMENT.codex.executable, [
       "--ask-for-approval", "never", ...search, "exec", "--ephemeral", "--json", "--sandbox", "read-only",
-      "--skip-git-repo-check", "--color", "never", "--model", "gpt-6.1-sol",
+      "--skip-git-repo-check", "--color", "never", "--model", "gpt-6.2-sol",
       "-c", 'model_reasoning_effort="high"', "-C", SOURCE_ROOT, "-",
     ], {
       cwd: SOURCE_ROOT, env, input: readFileSync(attempt === 1 ? original : retry, "utf8"),
