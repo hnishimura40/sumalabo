@@ -1,0 +1,3 @@
+
+# Preserve the raw bytes named by each archived benchmark content hash.
+/public/data/ai-benchmarks/archive/*.json -text

@@ -52,9 +52,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   chatgpt: {
     country: '米国', countryNote: openaiNote,
-    price: 'Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Pro200の新規受付は再開済み。Pro500はUltrafast対象。API別。税・現地通貨は購入画面。',
+    price: 'Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Pro200の新規受付は再開済み。Pro500はUltrafast対象。Pro200もCodexのGPT-6.2 SolのみUltrafast対象（段階提供・利用量の倍率あり）。API別。税・現地通貨は購入画面。',
     japan: '日本は公式対応国。個別のモデル・新機能・利用上限はプランと段階提供による。', japanStatus: 'available',
-    sources: [openaiCountry, openaiJapan, openaiPlans, s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
+    sources: [openaiCountry, openaiJapan, openaiPlans, s('Work・Codexの現行モデルとUltrafast', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex'), s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
   },
   gemini: {
     country: '米国', countryNote: googleNote,

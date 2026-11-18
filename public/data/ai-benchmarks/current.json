@@ -1,16 +1,82 @@
 {
-  "checkedAt": "2026-11-15",
+  "checkedAt": "2026-11-18",
   "benchmark": "Artificial Analysis Intelligence Index",
   "version": "5.0.1",
   "dateMeaning": "Source check date, not a shared model evaluation date",
   "scope": "Published model evaluations. Not subscription app scores or SumaLabo measurements.",
   "rows": [
-    {"serviceId":"gemini","model":"Gemini 4 Carbon","effort":"High","score":60,"context":"1M","source":"https://artificialanalysis.ai/models/gemini-4-carbon","access":"GeminiアプリではAI Ultraのモデル。無料プランの点数ではない。"},
-    {"serviceId":"chatgpt","model":"GPT-6 Astra","effort":"Max","score":57,"context":"1M","source":"https://artificialanalysis.ai/models/gpt-6-astra","access":"対象Pro等の上位モデル。ChatGPTの会話・連携全体を測る数字ではない。"},
-    {"serviceId":"claude","model":"Claude Fable 5.2","effort":"Max / Default Fallback","score":65,"context":"1M","source":"https://artificialanalysis.ai/models/claude-fable-5-2","access":"Fableの高い推論設定。利用クレジット等の契約条件とは別。"},
-    {"serviceId":"claude","model":"Claude Opus 5.5","effort":"Max / Default Fallback","score":59,"context":"1M","source":"https://artificialanalysis.ai/models/claude-opus-5-5","access":"Fableとは別モデル。小さい推論量の結果とも区別。"},
-    {"serviceId":"grok","model":"Grok 4.7","effort":"Xhigh","score":35,"context":"500k","source":"https://artificialanalysis.ai/models/grok-4-7","access":"モデルのAPI評価。X検索やImagineの作品品質の点数ではない。"},
-    {"serviceId":"muse","model":"Muse Wonder","effort":"Max","score":44,"context":"1M","source":"https://artificialanalysis.ai/models/muse-wonder","access":"API・Muse Codeのモデル。無料Museに同じモデル・設定が付く保証ではない。"},
-    {"serviceId":"muse","model":"Muse Wonder Full","effort":"Max","score":50,"context":"1M","source":"https://artificialanalysis.ai/models/muse-wonder-full","access":"上位のMuse Code向け。無料AI秘書Museの点数として読まない。"}
-  ]
+    {
+      "serviceId": "gemini",
+      "model": "Gemini 4 Carbon",
+      "effort": "High",
+      "score": 60,
+      "context": "1M",
+      "source": "https://artificialanalysis.ai/models/gemini-4-carbon",
+      "access": "GeminiアプリではAI Ultraのモデル。無料プランの点数ではない。"
+    },
+    {
+      "serviceId": "chatgpt",
+      "model": "GPT-6.2 Astra",
+      "effort": "Max",
+      "score": 62,
+      "context": "1M",
+      "source": "https://artificialanalysis.ai/models/gpt-6-2-astra",
+      "access": "Work・Codexの対象有料プランへ段階提供されるモデルの外部評価。通常のChat・無料枠の点数ではない。API評価の設定・文脈長とアプリの利用枠は別。"
+    },
+    {
+      "serviceId": "chatgpt",
+      "model": "GPT-6.2 Sol",
+      "effort": "Max",
+      "score": 57,
+      "context": "1M",
+      "source": "https://artificialanalysis.ai/models/gpt-6-2-sol",
+      "access": "Work・Codexの対象有料プランへ段階提供されるモデルの外部評価。通常のChat・無料枠の点数ではない。API評価の設定・文脈長とアプリの利用枠は別。"
+    },
+    {
+      "serviceId": "claude",
+      "model": "Claude Fable 5.2",
+      "effort": "Max / Default Fallback",
+      "score": 65,
+      "context": "1M",
+      "source": "https://artificialanalysis.ai/models/claude-fable-5-2",
+      "access": "Fableの高い推論設定。利用クレジット等の契約条件とは別。"
+    },
+    {
+      "serviceId": "claude",
+      "model": "Claude Opus 5.5",
+      "effort": "Max / Default Fallback",
+      "score": 59,
+      "context": "1M",
+      "source": "https://artificialanalysis.ai/models/claude-opus-5-5",
+      "access": "Fableとは別モデル。小さい推論量の結果とも区別。"
+    },
+    {
+      "serviceId": "grok",
+      "model": "Grok 4.7",
+      "effort": "Xhigh",
+      "score": 35,
+      "context": "500k",
+      "source": "https://artificialanalysis.ai/models/grok-4-7",
+      "access": "モデルのAPI評価。X検索やImagineの作品品質の点数ではない。"
+    },
+    {
+      "serviceId": "muse",
+      "model": "Muse Wonder",
+      "effort": "Max",
+      "score": 44,
+      "context": "1M",
+      "source": "https://artificialanalysis.ai/models/muse-wonder",
+      "access": "API・Muse Codeのモデル。無料Museに同じモデル・設定が付く保証ではない。"
+    },
+    {
+      "serviceId": "muse",
+      "model": "Muse Wonder Full",
+      "effort": "Max",
+      "score": 50,
+      "context": "1M",
+      "source": "https://artificialanalysis.ai/models/muse-wonder-full",
+      "access": "上位のMuse Code向け。無料AI秘書Museの点数として読まない。"
+    }
+  ],
+  "comparisonSource": "https://artificialanalysis.ai/leaderboards/models"
 }
