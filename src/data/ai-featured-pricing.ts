@@ -2,7 +2,7 @@
 // Price/free-limit review is separate from the older feature and benchmark snapshots.
 export const featuredPricingCheckedAt='2026-11-16';
 export const featuredPricing:Record<string,{free:string;paid:string;example:string;source:string}>={
- gemini:{free:'文章・相談、画像の生成と編集、Deep Research、Liveを無料枠で使える。',paid:'利用量と上位モデルを拡大。AI Plusから動画生成、Pro・Ultraでさらに枠や機能が増える。',example:'AI Plus ¥725/月',source:'https://gemini.google/jp/subscriptions/?hl=ja'},
+ gemini:{free:'文章・相談、画像の生成と編集、Deep Research、Liveを無料枠で使える。',paid:'利用量と上位モデルを拡大。AI Plusから動画生成、ProはGemini 4 Neon、UltraはCarbonやNeonの上位アクセス。',example:'AI Plus ¥725/月',source:'https://gemini.google/jp/subscriptions/?hl=ja'},
  chatgpt:{free:'文章・相談に加え、画像生成・調査・デスクトップ版Workなどを制限付きの枠で試せる。',paid:'Plusは調査・ファイル・画像等の利用枠を拡大。Work・CodexにはGPT-6.2を順次提供。常時秘書Dotsは対象Proの別入口。',example:'Plus $20/月',source:'https://chatgpt.com/pricing/'},
  claude:{free:'文章・資料の作成、Web検索、ファイル作成、Artifactsを使用量の上限内で使える。',paid:'Proから使用量を増やし、Coworkの継続・予約実行やClaude Codeなども利用できる。',example:'Pro $20/月（税別）',source:'https://claude.com/ja/pricing'},
  grok:{free:'会話・音声・画像生成に無料枠。新規X Subscriptionの無料プランに動画生成は含まれない。',paid:'利用枠を拡大。新規Premium以上で動画生成・Grok Bot。Plusはこの2機能の対象外。Cursor等と週次枠を共有。',example:'Plus $8/月（税別）',source:'https://docs.x.ai/x-subscription/pricing'},

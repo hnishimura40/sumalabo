@@ -72,7 +72,7 @@ export const planCapabilities:Record<Plan,Record<string,PlanFacts>>={
  },
  paid:{
   gemini:{...capabilityFacts.gemini,
-   files:yes('AI Plus以上：上位モデル・利用量を拡大',google),
+   files:yes('AI PlusはHydrogen、ProはNeon、UltraはCarbon等。利用量も拡大','https://gemini.google/jp/subscriptions/?hl=ja'),
    research:yes('AI Plus以上：調査の利用量を拡大',google),
    image:yes('AI Plus以上：画像の利用量・モデルを拡大',google),
    video:yes('AI Plus以上：動画生成。18歳以上',google),

@@ -94,7 +94,7 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   muse: {
     country: '米国', countryNote: 'Meta Platformsの本社は米国Menlo Park。常時稼働する専用VMの所在地を示す表示ではない。',
-    price: '無料上限あり。公式USDはPower $20/月（週500Mトークン）、Maximum $100/月（週3B）。日本円額は公式ヘルプに未掲載。地域・アカウント・購入経路別の最終額を確認。',
+    price: '無料上限あり。公式USDはPower $20/月（週500Mトークン）、Maximum $100/月（週3B）。対応地域・アカウントの電話枠はPower日10回、Maximum日20回。高度音声の日本提供とは別。日本円額は公式ヘルプに未掲載。地域・アカウント・購入経路別の最終額を確認。',
     japan: '2026/10/23日本提供開始。iOS・Android・Web。契約は18歳または成年・Metaアカウント。高度音声・Avatar・専用メール等は日本で別途案内。', japanStatus: 'available',
     sources: [metaCountry, s('日本での提供開始・機能の地域差', 'https://about.fb.com/ja/news/2026/10/muse-personal-ai-agent-launches-in-japan/'), s('公式料金・週次枠・年齢条件', 'https://www.meta.com/help/subscriptions/1021145227643680/'), s('マネーフォワードMEの参照専用連携', 'https://prtimes.jp/main/html/rd/p/000001705.000008962.html')],
   },

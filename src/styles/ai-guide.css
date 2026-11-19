@@ -15,3 +15,9 @@
 .ai-category-page .ai-breadcrumb{margin-bottom:16px}.ai-category-page h1{font-size:clamp(26px,3.1vw,36px)}.ai-page-heading>p:not(.ai-eyebrow){font-size:15px;margin:8px 0}.ai-category-switch{margin:16px 0;padding:11px 0}.ai-reading-note{padding:14px 18px;margin:18px 0}.ai-reading-note summary{cursor:pointer;font-size:15px;font-weight:700}.ai-reading-note summary span{font-size:11px;color:var(--teal);font-weight:400;margin-left:10px}.ai-reading-note p{margin-top:12px}.ai-filters{margin-top:20px}.ai-filters label[hidden]{display:none}
 
 .ai-selected-logo{display:inline-block;vertical-align:middle;object-fit:contain;box-sizing:border-box;padding:3px;border:1px solid #00000015;border-radius:20%;background:#fff}
+
+/* Plain tables: no header/stripe fills. Retain the explicitly requested dark theme. */
+.ai-guide .ai-plain-table-wrap{background:transparent}
+.ai-guide table.ai-plain-table{color:#000}
+.ai-guide table.ai-plain-table :is(th,td,caption,a,span,small,strong,p){color:inherit!important;background:transparent!important}
+html.dark .ai-guide table.ai-plain-table{color:var(--fg)}

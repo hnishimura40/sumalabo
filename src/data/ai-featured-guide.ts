@@ -107,7 +107,7 @@ export const capabilityFacts:Record<string,Record<CapabilityKey,Capability>>={
 };
 
 export const serviceModelRows=[
- {id:'gemini',name:'Gemini',models:'Flash-Lite → Gemini 4 Hydrogen → Argon → Carbon',access:'無料はFlash-Lite。AI PlusはHydrogen、ProはArgon、UltraはCarbon。',media:'画像：Nano Banana／動画：Gemini Omni／音楽：Lyria',note:'会話モデルと生成モデルを分けて選ぶ。',source:googlePlans},
+ {id:'gemini',name:'Gemini',models:'無料：Auto／AI Plus：Gemini 4 Hydrogen／Pro：Neon／Ultra：Carbon',access:'無料は自動選択。AI PlusはHydrogen、ProはNeon・Hydrogen、UltraはCarbonとNeonの上位アクセス。',media:'画像：Nano Banana／動画：Gemini Omni／音楽：Lyria',note:'日本の個人向けプランで確認。アプリの自動選択と、APIのモデル名・評価条件は別。',checkedAt:'2026-11-19',source:googlePlans},
  {id:'chatgpt',name:'ChatGPT',models:'Chat：GPT-6／GPT-6 Pro（Astra）。Work・Codex：GPT-6.2 Astra・Solを順次提供',access:'6.2はPlus・Pro等の対象Work・Codexへ段階提供。無料枠・通常のChatへの追加とは別。既存の6.1 Sol・Terra等もプラン・設定により表示。',media:'画像生成・Liveは別の機能。Soraは提供終了。',note:'6.2は通常のChatには追加されない。Workは資料・スライド等の作成、Codexは開発。利用可否はプラン・権限・段階提供による。',checkedAt:'2026-11-18',source:'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex',extraSource:'https://help.openai.com/en/articles/20001354-gpt-6-and-other-models-in-chatgpt'},
  {id:'claude',name:'Claude',models:'Haiku 5.5／Sonnet 5.5／Opus 5.5／Fable 5.2',access:'軽い仕事はHaiku、日常はSonnet、複雑な仕事はOpus・Fable。Fableは利用クレジット等の条件。',media:'図解：HTML/SVG／Motion：コードのアニメ。写真生成モデルはなし。',note:'FableとOpusは同じモデルではない。推論量も選べる。',source:'https://support.claude.com/en/articles/8664678-change-the-model-effort-and-thinking-settings'},
  {id:'grok',name:'Grok',models:'Grok 4.7',access:'会話・コードを担当。推論量はlow〜xhigh。画像・映像には別モデルを使う。',media:'画像：Grok Imagine Image 2.0／動画：Video 1.5／音声：Voice',note:'Web・X検索は検索ツールで情報を取得する。',source:'https://docs.x.ai/developers/models'},

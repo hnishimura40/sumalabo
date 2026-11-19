@@ -146,3 +146,7 @@ Googleはrobots.txtのSitemap行とサイト内リンクから発見できる。
 ## 2026-11-18 定期更新候補
 
 GPT-6.2 Astra・Solを通常Chatと分け、Work・Codexの対象有料プランへの段階提供として記載。Pro200のCodexは6.2 SolのUltrafastが対象で、Astra等とは条件が異なる。AA v5.0.1の現行比較は8行（Astra62・Sol57を含む）。従来の7行版を `public/data/ai-benchmarks/archive/2026-11-15-3bf09e4c8a42.json` に保存し、11/15の公開記録と独自実測は保持する。表の掲載数と検証はcurrent.jsonから導出する。公開完了状態は別の本番検証ログで判断する。
+
+## 2026-11-19 更新候補の追補
+
+PR #456を再利用。Geminiの日本向け料金表は無料がAuto、PlusがHydrogen、ProがNeon、UltraがCarbonとNeonの上位アクセスへ変更。AA v5.0.1でNeon Xhigh61・1Mを追加し、現行候補は9行。8行版も履歴へ保存。Museの電話枠は対応地域・アカウント向けの契約条件として記載し、日本の高度音声提供と同一視しない。今回改訂した4表は塗りつぶしなし・ライト既定黒文字に統一し、既に依頼されたダーク表示は維持。正式ブラウザツールがないため画面QAと本番公開は引き続き保留。

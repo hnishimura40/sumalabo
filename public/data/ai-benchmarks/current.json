@@ -1,10 +1,19 @@
 {
-  "checkedAt": "2026-11-18",
+  "checkedAt": "2026-11-19",
   "benchmark": "Artificial Analysis Intelligence Index",
   "version": "5.0.1",
   "dateMeaning": "Source check date, not a shared model evaluation date",
   "scope": "Published model evaluations. Not subscription app scores or SumaLabo measurements.",
   "rows": [
+    {
+      "serviceId": "gemini",
+      "model": "Gemini 4 Neon",
+      "effort": "Xhigh",
+      "score": 61,
+      "context": "1M",
+      "source": "https://artificialanalysis.ai/models/gemini-4-neon",
+      "access": "日本のGeminiアプリではAI Pro以上に掲載。外部評価のXhigh設定・1M文脈が、そのまま契約内の会話仕様になるわけではない。"
+    },
     {
       "serviceId": "gemini",
       "model": "Gemini 4 Carbon",
