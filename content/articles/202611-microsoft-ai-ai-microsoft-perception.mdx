@@ -1,0 +1,163 @@
+---
+title: "Microsoft Perceptionとは？ 職場に届く不審な知らせを仕分けるサービス"
+slug: "202611-microsoft-ai-ai-microsoft-perception"
+type: "news"
+category: "ニュースをかみくだく"
+description: "Microsoft Perceptionが、職場の警告を仕分ける仕組みを解説します。AIが任される作業、人が承認する操作、日本の職場で導入前に確認する条件を整理します。"
+thumbnail: "/images/thumbnails/202611-microsoft-ai-ai-microsoft-perception.webp"
+thumbnailAlt: "職場のシステム管理室で、ひまりが照合台で警告票と利用記録を重ね、らぼまると手がかりを確かめる、Microsoft Perceptionの警告仕分けを表す概念イラスト。"
+status: "ready"
+priority: 1
+updated: "2026-11-21"
+pubDate: "2026-11-21"
+publishAt: "2026-11-20T19:51:41.508Z"
+tags: ["Microsoft Perception","Microsoft Defender","AI","セキュリティ"]
+characterUse: {"recommended": true, "count": 2, "primary": "himari_question_icon.webp", "secondary": "labomaru_normal_icon.webp"}
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import Timeline from "../../src/components/article/Timeline.astro";
+import TimelineItem from "../../src/components/article/TimelineItem.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+
+<p>Microsoft Perceptionは、職場のシステムで不審な動きが見つかったときに届く警告を、AI（記録を読み取り、分類や判断を手助けする技術）で仕分けるサービスです。マイクロソフトは11月17日（米国時間）、対象の契約や環境で正式に使えるようになったと発表しました。<a href="https://www.microsoft.com/en-us/security/blog/2026/11/17/security-for-the-agentic-era-powered-by-microsoft-perception/">マイクロソフトの公式発表</a></p>
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> Microsoft Perceptionは、職場のシステムを守るための調査を手伝うサービスです。不審な動きが見つかったときに担当者に届く警告を、AI（記録を読み取り、分類や判断を手助けする技術）で仕分けます。 <a href="https://www.microsoft.com/en-us/security/business/microsoft-perception-agentic-system">マイクロソフトの製品ページ</a></li>
+    <li><strong>何があった？</strong> マイクロソフトは2026年11月17日（米国時間）、一般提供（対象の契約や環境で正式に使える段階）を発表しました。一部の機能は試験提供（条件を満たす利用者が正式提供前に試せる段階）です。 <a href="https://www.microsoft.com/en-us/security/blog/2026/11/17/security-for-the-agentic-era-powered-by-microsoft-perception/">マイクロソフトの発表</a></li>
+    <li><strong>誰に関係ある？</strong> 主に、職場のパソコンや業務システムを管理する担当者です。個人のパソコンやスマホの設定を、今回の発表を受けて変える必要はありません。</li>
+    <li><strong>結局どうなの？</strong> AIが警告を整理し、担当者がどれから調べるかを決めやすくします。組織がAIに任せる範囲を決め、影響の大きい操作には承認（権限のある担当者が内容を確認して実行を許可すること）が必要です。 <a href="https://www.microsoft.com/en-us/security/business/microsoft-perception-agentic-system#faq">公式FAQ</a></li>
+  </ol>
+</Summary30>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">職場の警告を仕分けるAI</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide01.webp" class="article-slide-link"><img src="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide01.webp" alt="職場のシステム管理室で、ひまりが警告票を引き寄せ、らぼまるが関連記録を見る。Microsoft Perceptionの一般提供発表を示す図。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図1：職場の警告を仕分けるAI</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>不審な動きが見つかると、担当者に警告が届きます。今回の一般提供で、対象の契約や環境ではAIによる警告の仕分けが正式に使えるようになりました。</p></div>
+</section>
+
+## 警告が届いたら、AIは何をする？
+
+Microsoft Perceptionでは、複数のAIエージェント（任された作業を、決められた手順に沿って進めるAI）が役割を分担します。警告を仕分ける、関連する記録を調べる、対処する順番を提案する、といった作業をそれぞれ受け持ちます。 <a href="https://techcommunity.microsoft.com/blog/perception-blog/whats-new-with-microsoft-perception-at-ignite-2026/4571834">マイクロソフトの機能解説</a>
+
+たとえば、普段と違う場所から業務システムが使われたと知らせが届いたとします。出張中の社員が使った可能性もあれば、本人以外が使った可能性もあります。AIが関連する記録を集め、担当者はその記録を見て、急いで調べるべきかを判断します。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">いつもと違う場所から使われたら</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide02.webp" class="article-slide-link"><img src="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide02.webp" alt="いつもと違う場所から業務システムが使われたという警告を、ひまりとらぼまるが調べる。出張中の本人と、本人以外の利用の二つの可能性が示されている。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図2：いつもと違う場所から使われたら</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>出張中の本人が使う場合もあります。担当者は利用記録を確かめ、急いで調べる必要があるかを判断します。</p></div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">複数のAIが役割を分担</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide03.webp" class="article-slide-link"><img src="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide03.webp" alt="警告票、関連記録、対処順のメモで、Microsoft PerceptionのAIが分担する三つの作業の例を示す図。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図3：複数のAIが役割を分担</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>警告の仕分け、関連する記録の調査、対処の順番の提案を分担します。</p></div>
+</section>
+
+## 今回、何が変わった？
+
+<Timeline>
+  <TimelineItem date="2026年7月27日">マイクロソフトは「Project Perception」を8月3日から試験提供すると発表しました。 <a href="https://blogs.microsoft.com/blog/2026/07/27/rethinking-security-for-the-age-of-ai/">7月の公式発表</a></TimelineItem>
+  <TimelineItem date="2026年11月17日（米国時間）">Microsoft Ignite 2026で「Microsoft Perception」の一般提供を発表しました。 <a href="https://news.microsoft.com/events/wp-content/uploads/2026/11/Nadella_TRANSCRIPT_Ignite-Keynote_Nov-2026.pdf">基調講演の公式記録</a></TimelineItem>
+</Timeline>
+
+日本語の公式発表は11月18日付で、ITmedia NEWSは11月20日に報じました。 [日本語の公式発表](https://news.microsoft.com/source/asia/features/microsoft-ignite-2026-empowering-human-ambition-intelligence-and-trust/?lang=ja)、[ITmedia NEWSの報道](https://www.itmedia.co.jp/news/article/2611/20/2000003368/)
+
+<Callout kind="facts" title="機能によって提供段階が異なる">
+  <p>警告の仕分け、攻撃の調査、職場のシステムの弱点を探す作業、対処の優先順位付けは一般提供の対象です。組織が検査を許可した、ブラウザで使う業務サービスの安全性を調べる機能は、試験提供の段階にあります。 <a href="https://news.microsoft.com/events/ignite/2026/book-of-news/">Microsoft Ignite 2026の公式発表資料</a></p>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">一般提供と試験提供の範囲</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide04.webp" class="article-slide-link"><img src="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide04.webp" alt="一般提供の機能例と、組織が検査を許可したWebサービスを点検する試験提供の機能を並べた図。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図4：一般提供と試験提供の範囲</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>試験提供の機能は、条件を満たす利用者が正式提供前に試せる段階です。</p></div>
+</section>
+
+<Callout kind="claims" title="マイクロソフトが説明した開発背景">
+  <p>マイクロソフトは、サイバー攻撃（システムに侵入したり、情報を盗んだり、サービスの利用を妨げたりする行為）の一部にAIが使われ、短時間で進むようになったことを開発の背景に挙げています。導入によって攻撃をどの程度防げるかや、対応時間がどのくらい変わるかは、今回の発表からは分かりません。 <a href="https://www.microsoft.com/en-us/security/blog/2026/11/17/security-for-the-agentic-era-powered-by-microsoft-perception/">マイクロソフトの開発背景</a></p>
+</Callout>
+
+## AIに任せる作業と、人が判断する場面
+
+警告がいくつも届くと、AIは仕分けの理由を示します。担当者はその理由と関連する記録を確認し、どの警告から詳しく調べるかを決められます。 <a href="https://techcommunity.microsoft.com/blog/perception-blog/whats-new-with-microsoft-perception-at-ignite-2026/4571834">マイクロソフトの警告仕分けの解説</a>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">影響の大きい操作は人が許可</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide05.webp" class="article-slide-link"><img src="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide05.webp" alt="ひまりが対応案を手前で止めて読み、らぼまるが仕分け理由を確認する。影響の大きい操作を人が承認する前の場面。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図5：影響の大きい操作は人が許可</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>AIが示す仕分けの理由と関連記録は、担当者が判断する材料になります。導入時には誰がどの操作を承認するかを決めます。</p></div>
+</section>
+
+<CharacterBubble speaker="himari" mood="curious">「仕事に影響する操作も、AIがそのまま進めるの？」</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">「AIに任せる範囲は職場で決めるよ。影響の大きい操作は、担当者が内容を確認して許可してから進む。使う前に、どの操作で誰の承認が要るかを決めておくんだ。」</CharacterBubble>
+
+[人による承認についての公式FAQ](https://www.microsoft.com/en-us/security/business/microsoft-perception-agentic-system#faq)
+
+## 日本の職場で使う前に確認すること
+
+利用の入口は、Microsoft Defender（職場のパソコンなどを監視し、不審な動きを担当者に知らせるマイクロソフトの製品）です。その管理画面（担当者がシステムの状態や設定を確認する画面）から利用します。 [公式製品ページ](https://www.microsoft.com/en-us/security/business/microsoft-perception-agentic-system)
+
+料金は利用量に応じてかかります。公式案内では、費用の見積もりや利用状況の確認ができます。 [料金の公式FAQ](https://www.microsoft.com/en-us/security/business/microsoft-perception-agentic-system#faq)
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">利用の入口と料金のしくみ</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide06.webp" class="article-slide-link"><img src="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide06.webp" alt="ひまりとらぼまるが、Microsoft Defenderの管理画面を表す端末と、利用量に応じた費用の見積もりを確かめる図。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図6：利用の入口と料金のしくみ</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>Microsoft Defenderの管理画面が入口です。利用前は費用を見積もり、利用中は使った量を確認できます。</p></div>
+</section>
+
+<Callout kind="unc" title="2026年11月21日時点の確認範囲">
+  <p>2026年11月21日時点で確認した公開資料では、日本の各組織が使い始められる日や、次の利用条件は特定できませんでした。導入を検討する際の確認項目です。 <a href="https://news.microsoft.com/source/asia/features/microsoft-ignite-2026-empowering-human-ambition-intelligence-and-trust/?lang=ja">日本語の公式発表</a>、<a href="https://www.microsoft.com/en-us/security/business/microsoft-perception-agentic-system">公式製品ページ</a></p>
+  <ul>
+    <li><strong>契約で使える機能と料金</strong>　自組織の契約が対象か、必要な機能や他社サービスとの連携が使えるか、円建ての単価はいくらか。</li>
+    <li><strong>日本語で使える範囲</strong>　操作画面やAIが示す調査結果を、どこまで日本語で確認できるか。</li>
+    <li><strong>データの処理・保存場所</strong>　調査に使う記録がどこで処理され、どこに保存されるか。</li>
+  </ul>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">日本の職場で使う前の確認</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide07.webp" class="article-slide-link"><img src="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide07.webp" alt="日本の職場でMicrosoft Perceptionを使う前に、契約と料金、日本語対応、データの処理・保存場所を確認する図。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図7：日本の職場で使う前の確認</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>利用できる機能と料金に加え、画面や調査結果の日本語対応、記録の処理・保存場所を自組織の契約に沿って確認します。</p></div>
+</section>
+
+## あなたに関係ある？
+
+- **関係がある人**　会社や学校などで、職場のパソコンや業務システムを管理し、不審な動きを調べる人。普段の作業のうち、記録集めや警告の仕分けをどこまで任せられるかが、導入の判断材料になります。
+- **あまり関係がない人**　職場のシステム管理を担当していない人。自宅のパソコンやスマホの使い方や契約を、今回の発表に合わせて見直す必要はありません。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">この発表が関係する人</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide08.webp" class="article-slide-link"><img src="/images/articles/202611-microsoft-ai-ai-microsoft-perception/slide08.webp" alt="ひまりが個人のスマホを脇に置き、業務用PCと警告票へ向き直る。Microsoft Perceptionが主に職場のシステム管理担当者向けであることを示す図。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図8：この発表が関係する人</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>職場の担当者は、警告の仕分けや記録集めのどこを任せられるか検討できます。自宅の端末の設定変更は不要です。</p></div>
+</section>
+
+## 参考情報
+
+- 機能ごとの提供段階を確認する。 [Microsoft Ignite 2026の公式発表資料](https://news.microsoft.com/events/ignite/2026/book-of-news/)
+- 利用量に応じた料金の仕組みや、費用の見積もり方を確認する。 [Microsoft Perceptionの公式FAQ](https://www.microsoft.com/en-us/security/business/microsoft-perception-agentic-system#faq)
