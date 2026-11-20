@@ -102,11 +102,16 @@
       "paths": [
         "/mobile/cp/",
         "/mobile/campaign/",
-        "/shop/cashback/"
+        "/shop/cashback/",
+        "/shop/administration_fee/"
       ],
       "resources": [
         {
           "url": "https://shop.uqmobile.jp/shop/cashback/",
+          "format": "html"
+        },
+        {
+          "url": "https://shop.uqmobile.jp/shop/administration_fee/",
           "format": "html"
         }
       ]
