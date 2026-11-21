@@ -52,9 +52,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   chatgpt: {
     country: '米国', countryNote: openaiNote,
-    price: 'Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Pro200の新規受付は再開済み。Pro500はUltrafast対象。API別。税・現地通貨は購入画面。',
+    price: 'Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Pro200の新規受付は再開済み。Pro500はUltrafast対象。Pro200もCodexのGPT-6.2 SolのみUltrafast対象（段階提供・利用量の倍率あり）。API別。税・現地通貨は購入画面。',
     japan: '日本は公式対応国。個別のモデル・新機能・利用上限はプランと段階提供による。', japanStatus: 'available',
-    sources: [openaiCountry, openaiJapan, openaiPlans, s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
+    sources: [openaiCountry, openaiJapan, openaiPlans, s('Work・Codexの現行モデルとUltrafast', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex'), s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
   },
   gemini: {
     country: '米国', countryNote: googleNote,
@@ -64,9 +64,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   claude: {
     country: '米国', countryNote: claudeNote,
-    price: 'Free $0、Pro $20/月または年$200一括（公式表示は月相当$17）、Max $100/月、Ultra $200/月。税別。上限はモデル・作業で変動。APIは別経路。',
+    price: 'Free $0、Pro $20/月または年$200一括（公式表示は月相当$17）、Max $100/月、Ultra $200/月。税別。FableはProでは使用クレジット、Max・Ultraでは週次枠の最大半分。Maxは月$100、Ultraは月$200のAPIクレジット付き（Console組織の連携・新規契約は7日経過後に申請、繰越なし）。アプリ・Claude Codeの追加使用量には使えない。',
     japan: '日本は公式対応国。Coworkのクラウド・予約実行はPro以上。Duetの米国向け研究プレビューとは別の製品・機能。', japanStatus: 'available',
-    sources: [claudeCountry, claudePlans, claudeJapan],
+    sources: [claudeCountry, claudePlans, claudeJapan, s('APIクレジットの対象・申請・期限', 'https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers')],
   },
   perplexity: {
     country: '米国', countryNote: 'Perplexity AIの米国拠点はSan Francisco。外部モデルの開発国と、サービス提供元の所在地を区別。',
@@ -94,7 +94,7 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   muse: {
     country: '米国', countryNote: 'Meta Platformsの本社は米国Menlo Park。常時稼働する専用VMの所在地を示す表示ではない。',
-    price: '無料上限あり。公式USDはPower $20/月（週500Mトークン）、Maximum $100/月（週3B）。日本円額は公式ヘルプに未掲載。地域・アカウント・購入経路別の最終額を確認。',
+    price: '無料上限あり。公式USDはPower $20/月（週500Mトークン）、Maximum $100/月（週3B）。対応地域・アカウントの電話枠はPower日10回、Maximum日20回。高度音声の日本提供とは別。日本円額は公式ヘルプに未掲載。地域・アカウント・購入経路別の最終額を確認。',
     japan: '2026/10/23日本提供開始。iOS・Android・Web。契約は18歳または成年・Metaアカウント。高度音声・Avatar・専用メール等は日本で別途案内。', japanStatus: 'available',
     sources: [metaCountry, s('日本での提供開始・機能の地域差', 'https://about.fb.com/ja/news/2026/10/muse-personal-ai-agent-launches-in-japan/'), s('公式料金・週次枠・年齢条件', 'https://www.meta.com/help/subscriptions/1021145227643680/'), s('マネーフォワードMEの参照専用連携', 'https://prtimes.jp/main/html/rd/p/000001705.000008962.html')],
   },
