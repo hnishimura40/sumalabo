@@ -88,7 +88,7 @@ export const planCapabilities:Record<Plan,Record<string,PlanFacts>>={
    automation:yes('TasksはPlus以上。Dotsは対象Pro等・段階提供',chat),
   },
   claude:{...capabilityFacts.claude,
-   files:yes('Pro以上：使用量・作成ツールを拡大',claude),
+   files:yes('Pro以上：使用量を拡大。Sheets・Whiteboardsも利用可（ベータ）',claude),
    research:yes('Pro以上：Web検索に加えResearch',claude),
    voice:yes('音声モード。契約プランの使用量を消費',claudeVoice),
    automation:yes('Pro以上：タスク委託・Coworkの予約実行',claude),

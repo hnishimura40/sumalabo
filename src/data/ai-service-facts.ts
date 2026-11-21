@@ -64,9 +64,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   claude: {
     country: '米国', countryNote: claudeNote,
-    price: 'Free $0、Pro $20/月または年$200一括（公式表示は月相当$17）、Max $100/月、Ultra $200/月。税別。上限はモデル・作業で変動。APIは別経路。',
+    price: 'Free $0、Pro $20/月または年$200一括（公式表示は月相当$17）、Max $100/月、Ultra $200/月。税別。FableはProでは使用クレジット、Max・Ultraでは週次枠の最大半分。Maxは月$100、Ultraは月$200のAPIクレジット付き（Console組織の連携・新規契約は7日経過後に申請、繰越なし）。アプリ・Claude Codeの追加使用量には使えない。',
     japan: '日本は公式対応国。Coworkのクラウド・予約実行はPro以上。Duetの米国向け研究プレビューとは別の製品・機能。', japanStatus: 'available',
-    sources: [claudeCountry, claudePlans, claudeJapan],
+    sources: [claudeCountry, claudePlans, claudeJapan, s('APIクレジットの対象・申請・期限', 'https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers')],
   },
   perplexity: {
     country: '米国', countryNote: 'Perplexity AIの米国拠点はSan Francisco。外部モデルの開発国と、サービス提供元の所在地を区別。',
