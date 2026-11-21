@@ -62,7 +62,8 @@
   .campaign-page-links a { padding: 10px 14px; border-radius: 8px; background: var(--brand); color: var(--bg-elev); font-size: 14px; font-weight: 700; text-decoration: none; }
   .campaign-page-links a + a { background: var(--bg-elev); border: 1px solid var(--line-strong); color: var(--fg); }
   #plan-diagnosis { scroll-margin-top: 110px; }
-  .article-content .mobile-campaigns { margin: 24px 0 48px; }
+  .article-content .mobile-campaigns { --campaign-table-ink: #000; margin: 24px 0 48px; }
+  html.dark .article-content .mobile-campaigns { --campaign-table-ink: var(--fg); }
   .mobile-campaigns [hidden] { display: none !important; }
   .mobile-campaigns :is(h2, h3, details[id]) { scroll-margin-top: 110px; }
   .article-content .mobile-campaigns > h2 { margin-top: 0; }
@@ -76,17 +77,17 @@
   .campaign-carrier-label select { min-height: 44px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg-elev); color: var(--fg); font: inherit; }
   .article-content .mobile-campaigns .campaign-count { flex-basis: 100%; margin: 0; font-size: 14px; color: var(--fg-mid); }
   .article-content .mobile-campaigns .campaign-filter-note { margin: 12px 0 20px; font-size: 14px; color: var(--fg-mid); }
-  .article-content .mobile-campaigns .campaign-table { width: 100%; margin: 0 0 32px; table-layout: fixed; border-collapse: collapse; background: transparent; color: #000; font-size: 14px; line-height: 1.65; }
-  .campaign-table caption { padding: 12px 0; text-align: left; color: #000; font-size: 17px; font-weight: 700; }
-  .article-content .mobile-campaigns .campaign-table :is(th, td) { padding: 16px 12px; border: 1px solid var(--line); background: transparent; color: #000; vertical-align: top; overflow-wrap: anywhere; }
-  .article-content .mobile-campaigns .campaign-table thead th { border-bottom: 2px solid #000; font-size: 13px; }
+  .article-content .mobile-campaigns .campaign-table { width: 100%; margin: 0 0 32px; table-layout: fixed; border-collapse: collapse; background: transparent; color: var(--campaign-table-ink); font-size: 14px; line-height: 1.65; }
+  .campaign-table caption { padding: 12px 0; text-align: left; color: var(--campaign-table-ink); font-size: 17px; font-weight: 700; }
+  .article-content .mobile-campaigns .campaign-table :is(th, td) { padding: 16px 12px; border: 1px solid var(--line); background: transparent; color: var(--campaign-table-ink); vertical-align: top; overflow-wrap: anywhere; }
+  .article-content .mobile-campaigns .campaign-table thead th { border-bottom: 2px solid var(--campaign-table-ink); font-size: 13px; }
   .campaign-table thead th:nth-child(1) { width: 22%; }
   .campaign-table thead th:nth-child(2) { width: 23%; }
   .campaign-table thead th:nth-child(3) { width: 15%; }
   .campaign-table thead th:nth-child(4) { width: 14%; }
   .campaign-table thead th:nth-child(5) { width: 26%; }
-  .article-content .mobile-campaigns .campaign-table :is(thead, tbody, tr) { background: transparent; color: #000; }
-  .article-content .mobile-campaigns .campaign-table :is(span, strong, a) { color: #000; }
+  .article-content .mobile-campaigns .campaign-table :is(thead, tbody, tr) { background: transparent; color: var(--campaign-table-ink); }
+  .article-content .mobile-campaigns .campaign-table :is(span, strong, a) { color: var(--campaign-table-ink); }
   .campaign-company { display: block; font-weight: 800; font-size: 16px; color: var(--fg); }
   .campaign-row-label { display: block; margin: 4px 0 10px; font-size: 13px; font-weight: 500; color: var(--fg-mid); }
   .campaign-table tbody th a { display: inline-flex; align-items: center; min-height: 44px; padding: 4px 0; font-size: 13px; text-underline-offset: 3px; }
@@ -126,9 +127,9 @@
     .campaign-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
     .campaign-table tbody { display: grid; gap: 16px; }
     .campaign-table tr { display: grid; border: 1px solid var(--line); border-radius: 12px; background: transparent; overflow: hidden; }
-    .article-content .mobile-campaigns .campaign-table tbody th { display: block; padding: 16px; border: 0; border-bottom: 2px solid #000; background: transparent; }
+    .article-content .mobile-campaigns .campaign-table tbody th { display: block; padding: 16px; border: 0; border-bottom: 2px solid var(--campaign-table-ink); background: transparent; }
     .article-content .mobile-campaigns .campaign-table tbody td { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 12px; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--line-soft); background: transparent; }
-    .campaign-table td::before { content: attr(data-label); color: #000; font-size: 12px; font-weight: 700; }
+    .campaign-table td::before { content: attr(data-label); color: var(--campaign-table-ink); font-size: 12px; font-weight: 700; }
     .campaign-row-label { margin-bottom: 2px; }
     .campaign-offer > summary { grid-template-columns: 1fr; padding: 16px; }
     .campaign-offer-title { grid-row: 2; }
