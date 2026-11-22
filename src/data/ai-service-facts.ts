@@ -13,6 +13,9 @@ const s = (label: string, url: string) => ({ label, url });
 const openaiCountry = s('提供法人・米国', 'https://openai.com/policies/row-terms-of-use/');
 const openaiPlans = s('Proの現行料金', 'https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers');
 const openaiJapan = s('ChatGPT対応国', 'https://help.openai.com/en/articles/7947663-chatgpt-supported-countries');
+const openaiApiCredits = s('ProのAPIクレジット・対象・期限', 'https://developers.openai.com/api/docs/guides/chatgpt-api-credits');
+const openaiSpace = s('SpaceのPlus展開・共有条件', 'https://help.openai.com/en/articles/6825453-chatgpt-release-notes');
+const openaiCreditNote = ' Pro $100/$200/$500は月$100/$200/$500のAPIクレジット付き。有料契約7日以上・同じメール・所有するAPI組織の連携が必要。初回日割り、請求期間末失効・繰越なし。APIキー経由のCodexは対象外で、ChatGPT・ログイン済みCodexの通常枠も増えない。';
 const claudeCountry = s('本社・米国', 'https://www.anthropic.com/transparency/voluntary-commitments');
 const claudePlans = s('Claude料金・税・利用枠', 'https://claude.com/ja/pricing');
 const claudeJapan = s('Claude対応国', 'https://support.claude.com/en/articles/8461763-where-can-i-access-claude');
@@ -34,9 +37,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   'chatgpt-work': {
     country: '米国', countryNote: openaiNote,
-    price: 'ChatGPT内の機能。Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Codexと枠を共有。追加クレジット・APIは別。税・現地通貨は購入画面。',
+    price: 'ChatGPT内の機能。Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Codexと枠を共有。追加クレジットとAPIの請求は別枠。税・現地通貨は購入画面。' + openaiCreditNote,
     japan: 'ChatGPT対応国に日本。Workの利用面・機能・段階提供はプラン別。Free/Goの制限付き提供と、有料の拡大枠を区別。', japanStatus: 'conditional',
-    sources: [openaiCountry, openaiJapan, openaiPlans, s('WorkとCodexの料金共有', 'https://learn.chatgpt.com/docs/pricing'), s('WorkとCodexの提供条件', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex')],
+    sources: [openaiCountry, openaiJapan, openaiPlans, openaiApiCredits, s('WorkとCodexの料金共有', 'https://learn.chatgpt.com/docs/pricing'), s('WorkとCodexの提供条件', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex')],
   },
   'perplexity-computer': {
     country: '米国', countryNote: 'Perplexity AIの米国拠点はSan Francisco。使う外部モデルの開発国・処理場所とは別。',
@@ -52,9 +55,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   chatgpt: {
     country: '米国', countryNote: openaiNote,
-    price: 'Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Pro200の新規受付は再開済み。Pro500はUltrafast対象。Pro200もCodexのGPT-6.2 SolのみUltrafast対象（段階提供・利用量の倍率あり）。API別。税・現地通貨は購入画面。',
-    japan: '日本は公式対応国。個別のモデル・新機能・利用上限はプランと段階提供による。', japanStatus: 'available',
-    sources: [openaiCountry, openaiJapan, openaiPlans, s('Work・Codexの現行モデルとUltrafast', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex'), s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
+    price: 'Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Pro200の新規受付は再開済み。Pro500はUltrafast対象。Pro200もCodexのGPT-6.2 SolのみUltrafast対象（段階提供・利用量の倍率あり）。APIは別枠。税・現地通貨は購入画面。' + openaiCreditNote,
+    japan: '日本は公式対応国。Spaceは2026/11/20から18歳以上のPlusへ世界順次展開。共有ページはSpace対応のPlus・Pro等と閲覧権限が必要で、Freeは開けず、一般公開リンクもない。個別のモデル・新機能はプランと段階提供による。', japanStatus: 'available',
+    sources: [openaiCountry, openaiJapan, openaiPlans, openaiApiCredits, openaiSpace, s('Work・Codexの現行モデルとUltrafast', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex'), s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
   },
   gemini: {
     country: '米国', countryNote: googleNote,
