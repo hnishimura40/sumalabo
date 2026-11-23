@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "astro dev --host 127.0.0.1",
     "build": "astro build",
-    "postbuild": "node scripts/ai-comparison-verify.mjs",
+    "postbuild": "node scripts/ai-comparison-verify.mjs && node scripts/sumahon/table-theme-check.mjs --dist",
+    "qa:table-theme": "node scripts/sumahon/table-theme-check.mjs --source --dist",
+    "test:table-theme": "node --test tests/sumahon/table-theme-check.test.mjs",
     "ai:verify-publication": "node scripts/ai-guide-publication-verify.mjs",
     "ai:watch": "node scripts/automation/ai-guide-watch.mjs",
     "ai:test-maintenance": "node --test tests/sumahon/ai-guide-watch.test.mjs",
