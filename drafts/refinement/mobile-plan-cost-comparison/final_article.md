@@ -32,7 +32,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 />
 
 {/* mobile-campaigns:start */}
-<section class="mobile-campaigns" aria-labelledby="mobile-campaigns" data-campaign-version="c5b6c1910bf1119c39a2a46e">
+<section class="mobile-campaigns" aria-labelledby="mobile-campaigns" data-campaign-version="60e68dc844889e97b99483ad">
 <h2 id="mobile-campaigns">携帯キャンペーンの早見表</h2>
 <p>自分の契約方法を選び、特典と必要な条件を比べてください。MNPは、電話番号を変えずに携帯会社を乗り換える手続きです。ポイントの有効期限や受取操作は「条件・受取方法」で確認できます。</p>
 <div class="campaign-filters" hidden>
@@ -237,42 +237,42 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">楽天モバイル</span><span class="campaign-offer-title">紹介を使わない初回MNP：10,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/23 8:08:12（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/24 8:13:48（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>紹介者がいなくても、スマホをそのまま使って初めて楽天回線へMNPしたい人。通知ごとの受取を管理できる人。</dd></div>
 <div><dt>特典</dt><dd>楽天ポイント合計10,000ポイント。現在は4,000・3,000・3,000ポイントの3回に分けて受け取ります。</dd></div>
-<div><dt>対象者</dt><dd>楽天回線を初めて申し込み、楽天モバイルの通常の音声プラン（動画セット・データ専用を除く）へ他社からMNPする楽天会員。</dd></div>
+<div><dt>対象者</dt><dd>楽天回線を初めて申し込み、楽天モバイルの通常の音声プラン、または動画配信サービスU-NEXT（ユーネクスト）が付いた音声プランへ他社からMNPする楽天会員。データ専用は対象外です。</dd></div>
 <div><dt>必須条件</dt><dd>Webでは申込前にエントリーし、その同じ月に申し込み。申込翌月末23:59までに利用開始とRakuten Linkから10秒以上の発信を完了します。</dd></div>
-<div><dt>対象外・併用条件</dt><dd>再契約、データタイプ、新規番号、楽天の旧回線からのプラン移行はこのMNP特典の対象外。別の初回・紹介・端末特価企画と重複できない場合があります。未納・不備・期限超過等も対象外。</dd></div>
+<div><dt>対象外・併用条件</dt><dd>再契約、新しい番号での契約、データ専用、通常プランとU-NEXT付きプランの間の単なるプラン変更は、このMNP特典の対象外。新規番号特典・紹介特典と併用できません。端末企画は公式の併用可リストを確認してください。未納・不備・期限超過等も対象外です。</dd></div>
 <div><dt>申込経路・エントリー</dt><dd>公式2091の企画へ申込前にエントリー。店舗申込はエントリー不要ですが、この記事ではWebの手順を示しています。</dd></div>
-<div><dt>受取時期・方法</dt><dd>条件確認月の翌々月末頃から3回。Rakuten Linkとメールの通知から毎回受取手続きが必要。各回の受取期限は通知の2カ月後月末、ポイント有効期限は通知の3カ月後月末です。</dd></div>
+<div><dt>受取時期・方法</dt><dd>条件確認月の翌々月末頃から3回（4,000・3,000・3,000ポイント）。Rakuten Linkとメールの通知から毎回受取手続きが必要。各回の受取期限は通知の2カ月後月末、ポイント有効期限は通知の3カ月後月末です。</dd></div>
 <div><dt>申込期限</dt><dd>終了日未定。Webエントリーは申込と同月、開通・指定通話は申込翌月末まで。</dd></div>
-<div><dt>月額料金</dt><dd>楽天モバイルの通常の音声プラン（動画セット・データ専用を除く）は割引前で3GBまで月1,078円、20GBまで2,178円、20GB超3,278円。国内通話無料はRakuten Link利用などの条件あり。</dd></div>
+<div><dt>月額料金</dt><dd>楽天モバイルの通常の音声プランは割引前で3GBまで月1,078円、20GBまで2,178円、20GB超3,278円。U-NEXT付きの音声プランは割引前で月4,378円です。どちらも特典対象ですが、ポイント額と毎月の料金を分けて比べてください。国内通話無料はRakuten Link利用などの条件があります。</dd></div>
 <div><dt>手数料</dt><dd>契約事務手数料は累計4回線目まで0円、同一名義で累計5回線目以降は3,850円。回線利用開始から1年以内の解約では、別途最大1,078円の解約事務手数料がかかる場合があります。</dd></div>
 <div><dt>注意点</dt><dd>紹介リンクを使える人は紹介特典と比較してください。番号を引き継がず新しく作る人には、別の初回新規特典があります。 期間中に店頭で申し込める場合は、別枠の20,000ポイント特典と比較してください。同じ回線での合算はできません。 楽天カード会員向け20,000ポイントとは別の申込経路・条件です。同じ回線の還元額へ合算しないでください。</dd></div>
 </dl>
-<p class="campaign-sources">出典 <a href="https://network.mobile.rakuten.co.jp/campaign/mnp/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/saikyo-plan/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://network.mobile.rakuten.co.jp/guide/commission/" rel="noopener noreferrer">公式の条件3</a></p>
+<p class="campaign-sources">出典 <a href="https://network.mobile.rakuten.co.jp/campaign/mnp/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/saikyo-plan/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://network.mobile.rakuten.co.jp/guide/commission/" rel="noopener noreferrer">公式の条件3</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/saikyo-plan/detail/" rel="noopener noreferrer">公式の条件4</a></p>
 </div>
 </details>
 <details class="campaign-offer" id="offer-rakuten-new-2142-202610" data-campaign-id="rakuten-new-2142-202610" data-carrier="rakuten" data-audiences="new">
 <summary><span class="campaign-company">楽天モバイル</span><span class="campaign-offer-title">紹介を使わず新しい番号で初回契約：9,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/23 8:08:12（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/24 8:13:48（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>番号を新しく作りたい人で、申し込み前に家族・知人から紹介を受けられない場合。紹介を受けられる場合は、受取回数や有効期限も含めて12,000ポイントの紹介特典と比べてください。</dd></div>
 <div><dt>特典</dt><dd>楽天の期間限定ポイントを2,000ポイントずつ4回と1,000ポイント1回、計9,000ポイント受け取れます。</dd></div>
-<div><dt>対象者</dt><dd>初めて楽天回線を申し込む楽天会員が、新しい番号で楽天モバイルの通常の音声プランを契約する場合。動画セットも対象ですが、下の月額は通常プランです。</dd></div>
+<div><dt>対象者</dt><dd>初めて楽天回線を申し込む楽天会員が、新しい番号で楽天モバイルの通常の音声プラン、またはU-NEXT付きの音声プランを契約する場合。データ専用は対象外です。</dd></div>
 <div><dt>必須条件</dt><dd>Webでは申込前に契約と同じ楽天IDでエントリーし、同じ月に申込。翌月末23:59までに利用開始と、申込回線でRakuten Linkから10秒以上の対象通話を済ませます。</dd></div>
 <div><dt>対象外・併用条件</dt><dd>他社からの乗り換え、再契約、データ専用、旧楽天モバイルのドコモ・au回線からメンバーズステーション経由の移行は対象外。紹介特典や初回MNP特典は併用不可。端末企画は公式の併用可リストを確認してください。</dd></div>
 <div><dt>申込経路・エントリー</dt><dd>Webは公式ページの新規契約特典（2142）へ申込前にエントリー。楽天モバイルショップで新しい番号を申し込む場合はエントリー不要です。</dd></div>
-<div><dt>受取時期・方法</dt><dd>利用開始と指定通話が確認された月の翌々月末ごろから5回。Rakuten Linkとメールの通知から毎回手続きします。受取期限は各通知の2カ月後の月末、ポイント有効期限は各通知の3カ月後の月末です。</dd></div>
+<div><dt>受取時期・方法</dt><dd>利用開始と指定通話が確認された月の翌々月末ごろから5回（2,000ポイントを4回、最後に1,000ポイント）。Rakuten Linkとメールの通知から毎回手続きします。受取期限は各通知の2カ月後の月末、ポイント有効期限は各通知の3カ月後の月末です。</dd></div>
 <div><dt>申込期限</dt><dd>終了日未定。Webはエントリーと同月に申込。開通と指定通話は申込翌月末まで。</dd></div>
-<div><dt>月額料金</dt><dd>楽天モバイルの通常の音声プラン（動画セット・データ専用を除く）は割引前で3GBまで月1,078円、20GBまで2,178円、20GB超3,278円。国内通話無料はRakuten Link利用などの条件あり。</dd></div>
+<div><dt>月額料金</dt><dd>楽天モバイルの通常の音声プランは割引前で3GBまで月1,078円、20GBまで2,178円、20GB超3,278円。U-NEXT付きの音声プランは割引前で月4,378円です。どちらも特典対象ですが、ポイント額と毎月の料金を分けて比べてください。国内通話無料はRakuten Link利用などの条件があります。</dd></div>
 <div><dt>手数料</dt><dd>契約事務手数料は累計4回線目まで0円、同一名義で累計5回線目以降は3,850円。回線利用開始から1年以内の解約では、別途最大1,078円の解約事務手数料がかかる場合があります。</dd></div>
-<div><dt>注意点</dt><dd>9,000ポイントは2026年10月1日以降の対象申込分。旧回線からの移行は同年10月28日9時以降、対象外です。受取手続きが5回に分かれるので、通知を見落とさないようにしてください。 期間中に店頭で申し込める場合は、別枠の20,000ポイント特典と比較してください。同じ回線での合算はできません。 楽天カード会員向け20,000ポイントとは別の申込経路・条件です。同じ回線の還元額へ合算しないでください。</dd></div>
+<div><dt>注意点</dt><dd>9,000ポイントは2026年10月1日以降の対象申込分。旧楽天モバイルのドコモ・au回線からメンバーズステーション経由で移行する場合は、同年10月28日9時以降、対象外です。受取手続きが5回に分かれるので、通知を見落とさないようにしてください。 期間中に店頭で申し込める場合は、別枠の20,000ポイント特典と比較してください。同じ回線での合算はできません。 楽天カード会員向け20,000ポイントとは別の申込経路・条件です。同じ回線の還元額へ合算しないでください。</dd></div>
 </dl>
-<p class="campaign-sources">出典 <a href="https://network.mobile.rakuten.co.jp/campaign/mnp/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/saikyo-plan/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://network.mobile.rakuten.co.jp/guide/commission/" rel="noopener noreferrer">公式の条件3</a></p>
+<p class="campaign-sources">出典 <a href="https://network.mobile.rakuten.co.jp/campaign/mnp/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/saikyo-plan/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://network.mobile.rakuten.co.jp/guide/commission/" rel="noopener noreferrer">公式の条件3</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/saikyo-plan/detail/" rel="noopener noreferrer">公式の条件4</a></p>
 </div>
 </details>
 <details class="campaign-offer" id="offer-rakuten-referral-1784-202609" data-campaign-id="rakuten-referral-1784-202609" data-carrier="rakuten" data-audiences="mnp new">
