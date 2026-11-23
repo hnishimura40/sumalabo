@@ -32,7 +32,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 />
 
 {/* mobile-campaigns:start */}
-<section class="mobile-campaigns" aria-labelledby="mobile-campaigns" data-campaign-version="bfb2f0538d0c694d106b8700">
+<section class="mobile-campaigns" aria-labelledby="mobile-campaigns" data-campaign-version="60e68dc844889e97b99483ad">
 <h2 id="mobile-campaigns">携帯キャンペーンの早見表</h2>
 <p>自分の契約方法を選び、特典と必要な条件を比べてください。MNPは、電話番号を変えずに携帯会社を乗り換える手続きです。ポイントの有効期限や受取操作は「条件・受取方法」で確認できます。</p>
 <div class="campaign-filters" hidden>
@@ -262,7 +262,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <dl>
 <div><dt>向いている人</dt><dd>番号を新しく作りたい人で、申し込み前に家族・知人から紹介を受けられない場合。紹介を受けられる場合は、受取回数や有効期限も含めて12,000ポイントの紹介特典と比べてください。</dd></div>
 <div><dt>特典</dt><dd>楽天の期間限定ポイントを2,000ポイントずつ4回と1,000ポイント1回、計9,000ポイント受け取れます。</dd></div>
-<div><dt>対象者</dt><dd>初めて楽天回線を申し込む楽天会員が、新しい番号で楽天モバイルの通常の音声プランを契約する場合。動画セットも対象ですが、下の月額は通常プランです。</dd></div>
+<div><dt>対象者</dt><dd>初めて楽天回線を申し込む楽天会員が、新しい番号で楽天モバイルの通常の音声プラン、またはU-NEXT付きの音声プランを契約する場合。データ専用は対象外です。</dd></div>
 <div><dt>必須条件</dt><dd>Webでは申込前に契約と同じ楽天IDでエントリーし、同じ月に申込。翌月末23:59までに利用開始と、申込回線でRakuten Linkから10秒以上の対象通話を済ませます。</dd></div>
 <div><dt>対象外・併用条件</dt><dd>他社からの乗り換え、再契約、データ専用、旧楽天モバイルのドコモ・au回線からメンバーズステーション経由の移行は対象外。紹介特典や初回MNP特典は併用不可。端末企画は公式の併用可リストを確認してください。</dd></div>
 <div><dt>申込経路・エントリー</dt><dd>Webは公式ページの新規契約特典（2142）へ申込前にエントリー。楽天モバイルショップで新しい番号を申し込む場合はエントリー不要です。</dd></div>
