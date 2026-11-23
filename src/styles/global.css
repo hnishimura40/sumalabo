@@ -18,6 +18,7 @@
   --bg-grid: rgba(20, 30, 50, 0.04);
 
   --fg: #1b2331;
+  --article-table-ink: #000;
   --fg-mid: #4a5568;
   --fg-soft: #4a5568;
   --fg-faint: #7a8494;
@@ -110,6 +111,7 @@ html.dark {
   --bg-grid: rgba(255, 255, 255, 0.03);
 
   --fg: #e7eaf0;
+  --article-table-ink: var(--fg);
   --fg-mid: #aeb6c4;
   --fg-soft: #aeb6c4;
   --fg-faint: #7c8698;
