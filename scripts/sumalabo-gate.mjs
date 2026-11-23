@@ -39,6 +39,7 @@ import { fileURLToPath } from "node:url";
 import { findProductNameVariants, FORMAL_PRODUCT_NAMES_PATH, loadFormalProductNames } from "./sumahon/formal-product-names.mjs";
 import { scanRepositoryForSecrets } from "./automation/secret-scan.mjs";
 import { scanRenderedArticleHtml } from "./sumahon/rendered-markdown-scan.mjs";
+import { scanTableThemeStyles } from "./sumahon/table-theme-check.mjs";
 import {
   validatePlainLanguageArticle,
   validatePlannedTermExplanations,
@@ -93,6 +94,12 @@ const RECOMMENDED_DRAFT_ARTIFACTS = [
 const findings = []; // {severity: "violation"|"warning", check, file, detail}
 function report(severity, check, file, detail) {
   findings.push({ severity, check, file, detail });
+}
+
+function checkTableTheme(text, file) {
+  for (const finding of scanTableThemeStyles(text).findings) {
+    report("violation", "table-theme", file, `L${finding.line}: ${finding.message}`);
+  }
 }
 
 // ---- ユーティリティ ----
@@ -314,6 +321,7 @@ function checkDraftStage(slug, patterns, productNames, stage) {
       checkForbiddenWords(body, `drafts/refinement/${slug}/${f}`, "draft", patterns);
       checkFormalProductNames(body, `drafts/refinement/${slug}/${f}`, productNames);
       if (f === "final_article.md") {
+        checkTableTheme(body, path.join(dir, f));
         checkStrayStatusLabels(body, `drafts/refinement/${slug}/${f}`);
         const plain = validatePlainLanguageArticle(body, { requireNewsStructure: true });
         for (const item of plain.issues) {
@@ -415,6 +423,7 @@ function checkMdxStage(slug, patterns, productNames) {
   }
   checkForbiddenWords(body, `content/articles/${slug}.mdx`, "mdx", patterns);
   checkFormalProductNames(raw, `content/articles/${slug}.mdx`, productNames);
+  checkTableTheme(raw, mdxPath);
   checkStrayStatusLabels(body, `content/articles/${slug}.mdx`);
   checkCharacterBubbleVariants(body, mdxPath);
   const plain = validatePlainLanguageArticle(body, { requireNewsStructure: true });
@@ -582,6 +591,7 @@ function checkDistRawMarkdown(slug) {
     return;
   }
   const scan = scanRenderedArticleHtml(html);
+  checkTableTheme(html, htmlPath);
   if (!scan.articleFound) {
     report("violation", "dist-raw-markdown", htmlPath, "article-content was not found");
     return;
@@ -617,6 +627,7 @@ function runAudit(patterns) {
       checkForbiddenWords(`---\n${frontmatter}`, `${label} (frontmatter)`, "mdx", patterns);
     }
     checkForbiddenWords(body, label, "mdx", patterns);
+    checkTableTheme(body, full);
   }
 
   // 記事だけでなく「サイト側の読者向け文言」も検査する（2026-07-25）。
