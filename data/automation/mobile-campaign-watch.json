@@ -37,15 +37,21 @@
       "name": "LINEMO",
       "url": "https://www.linemo.jp/campaign/",
       "hosts": [
-        "www.linemo.jp"
+        "www.linemo.jp",
+        "www.softbank.jp"
       ],
       "paths": [
-        "/campaign/"
+        "/campaign/",
+        "/service/appleone/"
       ],
       "resources": [
         {
           "url": "https://www.linemo.jp/campaign/js/data.json",
           "format": "json"
+        },
+        {
+          "url": "https://www.linemo.jp/service/appleone/",
+          "format": "html"
         }
       ]
     },
