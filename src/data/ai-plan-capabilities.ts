@@ -81,7 +81,7 @@ export const planCapabilities:Record<Plan,Record<string,PlanFacts>>={
    automation:yes('日本は無料からTasks対応。有料は利用枠を拡大',googleTasks),
   },
   chatgpt:{...capabilityFacts.chatgpt,
-   files:yes('Plus以上：Spaceでページ・スライド作成（18歳以上・順次）。ファイル枠も拡大','https://help.openai.com/en/articles/6825453-chatgpt-release-notes'),
+   files:yes('Plus以上：Chat向けGPT-6.2を順次提供。Spaceのページ・スライド作成は18歳以上。ファイル枠も拡大','https://help.openai.com/en/articles/6825453-chatgpt-release-notes'),
    research:yes('Plus以上：Deep Researchの枠を拡大',chat),
    image:yes('Plus以上：画像生成の利用枠を拡大',chat),
    voice:yes('Go・Plus以上：音声会話の枠を拡大',chat),

@@ -56,8 +56,8 @@ export const serviceFacts: Record<string, ServiceFact> = {
   chatgpt: {
     country: '米国', countryNote: openaiNote,
     price: 'Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Pro200の新規受付は再開済み。Pro500はUltrafast対象。Pro200もCodexのGPT-6.2 SolのみUltrafast対象（段階提供・利用量の倍率あり）。APIは別枠。税・現地通貨は購入画面。' + openaiCreditNote,
-    japan: '日本は公式対応国。Spaceは2026/11/20から18歳以上のPlusへ世界順次展開。共有ページはSpace対応のPlus・Pro等と閲覧権限が必要で、Freeは開けず、一般公開リンクもない。個別のモデル・新機能はプランと段階提供による。', japanStatus: 'available',
-    sources: [openaiCountry, openaiJapan, openaiPlans, openaiApiCredits, openaiSpace, s('Work・Codexの現行モデルとUltrafast', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex'), s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
+    japan: '日本は公式対応国。2026/11/23からPlus・Pro・Business・Enterpriseの通常ChatへGPT-6.2（Solの会話用調整版）を世界順次展開。無料・Goは対象外、Pro推論はGPT-6 Proを継続。Spaceは2026/11/20から18歳以上のPlusへ世界順次展開。共有ページはSpace対応のPlus・Pro等と閲覧権限が必要で、Freeは開けず、一般公開リンクもない。個別のモデル・新機能はプランと段階提供による。', japanStatus: 'available',
+    sources: [openaiCountry, openaiJapan, openaiPlans, openaiApiCredits, openaiSpace, s('通常ChatのGPT-6.2展開', 'https://help.openai.com/en/articles/6825453-chatgpt-release-notes'), s('Chatのモデル・推論設定', 'https://help.openai.com/en/articles/20001354-gpt-6-and-other-models-in-chatgpt'), s('Work・Codexの現行モデルとUltrafast', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex'), s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
   },
   gemini: {
     country: '米国', countryNote: googleNote,
