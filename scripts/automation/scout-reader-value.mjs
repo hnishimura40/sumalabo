@@ -25,6 +25,7 @@ export function scoreReaderValue(item, config, source = {}) {
   const trend = item.newsTrend;
   const aiNewsOpportunity = trend?.verified === true && Array.isArray(trend.aiAngles) &&
     trend.aiAngles.length > 0 && !uncertain && !event;
+  const directAiAngle = aiNewsOpportunity && trend.aiAngles.find(angle => angle.directAi === true);
   const chart = item.appChart;
   // A headline claiming '#1' is not a verified chart observation.
   const aiChartMomentum = source.type === "app-store-chart" && source.official === true &&
@@ -70,17 +71,22 @@ export function scoreReaderValue(item, config, source = {}) {
     deductions,
     matched,
     aiCoreEligible: aiCore,
-    aiPriority: aiChartMomentum || aiBenchmark ? 2 : aiModelLaunch || aiNewsOpportunity ? 1 : 0,
+    aiPriority: aiChartMomentum || aiBenchmark ? 3 : aiModelLaunch || directAiAngle ? 2 : aiNewsOpportunity ? 1 : 0,
     // One observed successful mechanism is curiosity, not an immediate action.
     // It can pass only with culture + technology, sufficient total score, and
     // the existing Japan/exclusion/deduplication checks. Never assert feasibility.
     curiosityEligible: (concreteCuriosity || cultureTechOpportunity) && positive >= policy.curiosityMinScore,
     relevanceEligible: ((concreteCuriosity || cultureTechOpportunity) && positive >= policy.curiosityMinScore) || (consumerChange && positive >= policy.consumerMinScore),
-    suggestedAngle: aiChartMomentum ? "なぜ注目されているか、何ができるか、既存AIとの違い、料金・利用条件を公式情報で確認する。順位の国・総合/カテゴリ・確認日を明示する" : aiBenchmark ? "指標の測定対象・条件・前回からの変化・実用上の意味を比較する。単一スコアで万能な優劣を断定しない" : aiNewsOpportunity ? trend.aiAngles.map(angle => angle.question).join(" / ") + "。話題性の出典・確認日時を保存し、AIの仕組み・能力・限界とニュースの接点を一次情報で裏付ける。ニュースでAIが使われたという事実と、AIの視点からの解説を区別する。根拠なしにAIが原因と断定しない。AIの説明を取り除いても内容が変わらないこじつけ記事や、読者の疑問に答えられない題材は採用しない" : cultureTechOpportunity ? "作品で描かれる技術は現実にどこまで実現できるか。作品中の描写と現実の技術を一次情報で照合する" : null,
+    suggestedAngle: aiChartMomentum ? "なぜ注目されているか、何ができるか、既存AIとの違い、料金・利用条件を公式情報で確認する。順位の国・総合/カテゴリ・確認日を明示する"
+      : aiBenchmark ? "指標の測定対象・条件・前回からの変化・実用上の意味を比較する。単一スコアで万能な優劣を断定しない"
+      : aiNewsOpportunity ? (directAiAngle?.question || trend.aiAngles.map(angle => angle.question).join(" / ")) + "。話題性の出典・確認日時を保存し、AIの仕組み・能力・限界とニュースの接点を一次情報で裏付ける。ニュースでAIが使われたという事実と、AIの視点からの解説を区別する。根拠なしにAIが原因と断定しない。AIの説明を取り除いても内容が変わらないこじつけ記事や、読者の疑問に答えられない題材は採用しない"
+      : cultureTechOpportunity ? "作品で描かれる技術は現実にどこまで実現できるか。作品中の描写と現実の技術を一次情報で照合する"
+      : null,
     reason: [
       aiBenchmark && "AIの最新性能指標・ベンチマークを優先",
       aiModelLaunch && "AIの重要モデル・サービス発表を優先",
       aiChartMomentum && "Apple公式ランキングでAIアプリの人気を確認",
+      directAiAngle && "AIの回答の信頼性を調べた報告を優先",
       aiNewsOpportunity && "主要ニュース掲載・複数媒体掲載の根拠があり、AIの視点で読者の疑問を調べられる",
       peripheralEvent && "局地的な教室・催事はAI主軸より優先度を下げる",
       consumerChange && "広く使われるサービスの料金・規約・設定などが変わる",

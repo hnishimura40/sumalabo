@@ -46,13 +46,22 @@ export function annotateNewsAngles(results, config, now, tokenize) {
     const publishers = [...new Set(relatedRows.map(r=>r.publisher).filter(Boolean))];
     const listings = relatedRows.filter(r=>r.listing);
     const verified = listings.length > 0 || publishers.length >= watch.minPublisherCount;
-    const text = `${row.item.title} ${row.item.description || ""}`.replace(/<[^>]*>/g," ").normalize("NFKC").toLowerCase();
-    const hit = word => {
+    const title = row.item.title.normalize("NFKC").toLowerCase();
+    const text = `${title} ${row.item.description || ""}`.replace(/<[^>]*>/g," ").normalize("NFKC").toLowerCase();
+    const hit = (word, target) => {
       const term = word.normalize("NFKC").toLowerCase();
-      return /^[a-z]+$/.test(term) ? new RegExp(`(^|[^a-z0-9])${term}($|[^a-z0-9])`,"u").test(text) : text.includes(term);
+      return /^[a-z]+$/.test(term) ? new RegExp(`(^|[^a-z0-9])${term}($|[^a-z0-9])`,"u").test(target) : target.includes(term);
     };
-    const angles = verified ? watch.angleRules.filter(rule => rule.groups.every(group => group.some(hit)))
-      .map(rule => ({ id:rule.id, question:rule.question, matched:rule.groups.map(group=>group.filter(hit)) })) : [];
+    const angles = [];
+    if (verified) {
+      for (const rule of watch.angleRules) {
+        const target = rule.directAi ? title : text;
+        const matched = rule.groups.map(group => group.filter(word => hit(word, target)));
+        if (matched.every(group => group.length > 0)) {
+          angles.push({ id: rule.id, question: rule.question, matched, ...(rule.directAi ? { directAi: true } : {}) });
+        }
+      }
+    }
     row.item.newsTrend = { verified, basis:listings.length ? "major_news_listing" : verified ? "multiple_publishers" : "insufficient_evidence",
       observedAt:new Date(now).toISOString(), publisherCount:publishers.length,
       // Keep distinct coverage evidence, including more than one publisher.

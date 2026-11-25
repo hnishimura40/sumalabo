@@ -52,6 +52,31 @@ test('話題性だけ・AIと書くだけ・バズったという自己申告で
   assert.equal(lone.newsTrend.verified,false);
   assert.equal(scoreItem(lone,source,config,now).readerValue.signals.aiNewsOpportunity,false);
 });
+test('AIの回答を検証した報告は、AIが補足にとどまる情報流出ニュースより先に調べる', async t => {
+  const titles = [
+    'ロシア軍の死者49万人超か、サイバー攻撃による流出データを英報道',
+    '「それは違う」の一言でAIが気候科学を撤回 全15モデルが譲歩、ユネスコ報告書',
+  ];
+  const xml = '<rss><channel>' + titles.map((title, i) =>
+    `<item><title>${title}</title><link>https://example.com/${i}</link><pubDate>${new Date(now - (i + 1) * 3600000).toUTCString()}</pubDate></item>`
+  ).join('') + '</channel></rss>';
+  t.mock.method(globalThis, 'fetch', async () => new Response(xml));
+  const result = await runScout({ config: { ...config, sources: [top] }, now, chartState: {} });
+  const accepted = result.candidates.filter(c => isEligible(c, result.minScore, result.minCriticality));
+  assert.deepEqual(accepted.map(c => c.title), [titles[1], titles[0]]);
+  assert.deepEqual(accepted.map(c => c.readerValue.aiPriority), [2, 1]);
+  assert.ok(accepted[0].newsTrend.aiAngles.some(angle => angle.id === 'ai_reliability'));
+  assert.match(accepted[0].readerValue.suggestedAngle, /^AIはどんな条件で回答を誤ったり変えたりするか/);
+});
+
+test('紹介文でAIと調査に触れただけでは、AIの回答の検証を主題とみなさない', () => {
+  const item = article('不正アクセスで情報流出、企業が対応を発表', {
+    description: '関連ニュース：AIの誤答を研究した報告書',
+  });
+  annotate([top], [[item]]);
+  assert.deepEqual(item.newsTrend.aiAngles.map(angle => angle.id), ['security']);
+  assert.equal(scoreItem(item, top, config, now).readerValue.aiPriority, 1);
+});
 test('同媒体の別フィード・Google代理URL・古い記事・未来記事で媒体数を水増ししない',()=>{
   const title='未知の企業で不正アクセス被害、現在の対応を発表';
   const sources=[{id:'a',url:'https://same.example/rss'},{id:'b',url:'https://same.example/feed'},
