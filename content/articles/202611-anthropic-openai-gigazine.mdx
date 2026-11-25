@@ -1,0 +1,160 @@
+---
+title: "新しいAIは、何を確かめて誰に届ける？ OpenAIとAnthropicの事例"
+slug: "202611-anthropic-openai-gigazine"
+type: "news"
+category: "ニュースをかみくだく"
+description: "未公開のAIを安全に届けられるか、OpenAIとAnthropicの一部の従業員が懸念しているとAxiosが報じました。両社の公式資料から、公開前に確かめることと提供条件の違いを整理します。"
+thumbnail: "/images/thumbnails/202611-anthropic-openai-gigazine.webp"
+thumbnailAlt: "安全研修室でひまりが床に投影された封筒を追い、違うあて先に届く手前で停止パッドに片手を添える。らぼまるも封筒が止まった位置を確かめる、AIの安全確認を表す概念イラスト。"
+status: "ready"
+priority: 1
+updated: "2026-11-26"
+pubDate: "2026-11-26"
+publishAt: "2026-11-25T19:58:16.583Z"
+tags: ["OpenAI","Anthropic","Claude","AIの安全性"]
+characterUse: {"recommended":true,"count":2,"primary":"himari_question_icon.webp","secondary":"labomaru_normal_icon.webp"}
+---
+
+import Summary30 from "../../src/components/article/Summary30.astro";
+import Callout from "../../src/components/article/Callout.astro";
+import CharacterBubble from "../../src/components/article/CharacterBubble.astro";
+
+未公開のAIを安全に届けられるか、OpenAIとAnthropicの一部の従業員が懸念しているとAxiosが報じました。両社の公式資料から、公開前に確かめることと提供条件の違いを整理します。
+
+<Summary30>
+  <ol>
+    <li><strong>これは何？</strong> 新しいAIを社外に出す前に、問題のある使い方を抑えられるかを確かめ、使える機能と利用できる相手を決める話です。</li>
+    <li><strong>何があった？</strong> 米メディアのAxiosは、まだ一般向けに出ていないAIを安全に提供できるか、OpenAIとAnthropicの一部の従業員が懸念していると報じました。両社の公式資料には、提供を見合わせた例や、利用できる相手を絞った例があります。 <a href="https://www.axios.com/2026/11/24/anthropic-openai-unreleased-ai-safety-risks">Axiosの報道</a> · <a href="https://openai.com/index/managing-frontier-ai-risk/">OpenAIの公式説明</a> · <a href="https://www.anthropic.com/claude-fable-and-mythos-5-2">Anthropicの公式発表</a></li>
+    <li><strong>誰に関係ある？</strong> 次のAIを仕事や勉強で試したい人、職場で導入を考えている人です。今回の報道に伴う、既存のChatGPTやClaudeの料金や利用条件の変更は確認できていません。</li>
+    <li><strong>結局どうなの？</strong> 開発会社は、AIにどんな操作を任せられるか、問題のある動きを見つけられるかを調べたうえで、機能や提供先を決めます。報道で言及されたAIを日本で使えるかは、現時点では分かっていません。</li>
+  </ol>
+</Summary30>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">安全に公開できるかを巡る報道</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-anthropic-openai-gigazine/slide01.webp" class="article-slide-link"><img src="/images/articles/202611-anthropic-openai-gigazine/slide01.webp" alt="研修室でひまりとらぼまるが、未公開AIの提供を巡る従業員の懸念を伝えたAxiosの報道を読む。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図1：安全に公開できるかを巡る報道</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>Axiosが取材したのは社内の議論を知る24人超の関係者です。懸念を示した従業員の人数や賛否の割合は確認されていません。</p></div>
+</section>
+
+## そもそも、AIを公開するってどういうこと？
+
+**AIモデル**（質問に答えたり文章を作ったりするAIの中核部分）は、ChatGPTやClaudeなどのサービスを動かしています。開発会社が社内で試していて、幅広い利用者にはまだ出していないAIを、ここでは**未公開モデル**と呼びます。
+
+**一般提供**（対象地域などの条件を満たす幅広い人が使えるようにすること）のほかに、**限定提供**（審査を通った組織など、相手を絞って使えるようにすること）もあります。
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">新しいAIを使える相手</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-anthropic-openai-gigazine/slide02.webp" class="article-slide-link"><img src="/images/articles/202611-anthropic-openai-gigazine/slide02.webp" alt="研修室の展示で、幅広い利用者への提供と、申し込んだ組織などへの限定提供を見比べる。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図2：新しいAIを使える相手</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>幅広く提供する場合も対象地域などの条件があります。使える相手を絞る場合は、審査を通った組織などが対象になります。</p></div>
+</section>
+
+## 自分に関係ある？
+
+- **関係がある人**は、次のAIを仕事や勉強で試したい人や、職場で導入を検討している人です。使いたい機能や、個人で申し込めるかどうかが判断材料になります。
+- **あまり関係がない人**は、今のChatGPTやClaudeで用が足りていて、新しいAIを使う予定がない人です。2026年11月26日時点で、今回の報道に伴う既存サービスの料金や利用条件の変更は確認できていません。
+
+## 今回、何が分かった？
+
+<Callout kind="claims" title="Axiosが報じた従業員の懸念">
+  <p>Axiosは2026年11月24日付の記事で、未公開モデルを安全に一般提供できるかを巡り、OpenAIとAnthropicの一部の従業員が懸念を抱いていると報じました。GIGAZINEは11月25日にこの報道を紹介しました。 <a href="https://www.axios.com/2026/11/24/anthropic-openai-unreleased-ai-safety-risks">Axiosの報道</a> · <a href="https://gigazine.net/news/20261125-anthropic-openai-employees-fear-unreleased-ai-models/">GIGAZINEの記事</a></p>
+</Callout>
+
+### OpenAIは、次の段階に進めるかを確かめる
+
+ChatGPTを開発するOpenAIは、研究、社内での利用、社外への提供という段階ごとに**安全審査**（AIの動きや問題を防ぐ仕組みを調べ、次に進めてよいか確かめること）を行うと説明しています。11月18日の公式資料では、**学習**（AIにデータを読み込ませ、答え方などを身につけさせる工程）を一時停止した例と、GPT‑6.1 Astraの**提供見合わせ**（その時点では利用者に出さないという判断）を挙げました。 [OpenAIの公式説明](https://openai.com/index/managing-frontier-ai-risk/)
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">OpenAIが安全性を確認する段階</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-anthropic-openai-gigazine/slide03.webp" class="article-slide-link"><img src="/images/articles/202611-anthropic-openai-gigazine/slide03.webp" alt="研究、社内での利用、社外への提供の順に、安全性を確かめる段階を示す。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図3：OpenAIが安全性を確認する段階</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>OpenAIは研究中や社内で使う段階でも、次に進む前にAIの動きと問題を防ぐ仕組みを調べると説明しています。</p></div>
+</section>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">GPT-6.1 Astraの提供見合わせ</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-anthropic-openai-gigazine/slide04.webp" class="article-slide-link"><img src="/images/articles/202611-anthropic-openai-gigazine/slide04.webp" alt="ひまりとらぼまるが、GPT-6.1 Astraの提供を見合わせたというOpenAIの記録を見る。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図4：GPT-6.1 Astraの提供見合わせ</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>OpenAIは、提供を見合わせた例のほか、学習を一時停止した例も公表しています。GPT‑6.1 Astraと報道対象のモデルとの関係は確認されていません。</p></div>
+</section>
+
+### Anthropicは、同じAIの土台でも提供条件を変えた
+
+<Callout kind="facts" title="Claude Fable 5.2とMythos 5.2の提供条件">
+  <p>Claudeを開発するAnthropicは、11月9日に発表したClaude Fable 5.2とClaude Mythos 5.2が、同じ<strong>基盤モデル</strong>（複数の製品やサービスに使えるAIの土台）を使っていると説明しています。Fable 5.2は、<strong>安全対策</strong>（問題のある使い方や動きを抑える仕組みや制限）を設けたうえで幅広く提供しています。Mythos 5.2には、対象となる組織が審査に申し込める提供枠があります。 <a href="https://www.anthropic.com/claude-fable-and-mythos-5-2#availability">Anthropicの公式発表と提供条件</a></p>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">同じ基盤モデルでも提供条件は異なる</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-anthropic-openai-gigazine/slide05.webp" class="article-slide-link"><img src="/images/articles/202611-anthropic-openai-gigazine/slide05.webp" alt="一つの土台の上に、幅広く提供するFable 5.2と、組織が審査に申し込める枠があるMythos 5.2の札が並ぶ。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図5：同じ基盤モデルでも提供条件は異なる</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>Fable 5.2は悪用を抑える制限付きで幅広く提供されます。Mythos 5.2には、対象組織が審査に申し込める提供経路があります。</p></div>
+</section>
+
+## 注意点は？
+
+<Callout kind="unc" title="2026年11月26日時点で分かっていないこと">
+  <p>Axiosが報じた未公開モデルの名前や、両社が最終的にどう提供するかは確認できていません。報道で言及されたモデルと、両社の公式資料に登場するモデルの関係も不明です。報道対象の提供日や価格、日本での利用条件も分かっていません。 <a href="https://www.axios.com/2026/11/24/anthropic-openai-unreleased-ai-safety-risks">Axiosの報道</a> · <a href="https://openai.com/index/managing-frontier-ai-risk/">OpenAIの公式説明</a> · <a href="https://www.anthropic.com/claude-fable-and-mythos-5-2">Anthropicの公式発表</a></p>
+</Callout>
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">報道対象のモデル名は不明</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-anthropic-openai-gigazine/slide06.webp" class="article-slide-link"><img src="/images/articles/202611-anthropic-openai-gigazine/slide06.webp" alt="ひまりとらぼまるが報道資料を見て、取り上げられたAIの名前が分かっていないことを確かめる。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図6：報道対象のモデル名は不明</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>2026年11月26日時点で、報道対象の名前や両社の最終的な提供判断は確認できていません。価格や日本での利用条件も不明です。</p></div>
+</section>
+
+## もう少し詳しく知りたい人へ
+
+OpenAIは、AIが出した説明や実際の動きから、間違いや問題のある振る舞いをどの程度見つけられるかも調べています。たとえると、メールの下書きなら人が読んでから送れます。送信までAIに任せるなら、宛先の間違いを送る前に見つけて止められるかも大切です。 [OpenAIの安全性評価の説明](https://openai.com/index/managing-frontier-ai-risk/)
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">メールを送る前に間違いに気づけるか</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-anthropic-openai-gigazine/slide07.webp" class="article-slide-link"><img src="/images/articles/202611-anthropic-openai-gigazine/slide07.webp" alt="研修室の床に投影された封筒が、印の異なる宛先に向かう。ひまりが停止パッドに手を添える。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図7：メールを送る前に間違いに気づけるか</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>メール送信を任せる場合は、宛先の間違いに気づき、送信前に止められるかも判断材料になります。床の投影と停止パッドはそのたとえです。</p></div>
+</section>
+
+## 日本で使う前に確認すること
+
+<CharacterBubble speaker="himari" mood="curious">「日本でClaudeを使っていたら、新しいAIも今の契約で選べるの？」</CharacterBubble>
+
+<CharacterBubble speaker="labo" mood="point">「日本でClaudeが使えることは、対応地域の一覧で分かるよ。今の契約で新しいAIを選べるかは、そのAIの案内にある対象プランを見よう。組織向けの提供枠なら、申し込みや審査の条件も確認できるよ。」</CharacterBubble>
+
+[Anthropicの対応地域一覧](https://www.anthropic.com/legal/supported-regions) · [Claude Fable 5.2とMythos 5.2の提供条件](https://www.anthropic.com/claude-fable-and-mythos-5-2#availability)
+
+<section class="article-slide-section article-wide-block">
+  <p class="slide-intro">日本で使うなら個別モデルの案内を見る</p>
+  <figure class="article-slide-figure">
+    <a href="/images/articles/202611-anthropic-openai-gigazine/slide08.webp" class="article-slide-link"><img src="/images/articles/202611-anthropic-openai-gigazine/slide08.webp" alt="ひまりとらぼまるが日本を示した対応地域の資料と、個別モデルの利用案内を見比べる。" width="1280" height="1600" loading="lazy" decoding="async" /></a>
+    <figcaption>図8：日本で使うなら個別モデルの案内を見る</figcaption>
+  </figure>
+  <div class="slide-reading-note"><p>日本が対応地域に含まれていても、使えるAIや機能は契約によって異なります。個別モデルの案内で対象地域、プラン、申し込みや審査の条件を確認できます。</p></div>
+</section>
+
+## すまラボまとめ
+
+新しいAIを届ける前に、開発会社は、どこまでの操作を任せられるか、問題が起きたときに見つけて止められるかを確かめます。その結果に応じて、機能を制限して幅広く届ける、利用できる相手を絞る、提供を見合わせるといった判断をします。日本で試したいAIが発表されたら、そのAIの公式案内で、対象地域、今の契約で使える機能、申し込みや審査の条件を確認できます。 [OpenAIの公式説明](https://openai.com/index/managing-frontier-ai-risk/) · [Anthropicの公式発表](https://www.anthropic.com/claude-fable-and-mythos-5-2#availability)
+
+## 参考情報
+
+- [Axiosの原報道](https://www.axios.com/2026/11/24/anthropic-openai-unreleased-ai-safety-risks)
+- [GIGAZINEの紹介記事](https://gigazine.net/news/20261125-anthropic-openai-employees-fear-unreleased-ai-models/)
+- [OpenAIの安全審査の説明](https://openai.com/index/managing-frontier-ai-risk/)
+- [Anthropicのモデル別提供条件](https://www.anthropic.com/claude-fable-and-mythos-5-2#availability)
+- [Anthropicの対応地域一覧](https://www.anthropic.com/legal/supported-regions)
