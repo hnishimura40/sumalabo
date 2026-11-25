@@ -71,6 +71,18 @@
         {
           "url": "https://ahamo.com/special/lp/dpointcp/001.html",
           "format": "html"
+        },
+        {
+          "url": "https://ahamo.com/special/ahamo_okaeri/",
+          "format": "html"
+        },
+        {
+          "url": "https://ahamo.com/special/lp/5g-welcome_wari.html",
+          "format": "html"
+        },
+        {
+          "url": "https://ahamo.com/campaigns/tyoujyou.html",
+          "format": "html"
         }
       ]
     },
@@ -83,7 +95,14 @@
       ],
       "paths": [
         "/campaign",
-        "/news/"
+        "/news/",
+        "/spec/detail/"
+      ],
+      "resources": [
+        {
+          "url": "https://povo.jp/spec/detail/",
+          "format": "html"
+        }
       ]
     },
     {
