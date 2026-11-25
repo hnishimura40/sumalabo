@@ -4,7 +4,7 @@
   "maxAgeHours": 48,
   "readerValuePolicy": {
     "enabled": true,
-    "version": "2026-11-03-ai-news-angles",
+    "version": "2026-11-25-ai-reader-decisions",
     "basis": "docs/scout-selection-policy.md",
     "brandWeight": 3,
     "brandCap": 8,
@@ -60,6 +60,16 @@
     "maxEvidence": 6,
     "angleRules": [
       {
+        "id": "ai_reliability",
+        "directAi": true,
+        "groups": [
+          ["AI", "人工知能", "LLM", "言語モデル", "チャットボット", "ChatGPT", "Claude", "Gemini"],
+          ["迎合", "誤答", "誤情報", "幻覚", "ハルシネーション", "撤回", "譲歩", "回答を変", "回答の正確"],
+          ["研究", "調査", "実験", "報告書", "検証", "評価", "テスト"]
+        ],
+        "question": "AIはどんな条件で回答を誤ったり変えたりするか。実験条件と、日頃の回答を確かめる方法を一次情報から説明する"
+      },
+      {
         "id": "security",
         "groups": [
           [
@@ -87,7 +97,7 @@
             "お知らせ"
           ]
         ],
-        "question": "何が起き、AI時代の攻撃や防御を考えるうえで何が分かるか。事件でのAI使用と一般論を分ける"
+        "question": "この事件を受けて読者が通知や情報の真偽を確かめるとき、AIの能力や限界はどの判断に関係するか。事件でのAI使用と一般論を分ける"
       },
       {
         "id": "authenticity",
