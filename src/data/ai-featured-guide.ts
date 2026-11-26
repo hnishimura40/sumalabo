@@ -92,7 +92,7 @@ export const capabilityFacts:Record<string,Record<CapabilityKey,Capability>>={
   video:limited('短い生成映像は米国Frontier。素材編集はClipchamp','https://support.microsoft.com/en-us/microsoft-365-copilot/create-ai-generated-short-clips-in-the-microsoft-365-copilot-app'),
   music:no('新曲の生成なし。CreateのBGMは素材ライブラリ',copilotCreate),
   voice:limited('Copilot Voice。対象Microsoft契約・地域・段階提供','https://support.microsoft.com/en-us/microsoft-365-copilot/get-started-with-voice-features-in-microsoft-365-copilot'),
-  automation:limited('Cowork・予約プロンプト。対象契約で段階提供',copilotTools),
+  automation:limited('個人CoworkはPremium・Proのプレビュー。移行した予約は再有効化','https://support.microsoft.com/en-us/microsoft-365-copilot/learning/changes-microsoft-copilot-app'),
  },
  muse:{
   free:yes('AI秘書のタスク実行を無料で開始。上限後は回復待ち可',musePlans),
@@ -120,6 +120,6 @@ export const serviceStories:Record<string,{headline:string;question:string;answe
  chatgpt:{headline:'調べる → 考える → 成果物にする。',question:'調査結果を読むだけじゃなく、比較表や説明資料まで仕上げたいな。',answer:'SearchやDeep Researchで調べ、文章・表・画像にまとめ、WorkやCodexで実際の作業へつなげられる。やることが途中で変わっても、相談しながら成果物へ進む使い方を選びやすいよ。',tryIt:'例えば「3案を調べ、根拠付きの比較表を作り、家族向けの説明資料にして」と依頼をつなぐ。',boundary:'Chat向けGPT-6.2はPlus等へ順次提供。Pro推論はGPT-6 Proのまま。Work・Codex・Dotsは枠と入口が別。SpaceはFreeでは開けず、APIクレジットでアプリの上限は増えない。Soraは終了済み。',source:chatPlans},
  claude:{headline:'長い資料を読み、文章と資料を仕上げる。',question:'手元の資料を読んで、筋の通った説明や、使えるファイルにしてほしい。',answer:'Claudeは、文章・資料からDocs、Slides、ArtifactsやOffice形式のファイルへ進めるのが選びどころ。図はSVGやHTMLで、コードはClaude Codeで作れる。写真を描くAIとは、強みの場所が違うんだ。',tryIt:'例えば「この資料の矛盾を整理して、結論・根拠・未記載の点を分けた報告書にして」と頼む。',boundary:'写真・イラスト生成は×。Motionはコードのアニメ。Coworkの継続作業は有料。Max・UltraのAPIクレジットで、アプリやCodeの上限は増えない。',source:'https://claude.com/ja/pricing'},
  grok:{headline:'Xの今を調べて、画像・映像へ。',question:'いまXで何が話題？ 元の投稿や公式発表までたどって確かめたい。',answer:'GrokはWebとXを検索でき、Imagineの画像・動画生成も同じサービスから使える。話題を集めて背景を整理したり、見つけた題材を創作につなげたい人に向いているよ。',tryIt:'例えば「この話題の元投稿と公式発表を分け、事実と感想を整理して」と頼む。',boundary:'検索した投稿が正しいとは限らない。常時稼働のGrok Botは別アプリで、新規契約ではPremium以上。',source:'https://x.ai/grok'},
- copilot:{headline:'いつものWord・Excel・PowerPointのそばで。',question:'新しいAI画面へコピーするより、いつもの仕事のファイルと一緒に使いたい！',answer:'Copilotの選びどころはMicrosoft 365との近さ。表計算の数字を読み、文書へまとめ、プレゼンにする仕事で、アプリと契約の組合せから選べる。対象契約のResearcherやCoworkも使い分けよう。',tryIt:'例えば「売上表の変化を説明し、会議用の要点とスライドの構成を作って」と、対象のアプリで頼む。',boundary:'無料チャットとOffice内のAIは同じ契約ではない。個人PremiumのAI機能は契約者本人だけ。',source:'https://www.microsoft.com/en-us/copilot/solutions/individuals'},
+ copilot:{headline:'いつものWord・Excel・PowerPointのそばで。',question:'新しいAI画面へコピーするより、いつもの仕事のファイルと一緒に使いたい！',answer:'Copilotの選びどころはMicrosoft 365との近さ。表計算の数字を読み、文書へまとめ、プレゼンにする仕事で、アプリと契約の組合せから選べる。対象契約のResearcherやCoworkも使い分けよう。',tryIt:'例えば「売上表の変化を説明し、会議用の要点とスライドの構成を作って」と、対象のアプリで頼む。',boundary:'個人Coworkの実行はPremium・Proのプレビューで、Personal・Familyでは使えない。旧Tasksから移った予約は初期状態で停止するので、自分で再有効化しよう。AI機能は契約者本人用。',source:'https://www.microsoft.com/en-us/copilot/solutions/individuals'},
  muse:{headline:'無料から、動き続けるAI秘書を持つ。',question:'「調べておいて」を無料で頼めて、アプリを閉じても続けてくれるの？',answer:'そこがMuseの大きな選びどころ。無料枠でタスク実行を始められ、専用クラウド環境で用事を続ける。調べもの、予定、価格の監視などを頼み、結果を受け取るAI秘書を、いきなり月額契約せず試せるんだ。',tryIt:'例えば「旅行の候補を調べておいて」「この商品の価格を見守って」と依頼する。重要な送信や購入は本人の確認を挟む。',boundary:'無料は使用量上限あり。上限後は回復を待つか有料へ。無料枠の固定トークン数は公表されていない。高度音声の日本提供は別案内。',source:museTools},
 };

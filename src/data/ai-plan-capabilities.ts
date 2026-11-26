@@ -107,7 +107,7 @@ export const planCapabilities:Record<Plan,Record<string,PlanFacts>>={
    image:yes('対象Microsoft 365契約：画像の利用枠を拡大',copilot),
    video:limited('対象有料契約でも生成クリップは米国Frontier。日本は対象外',capabilityFacts.copilot.video.source),
    voice:limited('対象Microsoft契約・地域・段階提供',copilotVoice),
-   automation:limited('個人向けはPremium・ProのCowork。プレビューで順次提供',copilot),
+   automation:limited('個人CoworkはPremium・Proのプレビュー。旧Tasksから移行した予約は再有効化が必要',copilot),
   },
   muse:{...capabilityFacts.muse,
    files:yes('Power・Maximum：文書やタスクの使用量を拡大',muse),

@@ -79,9 +79,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   copilot: {
     country: '米国', countryNote: 'Microsoftの世界本社は米国Redmond。日本法人・日本での契約と、保存・推論場所は別。',
-    price: '無料入口あり。日本の個人向けMicrosoft 365 Premium通常¥3,200/月・¥32,000/年（税込）。初月¥2,880／初年¥28,800の期間限定表示は通常価格と区別。法人向けは別。',
-    japan: '日本ストアで提供。Premiumは1〜6人向けでもAI機能は契約者本人のみ、共有不可。端末・言語・機能条件あり。', japanStatus: 'available',
-    sources: [s('世界本社・米国', 'https://www.microsoft.com/en-us/about/office-locations'), s('日本Premium料金・税込・AI共有条件', 'https://www.microsoft.com/ja-jp/microsoft-365/p/microsoft-365-premium/cfq7ttc11z3q')],
+    price: '無料入口あり。日本の個人向けMicrosoft 365 Premium通常¥3,200/月・¥32,000/年（税込）。初月¥2,880／初年¥28,800の期間限定表示は通常価格と区別。個人CoworkのプレビューはPremium・Proが対象で、Personal・Familyでは実行不可。法人向けは別。',
+    japan: '日本ストアで提供。Premiumは1〜6人向けでもAI機能は契約者本人のみ、共有不可。旧Tasksの会話・ファイルは移行対象でも記憶は移らず、予約は停止状態になるため再有効化が必要。公式案内は対象チャット・コンテンツの保持に2026/12/31までの更新版アプリへのサインインを求め、未移行分はその後削除すると説明。終了した機能のコンテンツは別扱い。端末・言語・段階提供の条件あり。', japanStatus: 'available',
+    sources: [s('世界本社・米国', 'https://www.microsoft.com/en-us/about/office-locations'), s('日本Premium料金・税込・AI共有条件', 'https://www.microsoft.com/ja-jp/microsoft-365/p/microsoft-365-premium/cfq7ttc11z3q'), s('アプリ移行・Cowork契約・予約・コンテンツ保持', 'https://support.microsoft.com/en-us/microsoft-365-copilot/learning/changes-microsoft-copilot-app')],
   },
   notebook: {
     country: '米国', countryNote: googleNote,

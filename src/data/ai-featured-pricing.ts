@@ -6,6 +6,6 @@ export const featuredPricing:Record<string,{free:string;paid:string;example:stri
  chatgpt:{free:'文章・相談に加え、画像生成・調査・デスクトップ版Workなどを制限付きの枠で試せる。',paid:'PlusからChat向けGPT-6.2を順次提供し、調査・画像等の枠を拡大。Spaceは18歳以上に順次提供。ProはAPIクレジット付き。Dotsは別条件。',example:'Plus $20/月',source:'https://chatgpt.com/pricing/'},
  claude:{free:'文章・資料の作成、Web検索、ファイル作成、Artifactsを使用量の上限内で使える。',paid:'ProからCowork・CodeやSheets・Whiteboards（ベータ）を利用可。Max・UltraはAPIクレジット付き。アプリの使用量とは別枠。',example:'Pro $20/月（税別）',source:'https://claude.com/ja/pricing'},
  grok:{free:'会話・音声・画像生成に無料枠。新規X Subscriptionの無料プランに動画生成は含まれない。',paid:'利用枠を拡大。新規Premium以上で動画生成・Grok Bot。Plusはこの2機能の対象外。Cursor等と週次枠を共有。',example:'Plus $8/月（税別）',source:'https://docs.x.ai/x-subscription/pricing'},
- copilot:{free:'チャット、画像生成、ファイル添付を利用枠の範囲で使える。',paid:'対象Microsoft 365契約でOfficeアプリ内のAIや高度な機能・使用量を拡大。PremiumのAIは契約者本人用。',example:'Premium ¥3,200/月（税込）',source:'https://www.microsoft.com/ja-jp/microsoft-365/p/microsoft-365-premium/cfq7ttc11z3q'},
+ copilot:{free:'チャット、画像生成、ファイル添付を利用枠の範囲で使える。',paid:'対象Microsoft 365契約でOffice内AIや利用枠を拡大。個人CoworkはPremium・Proのプレビュー。旧Tasksから移行した予約は再有効化が必要。AIは契約者本人用。',example:'Premium ¥3,200/月（税込）',source:'https://www.microsoft.com/ja-jp/microsoft-365/p/microsoft-365-premium/cfq7ttc11z3q'},
  muse:{free:'AI秘書に用事を頼み、アプリを閉じてもタスクを続けてもらえる。上限後は無料枠の回復を待って再開できる。',paid:'継続して任せられる使用量を増やす。Power・Maximumの2段階。無料枠で足りれば契約を急がなくてよい。',example:'Power $20/月',source:'https://www.meta.com/help/subscriptions/1021145227643680/'},
 };
