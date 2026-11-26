@@ -32,13 +32,13 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 />
 
 {/* mobile-campaigns:start */}
-<section class="mobile-campaigns" aria-labelledby="mobile-campaigns" data-campaign-version="13ae09242e74fe819470d142">
+<section class="mobile-campaigns" aria-labelledby="mobile-campaigns" data-campaign-version="d136bac2d459f1f05d54e768">
 <h2 id="mobile-campaigns">携帯キャンペーンの早見表</h2>
 <p>自分の契約方法を選び、特典と必要な条件を比べてください。MNPは、電話番号を変えずに携帯会社を乗り換える手続きです。ポイントの有効期限や受取操作は「条件・受取方法」で確認できます。</p>
 <div class="campaign-filters" hidden>
 <fieldset><legend>契約方法で絞る</legend><div class="campaign-options"><button type="button" data-audience-filter="all" aria-pressed="true">すべて</button><button type="button" data-audience-filter="mnp" aria-pressed="false">他社から乗り換え</button><button type="button" data-audience-filter="new" aria-pressed="false">新しい番号</button><button type="button" data-audience-filter="return" aria-pressed="false">以前使った会社に戻る</button></div></fieldset>
 <div class="campaign-carrier-label"><label for="campaign-carrier">携帯会社</label><select id="campaign-carrier" data-carrier-filter><option value="all">すべての会社</option><option value="linemo">LINEMO</option><option value="ahamo">ahamo</option><option value="povo">povo</option><option value="rakuten">楽天モバイル</option><option value="uq">UQ mobile</option><option value="ymobile">Y!mobile</option><option value="au">au</option><option value="softbank">ソフトバンク</option><option value="iijmio">IIJmio</option><option value="mineo">mineo</option></select></div>
-<p class="campaign-count" role="status" aria-live="polite">22件を表示</p>
+<p class="campaign-count" role="status" aria-live="polite">25件を表示</p>
 </div>
 <p class="campaign-filter-note">移行元・年齢・過去の特典利用などで対象外になる場合があります。最大額だけで決めず、月額料金と手数料も確認してください。</p>
 <table class="campaign-table"><caption>開催中の携帯キャンペーン比較</caption><thead><tr><th scope="col">携帯会社・特典名</th><th scope="col">特典</th><th scope="col">対象</th><th scope="col">申込期限</th><th scope="col">先に確認する条件</th></tr></thead><tbody><tr data-carrier="linemo" data-audiences="mnp new"><th scope="row"><span class="campaign-company">LINEMO</span><span class="campaign-row-label">初回・ベストプランV増額</span><a href="#offer-linemo-standard-v-20261116">条件・受取方法へ</a></th><td data-label="特典"><strong>MNP20,000円相当／新規14,000円相当のPayPayポイント</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号</span></td><td data-label="申込期限">12月6日まで</td><td data-label="先に確認する条件">初回利用。翌月末開通、Vの金額は6カ月後判定までのプラン条件。手数料割引は別条件</td></tr>
@@ -51,8 +51,10 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <tr data-carrier="ahamo" data-audiences="return"><th scope="row"><span class="campaign-company">ahamo</span><span class="campaign-row-label">おかえり・再契約</span><a href="#offer-ahamo-return-ah00057">条件・受取方法へ</a></th><td data-label="特典"><strong>dポイント10,000（2,000×5回）</strong></td><td data-label="対象"><span>以前使った会社に戻る</span></td><td data-label="申込期限">終了日未定</td><td data-label="先に確認する条件">過去の対象SIM乗り換え実績・ドコモ提供プラン解約から2年、SIMのみで再び他社から乗り換え</td></tr>
 <tr data-carrier="ahamo" data-audiences="mnp"><th scope="row"><span class="campaign-company">ahamo</span><span class="campaign-row-label">iPhone 16（128GB）購入</span><a href="#offer-ahamo-iphone16-ah00089-20261120">条件・受取方法へ</a></th><td data-label="特典"><strong>dポイント10,000（後日・有効3カ月）</strong></td><td data-label="対象"><span>他社から乗り換え</span></td><td data-label="申込期限">2027/1/11まで</td><td data-label="先に確認する条件">他社からの乗り換えと同時購入。期限内に開通。端末代別</td></tr>
 <tr data-carrier="povo" data-audiences="mnp"><th scope="row"><span class="campaign-company">povo</span><span class="campaign-row-label">本気割</span><a href="#offer-povo-honkivari-202505">条件・受取方法へ</a></th><td data-label="特典"><strong>対象年間データ代の50％相当をau PAY残高に還元</strong></td><td data-label="対象"><span>他社から乗り換え</span></td><td data-label="申込期限">終了日未定</td><td data-label="先に確認する条件">年間分を先払い。開通7日後までの対象購入とau ID連携が必要</td></tr>
+<tr data-carrier="povo" data-audiences="mnp new return"><th scope="row"><span class="campaign-company">povo</span><span class="campaign-row-label">データ増量祭・既存利用者も</span><a href="#offer-povo-data-increase-20261126">条件・受取方法へ</a></th><td data-label="特典"><strong>年額データ＋3／＋5／＋15GB</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号・以前使った会社に戻る</span></td><td data-label="申込期限">11/30 23:59まで</td><td data-label="先に確認する条件">例：375GBを26,400円で一括購入。増量対象を選択。本気割の還元は別条件</td></tr>
 <tr data-carrier="rakuten" data-audiences="mnp new"><th scope="row"><span class="campaign-company">楽天モバイル</span><span class="campaign-row-label">楽天カード会員・初回契約</span><a href="#offer-rakuten-card-3452-20261120">条件・受取方法へ</a></th><td data-label="特典"><strong>回線契約分20,000楽天ポイント（分割）</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号</span></td><td data-label="申込期限">Web12/21 10時／店頭12/20閉店</td><td data-label="先に確認する条件">12月末に有効な対象カード・同じ楽天ID。専用経路とクーポン、開通・指定通話</td></tr>
 <tr data-carrier="rakuten" data-audiences="mnp"><th scope="row"><span class="campaign-company">楽天モバイル</span><span class="campaign-row-label">通常の初回乗り換え</span><a href="#offer-rakuten-mnp-2091-202610">条件・受取方法へ</a></th><td data-label="特典"><strong>楽天ポイント10,000ポイント（分割）</strong></td><td data-label="対象"><span>他社から乗り換え</span></td><td data-label="申込期限">終了日未定</td><td data-label="先に確認する条件">初回利用。Webは申込前エントリーと指定通話。毎回受取が必要</td></tr>
+<tr data-carrier="rakuten" data-audiences="mnp"><th scope="row"><span class="campaign-company">楽天モバイル</span><span class="campaign-row-label">対象Galaxy購入＋初回MNP</span><a href="#offer-rakuten-galaxy-3303-20261126">条件・受取方法へ</a></th><td data-label="特典"><strong>楽天ポイント最大28,000（3企画の合計）</strong></td><td data-label="対象"><span>他社から乗り換え</span></td><td data-label="申込期限">Web1/8 8:59／店頭1/7閉店</td><td data-label="先に確認する条件">最大額はZ Flip8／Fold8／Fold8 Ultra。対象プラン、開通後の指定通話が必要</td></tr>
 <tr data-carrier="rakuten" data-audiences="new"><th scope="row"><span class="campaign-company">楽天モバイル</span><span class="campaign-row-label">通常の初回・新規番号</span><a href="#offer-rakuten-new-2142-202610">条件・受取方法へ</a></th><td data-label="特典"><strong>楽天ポイント9,000ポイント（分割）</strong></td><td data-label="対象"><span>新しい番号</span></td><td data-label="申込期限">終了日未定</td><td data-label="先に確認する条件">初回利用。Webは申込前エントリー、翌月末までの開通と指定通話</td></tr>
 <tr data-carrier="rakuten" data-audiences="mnp new"><th scope="row"><span class="campaign-company">楽天モバイル</span><span class="campaign-row-label">紹介を受けて初回契約</span><a href="#offer-rakuten-referral-1784-202609">条件・受取方法へ</a></th><td data-label="特典"><strong>MNP 13,000／新規12,000楽天ポイント</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号</span></td><td data-label="申込期限">終了日未定</td><td data-label="先に確認する条件">初回利用。公式の紹介URL・QRから申込前ログイン。開通・指定通話と端末特価の併用条件を確認</td></tr>
 <tr data-carrier="rakuten" data-audiences="mnp return"><th scope="row"><span class="campaign-company">楽天モバイル</span><span class="campaign-row-label">ただいまキャンペーン</span><a href="#offer-rakuten-return-2207">条件・受取方法へ</a></th><td data-label="特典"><strong>楽天ポイント2,162ポイント（1,081×2回）</strong></td><td data-label="対象"><span>他社から乗り換え・以前使った会社に戻る</span></td><td data-label="申込期限">終了日未定</td><td data-label="先に確認する条件">解約から2カ月超。他社から番号を戻し、クーポンと指定通話</td></tr>
@@ -62,7 +64,8 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <tr data-carrier="au" data-audiences="mnp new"><th scope="row"><span class="campaign-company">au</span><span class="campaign-row-label">オンライン・SIMデビュー</span><a href="#offer-au-sim-debut-20260917">条件・受取方法へ</a></th><td data-label="特典"><strong>MNP 20,000／新規10,000円相当のau PAY残高</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号</span></td><td data-label="申込期限">終了日未定</td><td data-label="先に確認する条件">UQ・povoからは対象外。対象プランとau PAY設定。5～12歳の新規は20,000円相当</td></tr>
 <tr data-carrier="softbank" data-audiences="mnp new"><th scope="row"><span class="campaign-company">ソフトバンク</span><span class="campaign-row-label">専用ページ・SIMのみ</span><a href="#offer-softbank-sim-paypay-202606">条件・受取方法へ</a></th><td data-label="特典"><strong>PayPayポイント12,000円相当</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号</span></td><td data-label="申込期限">終了日未定</td><td data-label="先に確認する条件">対象プラン・専用Web経由とPayPay連携。同系列からの移行は対象外</td></tr>
 <tr data-carrier="iijmio" data-audiences="mnp new"><th scope="row"><span class="campaign-company">IIJmio</span><span class="campaign-row-label">音声ギガプラン半額</span><a href="#offer-iijmio-gigaplan-half-20261105">条件・受取方法へ</a></th><td data-label="特典"><strong>15GBなら月800円・最大20GB（最大3カ月）</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号</span></td><td data-label="申込期限">終了日未定</td><td data-label="先に確認する条件">対象の音声SIM。申込時の容量を維持、初月日割り・終了後は通常料金</td></tr>
-<tr data-carrier="mineo" data-audiences="mnp new"><th scope="row"><span class="campaign-company">mineo</span><span class="campaign-row-label">秋のピッタリ割</span><a href="#offer-mineo-autumn-fit-20260917">条件・受取方法へ</a></th><td data-label="特典"><strong>音声7・15GBは月990円など（最大6カ月）</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号</span></td><td data-label="申込期限">11月30日まで</td><td data-label="先に確認する条件">音声マイピタ。申込承諾は12月末まで、終了後は通常料金</td></tr></tbody></table>
+<tr data-carrier="mineo" data-audiences="mnp new"><th scope="row"><span class="campaign-company">mineo</span><span class="campaign-row-label">秋のピッタリ割</span><a href="#offer-mineo-autumn-fit-20260917">条件・受取方法へ</a></th><td data-label="特典"><strong>音声7・15GBは月990円など（最大6カ月）</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号</span></td><td data-label="申込期限">11月30日まで</td><td data-label="先に確認する条件">音声マイピタ。申込承諾は12月末まで、終了後は通常料金</td></tr>
+<tr data-carrier="mineo" data-audiences="mnp new return"><th scope="row"><span class="campaign-company">mineo</span><span class="campaign-row-label">motorola 5機種・既存利用者も</span><a href="#offer-mineo-motorola-gift-20261126">条件・受取方法へ</a></th><td data-label="特典"><strong>交換式ギフト1,000〜10,000円分</strong></td><td data-label="対象"><span>他社から乗り換え・新しい番号・以前使った会社に戻る</span></td><td data-label="申込期限">12/27申込、1/31承諾まで</td><td data-label="先に確認する条件">mineoで対象端末を購入。最大はrazr 60。お試し200MBは対象外</td></tr></tbody></table>
 <p class="campaign-empty" hidden>この組み合わせの掲載特典はありません。契約方法か携帯会社を変えてください。</p>
 <h3 id="campaign-details">キャンペーンごとの詳しい条件</h3>
 <p>気になる特典を開くと、対象外の条件、月額料金、受取時期と公式の出典を確認できます。</p>
@@ -72,7 +75,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">LINEMO</span><span class="campaign-offer-title">12月6日まで：初回VはMNP20,000／新規14,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>毎月30GBと短い国内通話が必要で、受取までの期間とプラン条件を満たせる人。ポイントのためだけの高いプラン選択は勧めません。</dd></div>
 <div><dt>特典</dt><dd>ベストプランVは他社MNPでPayPayポイント20,000円相当、新しい番号で14,000円相当。通常12,000／6,000円相当に週替わり8,000円相当を加えた合計です。別途、条件を満たすと手数料3,850円分の請求割引。</dd></div>
@@ -93,7 +96,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">LINEMO</span><span class="campaign-offer-title">12月6日まで：初回ベストはMNP14,000／新規7,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>毎月のデータが3～10GBに収まり、オンライン手続きとポイント受取の管理ができる人。</dd></div>
 <div><dt>特典</dt><dd>ベストプランは他社MNPでPayPayポイント14,000円相当、新しい番号で7,000円相当。通常10,000／3,000円相当に週替わり4,000円相当を加えた合計です。別途、条件を満たすと手数料3,850円分の請求割引。</dd></div>
@@ -114,7 +117,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">LINEMO</span><span class="campaign-offer-title">12月6日まで：再契約のMNPはV14,000／ベスト6,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>以前LINEMOを使っていて、今の他社回線から同じ番号で戻りたい人。</dd></div>
 <div><dt>特典</dt><dd>専用ページからの他社MNPで、VはPayPayポイント14,000円相当、ベストプランは6,000円相当。通常6,000／2,000円相当に週替わり8,000／4,000円相当を加えた合計です。別途、条件を満たすと手数料3,850円分の請求割引。</dd></div>
@@ -135,7 +138,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">LINEMO</span><span class="campaign-offer-title">紹介専用リンク：初回MNP14,000／新規10,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>紹介リンクを利用でき、特に小容量プランの新しい番号でポイント額を比べたい人。通常ルートの7,000円相当と手数料割引、紹介ルートの10,000円相当と手数料3,850円を、支払額・受取時期ごとに比べてください。</dd></div>
 <div><dt>特典</dt><dd>紹介された人の初回利用は、他社MNP14,000円相当、新しい番号10,000円相当のPayPayポイント。紹介者の6,000円相当は別の人への特典で、ここへ合算しません。</dd></div>
@@ -156,7 +159,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">LINEMO</span><span class="campaign-offer-title">12月6日まで：ソフトバンクなどから移行は手数料相当の請求割引</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>ソフトバンク・ワイモバイル・LINEモバイルからLINEMOへ移る予定があり、ポイント対象外でも契約手数料分の負担を減らしたい人。</dd></div>
 <div><dt>特典</dt><dd>契約事務手数料3,850円分の請求割引。ソフトバンク・ワイモバイル・LINEモバイルからの移行は、上記の乗り換えポイント増額の対象ではありません。</dd></div>
@@ -177,7 +180,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">LINEMO</span><span class="campaign-offer-title">有料オプション：Apple Oneの税抜料金にポイント特典</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>既にLINEMOとApple One個人プランを使い、PayPayを利用する人。回線を乗り換えずに申込経路を見直せます。音楽・動画・50GBの保存容量などを実際に使うか、月1,350円に見合うかを先に確認してください。ポイントのためだけに使わない月額サービスを増やす必要はありません。</dd></div>
 <div><dt>特典</dt><dd>初回加入は1〜24カ月目に、割引後の税抜月額（消費税を含める前の料金）の10％相当。割引なしの月1,350円なら122ポイント／月。25カ月目以降・同じ回線での再加入は5％相当で、通常61ポイント／月です。PayPayポイントでの付与で、請求の値引きや現金還元ではありません。</dd></div>
@@ -198,7 +201,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">ahamo</span><span class="campaign-offer-title">SIMのみMNP：dポイント合計20,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>端末をそのまま使い、オンラインで手続きできるMNP利用者。短い国内通話を使い、ポイントの有効期限を管理できる人。</dd></div>
 <div><dt>特典</dt><dd>期間・用途限定dポイント4,000ポイントを5カ月、合計20,000ポイント。現金の一括還元ではありません。</dd></div>
@@ -219,7 +222,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">ahamo</span><span class="campaign-offer-title">以前のSIM乗り換え特典を使った人向け：おかえり10,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>以前に通常のSIM乗り換え特典でahamoを使い、ドコモ提供プラン解約から2年以上たっていて、いまの端末と番号のまま戻りたい人。</dd></div>
 <div><dt>特典</dt><dd>期間・用途限定dポイントを月2,000ポイントずつ5回、合計10,000ポイント。</dd></div>
@@ -240,7 +243,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">ahamo</span><span class="campaign-offer-title">iPhone 16（128GB）を同時購入する乗り換え：10,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>iPhone 16の128GBモデルを買う予定があり、ahamoへ乗り換える人。今のスマホを使い続けるなら、SIMのみの特典と総額で比べてください。</dd></div>
 <div><dt>特典</dt><dd>期間・用途限定dポイント10,000ポイントを後日進呈。端末の注文時に10,000円値引きされる仕組みとは異なります。</dd></div>
@@ -261,10 +264,10 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">povo</span><span class="campaign-offer-title">本気割：対象の年間データ購入代金の50％相当を還元</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>年間のデータ使用量を見通せ、まとめ払いできるMNP利用者。月ごとの使用量が変わり、年間容量を柔軟に使いたい人。</dd></div>
-<div><dt>特典</dt><dd>対象のデータ追加360GB・365日間（26,400円）ならau PAY残高13,200円相当。1.32TB・365日間（39,240円）なら19,620円相当。対象外のトッピングには適用されません。</dd></div>
+<div><dt>特典</dt><dd>対象のデータ追加360GB・365日間（26,400円）ならau PAY残高13,200円相当。1.32TB・365日間（39,240円）なら19,620円相当。対象外のトッピングには適用されません。 11月30日23:59まで、対象の360GB増量版（375GB、26,400円）も条件を満たせば13,200円相当です。</dd></div>
 <div><dt>対象者</dt><dd>au・UQ mobile・povo1.0以外から、povo2.0の「通話＋データ」へMNPする人。</dd></div>
 <div><dt>必須条件</dt><dd>SIM有効化の7日後23:59までに初めて対象トッピングを購入。購入前にpovoアカウントとau IDを連携し、還元までに同じau IDでau PAYを利用開始してください。</dd></div>
 <div><dt>対象外・併用条件</dt><dd>新しい番号の契約、データ専用、対象外の購入、過去にpovo2.0のMNP特典を受けた人、購入後にau IDを変更・統合・解約・一時停止した場合等は対象外。併用不可の企画があります。</dd></div>
@@ -275,14 +278,35 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <div><dt>手数料</dt><dd>契約事務手数料は原則0円。過去1年以内に同一名義で累計5回線以上の申込歴がある場合、6回線目以降は1回線3,850円。</dd></div>
 <div><dt>注意点</dt><dd>先払いとau PAYでの還元です。還元前の支払額、365日の使い切り、7日後までの購入を確認。セール時は変更後の対象データ代金の50％相当となり、Amazonプライム等とのセットは公式の計算条件が異なります。 回線の維持は、直近180日間に対象の有効なデータ追加などが適用されているかで判定されます。データを使い切っても有効期限までは適用中と扱われます。還元で実質無料になる追加購入などは対象にならない場合があります。</dd></div>
 </dl>
-<p class="campaign-sources">出典 <a href="https://povo.jp/campaign/detail/mnp_aupay_cpn_2025_05/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://povo.jp/spec/detail/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://povo.jp/information/" rel="noopener noreferrer">公式の条件3</a></p>
+<p class="campaign-sources">出典 <a href="https://povo.jp/campaign/detail/mnp_aupay_cpn_2025_05/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://povo.jp/spec/detail/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://povo.jp/information/" rel="noopener noreferrer">公式の条件3</a> ／ <a href="https://povo.jp/topping-list/detail/375G_365d_ext-cp/" rel="noopener noreferrer">公式の条件4</a></p>
+</div>
+</details>
+<details class="campaign-offer" id="offer-povo-data-increase-20261126" data-campaign-id="povo-data-increase-20261126" data-carrier="povo" data-audiences="mnp new return">
+<summary><span class="campaign-company">povo</span><span class="campaign-offer-title">11月30日まで：年額データ増量祭は最大15GB追加</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
+<div class="campaign-offer-body">
+
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
+<dl>
+<div><dt>向いている人</dt><dd>1年分のデータをまとめて買うつもりのpovo利用者。365日で使える量と支払額を比べ、多く使う人は同じ26,400円で15GB増える375GBが候補です。</dd></div>
+<div><dt>特典</dt><dd>365日分のデータが購入時に増量。60GB→63GB、120GB→125GB、360GB→375GB。いずれも対応する通常商品の価格は据え置きです。</dd></div>
+<div><dt>対象者</dt><dd>povo2.0の「通話＋データ」で、期間内に対象のデータ追加商品を購入する人。既存利用者も対象で、増量自体に乗り換えは不要です。データ専用プランでは「データ専用初回」と表示された対象商品の初回購入が対象です。</dd></div>
+<div><dt>必須条件</dt><dd>期間内に、povoアプリなど公式が指定する購入画面で「増量中」と表示された対象商品を選んで購入を完了してください。回線開通や初回購入が必要な人は、購入期限に間に合うよう手続きします。</dd></div>
+<div><dt>対象外・併用条件</dt><dd>既に買った通常商品のあとからの増量や、有効期間の延長はありません。データ専用プランは本気割の還元対象外。「通話＋データ」の375GBは対象の360GBの増量版で、本気割の乗り換え・開通後7日以内購入・au ID連携等を別途満たした場合に還元対象です。</dd></div>
+<div><dt>申込経路・エントリー</dt><dd>公式の増量祭ページから対象商品を確認し、公式アプリ等で購入。増量分の受け取りエントリーの記載はありません。</dd></div>
+<div><dt>受取時期・方法</dt><dd>増量後の容量を購入時に受け取り、有効期間は365日。24時間を1日とし、当面は満了日の23:59:59まで使えます。本気割を併用した場合のau PAY残高は別途、SIM有効化の翌月末まで。</dd></div>
+<div><dt>申込期限</dt><dd>2026年11月26日10:00〜11月30日23:59までに購入。</dd></div>
+<div><dt>月額料金</dt><dd>基本料0円とは別に、63GBは13,200円、125GBは21,600円、375GBは26,400円を一括で支払います。Amazonプライム1年付きはそれぞれ16,700円、25,100円、29,900円。通話やSMSは別料金です。</dd></div>
+<div><dt>手数料</dt><dd>契約事務手数料は原則0円。同一名義で直近1年間に累計6回線目以降は1回線3,850円。既存利用者が増量商品を買う支払いは商品代です。</dd></div>
+<div><dt>注意点</dt><dd>375GBを26,400円で購入し本気割の全条件を満たすと、au PAY残高13,200円相当が別に還元されます。63GB・125GBの購入や、データ専用の初回購入にも同じ還元が付くと考えないでください。購入した商品ごとに有効期限が進みます。</dd></div>
+</dl>
+<p class="campaign-sources">出典 <a href="https://povo.jp/campaign/detail/data-increase_2026_11/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://povo.jp/topping-list/detail/375G_365d_ext-cp/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://povo.jp/campaign/detail/mnp_aupay_cpn_2025_05/" rel="noopener noreferrer">公式の条件3</a> ／ <a href="https://povo.jp/spec/detail/" rel="noopener noreferrer">公式の条件4</a></p>
 </div>
 </details>
 <details class="campaign-offer" id="offer-rakuten-card-3452-20261120" data-campaign-id="rakuten-card-3452-20261120" data-carrier="rakuten" data-audiences="mnp new">
 <summary><span class="campaign-company">楽天モバイル</span><span class="campaign-offer-title">楽天カード会員向け：初回の回線契約20,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>対象の楽天カードをすでに持ち、初めて楽天回線を契約する人。新しい番号でもMNPでも回線特典は20,000ポイントで、カードを新しく作らずに条件を満たせる人の比較候補です。</dd></div>
 <div><dt>特典</dt><dd>条件を満たした回線の初回契約に、楽天の期間限定ポイント20,000ポイント（4,000×5回）。広告の最大30,000ポイントに含まれるカード新規入会・利用の別特典10,000ポイントは、この金額に含めません。</dd></div>
@@ -303,7 +327,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">楽天モバイル</span><span class="campaign-offer-title">紹介を使わない初回MNP：10,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>紹介者がいなくても、スマホをそのまま使って初めて楽天回線へMNPしたい人。通知ごとの受取を管理できる人。</dd></div>
 <div><dt>特典</dt><dd>楽天ポイント合計10,000ポイント。現在は4,000・3,000・3,000ポイントの3回に分けて受け取ります。</dd></div>
@@ -320,11 +344,32 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <p class="campaign-sources">出典 <a href="https://network.mobile.rakuten.co.jp/campaign/mnp/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/saikyo-plan/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://network.mobile.rakuten.co.jp/guide/commission/" rel="noopener noreferrer">公式の条件3</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/saikyo-plan/detail/" rel="noopener noreferrer">公式の条件4</a></p>
 </div>
 </details>
+<details class="campaign-offer" id="offer-rakuten-galaxy-3303-20261126" data-campaign-id="rakuten-galaxy-3303-20261126" data-carrier="rakuten" data-audiences="mnp">
+<summary><span class="campaign-company">楽天モバイル</span><span class="campaign-offer-title">Galaxy Z Flip8・Fold8・Fold8 Ultra購入と初回乗り換え：最大28,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
+<div class="campaign-offer-body">
+
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
+<dl>
+<div><dt>向いている人</dt><dd>対象の折りたたみGalaxyを購入予定で、楽天モバイルへ初めて番号を引き継ぐ人。今の端末を使うなら回線のみの特典で比較してください。</dd></div>
+<div><dt>特典</dt><dd>対象のGalaxy Z 3機種では、機種分12,000（3303）＋対象Android購入分6,000（2006）＋初回乗り換え分10,000（2091）の条件をすべて満たすと、合計28,000楽天ポイント。S26シリーズの3303分は7,000ポイントで、支払い方法などで適用企画が異なります。</dd></div>
+<div><dt>対象者</dt><dd>楽天モバイルへ初めて、他社から番号を引き継いで標準の音声プランまたはU-NEXT付きの音声プランを申し込み、同時に対象のGalaxyを買う楽天会員。最大額の対象はGalaxy Z Flip8／Z Fold8／Z Fold8 Ultraです。</dd></div>
+<div><dt>必須条件</dt><dd>申込と対象端末購入を同時に済ませ、申込・購入の翌月末23:59までに開通し、申し込んだ回線で楽天の通話アプリ「Rakuten Link」から対象の相手に10秒以上発信します。後から楽天会員になる場合は、通話前に会員へ切り替えてください。</dd></div>
+<div><dt>対象外・併用条件</dt><dd>新しい番号での契約、データ専用、楽天モバイルのプラン間変更、公式の販売経路以外の端末購入は対象外。3303と機種変更の3304、端末特価2178は併用できません。28,000には初回乗り換えの10,000が含まれます。</dd></div>
+<div><dt>申込経路・エントリー</dt><dd>Webは公式ページで楽天IDを使い、初回乗り換え分のエントリー後、同じ月に申込と購入。楽天モバイルショップでは初回乗り換え分のWebエントリーは不要です。各ポイントの併用条件を購入前に確認してください。</dd></div>
+<div><dt>受取時期・方法</dt><dd>開通・指定通話を確認された月の翌々月末ごろから3カ月に分割。Z 3機種の3303分は4,000ずつ3回、有効期限は付与日を含め3カ月。初回乗り換え分は受取通知後に各回の取得操作が必要で、有効期限も別です。</dd></div>
+<div><dt>申込期限</dt><dd>Webは2027年1月8日8:59、店頭は1月7日の閉店までに申込・購入。開通と指定通話は申込・購入の翌月末23:59まで。</dd></div>
+<div><dt>月額料金</dt><dd>標準の音声プランは割引前で月1,078円／2,178円／3,278円の段階制。U-NEXT付きの音声プランは通常月4,378円。いずれも端末代などは別です。</dd></div>
+<div><dt>手数料</dt><dd>契約事務手数料は累計4回線目まで0円、同一名義で累計5回線目以降は3,850円。端末の支払総額や、返却型の負担額と返却条件は申込時に確認してください。</dd></div>
+<div><dt>注意点</dt><dd>11月26日確認の対象機種と条件を掲載しています。既存利用者の機種変更分は別企画です。対象機種を決めたうえで端末代と回線費用を比べ、受取手続きをそれぞれ確認してください。</dd></div>
+</dl>
+<p class="campaign-sources">出典 <a href="https://network.mobile.rakuten.co.jp/campaign/galaxy/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://network.mobile.rakuten.co.jp/campaign/mnp/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://network.mobile.rakuten.co.jp/campaign/start-point/" rel="noopener noreferrer">公式の条件3</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/saikyo-plan/detail/" rel="noopener noreferrer">公式の条件4</a> ／ <a href="https://network.mobile.rakuten.co.jp/fee/unext/" rel="noopener noreferrer">公式の条件5</a> ／ <a href="https://network.mobile.rakuten.co.jp/information/news/service/3526/" rel="noopener noreferrer">公式の条件6</a></p>
+</div>
+</details>
 <details class="campaign-offer" id="offer-rakuten-new-2142-202610" data-campaign-id="rakuten-new-2142-202610" data-carrier="rakuten" data-audiences="new">
 <summary><span class="campaign-company">楽天モバイル</span><span class="campaign-offer-title">紹介を使わず新しい番号で初回契約：9,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>番号を新しく作りたい人で、申し込み前に家族・知人から紹介を受けられない場合。紹介を受けられる場合は、受取回数や有効期限も含めて12,000ポイントの紹介特典と比べてください。</dd></div>
 <div><dt>特典</dt><dd>楽天の期間限定ポイントを2,000ポイントずつ4回と1,000ポイント1回、計9,000ポイント受け取れます。</dd></div>
@@ -345,7 +390,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">楽天モバイル</span><span class="campaign-offer-title">紹介を受けて初回契約：MNP13,000／新規12,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>申し込み前に家族・知人から紹介を受けられる初回利用者。番号を新しく作る場合も通常の初回特典と比べたい人。</dd></div>
 <div><dt>特典</dt><dd>紹介される側はMNPで13,000ポイント、新しい番号の契約で12,000ポイント。広告の「2人合わせて」やU-NEXTの別条件分を、自分ひとりの特典として合算していません。</dd></div>
@@ -366,7 +411,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">楽天モバイル</span><span class="campaign-offer-title">以前使っていた人が他社から戻ると2,162ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>以前使っていた楽天モバイルへ、いま使っている他社の番号をそのまま持ち帰りたい人。</dd></div>
 <div><dt>特典</dt><dd>楽天の期間限定ポイントを1,081ポイントずつ2回、合計2,162ポイント受け取れます。</dd></div>
@@ -387,7 +432,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">UQ mobile</span><span class="campaign-offer-title">オンラインのSIMのみMNP：au PAY残高20,000円相当</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>au回線の使い勝手を重視し、35GB前後や店舗での相談も必要な人。オンラインの契約とau PAYの利用設定ができるMNP利用者。</dd></div>
 <div><dt>特典</dt><dd>au PAY残高20,000円相当（不課税）。商品購入や抽選の最大額を合算していません。</dd></div>
@@ -408,7 +453,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">UQ mobile</span><span class="campaign-offer-title">SIMのみ乗り換え：事務手数料相当を後日の請求から減算</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>自分のスマホを使い続け、SIMのみでUQへ乗り換える人。対象の他社MNPなら残高還元との併用、auからなら手数料相当だけを分けて比較できます。</dd></div>
 <div><dt>特典</dt><dd>契約事務手数料3,850円相当を、後日の請求額から減算して返します。現金・au PAY残高の付与ではありません。別枠のSIMデビュー20,000円相当と両方の条件を満たす他社MNPでは実質合計23,850円相当です。</dd></div>
@@ -429,7 +474,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">Y!mobile</span><span class="campaign-offer-title">ワイモバSIM契約キャンペーン5：MNP最大15,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>店舗サポートのある回線へMNPしたい人。ソフトバンク系以外からの乗り換えで、家族・光回線の割引条件も自分で確認できる人。</dd></div>
 <div><dt>特典</dt><dd>MNPはシンプル3 Sが5,000円相当、M/Lが15,000円相当。新規番号はS特典なし、M/L各5,000円相当。使用者5～18歳の新規M/Lは、対象者限定の5,000円相当増額と合わせ10,000円相当。</dd></div>
@@ -450,7 +495,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">au</span><span class="campaign-offer-title">au Online Shop SIMデビュー：MNP20,000円相当</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>auの大容量回線や付帯サービスを必要とし、オンライン契約とau PAYの設定ができる人。還元だけのために高いプランを選ぶ人には向きません。</dd></div>
 <div><dt>特典</dt><dd>他社MNPはau PAY残高20,000円相当。新しい番号は原則10,000円相当、使用者5～12歳なら20,000円相当。</dd></div>
@@ -471,7 +516,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">ソフトバンク</span><span class="campaign-offer-title">専用ページのSIMのみ契約：PayPay12,000ポイント</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>ソフトバンクの大容量回線を必要とし、PayPayを利用する人。特典のためだけに月額の高いプランへ移ることは勧めません。</dd></div>
 <div><dt>特典</dt><dd>条件を満たすとPayPayポイント12,000円相当を一括付与。MNPまたは新しい番号の契約が対象。</dd></div>
@@ -492,7 +537,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">IIJmio</span><span class="campaign-offer-title">ギガプラン半額｜15GBなら月800円・最大20GB</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>スマホをそのまま使い、月15GB前後の通信費を抑えたい人。割引と増量が終わっても15GBで足りるか、通常月額1,600円で納得できるかを先に確認してください。</dd></div>
 <div><dt>特典</dt><dd>音声5・10・15・25・35GBの月額基本料を最大3カ月割引。15GBを選ぶと同期間に最大5GB増量され、満額適用の月は月800円で20GB使えます。</dd></div>
@@ -513,7 +558,7 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <summary><span class="campaign-company">mineo</span><span class="campaign-offer-title">秋のピッタリ割：音声マイピタ最大6カ月割引</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
 <div class="campaign-offer-body">
 
-<p class="campaign-verified">公式情報の確認 2026/11/26 8:03:25（日本時間）</p>
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
 <dl>
 <div><dt>向いている人</dt><dd>速さより月額を抑えた使い方を選び、最大3Mbpsの通信でも自分の用途に合う人。ポイント管理より請求額の割引を好む人。</dd></div>
 <div><dt>特典</dt><dd>音声マイピタ3GB月880円、7GB・15GB月990円、30GB月1,320円、50GB月2,090円（最大6カ月）。3GB・7GBではパケット放題3Mbpsも条件付きで最大6カ月無料。</dd></div>
@@ -528,6 +573,27 @@ import ComparisonTable from "../../src/components/article/ComparisonTable.astro"
 <div><dt>注意点</dt><dd>3Mbpsは高速データ容量の無制限ではありません。最大速度の制限があり、3日間10GB以上利用時の混雑回避制限もあります。通常料金とオプションの自動課金を含めて比較してください。</dd></div>
 </dl>
 <p class="campaign-sources">出典 <a href="https://mineo.jp/campaign/cp-20260917-1/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://mineo.jp/price/" rel="noopener noreferrer">公式の条件2</a></p>
+</div>
+</details>
+<details class="campaign-offer" id="offer-mineo-motorola-gift-20261126" data-campaign-id="mineo-motorola-gift-20261126" data-carrier="mineo" data-audiences="mnp new return">
+<summary><span class="campaign-company">mineo</span><span class="campaign-offer-title">motorola 5機種の購入で電子マネーギフト1,000〜10,000円分</span><span class="campaign-status">開催中（条件付き）</span><span class="campaign-expand">条件・受取方法</span></summary>
+<div class="campaign-offer-body">
+
+<p class="campaign-verified">公式情報の確認 2026/11/27 8:05:50（日本時間）</p>
+<dl>
+<div><dt>向いている人</dt><dd>mineoの回線契約や機種変更を予定し、対象motorolaを買いたい人。低価格機も対象なので、ギフト額より端末代と使い方で機種を選べます。</dd></div>
+<div><dt>特典</dt><dd>電子マネーやポイントに交換して使えるEJOICAセレクトギフト。moto g06は1,000円分、moto g37jは1,500円分、edge 70 fusionとedge 60は5,000円分、razr 60は10,000円分です。</dd></div>
+<div><dt>対象者</dt><dd>対象端末をmineoで購入する個人。回線の新規申込（乗り換えまたは新しい番号）と同時購入、既存利用者のプラン・タイプ変更に伴う購入、端末追加購入が対象です。</dd></div>
+<div><dt>必須条件</dt><dd>対象機種を受付期間内に申し込み、2027年1月31日までにmineoの受付承諾が必要です。支払い状況で対象外になる場合があります。</dd></div>
+<div><dt>対象外・併用条件</dt><dd>法人と、お試し200MBコースへの申込・利用中の対象端末購入は対象外。他の割引は各企画の適用条件を確認してください。</dd></div>
+<div><dt>申込経路・エントリー</dt><dd>mineo通信サービスを扱う公式Web、店舗、電話から購入。既にmineoを利用中ならマイページの端末追加購入も対象です。</dd></div>
+<div><dt>受取時期・方法</dt><dd>mineoの課金開始月を1カ月目として3カ月目の月末までに、マイページへ付与しメールで通知。交換先と有効期限は受け取った案内を確認してください。</dd></div>
+<div><dt>申込期限</dt><dd>2026年11月26日〜12月27日に申込。mineoでの受付承諾は2027年1月31日まで。</dd></div>
+<div><dt>月額料金</dt><dd>マイピタの音声通話付きは通常3GBで月1,298円、7GBで月1,518円。端末代と通話料は別です。</dd></div>
+<div><dt>手数料</dt><dd>新規契約の通常事務手数料3,850円、SIMカード発行料440円。A・DプランのeSIMプロファイル発行料は無料で、SプランはeSIM非対応です。</dd></div>
+<div><dt>注意点</dt><dd>ギフトは交換して使います。換金や払い戻しはできません。回線解約時にコンテンツユーザー登録も解除すると、マイページで受け取れなくなります。機種によって端末価格と特典額が違うため、購入総額で比べてください。</dd></div>
+</dl>
+<p class="campaign-sources">出典 <a href="https://mineo.jp/campaign/cp-20261126/" rel="noopener noreferrer">公式の条件1</a> ／ <a href="https://mineo.jp/price/" rel="noopener noreferrer">公式の条件2</a> ／ <a href="https://mineo.jp/price/mypita/" rel="noopener noreferrer">公式の条件3</a></p>
 </div>
 </details>
 
