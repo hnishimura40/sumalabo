@@ -22,7 +22,7 @@ test("古い公開日でも、現在の公式ランキングにいる未掲載AI
   assert.equal(result.items[0].appChart.previousRank, null);
   const candidate = scoreItem(result.items[0], jp, config, now);
   assert.equal(eligible(candidate), true);
-  assert.equal(candidate.readerValue.aiPriority, 2);
+  assert.equal(candidate.readerValue.aiPriority, 3);
   assert.equal(candidate.ageHours, 0);
 });
 
@@ -63,7 +63,7 @@ test("AIベンチマークは行動変化がなくても主軸として採用で
   const candidate = score("新しいAIベンチマークの評価スコアを比較、LMArenaの順位を確認", "性能レポートの測定条件を整理");
   assert.ok(candidate.criticality.net < 0, "旧基準ではレポートが減点される");
   assert.equal(eligible(candidate), true);
-  assert.equal(candidate.readerValue.aiPriority, 2);
+  assert.equal(candidate.readerValue.aiPriority, 3);
   assert.equal(candidate.readerValue.signals.nicheAiUpdate, false);
 });
 
