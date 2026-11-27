@@ -13,6 +13,9 @@ const s = (label: string, url: string) => ({ label, url });
 const openaiCountry = s('提供法人・米国', 'https://openai.com/policies/row-terms-of-use/');
 const openaiPlans = s('Proの現行料金', 'https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers');
 const openaiJapan = s('ChatGPT対応国', 'https://help.openai.com/en/articles/7947663-chatgpt-supported-countries');
+const openaiApiCredits = s('ProのAPIクレジット・対象・期限', 'https://developers.openai.com/api/docs/guides/chatgpt-api-credits');
+const openaiSpace = s('SpaceのPlus展開・共有条件', 'https://help.openai.com/en/articles/6825453-chatgpt-release-notes');
+const openaiCreditNote = ' Pro $100/$200/$500は月$100/$200/$500のAPIクレジット付き。有料契約7日以上・同じメール・所有するAPI組織の連携が必要。初回日割り、請求期間末失効・繰越なし。APIキー経由のCodexは対象外で、ChatGPT・ログイン済みCodexの通常枠も増えない。';
 const claudeCountry = s('本社・米国', 'https://www.anthropic.com/transparency/voluntary-commitments');
 const claudePlans = s('Claude料金・税・利用枠', 'https://claude.com/ja/pricing');
 const claudeJapan = s('Claude対応国', 'https://support.claude.com/en/articles/8461763-where-can-i-access-claude');
@@ -34,9 +37,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   'chatgpt-work': {
     country: '米国', countryNote: openaiNote,
-    price: 'ChatGPT内の機能。Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Codexと枠を共有。追加クレジット・APIは別。税・現地通貨は購入画面。',
+    price: 'ChatGPT内の機能。Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Codexと枠を共有。追加クレジットとAPIの請求は別枠。税・現地通貨は購入画面。' + openaiCreditNote,
     japan: 'ChatGPT対応国に日本。Workの利用面・機能・段階提供はプラン別。Free/Goの制限付き提供と、有料の拡大枠を区別。', japanStatus: 'conditional',
-    sources: [openaiCountry, openaiJapan, openaiPlans, s('WorkとCodexの料金共有', 'https://learn.chatgpt.com/docs/pricing'), s('WorkとCodexの提供条件', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex')],
+    sources: [openaiCountry, openaiJapan, openaiPlans, openaiApiCredits, s('WorkとCodexの料金共有', 'https://learn.chatgpt.com/docs/pricing'), s('WorkとCodexの提供条件', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex')],
   },
   'perplexity-computer': {
     country: '米国', countryNote: 'Perplexity AIの米国拠点はSan Francisco。使う外部モデルの開発国・処理場所とは別。',
@@ -52,9 +55,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   chatgpt: {
     country: '米国', countryNote: openaiNote,
-    price: 'Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Pro200の新規受付は再開済み。Pro500はUltrafast対象。API別。税・現地通貨は購入画面。',
-    japan: '日本は公式対応国。個別のモデル・新機能・利用上限はプランと段階提供による。', japanStatus: 'available',
-    sources: [openaiCountry, openaiJapan, openaiPlans, s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
+    price: 'Free $0、Go参考$8/月（米国）、Plus $20/月、Pro $100・$200・$500/月。Pro200の新規受付は再開済み。Pro500はUltrafast対象。Pro200もCodexのGPT-6.2 SolのみUltrafast対象（段階提供・利用量の倍率あり）。APIは別枠。税・現地通貨は購入画面。' + openaiCreditNote,
+    japan: '日本は公式対応国。2026/11/23からPlus・Pro・Business・Enterpriseの通常ChatへGPT-6.2（Solの会話用調整版）を世界順次展開。無料・Goは対象外、Pro推論はGPT-6 Proを継続。Spaceは2026/11/20から18歳以上のPlusへ世界順次展開。共有ページはSpace対応のPlus・Pro等と閲覧権限が必要で、Freeは開けず、一般公開リンクもない。個別のモデル・新機能はプランと段階提供による。', japanStatus: 'available',
+    sources: [openaiCountry, openaiJapan, openaiPlans, openaiApiCredits, openaiSpace, s('通常ChatのGPT-6.2展開', 'https://help.openai.com/en/articles/6825453-chatgpt-release-notes'), s('Chatのモデル・推論設定', 'https://help.openai.com/en/articles/20001354-gpt-6-and-other-models-in-chatgpt'), s('Work・Codexの現行モデルとUltrafast', 'https://help.openai.com/en/articles/20001275-chatgpt-work-and-codex'), s('Plus月払い・API別課金', 'https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus'), s('Go参考価格・世界展開', 'https://openai.com/index/introducing-chatgpt-go/')],
   },
   gemini: {
     country: '米国', countryNote: googleNote,
@@ -64,9 +67,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   claude: {
     country: '米国', countryNote: claudeNote,
-    price: 'Free $0、Pro $20/月または年$200一括（公式表示は月相当$17）、Max $100/月、Ultra $200/月。税別。上限はモデル・作業で変動。APIは別経路。',
+    price: 'Free $0、Pro $20/月または年$200一括（公式表示は月相当$17）、Max $100/月、Ultra $200/月。税別。FableはProでは使用クレジット、Max・Ultraでは週次枠の最大半分。Maxは月$100、Ultraは月$200のAPIクレジット付き（Console組織の連携・新規契約は7日経過後に申請、繰越なし）。アプリ・Claude Codeの追加使用量には使えない。',
     japan: '日本は公式対応国。Coworkのクラウド・予約実行はPro以上。Duetの米国向け研究プレビューとは別の製品・機能。', japanStatus: 'available',
-    sources: [claudeCountry, claudePlans, claudeJapan],
+    sources: [claudeCountry, claudePlans, claudeJapan, s('APIクレジットの対象・申請・期限', 'https://platform.claude.com/docs/en/about-claude/api-credits-for-subscribers')],
   },
   perplexity: {
     country: '米国', countryNote: 'Perplexity AIの米国拠点はSan Francisco。外部モデルの開発国と、サービス提供元の所在地を区別。',
@@ -76,9 +79,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   copilot: {
     country: '米国', countryNote: 'Microsoftの世界本社は米国Redmond。日本法人・日本での契約と、保存・推論場所は別。',
-    price: '無料入口あり。日本の個人向けMicrosoft 365 Premium通常¥3,200/月・¥32,000/年（税込）。初月¥2,880／初年¥28,800の期間限定表示は通常価格と区別。法人向けは別。',
-    japan: '日本ストアで提供。Premiumは1〜6人向けでもAI機能は契約者本人のみ、共有不可。端末・言語・機能条件あり。', japanStatus: 'available',
-    sources: [s('世界本社・米国', 'https://www.microsoft.com/en-us/about/office-locations'), s('日本Premium料金・税込・AI共有条件', 'https://www.microsoft.com/ja-jp/microsoft-365/p/microsoft-365-premium/cfq7ttc11z3q')],
+    price: '無料入口あり。日本の個人向けMicrosoft 365 Premium通常¥3,200/月・¥32,000/年（税込）。初月¥2,880／初年¥28,800の期間限定表示は通常価格と区別。個人CoworkのプレビューはPremium・Proが対象で、Personal・Familyでは実行不可。法人向けは別。',
+    japan: '日本ストアで提供。Premiumは1〜6人向けでもAI機能は契約者本人のみ、共有不可。旧Tasksの会話・ファイルは移行対象でも記憶は移らず、予約は停止状態になるため再有効化が必要。公式案内は対象チャット・コンテンツの保持に2026/12/31までの更新版アプリへのサインインを求め、未移行分はその後削除すると説明。終了した機能のコンテンツは別扱い。端末・言語・段階提供の条件あり。', japanStatus: 'available',
+    sources: [s('世界本社・米国', 'https://www.microsoft.com/en-us/about/office-locations'), s('日本Premium料金・税込・AI共有条件', 'https://www.microsoft.com/ja-jp/microsoft-365/p/microsoft-365-premium/cfq7ttc11z3q'), s('アプリ移行・Cowork契約・予約・コンテンツ保持', 'https://support.microsoft.com/en-us/microsoft-365-copilot/learning/changes-microsoft-copilot-app')],
   },
   notebook: {
     country: '米国', countryNote: googleNote,
@@ -94,9 +97,9 @@ export const serviceFacts: Record<string, ServiceFact> = {
   },
   muse: {
     country: '米国', countryNote: 'Meta Platformsの本社は米国Menlo Park。常時稼働する専用VMの所在地を示す表示ではない。',
-    price: '無料上限あり。公式USDはPower $20/月（週500Mトークン）、Maximum $100/月（週3B）。日本円額は公式ヘルプに未掲載。地域・アカウント・購入経路別の最終額を確認。',
-    japan: '2026/10/23日本提供開始。iOS・Android・Web。契約は18歳または成年・Metaアカウント。高度音声・Avatar・専用メール等は日本で別途案内。', japanStatus: 'available',
-    sources: [metaCountry, s('日本での提供開始・機能の地域差', 'https://about.fb.com/ja/news/2026/10/muse-personal-ai-agent-launches-in-japan/'), s('公式料金・週次枠・年齢条件', 'https://www.meta.com/help/subscriptions/1021145227643680/'), s('マネーフォワードMEの参照専用連携', 'https://prtimes.jp/main/html/rd/p/000001705.000008962.html')],
+    price: '無料上限あり。公式USDはPower $20/月（週500Mトークン）、Maximum $100/月（週3B）。対応地域・アカウントの電話枠はPower日10回、Maximum日20回。高度音声の日本提供とは別。日本円額は公式ヘルプに未掲載。地域・アカウント・購入経路別の最終額を確認。',
+    japan: '2026/10/23日本提供開始。iOS・Android・Web。11/6のSpacesはMuse提供地域へ展開し、自分用の予定表や管理画面を作れる。契約は18歳または成年・Metaアカウント。高度音声・Avatar・専用メール等の日本提供とは別。', japanStatus: 'available',
+    sources: [metaCountry, s('Spacesの展開地域・専用画面', 'https://about.fb.com/news/2026/11/introducing-spaces-customize-muse-app/'), s('日本での提供開始・機能の地域差', 'https://about.fb.com/ja/news/2026/10/muse-personal-ai-agent-launches-in-japan/'), s('公式料金・週次枠・年齢条件', 'https://www.meta.com/help/subscriptions/1021145227643680/'), s('マネーフォワードMEの参照専用連携', 'https://prtimes.jp/main/html/rd/p/000001705.000008962.html')],
   },
   duet: {
     country: '米国', countryNote: claudeNote,

@@ -155,7 +155,9 @@
     "osworld-v2.xlang.ai",
     "prod.cursor.com",
     "runway.com",
-    "www.scbench.ai"
+    "www.scbench.ai",
+    "developers.openai.com",
+    "research.meta.ai"
   ],
   "excludedPathPattern": "\\.(png|webp|jpg|svg|mp4|zip|gguf|safetensors)$|/global-location$|/Archives/edgar/|/policies/row-terms-of-use/|/terms/row-consumer-terms/",
   "concurrency": 4,

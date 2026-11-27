@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync,readdirSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 const read=route=>readFileSync('dist'+route+'index.html','utf8');
@@ -35,6 +35,12 @@ assert.equal((html.match(/data-free-summary=/g)||[]).length,6);assert.equal((htm
 assert.ok(/<details[^>]*id="advanced-models"/.test(html));assert.ok(!/<details[^>]*id="advanced-models"[^>]*\sopen/.test(html));
 assert.ok(html.indexOf('id="major-details"')<html.indexOf('id="advanced-models"'));assert.ok(!html.includes('>独自実測</a>'));
 
+for(const name of readdirSync('public/data/ai-benchmarks/archive')){
+ if(!name.endsWith('.json'))continue;
+ const match=name.match(/^(\d{4}-\d{2}-\d{2})-([a-f0-9]{12})\.json$/);assert.ok(match,'Archive has a date and content hash');
+ const raw=readFileSync('public/data/ai-benchmarks/archive/'+name);assert.equal(createHash('sha256').update(raw).digest('hex').slice(0,12),match[2],'Archived benchmark bytes must retain their recorded hash');assert.equal(JSON.parse(raw).checkedAt,match[1]);
+}
+
 const common=JSON.parse(readFileSync('public/data/ai-benchmarks/current.json'));assert.match(common.version,/^\d+(?:\.\d+)+$/);assert.match(common.checkedAt,/^\d{4}-\d{2}-\d{2}$/);assert.ok(common.rows.length>0);assert.ok(common.rows.every(r=>Number.isFinite(r.score)&&r.score>=0&&r.effort&&r.context&&r.model&&payload.featured.includes(r.serviceId)&&new URL(r.source).hostname==='artificialanalysis.ai'));assert.equal(new Set(common.rows.map(r=>[r.model,r.effort].join('/'))).size,common.rows.length);
 assert.ok(common.rows.filter(r=>r.serviceId==='muse').every(r=>r.access.includes('無料')));
 
@@ -70,7 +76,7 @@ const models=read('/ai/models/'),bench=read('/ai/benchmarks/'),tests=read('/ai/t
 assert.equal((models.match(/data-model-country=/g)||[]).length,10);
 assert.equal((bench.match(/data-benchmark-group/g)||[]).length,6);
 const archivedGroups=bench.match(/<article[^>]*data-benchmark-group[^>]*>[\s\S]*?<\/article>/g)||[];assert.equal(archivedGroups.reduce((n,g)=>n+(g.match(/<th scope="row"/g)||[]).length,0),13);
-assert.equal((bench.match(/data-frontier-benchmark=/g)||[]).length,7);
+assert.equal((bench.match(/data-frontier-benchmark=/g)||[]).length,currentBenchmark.rows.length);
 assert.ok(bench.includes('Terminal-Bench 4.1')&&bench.includes('65.8% ±3.1%'));
 assert.ok(!tests.includes('id="models"')&&!models.includes('id="measurements"'));
 for(const [route,page]of pages){assert.ok(page.includes('https://sumalabo.com'+route));assert.ok(!/<meta[^>]+name="robots"[^>]+content="[^"]*noindex/.test(page));assert.ok(schema(page).some(n=>n['@type']==='BreadcrumbList'));const block=sitemap.split('<url>').find(b=>b.includes(`<loc>https://sumalabo.com${route}</loc>`));assert.ok(block?.includes(`<lastmod>${publication.dateModified}T00:00:00.000Z</lastmod>`));const ids=[...page.matchAll(/\sid="([^"]+)"/g)].map(m=>m[1]);assert.equal(ids.length,new Set(ids).size,route+' duplicate ids');}

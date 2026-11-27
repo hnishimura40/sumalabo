@@ -1,5 +1,6 @@
 ---
 import { modelFacts, benchmarkSnapshots, modelCountrySources } from '../data/ai-model-facts';
+import currentBenchmark from '../../public/data/ai-benchmarks/current.json';
 import measurements from '../../public/data/ai-eval-20261115/summary.json';
 import protocol from '../../public/data/ai-eval-20261115/protocol.json';
 const {mode='all'}=Astro.props;
@@ -14,7 +15,7 @@ const countries=[...new Set(modelFacts.map(m=>m.country.split('（')[0]))];
  <details class="evidence-details"><summary>国・地域の表示根拠を見る</summary><ul>{modelCountrySources.map(s=><li>{s.provider}：{s.country} — <a href={s.url} target="_blank" rel="noopener noreferrer">公式会社情報・法人資料 ↗</a></li>)}</ul></details>
 </section>}
 {(mode==='all'||mode==='benchmarks')&&<section id="benchmark-snapshots" aria-labelledby="snapshot-title">
- <div class="section-heading"><p class="eyebrow">外部の測定値 / 版・条件付き</p><h2 id="snapshot-title">別の試験・過去の記録も、条件付きで読む。</h2><p>各測定元が公開した特定時点の記録です。AAの10/27時点のv5は、上に掲載する11/15確認のv5.0.1とは別の記録です。現在の総合順位ではありません。更新日・試験・推論設定・実行の仕組みが違う行を、同じ点数の表として並べ替えません。</p></div>
+ <div class="section-heading"><p class="eyebrow">外部の測定値 / 版・条件付き</p><h2 id="snapshot-title">別の試験・過去の記録も、条件付きで読む。</h2><p>各測定元が公開した特定時点の記録です。AAの10/27時点のv5は、上に掲載する{currentBenchmark.checkedAt}確認のv{currentBenchmark.version}とは別の記録です。現在の総合順位ではありません。更新日・試験・推論設定・実行の仕組みが違う行を、同じ点数の表として並べ替えません。</p></div>
  <div class="benchmark-groups">{benchmarkGroups.map(group=><article class="benchmark-group" data-benchmark-group><h3><a href={group.rows[0].url} target="_blank" rel="noopener noreferrer">{group.name} ↗</a></h3><div class="table-wrap" role="region" tabindex="0" aria-label={group.name+'の記録'}><table><caption>{group.name}の条件付き記録</caption><thead><tr><th>モデル・実行の仕組み</th><th>公表値</th><th>記録日</th><th>条件・読み方</th></tr></thead><tbody>{group.rows.map(b=><tr><th scope="row">{b.model}</th><td><strong>{b.score}</strong></td><td>{b.date}</td><td>{b.conditions}</td></tr>)}</tbody></table></div></article>)}</div>
  <p class="note">SWE-benchはVerified 500題・Bash Onlyなどの条件、Terminal-Benchは4.1などの版を選んで確認します。SWE-benchの掲載例は固定環境の2026年2月の記録で、最新モデルの優劣の証明ではありません。Arenaは人の好み、AAは複数の能力試験、OSWorldはPCの操作、SlopCodeBenchは変更を重ねる開発を測ります。</p>
 </section>}
