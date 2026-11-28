@@ -5,6 +5,13 @@ export const siteConfig = {
   // サイト内検索（Pagefind・2026-11-28）。false にすると、ヘッダーの検索入口・
   // ビルド時の索引生成（/pagefind/）・/search/ の検索UIがまとめて止まる。
   siteSearch: true,
+  // Google だけに速報記事を登録させない（2026-11-28）。
+  // true のとき、カテゴリ googlebotNoindexCategory の記事に
+  // <meta name="googlebot" content="noindex"> を出す（Bing など他の検索エンジンは対象外）。
+  // 記事ごとの例外は frontmatter の allowGoogleIndex: true。
+  // false にすると全記事から googlebot の noindex が消え、以前の状態に戻る。
+  googlebotNoindexNews: true,
+  googlebotNoindexCategory: "ニュースをかみくだく",
   siteName: "すまラボ",
   siteDescription: "むずかしいスマホ・AI・ガジェットの話を、わかりやすく。",
   siteUrl: "https://sumalabo.com",

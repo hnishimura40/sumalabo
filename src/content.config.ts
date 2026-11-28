@@ -53,6 +53,9 @@ const articles = defineCollection({
     // true のとき記事冒頭に「本記事は広告（アフィリエイトリンク）を含みます」を自動表示。
     // ニュース記事(type: news)では常に false（sumalabo-gate が強制）。
     hasAffiliate: z.boolean().default(false),
+    // 速報記事（googlebotNoindexCategory）でも Google に登録させたい記事は true。
+    // siteConfig.googlebotNoindexNews が true のときだけ意味を持つ（src/lib/google-noindex.ts）。
+    allowGoogleIndex: z.boolean().default(false),
   }),
 });
 
