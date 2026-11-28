@@ -70,10 +70,14 @@ const { points } = Astro.props;
       }
       area.classList.add("scatter-named");
 
-      const positions = markers.map(({ button }) => ({
-        x: button.offsetLeft,
-        y: button.offsetTop,
-      }));
+      const plot = area.getBoundingClientRect();
+      const positions = markers.map(({ button }) => {
+        const dot = button.getBoundingClientRect();
+        return {
+          x: dot.left + dot.width / 2 - plot.left - area.clientLeft,
+          y: dot.top + dot.height / 2 - plot.top - area.clientTop,
+        };
+      });
       const occupied: Rect[] = positions.map(({ x, y }) => ({
         left: x - 11, top: y - 11, width: 22, height: 22,
       }));
