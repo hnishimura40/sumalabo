@@ -4,12 +4,21 @@
   "devices": {
     "uq-basio-active3-64": { "chip": "MediaTek Dimensity 6300", "score": null },
     "ymobile-aquos-wish6-128": { "chip": "MediaTek Dimensity 6300", "score": null },
-    "iijmio-nothing-phone-4b-128": { "chip": "Snapdragon 6 Gen 4", "score": null },
-    "iijmio-oppo-reno16-256": { "chip": "Snapdragon 7 Gen 4", "score": null },
-    "rakuten-nothing-phone-3-256": { "chip": "Snapdragon 8s Gen 4", "score": null },
+    "iijmio-nothing-phone-4b-128": {
+      "chip": "Snapdragon 6 Gen 4",
+      "score": { "single": 944, "multi": 3047, "method": "A009P・8GB構成の公開測定1件", "url": "https://browser.geekbench.com/v7/cpu/108195" }
+    },
+    "iijmio-oppo-reno16-256": {
+      "chip": "Snapdragon 7 Gen 4",
+      "score": { "single": 690, "multi": 3299, "method": "CPH2865・12GB構成の公開測定1件", "url": "https://browser.geekbench.com/v7/cpu/923457" }
+    },
+    "rakuten-nothing-phone-3-256": {
+      "chip": "Snapdragon 8s Gen 4",
+      "score": { "single": 1761, "multi": 6189, "method": "A024・12GB構成の公開測定1件", "url": "https://browser.geekbench.com/v7/cpu/899933" }
+    },
     "ahamo-galaxy-s25-256": {
       "chip": "Snapdragon 8 Elite for Galaxy",
-      "score": { "single": 2445, "multi": 8586, "method": "同じCPUのGalaxy S25集計", "url": "https://browser.geekbench.com/mobile-benchmarks" }
+      "score": { "single": 2445, "multi": 8586, "method": "同じCPUのGalaxy S25集計", "url": "https://browser.geekbench.com/android-benchmarks" }
     },
     "rakuten-galaxy-s26-256": {
       "chip": "Snapdragon 8 Elite Gen 5 for Galaxy",
