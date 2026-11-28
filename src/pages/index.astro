@@ -13,7 +13,21 @@ const sorted = (await import("../lib/articles")).getSortedVisibleArticles(all);
 const [lead, ...restAll] = sorted;
 const rest = restAll.slice(0, 6);
 // D: ニュースセクション直下の「定番ガイド」枠
-const stapleCards = buildStapleCards(all);
+const stapleCards = [
+  ...buildStapleCards(all),
+  ...buildStapleCards(sorted, [
+    {
+      slug: "mnp-smartphone-price-comparison",
+      label: "乗り換え時のスマホ端末価格を比較",
+      blurb: "公式オンラインショップの一括価格と返却時の負担を比べる。",
+    },
+    {
+      slug: "iphone-18-pro-return-price-watch",
+      label: "iPhone 18 Proの2年返却費用",
+      blurb: "返却までの端末代と手数料を、確認できたオンライン販売先ごとに比較。",
+    },
+  ]),
+];
 
 // ヒーローの「30秒サマリー先頭1行」は description の1文目を使う
 // （既存記事は Summary30 未搭載のため description を代用。先頭の句点まで）

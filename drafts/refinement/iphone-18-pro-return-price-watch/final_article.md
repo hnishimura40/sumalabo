@@ -2,7 +2,7 @@ import PhoneReturnWatch from "../../src/components/article/PhoneReturnWatch.astr
 import Summary30 from "../../src/components/article/Summary30.astro";
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
 
-**スマホ最安値定点観測**の初回はiPhone 18 Pro 256GB。返却型購入とは、分割で買った端末を期限内に返すと、残りの支払いが免除される仕組みです。MNPとは、今の電話番号を変えずに携帯会社を乗り換えられる仕組みです。乗り換えと同時に端末を買い、約2年後に返す場合を比べます。
+**スマホ返却費用の定点観測**の対象はiPhone 18 Pro 256GBです。確認できたオンライン販売先の端末関連費用を比べます。回線料は別です。返却型購入とは、分割で買った端末を期限内に返すと、残りの支払いが免除される仕組みです。MNPとは、今の電話番号を変えずに携帯会社を乗り換えられる仕組みです。乗り換えと同時に端末を買い、約2年後に返す場合を比べます。
 
 <PhoneReturnWatch modelName={"iPhone 18 Pro"} capacityGb={256}>
 <figure class="watch-device-photo" slot="device">
@@ -13,7 +13,7 @@ import CharacterDialogue from "../../src/components/characters/CharacterDialogue
 <Summary30 slot="summary">
   <ol>
     <li><strong>これは何？</strong> iPhone 18 Pro 256GBの返却型購入にかかる費用の比較です。</li>
-    <li><strong>何があった？</strong> 広告の表示額に返却料や契約事務手数料が加わるケースを確認しました。</li>
+    <li><strong>何があった？</strong> 返却までに払う端末代、返却料、契約事務手数料を分けて比べます。</li>
     <li><strong>誰に関係ある？</strong> iPhoneを約2年で買い替え、次の携帯会社はまだ決めていない人です。</li>
     <li><strong>結局どうなの？</strong> 次回の買い替え先を決めていないなら「次は他社へ」の列から見ます。</li>
   </ol>

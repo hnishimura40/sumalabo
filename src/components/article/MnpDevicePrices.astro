@@ -3,16 +3,19 @@ import catalog from "../../../data/mnp-device-prices.json";
 import benchmarkCatalog from "../../../data/mobile-device-benchmarks.json";
 import MnpPriceScatter from "./MnpPriceScatter.astro";
 import { mobileCarrierLinks, type MobileCarrierKey } from "../../data/mobileCarrierLinks";
-import { validateCatalog } from "../../lib/mnp-device-prices.mjs";
+import { isDeviceOfferEnded, validateCatalog } from "../../lib/mnp-device-prices.mjs";
 
-const now = Date.now();
+import { getBuildNow } from "../../lib/articles";
+
+const now = getBuildNow().getTime();
 const rows = validateCatalog(catalog).rows.slice().sort((a, b) => a.mnpYen - b.mnpYen).map(row => ({
   ...row,
   benchmark: benchmarkCatalog.devices[row.id as keyof typeof benchmarkCatalog.devices],
-  ended: row.status === "ended" || Boolean(row.endsAt && Date.parse(row.endsAt) <= now),
+  ended: isDeviceOfferEnded(row, now),
   stale: now - Date.parse(row.checkedAt) >= 48 * 60 * 60 * 1000,
 }));
-const lastChecked = rows.map(row => row.checkedAt).sort().at(-1);
+const activeRows = rows.filter(row => !row.ended);
+const lastChecked = activeRows.map(row => row.checkedAt).sort((a, b) => Date.parse(a) - Date.parse(b)).at(-1);
 const yen = (value: number) => new Intl.NumberFormat("ja-JP").format(value) + "円";
 const time = (value: string) => new Intl.DateTimeFormat("ja-JP", {
   timeZone: "Asia/Tokyo", dateStyle: "medium", timeStyle: "short",
@@ -25,8 +28,8 @@ const referenceDetails = {
   "iijmio-oppo-reno16-256": { label: "望遠カメラを使いたい", use: "持ちやすさと写真の両方を重視。6.3インチ、256GB、望遠カメラ付き。" },
   "ahamo-iphone-18-pro-256": { label: "iPhoneの上位モデル", use: "動画編集や負荷の大きいゲームも使う人。A20 Proと256GB。" },
 };
-const references = rows.filter(row => row.status === "verified" && !row.ended && row.id in referenceDetails);
-const points = rows.map(row => ({
+const references = activeRows.filter(row => row.status === "verified" && row.id in referenceDetails);
+const points = activeRows.map(row => ({
   id: row.id, name: row.model, carrier: mobileCarrierLinks[row.carrier as MobileCarrierKey].label,
   yen: row.mnpYen, reference: row.id in referenceDetails, cpu: row.benchmark?.score?.multi ?? null,
   weight: numericSpec(row.specs.weight), screen: numericSpec(row.specs.display),
@@ -36,9 +39,9 @@ const points = rows.map(row => ({
 <section class="mnp-prices" aria-labelledby="mnp-prices-title" data-mnp-prices>
   <div class="mnp-heading">
     <h2 id="mnp-prices-title">端末価格の早見表</h2>
-    <p>最終確認 <time datetime={lastChecked}>{time(lastChecked!)}</time>（日本時間）</p>
+    {lastChecked && <p>最終確認 <time datetime={lastChecked}>{time(lastChecked)}</time>（日本時間）</p>}
   </div>
-  <p class="mnp-price-guide">実質価格は、端末を期限内に返却する場合の負担額です。次回の買い替えによる免除やポイントは引いていません。回線料・契約事務手数料は別途かかる場合があります。</p>
+  <p class="mnp-price-guide">「乗り換え値引き前」は、回線契約なしでも適用される端末の値下げを反映した価格です。「返却時の端末負担額」には、指定期限に返す条件で確認できた金額を掲載します。値がない機種は一括の列を確認してください。期間を過ぎた価格は一覧から外します。</p>
   <p class="mnp-price-guide" data-mnp-scatter-link hidden><a href="#mnp-scatter-title">価格とスペックの散布図へ</a></p>
   <div class="mnp-filters" data-mnp-filters hidden>
     <label>携帯会社
@@ -56,17 +59,17 @@ const points = rows.map(row => ({
         <option value="over">10万円超</option>
       </select>
     </label>
-    <p data-mnp-count role="status" aria-live="polite">{rows.length}件</p>
+    <p data-mnp-count role="status" aria-live="polite">{activeRows.length}件</p>
   </div>
   <MnpPriceScatter points={points}>
-    {references.length > 1 && <div class="mnp-reference">
+    {references.length > 1 && <div class="mnp-reference" data-mnp-references>
       <h3>価格帯ごとに何が違う？</h3>
       <p>乗り換え一括の掲載価格です。最新の受付条件は公式価格で確認できます。</p>
       <ul>
         {references.map(row => {
           const detail = referenceDetails[row.id as keyof typeof referenceDetails];
           const score = row.benchmark?.score;
-          return <li>
+          return <li data-mnp-reference-id={row.id}>
             <span class="mnp-reference-label">{detail.label}</span>
             <strong>{row.model}</strong>
             <span class="mnp-reference-price">{yen(row.mnpYen)}</span>
@@ -83,14 +86,14 @@ const points = rows.map(row => ({
     <caption class="mnp-sr">公式オンラインショップのMNP端末価格（税込）</caption>
     <thead role="rowgroup"><tr role="row">
       <th scope="col" role="columnheader">機種・写真・主要スペック</th>
-      <th scope="col" role="columnheader">通常価格</th>
+      <th scope="col" role="columnheader">乗り換え値引き前</th>
       <th scope="col" role="columnheader">乗り換え一括</th>
-      <th scope="col" role="columnheader">実質価格（返却のみ）</th>
+      <th scope="col" role="columnheader">返却時の端末負担額</th>
       <th scope="col" role="columnheader">申込条件・出典</th>
     </tr></thead>
     <tbody role="rowgroup">
-      {rows.map(row => <tr role="row" data-mnp-id={row.id} data-carrier={row.carrier} data-price={row.mnpYen}
-          data-checked={row.checkedAt} data-ends={row.endsAt} data-state={row.status} class:list={{ "mnp-expired": row.ended }}>
+      {activeRows.map(row => <tr role="row" data-mnp-id={row.id} data-carrier={row.carrier} data-price={row.mnpYen}
+          data-checked={row.checkedAt} data-ends={row.endsAt} data-state={row.status}>
           <th scope="row" role="rowheader">
             <span class="mnp-carrier">{mobileCarrierLinks[row.carrier as MobileCarrierKey].label}</span>
             <strong class="mnp-model">{row.model}</strong>
@@ -121,7 +124,7 @@ const points = rows.map(row => ({
             </div>
           </th>
           <td role="cell" class="mnp-normal">
-            <span class="mnp-mobile-label" aria-hidden="true">通常価格</span>
+            <span class="mnp-mobile-label" aria-hidden="true">乗り換え値引き前</span>
             <span class="mnp-yen">{yen(row.normalYen)}</span>
           </td>
           <td role="cell" class="mnp-buy">
@@ -129,7 +132,7 @@ const points = rows.map(row => ({
             <strong class="mnp-yen">{yen(row.mnpYen)}</strong>
           </td>
           <td role="cell" class="mnp-return">
-            <span class="mnp-mobile-label" aria-hidden="true">実質価格（返却のみ）</span>
+            <span class="mnp-mobile-label" aria-hidden="true">返却時の端末負担額</span>
             {row.real ? <div>
               <strong class="mnp-yen">{yen(row.real.yen)}</strong>
               <span class="mnp-small">{row.real.installments}回払い・{row.real.plan}</span>
@@ -138,7 +141,6 @@ const points = rows.map(row => ({
             </div> : <span>{"returnNote" in row ? row.returnNote : "この条件での返却額は未確認"}</span>}
           </td>
           <td role="cell" class="mnp-terms">
-            <span class="mnp-flag" data-mnp-ended hidden={!row.ended}>掲載期間終了・過去の価格</span>
             <span class="mnp-flag" data-mnp-checking hidden={row.status !== "checking" || row.ended}>確認中・前回の価格</span>
             <span class="mnp-flag" data-mnp-stale hidden={!row.stale}>確認から2日以上経過</span>
             <span class="mnp-small"><b>対象</b> {row.eligibility}</span>
@@ -151,10 +153,12 @@ const points = rows.map(row => ({
         </tr>)}
     </tbody>
   </table>
-  <p data-mnp-empty hidden>該当する機種がありません。会社や価格帯を変えてください。</p>
+  <p data-mnp-empty hidden={activeRows.length > 0}>該当する機種がありません。会社や価格帯を変えてください。</p>
 </section>
 
 <script>
+  import { isDeviceOfferEnded } from "../../lib/mnp-device-prices.mjs";
+
   for (const section of document.querySelectorAll<HTMLElement>("[data-mnp-prices]")) {
     const filters = section.querySelector<HTMLElement>("[data-mnp-filters]")!;
     const carrier = section.querySelector<HTMLSelectElement>("[data-mnp-carrier]")!;
@@ -163,23 +167,33 @@ const points = rows.map(row => ({
     const empty = section.querySelector<HTMLElement>("[data-mnp-empty]")!;
     const scatterLink = section.querySelector<HTMLElement>("[data-mnp-scatter-link]")!;
     const rows = [...section.querySelectorAll<HTMLElement>("[data-mnp-id]")];
+    const references = new Map([...section.querySelectorAll<HTMLElement>("[data-mnp-reference-id]")]
+      .map(card => [card.dataset.mnpReferenceId, card]));
+    const referenceGroup = section.querySelector<HTMLElement>("[data-mnp-references]");
+    let expiryTimer: number | undefined;
     filters.hidden = false;
     scatterLink.hidden = false;
     function refresh() {
       const now = Date.now();
+      window.clearTimeout(expiryTimer);
       let shown = 0;
+      let nextExpiry = Infinity;
       for (const row of rows) {
         const price = Number(row.dataset.price);
-        const ended = row.dataset.state === "ended" || Boolean(row.dataset.ends && Date.parse(row.dataset.ends) <= now);
+        const ended = isDeviceOfferEnded({ status: row.dataset.state, endsAt: row.dataset.ends }, now);
         const stale = now - Date.parse(row.dataset.checked!) >= 48 * 60 * 60 * 1000;
-        row.classList.toggle("mnp-expired", ended);
-        row.querySelector<HTMLElement>("[data-mnp-ended]")!.hidden = !ended;
+        const deadline = Date.parse(row.dataset.ends ?? "");
+        if (!ended && deadline > now) nextExpiry = Math.min(nextExpiry, deadline);
+        const reference = references.get(row.dataset.mnpId);
+        if (reference) reference.hidden = ended;
         row.querySelector<HTMLElement>("[data-mnp-checking]")!.hidden = ended || row.dataset.state !== "checking";
         row.querySelector<HTMLElement>("[data-mnp-stale]")!.hidden = !stale;
         const inBudget = !max.value || (max.value === "over" ? price > 100000 : price <= Number(max.value));
-        row.hidden = Boolean((carrier.value && row.dataset.carrier !== carrier.value) || !inBudget);
+        row.hidden = ended || Boolean((carrier.value && row.dataset.carrier !== carrier.value) || !inBudget);
         if (!row.hidden) shown++;
       }
+      if (referenceGroup) referenceGroup.hidden = [...references.values()].every(card => card.hidden);
+      if (nextExpiry - now < 2_147_483_647) expiryTimer = window.setTimeout(refresh, nextExpiry - now);
       status.textContent = `${shown}件`;
       empty.hidden = shown !== 0;
       section.dispatchEvent(new Event("mnp-catalog-refresh"));
@@ -234,7 +248,6 @@ const points = rows.map(row => ({
   .mnp-buy .mnp-yen { font-size: 1.25rem; }
   .mnp-mobile-label { display: none; }
   .mnp-flag { font-weight: 750; border-inline-start: 2px solid currentColor; padding-inline-start: .35rem; font-size: .83rem; margin-bottom: .4rem; }
-  .mnp-expired :is(.mnp-buy,.mnp-return) .mnp-yen { text-decoration: line-through; }
   .mnp-prices [hidden] { display: none !important; }
   .mnp-sr { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
   @media (min-width: 830px) {

@@ -1,6 +1,6 @@
 ---
 import catalog from "../../../data/phone-return-watch.json";
-import { currentOffers, priceBreakdown, priceRating } from "../../lib/phone-return-watch.mjs";
+import { currentOffers, priceBreakdown, priceHistory, priceRating } from "../../lib/phone-return-watch.mjs";
 import { getBuildNow } from "../../lib/articles";
 
 interface Props { modelName: string; capacityGb: number }
@@ -8,7 +8,8 @@ const { modelName, capacityGb } = Astro.props;
 if (!modelName || !Number.isInteger(capacityGb)) {
   throw new Error("PhoneReturnWatch requires modelName and capacityGb");
 }
-const quotes = currentOffers(catalog, modelName, capacityGb, getBuildNow().getTime());
+const now = getBuildNow().getTime();
+const quotes = currentOffers(catalog, modelName, capacityGb, now);
 const admission = row => row.total && !row.expired && !row.stale && row.stock !== "sold-out";
 const online = quotes.filter(row => row.channel === "online");
 const current = online.filter(admission).sort((a, b) => a.total!.switchYen - b.total!.switchYen);
@@ -16,20 +17,8 @@ const pending = online.filter(row => !admission(row));
 const stores = quotes.filter(row => row.channel === "store");
 const best = current[0];
 const checked = quotes.map(row => row.observedAt).sort((a, b) => Date.parse(a) - Date.parse(b)).at(-1);
-const timeline = new Map();
-for (const row of catalog.observations) {
-  const total = priceBreakdown(row);
-  if (!total || row.device !== modelName || row.capacityGb !== capacityGb || row.channel !== "online") continue;
-  const entries = timeline.get(row.offerId) ?? [];
-  if (entries.length < 2 || entries.at(-1).total.switchYen !== total.switchYen) {
-    entries.push({ ...row, total });
-  } else {
-    entries[entries.length - 1] = { ...row, total };
-  }
-  timeline.set(row.offerId, entries);
-}
-const history = [...timeline.values()].filter(entries => entries.length > 1)
-  .flat().sort((a, b) => Date.parse(a.observedAt) - Date.parse(b.observedAt)).slice(-16);
+const changes = priceHistory(catalog, modelName, capacityGb, now);
+const history = changes.slice(-16).map(row => ({ ...row, total: priceBreakdown(row)! }));
 const high = Math.max(1, ...history.map(row => row.total.switchYen));
 const yen = (n: number) => n.toLocaleString("ja-JP") + "円";
 const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", {
@@ -43,8 +32,8 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
       <p class="watch-date">最終調査 <time datetime={checked}>{checked && date(checked)}（日本時間）</time></p>
       <h2 id="return-watch-title">次は他社へ。2年返却でいくら払う？</h2>
       {best && <div data-watch-current>
-        <p class="watch-result">確認できたオンラインの中で最も低い総額<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
-        <p>端末代、返却時費用、契約事務手数料などの合計です。回線料は別。期限内の返却と査定通過を前提に、次の端末代は含めません。</p>
+        <p class="watch-result">確認できたオンライン販売先で負担が小さい例<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
+        <p>確認済みのオンライン販売先で、期限内に返して査定を通過した場合の端末関連費用です。回線料と次の端末代は別です。ドコモの直接販売と量販店は価格を確認中です。</p>
         <p class="watch-rating">すまラボの買い時判定 <strong>{priceRating(best.total!.switchYen, best.conditions)}</strong></p>
       </div>}
       <p data-watch-hold hidden={Boolean(best)}>現在、費用と適用条件がそろったオンライン案件を確認中です。</p>
@@ -54,21 +43,21 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   <slot name="summary" />
 
   <h2 id="return-comparison">全国オンラインの価格比較</h2>
-  <p data-watch-current>条件付きポイントは支払額から引いていません。</p>
+  <p data-watch-current>「返却までの端末代」は、返却で残りの分割代金が免除される場合に支払う端末代です。返却料・契約料・補償・条件付きポイントは別に扱います。</p>
   {current.length > 0 && <table class="watch-table" role="table" data-watch-current>
     <caption class="watch-sr">確認済みのオンライン価格を次回他社への乗り換え時の総額順に表示</caption>
     <thead role="rowgroup"><tr role="row">
       <th scope="col" role="columnheader">販売先</th>
-      <th scope="col" role="columnheader">広告表示</th>
-      <th scope="col" role="columnheader">同じ会社で買い替え</th>
+      <th scope="col" role="columnheader">返却までの端末代</th>
+      <th scope="col" role="columnheader">指定の買い替えあり</th>
       <th scope="col" role="columnheader">次は他社へ</th>
       <th scope="col" role="columnheader">返却料／契約料</th>
     </tr></thead>
     <tbody role="rowgroup">
       {current.map(row => <tr role="row" data-watch-date={row.observedAt} data-watch-deadline={row.deadline}>
         <th scope="row" role="rowheader"><a href={row.sources[0].url}>{row.carrier}</a></th>
-        <td role="cell"><span class="watch-mobile" aria-hidden="true">広告表示</span>{yen(row.total!.advertisedYen)}{row.adNote && <small>{row.adNote}</small>}</td>
-        <td role="cell"><span class="watch-mobile" aria-hidden="true">同じ会社で買い替え</span>{yen(row.total!.sameYen)}</td>
+        <td role="cell"><span class="watch-mobile" aria-hidden="true">返却までの端末代</span>{yen(row.total!.retainedInstallmentsYen)}</td>
+        <td role="cell"><span class="watch-mobile" aria-hidden="true">指定の買い替えあり</span>{yen(row.total!.sameYen)}</td>
         <td role="cell"><span class="watch-mobile" aria-hidden="true">次は他社へ</span><strong>{yen(row.total!.switchYen)}</strong></td>
         <td role="cell"><span class="watch-mobile" aria-hidden="true">返却料／契約料</span><span class="watch-fee">{yen(row.prices!.returnFeeYen)}</span> ／ <wbr/><span class="watch-fee">{yen(row.prices!.adminYen)}</span></td>
       </tr>)}
@@ -78,7 +67,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
     {pending.map(row => <li><strong>{row.carrier}</strong> {row.expired ? "掲載期間終了。" : row.stale ? "確認から2日以上経過。" : row.stock === "sold-out" ? "在庫なし。" : "確認中。"} {row.note} <a href={row.sources[0].url}>公式情報</a></li>)}
   </ul>}
 
-  <h2>広告表示から総額までの内訳</h2>
+  <h2>返却までの端末代から総額まで</h2>
   {best && <div class="watch-formula" data-watch-current aria-label="確認できた最小の総額の内訳">
     <div><small>返却までの端末代</small><strong>{yen(best.prices!.retainedInstallmentsYen)}</strong></div>
     <span aria-hidden="true">＋</span>
@@ -90,17 +79,23 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
     <span aria-hidden="true">＝</span>
     <div><small>次は他社へ</small><strong>{yen(best.total!.switchYen)}</strong></div>
   </div>}
-  <p>端末の値引きは分割額に反映済みです。必須の有料オプション・補償を足し、確実な現金還元がある場合に引きます。ポイント、次回の端末代、査定で発生する追加負担は別に確認します。</p>
+  <p>端末値引きは分割額に反映済みです。合計には、選んだ返却方式で必須のオプションや補償を含め、条件を満たせば受け取れる現金値引き・還元がある場合は差し引きます。任意の補償、条件付きポイント、査定による追加負担は別です。</p>
 
   <h2>キャリア別の条件</h2>
   <div class="watch-carriers" data-watch-current>
     {current.map(row => <article>
       <h3>{row.carrier}</h3>
-      <p>通常 {yen(row.total!.listYen)} ／ MNP値引き {yen(row.total!.mnpDiscountYen)}</p>
+      <p>乗り換え値引き前 {yen(row.total!.listYen)} ／ MNP値引き {yen(row.total!.mnpDiscountYen)}</p>
+      <p><strong>返却までの端末代 {yen(row.total!.retainedInstallmentsYen)}</strong>{row.installmentNote && <small> {row.installmentNote}</small>}</p>
+      <p>端末代 {yen(row.total!.retainedInstallmentsYen)} ＋ 返却料 {yen(row.prices!.returnFeeYen)} ＋ 契約料 {yen(row.prices!.adminYen)}
+        {(row.prices!.optionsYen + row.prices!.insuranceYen) > 0 && <> ＋ 必須費用 {yen(row.prices!.optionsYen + row.prices!.insuranceYen)}</>}
+        {row.prices!.cashbackYen > 0 && <> − 確実な現金還元 {yen(row.prices!.cashbackYen)}</>}
+        {' ＝ '}<strong>{yen(row.total!.switchYen)}</strong>。{row.prices!.sameCarrierWaiverYen > 0 && <>指定の買い替えで {yen(row.prices!.sameCarrierWaiverYen)} 免除、合計 <strong>{yen(row.total!.sameYen)}</strong>。</>}
+      </p>
       <dl>
         <dt>申込条件</dt><dd>{row.plan}</dd>
         <dt>返却</dt><dd>{row.returnTiming}</dd>
-        <dt>次も同じ会社</dt><dd>{row.sameCarrierCondition}</dd>
+        <dt>指定の買い替え</dt><dd>{row.sameCarrierCondition}</dd>
         <dt>povoから</dt><dd>{row.povo ?? "条件を確認中"}</dd>
         {row.prices!.points > 0 && <><dt>条件付きポイント</dt><dd>{row.prices!.points.toLocaleString("ja-JP")}pt。条件は公式サイト参照。</dd></>}
         <dt>在庫</dt><dd>{row.stock === "available" ? row.note : "色・在庫の状況は申込前に要確認。"}</dd>
@@ -110,7 +105,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   </div>
 
   <h2 id="return-price-history">価格推移</h2>
-  <p>同じ販売経路で2回以上確認できた、次は他社へ移る場合の端末関連総額です。発売前の公式発表と主な変動を、最大16件表示します。</p>
+  <p>次は他社へ移る場合の端末関連総額です。販売先ごとに確認できた最初の金額と、金額が変わった日を載せています。{changes.length > history.length ? "直近" : "表示は"}{history.length}件です。</p>
   {history.length > 0 ? <ul class="watch-history">
     {history.map(row => <li>
       <a href={row.sources[0].url}>{row.carrier} <time datetime={row.observedAt}>{date(row.observedAt, true)}</time></a>
