@@ -41,6 +41,7 @@ interface Props {
 
 const { article, previousArticle, nextArticle, headings = [], renewal = false } = Astro.props;
 const isCampaignGuide = article.slug === "mobile-plan-cost-comparison";
+const isMnpGuide = article.slug === "mnp-smartphone-price-comparison";
 
 // 目次は h2 のみ・2 個以上あるときだけ出す（v3: モバイルは折りたたみ、PCは開いた状態）
 const tocHeadings = headings.filter((h) => h.depth === 2);
@@ -94,10 +95,11 @@ const breadcrumbSchema = buildBreadcrumbSchema([
 >
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <article class:list={["article-shell", `article-shell--${article.type}`, {"article-shell--renewal":renewal}]}>
+  <article class:list={["article-shell", `article-shell--${article.type}`, {"article-shell--renewal":renewal, "article-shell--mnp":isMnpGuide}]}>
     {
       article.hasAffiliate && (
         <p class="ad-disclosure" role="note">
+          {isMnpGuide && <strong>PR　</strong>}
           本記事は広告（アフィリエイトリンク）を含みます。<a href="/disclosure/">広告掲載の方針</a>
         </p>
       )
@@ -110,6 +112,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       </div>
       <h1 data-pagefind-weight="10">{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : article.title}</h1>
       <p data-pagefind-ignore="all">{article.description}</p>
+      {isMnpGuide && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#mnp-prices-title">端末価格を比べる</a></nav>}
       {isCampaignGuide && <nav class="campaign-page-links" aria-label="記事内の案内" data-pagefind-ignore="all"><a href="#mobile-campaigns">キャンペーンを比べる</a><a href="#plan-diagnosis">3問で料金を見直す</a></nav>}
       {
         !renewal && (article.thumbnail ? (
@@ -369,6 +372,20 @@ const breadcrumbSchema = buildBreadcrumbSchema([
 
   .article-shell--revenue {
     width: min(960px, calc(100% - 32px));
+  }
+
+  .article-shell--mnp { max-width: 1150px; }
+  .article-shell--mnp .article-thumbnail { object-position: 68% center; }
+  @media (min-width: 830px) {
+    .article-shell--mnp .article-header {
+      display: grid; grid-template-columns: 1fr minmax(0, .88fr); align-items: center;
+      gap: .65rem 2rem; padding: 1.25rem 0;
+    }
+    .article-shell--mnp .article-header > :not(img) { grid-column: 1; margin-top: 0; }
+    .article-shell--mnp .article-header > img { grid-column: 2; grid-row: 1 / span 4; margin: 0; aspect-ratio: 4 / 3; }
+  }
+  @media (max-width: 829px) {
+    .article-shell--mnp .article-thumbnail { margin-top: .9rem; }
   }
 
   .meta-row {

@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "rows": [
+    {
+      "id": "uq-basio-active3-64",
+      "carrier": "uq",
+      "model": "BASIO active3",
+      "storage": "64GB",
+      "normalYen": 49800,
+      "mnpYen": 27800,
+      "real": {
+        "yen": 47,
+        "installments": 24,
+        "return": "購入後13〜25カ月目までに回収・査定。初回3円、2〜23回目は各2円。破損等で最大22,000円の負担または特典対象外。",
+        "plan": "対象プラン・増量オプションⅡ・スマホトクするプログラム"
+      },
+      "plan": "コミコミプランバリューまたはトクトクプラン2",
+      "option": "増量オプションⅡ（月550円。無料期間は適用条件あり）",
+      "eligibility": "他社から番号を引き継ぎ、端末を同時購入。au・povoからの移行はこの価格の対象外。",
+      "period": "終了日未公表",
+      "endsAt": null,
+      "officialUrl": "https://shop.uqmobile.jp/detail/basio_active3/",
+      "termsUrl": "https://shop.uqmobile.jp/shop/otokuwari/",
+      "specs": {
+        "display": "約6.1インチ",
+        "weight": "約188g",
+        "feature": "通話用の物理ボタン"
+      },
+      "specUrl": "https://www.uqwimax.jp/mobile/products/sp/basio_active3/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T02:23:09.579Z"
+    },
+    {
+      "id": "ymobile-aquos-wish6-128",
+      "carrier": "ymobile",
+      "model": "AQUOS wish6",
+      "storage": "128GB",
+      "normalYen": 46224,
+      "mnpYen": 29664,
+      "real": {
+        "yen": 24,
+        "installments": 48,
+        "return": "25カ月目に特典を申し込み、翌月末までに回収・査定。初回〜24回目は各1円。返却特典なしの48回払いの支払総額は35,184円です。査定条件により22,000円の負担が生じる場合があります。",
+        "plan": "シンプル3 M/L・新トクするサポート（A）"
+      },
+      "plan": "シンプル3 M/L（Sの一括価格は33,264円）",
+      "option": "一括価格に必須の有料オプションなし",
+      "eligibility": "公式オンラインストアで対象の他社から番号を引き継ぐ。ソフトバンク・LINEMO・ソフトバンク回線の格安SIMからの移行は掲載価格の比較対象外。",
+      "period": "終了日未公表",
+      "endsAt": null,
+      "officialUrl": "https://order.ymobile.jp/store/CHDO0001/entry/wish6/plan?md=wish6&contract=c02",
+      "termsUrl": "https://www.ymobile.jp/lineup/tokusuru-support/",
+      "specs": {
+        "display": "約6.6インチ",
+        "weight": "約189g",
+        "feature": "バッテリー5,000mAh"
+      },
+      "specUrl": "https://www.ymobile.jp/lineup/smartphone/wish6/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T02:23:09.579Z"
+    },
+    {
+      "id": "iijmio-nothing-phone-4b-128",
+      "carrier": "iijmio",
+      "model": "Nothing Phone (4b)",
+      "storage": "128GB",
+      "normalYen": 59800,
+      "mnpYen": 49800,
+      "real": null,
+      "plan": "ギガプランの音声SIMまたは音声eSIM",
+      "option": "掲載価格に必須の有料オプションなし",
+      "eligibility": "公式Webで他社から番号を引き継ぎ、対象端末をセットで購入。契約者IDごとに対象端末1台まで。申込月を含む過去12カ月に端末特価・のりかえ価格を申し込んだ人は対象外。",
+      "period": "2026年11月5日〜11月30日21:59",
+      "endsAt": "2026-11-30T21:59:59+09:00",
+      "officialUrl": "https://www.iijmio.jp/device/",
+      "termsUrl": "https://www.iijmio.jp/info/iij/1793240285.html",
+      "specs": {
+        "display": "6.77インチ・有機EL",
+        "weight": "約210g",
+        "feature": "バッテリー5,200mAh"
+      },
+      "specUrl": "https://jp.nothing.tech/products/phone-4b",
+      "status": "verified",
+      "checkedAt": "2026-11-28T02:23:09.579Z"
+    },
+    {
+      "id": "iijmio-oppo-reno16-256",
+      "carrier": "iijmio",
+      "model": "OPPO Reno16 5G",
+      "storage": "256GB",
+      "normalYen": 89800,
+      "mnpYen": 59800,
+      "real": null,
+      "plan": "ギガプランの音声SIMまたは音声eSIM",
+      "option": "掲載価格に必須の有料オプションなし",
+      "eligibility": "公式Webで他社から番号を引き継ぎ、対象端末をセットで購入。契約者IDごとに対象端末1台まで。申込月を含む過去12カ月に端末特価・のりかえ価格を申し込んだ人は対象外。",
+      "period": "2026年11月5日〜11月30日21:59",
+      "endsAt": "2026-11-30T21:59:59+09:00",
+      "officialUrl": "https://www.iijmio.jp/device/",
+      "termsUrl": "https://www.iijmio.jp/info/iij/1793240285.html",
+      "specs": {
+        "display": "約6.3インチ",
+        "weight": "約193g",
+        "feature": "eSIM対応"
+      },
+      "specUrl": "https://www.oppo.com/jp/smartphones/series-reno/reno16/specs/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T02:23:09.579Z"
+    },
+    {
+      "id": "rakuten-galaxy-s26-256",
+      "carrier": "rakuten",
+      "model": "Galaxy S26",
+      "storage": "256GB",
+      "normalYen": 136800,
+      "mnpYen": 99900,
+      "real": null,
+      "plan": "楽天の標準音声プランまたはU-NEXT付きの音声プラン",
+      "option": "一括価格に必須の有料オプションなし",
+      "eligibility": "楽天会員が他社から番号を引き継ぎ、対象プランの申込と同時に一括で購入。特価は1人1点まで。",
+      "period": "終了日未定（端末の対象状況は公式参照）",
+      "endsAt": null,
+      "officialUrl": "https://network.mobile.rakuten.co.jp/product/smartphone/samsung-galaxy-s26/",
+      "termsUrl": "https://network.mobile.rakuten.co.jp/campaign/android-sale/",
+      "specs": {
+        "display": "約6.3インチ・有機EL",
+        "weight": "約167g",
+        "feature": "バッテリー4,300mAh"
+      },
+      "specUrl": "https://network.mobile.rakuten.co.jp/product/smartphone/samsung-galaxy-s26/#spec",
+      "status": "verified",
+      "checkedAt": "2026-11-28T02:23:09.579Z"
+    },
+    {
+      "id": "ahamo-iphone16-128",
+      "carrier": "ahamo",
+      "model": "iPhone 16",
+      "storage": "128GB",
+      "normalYen": 166210,
+      "mnpYen": 133353,
+      "real": {
+        "yen": 22033,
+        "installments": 24,
+        "return": "23カ月目に端末を返却。分割支払分33円と利用料22,000円の合計。対象機種への買い替えによる免除は含みません。破損等で別途最大22,000円の負担または特典対象外になる場合があります。",
+        "plan": "ahamo・いつでもカエドキプログラム。dポイントクラブへ加入し、返却まで継続",
+        "url": "https://faq.ahamo.com/faq/show/4023?site_domain=default"
+      },
+      "plan": "ahamo",
+      "option": "JALモバイルオプションの同時申込は対象外",
+      "eligibility": "他社から番号を引き継ぎ、ahamo公式で端末を同時購入。5G WELCOME割の対象。過去1年以内に乗り換え向け端末割引（dポイント還元を含む）を適用済みの場合は対象外。",
+      "period": "端末値引きの終了日未公表",
+      "endsAt": null,
+      "officialUrl": "https://ahamo.com/products/iphone/iphone-16/",
+      "termsUrl": "https://ahamo.com/special/lp/5g-welcome_wari.html",
+      "specs": {
+        "display": "6.1インチ・有機EL",
+        "weight": "170g",
+        "feature": "ビデオ再生 最大22時間（Apple公称）"
+      },
+      "specUrl": "https://www.apple.com/jp/iphone-16/specs/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T02:23:09.579Z",
+      "photo": {
+        "src": "/images/articles/mnp-smartphone-price-comparison/iphone-16-back.webp",
+        "alt": "黒いiPhone 16の背面。店頭の展示端末の参考写真",
+        "credit": "Kyu3a",
+        "source": "https://commons.wikimedia.org/wiki/File:Back_of_iPhone_16.jpg",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    }
+  ]
+}
