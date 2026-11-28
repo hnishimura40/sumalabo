@@ -35,5 +35,6 @@ const renewal=siteConfig.renewalArticleLayout && /data-renewal-kind=|<AiArticleV
   renewal={renewal}
 >
   <Content />
-  {!renewal && <ArticleAffiliatePlacements slug={article.data.slug} />}
+  {/* 広告枠はサイト内検索の索引から外す（display:contents で表示は従来どおり） */}
+  {!renewal && <div data-pagefind-ignore="all" style="display:contents"><ArticleAffiliatePlacements slug={article.data.slug} /></div>}
 </ArticleLayout>

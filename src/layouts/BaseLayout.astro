@@ -4,6 +4,7 @@ import { siteConfig } from "../config/site";
 import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 import DrainageTracking from "../components/DrainageTracking.astro";
 import ForceRefresh from "../components/ForceRefresh.astro";
+import SiteSearch from "../components/SiteSearch.astro";
 import { BUILD_ID } from "../lib/build-id";
 
 interface Props {
@@ -121,6 +122,7 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
           <a href="/categories/smartphone/">スマホ選び</a>
           <a href="/categories/gadgets/">周辺機器</a>
         </nav>
+        <SiteSearch />
         <button id="theme-toggle" class="theme-toggle" type="button" aria-label="ライト/ダーク切り替え">
           <span class="theme-toggle-icon" aria-hidden="true"></span>
         </button>

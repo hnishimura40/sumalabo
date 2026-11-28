@@ -1,0 +1,330 @@
+---
+// サイト内検索の結果ページ（2026-11-28）。
+// /pagefind/ の静的索引をブラウザ内で引く（サーバー・外部サービスなし）。
+// 索引の対象は記事のタイトルと本文だけ（ArticleLayout の data-pagefind-body）。
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../config/site";
+---
+
+<BaseLayout title="サイト内検索" description="すまラボの記事をキーワードで検索できます。" canonicalPath="/search/" noindex>
+  <section class="page-shell search-page">
+    <header class="search-header">
+      <p class="eyebrow">Search</p>
+      <h1>サイト内検索</h1>
+      {
+        siteConfig.siteSearch ? (
+          <form class="search-page-form" action="/search/" method="get" role="search" data-search-form>
+            <label class="search-page-label" for="search-page-input">キーワード</label>
+            <input
+              id="search-page-input"
+              type="search"
+              name="q"
+              placeholder="例: eSIM、乗り換え、モバイルバッテリー"
+              autocomplete="off"
+              enterkeyhint="search"
+            />
+            <button type="submit">検索</button>
+          </form>
+        ) : (
+          <p class="search-off">
+            サイト内検索は現在お休みしています。<a href="/articles/">記事一覧</a>から新しい順に探せます。
+          </p>
+        )
+      }
+    </header>
+
+    {
+      siteConfig.siteSearch && (
+        <div class="search-results" aria-live="polite">
+          <p class="search-status" data-search-status>
+            キーワードを入れて検索してください。記事のタイトルと本文から探します。
+          </p>
+          <ol class="search-list" data-search-list />
+          <button class="search-more" type="button" data-search-more hidden>
+            さらに表示
+          </button>
+          <p class="search-fallback">
+            見つからないときは<a href="/articles/">記事一覧（新しい順・カテゴリで絞り込み）</a>からも探せます。
+          </p>
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>
+
+{
+  siteConfig.siteSearch && (
+    <script is:inline type="module">
+      const form = document.querySelector("[data-search-form]");
+      const input = document.getElementById("search-page-input");
+      const statusEl = document.querySelector("[data-search-status]");
+      const list = document.querySelector("[data-search-list]");
+      const more = document.querySelector("[data-search-more]");
+      const PAGE = 10;
+      let pagefind = null;
+      let current = [];
+      let shown = 0;
+      let seq = 0;
+
+      const esc = (s) =>
+        String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      // Pagefind の抜粋は本文をエスケープ済みで <mark> だけを含む。念のため mark 以外のタグを落とす。
+      const safeExcerpt = (html) => String(html ?? "").replace(/<(?!\/?mark>)[^>]*>/g, "");
+
+      async function loadPagefind() {
+        if (pagefind) return pagefind;
+        const url = "/pagefind/pagefind.js";
+        pagefind = await import(url);
+        await pagefind.options({ excerptLength: 36 });
+        await pagefind.init();
+        return pagefind;
+      }
+
+      async function renderMore() {
+        const slice = current.slice(shown, shown + PAGE);
+        const mySeq = seq;
+        const data = await Promise.all(slice.map((r) => r.data()));
+        if (mySeq !== seq) return;
+        for (const d of data) {
+          const li = document.createElement("li");
+          li.className = "search-item";
+          const title = d.meta?.title || d.url;
+          const updated = d.meta?.updated;
+          li.innerHTML =
+            `<a class="search-item-link" href="${esc(d.url)}">` +
+            `<span class="search-item-title">${esc(title)}</span>` +
+            `<span class="search-item-excerpt">${safeExcerpt(d.excerpt)}</span>` +
+            (updated ? `<time class="search-item-date" datetime="${esc(updated)}">更新日: ${esc(updated)}</time>` : "") +
+            `</a>`;
+          list.appendChild(li);
+        }
+        shown += slice.length;
+        more.hidden = shown >= current.length;
+      }
+
+      async function run(q) {
+        const mySeq = ++seq;
+        list.innerHTML = "";
+        more.hidden = true;
+        shown = 0;
+        current = [];
+        q = q.trim();
+        if (!q) {
+          statusEl.textContent = "キーワードを入れて検索してください。記事のタイトルと本文から探します。";
+          return;
+        }
+        statusEl.textContent = "検索しています…";
+        try {
+          const pf = await loadPagefind();
+          const res = await pf.search(q);
+          if (mySeq !== seq) return;
+          current = res.results;
+          statusEl.textContent = current.length
+            ? `「${q}」の検索結果: ${current.length}件`
+            : `「${q}」に一致する記事は見つかりませんでした。言葉を短くするか、別の言い方で試してください。`;
+          await renderMore();
+        } catch (e) {
+          if (mySeq !== seq) return;
+          statusEl.textContent = "検索を準備できませんでした。時間をおいて再度お試しください。";
+        }
+      }
+
+      more.addEventListener("click", () => renderMore());
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const q = input.value;
+        const url = new URL(location.href);
+        if (q.trim()) url.searchParams.set("q", q.trim());
+        else url.searchParams.delete("q");
+        history.replaceState(null, "", url);
+        const headerInput = document.getElementById("site-search-input");
+        if (headerInput) headerInput.value = q.trim();
+        run(q);
+      });
+
+      const initial = new URLSearchParams(location.search).get("q") || "";
+      input.value = initial;
+      if (initial.trim()) run(initial);
+      else input.focus();
+    </script>
+  )
+}
+
+<style>
+  .search-header {
+    margin-bottom: 24px;
+    padding: clamp(24px, 5vw, 38px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(135deg, var(--teal-tint), transparent 58%),
+      var(--bg-elev);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .eyebrow {
+    margin: 0 0 8px;
+    color: var(--teal);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0 0 18px;
+    color: var(--fg);
+    font-size: clamp(30px, 6vw, 46px);
+    line-height: 1.2;
+  }
+
+  .search-page-form {
+    display: flex;
+    gap: 8px;
+    max-width: 680px;
+  }
+
+  .search-page-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .search-page-form input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 48px;
+    padding: 0 16px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--bg-elev);
+    color: var(--fg);
+    font: inherit;
+    font-size: 16px;
+  }
+
+  .search-page-form input:focus {
+    border-color: var(--brand);
+    outline: none;
+  }
+
+  .search-page-form button {
+    flex: 0 0 auto;
+    height: 48px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: var(--teal);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .search-page-form button:hover {
+    background: var(--teal-deep);
+  }
+
+  .search-off {
+    margin: 0;
+    color: var(--fg-mid);
+    line-height: 1.8;
+  }
+
+  .search-status {
+    margin: 0 0 14px;
+    color: var(--fg-mid);
+    font-weight: 600;
+  }
+
+  .search-list {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  :global(.search-item-link) {
+    display: grid;
+    gap: 6px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+    color: var(--fg);
+    text-decoration: none;
+    transition:
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  :global(.search-item-link:hover) {
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-sm);
+  }
+
+  :global(.search-item-title) {
+    color: var(--fg);
+    font-family: var(--font-heading);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  :global(.search-item-excerpt) {
+    color: var(--fg-soft);
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  :global(.search-item-excerpt mark) {
+    padding: 0 2px;
+    border-radius: 3px;
+    background: var(--amber-tint);
+    color: var(--fg);
+    font-weight: 700;
+  }
+
+  :global(.search-item-date) {
+    color: var(--fg-faint);
+    font-family: var(--font-num);
+    font-size: 12px;
+  }
+
+  .search-more {
+    display: block;
+    margin: 18px auto 0;
+    padding: 10px 26px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--bg-elev);
+    color: var(--fg-mid);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .search-more[hidden] {
+    display: none;
+  }
+
+  .search-more:hover {
+    border-color: var(--brand);
+    color: var(--brand);
+  }
+
+  .search-fallback {
+    margin: 26px 0 0;
+    color: var(--fg-soft);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 720px) {
+    .search-page-form button {
+      padding: 0 16px;
+    }
+  }
+</style>

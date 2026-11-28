@@ -3,6 +3,7 @@ import BaseLayout from "./BaseLayout.astro";
 import ArticleNavigation from "../components/ArticleNavigation.astro";
 import PreviewVetoButton from "../components/PreviewVetoButton.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
+import SameCategoryLatest from "../components/SameCategoryLatest.astro";
 import MobileCampaignPresentation from "../components/article/MobileCampaignPresentation.astro";
 
 import { siteConfig } from "../config/site";
@@ -106,7 +107,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
         <span>{renewal && article.type!=="news" ? `毎月更新 ／ ${article.updated.slice(0,4)}年${Number(article.updated.slice(5,7))}月号` : article.category}</span>
         <time datetime={article.updated}>更新日: {article.updated}</time>
       </div>
-      <h1>{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : article.title}</h1>
+      <h1 data-pagefind-body>{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : article.title}</h1>
       <p>{article.description}</p>
       {isCampaignGuide && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#mobile-campaigns">キャンペーンを比べる</a><a href="#plan-diagnosis">3問で料金を見直す</a></nav>}
       {
@@ -144,7 +145,10 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       )
     }
 
-    <div class="article-content">
+    {/* サイト内検索の索引対象は h1 とこの本文だけ（data-pagefind-body）。それ以外は自動的に除外される */}
+    <div class="article-content" data-pagefind-body>
+      <span hidden data-pagefind-meta={`title:${article.title}`}></span>
+      <span hidden data-pagefind-meta={`updated:${article.updated}`}></span>
       <slot />
     </div>
     {isCampaignGuide && <MobileCampaignPresentation />}
@@ -192,6 +196,8 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     </div>
 
     <PreviewVetoButton slug={article.slug} />
+
+    <SameCategoryLatest slug={article.slug} category={article.category} />
 
     <ArticleNavigation previousArticle={previousArticle} nextArticle={nextArticle} />
   </article>

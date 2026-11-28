@@ -79,6 +79,7 @@
     "@astrojs/mdx": "latest",
     "@astrojs/sitemap": "^3.7.2",
     "astro": "latest",
+    "pagefind": "1.6.0",
     "sharp": "0.34.5"
   },
   "devDependencies": {
