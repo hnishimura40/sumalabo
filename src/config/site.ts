@@ -2,6 +2,9 @@ export const siteConfig = {
   renewalClickTracking: true, // false disables renewal-specific click events
   renewalArticleLayout: true, // false restores the classic outer article layout
   scrollNavigation: true, // false restores the previous navigation layout
+  // サイト内検索（Pagefind・2026-11-28）。false にすると、ヘッダーの検索入口・
+  // ビルド時の索引生成（/pagefind/）・/search/ の検索UIがまとめて止まる。
+  siteSearch: true,
   siteName: "すまラボ",
   siteDescription: "むずかしいスマホ・AI・ガジェットの話を、わかりやすく。",
   siteUrl: "https://sumalabo.com",

@@ -1,0 +1,164 @@
+---
+// 記事末尾「同じカテゴリの新着」（2026-11-28）。
+// 公開中の記事を新しい順に並べ、同じカテゴリの記事を最大4件出す（自分自身は除く）。
+// サイト内検索の索引からは除外する（data-pagefind-ignore）。
+import { getCollection } from "astro:content";
+import { getSortedVisibleArticles } from "../lib/articles";
+import { getCategoryByName } from "../lib/categories";
+
+interface Props {
+  slug: string;
+  category: string;
+  limit?: number;
+}
+
+const { slug, category, limit = 4 } = Astro.props;
+const categoryInfo = getCategoryByName(category);
+const items = getSortedVisibleArticles(await getCollection("articles"))
+  .filter((entry) => entry.data.category === category && entry.data.slug !== slug)
+  .slice(0, limit)
+  .map((entry) => entry.data);
+---
+
+{
+  items.length > 0 && (
+    <aside class="same-category" aria-labelledby="same-category-title" data-pagefind-ignore="all">
+      <h2 class="same-category__title" id="same-category-title">
+        同じカテゴリの新着<span>{category}</span>
+      </h2>
+      <ul class="same-category__list">
+        {items.map((item) => (
+          <li>
+            <a href={`/articles/${item.slug}/`} data-drainage="same-category" data-drainage-target={item.slug}>
+              {item.thumbnail && (
+                <img src={item.thumbnail} alt="" loading="lazy" decoding="async" width="160" height="90" />
+              )}
+              <span class="same-category__body">
+                <span class="same-category__name">{item.title}</span>
+                <time datetime={item.updated}>更新日: {item.updated}</time>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="same-category__more">
+        {categoryInfo && <a href={`/categories/${categoryInfo.slug}/`}>「{categoryInfo.name}」の記事をもっと見る</a>}
+        <a href="/articles/">記事一覧（新しい順）</a>
+      </p>
+    </aside>
+  )
+}
+
+<style>
+  .same-category {
+    margin: 36px 0 0;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elev);
+  }
+
+  .same-category__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    margin: 0 0 14px;
+    color: var(--fg);
+    font-size: 20px;
+    line-height: 1.4;
+  }
+
+  .same-category__title span {
+    color: var(--fg-faint);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .same-category__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .same-category__list a {
+    display: grid;
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+    height: 100%;
+    padding: 10px;
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius-md);
+    color: var(--fg);
+    text-decoration: none;
+    transition: border-color 150ms ease;
+  }
+
+  .same-category__list a:hover {
+    border-color: var(--line-strong);
+  }
+
+  .same-category__list img {
+    width: 104px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    background: var(--bg-sunk);
+  }
+
+  .same-category__body {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    grid-column: 2;
+  }
+
+  .same-category__name {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.55;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  .same-category__body time {
+    color: var(--fg-faint);
+    font-family: var(--font-num);
+    font-size: 12px;
+  }
+
+  .same-category__more {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 14px 0 0;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 720px) {
+    .same-category {
+      padding: 16px;
+    }
+
+    .same-category__list {
+      grid-template-columns: 1fr;
+    }
+
+    .same-category__list a {
+      grid-template-columns: 88px minmax(0, 1fr);
+    }
+
+    .same-category__list img {
+      width: 88px;
+    }
+  }
+</style>

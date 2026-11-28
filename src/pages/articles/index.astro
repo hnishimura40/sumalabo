@@ -5,12 +5,15 @@ import ArticleCard from "../../components/ArticleCard.astro";
 import StapleGuideCard from "../../components/StapleGuideCard.astro";
 import CategoryNav from "../../components/CategoryNav.astro";
 import { isListableArticle, sortArticles } from "../../lib/articles";
+import { categories, getCategoryByName } from "../../lib/categories";
 import { buildStapleCards, interleaveStaples } from "../../lib/staple-cards";
 
 const all = await getCollection("articles");
 const articles = all.filter(isListableArticle).sort(sortArticles);
 // D: 定番ガイド(収益記事)を N 件ごとに差し込む
 const items = interleaveStaples(articles, buildStapleCards(all));
+const countByCategory = new Map<string, number>();
+for (const a of articles) countByCategory.set(a.data.category, (countByCategory.get(a.data.category) ?? 0) + 1);
 ---
 
 <BaseLayout
@@ -60,13 +63,38 @@ const items = interleaveStaples(articles, buildStapleCards(all));
               公開準備ができた本番記事を掲載しています。選び方の土台記事から、具体的な比較記事まで順番に確認できます。
             </p>
           </div>
+          {/* カテゴリ絞り込み（JSなしではカテゴリページへのリンクとして動く） */}
+          <div class="article-filter" role="group" aria-label="カテゴリで絞り込む" data-article-filter>
+            <a class="article-filter__chip is-active" href="/articles/" data-filter="" aria-pressed="true">
+              すべて<span>{articles.length}</span>
+            </a>
+            {categories.map((category) => (
+              <a
+                class="article-filter__chip"
+                href={`/categories/${category.slug}/`}
+                data-filter={category.slug}
+                aria-pressed="false"
+              >
+                {category.name}
+                <span>{countByCategory.get(category.name) ?? 0}</span>
+              </a>
+            ))}
+          </div>
+          <p class="article-filter__status" data-filter-status aria-live="polite"></p>
           <div class="article-grid">
             {
               items.map((item) =>
                 item.kind === "article" ? (
-                  <ArticleCard article={item.entry.data} />
+                  <div
+                    class="article-grid__item"
+                    data-category={getCategoryByName(item.entry.data.category)?.slug ?? ""}
+                  >
+                    <ArticleCard article={item.entry.data} />
+                  </div>
                 ) : (
-                  <StapleGuideCard card={item.card} />
+                  <div class="article-grid__item" data-staple>
+                    <StapleGuideCard card={item.card} />
+                  </div>
                 ),
               )
             }
@@ -82,6 +110,139 @@ const items = interleaveStaples(articles, buildStapleCards(all));
     }
   </section>
 </BaseLayout>
+
+<script is:inline>
+  (function () {
+    var root = document.querySelector("[data-article-filter]");
+    if (!root) return;
+    var chips = Array.prototype.slice.call(root.querySelectorAll("[data-filter]"));
+    var items = Array.prototype.slice.call(document.querySelectorAll(".article-grid__item"));
+    var status = document.querySelector("[data-filter-status]");
+    function apply(slug, updateUrl) {
+      var shown = 0;
+      items.forEach(function (el) {
+        // 絞り込み中は定番ガイド枠（差し込みカード）を隠し、該当カテゴリの記事だけを新しい順に並べる
+        var visible = slug ? el.getAttribute("data-category") === slug : true;
+        el.hidden = !visible;
+        if (visible && !el.hasAttribute("data-staple")) shown++;
+      });
+      chips.forEach(function (chip) {
+        var on = chip.getAttribute("data-filter") === slug;
+        chip.classList.toggle("is-active", on);
+        chip.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      var active = chips.filter(function (c) { return c.getAttribute("data-filter") === slug; })[0];
+      // スマホ幅では横スクロールの外に隠れないよう、選択中のチップを見える位置へ
+      if (active && root.scrollWidth > root.clientWidth) {
+        root.scrollLeft = Math.max(0, active.offsetLeft - root.offsetLeft - 8);
+      }
+      if (status) status.textContent = slug && active ? active.firstChild.textContent.trim() + "の記事: " + shown + "件（新しい順）" : "";
+      if (updateUrl) {
+        try {
+          var url = new URL(location.href);
+          if (slug) url.searchParams.set("category", slug);
+          else url.searchParams.delete("category");
+          history.replaceState(null, "", url);
+        } catch (e) {}
+      }
+    }
+    chips.forEach(function (chip) {
+      chip.addEventListener("click", function (e) {
+        e.preventDefault();
+        apply(chip.getAttribute("data-filter"), true);
+      });
+    });
+    var initial = "";
+    try {
+      initial = new URLSearchParams(location.search).get("category") || "";
+    } catch (e) {}
+    if (chips.some(function (c) { return c.getAttribute("data-filter") === initial; })) apply(initial, false);
+  })();
+</script>
+
+<style>
+  .article-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 10px;
+  }
+
+  .article-filter__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--bg-elev);
+    color: var(--fg-mid);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      border-color 150ms ease,
+      background-color 150ms ease,
+      color 150ms ease;
+  }
+
+  .article-filter__chip span {
+    color: var(--fg-faint);
+    font-family: var(--font-num);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .article-filter__chip:hover {
+    border-color: var(--teal);
+    color: var(--fg);
+  }
+
+  .article-filter__chip.is-active {
+    border-color: var(--teal);
+    background: var(--teal);
+    color: #fff;
+  }
+
+  .article-filter__chip.is-active span {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .article-filter__status {
+    min-height: 1.6em;
+    margin: 0 0 12px;
+    color: var(--fg-soft);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .article-grid__item {
+    display: contents;
+  }
+
+  .article-grid__item[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 720px) {
+    .article-filter {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .article-filter::-webkit-scrollbar {
+      display: none;
+    }
+
+    .article-filter__chip {
+      flex: 0 0 auto;
+      font-size: 13px;
+      padding: 6px 12px;
+    }
+  }
+</style>
 
 <style>
   .list-header {

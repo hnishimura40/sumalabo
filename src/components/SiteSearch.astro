@@ -1,0 +1,222 @@
+---
+// ヘッダーのサイト内検索入口（2026-11-28）。
+// PC幅: 入力欄をそのまま表示。スマホ幅(<=720px): 虫めがねボタンだけを出し、押すと入力欄が開く。
+// 送信先は /search/?q=...（結果は Pagefind の静的索引をブラウザ内で検索。外部送信なし）。
+// siteConfig.siteSearch=false のときは何も出力しない。
+import { siteConfig } from "../config/site";
+---
+
+{
+  siteConfig.siteSearch && (
+    <div class="site-search" data-site-search>
+      <button
+        class="site-search-toggle"
+        type="button"
+        aria-label="サイト内検索を開く"
+        aria-expanded="false"
+        aria-controls="site-search-form"
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2" />
+          <path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+        </svg>
+      </button>
+      <form class="site-search-form" id="site-search-form" action="/search/" method="get" role="search">
+        <label class="site-search-label" for="site-search-input">サイト内検索</label>
+        <input
+          id="site-search-input"
+          class="site-search-input"
+          type="search"
+          name="q"
+          placeholder="記事を検索"
+          autocomplete="off"
+          enterkeyhint="search"
+          required
+        />
+        <button class="site-search-submit" type="submit" aria-label="検索する">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+            <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2" />
+            <path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  )
+}
+
+{
+  siteConfig.siteSearch && (
+    <script is:inline>
+      (function () {
+        var root = document.querySelector("[data-site-search]");
+        if (!root) return;
+        var toggle = root.querySelector(".site-search-toggle");
+        var input = root.querySelector(".site-search-input");
+        function setOpen(open) {
+          root.classList.toggle("is-open", open);
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+          toggle.setAttribute("aria-label", open ? "サイト内検索を閉じる" : "サイト内検索を開く");
+          if (open) input.focus();
+        }
+        toggle.addEventListener("click", function () {
+          setOpen(!root.classList.contains("is-open"));
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && root.classList.contains("is-open")) {
+            setOpen(false);
+            toggle.focus();
+          }
+        });
+        // 検索ページでは現在の語を入れておく
+        try {
+          var q = new URLSearchParams(location.search).get("q");
+          if (q && location.pathname === "/search/") input.value = q;
+        } catch (e) {}
+      })();
+    </script>
+  )
+}
+
+<style is:global>
+  .site-search {
+    flex: 0 0 auto;
+    position: relative;
+  }
+
+  .site-search-toggle {
+    display: none;
+  }
+
+  .site-search-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .site-search-form {
+    display: flex;
+    align-items: center;
+    width: 190px;
+    height: 38px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--bg-elev);
+    transition: border-color 150ms ease;
+  }
+
+  .site-search-form:focus-within {
+    border-color: var(--brand);
+  }
+
+  .site-search-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    padding: 0 4px 0 14px;
+    border: 0;
+    background: transparent;
+    color: var(--fg);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .site-search-input::placeholder {
+    color: var(--fg-faint);
+  }
+
+  .site-search-input::-webkit-search-cancel-button {
+    display: none;
+  }
+
+  .site-search-submit,
+  .site-search-toggle {
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    color: var(--fg-mid);
+    cursor: pointer;
+  }
+
+  .site-search-submit {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    margin-right: 1px;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .site-search-submit:hover {
+    color: var(--brand);
+  }
+
+  /* 紙面レイアウト（renewal-paper）の記事: 1行目の右側にトグルと並べる */
+  .renewal-paper .header-inner:has(.site-search) {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+  .renewal-paper .site-search {
+    grid-row: 1;
+    grid-column: 2;
+    align-self: center;
+  }
+  .renewal-paper .header-inner:has(.site-search) .theme-toggle {
+    grid-column: 3;
+  }
+
+  @media (max-width: 960px) and (min-width: 721px) {
+    .site-search-form {
+      width: 150px;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .site-search {
+      position: absolute;
+      top: 10px;
+      right: 58px;
+    }
+
+    .header-inner:has(.site-search) .brand {
+      padding-right: 92px;
+    }
+
+    .site-search-toggle {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      border: 1.5px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--bg-elev);
+    }
+
+    .site-search.is-open .site-search-toggle {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .site-search-form {
+      display: none;
+    }
+
+    .site-search.is-open .site-search-form {
+      display: flex;
+      position: fixed;
+      top: var(--site-search-top, 58px);
+      left: 16px;
+      right: 16px;
+      width: auto;
+      height: 44px;
+      box-shadow: var(--shadow-lg);
+      z-index: 30;
+    }
+
+    .site-search.is-open .site-search-input {
+      font-size: 16px; /* iOS のフォーカス時ズームを防ぐ */
+    }
+  }
+</style>
