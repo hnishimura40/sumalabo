@@ -29,6 +29,10 @@ function words(...strings) {
   return strings.every(s => typeof s === "string" && s.trim() && !forbidden.test(s));
 }
 
+export function isDeviceOfferEnded({ status, endsAt }, now) {
+  return status === "ended" || Boolean(endsAt && Date.parse(endsAt) <= now);
+}
+
 export function validateCatalog(catalog) {
   if (catalog?.schemaVersion !== 1 || !Array.isArray(catalog.rows) || !catalog.rows.length)
     throw Error("価格データがありません");

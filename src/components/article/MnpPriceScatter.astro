@@ -125,7 +125,7 @@ const { points } = Astro.props;
     function refresh() {
       const now = Date.now();
       const included = new Map([...parent.querySelectorAll<HTMLElement>("[data-mnp-id]")]
-        .filter(row => !row.hidden && row.dataset.state === "verified" && !row.classList.contains("mnp-expired"))
+        .filter(row => !row.hidden && row.dataset.state === "verified")
         .map(row => [row.dataset.mnpId, now - Date.parse(row.dataset.checked!) >= 48 * 60 * 60 * 1000]));
       const axis = metric.value as keyof typeof metrics;
       const { step, unit } = metrics[axis];

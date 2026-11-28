@@ -2,7 +2,7 @@
 // listStaple:true の収益記事を、実記事データ(サムネ・更新日)で肉付けし、
 // 記事一覧に N 件ごとに 1 枚差し込むための配列を作る。
 import type { CollectionEntry } from "astro:content";
-import { getListStapleTargets, relatedGuideSettings } from "./related-guides";
+import { getListStapleTargets, relatedGuideSettings, type GuideTarget } from "./related-guides";
 
 export interface StapleCard {
   slug: string;
@@ -17,8 +17,11 @@ export const listInsertEveryN = relatedGuideSettings.listInsertEveryN;
 export const listLabel = relatedGuideSettings.listLabel;
 
 /** listStaple な導線先を実記事データで肉付け（実在しない slug は除外）。 */
-export function buildStapleCards(all: CollectionEntry<"articles">[]): StapleCard[] {
-  return getListStapleTargets()
+export function buildStapleCards(
+  all: CollectionEntry<"articles">[],
+  targets: Pick<GuideTarget, "slug" | "label" | "blurb">[] = getListStapleTargets(),
+): StapleCard[] {
+  return targets
     .map((t) => {
       const entry = all.find((a) => a.data.slug === t.slug);
       if (!entry) return null;

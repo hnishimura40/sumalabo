@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { validateCatalog, reconcilePrices } from "../../src/lib/mnp-device-prices.mjs";
+import { isDeviceOfferEnded, validateCatalog, reconcilePrices } from "../../src/lib/mnp-device-prices.mjs";
 
 const catalog = JSON.parse(readFileSync(new URL("../../data/mnp-device-prices.json", import.meta.url), "utf8"));
 const base = { schemaVersion: 1, rows: [catalog.rows[0]] };
@@ -59,4 +59,12 @@ test("日付の戻りと無効な終了証拠を許可しない", () => {
   assert.equal(reconcile(bad).catalog.rows[0].status, "checking");
   const good = { ...bad, evidenceUrl: row.officialUrl };
   assert.equal(reconcile(good).catalog.rows[0].status, "ended");
+});
+
+test("IIJmioの2件は21時59分台を含み、22時ちょうどから終了扱い", () => {
+  const rows = catalog.rows.filter(row => row.carrier === "iijmio");
+  assert.equal(rows.length, 2);
+  const lastSecond = Date.parse("2026-11-30T21:59:59+09:00");
+  assert.equal(rows.filter(row => isDeviceOfferEnded(row, lastSecond)).length, 0);
+  assert.equal(rows.filter(row => isDeviceOfferEnded(row, lastSecond + 1000)).length, 2);
 });

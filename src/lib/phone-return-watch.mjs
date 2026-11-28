@@ -15,7 +15,7 @@ export function priceBreakdown(row) {
     insuranceYen, cashbackYen, sameCarrierWaiverYen, advertisedYen } = row.prices;
   // The installment figure already includes the applicable MNP discount.
   const switchYen = retainedInstallmentsYen + returnFeeYen + adminYen + optionsYen + insuranceYen - cashbackYen;
-  return { listYen, mnpDiscountYen, advertisedYen, sameYen: switchYen - sameCarrierWaiverYen, switchYen };
+  return { listYen, mnpDiscountYen, advertisedYen, retainedInstallmentsYen, sameYen: switchYen - sameCarrierWaiverYen, switchYen };
 }
 
 export function validateObservations(catalog) {
@@ -57,6 +57,18 @@ export function currentOffers(catalog, device, capacityGb, now = Date.now()) {
     expired: Boolean(row.deadline && Date.parse(row.deadline) <= now),
     stale: now - Date.parse(row.observedAt) >= 48 * 60 * 60 * 1000,
   }));
+}
+
+export function priceHistory(catalog, device, capacityGb, now) {
+  const last = new Map();
+  return catalog.observations.filter(row => {
+    if (row.device !== device || row.capacityGb !== capacityGb || row.channel !== "online"
+        || Date.parse(row.observedAt) > now || row.status !== "verified") return false;
+    const total = priceBreakdown(row).switchYen;
+    if (last.get(row.offerId) === total) return false;
+    last.set(row.offerId, total);
+    return true;
+  }).sort((a, b) => Date.parse(a.observedAt) - Date.parse(b.observedAt));
 }
 
 export function priceRating(yen, conditions = "standard") {

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { appendObservations, currentOffers, priceBreakdown, priceRating, validateObservations } from "../../src/lib/phone-return-watch.mjs";
+import { appendObservations, currentOffers, priceBreakdown, priceHistory, priceRating, validateObservations } from "../../src/lib/phone-return-watch.mjs";
 
 const data = JSON.parse(await readFile(new URL("../../data/phone-return-watch.json", import.meta.url)));
 const now = Date.parse("2026-11-28T13:00:00+09:00");
@@ -37,4 +37,17 @@ test("期限や鮮度を判定し、複雑な条件は買い時評価を抑え�
   assert.equal(later.expired, true);
   assert.equal(later.stale, true);
   assert.equal(priceBreakdown(entry("docomo-online")), null);
+});
+
+test("各社共通の端末代と、同額の再確認を省いた価格履歴", () => {
+  assert.deepEqual(rows.filter(row => row.total).map(row => row.total.retainedInstallmentsYen),
+    [22900, (2365 - 1264) * 24, 241230 - 196416, 5331 * 24]);
+  const history = priceHistory(data, "iPhone 18 Pro", 256, now);
+  assert.deepEqual(history.map(row => [row.offerId, priceBreakdown(row).switchYen]), [
+    ["softbank-online", 49610],
+    ["au-online", 48750],
+    ["ahamo-online", 66814],
+    ["softbank-online", 52274],
+    ["rakuten-online", 131244],
+  ]);
 });
