@@ -1,0 +1,175 @@
+---
+import catalog from "../../../data/phone-return-watch.json";
+import { currentOffers, priceBreakdown, priceRating } from "../../lib/phone-return-watch.mjs";
+import { getBuildNow } from "../../lib/articles";
+
+interface Props { device: string; capacityGb: number }
+const { device, capacityGb } = Astro.props;
+const quotes = currentOffers(catalog, device, capacityGb, getBuildNow().getTime());
+const admission = row => row.total && !row.expired && !row.stale && row.stock !== "sold-out";
+const online = quotes.filter(row => row.channel === "online");
+const current = online.filter(admission).sort((a, b) => a.total!.switchYen - b.total!.switchYen);
+const pending = online.filter(row => !admission(row));
+const stores = quotes.filter(row => row.channel === "store");
+const best = current[0];
+const checked = quotes.map(row => row.observedAt).sort().at(-1);
+const timeline = new Map();
+for (const row of catalog.observations) {
+  const total = priceBreakdown(row);
+  if (!total || row.device !== device || row.capacityGb !== capacityGb || row.channel !== "online") continue;
+  const entries = timeline.get(row.offerId) ?? [];
+  if (entries.length < 2 || entries.at(-1).total.switchYen !== total.switchYen) {
+    entries.push({ ...row, total });
+  } else {
+    entries[entries.length - 1] = { ...row, total };
+  }
+  timeline.set(row.offerId, entries);
+}
+const history = [...timeline.values()].filter(entries => entries.length > 1)
+  .flat().sort((a, b) => Date.parse(a.observedAt) - Date.parse(b.observedAt)).slice(-16);
+const high = Math.max(1, ...history.map(row => row.total.switchYen));
+const yen = (n: number) => n.toLocaleString("ja-JP") + "円";
+const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", {
+  timeZone: "Asia/Tokyo", dateStyle: short ? "short" : "medium", ...(short ? {} : { timeStyle: "short" }),
+}).format(new Date(value));
+---
+
+<section class="return-watch" aria-labelledby="return-watch-title" data-return-watch>
+  <div class="watch-lead">
+    <p class="watch-date">最終調査 <time datetime={checked}>{checked && date(checked)}（日本時間）</time></p>
+    <h2 id="return-watch-title">次は他社へ。2年返却でいくら払う？</h2>
+    {best && <div data-watch-current>
+      <p class="watch-result">確認できたオンラインの中で最も低いのは<strong>{best.carrier}の {yen(best.total!.switchYen)}</strong>です。</p>
+      <p>端末代、返却時費用、契約事務手数料などの合計です。回線料は別。期限内の返却と査定通過を前提に、次の端末代は含めません。</p>
+      <p class="watch-rating">すまラボの買い時判定 <strong>{priceRating(best.total!.switchYen, best.conditions)}</strong></p>
+    </div>}
+    <p data-watch-hold hidden={Boolean(best)}>現在、費用と適用条件がそろったオンライン案件を確認中です。</p>
+  </div>
+  <slot name="summary" />
+
+  <h2>全国オンラインの価格比較</h2>
+  {current.length > 0 && <table class="watch-table" role="table" data-watch-current>
+    <caption>確認済みの標準条件。条件付きポイントは支払額から引きません。</caption>
+    <thead role="rowgroup"><tr role="row">
+      <th scope="col" role="columnheader">販売先</th>
+      <th scope="col" role="columnheader">広告表示</th>
+      <th scope="col" role="columnheader">同じ会社で買い替え</th>
+      <th scope="col" role="columnheader">次は他社へ</th>
+      <th scope="col" role="columnheader">返却料／契約料</th>
+    </tr></thead>
+    <tbody role="rowgroup">
+      {current.map(row => <tr role="row" data-watch-date={row.observedAt} data-watch-deadline={row.deadline}>
+        <th scope="row" role="rowheader"><a href={row.sources[0].url}>{row.carrier}</a></th>
+        <td role="cell"><span class="watch-mobile" aria-hidden="true">広告表示</span>{yen(row.total!.advertisedYen)}{row.adNote && <small>{row.adNote}</small>}</td>
+        <td role="cell"><span class="watch-mobile" aria-hidden="true">同じ会社で買い替え</span>{yen(row.total!.sameYen)}</td>
+        <td role="cell"><span class="watch-mobile" aria-hidden="true">次は他社へ</span><strong>{yen(row.total!.switchYen)}</strong></td>
+        <td role="cell"><span class="watch-mobile" aria-hidden="true">返却料／契約料</span>{yen(row.prices!.returnFeeYen)} ／ {yen(row.prices!.adminYen)}</td>
+      </tr>)}
+    </tbody>
+  </table>}
+  {pending.length > 0 && <ul class="watch-pending">
+    {pending.map(row => <li><strong>{row.carrier}</strong> {row.expired ? "掲載期間終了。" : row.stale ? "確認から2日以上経過。" : row.stock === "sold-out" ? "在庫なし。" : "確認中。"} {row.note} <a href={row.sources[0].url}>公式情報</a></li>)}
+  </ul>}
+
+  <h2>広告表示から総額までの内訳</h2>
+  {best && <div class="watch-formula" data-watch-current aria-label="確認できた最小の総額の内訳">
+    <div><small>返却までの端末代</small><strong>{yen(best.prices!.retainedInstallmentsYen)}</strong></div>
+    <span aria-hidden="true">＋</span>
+    <div><small>返却時費用</small><strong>{yen(best.prices!.returnFeeYen)}</strong></div>
+    <span aria-hidden="true">＋</span>
+    <div><small>契約事務手数料</small><strong>{yen(best.prices!.adminYen)}</strong></div>
+    {(best.prices!.optionsYen + best.prices!.insuranceYen) > 0 && <><span aria-hidden="true">＋</span><div><small>必須のオプション・補償</small><strong>{yen(best.prices!.optionsYen + best.prices!.insuranceYen)}</strong></div></>}
+    {best.prices!.cashbackYen > 0 && <><span aria-hidden="true">−</span><div><small>確実な現金還元</small><strong>{yen(best.prices!.cashbackYen)}</strong></div></>}
+    <span aria-hidden="true">＝</span>
+    <div><small>次は他社へ</small><strong>{yen(best.total!.switchYen)}</strong></div>
+  </div>}
+  <p>端末の値引きは分割額に反映済みです。必須の有料オプション・補償を足し、確実な現金還元がある場合に引きます。ポイント、次回の端末代、査定で発生する追加負担は別に確認します。</p>
+
+  <h2>キャリア別の条件</h2>
+  <div class="watch-carriers" data-watch-current>
+    {current.map(row => <article>
+      <h3>{row.carrier}</h3>
+      <p>通常 {yen(row.total!.listYen)} ／ MNP値引き {yen(row.total!.mnpDiscountYen)}</p>
+      <dl>
+        <dt>申込条件</dt><dd>{row.plan}</dd>
+        <dt>返却</dt><dd>{row.returnTiming}</dd>
+        <dt>次も同じ会社</dt><dd>{row.sameCarrierCondition}</dd>
+        <dt>povoから</dt><dd>{row.povo ?? "条件を確認中"}</dd>
+        {row.prices!.points > 0 && <><dt>条件付きポイント</dt><dd>{row.prices!.points.toLocaleString("ja-JP")}pt。条件は公式サイト参照。</dd></>}
+        <dt>在庫</dt><dd>{row.stock === "available" ? row.note : "色・在庫の状況は申込前に要確認。"}</dd>
+      </dl>
+      <ul class="watch-sources">{row.sources.map(source => <li><a href={source.url}>{source.name}</a></li>)}</ul>
+    </article>)}
+  </div>
+
+  <h2>価格推移</h2>
+  <p>同じ販売経路で2回以上確認できた、次は他社へ移る場合の端末関連総額です。発売前の公式発表と主な変動を、最大16件表示します。</p>
+  {history.length > 0 ? <ul class="watch-history">
+    {history.map(row => <li>
+      <a href={row.sources[0].url}>{row.carrier} <time datetime={row.observedAt}>{date(row.observedAt, true)}</time></a>
+      <span class="watch-bar" aria-hidden="true"><span style={{ width: (100 * row.total.switchYen / high) + "%" }}></span></span>
+      <strong>{yen(row.total.switchYen)}</strong>
+    </li>)}
+  </ul> : <p>比較可能な確認日が増えた段階で価格推移を表示します。</p>}
+
+  <h2>量販店・地域限定の確認状況</h2>
+  <p>店舗と受付期限、容量、返却前後の支払いを確認できる案件を、この欄で扱います。オンラインの順位とは別です。</p>
+  <ul>{stores.map(row => <li><a href={row.sources[0].url}>{row.seller}</a> {admission(row) ? yen(row.total!.switchYen) : "確認中。"} {row.note}</li>)}</ul>
+</section>
+
+<script>
+  for (const section of document.querySelectorAll("[data-return-watch]")) {
+    const dates = [...section.querySelectorAll<HTMLElement>("[data-watch-date]")];
+    const current = section.querySelectorAll<HTMLElement>("[data-watch-current]");
+    const hold = section.querySelector<HTMLElement>("[data-watch-hold]")!;
+    function checkFreshness() {
+      const now = Date.now();
+      const needCheck = dates.length === 0 || dates.some(row =>
+        now - Date.parse(row.dataset.watchDate!) >= 48 * 60 * 60 * 1000
+        || Boolean(row.dataset.watchDeadline && now >= Date.parse(row.dataset.watchDeadline)));
+      for (const area of current) area.hidden = needCheck;
+      hold.hidden = !needCheck;
+    }
+    checkFreshness();
+    window.addEventListener("pageshow", checkFreshness);
+    window.setInterval(checkFreshness, 60_000);
+  }
+</script>
+
+<style>
+  .return-watch { color: var(--fg); }
+  .return-watch [hidden] { display: none !important; }
+  .watch-lead { padding: 1.25rem; border: 1px solid var(--line); border-radius: 14px; }
+  .watch-lead h2 { margin: .35rem 0 .7rem; }
+  .watch-lead p { margin: .4rem 0; }
+  .watch-date, .watch-sources, .watch-pending { font-size: .875rem; }
+  .watch-result strong { display: block; font-size: clamp(1.4rem, 4vw, 2rem); line-height: 1.4; }
+  .watch-rating { border-inline-start: 2px solid currentColor; padding-inline-start: .65rem; }
+  .return-watch table.watch-table { border-collapse: collapse; width: 100%; }
+  .return-watch table.watch-table :is(th,td) { background: transparent; color: var(--fg); padding: .65rem; border: 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  .watch-table caption { margin-bottom: .5rem; text-align: left; font-size: .875rem; }
+  .watch-table small, .watch-formula small { display: block; }
+  .watch-mobile { display: none; }
+  .watch-formula { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; }
+  .watch-formula div { padding: .55rem .75rem; border: 1px solid var(--line); border-radius: 8px; }
+  .watch-formula strong { font-size: 1.1rem; }
+  .watch-carriers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 265px), 1fr)); gap: 1rem; }
+  .watch-carriers article { border: 1px solid var(--line); border-radius: 10px; padding: 1rem; }
+  .watch-carriers h3 { margin: 0; }
+  .watch-carriers dt { font-weight: 700; margin-top: .35rem; }
+  .watch-carriers dd { margin: 0; }
+  .watch-history { list-style: none; padding: 0; }
+  .watch-history li { display: grid; grid-template-columns: minmax(7rem,12rem) minmax(2rem,1fr) auto; gap: .6rem; align-items: center; border-bottom: 1px solid var(--line); padding: .5rem 0; }
+  .watch-bar { display: block; }
+  .watch-bar span { display: block; height: .65rem; border: 1px solid currentColor; border-radius: 4px; }
+  @media (max-width: 610px) {
+    .return-watch table.watch-table, .watch-table tbody { display: block; }
+    .watch-table tbody tr { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); margin-bottom: .65rem; border: 1px solid var(--line); border-radius: 10px; }
+    .watch-table thead { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
+    .watch-table tbody th { grid-column: 1 / -1; }
+    .watch-mobile { display: block; font-size: .8rem; font-weight: 650; }
+    .watch-formula div { flex: 1 1 38%; }
+    .watch-formula > span { display: none; }
+    .watch-history li { grid-template-columns: minmax(7rem,1fr) minmax(1rem,.5fr) auto; gap: .3rem; font-size: .875rem; }
+  }
+</style>
