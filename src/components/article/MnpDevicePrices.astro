@@ -42,7 +42,7 @@ const points = activeRows.map(row => ({
     {lastChecked && <p>最終確認 <time datetime={lastChecked}>{time(lastChecked)}</time>（日本時間）</p>}
   </div>
   <div class="mnp-notes">
-    <p class="mnp-price-guide">「乗り換え値引き前」は、回線契約なしでも適用される端末の値下げを反映した価格です。「返却時の端末負担額」には、指定期限に返す条件で確認できた金額を掲載します。値がない機種は一括の列を確認してください。期間を過ぎた価格は一覧から外します。</p>
+    <p class="mnp-price-guide">手元に残すなら「乗り換え一括」、期限内に返すなら「返却時の端末負担額」を見ます。返却額の記載がない機種は一括の列へ。終了した価格は一覧から外しています。</p>
     <p data-mnp-scatter-link hidden><a href="#mnp-scatter-title">価格と性能の散布図へ</a></p>
   </div>
   <div class="mnp-filters" data-mnp-filters hidden>

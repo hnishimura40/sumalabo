@@ -68,6 +68,36 @@ test("旧Delphi型の専門語だけの30秒欄を不合格にする", () => {
   assert.ok(result.issues.some((item) => item.code === "subject_definition_missing"));
 });
 
+const naturalArticle = `
+<Summary30 title="乗り換える前に見るところ">
+  <ol>
+    <li data-summary-point="answer">今の機種を買い替える人は、申込前に対応機種を見ます。</li>
+    <li data-summary-point="subject">eSIMは、カードを挿さずスマホに通信契約を設定する仕組みです。</li>
+    <li data-summary-point="context">新しい機種では設定に必要な手順が短くなりました。</li>
+    <li data-summary-point="audience">番号を変えずに次のスマホへ引き継ぎたい人が対象です。</li>
+  </ol>
+</Summary30>
+<p data-reader-scope="relevant">新しいiPhoneに替えるときは、携帯会社の対応を先に見ます。</p>
+<p data-reader-scope="unaffected">同じスマホを使い続けるなら、今の設定で使えます。</p>
+`;
+
+test("固定ラベルがなくても、4つの要点と前半の読者条件があれば通る", () => {
+  const result = validatePlainLanguageArticle(naturalArticle);
+  assert.equal(result.ok, true, result.issues.map((item) => item.message).join("\n"));
+  assert.equal(result.usesMarkedSummary, true);
+  assert.equal(result.hasMarkedAudience, true);
+});
+
+test("マーカーだけの要点と記事後半の読者条件では通らない", () => {
+  const late = "設定の手順を読み進めます。".repeat(150);
+  const incomplete = naturalArticle
+    .replace('今の機種を買い替える人は、申込前に対応機種を見ます。', '<strong>結論</strong>')
+    .replace('<p data-reader-scope="unaffected">', late + '<p data-reader-scope="unaffected">');
+  const { issues } = validatePlainLanguageArticle(incomplete);
+  assert.ok(issues.some(({ code }) => code === "summary30_fields_missing"));
+  assert.ok(issues.some(({ code }) => code === "non_relevant_people_missing"));
+});
+
 test("読者翻訳設計の専門語を初出説明へ結び付ける", () => {
   const plan = `## 読者翻訳設計\n- IDE → プログラムを書くための作業ソフト\n- language server → 入力補完やエラーチェックを裏側で助ける仕組み`;
   const good = `プログラムを書くための作業ソフト（IDE）が新しくなりました。入力補完やエラーチェックを裏側で助ける仕組み（language server）も更新されました。`;

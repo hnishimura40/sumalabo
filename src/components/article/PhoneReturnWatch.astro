@@ -33,8 +33,8 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
       <div class="watch-lead-body">
         <p class="watch-date">最終調査 <time datetime={checked}>{checked && date(checked)}（日本時間）</time></p>
         {best && <div data-watch-current>
-          <p class="watch-result">確認できたオンライン販売先で負担が小さい例<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
-          <p>確認済みのオンライン販売先で、期限内に返して査定を通過した場合の端末関連費用です。回線料と次の端末代は別です。ドコモの直接販売と量販店は価格を確認中です。</p>
+          <p class="watch-result">次に他社へ移る場合、確認できた中で負担が小さかったのは<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
+          <p>期限内の返却と、端末の状態確認（査定）に通った場合の金額です。回線料と次に買う端末の代金は別。ドコモ直販と量販店は確認中です。</p>
           <p class="watch-rating">すまラボの買い時判定 <strong>{priceRating(best.total!.switchYen, best.conditions)}</strong></p>
         </div>}
         <p data-watch-hold hidden={Boolean(best)}>現在、費用と適用条件がそろったオンライン案件を確認中です。</p>
@@ -44,7 +44,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   </div>
 
   <h2 id="return-comparison">全国オンラインの価格比較</h2>
-  <p data-watch-current>「返却までの端末代」は、返却で残りの分割代金が免除される場合に支払う端末代です。返却料・契約料・補償・条件付きポイントは別に扱います。</p>
+  <p data-watch-current>「返却までの端末代」は、返すまでに払い終える分です。返却料や契約料、補償、条件付きポイントは端末代と分けています。</p>
   {current.length > 0 && <table class="watch-table" role="table" data-watch-current>
     <caption class="watch-sr">確認済みのオンライン価格を次回他社への乗り換え時の総額順に表示</caption>
     <thead role="rowgroup"><tr role="row">
