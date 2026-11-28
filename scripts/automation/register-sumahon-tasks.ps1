@@ -38,7 +38,7 @@ if ($Production) {
 $principal = New-ScheduledTaskPrincipal `
   -UserId $UserId `
   -LogonType Interactive `
-  -RunLevel LeastPrivilege
+  -RunLevel Limited
 
 $settings = New-ScheduledTaskSettingsSet `
   -AllowStartIfOnBatteries `
