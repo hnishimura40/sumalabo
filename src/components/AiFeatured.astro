@@ -2,7 +2,7 @@
 import AiServiceLogo from './AiServiceLogo.astro';
 import {featured} from '../data/ai-featured';
 import {capabilityLabels,capabilityNames,negativeEvidence} from '../data/ai-featured-guide';
-import {featuredPricingCheckedAt} from '../data/ai-featured-pricing';
+import {featuredPricingCheckedAt,featuredFxNote} from '../data/ai-featured-pricing';
 import AiStrengthStories from './AiStrengthStories.astro';
 import AiModelsAndBenchmarks from './AiModelsAndBenchmarks.astro';
 import AiTypeGuide from './AiTypeGuide.astro';
@@ -22,6 +22,7 @@ import {comparisonPlans,planCapabilities,planCapabilityAxes,planCapabilitiesChec
  </article>)}
  </div>
  <p class="featured-note">この6つは、すまラボが入口として取り上げるサービスです。掲載順は性能順位ではありません。選びどころは公式機能をもとにした編集上の整理です。主要6サービスの料金・無料枠は{featuredPricingCheckedAt}確認。無料枠には上限があり、有料価格は代表例です。通貨・税・契約条件は下の詳細へ。</p>
+ <p class="featured-note">{featuredFxNote}</p>
 </section>
 <AiTypeGuide />
 <AiStrengthStories />
