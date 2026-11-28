@@ -2,15 +2,29 @@
 // GA4 計測タグ（BaseLayout の </head> 直前で全ページに出力）。
 // 測定IDは siteConfig.gaMeasurementId で一元管理（CI ビルドでも確実に乗る）。
 // 環境変数 PUBLIC_GA_MEASUREMENT_ID を設定すればそちらが優先される。
+//
+// 本番ホスト（sumalabo.com）でだけ計測する。Cloudflare Pages のプレビュー
+// （*.sumalabo.pages.dev）やローカル確認のアクセスが GA4 に混ざり、
+// 2026-11 時点で全セッションの約7割を占めていたため。
+// 本番以外では gtag.js も読み込まず、window.gtag も定義しない
+// （DrainageTracking 側は typeof window.gtag === "function" で判定済み）。
 import { siteConfig } from "../config/site";
 
+const PRODUCTION_HOSTNAME = "sumalabo.com";
 const measurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || siteConfig.gaMeasurementId;
+const gtagSrc = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(measurementId || "");
 const configScript = measurementId
   ? `
-window.dataLayer = window.dataLayer || [];
-function gtag(){window.dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', ${JSON.stringify(measurementId)});
+if (location.hostname === ${JSON.stringify(PRODUCTION_HOSTNAME)}) {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function(){window.dataLayer.push(arguments);};
+  window.gtag('js', new Date());
+  window.gtag('config', ${JSON.stringify(measurementId)});
+  var gaScript = document.createElement('script');
+  gaScript.async = true;
+  gaScript.src = ${JSON.stringify(gtagSrc)};
+  document.head.appendChild(gaScript);
+}
 `
   : "";
 ---
@@ -18,7 +32,6 @@ gtag('config', ${JSON.stringify(measurementId)});
 {
   measurementId && (
     <>
-      <script async src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} />
       <script is:inline set:html={configScript} />
     </>
   )
