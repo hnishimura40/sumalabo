@@ -9,7 +9,7 @@
 3. 調査時の表示、掲載日時、機種、容量、販売経路、在庫、申込・維持条件、期限、返却料・事務手数料・必須費用を照合する。分割額の値引きは適用済みの値で保存する。条件付きポイントは支払額に入れない。取得不能は `unconfirmed`、公式に終了を確認したものは `ended` とし、理由と参照先を保存する。
 4. 調査結果を `logs/scout/phone-return-watch/reviewed.json` に `{ "observations": [...] }` で保存し、`node scripts/automation/phone-return-watch.mjs append <reviewed.json>` で検証する。1万円以上動いた行は別の公式根拠と確認理由を `recheckUrl` と `recheckReason` に記録する。合格した結果に `--apply` を付けると追記する。変更のない日も確認できた根拠と日時を蓄積する。
 5. 期限内・48時間以内の確認済み行を現在欄に表示する。順位は次回に他社へ移る場合の端末関連総額。回線料・条件付きポイント・査定追加費用・次の端末の価格は別に扱う。確認できない値をゼロとして扱わない。買い替え免除は公式条件を保存した同一キャリアのケースだけに反映する。
-6. 価格・条件の照合と計算監査、単体テスト、記事ゲート、秘密情報検査、ビルドを通す。表示変更がある場合は375pxとPCの明暗表示を確認する。対象を絞ったPRを作り、最新main・headのハッシュ・mergeableを確認してマージする。最新mainのクリーンcheckoutで `npm run deploy:production -- --slug=iphone-18-pro-return-price-watch --trigger=manual --run-mode=maintenance --output=<private-result.json>` を実行。HTTP 200・strict verify・HTML上の確認日時と掲載金額を照合し、公開できた履歴の日時とPRを非公開記録に残す。失敗時は公開済み扱いにせず次回も確認する。
+6. 価格・条件の照合と計算監査、単体テスト、記事ゲート、秘密情報検査、ビルドを通す。ビルドした記事の確認日時、現在欄の会社数と金額を調査結果と照合し、価格が確認できている日の空表示を検出する。表示変更がある場合は375pxとPCの明暗表示を確認する。対象を絞ったPRを作り、最新main・headのハッシュ・mergeableを確認してマージする。最新mainのクリーンcheckoutで `npm run deploy:production -- --slug=iphone-18-pro-return-price-watch --trigger=manual --run-mode=maintenance --output=<private-result.json>` を実行。HTTP 200・strict verify・HTML上の確認日時と掲載金額を照合し、公開できた履歴の日時とPRを非公開記録に残す。失敗時は公開済み扱いにせず次回も確認する。
 
 ## 毎朝8時の定期実行
 

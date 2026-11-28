@@ -3,9 +3,12 @@ import catalog from "../../../data/phone-return-watch.json";
 import { currentOffers, priceBreakdown, priceRating } from "../../lib/phone-return-watch.mjs";
 import { getBuildNow } from "../../lib/articles";
 
-interface Props { device: string; capacityGb: number }
-const { device, capacityGb } = Astro.props;
-const quotes = currentOffers(catalog, device, capacityGb, getBuildNow().getTime());
+interface Props { modelName: string; capacityGb: number }
+const { modelName, capacityGb } = Astro.props;
+if (!modelName || !Number.isInteger(capacityGb)) {
+  throw new Error("PhoneReturnWatch requires modelName and capacityGb");
+}
+const quotes = currentOffers(catalog, modelName, capacityGb, getBuildNow().getTime());
 const admission = row => row.total && !row.expired && !row.stale && row.stock !== "sold-out";
 const online = quotes.filter(row => row.channel === "online");
 const current = online.filter(admission).sort((a, b) => a.total!.switchYen - b.total!.switchYen);
@@ -16,7 +19,7 @@ const checked = quotes.map(row => row.observedAt).sort((a, b) => Date.parse(a) -
 const timeline = new Map();
 for (const row of catalog.observations) {
   const total = priceBreakdown(row);
-  if (!total || row.device !== device || row.capacityGb !== capacityGb || row.channel !== "online") continue;
+  if (!total || row.device !== modelName || row.capacityGb !== capacityGb || row.channel !== "online") continue;
   const entries = timeline.get(row.offerId) ?? [];
   if (entries.length < 2 || entries.at(-1).total.switchYen !== total.switchYen) {
     entries.push({ ...row, total });
