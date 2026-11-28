@@ -100,9 +100,8 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <article class:list={["article-shell", `article-shell--${article.type}`, {"article-shell--renewal":renewal, "article-shell--mnp":isMnpGuide}]}>
     {
-      article.hasAffiliate && (
+      article.hasAffiliate && !isMnpGuide && (
         <p class="ad-disclosure" role="note">
-          {isMnpGuide && <strong>PR　</strong>}
           本記事は広告（アフィリエイトリンク）を含みます。<a href="/disclosure/">広告掲載の方針</a>
         </p>
       )
@@ -113,8 +112,9 @@ const breadcrumbSchema = buildBreadcrumbSchema([
         <span>{renewal && article.type!=="news" ? `毎月更新 ／ ${article.updated.slice(0,4)}年${Number(article.updated.slice(5,7))}月号` : article.category}</span>
         <time datetime={article.updated}>更新日: {article.updated}</time>
       </div>
-      <h1 data-pagefind-weight="10">{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : article.title}</h1>
-      <p data-pagefind-ignore="all">{article.description}</p>
+      <h1 data-pagefind-weight="10">{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : isMnpGuide ? <>{article.title.slice(0, article.title.indexOf("安く"))}<br />{article.title.slice(article.title.indexOf("安く"))}</> : article.title}</h1>
+      {isMnpGuide && article.hasAffiliate && <p class="ad-disclosure mnp-disclosure" role="note" data-pagefind-ignore="all"><strong>PR</strong> 本記事は広告（アフィリエイトリンク）を含みます。<a href="/disclosure/">広告掲載の方針</a></p>}
+      <p class:list={{"mnp-intro": isMnpGuide}} data-pagefind-ignore="all">{article.description}</p>
       {isMnpGuide && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#mnp-prices-title">端末価格を比べる</a></nav>}
       {isCampaignGuide && <nav class="campaign-page-links" aria-label="記事内の案内" data-pagefind-ignore="all"><a href="#mobile-campaigns">キャンペーンを比べる</a><a href="#plan-diagnosis">3問で料金を見直す</a></nav>}
       {
@@ -377,16 +377,79 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     width: min(960px, calc(100% - 32px));
   }
 
-  .article-shell--mnp { max-width: 1150px; }
-  .article-shell--mnp .article-thumbnail { object-position: 68% center; }
-  @media (min-width: 830px) {
-    .article-shell--mnp .article-header {
-      display: grid; grid-template-columns: 1fr minmax(0, .88fr); align-items: center;
-      gap: .65rem 2rem; padding: 1.25rem 0;
-    }
-    .article-shell--mnp .article-header > :not(img) { grid-column: 1; margin-top: 0; }
-    .article-shell--mnp .article-header > img { grid-column: 2; grid-row: 1 / span 4; margin: 0; aspect-ratio: 4 / 3; }
+  .article-shell--mnp .article-header .mnp-disclosure {
+    margin: .65rem 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: .875rem;
+    line-height: 1.5;
+    color: var(--fg);
   }
+
+  .article-shell--mnp .article-thumbnail { object-position: 74% center; }
+  .article-shell--mnp .mnp-intro { margin-top: .8rem; }
+
+  @media (min-width: 830px) {
+    .article-shell--mnp {
+      width: min(1440px, calc(100% - clamp(48px, 6vw, 112px)));
+      padding-top: 32px;
+    }
+
+    .article-shell--mnp .article-header {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 53%) 1fr;
+      gap: 0 2rem;
+      min-height: clamp(310px, 28vw, 420px);
+      margin: 0;
+      padding: clamp(28px, 3.5vw, 56px);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      background: linear-gradient(110deg, var(--bg-elev) 34%, var(--teal-tint) 100%);
+      box-shadow: none;
+    }
+
+    .article-shell--mnp .article-header > :not(img) { grid-column: 1; }
+    .article-shell--mnp .article-header h1 {
+      font-size: clamp(32px, 4.2vw, 60px);
+      font-weight: 900;
+      overflow-wrap: normal;
+    }
+    .article-shell--mnp .article-header .meta-row { margin-bottom: .7rem; }
+    .article-shell--mnp .article-header .meta-row :is(span,time) {
+      padding: 0;
+      background: none;
+      border: 0;
+    }
+
+    .article-shell--mnp .article-header > img {
+      position: absolute;
+      inset: 0 0 0 auto;
+      z-index: -1;
+      width: 56%;
+      height: 100%;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      object-fit: cover;
+      mask-image: linear-gradient(to right, transparent, black 22%);
+    }
+
+    .article-shell--mnp .article-content {
+      padding: 22px clamp(20px, 2.5vw, 38px) 38px;
+      border-top: 0;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      box-shadow: none;
+    }
+
+    .article-shell--mnp .article-content > :global(:is(p, ul, .summary-box, .character-dialogue, .mobile-carrier-cta)) {
+      max-width: 860px;
+    }
+  }
+
   @media (max-width: 829px) {
     .article-shell--mnp .article-thumbnail { margin-top: .9rem; }
   }

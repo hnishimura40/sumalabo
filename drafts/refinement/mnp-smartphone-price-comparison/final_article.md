@@ -4,6 +4,8 @@ import MobileCarrierCTA from "../../src/components/article/MobileCarrierCTA.astr
 import Summary30 from "../../src/components/article/Summary30.astro";
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
 
+<MnpDevicePrices />
+
 MNPとは、今の電話番号を変えずに携帯会社を乗り換えられる仕組みです。このページでは5社の公式オンラインショップで、回線と端末を同時に申し込む場合の端末価格を比べます。店頭・量販店の価格は対象外です。冒頭の画像はイメージです。実機の外観は各行の「外観・仕様」で確認できます。
 
 <Summary30>
@@ -14,8 +16,6 @@ MNPとは、今の電話番号を変えずに携帯会社を乗り換えられ�
     <li><strong>結局どうなの？</strong> 長く手元に置くなら一括価格を、返却するなら返却時の負担額と回収条件を比べます。</li>
   </ol>
 </Summary30>
-
-<MnpDevicePrices />
 
 **関係がある人**：電話番号をそのままに回線を乗り換え、端末も買い替えたい人。
 
