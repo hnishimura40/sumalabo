@@ -1,8 +1,50 @@
 ---
 import AiGuideLayout from '../../layouts/AiGuideLayout.astro';
 import AiEvidence from '../../components/AiEvidence.astro';
+const services=['Gemini','ChatGPT','Claude','Grok','Copilot','Muse'];
+const tasks=[
+ {name:'旅行計画',prompt:'日数・予算・人数・移動手段を決めた国内旅行の行程表づくり',points:'条件を守っているか／移動時間や営業日など確認すべき点を示すか／根拠のない店名・料金を作らないか'},
+ {name:'家計の表づくり',prompt:'架空の1か月分の支出メモから、費目別の集計表を作る',points:'合計が合っているか／費目の分け方が一貫しているか／コピーして使える表か'},
+ {name:'写真の文字起こし',prompt:'個人情報を含まない掲示物やレシート風の写真から文字を書き起こす',points:'読み落とし・読み違いの数／読めない箇所を推測で埋めずに伝えるか'},
+ {name:'長文の要約',prompt:'公開されている同じ長文資料を、決めた字数で要約する',points:'要点の抜け／原文にないことを足していないか／字数を守っているか'},
+ {name:'画像生成',prompt:'同じ説明文から、案内用のイラストを1枚作る',points:'指示した要素が入っているか／文字の崩れ／無料と有料で回数や待ち時間が違うか'},
+];
 ---
 <AiGuideLayout title="すまラボのAI独自実測" description="同じ日本語6課題を4モデルで各3回。回答・条件・時間・使用量を公開して、測った範囲と限界を確かめます。" path="/ai/tests/" current="独自実測">
- <div class="ai-callout"><h2>試した結果と、サービスのおすすめは分けます。</h2><p>この小規模な試験は全モデル18/18。性能の優劣は判別できませんでした。画像・動画・音楽の品質や、エージェントの長い作業の評価は含みません。</p></div>
- <AiEvidence mode="tests" />
+ <section class="fixed-test" aria-labelledby="fixed-test-heading">
+  <p class="ai-eyebrow">毎月、同じお題で比べる</p>
+  <h2 id="fixed-test-heading">主要6サービスの定点検証</h2>
+  <p>同じお題を毎月、{services.join('・')}の6サービスに投げ、答え方の変化を記録します。性能ランキングではなく、「この用事ならどこで困りやすいか」を見るための記録です。</p>
+  <div class="ai-callout"><h3>結果は、まだ掲載していません。</h3><p>初回の結果は<strong>2026年12月に掲載予定</strong>です。それまでは、手順と評価の観点だけを公開します。</p></div>
+  <h3>5つのお題</h3>
+  <div class="ai-table-wrap" role="region" tabindex="0" aria-label="定点検証のお題と評価の観点">
+   <table class="fixed-test-table">
+    <thead><tr><th scope="col">お題</th><th scope="col">頼む内容</th><th scope="col">評価の観点</th></tr></thead>
+    <tbody>{tasks.map(t=><tr><th scope="row">{t.name}</th><td>{t.prompt}</td><td>{t.points}</td></tr>)}</tbody>
+   </table>
+  </div>
+  <h3>手順</h3>
+  <ol class="fixed-test-steps">
+   <li>毎月同じ文面のお題を、6サービスへ同じ日に1回ずつ送ります。追加の指示や言い直しはしません。</li>
+   <li>使ったプラン（無料／有料）、表示されたモデル名、実施日を記録します。</li>
+   <li>入力には個人情報を含まない素材だけを使います。</li>
+   <li>回答は原文のまま保存し、上の観点で「できた／一部できた／できなかった」と理由を書きます。</li>
+   <li>回答の誤りと、混雑・上限・地域制限で回答を得られなかった場合を分けて記録します。</li>
+  </ol>
+  <p class="ai-small-note">各お題1回ずつの試行のため、同じお題でも日によって結果が変わることがあります。結果はサービスの総合評価ではありません。</p>
+ </section>
+ <section class="past-record" aria-labelledby="past-record-heading">
+  <p class="ai-eyebrow">参考記録（2026年11月15日）</p>
+  <h2 id="past-record-heading">これまでの文章課題の記録</h2>
+  <div class="ai-callout"><h3>試した結果と、サービスのおすすめは分けます。</h3><p>同じ日本語6課題を4モデルで各3回試した小規模な記録です。全モデル18/18で、性能の優劣は判別できませんでした。画像・動画・音楽の品質や、エージェントの長い作業の評価は含みません。</p></div>
+  <AiEvidence mode="tests" />
+ </section>
 </AiGuideLayout>
+<style>
+ .past-record{margin-top:40px;padding-top:28px;border-top:1px solid var(--line)}
+ .fixed-test h3{font-size:18px;margin-top:24px}
+ .fixed-test-table{width:100%;border-collapse:collapse;font-size:13px}
+ .fixed-test-table th,.fixed-test-table td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top;word-break:break-word;overflow-wrap:anywhere}
+ .fixed-test-steps{font-size:14px;line-height:1.9;padding-left:1.4em}
+ @media(max-width:580px){.fixed-test-table{font-size:12px}.fixed-test-table th,.fixed-test-table td{padding:7px}}
+</style>
