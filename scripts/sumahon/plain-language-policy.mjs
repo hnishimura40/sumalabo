@@ -1,6 +1,7 @@
 import {validateAiV2Mdx} from '../automation/ai-v2-checks.mjs';
 import {validateComparisonRenewal} from '../automation/comparison-renewal-checks.mjs';
 const SUMMARY_LABELS = ["これは何？", "何があった？", "誰に関係ある？", "結局どうなの？"];
+const SUMMARY_POINTS = ["subject", "context", "audience", "answer"];
 
 function issue(code, severity, message) {
   return { code, severity, message };
@@ -23,6 +24,18 @@ export function visibleArticleText(source = "") {
     .replace(/[*_`#>|{}[\]]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function markedText(source, tag, attribute) {
+  const elements = new RegExp(`<${tag}\\b([^>]*)>([\\s\\S]*?)<\\/${tag}>`, "gi");
+  const marker = new RegExp(`(?:^|\\s)${attribute}=(?:"([^"]+)"|'([^']+)')`, "i");
+  const values = new Map();
+  for (const [, attributes, body] of source.matchAll(elements)) {
+    const match = attributes.match(marker);
+    const text = visibleArticleText(body.replace(/^\s*<strong>[^<]*<\/strong>/i, ""));
+    if (match && /[\p{L}\p{N}]/u.test(text)) values.set(match[1] ?? match[2], text);
+  }
+  return values;
 }
 
 // 単語単体ではなく、編集工程でしか成立しない複合表現を検出する。
@@ -103,6 +116,11 @@ export function validatePlainLanguageArticle(source = "", { requireNewsStructure
   const summary = publicMaterial.match(/<Summary30\b[^>]*>([\s\S]*?)<\/Summary30>/i)?.[1]
     || publicMaterial.match(/^##\s*30秒[^\n]*\n([\s\S]*?)(?=^##\s+|(?![\s\S]))/m)?.[1]
     || "";
+  const usesMarkedSummary = /\bdata-summary-point\s*=/u.test(summary);
+  const early = visible.slice(0, 1500);
+  const audience = markedText(publicMaterial, "p", "data-reader-scope");
+  const hasScope = (key) => audience.has(key) && early.includes(audience.get(key));
+  const hasMarkedAudience = hasScope("relevant") && hasScope("unaffected");
 
   for (const finding of scanInternalResidue(source)) {
     issues.push(issue(finding.code, "major", `公開本文に${finding.label}が残っています: ${finding.match}`));
@@ -114,19 +132,20 @@ export function validatePlainLanguageArticle(source = "", { requireNewsStructure
     if (!summary) {
       issues.push(issue("summary30_missing", "major", "30秒サマリー（Summary30）がありません。"));
     } else {
-      const missing = SUMMARY_LABELS.filter((label) => !summary.includes(label));
+      const points = usesMarkedSummary ? markedText(summary, "li", "data-summary-point") : null;
+      const missing = SUMMARY_LABELS.filter((label, index) =>
+        points ? !points.has(SUMMARY_POINTS[index]) : !summary.includes(label));
       if (missing.length) issues.push(issue("summary30_fields_missing", "major", `30秒サマリーの項目が不足しています: ${missing.join(" / ")}`));
     }
 
-    const early = visible.slice(0, 1500);
     const hasWhatIs = /(?:そもそも.{0,40}(?:とは|って何)|これは何[？?]?|^|。)(?:[^。]{0,90})(?:とは|というのは|は、)(?:[^。]{2,100})(?:サービス|制度|技術|ソフト|道具|製品|機能|仕組み|開発環境|こと)/u.test(early)
       || /^##\s*(?:そもそも|これは何)/m.test(publicMaterial);
     if (!hasWhatIs) issues.push(issue("subject_definition_missing", "major", "冒頭で『そもそも何か』を専門知識ゼロの読者向けに説明できていません。"));
 
-    if (!/(?:関係がある人|こんな人に関係)/u.test(publicMaterial)) {
+    if (!hasScope("relevant") && !/(?:関係がある人|こんな人に関係)/u.test(publicMaterial)) {
       issues.push(issue("relevant_people_missing", "major", "記事前半に『関係がある人』がありません。"));
     }
-    if (!/(?:あまり関係がない人|ほぼ関係ない人|急いで気にしなくてよい人|今は関係が薄い人)/u.test(publicMaterial)) {
+    if (!hasScope("unaffected") && !/(?:あまり関係がない人|ほぼ関係ない人|急いで気にしなくてよい人|今は関係が薄い人)/u.test(publicMaterial)) {
       issues.push(issue("non_relevant_people_missing", "major", "記事前半に『あまり関係がない人』がありません。"));
     }
   }
@@ -152,6 +171,8 @@ export function validatePlainLanguageArticle(source = "", { requireNewsStructure
     ok: !issues.some((item) => item.severity === "major"),
     issues,
     summaryLabels: SUMMARY_LABELS,
+    usesMarkedSummary,
+    hasMarkedAudience,
     metrics: { visibleCharacters: visible.length, sentenceCount: sentences.length, longestSentence: longest, averageSentence: average },
   };
 }

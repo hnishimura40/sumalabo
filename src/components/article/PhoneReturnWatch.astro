@@ -27,23 +27,24 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
 ---
 
 <section class="return-watch" aria-labelledby="return-watch-title" data-return-watch>
-  <div class="watch-lead">
-    <div>
-      <p class="watch-date">最終調査 <time datetime={checked}>{checked && date(checked)}（日本時間）</time></p>
+  <div class="watch-overview">
+    <div class="watch-lead">
       <h2 id="return-watch-title">次は他社へ。2年返却でいくら払う？</h2>
-      {best && <div data-watch-current>
-        <p class="watch-result">確認できたオンライン販売先で負担が小さい例<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
-        <p>確認済みのオンライン販売先で、期限内に返して査定を通過した場合の端末関連費用です。回線料と次の端末代は別です。ドコモの直接販売と量販店は価格を確認中です。</p>
-        <p class="watch-rating">すまラボの買い時判定 <strong>{priceRating(best.total!.switchYen, best.conditions)}</strong></p>
-      </div>}
-      <p data-watch-hold hidden={Boolean(best)}>現在、費用と適用条件がそろったオンライン案件を確認中です。</p>
+      <div class="watch-lead-body">
+        <p class="watch-date">最終調査 <time datetime={checked}>{checked && date(checked)}（日本時間）</time></p>
+        {best && <div data-watch-current>
+          <p class="watch-result">次に他社へ移る場合、確認できた中で負担が小さかったのは<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
+          <p>期限内の返却と、端末の状態確認（査定）に通った場合の金額です。回線料と次に買う端末の代金は別。ドコモ直販と量販店は確認中です。</p>
+          <p class="watch-rating">すまラボの買い時判定 <strong>{priceRating(best.total!.switchYen, best.conditions)}</strong></p>
+        </div>}
+        <p data-watch-hold hidden={Boolean(best)}>現在、費用と適用条件がそろったオンライン案件を確認中です。</p>
+      </div>
     </div>
-    <slot name="device" />
+    <slot name="summary" />
   </div>
-  <slot name="summary" />
 
   <h2 id="return-comparison">全国オンラインの価格比較</h2>
-  <p data-watch-current>「返却までの端末代」は、返却で残りの分割代金が免除される場合に支払う端末代です。返却料・契約料・補償・条件付きポイントは別に扱います。</p>
+  <p data-watch-current>「返却までの端末代」は、返すまでに払い終える分です。返却料や契約料、補償、条件付きポイントは端末代と分けています。</p>
   {current.length > 0 && <table class="watch-table" role="table" data-watch-current>
     <caption class="watch-sr">確認済みのオンライン価格を次回他社への乗り換え時の総額順に表示</caption>
     <thead role="rowgroup"><tr role="row">
@@ -66,6 +67,9 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   {pending.length > 0 && <ul class="watch-pending">
     {pending.map(row => <li><strong>{row.carrier}</strong> {row.expired ? "掲載期間終了。" : row.stale ? "確認から2日以上経過。" : row.stock === "sold-out" ? "在庫なし。" : "確認中。"} {row.note} <a href={row.sources[0].url}>公式情報</a></li>)}
   </ul>}
+
+  <slot name="scope" />
+  <slot name="device" />
 
   <h2>返却までの端末代から総額まで</h2>
   {best && <div class="watch-formula" data-watch-current aria-label="確認できた最小の総額の内訳">
@@ -107,7 +111,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   <h2 id="return-price-history">価格推移</h2>
   <p>次は他社へ移る場合の端末関連総額です。販売先ごとに確認できた最初の金額と、金額が変わった日を載せています。{changes.length > history.length ? "直近" : "表示は"}{history.length}件です。</p>
   {history.length > 0 ? <ul class="watch-history">
-    {history.map(row => <li>
+    {history.map(row => <li data-carrier={row.carrier}>
       <a href={row.sources[0].url}>{row.carrier} <time datetime={row.observedAt}>{date(row.observedAt, true)}</time></a>
       <span class="watch-bar" aria-hidden="true"><span style={{ width: (100 * row.total.switchYen / high) + "%" }}></span></span>
       <strong>{yen(row.total.switchYen)}</strong>
@@ -142,21 +146,73 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   .return-watch { color: var(--fg); }
   .return-watch h2[id] { scroll-margin-top: 116px; }
   .return-watch [hidden] { display: none !important; }
-  .watch-lead { padding: 1.25rem; border: 1px solid var(--line); border-radius: 14px; }
-  .watch-lead :global(.watch-device-photo) { margin: .85rem 0 0; font-size: .8rem; line-height: 1.5; }
-  .watch-lead :global(.watch-device-photo img) { width: 120px; height: 160px; object-fit: cover; border-radius: 8px; margin: 0; }
-  .watch-fee { white-space: nowrap; }
-  @media (min-width: 700px) {
-    .watch-lead { display: grid; grid-template-columns: minmax(0, 1fr) minmax(140px, 190px); gap: 1rem; align-items: start; }
-    .watch-lead :global(.watch-device-photo) { margin: 0; }
+  .watch-overview {
+    display: grid;
+    gap: .85rem;
+    margin: 0 0 .9rem;
   }
-  .watch-lead h2 { margin: .35rem 0 .7rem; }
-  .watch-lead p { margin: .4rem 0; }
+
+  .watch-lead,
+  .watch-overview :global(.summary) {
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    overflow: clip;
+    background: var(--bg-elev);
+    box-shadow: none;
+  }
+
+  .watch-overview .watch-lead h2,
+  .watch-overview :global(.summary-head) {
+    margin: 0;
+    border: 0;
+    padding: .55rem .9rem;
+    color: #fff;
+    font-size: clamp(.96rem, 1.2vw, 1.12rem);
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  .watch-overview .watch-lead h2 { background: linear-gradient(105deg, #154c51, #1e666e); }
+  .watch-overview :global(.summary-head) { background: linear-gradient(105deg, #414581, #50599d); }
+
+  .watch-lead-body,
+  .watch-overview :global(.summary > :is(ol,ul)) {
+    padding: .65rem .9rem .8rem;
+  }
+
+  .watch-lead-body { font-size: .925rem; line-height: 1.55; }
+  .watch-overview :global(.summary li) { font-size: .925rem; line-height: 1.55; }
+  .watch-overview :global(.summary li + li) { margin-block-start: .4rem; }
+  .return-watch :global(.watch-device-photo) {
+    display: grid;
+    grid-template-columns: clamp(80px, 16vw, 132px) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(.7rem, 3vw, 1.4rem);
+    margin: 1.25rem 0;
+    padding: .85rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg-elev);
+  }
+  .return-watch :global(.watch-device-photo img) { margin: 0; width: 100%; height: auto; }
+  .return-watch :global(.watch-device-photo figcaption) { text-align: start; color: var(--fg); font-size: .9rem; }
+  .return-watch :global(.watch-device-photo p) { margin: .25rem 0; }
+  .watch-fee { white-space: nowrap; }
+  @media (min-width: 960px) {
+    .watch-overview { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); }
+  }
+  #return-comparison { margin-block: 1.15rem .45rem; border-inline-start-color: var(--amber); }
+  #return-comparison + p { max-width: 65rem; margin: 0 0 .6rem; font-size: .93rem; line-height: 1.55; }
+  .watch-lead-body p { margin: .32rem 0; }
+  .watch-lead-body > :first-child { margin-top: 0; }
+  .return-watch > :global(p.watch-scope) { max-width: 62rem; margin: .85rem 0 0; color: var(--fg-mid); font-size: .93rem; line-height: 1.65; }
   .watch-date, .watch-sources, .watch-pending { font-size: .875rem; }
-  .watch-result strong { display: block; font-size: clamp(1.4rem, 4vw, 2rem); line-height: 1.4; }
-  .watch-rating { border-inline-start: 2px solid currentColor; padding-inline-start: .65rem; }
+  .watch-result strong { display: block; font-size: clamp(1.4rem, 3.2vw, 2rem); line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .watch-rating { border-inline-start: 2px solid var(--amber); padding-inline-start: .65rem; }
   .return-watch table.watch-table { border-collapse: collapse; width: 100%; }
-  .return-watch table.watch-table :is(th,td) { background: transparent; color: var(--fg); padding: .65rem; border: 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  .return-watch table.watch-table :is(th,td) { background: transparent; color: var(--article-table-ink); padding: .65rem; border: 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
   .watch-sr { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
   .watch-table small, .watch-formula small { display: block; }
   .watch-mobile { display: none; }
@@ -164,14 +220,17 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   .watch-formula div { padding: .55rem .75rem; border: 1px solid var(--line); border-radius: 8px; }
   .watch-formula strong { font-size: 1.1rem; }
   .watch-carriers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 265px), 1fr)); gap: 1rem; }
-  .watch-carriers article { border: 1px solid var(--line); border-radius: 10px; padding: 1rem; }
+  .watch-carriers article { border: 1px solid var(--line); border-top: 3px solid var(--brand); border-radius: 10px; padding: 1rem; }
   .watch-carriers h3 { margin: 0; }
   .watch-carriers dt { font-weight: 700; margin-top: .35rem; }
   .watch-carriers dd { margin: 0; }
   .watch-history { list-style: none; padding: 0; }
   .watch-history li { display: grid; grid-template-columns: minmax(7rem,12rem) minmax(2rem,1fr) auto; gap: .6rem; align-items: center; border-bottom: 1px solid var(--line); padding: .5rem 0; }
-  .watch-bar { display: block; }
-  .watch-bar span { display: block; height: .65rem; border: 1px solid currentColor; border-radius: 4px; }
+  .watch-bar { display: block; background: var(--bg-sunk); border-radius: 4px; }
+  .watch-bar span { display: block; height: .65rem; background: var(--watch-bar-color, var(--teal)); border-radius: 4px; }
+  .watch-history li[data-carrier="ソフトバンク"] { --watch-bar-color: var(--brand); }
+  .watch-history li[data-carrier="au"] { --watch-bar-color: var(--amber); }
+  .watch-history li[data-carrier="楽天モバイル"] { --watch-bar-color: var(--slate); }
   @media (max-width: 610px) {
     .return-watch table.watch-table, .watch-table tbody { display: block; }
     .watch-table tbody tr { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); margin-bottom: .65rem; border: 1px solid var(--line); border-radius: 10px; }

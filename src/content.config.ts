@@ -32,6 +32,7 @@ const articles = defineCollection({
     description: z.string(),
     thumbnail: z.string().default(""),
     thumbnailAlt: z.string().default(""),
+    heroIllustration: z.string().startsWith("/images/").optional(),
     draft: z.boolean().default(false),
     status: articleStatus,
     reviewMethod: z.literal("automated").optional(),

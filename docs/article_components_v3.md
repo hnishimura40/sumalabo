@@ -33,7 +33,7 @@ import CharacterBubble from "../../src/components/article/CharacterBubble.astro"
 
 | コンポーネント | 使いどころ | ルール |
 |---|---|---|
-| `Summary30` | 記事冒頭 | `<ol><li>` で「これは何？ / 何があった？ / 誰に関係ある？ / 結局どうなの？」の4項目。1記事1回 |
+| `Summary30` | 記事冒頭 | `<ol><li>` で主題・状況・読者条件・答えの4項目。自然な文言の付け方は [一般読者向け生成規則](general_reader_explainer_policy.md)。1記事1回 |
 | `Callout kind="facts"` | 公式発表で確定した事実 | 一次情報リンクとセットで |
 | `Callout kind="claims"` | 報道ベース（未確認含む） | 出典メディア名を本文で明示 |
 | `Callout kind="unc"` | 未確定・変わる可能性 | 「〜時点」を必ず書く |

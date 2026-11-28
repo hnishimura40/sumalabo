@@ -445,8 +445,15 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists, f
     issues.push(makeIssue("few_h2", "warning", `h2見出しが少なめです。h2数: ${h2Count}`));
   }
 
-  for (const topic of (aiV2?requiredTopics.filter(t=>!["summary","summary_end"].includes(t.code)):requiredTopics)) {
-    if (includesAny(plain, topic.needles)) {
+  const plainLanguageCheck = validatePlainLanguageArticle(body, { requireNewsStructure: true });
+  for (const topic of requiredTopics) {
+    if (aiV2 && ["summary", "summary_end"].includes(topic.code)) continue;
+    if (plainLanguageCheck.usesMarkedSummary && topic.code === "summary_end") continue;
+    if (
+      (topic.code === "summary" && plainLanguageCheck.usesMarkedSummary)
+      || (topic.code === "reader_relevance" && plainLanguageCheck.hasMarkedAudience)
+      || includesAny(plain, topic.needles)
+    ) {
       presentTopics.push(topic.label);
     } else {
       missingTopics.push(topic.label);
@@ -473,7 +480,7 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists, f
     issues.push(makeIssue("source_respect", "major", "元記事の要点文と同一または近すぎる長文が本文に含まれている可能性があります。"));
   }
 
-  if (!includesAny(plain, ["関係がある人", "あまり関係がない人", "誰に関係ある？", "結局どうなの？"])) {
+  if (!plainLanguageCheck.hasMarkedAudience && !includesAny(plain, ["関係がある人", "あまり関係がない人", "誰に関係ある？", "結局どうなの？"])) {
     issues.push(makeIssue("reader_focus", "warning", "誰に関係するか、読者目線の結論が弱い可能性があります。"));
   }
 
@@ -526,7 +533,6 @@ export function validateGeneratedArticle({ body, source = {}, thumbnailExists, f
     issues.push(qIssue);
   }
 
-  const plainLanguageCheck = validatePlainLanguageArticle(body, { requireNewsStructure: true });
   for (const plainIssue of plainLanguageCheck.issues) {
     issues.push(plainIssue);
   }
