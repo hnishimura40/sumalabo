@@ -1,0 +1,2 @@
+# AI logo originals are verified by SHA-256 on production; keep exact bytes (no CRLF conversion).
+public/images/ai-logos/*.svg -text
