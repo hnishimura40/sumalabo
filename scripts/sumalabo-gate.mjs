@@ -503,7 +503,7 @@ const AFFILIATE_URL_PATTERNS = [
   { re: /amzn\.to\//i, label: "Amazon 短縮リンク" },
   { re: /amazon\.co\.jp\/[^\s"')>]*[?&]tag=/i, label: "Amazon アソシエイトタグ" },
 ];
-const AFFILIATE_COMPONENT_RE = /<(ProductCard|CTABox|AffiliateLinks|ComparisonPriceButtons|RakutenAffiliateImage|MobileCarrierCTA)\b/;
+const AFFILIATE_COMPONENT_RE = /<(ProductCard|CTABox|AffiliateLinks|ComparisonPriceButtons|RakutenAffiliateImage|MobileCarrierCTA|MnpMobileCarrierAds)\b/;
 
 function checkAffiliate(slug, mdx) {
   if (!mdx) return;

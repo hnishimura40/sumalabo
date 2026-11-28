@@ -1,0 +1,61 @@
+---
+// A8.netの通常広告用コード。文言・リンク・計測画像は発行時のまま使う。
+const rakutenAd = `<a href="https://px.a8.net/svt/ejp?a8mat=4B8B4X+1GZN5U+5W58+5YRHE" rel="nofollow">【楽天モバイル】</a>
+<img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4B8B4X+1GZN5U+5W58+5YRHE" alt="">`;
+const ahamoAd = '<a href="https://px.a8.net/svt/ejp?a8mat=4B8B4X+1RPG1U+4TIO+5YJRM" rel="nofollow">ahamo</a> <img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4B8B4X+1RPG1U+4TIO+5YJRM" alt="">';
+---
+
+<section class="mnp-carrier-ads article-wide-block" aria-label="回線の申込案内">
+  <div>
+    <p><strong>楽天モバイルを初めて利用する人へ</strong></p>
+    <p>回線の料金と申込条件を確認できます。端末代と購入条件は比較表の「公式価格」「公式条件」をご覧ください。</p>
+    <p class="mnp-ad-link"><span>広告</span> <Fragment set:html={rakutenAd} /></p>
+  </div>
+  <div>
+    <p><strong>今のスマホのままahamoに乗り換える人へ</strong></p>
+    <p>他社から回線だけを乗り換える人向けです。端末も買う場合は、比較表の「公式価格」「公式条件」をご覧ください。</p>
+    <p class="mnp-ad-link"><span>広告</span> <Fragment set:html={ahamoAd} /></p>
+  </div>
+</section>
+
+<style>
+  .mnp-carrier-ads {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-block: 20px;
+  }
+
+  .mnp-carrier-ads > div {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+  }
+
+  .mnp-carrier-ads p {
+    margin: 0 0 8px;
+  }
+
+  .mnp-carrier-ads .mnp-ad-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .mnp-ad-link > span {
+    font-size: .875em;
+  }
+
+  .mnp-ad-link :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 8px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 560px) {
+    .mnp-carrier-ads { grid-template-columns: 1fr; }
+  }
+</style>
