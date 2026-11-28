@@ -416,8 +416,8 @@
       "prices": null,
       "sources": [
         {
-          "name": "公式取扱情報",
-          "url": "https://shop.joshin.co.jp/product/mobile/apple/shoplist.php"
+          "name": "公式店舗情報",
+          "url": "https://shop.joshin.co.jp/"
         }
       ],
       "note": "製品取扱窓口を確認。店舗名、期間、256GBの返却込み総額を照合できる特価は未確認。"

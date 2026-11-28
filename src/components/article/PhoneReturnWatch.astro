@@ -12,7 +12,7 @@ const current = online.filter(admission).sort((a, b) => a.total!.switchYen - b.t
 const pending = online.filter(row => !admission(row));
 const stores = quotes.filter(row => row.channel === "store");
 const best = current[0];
-const checked = quotes.map(row => row.observedAt).sort().at(-1);
+const checked = quotes.map(row => row.observedAt).sort((a, b) => Date.parse(a) - Date.parse(b)).at(-1);
 const timeline = new Map();
 for (const row of catalog.observations) {
   const total = priceBreakdown(row);
@@ -47,7 +47,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   </div>
   <slot name="summary" />
 
-  <h2>全国オンラインの価格比較</h2>
+  <h2 id="return-comparison">全国オンラインの価格比較</h2>
   {current.length > 0 && <table class="watch-table" role="table" data-watch-current>
     <caption>確認済みの標準条件。条件付きポイントは支払額から引きません。</caption>
     <thead role="rowgroup"><tr role="row">
@@ -102,7 +102,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
     </article>)}
   </div>
 
-  <h2>価格推移</h2>
+  <h2 id="return-price-history">価格推移</h2>
   <p>同じ販売経路で2回以上確認できた、次は他社へ移る場合の端末関連総額です。発売前の公式発表と主な変動を、最大16件表示します。</p>
   {history.length > 0 ? <ul class="watch-history">
     {history.map(row => <li>
@@ -138,6 +138,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
 
 <style>
   .return-watch { color: var(--fg); }
+  .return-watch h2[id] { scroll-margin-top: 116px; }
   .return-watch [hidden] { display: none !important; }
   .watch-lead { padding: 1.25rem; border: 1px solid var(--line); border-radius: 14px; }
   .watch-lead h2 { margin: .35rem 0 .7rem; }

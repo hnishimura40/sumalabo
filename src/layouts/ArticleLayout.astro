@@ -44,13 +44,14 @@ interface Props {
 const { article, previousArticle, nextArticle, headings = [], renewal = false } = Astro.props;
 const isCampaignGuide = article.slug === "mobile-plan-cost-comparison";
 const isMnpGuide = article.slug === "mnp-smartphone-price-comparison";
+const isReturnPriceWatch = article.slug === "iphone-18-pro-return-price-watch";
 
 // 目次は h2 のみ・2 個以上あるときだけ出す（v3: モバイルは折りたたみ、PCは開いた状態）
 const tocHeadings = headings.filter((h) => h.depth === 2);
 if (isCampaignGuide && !tocHeadings.some(h => h.slug === "mobile-campaigns")) {
   tocHeadings.unshift({ depth: 2, slug: "mobile-campaigns", text: "携帯キャンペーンの早見表" });
 }
-const showToc = tocHeadings.length >= 2;
+const showToc = !isReturnPriceWatch && tocHeadings.length >= 2;
 
 // 内部レーン名（土台/収益/流入=foundation/revenue/news）は運用分類であり、
 // 公開ページには出さない（カテゴリのみ表示）。2026-07-19。
@@ -98,7 +99,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
 >
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <article class:list={["article-shell", `article-shell--${article.type}`, {"article-shell--renewal":renewal, "article-shell--mnp":isMnpGuide}]}>
+  <article class:list={["article-shell", `article-shell--${article.type}`, {"article-shell--renewal":renewal, "article-shell--mnp":isMnpGuide, "article-shell--price-watch":isReturnPriceWatch}]}>
     {
       article.hasAffiliate && !isMnpGuide && (
         <p class="ad-disclosure" role="note">
@@ -116,9 +117,10 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       {isMnpGuide && article.hasAffiliate && <p class="ad-disclosure mnp-disclosure" role="note" data-pagefind-ignore="all"><strong>PR</strong> 本記事は広告（アフィリエイトリンク）を含みます。<a href="/disclosure/">広告掲載の方針</a></p>}
       <p class:list={{"mnp-intro": isMnpGuide}} data-pagefind-ignore="all">{isMnpGuide ? "公式オンラインショップ5社の端末代を比較。買い切り価格と、分割・返却時の負担を比べられます。店頭・量販店は対象外です。" : article.description}</p>
       {isMnpGuide && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#mnp-prices-title">端末価格を比べる</a></nav>}
+      {isReturnPriceWatch && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#return-comparison">価格を比べる</a><a href="#return-scratches">返却時の査定</a><a href="#return-price-history">価格推移</a></nav>}
       {isCampaignGuide && <nav class="campaign-page-links" aria-label="記事内の案内" data-pagefind-ignore="all"><a href="#mobile-campaigns">キャンペーンを比べる</a><a href="#plan-diagnosis">3問で料金を見直す</a></nav>}
       {
-        !renewal && (article.thumbnail ? (
+        !renewal && !isReturnPriceWatch && (article.thumbnail ? (
           <img
             data-pagefind-ignore="all"
             class="article-thumbnail"
@@ -389,6 +391,11 @@ const breadcrumbSchema = buildBreadcrumbSchema([
 
   .article-shell--mnp .article-thumbnail { object-position: 74% center; }
   .article-shell--mnp .mnp-intro { margin-top: .8rem; }
+  .article-shell--price-watch .article-header h1 { text-wrap: balance; }
+  .article-shell--price-watch .article-header { padding-block: clamp(1.25rem, 3vw, 2rem); }
+  @media (min-width: 950px) {
+    .article-shell--price-watch { width: min(1180px, calc(100% - 6vw)); max-width: none; }
+  }
 
   @media (min-width: 830px) {
     .article-shell--mnp {

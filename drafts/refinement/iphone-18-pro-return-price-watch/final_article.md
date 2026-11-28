@@ -33,7 +33,7 @@ import CharacterDialogue from "../../src/components/characters/CharacterDialogue
 
 ahamoは11月時点で月2,970円（30GB）。12月1日から40GBで月3,135円の段階制へ変わるため、今申し込むときは12月以降の料金も確認してください。 [ahamo公式](https://ahamo.com/plan/)
 
-## 返すときの傷はどこまで大丈夫？
+<h2 id="return-scratches" style={{ scrollMarginTop: "116px" }}>返すときの傷はどこまで大丈夫？</h2>
 
 査定結果によって追加負担が発生したり、残りの分割代金の免除を受けられなくなったりします。ケースの擦れ跡やバッテリーの劣化など、公式情報で一律の境界を確認できない項目は「要個別査定」としました。
 
