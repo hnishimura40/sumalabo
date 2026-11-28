@@ -47,7 +47,98 @@
         "商品リンク作成後の計測パラメーターは変更しない",
         "公開ページのファーストビューなど一般消費者が確認できる位置に広告表示を置く",
         "公開後はA8の広告掲載URL管理へ掲載URLを提出する"
+      ],
+      "submittedArticleUrls": [
+        {
+          "url": "https://sumalabo.com/articles/mnp-smartphone-price-comparison/",
+          "submittedAt": "2026-11-28T20:09:54+09:00"
+        }
       ]
+    },
+    "ahamoA8": {
+      "checkedAt": "2026-11-28",
+      "network": "A8",
+      "programId": "s00000022488001",
+      "programName": "ahamo",
+      "status": "partnered",
+      "publisherSite": "すまラボ【アピールサイト】",
+      "publisherSiteId": "003",
+      "linkMaterialId": "001",
+      "reward": "新規契約3000円",
+      "revisitPeriod": "90日",
+      "confirmationEstimate": "約75日",
+      "achievementConditions": [
+        "広告主を初めて利用すること",
+        "ウェブで申し込み、新規契約または電話番号を引き継ぐ乗り換え契約を完了すること"
+      ],
+      "denialConditions": [
+        "ドコモからのプラン変更",
+        "ドコモMAX・ドコモmini・ahamo・eximo・irumo・JALモバイル等の契約歴がある場合（再登録を含む）",
+        "JALモバイルオプションとの同時申込",
+        "虚偽・いたずら、リスティング違反、掲載面開示に応じない場合"
+      ],
+      "prohibitedClaims": [
+        "SIMのみの乗り換えキャンペーンを「期間限定」「今だけ」と表示すること",
+        "公式ページのタレント画像の切り抜きや、使用期限の切れたタレント素材の使用",
+        "広告主名やサービス名を使ったリスティング広告"
+      ],
+      "listingPolicy": "端末比較ページでは、既存の通常テキスト素材を回線のみの申込案内として表の外に掲載する。広告表記をリンクの直前に置き、端末価格や端末購入条件への導線とは分ける。",
+      "notes": [
+        "素材001はSIMのみ乗り換えの公式ページに遷移する",
+        "特別報酬で掲載する場合はクリエイティブの事前提出が必要",
+        "公開後はA8.netの広告掲載URL管理に掲載URLを提出する",
+        "A8.netの発行コード全体を使い、表示文言・リンク・表示計測用画像を変更しない"
+      ]
+    },
+    "yStationA8": {
+      "checkedAt": "2026-11-28",
+      "network": "A8",
+      "programId": "s00000018938002",
+      "programName": "Y!mobile正規取扱店 Yステーション",
+      "status": "partnered",
+      "publisherSite": "すまラボ【アピールサイト】",
+      "publisherSiteId": "003",
+      "reward": "新規開通500円・MNP開通4500円・新規機種変更1500円",
+      "achievementConditions": [
+        "広告主を初めて利用し、ウェブ申込・問い合わせから45日以内に開通すること",
+        "1申込につき1成果"
+      ],
+      "denialConditions": [
+        "同一世帯からの2件目以降など重複条件に該当する申込",
+        "対象外の契約種別や機種",
+        "虚偽・無効・キャンセル・リスティング違反など"
+      ],
+      "prohibitedClaims": [
+        "Apple製品の名称・ロゴ・製品を識別できる画像の掲載",
+        "Y!mobile公式オンラインストアと混同させる表示",
+        "Y!mobileのロゴやマスコットの使用",
+        "短期解約や転売を促す訴求"
+      ],
+      "listingPolicy": "公式オンラインストアとは別の正規取扱店。端末比較ページは公式オンラインストアの価格を扱い、Apple製品の名称・写真も使用しているため、当該広告を掲載しない。"
+    },
+    "ymobileOfficialVc": {
+      "checkedAt": "2026-11-28",
+      "network": "VC",
+      "programId": "2047876",
+      "programName": "ワイモバイルオンラインストア",
+      "status": "pending",
+      "listingPolicy": "バリューコマースで提携待ち。比較ページは公式リンクのみ。"
+    },
+    "uqMobileVc": {
+      "checkedAt": "2026-11-28",
+      "network": "VC",
+      "programId": "2135116",
+      "programName": "【公式】＜UQ mobileご契約促進プログラム＞格安スマホのUQモバイル",
+      "status": "eligible_to_reapply",
+      "listingPolicy": "バリューコマースで再申請可。現在は未提携のため、比較ページは公式リンクのみ。"
+    },
+    "iijmioVc": {
+      "checkedAt": "2026-11-28",
+      "network": "VC",
+      "programId": "2134016",
+      "programName": "IIJmio",
+      "status": "eligible_to_reapply",
+      "listingPolicy": "バリューコマースで再申請可。現在は未提携のため、比較ページは公式リンクのみ。"
     }
   }
 }
