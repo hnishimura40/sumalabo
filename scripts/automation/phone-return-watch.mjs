@@ -9,6 +9,7 @@ const catalog = validateObservations(JSON.parse(await readFile(catalogUrl, "utf8
 const [command, input, flag] = process.argv.slice(2);
 const naturalKey = row => [row.device, row.capacityGb, row.offerId].join("/");
 const latest = new Map(catalog.observations.map(row => [naturalKey(row), row]));
+const lastVerified = new Map(catalog.observations.filter(row => row.status === "verified").map(row => [naturalKey(row), row]));
 
 if (command === "check" && input) {
   const urls = [...new Set([...latest.values()].flatMap(row => row.sources.map(source => source.url)))];
@@ -37,7 +38,7 @@ if (command === "check" && input) {
   const next = appendObservations(catalog, observations);
   for (const row of observations) {
     if (Date.parse(row.observedAt) > now) throw Error("Future observation: " + row.offerId);
-    const prev = latest.get(naturalKey(row));
+    const prev = lastVerified.get(naturalKey(row));
     const before = prev && priceBreakdown(prev);
     const after = priceBreakdown(row);
     if (before && after && Math.abs(after.switchYen - before.switchYen) >= 10_000
@@ -45,7 +46,7 @@ if (command === "check" && input) {
         || !row.sources.some(source => source.url === row.recheckUrl)))
       throw Error("Large price movement requires a separate official source: " + row.offerId);
     console.log(JSON.stringify({ id: row.offerId, status: row.status, before: before?.switchYen, after: after?.switchYen }));
-    latest.set(naturalKey(row), row);
+    if (row.status === "verified") lastVerified.set(naturalKey(row), row);
   }
   if (flag === "--apply") {
     const tempUrl = new URL("phone-return-watch.json.next", catalogUrl);

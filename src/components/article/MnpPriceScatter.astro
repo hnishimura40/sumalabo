@@ -1,0 +1,127 @@
+---
+interface Point {
+  id: string; name: string; carrier: string; yen: number;
+  cpu: number | null; weight: number | null; screen: number | null;
+}
+interface Props { points: Point[] }
+const { points } = Astro.props;
+---
+
+<section class="scatter" aria-labelledby="mnp-scatter-title" data-mnp-scatter data-points={JSON.stringify(points)} hidden>
+  <h2 id="mnp-scatter-title">価格とスペックの散布図</h2>
+  <p>横軸は乗り換え一括価格、縦軸は選んだスペックです。点を選ぶと機種と数値を表示します。</p>
+  <div class="scatter-controls">
+    <label>縦軸
+      <select data-scatter-metric>
+        <option value="cpu">CPU性能（Geekbench 7 マルチ）</option>
+        <option value="weight">重さ</option>
+        <option value="screen">画面サイズ</option>
+      </select>
+    </label>
+    <p data-scatter-count role="status"></p>
+  </div>
+  <p class="scatter-note">CPUの点数は機種別集計または公開測定の参考値です。測定条件で変動します。点数が未確認でも、重さ・画面サイズは比較できます。</p>
+  <div class="scatter-frame" data-scatter-frame>
+    <div class="scatter-y" data-scatter-y aria-hidden="true"></div>
+    <div class="scatter-area" data-scatter-area role="group" aria-label="機種ごとの測定点"></div>
+    <div class="scatter-x" data-scatter-x aria-hidden="true"></div>
+  </div>
+  <p class="scatter-x-title" data-scatter-horizontal>乗り換え一括（円）</p>
+  <p data-scatter-selection class="scatter-selection" aria-live="polite">点を選ぶと詳細を表示します。</p>
+  <p data-scatter-empty hidden>この絞り込みと縦軸で表示できる機種はありません。</p>
+</section>
+
+<script>
+  type Point = { id: string; name: string; carrier: string; yen: number; cpu: number | null; weight: number | null; screen: number | null };
+  const metrics = {
+    cpu: { unit: "点", step: 2000 },
+    weight: { unit: "g", step: 50 },
+    screen: { unit: "インチ", step: 2 },
+  };
+  const format = (n: number) => n.toLocaleString("ja-JP", { maximumFractionDigits: 2 });
+
+  for (const section of document.querySelectorAll<HTMLElement>("[data-mnp-scatter]")) {
+    const parent = section.closest<HTMLElement>("[data-mnp-prices]")!;
+    const points: Point[] = JSON.parse(section.dataset.points!);
+    const metric = section.querySelector<HTMLSelectElement>("[data-scatter-metric]")!;
+    const count = section.querySelector<HTMLElement>("[data-scatter-count]")!;
+    const area = section.querySelector<HTMLElement>("[data-scatter-area]")!;
+    const x = section.querySelector<HTMLElement>("[data-scatter-x]")!;
+    const y = section.querySelector<HTMLElement>("[data-scatter-y]")!;
+    const frame = section.querySelector<HTMLElement>("[data-scatter-frame]")!;
+    const horizontal = section.querySelector<HTMLElement>("[data-scatter-horizontal]")!;
+    const selection = section.querySelector<HTMLElement>("[data-scatter-selection]")!;
+    const empty = section.querySelector<HTMLElement>("[data-scatter-empty]")!;
+    let previous = "";
+
+    function refresh() {
+      const included = new Set([...parent.querySelectorAll<HTMLElement>("[data-mnp-id]")]
+        .filter(row => !row.hidden && row.dataset.state === "verified" && !row.classList.contains("mnp-expired")
+          && Date.now() - Date.parse(row.dataset.checked!) < 48 * 60 * 60 * 1000)
+        .map(row => row.dataset.mnpId));
+      const axis = metric.value as keyof typeof metrics;
+      const { step, unit } = metrics[axis];
+      const visible = points.filter(point => included.has(point.id));
+      const shown = visible.filter(point => point[axis] !== null);
+      const signature = [axis, ...visible.map(point => point.id)].join(":");
+      if (signature === previous) return;
+      previous = signature;
+      count.textContent = `${shown.length} / ${visible.length}件`;
+      frame.hidden = horizontal.hidden = selection.hidden = shown.length === 0;
+      empty.hidden = shown.length !== 0;
+      selection.textContent = "点を選ぶと詳細を表示します。";
+      area.replaceChildren();
+      if (!shown.length) return;
+      const maxX = Math.max(50000, Math.ceil(Math.max(...shown.map(point => point.yen)) / 50000) * 50000);
+      const maxY = Math.max(step, Math.ceil(Math.max(...shown.map(point => point[axis]!)) / step) * step);
+      const labels = (axis: HTMLElement, values: number[]) => axis.replaceChildren(...values.map(value => {
+        const span = document.createElement("span");
+        span.textContent = format(value);
+        return span;
+      }));
+      labels(x, [0, maxX / 2, maxX]);
+      labels(y, [maxY, maxY / 2, 0]);
+      shown.forEach((point, index) => {
+        const button = document.createElement("button");
+        const detail = `${point.name}（${point.carrier}） ${format(point.yen)}円 ／ ${format(point[axis]!)}${unit}`;
+        button.type = "button";
+        button.className = "scatter-dot";
+        button.style.left = `${100 * point.yen / maxX}%`;
+        button.style.bottom = `${100 * point[axis]! / maxY}%`;
+        button.setAttribute("aria-label", detail);
+        button.title = detail;
+        button.textContent = String(index + 1);
+        const show = () => { selection.textContent = detail; };
+        button.addEventListener("click", show);
+        button.addEventListener("focus", show);
+        area.append(button);
+      });
+    }
+
+    parent.addEventListener("mnp-catalog-refresh", refresh);
+    metric.addEventListener("change", refresh);
+    section.hidden = false;
+    refresh();
+  }
+</script>
+
+<style>
+  .scatter { margin: 1.4rem 0; color: var(--fg); }
+  .scatter h2 { margin-bottom: .45rem; scroll-margin-top: 116px; }
+  .scatter p { margin-block: .35rem; }
+  .scatter-controls { display: flex; align-items: center; justify-content: space-between; gap: .65rem; flex-wrap: wrap; }
+  .scatter-controls label { display: flex; gap: .4rem; flex-wrap: wrap; align-items: baseline; font-weight: 650; }
+  .scatter-controls select { font: inherit; max-width: 100%; min-height: 36px; background: var(--bg-elev); color: var(--fg); border: 1px solid var(--line); border-radius: 5px; }
+  .scatter-note, .scatter-x-title, .scatter-controls p { font-size: .85rem; }
+  .scatter-frame { display: grid; grid-template-columns: 3.2rem minmax(0,1fr); gap: .15rem .45rem; margin-top: 1rem; }
+  .scatter-y, .scatter-x { color: var(--fg); display: flex; justify-content: space-between; font-size: .78rem; font-variant-numeric: tabular-nums; }
+  .scatter-y { flex-direction: column; align-items: end; }
+  .scatter-x { grid-column: 2; }
+  .scatter-area { position: relative; min-height: 230px; border: 1px solid var(--line); border-inline-start-color: currentColor; border-bottom-color: currentColor; background: linear-gradient(to right, transparent 49.9%, var(--line) 50%, transparent 50.1%), linear-gradient(to bottom, transparent 49.9%, var(--line) 50%, transparent 50.1%); }
+  .scatter-area :global(.scatter-dot) { position: absolute; z-index: 1; transform: translate(-50%, 50%); width: 1.25rem; height: 1.25rem; border: 1px solid currentColor; border-radius: 50%; color: var(--fg); background: var(--bg-elev); font: 700 .7rem/1 system-ui; padding: 0; cursor: pointer; }
+  .scatter-area :global(.scatter-dot:is(:hover,:focus-visible)) { z-index: 2; outline: 2px solid currentColor; outline-offset: 2px; }
+  .scatter-x-title { text-align: right; }
+  .scatter-selection { padding: .45rem .7rem; border-inline-start: 2px solid currentColor; min-height: 2.3rem; }
+  .scatter [hidden] { display: none !important; }
+  @media (max-width: 420px) { .scatter-frame { grid-template-columns: 2.65rem minmax(0,1fr); } }
+</style>

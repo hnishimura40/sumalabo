@@ -36,14 +36,17 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
 
 <section class="return-watch" aria-labelledby="return-watch-title" data-return-watch>
   <div class="watch-lead">
-    <p class="watch-date">最終調査 <time datetime={checked}>{checked && date(checked)}（日本時間）</time></p>
-    <h2 id="return-watch-title">次は他社へ。2年返却でいくら払う？</h2>
-    {best && <div data-watch-current>
-      <p class="watch-result">確認できたオンラインの中で最も低い総額<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
-      <p>端末代、返却時費用、契約事務手数料などの合計です。回線料は別。期限内の返却と査定通過を前提に、次の端末代は含めません。</p>
-      <p class="watch-rating">すまラボの買い時判定 <strong>{priceRating(best.total!.switchYen, best.conditions)}</strong></p>
-    </div>}
-    <p data-watch-hold hidden={Boolean(best)}>現在、費用と適用条件がそろったオンライン案件を確認中です。</p>
+    <div>
+      <p class="watch-date">最終調査 <time datetime={checked}>{checked && date(checked)}（日本時間）</time></p>
+      <h2 id="return-watch-title">次は他社へ。2年返却でいくら払う？</h2>
+      {best && <div data-watch-current>
+        <p class="watch-result">確認できたオンラインの中で最も低い総額<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
+        <p>端末代、返却時費用、契約事務手数料などの合計です。回線料は別。期限内の返却と査定通過を前提に、次の端末代は含めません。</p>
+        <p class="watch-rating">すまラボの買い時判定 <strong>{priceRating(best.total!.switchYen, best.conditions)}</strong></p>
+      </div>}
+      <p data-watch-hold hidden={Boolean(best)}>現在、費用と適用条件がそろったオンライン案件を確認中です。</p>
+    </div>
+    <slot name="device" />
   </div>
   <slot name="summary" />
 
@@ -64,7 +67,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
         <td role="cell"><span class="watch-mobile" aria-hidden="true">広告表示</span>{yen(row.total!.advertisedYen)}{row.adNote && <small>{row.adNote}</small>}</td>
         <td role="cell"><span class="watch-mobile" aria-hidden="true">同じ会社で買い替え</span>{yen(row.total!.sameYen)}</td>
         <td role="cell"><span class="watch-mobile" aria-hidden="true">次は他社へ</span><strong>{yen(row.total!.switchYen)}</strong></td>
-        <td role="cell"><span class="watch-mobile" aria-hidden="true">返却料／契約料</span>{yen(row.prices!.returnFeeYen)} ／ {yen(row.prices!.adminYen)}</td>
+        <td role="cell"><span class="watch-mobile" aria-hidden="true">返却料／契約料</span><span class="watch-fee">{yen(row.prices!.returnFeeYen)}</span> ／ <wbr/><span class="watch-fee">{yen(row.prices!.adminYen)}</span></td>
       </tr>)}
     </tbody>
   </table>}
@@ -142,6 +145,13 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   .return-watch h2[id] { scroll-margin-top: 116px; }
   .return-watch [hidden] { display: none !important; }
   .watch-lead { padding: 1.25rem; border: 1px solid var(--line); border-radius: 14px; }
+  .watch-lead :global(.watch-device-photo) { margin: .85rem 0 0; font-size: .8rem; line-height: 1.5; }
+  .watch-lead :global(.watch-device-photo img) { width: 120px; height: 160px; object-fit: cover; border-radius: 8px; margin: 0; }
+  .watch-fee { white-space: nowrap; }
+  @media (min-width: 700px) {
+    .watch-lead { display: grid; grid-template-columns: minmax(0, 1fr) minmax(140px, 190px); gap: 1rem; align-items: start; }
+    .watch-lead :global(.watch-device-photo) { margin: 0; }
+  }
   .watch-lead h2 { margin: .35rem 0 .7rem; }
   .watch-lead p { margin: .4rem 0; }
   .watch-date, .watch-sources, .watch-pending { font-size: .875rem; }

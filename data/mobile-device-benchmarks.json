@@ -1,0 +1,43 @@
+{
+  "benchmark": "Geekbench 7 CPU",
+  "checkedOn": "2026-11-28",
+  "devices": {
+    "uq-basio-active3-64": { "chip": "MediaTek Dimensity 6300", "score": null },
+    "ymobile-aquos-wish6-128": { "chip": "MediaTek Dimensity 6300", "score": null },
+    "iijmio-nothing-phone-4b-128": { "chip": "Snapdragon 6 Gen 4", "score": null },
+    "iijmio-oppo-reno16-256": { "chip": "Snapdragon 7 Gen 4", "score": null },
+    "rakuten-nothing-phone-3-256": { "chip": "Snapdragon 8s Gen 4", "score": null },
+    "ahamo-galaxy-s25-256": {
+      "chip": "Snapdragon 8 Elite for Galaxy",
+      "score": { "single": 2445, "multi": 8586, "method": "同じCPUのGalaxy S25集計", "url": "https://browser.geekbench.com/mobile-benchmarks" }
+    },
+    "rakuten-galaxy-s26-256": {
+      "chip": "Snapdragon 8 Elite Gen 5 for Galaxy",
+      "score": { "single": 3069, "multi": 10423, "method": "国内版 SM-S942C の公開測定1件", "url": "https://browser.geekbench.com/v7/cpu/753206" }
+    },
+    "ahamo-galaxy-s26-256": {
+      "chip": "Snapdragon 8 Elite Gen 5 for Galaxy",
+      "score": { "single": 3022, "multi": 9913, "method": "国内版 SC-51G の公開測定1件", "url": "https://browser.geekbench.com/v7/cpu/601175" }
+    },
+    "ahamo-iphone16-128": {
+      "chip": "Apple A18",
+      "score": { "single": 2799, "multi": 7605, "method": "機種別集計", "url": "https://browser.geekbench.com/ios_devices/iphone-16" }
+    },
+    "ahamo-iphone-17e-256": {
+      "chip": "Apple A19",
+      "score": { "single": 2903, "multi": 8024, "method": "機種別集計", "url": "https://browser.geekbench.com/ios_devices/iphone-17e" }
+    },
+    "ahamo-iphone-17-256": {
+      "chip": "Apple A19",
+      "score": { "single": 3014, "multi": 8320, "method": "機種別集計", "url": "https://browser.geekbench.com/ios_devices/iphone-17" }
+    },
+    "ahamo-iphone-air-256": {
+      "chip": "Apple A19 Pro",
+      "score": { "single": 3021, "multi": 8446, "method": "機種別集計", "url": "https://browser.geekbench.com/ios_devices/iphone-air" }
+    },
+    "ahamo-iphone-18-pro-256": {
+      "chip": "Apple A20 Pro",
+      "score": { "single": 3988, "multi": 11214, "method": "機種別集計", "url": "https://browser.geekbench.com/ios_devices/iphone-18-pro" }
+    }
+  }
+}
