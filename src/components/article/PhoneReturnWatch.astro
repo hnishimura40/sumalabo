@@ -39,7 +39,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
     <p class="watch-date">最終調査 <time datetime={checked}>{checked && date(checked)}（日本時間）</time></p>
     <h2 id="return-watch-title">次は他社へ。2年返却でいくら払う？</h2>
     {best && <div data-watch-current>
-      <p class="watch-result">確認できたオンラインの中で最も低いのは<strong>{best.carrier}の {yen(best.total!.switchYen)}</strong>です。</p>
+      <p class="watch-result">確認できたオンラインの中で最も低い総額<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
       <p>端末代、返却時費用、契約事務手数料などの合計です。回線料は別。期限内の返却と査定通過を前提に、次の端末代は含めません。</p>
       <p class="watch-rating">すまラボの買い時判定 <strong>{priceRating(best.total!.switchYen, best.conditions)}</strong></p>
     </div>}
@@ -48,8 +48,9 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   <slot name="summary" />
 
   <h2 id="return-comparison">全国オンラインの価格比較</h2>
+  <p data-watch-current>条件付きポイントは支払額から引いていません。</p>
   {current.length > 0 && <table class="watch-table" role="table" data-watch-current>
-    <caption>確認済みの標準条件。条件付きポイントは支払額から引きません。</caption>
+    <caption class="watch-sr">確認済みのオンライン価格を次回他社への乗り換え時の総額順に表示</caption>
     <thead role="rowgroup"><tr role="row">
       <th scope="col" role="columnheader">販売先</th>
       <th scope="col" role="columnheader">広告表示</th>
@@ -148,7 +149,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   .watch-rating { border-inline-start: 2px solid currentColor; padding-inline-start: .65rem; }
   .return-watch table.watch-table { border-collapse: collapse; width: 100%; }
   .return-watch table.watch-table :is(th,td) { background: transparent; color: var(--fg); padding: .65rem; border: 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
-  .watch-table caption { margin-bottom: .5rem; text-align: left; font-size: .875rem; }
+  .watch-sr { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
   .watch-table small, .watch-formula small { display: block; }
   .watch-mobile { display: none; }
   .watch-formula { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; }
