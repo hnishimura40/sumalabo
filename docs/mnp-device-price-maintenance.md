@@ -1,0 +1,18 @@
+# 乗り換え時の端末価格の保守
+
+更新先は [乗り換え（MNP）で安く買えるスマホ](https://sumalabo.com/articles/mnp-smartphone-price-comparison/) の1ページ。公開データの正本は `data/mnp-device-prices.json`。対象は楽天モバイル、ahamo、Y!mobile、UQ mobile、IIJmioの公式オンラインショップ。料金は税込の端末代に限定し、回線料・手数料・下取り・ポイントを差し引かない。販売経路と容量、移行元、対象プラン、オプション、返却の期日・査定・追加費用を公式条件と照合する。広告は別枠で契約条件と既存素材を確認する。
+
+1. 最新の `origin/main` から専用のクリーンな作業ツリーを用意する。夜間実行の作業ツリーや本体作業フォルダに書き込まない。
+2. `node scripts/automation/mnp-device-prices.mjs check <private>/official-sources.json` を実行する。終了コード2は要調査。ハッシュと取得成功は巡回の目安。動的な値は公式ブラウザでMNP・容量・指定プラン・一括と返却をそれぞれ選んで表示を確認する。読み取りのみを行い、公式条件と突き合わせる。
+3. 掲載中の全行について確認結果を非公開の `reviewed-observations.json` に記録する。具体的な対象・条件・期限と、同じモデル・容量で確認した価格を保存する。掲載内の価格に営業日ごとの変化がない場合も確認日時は新しい実測でのみ進める。判定ができない場合は `unavailable` とする。期限変更・終了は公式の告知または表示された規約で判定する。一覧や検索結果の消失は終了の証拠としない。
+4. `node scripts/automation/mnp-device-prices.mjs reconcile <reviewed-observations.json> <private-result.json>` を実行する。既知の行の取得失敗、無効値、大きな変動では前の値と確認日時を維持し、行を「確認中」にする。目安は1万円以上、または1,000円以上かつ20%以上、または返却価格の追加・消失。金額が大きく動いた場合はまず確認中を反映し、後日の独立した公式再確認により確認済み価格へ切り替える。自動取得のデフォルト値・空欄・0円を反映しない。前回確認から48時間で古い旨が文面に出る。終了した条件は過去の価格と明示する。
+5. 新規の掲載を追加するときは、公式の機種・容量・仕様・条件を確認し、全件カタログに有効な行を追加する。既存行を部分リストで置換しない。価格と条件が一致する場合でも、広告素材と出典先は価格更新で書き換えない。全行確認、独立検品、記事ゲート、秘密情報検査、ビルド、375pxの明暗表示を通す。
+6. データ差分のみでPRを作成し、対象・ハッシュ・mergeableを確認。4:30と8:00の起動処理の競合を避け、最新mainのクリーンツリーから既存 `deploy:production` の maintenance 経路を使用する。HTTP 200、strict verify、価格・確認中と公式リンクの実表示を確認する。新しい懸念や未確認行を報告し、失敗は処理済みにしない。
+
+観測は `{ "observations": [{ "id": "...", "outcome": "verified", "checkedAt": "<ISO日時>", "evidenceUrl": "<公式URL>", "evidenceNote": "<何を選び何と照合したか>", "values": { ... } }] }` の形式。 `values` にはデータファイルの `normalYen, mnpYen, real, plan, option, eligibility, period, endsAt, officialUrl, termsUrl` を同じキーで入れる。返却価格を掲載しないときは `real: null`。終了の観測は `outcome: "ended"` と公式証拠、取得不能は `outcome: "unavailable"` を使う。大幅変動の再確認時は公式の別表示・再取得と照合し、`confirmedLarge` の項目に機種ID、`status: "confirmed"`、独立照合した通常・一括・返却の税込額（`prices.normalYen, prices.mnpYen, prices.realYen`）、公式の `url`、 `checkedAt` と `note` を記録する。確認中を一度反映済みの行だけ、新価格へ切り替えられる。
+
+作業記録は `logs/scout/mnp-device-prices/` などの非公開領域へ保存する。
+
+## Codexアプリの8:00定期実行に追記する指示文
+
+> 携帯キャンペーンの日次保守に続けて、最新mainの `docs/mnp-device-price-maintenance.md` に従い、公式5社の端末価格を同じ定期実行内で確認してください。新記事は作らず、価格カタログを更新します。取得できない額や大幅変動は前回値のまま確認中とし、48時間を超える行は古い旨を表示してください。すべての公式条件の確認と独立検品を通った差分を、既存手順でPR・マージ・本番公開し、公開本文とstrict verifyを確認してください。未確認の項目、初めて生じた取得障害、公開結果を短く報告し、同じ障害だけを繰り返し通知しないでください。新規の定期実行やWindowsタスクは作らず、夜間runnerの設定には触れないでください。8:00のタスク開始直後は巡回を行い、PR・本番更新は4:30と8:00の起動処理と競合しない時間に進めてください。
