@@ -116,7 +116,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       <h1 data-pagefind-weight="10">{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : isMnpGuide ? <>{article.title.slice(0, article.title.indexOf("安く"))}<br />{article.title.slice(article.title.indexOf("安く"))}</> : article.title}</h1>
       {isMnpGuide && article.hasAffiliate && <p class="ad-disclosure mnp-disclosure" role="note" data-pagefind-ignore="all"><strong>PR</strong> 本記事は広告（アフィリエイトリンク）を含みます。<a href="/disclosure/">広告掲載の方針</a></p>}
       <p class:list={{"mnp-intro": isMnpGuide}} data-pagefind-ignore="all">{isMnpGuide ? "公式オンラインショップ5社の端末代を比較。買い切り価格と、分割・返却時の負担を比べられます。店頭・量販店は対象外です。" : article.description}</p>
-      {isMnpGuide && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#mnp-prices-title">端末価格を比べる</a></nav>}
+      {isMnpGuide && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#mnp-prices-title">端末価格を比べる</a><a href="#mnp-scatter-title">価格と性能の散布図</a></nav>}
       {isReturnPriceWatch && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#return-comparison">価格を比べる</a><a href="#return-scratches">返却時の査定</a><a href="#return-price-history">価格推移</a></nav>}
       {isCampaignGuide && <nav class="campaign-page-links" aria-label="記事内の案内" data-pagefind-ignore="all"><a href="#mobile-campaigns">キャンペーンを比べる</a><a href="#plan-diagnosis">3問で料金を見直す</a></nav>}
       {

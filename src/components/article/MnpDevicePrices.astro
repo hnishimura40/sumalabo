@@ -19,9 +19,16 @@ const time = (value: string) => new Intl.DateTimeFormat("ja-JP", {
 }).format(new Date(value));
 const carriers = Object.entries(mobileCarrierLinks);
 const numericSpec = (value: string) => Number(value.match(/\d+(?:\.\d+)?/)?.[0]) || null;
+const referenceDetails = {
+  "ymobile-aquos-wish6-128": { label: "日常使いの入門機", use: "連絡・地図・動画視聴が中心。大きめの6.6インチ画面と、5,000mAhの電池。" },
+  "iijmio-nothing-phone-4b-128": { label: "大画面で動画・SNS", use: "有機ELの大画面で動画やSNSを見たい人。6.77インチと128GB。" },
+  "iijmio-oppo-reno16-256": { label: "望遠カメラを使いたい", use: "持ちやすさと写真の両方を重視。6.3インチ、256GB、望遠カメラ付き。" },
+  "ahamo-iphone-18-pro-256": { label: "iPhoneの上位モデル", use: "動画編集や負荷の大きいゲームも使う人。A20 Proと256GB。" },
+};
+const references = rows.filter(row => row.status === "verified" && !row.ended && row.id in referenceDetails);
 const points = rows.map(row => ({
   id: row.id, name: row.model, carrier: mobileCarrierLinks[row.carrier as MobileCarrierKey].label,
-  yen: row.mnpYen, cpu: row.benchmark?.score?.multi ?? null,
+  yen: row.mnpYen, reference: row.id in referenceDetails, cpu: row.benchmark?.score?.multi ?? null,
   weight: numericSpec(row.specs.weight), screen: numericSpec(row.specs.display),
 }));
 ---
@@ -51,6 +58,27 @@ const points = rows.map(row => ({
     </label>
     <p data-mnp-count role="status" aria-live="polite">{rows.length}件</p>
   </div>
+  <MnpPriceScatter points={points}>
+    {references.length > 1 && <div class="mnp-reference">
+      <h3>価格帯ごとに何が違う？</h3>
+      <p>乗り換え一括の掲載価格です。最新の受付条件は公式価格で確認できます。</p>
+      <ul>
+        {references.map(row => {
+          const detail = referenceDetails[row.id as keyof typeof referenceDetails];
+          const score = row.benchmark?.score;
+          return <li>
+            <span class="mnp-reference-label">{detail.label}</span>
+            <strong>{row.model}</strong>
+            <span class="mnp-reference-price">{yen(row.mnpYen)}</span>
+            {score ? <span>CPUマルチ <a href={score.url}>{score.multi.toLocaleString("ja-JP")}点</a></span> : <span>CPUの公開測定値は未確認</span>}
+            <span>{detail.use}</span>
+            <small>価格確認 <time datetime={row.checkedAt}>{time(row.checkedAt)}</time></small>
+            <a href={row.officialUrl}>公式価格</a>
+          </li>;
+        })}
+      </ul>
+    </div>}
+  </MnpPriceScatter>
   <table class="mnp-table" role="table">
     <caption class="mnp-sr">公式オンラインショップのMNP端末価格（税込）</caption>
     <thead role="rowgroup"><tr role="row">
@@ -88,8 +116,7 @@ const points = rows.map(row => ({
                   シングル {row.benchmark.score.single.toLocaleString("ja-JP")} ／ マルチ {row.benchmark.score.multi.toLocaleString("ja-JP")}
                   <span class="mnp-small">{row.benchmark.score.method}</span>
                 </p> : <span class="mnp-small">Geekbench 7の点数は未確認</span>}
-                {!("photo" in row && row.photo) && <span class="mnp-small">写真未掲載</span>}
-                <a href={row.specUrl}>公式仕様</a>
+                <a href={row.specUrl}>{"photo" in row && row.photo ? "公式仕様" : "公式写真・仕様"}</a>
               </div>
             </div>
           </th>
@@ -125,7 +152,6 @@ const points = rows.map(row => ({
     </tbody>
   </table>
   <p data-mnp-empty hidden>該当する機種がありません。会社や価格帯を変えてください。</p>
-  <MnpPriceScatter points={points} />
 </section>
 
 <script>
@@ -166,6 +192,13 @@ const points = rows.map(row => ({
 </script>
 
 <style>
+  .mnp-reference { margin-block: 1rem 1.5rem; }
+  .mnp-reference h3 { margin-bottom: .35rem; }
+  .mnp-reference > p { font-size: .88rem; }
+  .mnp-reference ul { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%, 205px),1fr)); gap: .7rem; list-style: none; padding: 0; margin: .7rem 0 0; }
+  .mnp-reference li { display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; border: 1px solid var(--line); border-radius: .55rem; padding: .75rem; margin: 0; font-size: .88rem; }
+  .mnp-reference-label { font-size: .8rem; font-weight: 700; }
+  .mnp-reference-price { font-size: 1.2rem; font-weight: 750; font-variant-numeric: tabular-nums; }
   .mnp-prices { margin-block: 2rem; color: var(--fg); }
   .mnp-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem 1rem; }
   .mnp-heading h2 { margin: 0; scroll-margin-top: 116px; }
