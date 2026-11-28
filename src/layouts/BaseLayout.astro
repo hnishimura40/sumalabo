@@ -104,7 +104,7 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
     <DrainageTracking />
     <title>{pageTitle}</title>
   </head>
-  <body class:list={[{"renewal-paper":paper}]}>
+  <body class:list={[{ "renewal-paper": paper, "editorial-page": ogType === "article" }]}>
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href="/" aria-label="すまラボ トップへ">
@@ -184,6 +184,8 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
 </html>
 
 <style is:global>
+body.editorial-page { background: var(--bg); }
+body.editorial-page .site-header { border-bottom-color: var(--line-strong); }
 .site-nav.site-nav--scroll{display:flex;flex-wrap:nowrap;overflow-x:auto;min-width:0;max-width:100%;padding-right:36px;mask-image:linear-gradient(to right,#000 88%,transparent);-webkit-mask-image:linear-gradient(to right,#000 88%,transparent);scrollbar-width:thin;overscroll-behavior-inline:contain}.site-nav.site-nav--scroll a{flex:0 0 auto;white-space:nowrap}.header-inner:has(.site-nav--scroll){min-width:0}.header-inner:has(.site-nav--scroll)>*{min-width:0}@media(max-width:720px){.header-inner:has(.site-nav--scroll){grid-template-columns:minmax(0,1fr) auto}.site-nav.site-nav--scroll{width:100%;grid-column:1/-1;order:3}}
 
 @media (min-width: 1280px) {

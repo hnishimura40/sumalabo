@@ -19,7 +19,7 @@ type ArticleData = {
   category: string;
   thumbnail?: string;
   thumbnailAlt?: string;
-  thumbnailCredit?: { author: string; sourceUrl: string; license: string; licenseUrl: string };
+  heroIllustration?: string;
   hasAffiliate?: boolean;
   updated: string;
   pubDate?: string;
@@ -48,7 +48,10 @@ const isCampaignGuide = article.slug === "mobile-plan-cost-comparison";
 const isMnpGuide = article.slug === "mnp-smartphone-price-comparison";
 const isReturnPriceWatch = article.slug === "iphone-18-pro-return-price-watch";
 const isPriceGuide = isMnpGuide || isReturnPriceWatch;
-const showHeroImage = !renewal && Boolean(article.thumbnail);
+const heroImage = article.heroIllustration || article.thumbnail;
+const showHeroImage = !renewal && Boolean(heroImage);
+const hasIllustratedHero = showHeroImage && Boolean(article.heroIllustration);
+const watchTitle = isReturnPriceWatch ? article.title.match(/^(.+の)(2年返却.+?)(【.+】)$/) : null;
 const sectionLinks = isMnpGuide ? [
   { href: "#mnp-prices-title", text: "端末価格を比べる" },
   { href: "#mnp-scatter-title", text: "価格と性能の散布図" },
@@ -128,30 +131,28 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       )
     }
     {/* サイト内検索: header はタイトル(h1)だけを索引に入れる。h1 の見出し重みを効かせるため header を索引ルートにする */}
-    <header class:list={["article-header", { "article-header--with-image": showHeroImage }]} data-pagefind-body>
+    <header class:list={["article-header", { "article-header--with-image": showHeroImage, "article-header--illustrated": hasIllustratedHero }]} data-pagefind-body>
       <div class="article-heading">
         <div class="meta-row" data-pagefind-ignore="all">
           <span>{renewal && article.type!=="news" ? `毎月更新 ／ ${article.updated.slice(0,4)}年${Number(article.updated.slice(5,7))}月号` : article.category}</span>
           <time datetime={article.updated}>更新日: {article.updated}</time>
         </div>
-        <h1 data-pagefind-weight="10">{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : article.title}</h1>
+        <h1 data-pagefind-weight="10">{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : watchTitle ? <><span class="article-title-line">{watchTitle[1]}</span><span class="article-title-line">{watchTitle[2]}</span><span class="article-title-series">{watchTitle[3]}</span></> : article.title}</h1>
         {isMnpGuide && article.hasAffiliate && <p class="ad-disclosure mnp-disclosure" role="note" data-pagefind-ignore="all"><strong>PR</strong> 本記事は広告（アフィリエイトリンク）を含みます。<a href="/disclosure/">広告掲載の方針</a></p>}
         <p class:list={{"mnp-intro": isMnpGuide}} data-pagefind-ignore="all">{isMnpGuide ? "公式オンラインショップ5社の端末代を比較。買い切り価格と、分割・返却時の負担を比べられます。店頭・量販店は対象外です。" : article.description}</p>
       </div>
       {showHeroImage && (
-        <figure class:list={["article-hero-media", { "article-hero-media--portrait": isReturnPriceWatch }]} data-pagefind-ignore="all">
+        <figure class="article-hero-media" data-pagefind-ignore="all">
           <img
             class="article-thumbnail"
-            src={article.thumbnail}
-            alt={article.thumbnailAlt || ""}
+            src={heroImage}
+            alt={hasIllustratedHero ? "" : article.thumbnailAlt || ""}
             loading="eager"
             fetchpriority="high"
-            width={isReturnPriceWatch ? 600 : 1280}
-            height={isReturnPriceWatch ? 800 : 720}
+            width={hasIllustratedHero ? 1536 : 1280}
+            height={hasIllustratedHero ? 1024 : 720}
           />
-          {article.thumbnailCredit && <figcaption>
-            {article.thumbnailCredit.author} · <a href={article.thumbnailCredit.sourceUrl}>写真出典</a> · <a href={article.thumbnailCredit.licenseUrl}>{article.thumbnailCredit.license}</a>
-          </figcaption>}
+          {hasIllustratedHero && <figcaption class="hero-illustration-note">イメージ（AI生成）</figcaption>}
         </figure>
       )}
     </header>
@@ -387,6 +388,10 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   .article-shell {
     --article-accent: var(--brand);
     --article-accent-tint: var(--brand-soft);
+    --hero-base: var(--bg-elev);
+    --hero-ink: var(--fg);
+    --hero-copy: var(--fg-mid);
+    --hero-accent: var(--article-accent);
   }
 
   .article-shell--comparison {
@@ -408,10 +413,10 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   .article-breadcrumb a:hover { color: var(--article-accent); }
 
   .article-header {
-    margin-bottom: 24px;
+    margin-bottom: 18px;
     border: 1px solid var(--line);
-    border-top: 3px solid transparent;
-    border-radius: var(--radius-lg);
+    border-top: 2px solid transparent;
+    border-radius: 10px;
     background:
       linear-gradient(125deg, var(--article-accent-tint), var(--bg-elev) 58%) padding-box,
       linear-gradient(95deg, var(--article-accent) 16%, var(--brand) 70%, var(--amber)) border-box;
@@ -419,7 +424,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
 
   .article-heading {
     min-width: 0;
-    padding: clamp(22px, 3.6vw, 52px);
+    padding: clamp(22px, 3vw, 44px);
     align-self: center;
   }
 
@@ -450,7 +455,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     flex-wrap: wrap;
     gap: 0 clamp(.7rem, 2.5vw, 2rem);
     border-bottom: 1px solid var(--line-strong);
-    margin: -14px 0 24px;
+    margin: 0 0 24px;
   }
 
   .article-section-links a {
@@ -473,7 +478,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   }
 
   @media (min-width: 900px) {
-    .article-shell--comparison .article-content { padding-block-start: clamp(22px, 2.5vw, 36px); }
+    .article-shell--comparison .article-content { padding: clamp(18px, 2.1vw, 30px); }
     .article-shell:not(.article-shell--renewal) {
       width: min(1240px, calc(100% - clamp(48px, 6vw, 112px)));
       padding-top: 26px;
@@ -487,7 +492,6 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     }
     .article-header--with-image .article-hero-media {
       display: grid;
-      grid-template-rows: minmax(0, 1fr) auto;
       align-self: stretch;
     }
     .article-content > :global(:is(p,ul,ol,blockquote)) { max-width: 54rem; }
@@ -532,7 +536,18 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     text-wrap: balance;
     overflow-wrap: anywhere;
     line-height: 1.22;
-    letter-spacing: 0;
+    letter-spacing: -.025em;
+    word-break: auto-phrase;
+  }
+
+  .article-title-line { display: block; }
+
+  .article-title-series {
+    display: block;
+    margin-top: .65rem;
+    color: var(--hero-accent, var(--article-accent));
+    font-size: .42em;
+    letter-spacing: .06em;
   }
 
   .article-header p {
@@ -553,27 +568,132 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
 
-  .article-hero-media--portrait .article-thumbnail {
-    object-position: 50% 26%;
-    border-radius: 0;
-  }
-
   @media (min-width: 900px) {
     .article-thumbnail {
       border-radius: 0 calc(var(--radius-lg) - 2px) calc(var(--radius-lg) - 2px) 0;
     }
     .article-shell--mnp .article-thumbnail { object-position: 72% center; }
-    .article-hero-media--portrait figcaption { grid-row: 2; }
   }
 
-  .article-hero-media--portrait figcaption { border-end-end-radius: var(--radius-lg); }
+  /* Wide editorial images fade into a solid text surface on desktop. */
+  .article-shell--mnp {
+    --hero-base: #f5efe5;
+    --hero-ink: #19212a;
+    --hero-copy: #3e454a;
+    --hero-accent: #175b52;
+  }
+
+  .article-shell--price-watch {
+    --hero-base: #eeeff9;
+    --hero-ink: #181d32;
+    --hero-copy: #404761;
+    --hero-accent: #414e8f;
+  }
+
+  :global(html.dark) .article-shell--mnp {
+    --hero-base: #132020;
+    --hero-ink: #f2f5f6;
+    --hero-copy: #c6d5d2;
+    --hero-accent: #9ed0c2;
+  }
+
+  :global(html.dark) .article-shell--price-watch {
+    --hero-base: #111725;
+    --hero-ink: #f4f5fa;
+    --hero-copy: #d1d6e7;
+    --hero-accent: #bdc6fa;
+    --article-accent: #bdc6fa;
+  }
+
+  .article-header--illustrated {
+    --hero-veil: color-mix(in srgb, var(--hero-base) 94%, transparent);
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--hero-accent) 25%, var(--line));
+    background: var(--hero-base);
+  }
+
+  .article-header--illustrated h1 {
+    color: var(--hero-ink);
+    line-height: 1.15;
+  }
+
+  .article-header--illustrated .article-heading p {
+    max-width: 37rem;
+    color: var(--hero-copy);
+  }
+
+  .article-header--illustrated .article-heading p a { color: var(--hero-accent); }
+
+  .article-header--illustrated .meta-row span {
+    border: 0;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--hero-accent) 14%, var(--hero-base));
+    color: var(--hero-accent);
+  }
+
+  .article-header--illustrated .meta-row time {
+    border: 0;
+    background: none;
+    color: var(--hero-copy);
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+
+  .article-header--illustrated .article-hero-media { position: relative; }
+  .article-header--illustrated .article-thumbnail { border-radius: 0; }
+
+  .article-hero-media .hero-illustration-note {
+    position: absolute;
+    z-index: 1;
+    inset: auto .7rem .55rem auto;
+    border-radius: 3px;
+    padding: .15rem .45rem;
+    background: #151923;
+    color: #f4f5fa;
+    font-size: .68rem;
+  }
+
+  @media (min-width: 900px) {
+    .article-header--illustrated {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 56%) minmax(0, 1fr);
+      min-height: clamp(300px, 27vw, 362px);
+    }
+
+    .article-header--illustrated .article-heading { position: relative; z-index: 1; }
+    .article-header--illustrated .article-hero-media {
+      position: absolute;
+      display: block;
+      inset: 0 0 0 24%;
+    }
+
+    .article-header--illustrated .article-hero-media::after {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, var(--hero-base), var(--hero-veil) 25%, transparent 66%);
+      content: "";
+    }
+
+    .article-header--illustrated .article-thumbnail { object-position: right 43%; }
+    .article-shell--price-watch .article-header--illustrated .article-thumbnail { object-position: right 34%; }
+  }
+
+  @media (max-width: 899px) {
+    .article-header--illustrated .article-thumbnail {
+      height: auto;
+      aspect-ratio: 2.05;
+      object-position: 78% center;
+    }
+  }
 
   .article-content {
     background: var(--bg-elev);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     padding: clamp(24px, 5vw, 46px);
-    box-shadow: var(--shadow-md);
     color: var(--fg);
     font-size: 17px;
     line-height: 1.85;

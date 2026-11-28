@@ -2,10 +2,18 @@ import PhoneReturnWatch from "../../src/components/article/PhoneReturnWatch.astr
 import Summary30 from "../../src/components/article/Summary30.astro";
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
 
-**スマホ返却費用の定点観測**の対象はiPhone 18 Pro 256GBです。確認できたオンライン販売先の端末関連費用を比べます。回線料は別です。返却型購入とは、分割で買った端末を期限内に返すと、残りの支払いが免除される仕組みです。MNPとは、今の電話番号を変えずに携帯会社を乗り換えられる仕組みです。乗り換えと同時に端末を買い、約2年後に返す場合を比べます。
-
 <PhoneReturnWatch modelName={"iPhone 18 Pro"} capacityGb={256}>
-<p class="watch-device-specs" slot="device">6.3インチ・211g・A20 Pro。<a href="https://browser.geekbench.com/ios_devices/iphone-18-pro">Geekbench 7</a>はシングル3,988、マルチ11,214。</p>
+<p class="watch-scope" slot="scope">
+  <strong>スマホ返却費用の定点観測</strong>の対象はiPhone 18 Pro 256GBです。確認できたオンライン販売先の端末関連費用を比べます。回線料は別です。返却型購入とは、分割で買った端末を期限内に返すと、残りの支払いが免除される仕組みです。MNPとは、今の電話番号を変えずに携帯会社を乗り換えられる仕組みです。乗り換えと同時に端末を買い、約2年後に返す場合を比べます。
+</p>
+<figure class="watch-device-photo" slot="device">
+  <img src="/images/thumbnails/iphone-18-pro-return-price-watch.webp" alt="iPhone 18 Proの展示機の背面" width="150" height="200" loading="lazy" decoding="async" />
+  <figcaption>
+    <strong>iPhone 18 Proの実機と仕様</strong>
+    <p>6.3インチ・211g・A20 Pro。<a href="https://browser.geekbench.com/ios_devices/iphone-18-pro">Geekbench 7</a>はシングル3,988、マルチ11,214。</p>
+    <small>茅野ふたば撮影（縮小・WebP化） · <a href="https://commons.wikimedia.org/wiki/File:IPhone_18_Pro_rear.jpg">写真出典</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></small>
+  </figcaption>
+</figure>
 <Summary30 slot="summary">
   <ol>
     <li><strong>これは何？</strong> iPhone 18 Pro 256GBの返却型購入にかかる費用の比較です。</li>

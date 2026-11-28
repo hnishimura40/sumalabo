@@ -460,14 +460,14 @@ function checkImageStage(slug, mdx) {
     }
   }
 
-  // サムネイル
-  if (fm) {
-    const thumb = frontmatterValue(fm, "thumbnail");
-    if (thumb) {
-      const thumbPath = path.join(REPO_ROOT, "public", thumb.replace(/^\//, ""));
-      if (!existsSync(thumbPath)) report("violation", "image-ref", mdxLabel, `thumbnail が存在しません: ${thumb}`);
-      if (!/\.webp$/i.test(thumb)) report("violation", "image-ref", mdxLabel, `thumbnail が WebP ではありません: ${thumb}`);
-    }
+  // サムネイルと記事冒頭の画像
+  for (const field of ["thumbnail", "heroIllustration"]) {
+    const ref = fm && frontmatterValue(fm, field);
+    if (!ref) continue;
+    const assetPath = path.join(REPO_ROOT, "public", ref.replace(/^\//, ""));
+    if (!existsSync(assetPath)) report("violation", "image-ref", mdxLabel, `${field} が存在しません: ${ref}`);
+    if (!/\.webp$/i.test(ref)) report("violation", "image-ref", mdxLabel, `${field} が WebP ではありません: ${ref}`);
+    refs.add(ref);
   }
 
   // 未参照画像（置きっぱなし検出）
