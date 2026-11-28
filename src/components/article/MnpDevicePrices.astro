@@ -1,11 +1,14 @@
 ---
 import catalog from "../../../data/mnp-device-prices.json";
+import benchmarkCatalog from "../../../data/mobile-device-benchmarks.json";
+import MnpPriceScatter from "./MnpPriceScatter.astro";
 import { mobileCarrierLinks, type MobileCarrierKey } from "../../data/mobileCarrierLinks";
 import { validateCatalog } from "../../lib/mnp-device-prices.mjs";
 
 const now = Date.now();
 const rows = validateCatalog(catalog).rows.slice().sort((a, b) => a.mnpYen - b.mnpYen).map(row => ({
   ...row,
+  benchmark: benchmarkCatalog.devices[row.id as keyof typeof benchmarkCatalog.devices],
   ended: row.status === "ended" || Boolean(row.endsAt && Date.parse(row.endsAt) <= now),
   stale: now - Date.parse(row.checkedAt) >= 48 * 60 * 60 * 1000,
 }));
@@ -15,6 +18,12 @@ const time = (value: string) => new Intl.DateTimeFormat("ja-JP", {
   timeZone: "Asia/Tokyo", dateStyle: "medium", timeStyle: "short",
 }).format(new Date(value));
 const carriers = Object.entries(mobileCarrierLinks);
+const numericSpec = (value: string) => Number(value.match(/\d+(?:\.\d+)?/)?.[0]) || null;
+const points = rows.map(row => ({
+  id: row.id, name: row.model, carrier: mobileCarrierLinks[row.carrier as MobileCarrierKey].label,
+  yen: row.mnpYen, cpu: row.benchmark?.score?.multi ?? null,
+  weight: numericSpec(row.specs.weight), screen: numericSpec(row.specs.display),
+}));
 ---
 
 <section class="mnp-prices" aria-labelledby="mnp-prices-title" data-mnp-prices>
@@ -23,6 +32,7 @@ const carriers = Object.entries(mobileCarrierLinks);
     <p>最終確認 <time datetime={lastChecked}>{time(lastChecked!)}</time>（日本時間）</p>
   </div>
   <p class="mnp-price-guide">実質価格は、端末を期限内に返却する場合の負担額です。次回の買い替えによる免除やポイントは引いていません。回線料・契約事務手数料は別途かかる場合があります。</p>
+  <p class="mnp-price-guide" data-mnp-scatter-link hidden><a href="#mnp-scatter-title">価格とスペックの散布図へ</a></p>
   <div class="mnp-filters" data-mnp-filters hidden>
     <label>携帯会社
       <select data-mnp-carrier>
@@ -70,8 +80,14 @@ const carriers = Object.entries(mobileCarrierLinks);
                   <dt>容量</dt><dd>{row.storage}</dd>
                   <dt>重さ</dt><dd>{row.specs.weight}</dd>
                   {"battery" in row.specs && <><dt>電池</dt><dd>{row.specs.battery}</dd></>}
+                  {row.benchmark && <><dt>CPU</dt><dd>{row.benchmark.chip}</dd></>}
                 </dl>
                 <p class="mnp-feature">{row.specs.feature}</p>
+                {row.benchmark?.score ? <p class="mnp-feature">
+                  <a href={row.benchmark.score.url}>Geekbench 7</a><br/>
+                  シングル {row.benchmark.score.single.toLocaleString("ja-JP")} ／ マルチ {row.benchmark.score.multi.toLocaleString("ja-JP")}
+                  <span class="mnp-small">{row.benchmark.score.method}</span>
+                </p> : <span class="mnp-small">Geekbench 7の点数は未確認</span>}
                 {!("photo" in row && row.photo) && <span class="mnp-small">写真未掲載</span>}
                 <a href={row.specUrl}>公式仕様</a>
               </div>
@@ -109,6 +125,7 @@ const carriers = Object.entries(mobileCarrierLinks);
     </tbody>
   </table>
   <p data-mnp-empty hidden>該当する機種がありません。会社や価格帯を変えてください。</p>
+  <MnpPriceScatter points={points} />
 </section>
 
 <script>
@@ -118,8 +135,10 @@ const carriers = Object.entries(mobileCarrierLinks);
     const max = section.querySelector<HTMLSelectElement>("[data-mnp-max]")!;
     const status = section.querySelector<HTMLElement>("[data-mnp-count]")!;
     const empty = section.querySelector<HTMLElement>("[data-mnp-empty]")!;
+    const scatterLink = section.querySelector<HTMLElement>("[data-mnp-scatter-link]")!;
     const rows = [...section.querySelectorAll<HTMLElement>("[data-mnp-id]")];
     filters.hidden = false;
+    scatterLink.hidden = false;
     function refresh() {
       const now = Date.now();
       let shown = 0;
@@ -137,6 +156,7 @@ const carriers = Object.entries(mobileCarrierLinks);
       }
       status.textContent = `${shown}件`;
       empty.hidden = shown !== 0;
+      section.dispatchEvent(new Event("mnp-catalog-refresh"));
     }
     filters.addEventListener("change", refresh);
     window.addEventListener("pageshow", refresh);

@@ -1,0 +1,650 @@
+{
+  "schemaVersion": 1,
+  "observations": [
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "au-online",
+      "carrier": "au",
+      "seller": "au Online Shop",
+      "channel": "online",
+      "observedAt": "2026-09-16T23:59:59+09:00",
+      "status": "verified",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": {
+        "listYen": 268800,
+        "mnpDiscountYen": 44000,
+        "retainedInstallmentsYen": 22900,
+        "returnFeeYen": 22000,
+        "adminYen": 3850,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 0,
+        "sameCarrierWaiverYen": 22000,
+        "advertisedYen": 22900
+      },
+      "plan": "対象のau音声プラン。スマホミニプラン＋は割引対象外。",
+      "returnTiming": "24回払い、13カ月以上利用して25カ月目までに回収。",
+      "sameCarrierCondition": "特典申込と同時にauで対象機種へ買い替え。",
+      "sources": [
+        {
+          "name": "2026年9月16日付の販売価格表",
+          "url": "https://tmp.acs.au.com/content/dam/au-com/extlib/iphone/csv/files/iphone_au-price_2609_f6761310f6d644d6.pdf",
+          "asOf": "2026-09-16"
+        },
+        {
+          "name": "オンライン契約手数料",
+          "url": "https://www.au.com/mobile/information/contract/"
+        }
+      ],
+      "note": "発売前の公式掲示。発売当日の実売を確認した記録と区別。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "softbank-online",
+      "carrier": "ソフトバンク",
+      "seller": "ソフトバンクオンラインショップ",
+      "channel": "online",
+      "observedAt": "2026-09-12T23:59:59+09:00",
+      "status": "verified",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": {
+        "listYen": 268560,
+        "mnpDiscountYen": 33000,
+        "retainedInstallmentsYen": 23760,
+        "returnFeeYen": 22000,
+        "adminYen": 3850,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 0,
+        "sameCarrierWaiverYen": 22000,
+        "advertisedYen": 23760
+      },
+      "plan": "他社から番号を引き継ぎ、端末を48回払いで自宅受け取り。",
+      "returnTiming": "25カ月目に特典Bを申し込み、翌月末までに回収・査定完了。",
+      "sameCarrierCondition": "ソフトバンクで指定機種を一括または48回払いで購入し、買替え応援割の条件を満たす。",
+      "sources": [
+        {
+          "name": "2026年9月の公式機種代金資料",
+          "url": "https://www.softbank.jp/mobile/set/common/pdf/products/apple-autumn-2026/model-price-iphone.pdf",
+          "asOf": "2026-09-12"
+        },
+        {
+          "name": "自宅受け取りの事務手数料",
+          "url": "https://www.softbank.jp/support/faq/view/20471"
+        }
+      ],
+      "note": "発売前の公式掲示。発売当日の実売を確認した記録と区別。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "au-online",
+      "carrier": "au",
+      "seller": "au Online Shop",
+      "channel": "online",
+      "observedAt": "2026-11-28T12:18:00+09:00",
+      "status": "verified",
+      "stock": "available",
+      "deadline": null,
+      "prices": {
+        "listYen": 268800,
+        "mnpDiscountYen": 44000,
+        "retainedInstallmentsYen": 22900,
+        "returnFeeYen": 22000,
+        "adminYen": 3850,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 0,
+        "sameCarrierWaiverYen": 22000,
+        "advertisedYen": 22900
+      },
+      "plan": "スマホミニプラン＋は割引対象外。19歳以上向けの公式オンライン割引。プラン月額は別途。",
+      "returnTiming": "24回払い。13カ月以上利用して25カ月目までに回収。",
+      "sameCarrierCondition": "特典申込と同時にauで対象機種に買い替えると22,000円免除。",
+      "povo": "povo2.0は他社乗り換えと同じ申込区分。povo1.0は割引対象外。",
+      "conditions": "plan",
+      "sources": [
+        {
+          "name": "256GBの端末価格と在庫",
+          "url": "https://www.au.com/iphone/product/iphone-18-pro/"
+        },
+        {
+          "name": "オンライン割引規約",
+          "url": "https://www.au.com/mobile/campaign/ols-otokuwari-2004/"
+        },
+        {
+          "name": "返却と査定",
+          "url": "https://www.au.com/mobile/tokusuru-program-plus/"
+        },
+        {
+          "name": "オンライン契約手数料",
+          "url": "https://www.au.com/support/faq/details/00/0000/000028/pg00002818/",
+          "asOf": "2026-10-16"
+        }
+      ],
+      "note": "バーガンディ256GBの在庫表示を確認。色によって在庫は異なります。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "softbank-online",
+      "carrier": "ソフトバンク",
+      "seller": "ソフトバンクオンラインショップ",
+      "channel": "online",
+      "observedAt": "2026-11-28T12:17:00+09:00",
+      "status": "verified",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": {
+        "listYen": 268560,
+        "mnpDiscountYen": 30336,
+        "retainedInstallmentsYen": 26424,
+        "returnFeeYen": 22000,
+        "adminYen": 3850,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 0,
+        "sameCarrierWaiverYen": 22000,
+        "advertisedYen": 26424
+      },
+      "plan": "他社から番号を引き継ぎ、48回払い。オンラインショップ割は自宅等受け取りが対象。",
+      "returnTiming": "25カ月目に特典Bを申し込み、翌月末までに回収・査定完了。補償はこの比較の必須費用に含めない。",
+      "sameCarrierCondition": "ソフトバンクで指定機種を一括または48回払いで購入し、買替え応援割の条件を満たすと22,000円免除。",
+      "povo": "通常の他社MNP対象としての適用可否は購入画面で要確認。",
+      "conditions": "standard",
+      "sources": [
+        {
+          "name": "256GBの現行価格表",
+          "url": "https://www.softbank.jp/iphone/price-comparison/"
+        },
+        {
+          "name": "返却と査定",
+          "url": "https://www.softbank.jp/mobile/products/new-tokusuru-support-plus/"
+        },
+        {
+          "name": "自宅受け取りの事務手数料",
+          "url": "https://www.softbank.jp/support/faq/view/20471"
+        }
+      ]
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "ahamo-online",
+      "carrier": "ahamo",
+      "seller": "ahamo公式サイト",
+      "channel": "online",
+      "observedAt": "2026-11-28T12:16:00+09:00",
+      "status": "verified",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": {
+        "listYen": 263230,
+        "mnpDiscountYen": 22000,
+        "retainedInstallmentsYen": 44814,
+        "returnFeeYen": 22000,
+        "adminYen": 0,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 0,
+        "sameCarrierWaiverYen": 22000,
+        "advertisedYen": 66814
+      },
+      "plan": "ahamoへ他社から乗り換え。JALモバイルオプション同時申込や過去1年以内の対象割引の適用は対象外。返却にはdポイントクラブの継続等が必要。",
+      "returnTiming": "24回払い。23カ月目に返却する場合。",
+      "sameCarrierCondition": "返却と同時にドコモで対象機種への買い替え条件を満たすと利用料免除。",
+      "povo": "他社MNPの手続き。対象の申込画面および受付条件を確認。",
+      "conditions": "standard",
+      "sources": [
+        {
+          "name": "256GBと返却だけの場合の表示",
+          "url": "https://ahamo.com/products/iphone/iphone-18-pro/"
+        },
+        {
+          "name": "5G WELCOME割",
+          "url": "https://ahamo.com/special/lp/5g-welcome_wari.html"
+        },
+        {
+          "name": "契約手数料",
+          "url": "https://faq.ahamo.com/faq/show/36?site_domain=default"
+        }
+      ]
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "rakuten-online",
+      "carrier": "楽天モバイル",
+      "seller": "楽天モバイル公式",
+      "channel": "online",
+      "observedAt": "2026-11-28T12:18:00+09:00",
+      "status": "verified",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": {
+        "listYen": 255900,
+        "mnpDiscountYen": 0,
+        "retainedInstallmentsYen": 127944,
+        "returnFeeYen": 3300,
+        "adminYen": 0,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 5000,
+        "sameCarrierWaiverYen": 0,
+        "advertisedYen": 127944
+      },
+      "plan": "楽天カードによる48回払い。料金は回線契約が累計4回線目までの例。5回線目以上は契約事務手数料3,850円が別途必要。",
+      "returnTiming": "25カ月目に返却手続き。返却・機種変更のどちらも手数料3,300円。",
+      "sameCarrierCondition": "対象機種へ買い替える場合も返却手数料あり。",
+      "povo": "povoからの乗り換え手順を公式が案内。",
+      "adNote": "月5,331円の端末表示を24回分に換算。条件付きポイント5,000ptは別表示。",
+      "conditions": "card",
+      "sources": [
+        {
+          "name": "256GBの分割価格",
+          "url": "https://network.mobile.rakuten.co.jp/product/iphone/iphone-18-pro/"
+        },
+        {
+          "name": "返却の条件",
+          "url": "https://network.mobile.rakuten.co.jp/service/replacement-program/"
+        },
+        {
+          "name": "契約事務手数料",
+          "url": "https://network.mobile.rakuten.co.jp/terms/pdf/rakuten_mobile_voice_sim_pricelist.pdf?20260224="
+        },
+        {
+          "name": "ポイントの条件",
+          "url": "https://network.mobile.rakuten.co.jp/campaign/iphone-upgrade/"
+        },
+        {
+          "name": "povoからの移行案内",
+          "url": "https://network.mobile.rakuten.co.jp/guide/mnp/povo/"
+        }
+      ]
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "docomo-online",
+      "carrier": "ドコモ",
+      "seller": "ドコモオンラインショップ",
+      "channel": "online",
+      "observedAt": "2026-11-28T12:17:00+09:00",
+      "status": "unconfirmed",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": null,
+      "sources": [
+        {
+          "name": "256GB販売ページ",
+          "url": "https://onlineshop.docomo.ne.jp/products/mobile/details/004Nh"
+        },
+        {
+          "name": "カエドキプログラムの残価表",
+          "url": "https://www.docomo.ne.jp/campaign_event/kaedoki_program/",
+          "asOf": "2026-11-26"
+        },
+        {
+          "name": "11月26日付のメンテナンス情報",
+          "url": "https://www.docomo.ne.jp/info/notice/page/261126_00_m.html",
+          "asOf": "2026-11-26"
+        }
+      ],
+      "note": "公式オンラインショップがメンテナンス表示。現行の販売価格・オンライン限定の値引き・在庫をまとめて確認できず、オンライン順位から保留。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "yodobashi-store",
+      "carrier": "ソフトバンク",
+      "seller": "ヨドバシカメラ",
+      "channel": "store",
+      "observedAt": "2026-11-28T12:19:00+09:00",
+      "status": "unconfirmed",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": null,
+      "sources": [
+        {
+          "name": "256GB販売ページ",
+          "url": "https://www.yodobashi.com/product/100000001010207002/"
+        }
+      ],
+      "note": "対象端末の公式掲載を確認。店舗、回線、返却までの総額を同時に照合できる特価告知は未確認。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "nojima-store",
+      "carrier": "取扱キャリア別",
+      "seller": "ノジマ",
+      "channel": "store",
+      "observedAt": "2026-11-28T12:19:00+09:00",
+      "status": "unconfirmed",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": null,
+      "sources": [
+        {
+          "name": "iPhone 18の案内",
+          "url": "https://www.nojima.co.jp/campaign/iphone18/"
+        }
+      ],
+      "note": "製品案内を確認。店舗名・期限・MNP／返却時の条件・費用が揃う256GB店頭案件は未確認。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "edion-store",
+      "carrier": "取扱キャリア別",
+      "seller": "エディオン",
+      "channel": "store",
+      "observedAt": "2026-11-28T12:19:00+09:00",
+      "status": "unconfirmed",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": null,
+      "sources": [
+        {
+          "name": "公式商品検索",
+          "url": "https://www.edion.com/item_list.html?keyword=iPhone18"
+        }
+      ],
+      "note": "256GBのMNP・返却プログラムを含む店頭価格と適用条件は未確認。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "bic-store",
+      "carrier": "取扱キャリア別",
+      "seller": "ビックカメラ",
+      "channel": "store",
+      "observedAt": "2026-11-28T03:28:04.777Z",
+      "status": "unconfirmed",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": null,
+      "sources": [
+        {
+          "name": "公式取扱情報",
+          "url": "https://www.biccamera.com/bc/i/topics/phone/store_phone/index.jsp"
+        }
+      ],
+      "note": "製品取扱窓口を確認。店舗名、期間、256GBの返却込み総額を照合できる特価は未確認。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "yamada-store",
+      "carrier": "取扱キャリア別",
+      "seller": "ヤマダデンキ",
+      "channel": "store",
+      "observedAt": "2026-11-28T03:28:04.778Z",
+      "status": "unconfirmed",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": null,
+      "sources": [
+        {
+          "name": "公式取扱情報",
+          "url": "https://www.yamada-denki.jp/service/apple/"
+        }
+      ],
+      "note": "製品取扱窓口を確認。店舗名、期間、256GBの返却込み総額を照合できる特価は未確認。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "joshin-store",
+      "carrier": "取扱キャリア別",
+      "seller": "ジョーシン",
+      "channel": "store",
+      "observedAt": "2026-11-28T03:28:04.778Z",
+      "status": "unconfirmed",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": null,
+      "sources": [
+        {
+          "name": "公式店舗情報",
+          "url": "https://shop.joshin.co.jp/"
+        }
+      ],
+      "note": "製品取扱窓口を確認。店舗名、期間、256GBの返却込み総額を照合できる特価は未確認。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "au-online",
+      "carrier": "au",
+      "seller": "au Online Shop",
+      "channel": "online",
+      "observedAt": "2026-11-28T03:46:33.639Z",
+      "status": "verified",
+      "stock": "available",
+      "deadline": null,
+      "prices": {
+        "listYen": 268800,
+        "mnpDiscountYen": 44000,
+        "retainedInstallmentsYen": 22900,
+        "returnFeeYen": 22000,
+        "adminYen": 3850,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 0,
+        "sameCarrierWaiverYen": 22000,
+        "advertisedYen": 22900
+      },
+      "plan": "スマホミニプラン＋は割引対象外。19歳以上向けの公式オンライン割引。プラン月額は別途。",
+      "returnTiming": "24回払い。13カ月以上利用して25カ月目までに回収。",
+      "sameCarrierCondition": "特典申込と同時にauで対象機種に買い替えると22,000円免除。",
+      "povo": "povo2.0は他社乗り換えと同じ申込区分。povo1.0は割引対象外。",
+      "conditions": "plan",
+      "sources": [
+        {
+          "name": "256GBの端末価格と在庫",
+          "url": "https://www.au.com/iphone/product/iphone-18-pro/"
+        },
+        {
+          "name": "オンライン割引規約",
+          "url": "https://www.au.com/mobile/campaign/ols-otokuwari-2004/"
+        },
+        {
+          "name": "返却と査定",
+          "url": "https://www.au.com/mobile/tokusuru-program-plus/"
+        },
+        {
+          "name": "オンライン契約手数料",
+          "url": "https://www.au.com/support/faq/details/00/0000/000028/pg00002818/",
+          "asOf": "2026-10-16"
+        }
+      ],
+      "note": "公式商品ページで「他社／povo2.0から乗りかえ」、バーガンディ256GB、224,800円と残価201,900円、在庫ありを再確認。オンライン契約料3,850円。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "softbank-online",
+      "carrier": "ソフトバンク",
+      "seller": "ソフトバンクオンラインショップ",
+      "channel": "online",
+      "observedAt": "2026-11-28T03:46:33.639Z",
+      "status": "verified",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": {
+        "listYen": 268560,
+        "mnpDiscountYen": 30336,
+        "retainedInstallmentsYen": 26424,
+        "returnFeeYen": 22000,
+        "adminYen": 3850,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 0,
+        "sameCarrierWaiverYen": 22000,
+        "advertisedYen": 26424
+      },
+      "plan": "他社から番号を引き継ぎ、48回払い。オンラインショップ割は自宅等受け取りが対象。",
+      "returnTiming": "25カ月目に特典Bを申し込み、翌月末までに回収・査定完了。補償はこの比較の必須費用に含めない。",
+      "sameCarrierCondition": "ソフトバンクで指定機種を一括または48回払いで購入し、買替え応援割の条件を満たすと22,000円免除。",
+      "povo": "通常の他社MNP対象としての適用可否は購入画面で要確認。",
+      "conditions": "standard",
+      "sources": [
+        {
+          "name": "256GBの現行価格表",
+          "url": "https://www.softbank.jp/iphone/price-comparison/"
+        },
+        {
+          "name": "返却と査定",
+          "url": "https://www.softbank.jp/mobile/products/new-tokusuru-support-plus/"
+        },
+        {
+          "name": "自宅受け取りの事務手数料",
+          "url": "https://www.softbank.jp/support/faq/view/20471"
+        }
+      ],
+      "note": "公式価格表でオンラインMNP、256GB、1〜24回26,424円・返却料22,000円、公式FAQで自宅受け取りの契約料3,850円を再確認。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "ahamo-online",
+      "carrier": "ahamo",
+      "seller": "ahamo公式サイト",
+      "channel": "online",
+      "observedAt": "2026-11-28T03:46:33.639Z",
+      "status": "verified",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": {
+        "listYen": 263230,
+        "mnpDiscountYen": 22000,
+        "retainedInstallmentsYen": 44814,
+        "returnFeeYen": 22000,
+        "adminYen": 0,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 0,
+        "sameCarrierWaiverYen": 22000,
+        "advertisedYen": 66814
+      },
+      "plan": "ahamoへ他社から乗り換え。JALモバイルオプション同時申込や過去1年以内の対象割引の適用は対象外。返却にはdポイントクラブの継続等が必要。",
+      "returnTiming": "24回払い。23カ月目に返却する場合。",
+      "sameCarrierCondition": "返却と同時にドコモで対象機種への買い替え条件を満たすと利用料免除。",
+      "povo": "他社MNPの手続き。対象の申込画面および受付条件を確認。",
+      "conditions": "standard",
+      "sources": [
+        {
+          "name": "256GBと返却だけの場合の表示",
+          "url": "https://ahamo.com/products/iphone/iphone-18-pro/"
+        },
+        {
+          "name": "5G WELCOME割",
+          "url": "https://ahamo.com/special/lp/5g-welcome_wari.html"
+        },
+        {
+          "name": "契約手数料",
+          "url": "https://faq.ahamo.com/faq/show/36?site_domain=default"
+        }
+      ],
+      "note": "公式商品ページでMNP・256GB、一括241,230円、返却のみ66,814円、条件付き買い替え44,814円を再確認。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "rakuten-online",
+      "carrier": "楽天モバイル",
+      "seller": "楽天モバイル公式",
+      "channel": "online",
+      "observedAt": "2026-11-28T03:46:33.639Z",
+      "status": "verified",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": {
+        "listYen": 255900,
+        "mnpDiscountYen": 0,
+        "retainedInstallmentsYen": 127944,
+        "returnFeeYen": 3300,
+        "adminYen": 0,
+        "optionsYen": 0,
+        "insuranceYen": 0,
+        "cashbackYen": 0,
+        "points": 5000,
+        "sameCarrierWaiverYen": 0,
+        "advertisedYen": 127944
+      },
+      "plan": "楽天カードによる48回払い。料金は回線契約が累計4回線目までの例。5回線目以上は契約事務手数料3,850円が別途必要。",
+      "returnTiming": "25カ月目に返却手続き。返却・機種変更のどちらも手数料3,300円。",
+      "sameCarrierCondition": "対象機種へ買い替える場合も返却手数料あり。",
+      "povo": "povoからの乗り換え手順を公式が案内。",
+      "adNote": "月5,331円の端末表示を24回分に換算。条件付きポイント5,000ptは別表示。",
+      "conditions": "card",
+      "sources": [
+        {
+          "name": "256GBの分割価格",
+          "url": "https://network.mobile.rakuten.co.jp/product/iphone/iphone-18-pro/"
+        },
+        {
+          "name": "返却の条件",
+          "url": "https://network.mobile.rakuten.co.jp/service/replacement-program/"
+        },
+        {
+          "name": "契約事務手数料",
+          "url": "https://network.mobile.rakuten.co.jp/terms/pdf/rakuten_mobile_voice_sim_pricelist.pdf?20260224="
+        },
+        {
+          "name": "ポイントの条件",
+          "url": "https://network.mobile.rakuten.co.jp/campaign/iphone-upgrade/"
+        },
+        {
+          "name": "povoからの移行案内",
+          "url": "https://network.mobile.rakuten.co.jp/guide/mnp/povo/"
+        }
+      ],
+      "note": "公式商品ページで256GB、255,900円・楽天カード48回（最初の24回は月5,331円）・返却時の3,300円を再確認。"
+    },
+    {
+      "device": "iPhone 18 Pro",
+      "capacityGb": 256,
+      "offerId": "docomo-online",
+      "carrier": "ドコモ",
+      "seller": "ドコモオンラインショップ",
+      "channel": "online",
+      "observedAt": "2026-11-28T03:46:33.639Z",
+      "status": "unconfirmed",
+      "stock": "unconfirmed",
+      "deadline": null,
+      "prices": null,
+      "sources": [
+        {
+          "name": "256GB販売ページ",
+          "url": "https://onlineshop.docomo.ne.jp/products/mobile/details/004Nh"
+        },
+        {
+          "name": "カエドキプログラムの残価表",
+          "url": "https://www.docomo.ne.jp/campaign_event/kaedoki_program/",
+          "asOf": "2026-11-26"
+        },
+        {
+          "name": "11月26日付のメンテナンス情報",
+          "url": "https://www.docomo.ne.jp/info/notice/page/261126_00_m.html",
+          "asOf": "2026-11-26"
+        }
+      ],
+      "note": "公式オンラインショップの256GBページがメンテナンスへ転送され、オンライン価格・在庫は確認できず順位を保留。"
+    }
+  ]
+}

@@ -419,6 +419,45 @@
         "license": "https://creativecommons.org/publicdomain/zero/1.0/",
         "edits": "縮小・WebP化"
       }
+    },
+    {
+      "id": "ahamo-iphone-18-pro-256",
+      "carrier": "ahamo",
+      "model": "iPhone 18 Pro",
+      "storage": "256GB",
+      "normalYen": 263230,
+      "mnpYen": 241230,
+      "real": {
+        "yen": 66814,
+        "installments": 24,
+        "return": "23カ月目に端末を返却。分割支払分44,814円と利用料22,000円の合計。対象機種への買い替えによる免除は含みません。破損等で別途最大22,000円の負担または特典対象外になる場合があります。",
+        "plan": "ahamo・いつでもカエドキプログラム。dポイントクラブへ加入し、返却まで継続",
+        "url": "https://faq.ahamo.com/faq/show/4023?site_domain=default"
+      },
+      "plan": "ahamo",
+      "option": "JALモバイルオプションの同時申込は対象外",
+      "eligibility": "他社から番号を引き継ぎ、ahamo公式で端末を同時購入。5G WELCOME割の対象。過去1年以内に乗り換え向け端末割引（dポイント還元を含む）を適用済みの場合は対象外。",
+      "period": "端末値引きの終了日未公表",
+      "endsAt": null,
+      "officialUrl": "https://ahamo.com/products/iphone/iphone-18-pro/",
+      "termsUrl": "https://ahamo.com/special/lp/5g-welcome_wari.html",
+      "specs": {
+        "display": "6.3インチ・有機EL",
+        "weight": "211g",
+        "feature": "可変絞り付き48MPメインカメラ"
+      },
+      "specUrl": "https://www.apple.com/jp/iphone-18-pro/specs/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T03:46:33.639Z",
+      "photo": {
+        "src": "/images/articles/mnp-smartphone-price-comparison/iphone-18-pro-rear.webp",
+        "alt": "iPhone 18 Proの展示機の背面",
+        "source": "https://commons.wikimedia.org/wiki/File:IPhone_18_Pro_rear.jpg",
+        "credit": "茅野ふたば",
+        "licenseLabel": "CC BY-SA 4.0",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "edits": "縮小・WebP化"
+      }
     }
   ]
 }
