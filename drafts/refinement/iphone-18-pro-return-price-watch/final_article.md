@@ -1,24 +1,3 @@
----
-title: "iPhone 18 Proはどこが安い？2年返却の本当の負担額を比較【定点観測】"
-slug: "iphone-18-pro-return-price-watch"
-type: "foundation"
-category: "通信費を下げる"
-description: "iPhone 18 Pro 256GBの2年返却を比較。広告表示、同じ会社で買い替える場合、次は他社へ移る場合の違いを、返却時の利用料と事務手数料まで含めて追います。"
-thumbnail: "/images/thumbnails/mnp-smartphone-price-comparison.webp"
-thumbnailAlt: "2台の架空のスマートフォン。端末価格比較を表すイメージ"
-status: "review"
-priority: 2
-hasAffiliate: false
-characterUse:
-  recommended: true
-  count: 2
-tags: ["iPhone 18 Pro", "スマホ価格", "MNP", "返却プログラム"]
-related: ["mnp-smartphone-price-comparison", "mobile-plan-cost-comparison"]
-pubDate: "2026-11-28"
-updated: "2026-11-28"
-publishAt: "2026-11-28T12:00:00+09:00"
----
-
 import PhoneReturnWatch from "../../src/components/article/PhoneReturnWatch.astro";
 import Summary30 from "../../src/components/article/Summary30.astro";
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
