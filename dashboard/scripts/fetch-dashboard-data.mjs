@@ -42,6 +42,27 @@ const OUT_PATH = resolve(ROOT, 'public/data/dashboard-latest.json');
 
 const SITE_KEYS = ['ainitoryu', 'sumalab', 'miradia'];
 
+/**
+ * GA4 を本番ホスト名で絞るサイト。すまラボは Cloudflare Pages のプレビュー
+ * (*.sumalabo.pages.dev) のアクセスが同じプロパティに混ざり、2026-11 時点で
+ * 全セッションの約7割を占めていたため、hostName = sumalabo.com だけを数える。
+ */
+export const GA4_HOSTNAME_FILTERS = Object.freeze({ sumalab: 'sumalabo.com' });
+
+/** siteId に対応する hostName 完全一致フィルタ (FilterExpression)。対象外は null */
+export function hostNameFilterFor(siteId) {
+  const host = GA4_HOSTNAME_FILTERS[siteId];
+  if (!host) return null;
+  return { filter: { fieldName: 'hostName', stringFilter: { matchType: 'EXACT', value: host } } };
+}
+
+/** 既存の dimensionFilter に hostName フィルタを AND で足す。どちらか無ければもう片方 */
+export function withHostNameFilter(dimensionFilter, hostFilter) {
+  if (!hostFilter) return dimensionFilter;
+  if (!dimensionFilter) return hostFilter;
+  return { andGroup: { expressions: [dimensionFilter, hostFilter] } };
+}
+
 /* -------------------------------------------------------------------------- */
 /*  ヘルパ                                                                    */
 /* -------------------------------------------------------------------------- */
@@ -354,7 +375,7 @@ function lastNDatesJst(n) {
  *
  * @returns {Promise<Array<{path:string,title:string,pv7:number,pvPrev7:number,deltaPct:number|null,status:string,trend:number[]}>>}
  */
-async function fetchArticleMomentum(client, property) {
+async function fetchArticleMomentum(client, property, hostFilter = null) {
   // ---- クエリ1: 記事別 今週/前週 PV ----
   const [cmpRes] = await client.runReport({
     property,
@@ -364,6 +385,7 @@ async function fetchArticleMomentum(client, property) {
     ],
     dimensions: [{ name: 'pagePath' }, { name: 'pageTitle' }],
     metrics: [{ name: 'screenPageViews' }],
+    dimensionFilter: withHostNameFilter(undefined, hostFilter),
     limit: 5000,
   });
 
@@ -414,12 +436,15 @@ async function fetchArticleMomentum(client, property) {
     dateRanges: [{ startDate: `${MOMENTUM.TREND_DAYS - 1}daysAgo`, endDate: 'today' }],
     dimensions: [{ name: 'date' }, { name: 'pagePath' }],
     metrics: [{ name: 'screenPageViews' }],
-    dimensionFilter: {
-      filter: {
-        fieldName: 'pagePath',
-        inListFilter: { values: [...picked.keys()] },
+    dimensionFilter: withHostNameFilter(
+      {
+        filter: {
+          fieldName: 'pagePath',
+          inListFilter: { values: [...picked.keys()] },
+        },
       },
-    },
+      hostFilter,
+    ),
     limit: 10000,
   });
 
@@ -646,6 +671,9 @@ async function fetchSimulator(client, property) {
  */
 async function fetchSiteFromGa4(client, propertyId, siteMeta) {
   const property = `properties/${propertyId}`;
+  // すまラボは本番ホストだけ数える (GA4_HOSTNAME_FILTERS)。他サイトは undefined のまま
+  const hostFilter = hostNameFilterFor(siteMeta.id);
+  const hostDimensionFilter = withHostNameFilter(undefined, hostFilter);
 
   const dailyMetrics = [
     { name: 'screenPageViews' },
@@ -663,6 +691,7 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     // 1) 日別サイト合計 (90 日)
     client.runReport({
       property,
+      dimensionFilter: hostDimensionFilter,
       dateRanges: [{ startDate: '89daysAgo', endDate: 'today' }],
       dimensions: [{ name: 'date' }],
       metrics: dailyMetrics,
@@ -671,6 +700,7 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     // 2) ページ別 (90 日 top 50)
     client.runReport({
       property,
+      dimensionFilter: hostDimensionFilter,
       dateRanges: [{ startDate: '89daysAgo', endDate: 'today' }],
       dimensions: [{ name: 'pagePath' }, { name: 'pageTitle' }],
       metrics: pageMetrics,
@@ -680,6 +710,7 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     // 3) ページ別 (28 日 top 50)
     client.runReport({
       property,
+      dimensionFilter: hostDimensionFilter,
       dateRanges: [{ startDate: '27daysAgo', endDate: 'today' }],
       dimensions: [{ name: 'pagePath' }, { name: 'pageTitle' }],
       metrics: pageMetrics,
@@ -689,6 +720,7 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     // 4) ページ別 (7 日 top 50)
     client.runReport({
       property,
+      dimensionFilter: hostDimensionFilter,
       dateRanges: [{ startDate: '6daysAgo', endDate: 'today' }],
       dimensions: [{ name: 'pagePath' }, { name: 'pageTitle' }],
       metrics: pageMetrics,
@@ -698,6 +730,7 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     // 5) チャネル別 (28 日)
     client.runReport({
       property,
+      dimensionFilter: hostDimensionFilter,
       dateRanges: [{ startDate: '27daysAgo', endDate: 'today' }],
       dimensions: [{ name: 'sessionDefaultChannelGroup' }],
       metrics: pageMetrics,
@@ -706,6 +739,7 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     // 6) デバイス別 (28 日)
     client.runReport({
       property,
+      dimensionFilter: hostDimensionFilter,
       dateRanges: [{ startDate: '27daysAgo', endDate: 'today' }],
       dimensions: [{ name: 'deviceCategory' }],
       metrics: pageMetrics,
@@ -714,6 +748,7 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     // 7) リファラー別 (28 日) — internalNavShare (サイト内回遊の PV 割合) 算出用
     client.runReport({
       property,
+      dimensionFilter: hostDimensionFilter,
       dateRanges: [{ startDate: '27daysAgo', endDate: 'today' }],
       dimensions: [{ name: 'pageReferrer' }],
       metrics: [{ name: 'screenPageViews' }],
@@ -841,7 +876,7 @@ async function fetchSiteFromGa4(client, propertyId, siteMeta) {
     totalReferrerViews > 0 ? Number((internalViews / totalReferrerViews).toFixed(4)) : 0;
 
   // ---- 記事ごとの動性 (前週比 + 14日デイリー推移) ----
-  const articles = await fetchArticleMomentum(client, property);
+  const articles = await fetchArticleMomentum(client, property, hostFilter);
 
   return {
     siteId: siteMeta.id,
