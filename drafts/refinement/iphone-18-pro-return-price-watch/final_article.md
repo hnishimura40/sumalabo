@@ -23,7 +23,7 @@ import PhoneReturnWatch from "../../src/components/article/PhoneReturnWatch.astr
 import Summary30 from "../../src/components/article/Summary30.astro";
 import CharacterDialogue from "../../src/components/characters/CharacterDialogue.astro";
 
-**スマホ最安値定点観測**の初回はiPhone 18 Pro 256GB。返却型購入とは、分割で買った端末を期限内に返すと、残りの支払いが免除される仕組みです。MNPとは、今の電話番号を変えずに携帯会社を乗り換える手続きです。乗り換えと同時に端末を買い、約2年後に返す場合を比べます。
+**スマホ最安値定点観測**の初回はiPhone 18 Pro 256GB。返却型購入とは、分割で買った端末を期限内に返すと、残りの支払いが免除される仕組みです。MNPとは、今の電話番号を変えずに携帯会社を乗り換えられる仕組みです。乗り換えと同時に端末を買い、約2年後に返す場合を比べます。
 
 <PhoneReturnWatch device="iPhone 18 Pro" capacityGb={256}>
 <Summary30 slot="summary">
