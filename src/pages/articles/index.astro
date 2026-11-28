@@ -132,6 +132,10 @@ for (const a of articles) countByCategory.set(a.data.category, (countByCategory.
         chip.setAttribute("aria-pressed", on ? "true" : "false");
       });
       var active = chips.filter(function (c) { return c.getAttribute("data-filter") === slug; })[0];
+      // スマホ幅では横スクロールの外に隠れないよう、選択中のチップを見える位置へ
+      if (active && root.scrollWidth > root.clientWidth) {
+        root.scrollLeft = Math.max(0, active.offsetLeft - root.offsetLeft - 8);
+      }
       if (status) status.textContent = slug && active ? active.firstChild.textContent.trim() + "の記事: " + shown + "件（新しい順）" : "";
       if (updateUrl) {
         try {
@@ -224,8 +228,6 @@ for (const a of articles) countByCategory.set(a.data.category, (countByCategory.
     .article-filter {
       flex-wrap: nowrap;
       overflow-x: auto;
-      margin-right: -16px;
-      padding-right: 16px;
       padding-bottom: 4px;
       scrollbar-width: none;
     }

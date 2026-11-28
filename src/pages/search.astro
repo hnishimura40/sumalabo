@@ -80,10 +80,68 @@ import { siteConfig } from "../config/site";
         return pagefind;
       }
 
+      // 日本語入力で混ざりやすい全角英数字・全角スペースを半角へ寄せる（ＥＳＩＭ → ESIM）。
+      // Pagefind の索引は半角で持っているため、未正規化だと0件になる。
+      const normalize = (s) => String(s ?? "").normalize("NFKC").replace(/\s+/g, " ").trim();
+
+      // タイトルに検索語がすべて入っている記事を先頭へ寄せる（上位30件の範囲で並べ替え）。
+      // Pagefind の既定順位は本文の出現回数に引っ張られ、日本語ではタイトル一致の記事が
+      // 5位前後に沈むことがあったため。
+      const TITLE_BOOST_WINDOW = 30;
+      async function titleFirst(results, q) {
+        const terms = q.toLowerCase().split(" ").filter(Boolean);
+        const head = await Promise.all(
+          results.slice(0, TITLE_BOOST_WINDOW).map(async (r) => ({ r, d: await r.data() })),
+        );
+        const hit = (e) => {
+          const t = normalize(e.d.meta?.title).toLowerCase();
+          return terms.every((w) => t.includes(w));
+        };
+        return [
+          ...head.filter(hit),
+          ...head.filter((e) => !hit(e)),
+          ...results.slice(TITLE_BOOST_WINDOW).map((r) => ({ r, d: null })),
+        ];
+      }
+
+      // タイトル(h1)も索引に入れているため、タイトル一致のときは抜粋が「タイトル. 本文…」で始まる。
+      // 結果のタイトルと重複するので、先頭のタイトル部分を落として本文側の抜粋を見せる。
+      function stripLeadingTitle(html, title) {
+        const plain = html.replace(/<[^>]*>/g, "");
+        const head = normalize(title).slice(0, 8);
+        if (!head || !normalize(plain).startsWith(head)) return html;
+        const cut = plain.indexOf(". ");
+        if (cut < 0 || cut > String(title).length + 10) return html;
+        let i = 0;
+        let n = 0;
+        while (i < html.length && n < cut + 2) {
+          if (html[i] === "<") {
+            i = html.indexOf(">", i) + 1;
+            continue;
+          }
+          i++;
+          n++;
+        }
+        const rest = html.slice(i).replace(/^\s*<\/mark>/, "").trim();
+        return rest ? rest + "…" : html;
+      }
+
+      // 結果タイトル内の検索語を <mark> で示す（タイトルはエスケープ済み文字列に対して置換）
+      function markTitle(title, terms) {
+        let out = esc(title);
+        for (const t of terms) {
+          const et = esc(t).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          if (et) out = out.replace(new RegExp(et, "gi"), (m) => `<mark>${m}</mark>`);
+        }
+        return out;
+      }
+
+      let currentTerms = [];
+
       async function renderMore() {
         const slice = current.slice(shown, shown + PAGE);
         const mySeq = seq;
-        const data = await Promise.all(slice.map((r) => r.data()));
+        const data = await Promise.all(slice.map((e) => e.d ?? e.r.data()));
         if (mySeq !== seq) return;
         for (const d of data) {
           const li = document.createElement("li");
@@ -92,8 +150,8 @@ import { siteConfig } from "../config/site";
           const updated = d.meta?.updated;
           li.innerHTML =
             `<a class="search-item-link" href="${esc(d.url)}">` +
-            `<span class="search-item-title">${esc(title)}</span>` +
-            `<span class="search-item-excerpt">${safeExcerpt(d.excerpt)}</span>` +
+            `<span class="search-item-title">${markTitle(title, currentTerms)}</span>` +
+            `<span class="search-item-excerpt">${stripLeadingTitle(safeExcerpt(d.excerpt), title)}</span>` +
             (updated ? `<time class="search-item-date" datetime="${esc(updated)}">更新日: ${esc(updated)}</time>` : "") +
             `</a>`;
           list.appendChild(li);
@@ -108,7 +166,8 @@ import { siteConfig } from "../config/site";
         more.hidden = true;
         shown = 0;
         current = [];
-        q = q.trim();
+        q = normalize(q);
+        currentTerms = q.split(" ").filter(Boolean);
         if (!q) {
           statusEl.textContent = "キーワードを入れて検索してください。記事のタイトルと本文から探します。";
           return;
@@ -118,7 +177,8 @@ import { siteConfig } from "../config/site";
           const pf = await loadPagefind();
           const res = await pf.search(q);
           if (mySeq !== seq) return;
-          current = res.results;
+          current = await titleFirst(res.results, q);
+          if (mySeq !== seq) return;
           statusEl.textContent = current.length
             ? `「${q}」の検索結果: ${current.length}件`
             : `「${q}」に一致する記事は見つかりませんでした。言葉を短くするか、別の言い方で試してください。`;
@@ -280,6 +340,7 @@ import { siteConfig } from "../config/site";
     line-height: 1.75;
   }
 
+  :global(.search-item-title mark),
   :global(.search-item-excerpt mark) {
     padding: 0 2px;
     border-radius: 3px;
