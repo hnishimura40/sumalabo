@@ -134,7 +134,7 @@ const carriers = Object.entries(mobileCarrierLinks);
 <style>
   .mnp-prices { margin-block: 2rem; color: var(--fg); }
   .mnp-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem 1rem; }
-  .mnp-heading h2 { margin: 0; }
+  .mnp-heading h2 { margin: 0; scroll-margin-top: 116px; }
   .mnp-heading p, .mnp-filters p { margin: 0; font-size: .875rem; color: var(--fg); }
   .mnp-filters { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; margin: 1rem 0; }
   .mnp-filters label { display: grid; gap: .25rem; font-weight: 650; font-size: .875rem; }
@@ -162,7 +162,14 @@ const carriers = Object.entries(mobileCarrierLinks);
   .mnp-expired :is(.mnp-buy,.mnp-return) .mnp-yen { text-decoration: line-through; }
   .mnp-prices [hidden] { display: none !important; }
   .mnp-sr { position: absolute; width: 1px; height: 1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
-  @media (max-width: 760px) {
+  @media (min-width: 830px) {
+    .mnp-prices { margin-top: 0; }
+    .mnp-filters { gap: 1.4rem; }
+    .mnp-filters label { grid-template-columns: auto minmax(145px, 210px); align-items: center; gap: .6rem; }
+    .mnp-prices table.mnp-table :is(th,td) { padding: .9rem .7rem; }
+    .mnp-model { font-size: 1.12rem; }
+  }
+  @media (max-width: 829px) {
     .mnp-filters { display: grid; grid-template-columns: 1fr 1fr; align-items: start; }
     .mnp-filters p { grid-column: 1 / -1; margin: 0; }
     .mnp-prices table.mnp-table, .mnp-table tbody { display: block; }
