@@ -185,6 +185,21 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
 
 <style is:global>
 .site-nav.site-nav--scroll{display:flex;flex-wrap:nowrap;overflow-x:auto;min-width:0;max-width:100%;padding-right:36px;mask-image:linear-gradient(to right,#000 88%,transparent);-webkit-mask-image:linear-gradient(to right,#000 88%,transparent);scrollbar-width:thin;overscroll-behavior-inline:contain}.site-nav.site-nav--scroll a{flex:0 0 auto;white-space:nowrap}.header-inner:has(.site-nav--scroll){min-width:0}.header-inner:has(.site-nav--scroll)>*{min-width:0}@media(max-width:720px){.header-inner:has(.site-nav--scroll){grid-template-columns:minmax(0,1fr) auto}.site-nav.site-nav--scroll{width:100%;grid-column:1/-1;order:3}}
+
+@media (min-width: 1280px) {
+  .header-inner:has(.site-nav--scroll) {
+    width: min(1360px, calc(100% - 6vw));
+    gap: clamp(12px, 1.5vw, 24px);
+  }
+  .site-nav.site-nav--scroll {
+    flex-wrap: wrap;
+    overflow: visible;
+    padding-right: 0;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .site-nav.site-nav--scroll a { padding-inline: 8px; }
+}
 </style>
 
 <style is:global>

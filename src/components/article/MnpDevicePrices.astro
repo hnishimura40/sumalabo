@@ -61,27 +61,6 @@ const points = activeRows.map(row => ({
     </label>
     <p data-mnp-count role="status" aria-live="polite">{activeRows.length}件</p>
   </div>
-  <MnpPriceScatter points={points}>
-    {references.length > 1 && <div class="mnp-reference" data-mnp-references>
-      <h3>価格帯ごとに何が違う？</h3>
-      <p>乗り換え一括の掲載価格です。最新の受付条件は公式価格で確認できます。</p>
-      <ul>
-        {references.map(row => {
-          const detail = referenceDetails[row.id as keyof typeof referenceDetails];
-          const score = row.benchmark?.score;
-          return <li data-mnp-reference-id={row.id}>
-            <span class="mnp-reference-label">{detail.label}</span>
-            <strong>{row.model}</strong>
-            <span class="mnp-reference-price">{yen(row.mnpYen)}</span>
-            {score ? <span>CPUマルチ <a href={score.url}>{score.multi.toLocaleString("ja-JP")}点</a></span> : <span>CPUの公開測定値は未確認</span>}
-            <span>{detail.use}</span>
-            <small>価格確認 <time datetime={row.checkedAt}>{time(row.checkedAt)}</time></small>
-            <a href={row.officialUrl}>公式価格</a>
-          </li>;
-        })}
-      </ul>
-    </div>}
-  </MnpPriceScatter>
   <table class="mnp-table" role="table">
     <caption class="mnp-sr">公式オンラインショップのMNP端末価格（税込）</caption>
     <thead role="rowgroup"><tr role="row">
@@ -154,6 +133,27 @@ const points = activeRows.map(row => ({
     </tbody>
   </table>
   <p data-mnp-empty hidden={activeRows.length > 0}>該当する機種がありません。会社や価格帯を変えてください。</p>
+  <MnpPriceScatter points={points}>
+    {references.length > 1 && <div class="mnp-reference" data-mnp-references>
+      <h3>価格帯ごとに何が違う？</h3>
+      <p>乗り換え一括の掲載価格です。最新の受付条件は公式価格で確認できます。</p>
+      <ul>
+        {references.map(row => {
+          const detail = referenceDetails[row.id as keyof typeof referenceDetails];
+          const score = row.benchmark?.score;
+          return <li data-mnp-reference-id={row.id}>
+            <span class="mnp-reference-label">{detail.label}</span>
+            <strong>{row.model}</strong>
+            <span class="mnp-reference-price">{yen(row.mnpYen)}</span>
+            {score ? <span>CPUマルチ <a href={score.url}>{score.multi.toLocaleString("ja-JP")}点</a></span> : <span>CPUの公開測定値は未確認</span>}
+            <span>{detail.use}</span>
+            <small>価格確認 <time datetime={row.checkedAt}>{time(row.checkedAt)}</time></small>
+            <a href={row.officialUrl}>公式価格</a>
+          </li>;
+        })}
+      </ul>
+    </div>}
+  </MnpPriceScatter>
 </section>
 
 <script>
@@ -218,24 +218,25 @@ const points = activeRows.map(row => ({
   .mnp-heading h2 { margin: 0; scroll-margin-top: 116px; }
   .mnp-heading p, .mnp-filters p { margin: 0; font-size: .875rem; color: var(--fg); }
   .mnp-price-guide { margin: .5rem 0 0; font-size: .875rem; line-height: 1.6; }
-  .mnp-filters { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; margin: 1rem 0; }
-  .mnp-filters label { display: grid; gap: .25rem; font-weight: 650; font-size: .875rem; }
+  .mnp-filters { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; margin: 1rem 0; padding: .85rem; background: var(--teal-tint); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .mnp-filters label { display: grid; gap: .25rem; font-weight: 650; font-size: .875rem; min-width: 0; max-width: 100%; }
   .mnp-filters select { min-height: 44px; max-width: 100%; border: 1px solid var(--line); border-radius: 9px; background: var(--bg-elev); color: var(--fg); padding-inline: .55rem; font: inherit; }
   .mnp-filters p { margin: 0 0 .55rem auto; }
   .mnp-prices table.mnp-table { width: 100%; margin: .65rem 0 0; border-collapse: collapse; table-layout: fixed; color: var(--fg); background: transparent; }
-  .mnp-prices table.mnp-table :is(th,td) { border: 0; border-bottom: 1px solid var(--line); padding: .8rem .55rem; background: transparent; color: var(--fg); vertical-align: top; text-align: left; overflow-wrap: anywhere; }
-  .mnp-table thead { border-bottom: 2px solid var(--fg); }
+  .mnp-prices table.mnp-table :is(th,td) { border: 0; border-bottom: 1px solid var(--line); padding: .8rem .55rem; background: transparent; color: var(--article-table-ink); vertical-align: top; text-align: left; overflow-wrap: anywhere; }
+  .mnp-table thead { border-bottom: 2px solid var(--article-table-ink); }
+  .mnp-table thead th { font-size: .94rem; line-height: 1.45; }
   .mnp-table thead th:first-child { width: 28%; }
-  .mnp-table thead th:nth-child(2) { width: 10%; }
+  .mnp-table thead th:nth-child(2) { width: 11%; }
   .mnp-table thead th:nth-child(3) { width: 12%; }
   .mnp-table thead th:nth-child(4) { width: 22%; }
-  .mnp-table a { color: var(--fg); font-size: .83rem; text-decoration: underline; text-underline-offset: .2em; }
+  .mnp-table a { color: var(--article-table-ink); font-size: .83rem; text-decoration: underline; text-underline-offset: .2em; }
   .mnp-model, .mnp-carrier, .mnp-small, .mnp-flag { display: block; }
   .mnp-device { margin-top: .55rem; }
   .mnp-device--photo { display: grid; grid-template-columns: clamp(76px, 8vw, 112px) minmax(0, 1fr); align-items: start; gap: .75rem; }
   .mnp-photo { margin: 0; min-width: 0; }
   .mnp-prices table.mnp-table .mnp-photo img { display: block; width: 100%; height: auto; aspect-ratio: 112 / 136; object-fit: contain; border: 1px solid var(--line); border-radius: 8px; margin: 0; }
-  .mnp-photo figcaption, .mnp-photo a { color: var(--fg); font-size: .72rem; font-weight: 400; }
+  .mnp-photo figcaption, .mnp-photo a { color: var(--article-table-ink); font-size: .72rem; font-weight: 400; }
   .mnp-photo figcaption span { display: block; }
   .mnp-specs { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: .15rem .45rem; margin: 0; font-size: .82rem; line-height: 1.5; }
   .mnp-specs dd { margin: 0; font-weight: 400; }
