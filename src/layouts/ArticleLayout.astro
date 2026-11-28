@@ -114,7 +114,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       </div>
       <h1 data-pagefind-weight="10">{renewal && article.title.includes("｜") ? <>{article.title.split("｜")[0]}<br/><span class="renewal-title-mark">{article.title.split("｜").slice(1).join("｜")}</span></> : isMnpGuide ? <>{article.title.slice(0, article.title.indexOf("安く"))}<br />{article.title.slice(article.title.indexOf("安く"))}</> : article.title}</h1>
       {isMnpGuide && article.hasAffiliate && <p class="ad-disclosure mnp-disclosure" role="note" data-pagefind-ignore="all"><strong>PR</strong> 本記事は広告（アフィリエイトリンク）を含みます。<a href="/disclosure/">広告掲載の方針</a></p>}
-      <p class:list={{"mnp-intro": isMnpGuide}} data-pagefind-ignore="all">{article.description}</p>
+      <p class:list={{"mnp-intro": isMnpGuide}} data-pagefind-ignore="all">{isMnpGuide ? "公式オンラインショップ5社の端末代を比較。買い切り価格と、分割・返却時の負担を比べられます。店頭・量販店は対象外です。" : article.description}</p>
       {isMnpGuide && <nav class="campaign-page-links" aria-label="記事内の案内"><a href="#mnp-prices-title">端末価格を比べる</a></nav>}
       {isCampaignGuide && <nav class="campaign-page-links" aria-label="記事内の案内" data-pagefind-ignore="all"><a href="#mobile-campaigns">キャンペーンを比べる</a><a href="#plan-diagnosis">3問で料金を見直す</a></nav>}
       {
@@ -401,7 +401,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       isolation: isolate;
       overflow: hidden;
       display: grid;
-      grid-template-columns: minmax(0, 53%) 1fr;
+      grid-template-columns: minmax(0, 49%) 1fr;
       gap: 0 2rem;
       min-height: clamp(310px, 28vw, 420px);
       margin: 0;
@@ -413,7 +413,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
 
     .article-shell--mnp .article-header > :not(img) { grid-column: 1; }
     .article-shell--mnp .article-header h1 {
-      font-size: clamp(32px, 4.2vw, 60px);
+      font-size: clamp(32px, 4vw, 58px);
       font-weight: 900;
       overflow-wrap: normal;
     }
@@ -428,14 +428,14 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       position: absolute;
       inset: 0 0 0 auto;
       z-index: -1;
-      width: 56%;
+      width: 50%;
       height: 100%;
       margin: 0;
       border: 0;
       border-radius: 0;
       box-shadow: none;
       object-fit: cover;
-      mask-image: linear-gradient(to right, transparent, black 22%);
+      mask-image: linear-gradient(to right, transparent, black 18%);
     }
 
     .article-shell--mnp .article-content {
