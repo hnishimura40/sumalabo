@@ -24,7 +24,7 @@
       "specs": {
         "display": "約6.1インチ",
         "weight": "約188g",
-        "feature": "通話用の物理ボタン"
+        "feature": "通話用の物理ボタン／メイン約5,000万画素"
       },
       "specUrl": "https://www.uqwimax.jp/mobile/products/sp/basio_active3/",
       "status": "verified",
@@ -53,7 +53,8 @@
       "specs": {
         "display": "約6.6インチ",
         "weight": "約189g",
-        "feature": "バッテリー5,000mAh"
+        "feature": "120Hz表示／おサイフケータイ対応",
+        "battery": "5,000mAh"
       },
       "specUrl": "https://www.ymobile.jp/lineup/smartphone/wish6/",
       "status": "verified",
@@ -77,11 +78,48 @@
       "specs": {
         "display": "6.77インチ・有機EL",
         "weight": "約210g",
-        "feature": "バッテリー5,200mAh"
+        "feature": "背面の光で通知を知らせるGlyphバー",
+        "battery": "5,200mAh"
       },
       "specUrl": "https://jp.nothing.tech/products/phone-4b",
       "status": "verified",
-      "checkedAt": "2026-11-28T02:23:09.579Z"
+      "checkedAt": "2026-11-28T02:23:09.579Z",
+      "returnNote": "この価格は買い切り。返却を条件にした価格は掲載なし"
+    },
+    {
+      "id": "rakuten-nothing-phone-3-256",
+      "carrier": "rakuten",
+      "model": "Nothing Phone (3)",
+      "storage": "256GB",
+      "normalYen": 95990,
+      "mnpYen": 55990,
+      "real": null,
+      "plan": "楽天の標準音声プランまたはU-NEXT付きの音声プラン",
+      "option": "一括価格に必須の有料オプションなし",
+      "eligibility": "楽天会員が他社から番号を引き継ぎ、対象プランの申込と同時に一括で購入。特価は1人1点まで。 2020年4月8日以降に3回線以上の契約終了や申込後キャンセル等がある場合は対象外。",
+      "period": "終了日未定（端末単体の値下げ後価格を通常欄に表示）",
+      "endsAt": null,
+      "officialUrl": "https://network.mobile.rakuten.co.jp/product/smartphone/phone-3/",
+      "termsUrl": "https://network.mobile.rakuten.co.jp/campaign/android-sale/",
+      "specs": {
+        "display": "約6.67インチ・有機EL",
+        "weight": "約218g",
+        "battery": "5,150mAh",
+        "feature": "背面の小型ディスプレイで通知などを表示"
+      },
+      "specUrl": "https://network.mobile.rakuten.co.jp/product/smartphone/phone-3/spec/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T03:09:03.095Z",
+      "photo": {
+        "src": "/images/articles/mnp-smartphone-price-comparison/nothing-phone-3.webp",
+        "alt": "Nothing Phone (3)の実機映像からの一場面",
+        "credit": "可恩Ke En",
+        "source": "https://commons.wikimedia.org/wiki/File:%E5%8D%8A%E5%A4%9C%E9%A6%96%E5%8F%91%EF%BC%81%E7%AC%AC%E4%B8%80%E6%89%8B%E6%8B%BF%E5%88%B0%E4%BA%86Nothing_Phone_(3)_%EF%BC%81%E7%81%AF%E6%9D%A1%E6%B2%A1%E4%BA%86%E3%80%81%E8%83%8C%E5%90%8E%E5%A4%9A%E4%B8%80%E4%B8%AAscreen%EF%BC%81-00.00.58.734.png",
+        "licenseLabel": "CC BY 3.0",
+        "license": "https://creativecommons.org/licenses/by/3.0/",
+        "edits": "縮小・WebP化"
+      },
+      "returnNote": "この一括値引きと同じ条件での返却額は未確認"
     },
     {
       "id": "iijmio-oppo-reno16-256",
@@ -101,11 +139,53 @@
       "specs": {
         "display": "約6.3インチ",
         "weight": "約193g",
-        "feature": "eSIM対応"
+        "feature": "約5,000万画素の望遠カメラ／eSIM対応",
+        "battery": "6,700mAh"
       },
       "specUrl": "https://www.oppo.com/jp/smartphones/series-reno/reno16/specs/",
       "status": "verified",
-      "checkedAt": "2026-11-28T02:23:09.579Z"
+      "checkedAt": "2026-11-28T02:23:09.579Z",
+      "returnNote": "この価格は買い切り。返却を条件にした価格は掲載なし"
+    },
+    {
+      "id": "ahamo-galaxy-s25-256",
+      "carrier": "ahamo",
+      "model": "Galaxy S25",
+      "storage": "256GB",
+      "normalYen": 113300,
+      "mnpYen": 89793,
+      "real": {
+        "yen": 22033,
+        "installments": 24,
+        "return": "23カ月目に端末を返却。端末の分割分33円＋利用料22,000円。ドコモで対象機種に買い替える場合は利用料免除の条件があります。破損等で別途最大22,000円の負担または特典対象外になる場合があります。",
+        "plan": "ahamo・いつでもカエドキプログラム。dポイントクラブへ加入し、返却まで継続",
+        "url": "https://faq.ahamo.com/faq/show/4023?site_domain=default"
+      },
+      "plan": "ahamo",
+      "option": "JALモバイルオプションの同時申込は対象外",
+      "eligibility": "他社から番号を引き継ぎ、ahamo公式で端末を同時購入。5G WELCOME割の対象。過去1年以内に乗り換え向け端末割引（dポイント還元を含む）を適用済みの場合は対象外。",
+      "period": "端末値引きの終了日未公表",
+      "endsAt": null,
+      "officialUrl": "https://ahamo.com/products/android/galaxy-s25-256gb-sc51f/",
+      "termsUrl": "https://ahamo.com/special/lp/5g-welcome_wari.html",
+      "specs": {
+        "display": "約6.2インチ・有機EL",
+        "weight": "約162g",
+        "battery": "4,000mAh",
+        "feature": "光学3倍の望遠カメラ"
+      },
+      "specUrl": "https://ahamo.com/products/android/galaxy-s25-256gb-sc51f/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T03:09:03.095Z",
+      "photo": {
+        "src": "/images/articles/mnp-smartphone-price-comparison/galaxy-s25.webp",
+        "alt": "Galaxy S25の展示端末",
+        "credit": "Striker9498",
+        "source": "https://commons.wikimedia.org/wiki/File:20250124_%EC%82%BC%EC%84%B1_%EA%B0%A4%EB%9F%AD%EC%8B%9C_s25.jpg",
+        "licenseLabel": "CC0",
+        "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "edits": "縮小・WebP化"
+      }
     },
     {
       "id": "rakuten-galaxy-s26-256",
@@ -117,7 +197,7 @@
       "real": null,
       "plan": "楽天の標準音声プランまたはU-NEXT付きの音声プラン",
       "option": "一括価格に必須の有料オプションなし",
-      "eligibility": "楽天会員が他社から番号を引き継ぎ、対象プランの申込と同時に一括で購入。特価は1人1点まで。",
+      "eligibility": "楽天会員が他社から番号を引き継ぎ、対象プランの申込と同時に一括で購入。特価は1人1点まで。 2020年4月8日以降に3回線以上の契約終了や申込後キャンセル等がある場合は対象外。",
       "period": "終了日未定（端末の対象状況は公式参照）",
       "endsAt": null,
       "officialUrl": "https://network.mobile.rakuten.co.jp/product/smartphone/samsung-galaxy-s26/",
@@ -125,11 +205,102 @@
       "specs": {
         "display": "約6.3インチ・有機EL",
         "weight": "約167g",
-        "feature": "バッテリー4,300mAh"
+        "feature": "光学3倍の望遠カメラ",
+        "battery": "4,300mAh"
       },
       "specUrl": "https://network.mobile.rakuten.co.jp/product/smartphone/samsung-galaxy-s26/#spec",
       "status": "verified",
-      "checkedAt": "2026-11-28T02:23:09.579Z"
+      "checkedAt": "2026-11-28T02:23:09.579Z",
+      "photo": {
+        "src": "/images/articles/mnp-smartphone-price-comparison/galaxy-s26.webp",
+        "alt": "Galaxy S26の画面が点灯した展示端末",
+        "credit": "Kyu3a",
+        "source": "https://commons.wikimedia.org/wiki/File:Galaxy_S26.jpg",
+        "licenseLabel": "CC BY-SA 4.0",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "edits": "縮小・WebP化"
+      },
+      "returnNote": "この一括値引きと同じ条件での返却額は未確認"
+    },
+    {
+      "id": "ahamo-iphone-17e-256",
+      "carrier": "ahamo",
+      "model": "iPhone 17e",
+      "storage": "256GB",
+      "normalYen": 158345,
+      "mnpYen": 114345,
+      "real": {
+        "yen": 22033,
+        "installments": 24,
+        "return": "23カ月目に端末を返却。端末の分割分33円＋利用料22,000円。ドコモで対象機種に買い替える場合は利用料免除の条件があります。破損等で別途最大22,000円の負担または特典対象外になる場合があります。",
+        "plan": "ahamo・いつでもカエドキプログラム。dポイントクラブへ加入し、返却まで継続",
+        "url": "https://faq.ahamo.com/faq/show/4023?site_domain=default"
+      },
+      "plan": "ahamo",
+      "option": "JALモバイルオプションの同時申込は対象外",
+      "eligibility": "他社から番号を引き継ぎ、ahamo公式で端末を同時購入。5G WELCOME割の対象。過去1年以内に乗り換え向け端末割引（dポイント還元を含む）を適用済みの場合は対象外。",
+      "period": "端末値引きの終了日未公表",
+      "endsAt": null,
+      "officialUrl": "https://ahamo.com/products/iphone/iphone-17e/",
+      "termsUrl": "https://ahamo.com/special/lp/5g-welcome_wari.html",
+      "specs": {
+        "display": "6.1インチ・有機EL",
+        "weight": "169g",
+        "battery": "動画再生 最大26時間",
+        "feature": "A19チップ／48MPメインカメラ"
+      },
+      "specUrl": "https://www.apple.com/jp/iphone-17e/specs/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T03:09:03.095Z",
+      "photo": {
+        "src": "/images/articles/mnp-smartphone-price-comparison/iphone-17e.webp",
+        "alt": "白いiPhone 17eの実機",
+        "credit": "茅野ふたば",
+        "source": "https://commons.wikimedia.org/wiki/File:IPhone_17e_white.jpg",
+        "licenseLabel": "CC BY-SA 4.0",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "edits": "縮小・WebP化"
+      }
+    },
+    {
+      "id": "ahamo-galaxy-s26-256",
+      "carrier": "ahamo",
+      "model": "Galaxy S26",
+      "storage": "256GB",
+      "normalYen": 152790,
+      "mnpYen": 118558,
+      "real": {
+        "yen": 31790,
+        "installments": 24,
+        "return": "23カ月目に端末を返却。端末の分割分9,790円＋利用料22,000円。ドコモで対象機種に買い替える場合は利用料免除の条件があります。破損等で別途最大22,000円の負担または特典対象外になる場合があります。",
+        "plan": "ahamo・いつでもカエドキプログラム。dポイントクラブへ加入し、返却まで継続",
+        "url": "https://faq.ahamo.com/faq/show/4023?site_domain=default"
+      },
+      "plan": "ahamo",
+      "option": "JALモバイルオプションの同時申込は対象外",
+      "eligibility": "他社から番号を引き継ぎ、ahamo公式で端末を同時購入。5G WELCOME割の対象。過去1年以内に乗り換え向け端末割引（dポイント還元を含む）を適用済みの場合は対象外。",
+      "period": "端末値引きの終了日未公表",
+      "endsAt": null,
+      "officialUrl": "https://ahamo.com/products/android/samsung-galaxy-s26-256gb-sc51g/",
+      "termsUrl": "https://ahamo.com/special/lp/5g-welcome_wari.html",
+      "specs": {
+        "display": "約6.3インチ・有機EL",
+        "weight": "約167g",
+        "battery": "4,300mAh",
+        "feature": "光学3倍の望遠カメラ"
+      },
+      "specUrl": "https://ahamo.com/products/android/samsung-galaxy-s26-256gb-sc51g/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T03:09:03.095Z",
+      "photo": {
+        "src": "/images/articles/mnp-smartphone-price-comparison/galaxy-s26.webp",
+        "alt": "Galaxy S26の画面が点灯した展示端末",
+        "credit": "Kyu3a",
+        "source": "https://commons.wikimedia.org/wiki/File:Galaxy_S26.jpg",
+        "licenseLabel": "CC BY-SA 4.0",
+        "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "edits": "縮小・WebP化"
+      }
     },
     {
       "id": "ahamo-iphone16-128",
@@ -155,7 +326,8 @@
       "specs": {
         "display": "6.1インチ・有機EL",
         "weight": "170g",
-        "feature": "ビデオ再生 最大22時間（Apple公称）"
+        "feature": "A18チップ／48MPメインカメラ",
+        "battery": "動画再生 最大22時間"
       },
       "specUrl": "https://www.apple.com/jp/iphone-16/specs/",
       "status": "verified",
@@ -166,6 +338,86 @@
         "credit": "Kyu3a",
         "source": "https://commons.wikimedia.org/wiki/File:Back_of_iPhone_16.jpg",
         "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+      }
+    },
+    {
+      "id": "ahamo-iphone-17-256",
+      "carrier": "ahamo",
+      "model": "iPhone 17",
+      "storage": "256GB",
+      "normalYen": 199793,
+      "mnpYen": 155793,
+      "real": {
+        "yen": 22033,
+        "installments": 24,
+        "return": "23カ月目に端末を返却。端末の分割分33円＋利用料22,000円。ドコモで対象機種に買い替える場合は利用料免除の条件があります。破損等で別途最大22,000円の負担または特典対象外になる場合があります。",
+        "plan": "ahamo・いつでもカエドキプログラム。dポイントクラブへ加入し、返却まで継続",
+        "url": "https://faq.ahamo.com/faq/show/4023?site_domain=default"
+      },
+      "plan": "ahamo",
+      "option": "JALモバイルオプションの同時申込は対象外",
+      "eligibility": "他社から番号を引き継ぎ、ahamo公式で端末を同時購入。5G WELCOME割の対象。過去1年以内に乗り換え向け端末割引（dポイント還元を含む）を適用済みの場合は対象外。",
+      "period": "端末値引きの終了日未公表",
+      "endsAt": null,
+      "officialUrl": "https://ahamo.com/products/iphone/iphone-17/",
+      "termsUrl": "https://ahamo.com/special/lp/5g-welcome_wari.html",
+      "specs": {
+        "display": "6.3インチ・有機EL",
+        "weight": "177g",
+        "battery": "動画再生 最大30時間",
+        "feature": "最大120Hz表示／広角と超広角の48MPカメラ"
+      },
+      "specUrl": "https://www.apple.com/jp/iphone-17/specs/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T03:09:03.095Z",
+      "photo": {
+        "src": "/images/articles/mnp-smartphone-price-comparison/iphone-17-back.webp",
+        "alt": "ラベンダー色のiPhone 17の背面",
+        "credit": "AzureSaturn",
+        "source": "https://commons.wikimedia.org/wiki/File:IPhone_17_(Lavender)_-_Backside.jpg",
+        "licenseLabel": "CC0",
+        "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "edits": "縮小・WebP化"
+      }
+    },
+    {
+      "id": "ahamo-iphone-air-256",
+      "carrier": "ahamo",
+      "model": "iPhone Air",
+      "storage": "256GB",
+      "normalYen": 212300,
+      "mnpYen": 168300,
+      "real": {
+        "yen": 51700,
+        "installments": 24,
+        "return": "23カ月目に端末を返却。端末の分割分29,700円＋利用料22,000円。ドコモで対象機種に買い替える場合は利用料免除の条件があります。破損等で別途最大22,000円の負担または特典対象外になる場合があります。",
+        "plan": "ahamo・いつでもカエドキプログラム。dポイントクラブへ加入し、返却まで継続",
+        "url": "https://faq.ahamo.com/faq/show/4023?site_domain=default"
+      },
+      "plan": "ahamo",
+      "option": "JALモバイルオプションの同時申込は対象外",
+      "eligibility": "他社から番号を引き継ぎ、ahamo公式で端末を同時購入。5G WELCOME割の対象。過去1年以内に乗り換え向け端末割引（dポイント還元を含む）を適用済みの場合は対象外。",
+      "period": "端末値引きの終了日未公表",
+      "endsAt": null,
+      "officialUrl": "https://ahamo.com/products/iphone/iphone-air/",
+      "termsUrl": "https://ahamo.com/special/lp/5g-welcome_wari.html",
+      "specs": {
+        "display": "6.5インチ・有機EL",
+        "weight": "165g",
+        "battery": "動画再生 最大27時間",
+        "feature": "厚さ5.64mm／eSIM専用"
+      },
+      "specUrl": "https://www.apple.com/jp/iphone-air/specs/",
+      "status": "verified",
+      "checkedAt": "2026-11-28T03:09:03.095Z",
+      "photo": {
+        "src": "/images/articles/mnp-smartphone-price-comparison/iphone-air-back.webp",
+        "alt": "白いiPhone Airの背面",
+        "credit": "AzureSaturn",
+        "source": "https://commons.wikimedia.org/wiki/File:IPhone_Air_(Cloud_White)_-_Backside.jpg",
+        "licenseLabel": "CC0",
+        "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "edits": "縮小・WebP化"
       }
     }
   ]

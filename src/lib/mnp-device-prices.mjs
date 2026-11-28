@@ -10,6 +10,11 @@ const specHosts = ["www.apple.com", "jp.nothing.tech", "www.oppo.com"];
 const forbidden = /最安|絶対お得|MNP\s*弾|せどり|転売|短期解約/i;
 const isPrice = value => Number.isSafeInteger(value) && value > 0;
 const date = value => typeof value === "string" && /(?:Z|[+-]\d\d:\d\d)$/.test(value) && Number.isFinite(Date.parse(value));
+const photoLicenses = {
+  "CC BY-SA 4.0": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "CC BY 3.0": "https://creativecommons.org/licenses/by/3.0/",
+  "CC0": "https://creativecommons.org/publicdomain/zero/1.0/",
+};
 
 export function officialUrl(value, allowed) {
   try {
@@ -44,6 +49,16 @@ export function validateCatalog(catalog) {
         || !officialUrl(row.officialUrl, allowed) || !officialUrl(row.termsUrl, allowed)
         || !officialUrl(row.specUrl, [...allowed, ...specHosts]))
       throw Error("条件・確認日時・出典が不正です: " + row.id);
+    if ((row.specs.battery != null && !words(row.specs.battery))
+        || (row.returnNote != null && !words(row.returnNote)))
+      throw Error("補足の仕様または返却価格の注記が不正です: " + row.id);
+    const { photo } = row;
+    if (photo && (!/^\/images\/articles\/mnp-smartphone-price-comparison\/[a-z0-9-]+\.webp$/.test(photo.src)
+        || !officialUrl(photo.source, ["commons.wikimedia.org"])
+        || !words(photo.alt, photo.credit)
+        || (photo.edits != null && !words(photo.edits))
+        || photo.license !== photoLicenses[photo.licenseLabel ?? "CC BY-SA 4.0"]))
+      throw Error("写真の出典またはライセンスが不正です: " + row.id);
   }
   return catalog;
 }
