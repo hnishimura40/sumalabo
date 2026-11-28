@@ -455,7 +455,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     flex-wrap: wrap;
     gap: 0 clamp(.7rem, 2.5vw, 2rem);
     border-bottom: 1px solid var(--line-strong);
-    margin: 0 0 24px;
+    margin: 0 0 18px;
   }
 
   .article-section-links a {
@@ -478,7 +478,6 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   }
 
   @media (min-width: 900px) {
-    .article-shell--comparison .article-content { padding: clamp(18px, 2.1vw, 30px); }
     .article-shell:not(.article-shell--renewal) {
       width: min(1240px, calc(100% - clamp(48px, 6vw, 112px)));
       padding-top: 26px;
@@ -698,6 +697,12 @@ const breadcrumbSchema = buildBreadcrumbSchema([
     font-size: 17px;
     line-height: 1.85;
     overflow-wrap: anywhere;
+  }
+
+  .article-shell--comparison .article-content {
+    border: 0;
+    background: transparent;
+    padding: 0 clamp(4px, .7vw, 12px) 24px;
   }
 
   @media (min-width: 768px) {
@@ -1259,6 +1264,8 @@ const breadcrumbSchema = buildBreadcrumbSchema([
       font-size: 16.5px;
       line-height: 1.9;
     }
+
+    .article-shell--comparison .article-content { padding-inline: 4px; }
 
     .article-content :global(h2) {
       margin-top: 50px;

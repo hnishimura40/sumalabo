@@ -41,8 +41,10 @@ const points = activeRows.map(row => ({
     <h2 id="mnp-prices-title">端末価格の早見表</h2>
     {lastChecked && <p>最終確認 <time datetime={lastChecked}>{time(lastChecked)}</time>（日本時間）</p>}
   </div>
-  <p class="mnp-price-guide">「乗り換え値引き前」は、回線契約なしでも適用される端末の値下げを反映した価格です。「返却時の端末負担額」には、指定期限に返す条件で確認できた金額を掲載します。値がない機種は一括の列を確認してください。期間を過ぎた価格は一覧から外します。</p>
-  <p class="mnp-price-guide" data-mnp-scatter-link hidden><a href="#mnp-scatter-title">価格とスペックの散布図へ</a></p>
+  <div class="mnp-notes">
+    <p class="mnp-price-guide">「乗り換え値引き前」は、回線契約なしでも適用される端末の値下げを反映した価格です。「返却時の端末負担額」には、指定期限に返す条件で確認できた金額を掲載します。値がない機種は一括の列を確認してください。期間を過ぎた価格は一覧から外します。</p>
+    <p data-mnp-scatter-link hidden><a href="#mnp-scatter-title">価格と性能の散布図へ</a></p>
+  </div>
   <div class="mnp-filters" data-mnp-filters hidden>
     <label>携帯会社
       <select data-mnp-carrier>
@@ -213,15 +215,23 @@ const points = activeRows.map(row => ({
   .mnp-reference li { display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; border: 1px solid var(--line); border-radius: .55rem; padding: .75rem; margin: 0; font-size: .88rem; }
   .mnp-reference-label { font-size: .8rem; font-weight: 700; }
   .mnp-reference-price { font-size: 1.2rem; font-weight: 750; font-variant-numeric: tabular-nums; }
-  .mnp-prices { margin-block: 2rem; color: var(--fg); }
+  .mnp-prices { margin-block: .25rem 2rem; color: var(--fg); }
   .mnp-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem 1rem; }
-  .mnp-heading h2 { margin: 0; scroll-margin-top: 116px; }
+  .mnp-heading h2 { margin: 0; border-inline-start-color: var(--amber); scroll-margin-top: 116px; }
   .mnp-heading p, .mnp-filters p { margin: 0; font-size: .875rem; color: var(--fg); }
-  .mnp-price-guide { max-width: 66rem; margin: .55rem 0 0; color: var(--fg-mid); font-size: .875rem; line-height: 1.6; }
-  .mnp-filters { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; margin: 1rem 0; padding: .85rem; background: color-mix(in srgb, var(--teal-tint) 62%, var(--bg-elev)); border: 1px solid var(--line); border-radius: 8px; }
+  .mnp-notes { display: flex; align-items: baseline; flex-wrap: wrap; gap: .35rem 1rem; margin-top: .45rem; }
+  .mnp-notes p { margin: 0; color: var(--fg-mid); font-size: .875rem; line-height: 1.55; }
+  .mnp-notes .mnp-price-guide { flex: 1 1 40rem; max-width: 66rem; }
+  .mnp-notes a { white-space: nowrap; }
+  .mnp-filters { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; margin: .75rem 0 .65rem; padding: .6rem .85rem; background: var(--bg-sunk); border: 1px solid var(--line); border-radius: 8px; }
   .mnp-filters label { display: grid; gap: .25rem; font-weight: 650; font-size: .875rem; min-width: 0; max-width: 100%; }
   .mnp-filters select { min-height: 44px; max-width: 100%; border: 1px solid var(--line); border-radius: 9px; background: var(--bg-elev); color: var(--fg); padding-inline: .55rem; font: inherit; }
-  .mnp-filters p { margin: 0 0 .55rem auto; }
+  .mnp-filters select:has(option:checked:not([value=""])) {
+    border-color: var(--teal-deep);
+    color: var(--teal-deep);
+    font-weight: 750;
+  }
+  .mnp-filters p { align-self: center; margin: 0 0 0 auto; }
   .mnp-prices table.mnp-table { width: 100%; margin: .65rem 0 0; border-collapse: collapse; table-layout: fixed; color: var(--fg); background: transparent; }
   .mnp-prices table.mnp-table :is(th,td) { border: 0; border-bottom: 1px solid var(--line); padding: .8rem .55rem; background: transparent; color: var(--article-table-ink); vertical-align: top; text-align: left; overflow-wrap: anywhere; }
   .mnp-table thead { border-bottom: 2px solid var(--article-table-ink); }

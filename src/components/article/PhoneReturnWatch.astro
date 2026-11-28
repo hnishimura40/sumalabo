@@ -29,9 +29,9 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
 <section class="return-watch" aria-labelledby="return-watch-title" data-return-watch>
   <div class="watch-overview">
     <div class="watch-lead">
-      <div>
+      <h2 id="return-watch-title">次は他社へ。2年返却でいくら払う？</h2>
+      <div class="watch-lead-body">
         <p class="watch-date">最終調査 <time datetime={checked}>{checked && date(checked)}（日本時間）</time></p>
-        <h2 id="return-watch-title">次は他社へ。2年返却でいくら払う？</h2>
         {best && <div data-watch-current>
           <p class="watch-result">確認できたオンライン販売先で負担が小さい例<strong>{best.carrier} {yen(best.total!.switchYen)}</strong></p>
           <p>確認済みのオンライン販売先で、期限内に返して査定を通過した場合の端末関連費用です。回線料と次の端末代は別です。ドコモの直接販売と量販店は価格を確認中です。</p>
@@ -42,8 +42,6 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
     </div>
     <slot name="summary" />
   </div>
-
-  <slot name="scope" />
 
   <h2 id="return-comparison">全国オンラインの価格比較</h2>
   <p data-watch-current>「返却までの端末代」は、返却で残りの分割代金が免除される場合に支払う端末代です。返却料・契約料・補償・条件付きポイントは別に扱います。</p>
@@ -70,6 +68,7 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
     {pending.map(row => <li><strong>{row.carrier}</strong> {row.expired ? "掲載期間終了。" : row.stale ? "確認から2日以上経過。" : row.stock === "sold-out" ? "在庫なし。" : "確認中。"} {row.note} <a href={row.sources[0].url}>公式情報</a></li>)}
   </ul>}
 
+  <slot name="scope" />
   <slot name="device" />
 
   <h2>返却までの端末代から総額まで</h2>
@@ -147,20 +146,45 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   .return-watch { color: var(--fg); }
   .return-watch h2[id] { scroll-margin-top: 116px; }
   .return-watch [hidden] { display: none !important; }
-  .watch-overview { display: grid; gap: 1rem; margin-block: 0 1.4rem; }
+  .watch-overview {
+    display: grid;
+    gap: .85rem;
+    margin: 0 0 .9rem;
+  }
+
+  .watch-lead,
   .watch-overview :global(.summary) {
     margin: 0;
-    padding: clamp(1rem, 2.5vw, 1.5rem);
-    background: color-mix(in srgb, var(--brand-soft) 84%, var(--bg-elev));
-    border-top: 3px solid var(--brand);
-  }
-  .watch-lead {
-    padding: clamp(1rem, 2.5vw, 1.5rem);
+    padding: 0;
     border: 1px solid var(--line);
-    border-top: 3px solid var(--teal);
-    border-radius: 14px;
-    background: var(--teal-tint);
+    border-radius: 9px;
+    overflow: clip;
+    background: var(--bg-elev);
+    box-shadow: none;
   }
+
+  .watch-overview .watch-lead h2,
+  .watch-overview :global(.summary-head) {
+    margin: 0;
+    border: 0;
+    padding: .55rem .9rem;
+    color: #fff;
+    font-size: clamp(.96rem, 1.2vw, 1.12rem);
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  .watch-overview .watch-lead h2 { background: linear-gradient(105deg, #154c51, #1e666e); }
+  .watch-overview :global(.summary-head) { background: linear-gradient(105deg, #414581, #50599d); }
+
+  .watch-lead-body,
+  .watch-overview :global(.summary > :is(ol,ul)) {
+    padding: .65rem .9rem .8rem;
+  }
+
+  .watch-lead-body { font-size: .925rem; line-height: 1.55; }
+  .watch-overview :global(.summary li) { font-size: .925rem; line-height: 1.55; }
+  .watch-overview :global(.summary li + li) { margin-block-start: .4rem; }
   .return-watch :global(.watch-device-photo) {
     display: grid;
     grid-template-columns: clamp(80px, 16vw, 132px) minmax(0, 1fr);
@@ -179,12 +203,13 @@ const date = (value: string, short = false) => new Intl.DateTimeFormat("ja-JP", 
   @media (min-width: 960px) {
     .watch-overview { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); }
   }
-  .watch-lead h2 { margin: .35rem 0 .65rem; }
-  #return-comparison { margin-top: 1.8rem; border-inline-start-color: var(--amber); }
-  .watch-lead p { margin: .4rem 0; }
-  .return-watch > :global(p.watch-scope) { max-width: 62rem; margin: 0; color: var(--fg-mid); font-size: .93rem; }
+  #return-comparison { margin-block: 1.15rem .45rem; border-inline-start-color: var(--amber); }
+  #return-comparison + p { max-width: 65rem; margin: 0 0 .6rem; font-size: .93rem; line-height: 1.55; }
+  .watch-lead-body p { margin: .32rem 0; }
+  .watch-lead-body > :first-child { margin-top: 0; }
+  .return-watch > :global(p.watch-scope) { max-width: 62rem; margin: .85rem 0 0; color: var(--fg-mid); font-size: .93rem; line-height: 1.65; }
   .watch-date, .watch-sources, .watch-pending { font-size: .875rem; }
-  .watch-result strong { display: block; font-size: clamp(1.45rem, 4vw, 2.2rem); line-height: 1.3; font-variant-numeric: tabular-nums; }
+  .watch-result strong { display: block; font-size: clamp(1.4rem, 3.2vw, 2rem); line-height: 1.2; font-variant-numeric: tabular-nums; }
   .watch-rating { border-inline-start: 2px solid var(--amber); padding-inline-start: .65rem; }
   .return-watch table.watch-table { border-collapse: collapse; width: 100%; }
   .return-watch table.watch-table :is(th,td) { background: transparent; color: var(--article-table-ink); padding: .65rem; border: 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
