@@ -15,6 +15,8 @@ interface Props {
   canonicalPath?: string;
   /** true で robots に noindex を付ける（社内確認ページ用） */
   noindex?: boolean;
+  /** true で Google だけに noindex を伝える（<meta name="googlebot">。速報記事用） */
+  googlebotNoindex?: boolean;
   paper?: boolean;
 }
 
@@ -25,6 +27,7 @@ const {
   ogType = "website",
   canonicalPath,
   noindex = false,
+  googlebotNoindex = false,
   paper = false,
 } = Astro.props;
 const robotsContent = noindex ? "noindex, nofollow" : "max-image-preview:large";
@@ -46,6 +49,7 @@ const ogImage = selectedImage && hasSiteUrl ? new URL(selectedImage, siteConfig.
     <meta name="author" content={siteConfig.authorName} />
     <meta name="theme-color" content="#0f1720" />
     <meta name="robots" content={robotsContent} />
+    {googlebotNoindex && <meta name="googlebot" content="noindex" />}
     {
       siteConfig.googleSiteVerification && (
         <meta name="google-site-verification" content={siteConfig.googleSiteVerification} />

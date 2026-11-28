@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import { isGooglebotNoindexArticle } from "../lib/google-noindex";
 import ArticleNavigation from "../components/ArticleNavigation.astro";
 import PreviewVetoButton from "../components/PreviewVetoButton.astro";
 import RelatedGuides from "../components/RelatedGuides.astro";
@@ -22,6 +23,7 @@ type ArticleData = {
   pubDate?: string;
   tags?: string[];
   reviewMethod?: "automated";
+  allowGoogleIndex?: boolean;
 };
 
 type Heading = {
@@ -91,6 +93,7 @@ const breadcrumbSchema = buildBreadcrumbSchema([
   ogType="article"
   canonicalPath={`/articles/${article.slug}/`}
   paper={renewal}
+  googlebotNoindex={isGooglebotNoindexArticle(article)}
 >
   <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
